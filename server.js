@@ -8,7 +8,7 @@ const compression = require('compression')
 const microcache = require('route-cache')
 const requestIp = require('request-ip')
 const resolve = file => path.resolve(__dirname, file)
-// const { VALID_PREVIEW_IP_ADD } = require('./api/config')
+const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = require('./api/config')
 const { createBundleRenderer } = require('vue-server-renderer')
 
 const isProd = process.env.NODE_ENV === 'production'
@@ -109,7 +109,8 @@ function render (req, res) {
 
   const context = {
     title: 'Readr', // default title
-    url: req.url
+    url: req.url,
+    GOOGLE_CLIENT_ID: GOOGLE_CLIENT_ID
   }
   renderer.renderToString(context, (err, html) => {
     if (err) {
