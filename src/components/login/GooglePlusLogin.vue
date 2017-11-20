@@ -41,7 +41,7 @@
       }
     },
     mounted () {
-      window.gapi.load('client', this.gapiLoadedHandler)
+      window.gapi && window.gapi.load('client', this.gapiLoadedHandler)
     },
   }
 </script>

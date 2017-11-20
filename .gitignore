@@ -16,3 +16,5 @@ gcskeyfile.json
 archives
 
 .vscode
+selenium-debug.log
+test/unit/coverage/*

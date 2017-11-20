@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites errors="1"
+            failures="0"
+            tests="1">
+
+  <testsuite name="Index.spec"
+    errors="1" failures="0" hostname="" id="" package="Index.spec" skipped="0"
+    tests="1" time="0.03200" timestamp="Sun, 19 Nov 2017 13:44:56 GMT">
+  
+    <testcase name="Show Login Panel" classname="Index.spec" time="0.03200" assertions="0">
+    </testcase>
+  
+
+  
+    <system-err>
+        Error while running [Index Spec / Show Login Panel]:
+
+  TypeError: browser.page.index(...).showPageRoot(...).page.index(...).indexDivShouldBeVIsible(...).page.loginPanel.loginPanelShouldBeVisible is not a function
+    at Object.ShowLoginPanel [as Show Login Panel] (/Library/WebServer/Documents/readr-site/test/e2e/specs/Index.spec.js:6:24)
+    at Module.call (/Library/WebServer/Documents/readr-site/node_modules/nightwatch/lib/runner/module.js:62:34)
+    at /Library/WebServer/Documents/readr-site/node_modules/nightwatch/lib/runner/testcase.js:70:29
+    at _fulfilled (/Library/WebServer/Documents/readr-site/node_modules/q/q.js:834:54)
+    at self.promiseDispatch.done (/Library/WebServer/Documents/readr-site/node_modules/q/q.js:863:30)
+    at Promise.promise.promiseDispatch (/Library/WebServer/Documents/readr-site/node_modules/q/q.js:796:13)
+    at /Library/WebServer/Documents/readr-site/node_modules/q/q.js:556:49
+    at runSingle (/Library/WebServer/Documents/readr-site/node_modules/q/q.js:137:13)
+    at flush (/Library/WebServer/Documents/readr-site/node_modules/q/q.js:125:13)
+    at _combinedTickCallback (internal/process/next_tick.js:67:7)
+    </system-err>
+  
+
+  
+  </testsuite>
+</testsuites>
