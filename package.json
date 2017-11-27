@@ -1,9 +1,10 @@
 {
-  "name": "readr-projects",
+  "name": "readr-site",
   "description": "A Vue.js project",
   "author": "MirrorMedia <master@mirrormedia.mg>",
   "private": true,
   "scripts": {
+    "api": "mocha --timeout 5000 --reporter nyan test/api/specs/*.spec.js",
     "dev": "forever -e err.log serverCluster.js",
     "start": "cross-env NODE_ENV=production PORT=80 forever -e err.log serverCluster.js",
     "build": "rimraf dist && yarn run build:client && yarn run build:server",
@@ -26,6 +27,7 @@
     "extract-text-webpack-plugin": "^3.0.0",
     "lodash": "^4.17.4",
     "lru-cache": "^4.1.1",
+    "redis-connection-pool": "^1.6.1",
     "request-ip": "^2.0.2",
     "route-cache": "0.4.3",
     "serve-favicon": "^2.4.4",
@@ -77,6 +79,7 @@
     "sinon-chai": "^2.8.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.1",
+    "supertest": "^3.0.0",
     "sw-precache-webpack-plugin": "^0.11.4",
     "url-loader": "^0.5.9",
     "vue-loader": "^13.0.5",

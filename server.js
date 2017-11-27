@@ -85,7 +85,15 @@ app.use('/service-worker.js', serve('./dist/service-worker.js'))
 // https://www.nginx.com/blog/benefits-of-microcaching-nginx/
 app.use(microcache.cacheSeconds(1, req => useMicroCache && req.originalUrl))
 
-function render (req, res) {
+function render (req, res, next) {
+  if (req.url.indexOf('/api/') === 0) {
+    next()
+    return
+  } else if (req.url.indexOf('/404') === 0) {
+    res.status(404).send('404 | Page Not Found')
+    return
+  }
+
   const s = Date.now()
   let isPageNotFound = false
   let isErrorOccurred = false  
@@ -123,9 +131,11 @@ function render (req, res) {
   })
 }
 
-app.get('*', isProd ? render : (req, res) => {
-  readyPromise.then(() => render(req, res))
+app.get('*', isProd ? render : (req, res, next) => {
+  readyPromise.then(() => render(req, res, next))
 })
+
+app.use('/api', require('./api/index'))
 
 const port = process.env.PORT || 8080
 const server = app.listen(port, () => {
