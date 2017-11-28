@@ -4,7 +4,7 @@
   "author": "MirrorMedia <master@mirrormedia.mg>",
   "private": true,
   "scripts": {
-    "api": "mocha --timeout 5000 --reporter nyan test/api/specs/*.spec.js",
+    "api": "node test/api/runner.js --timeout 5000 --reporter list test/api/specs/*.spec.js",
     "dev": "forever -e err.log serverCluster.js",
     "start": "cross-env NODE_ENV=production PORT=80 forever -e err.log serverCluster.js",
     "build": "rimraf dist && yarn run build:client && yarn run build:server",
