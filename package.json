@@ -58,6 +58,7 @@
     "eslint-plugin-html": "^4.0.0",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-vue": "^2.1.0",
+    "faker": "^4.1.0",
     "file-loader": "^0.11.2",
     "forever": "^0.15.3",
     "friendly-errors-webpack-plugin": "^1.6.1",
