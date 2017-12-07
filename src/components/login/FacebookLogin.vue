@@ -21,9 +21,13 @@
 </script>
 <style lang="stylus" scoped>
   .facebook-login
-    width 200px
-    height 80px
-    background-color blue
+    width 100%
+    height 2rem
+    background-color #3b5998
     cursor pointer
     color #fff
+    display flex
+    justify-content center
+    align-items center
+    
 </style>
