@@ -8,6 +8,7 @@ server.ready.then(() => {
   var runner = spawn('mocha', opts, { stdio: 'inherit' })
 
   runner.on('exit', function (code) {
+    console.log('going to close server...')
     server.close()
     process.exit(code)
   })

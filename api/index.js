@@ -2,6 +2,7 @@ const { API_DEADLINE, API_HOST, API_PORT, API_PROTOCOL, API_TIMEOUT } = require(
 const { REDIS_AUTH, REDIS_MAX_CLIENT, REDIS_READ_HOST, REDIS_READ_PORT, REDIS_WRITE_HOST, REDIS_WRITE_PORT, REDIS_TIMEOUT } = require('./config')
 const { SERVER_PROTOCOL, SERVER_HOST } = require('./config')
 const RedisConnectionPool = require('redis-connection-pool')
+const bodyParser = require('body-parser')
 const express = require('express')
 const isProd = process.env.NODE_ENV === 'production'
 const router = express.Router()
@@ -105,7 +106,7 @@ router.get('*', function(req, res) {
           if (!err && response) {
             const resData = JSON.parse(response.text)
             if (Object.keys(resData).length !== 0 && resData.constructor === Object) {
-              redisWriting(req.url, response.text)
+              // redisWriting(req.url, response.text)
             }
             res.json(resData)
           } else {
@@ -123,6 +124,48 @@ router.get('*', function(req, res) {
   }
 })
 
+// parse application/x-www-form-urlencoded
+router.use(bodyParser.urlencoded({ extended: false }))
+// parse application/json
+router.use(bodyParser.json())
 
+router.post('*', function (req, res) {
+  const url = `${apiHost}${req.url}`
+  superagent
+  .post(url)
+  .send(req.body)
+  .end((err, response) => {
+    if (!err && response) {
+      res.send(response)
+    } else {
+      res.json(err)
+    }
+  })
+})
+router.put('*', function (req, res) {
+  const url = `${apiHost}${req.url}`
+  superagent
+  .put(url)
+  .send(req.body)
+  .end((err, response) => {
+    if (!err && response) {
+      res.send(response)
+    } else {
+      res.json(err)
+    }
+  })
+})
+router.delete('*', function (req, res) {
+  const url = `${apiHost}${req.url}`
+  superagent
+  .delete(url)
+  .end((err, response) => {
+    if (!err && response) {
+      res.send(response)
+    } else {
+      res.json(err)
+    }
+  })
+})
 
 module.exports = router
