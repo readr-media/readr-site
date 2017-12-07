@@ -47,9 +47,12 @@
 </script>
 <style lang="stylus" scoped>
   .google-plus-login
-    width 200px
-    height 80px
-    background-color red
+    width 100%
+    height 2rem
+    background-color #d34836
     cursor pointer
     color #fff
+    display flex
+    justify-content center
+    align-items center
 </style>
