@@ -4,7 +4,7 @@
   "author": "MirrorMedia <master@mirrormedia.mg>",
   "private": true,
   "scripts": {
-    "api": "mocha --timeout 5000 --reporter nyan test/api/specs/*.spec.js",
+    "api": "node test/api/runner.js --timeout 5000 --reporter list test/api/specs/*.spec.js",
     "dev": "forever -e err.log serverCluster.js",
     "start": "cross-env NODE_ENV=production PORT=80 forever -e err.log serverCluster.js",
     "build": "rimraf dist && yarn run build:client && yarn run build:server",
@@ -20,6 +20,7 @@
     "npm": ">=4.0"
   },
   "dependencies": {
+    "body-parser": "^1.18.2",
     "compression": "^1.7.0",
     "cross-env": "^5.0.5",
     "es6-promise": "^4.1.1",
@@ -27,6 +28,7 @@
     "extract-text-webpack-plugin": "^3.0.0",
     "lodash": "^4.17.4",
     "lru-cache": "^4.1.1",
+    "moment": "^2.19.3",
     "redis-connection-pool": "^1.6.1",
     "request-ip": "^2.0.2",
     "route-cache": "0.4.3",
@@ -58,6 +60,7 @@
     "eslint-plugin-html": "^4.0.0",
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-vue": "^2.1.0",
+    "faker": "^4.1.0",
     "file-loader": "^0.11.2",
     "forever": "^0.15.3",
     "friendly-errors-webpack-plugin": "^1.6.1",

@@ -133,6 +133,24 @@ function render (req, res, next) {
 
 app.get('*', isProd ? render : (req, res, next) => {
   readyPromise.then(() => render(req, res, next))
+}).put('*', (req, res, next) => {
+  if (req.url.indexOf('/api/') === 0) {
+    next()
+    return
+  }
+  res.status(403).send('Forbidden')
+}).post('*', (req, res, next) => {
+  if (req.url.indexOf('/api/') === 0) {
+    next()
+    return
+  }
+  res.status(403).send('Forbidden')
+}).delete('*', (req, res, next) => {
+  if (req.url.indexOf('/api/') === 0) {
+    next()
+    return
+  }
+  res.status(403).send('Forbidden')
 })
 
 app.use('/api', require('./api/index'))
