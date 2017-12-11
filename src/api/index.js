@@ -1,5 +1,6 @@
 
 import { getHost } from '../util/comm'
+import { currentUser, getToken, saveToken } from '../util/services' 
 import uuidv4 from 'uuid/v4'
 const superagent = require('superagent')
 // import { camelizeKeys } from 'humps'
@@ -20,16 +21,32 @@ function _doFetch (url) {
   })
 }
 
-export function register (param) {
+function _doPost (url, params) {
   return new Promise((resolve) => {
-    let url = `${host}/api/member`
+    superagent
+    .post(url)
+    .set('Authorization', `Bearer ${getToken()}`)
+    .send(params)
+    .end(function (err, res) {
+      if (err) {
+        reject(err)
+      } else {
+        resolve({ status: res.status, body: res.body })
+      }
+    })
+  })
+}
+
+export function register (params) {
+  return new Promise((resolve, reject) => {
+    let url = `${host}/api/register`
     const uuid = uuidv4()
-    param.id = uuid
-    console.log('param', param)
+    params.id = uuid
+
     superagent
     .post(url)
     .send(
-      param
+      params
     )
     .end(function (err, res) {
       if (err) {
@@ -38,5 +55,24 @@ export function register (param) {
         resolve({ status: res.body.status })
       }
     })
+  })
+}
+
+export function login (params) {
+  let url = `${host}/api/login`
+  return _doPost (url, {
+    email: params.email,
+    password: params.password,
+    keepAlive: params.keepAlive
+  }).then((res) => {
+    saveToken(res.body.token)
+    return { status: res.status }
+  })
+}
+
+export function logout () {
+  return new Promise((resolve) => {
+    window && (window.localStorage.removeItem('csrf'))
+    resolve()
   })
 }

@@ -29,6 +29,7 @@
 </template>
 <script>
   import { WORDING_EMAIL, WORDING_MEMBER_AGREEMENT, WORDING_NICKNAME, WORDING_PASSWORD, WORDING_PASSWORD_CHECK, WORDING_REGISTER, WORDING_REGISTER_NOTICE, WORDING_REGISTER_SUCESSFUL, WORDING_REGISTER_INFAIL } from '../../constants'
+  import { consoleLogOnDev } from '../../util/comm'
   import validator from 'validator'
 
   const register = (store, profile) => {
@@ -61,7 +62,7 @@
         if (this.validatInput()) {
           register(this.$store, {
             nickname: this.$refs[ 'nickname' ].value,
-            mail: this.$refs[ 'mail' ].value,
+            email: this.$refs[ 'mail' ].value,
             password: this.$refs[ 'pwd' ].value
           }).then(({ status }) => {
             this.isRegistered = true

@@ -1,14 +1,16 @@
 <template>
   <div class="login">
     <div class="login__input-email">
-      <input type="text" :placeholder="wording.WORDING_EMAIL">
+      <input type="text" :placeholder="wording.WORDING_EMAIL" ref="mail">
     </div>
     <div class="login__input-pwd">
-      <input type="text" :placeholder="wording.WORDING_PASSWORD">
+      <input type="text" :placeholder="wording.WORDING_PASSWORD" ref="pwd">
     </div>
+    <div class="login__alert" v-if="isSomethingWrong" v-text="alertMsg"></div>
     <div class="login__wrapper">
       <div class="keep-login-alive">
-        <input type="checkbox"> {{ wording.WORDING_KEEP_ALIVE }}
+        <input type="checkbox" id="keep-alive" ref="keep-alive">
+        <label for="keep-alive" v-text="wording.WORDING_KEEP_ALIVE"></label>
       </div>
       <div class="forget-pwd">
         <span v-text="wording.WORDING_FORGET_PASSWORD"></span>
@@ -18,18 +20,31 @@
       <span class="notice" v-text="wording.WORDING_REGISTER_NOTICE"></span>
       <span class="agreement" v-text="wording.WORDING_MEMBER_AGREEMENT"></span>
     </div>
-    <div class="login__btn">
+    <div class="login__btn" @click="login">
       <span v-text="wording.WORDING_LOGIN"></span>
     </div>
   </div>
 </template>
 <script>
-  import { WORDING_EMAIL, WORDING_FORGET_PASSWORD, WORDING_KEEP_ALIVE, WORDING_LOGIN, WORDING_MEMBER_AGREEMENT, WORDING_PASSWORD, WORDING_REGISTER_NOTICE } from '../../constants'
+  import { WORDING_EMAIL, WORDING_FORGET_PASSWORD, WORDING_KEEP_ALIVE, WORDING_LOGIN, WORDING_LOGIN_INFAIL_VALIDATION_ISSUE, WORDING_MEMBER_AGREEMENT, WORDING_PASSWORD, WORDING_REGISTER_NOTICE } from '../../constants'
+  const login = (store, profile) => {
+    return store.dispatch('LOGIN', {
+      params: {
+        email: profile.email,
+        password: profile.password,
+        keepAlive: profile.keepAlive
+      }
+    })
+  }
+
   export default {
     data () {
       return {
+        alertMsg: '',
+        isSomethingWrong: false,
         wording: {
           WORDING_LOGIN,
+          WORDING_LOGIN_INFAIL_VALIDATION_ISSUE,
           WORDING_MEMBER_AGREEMENT,
           WORDING_REGISTER_NOTICE,
           WORDING_PASSWORD,
@@ -41,6 +56,20 @@
     },
     name: 'login',
     methods: {
+      login () {
+        login(this.$store, {
+          email: this.$refs[ 'mail' ].value,
+          password: this.$refs[ 'pwd' ].value,
+          keepAlive: this.$refs[ 'keep-alive' ].checked
+        }).then((res) => {
+          if (res.status === 200) {
+            location.replace('/')
+          } else {
+            this.alertMsg = this.wording.WORDING_LOGIN_INFAIL_VALIDATION_ISSUE
+            this.isSomethingWrong = true
+          }
+        })
+      }
     },
     mounted () {},
   }
@@ -65,6 +94,11 @@
         padding 0 0.5rem
         &::-webkit-input-placeholder
           color #bdbdbd
+    &__alert
+      font-size 0.9rem
+      text-align right
+      color #d26565 !important
+      font-weight bold
     &__wrapper
       margin-top 40px
       display flex
