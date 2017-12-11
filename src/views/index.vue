@@ -1,19 +1,14 @@
 <template>
-  <div class="index-page">
-    <LoginPanel></LoginPanel>
-  </div>
+  <div class="index-page">index</div>
 </template>
 <script>
-  import LoginPanel from '../components/LoginPanel.vue'
+  import { getToken } from '../util/services'
 
   export default {
-    components: {
-      LoginPanel
-    },
+    components: {},
     name: 'index-page',
     methods: {},
     mounted () {
-      console.log('test')
     },
   }
 </script>

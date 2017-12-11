@@ -3,12 +3,41 @@ const { REDIS_AUTH, REDIS_MAX_CLIENT, REDIS_READ_HOST, REDIS_READ_PORT, REDIS_WR
 const { SERVER_PROTOCOL, SERVER_HOST } = require('./config')
 const RedisConnectionPool = require('redis-connection-pool')
 const bodyParser = require('body-parser')
+const crypto = require('crypto')
 const express = require('express')
 const isProd = process.env.NODE_ENV === 'production'
+const jwt = require('jsonwebtoken')
+const jwtExpress = require('express-jwt')
+
 const router = express.Router()
 const superagent = require('superagent')
 
 const apiHost = API_PROTOCOL + '://' + API_HOST + ':' + API_PORT
+const consoleLogOnDev = ({ msg, showSplitLine }) => {
+  if (!isProd) {
+    showSplitLine && console.log('####################')
+    console.log(msg)
+    showSplitLine && console.log('####################')
+  }
+}
+
+const SECRET_KEY = `_csrf_secret`
+const SECRET_LENGTH = 10
+const currSecret = crypto.pseudoRandomBytes(SECRET_LENGTH).toString('base64')
+
+const generateJwt = ({ id, email, keepAlive }) => {
+  const expiry = new Date()
+  expiry.setDate(expiry.getDate() + (keepAlive ? 30 : 1))
+  return jwt.sign({
+    id: id,
+    email: email,
+    exp: parseInt(expiry.getTime() / 1000)
+  }, currSecret)
+}
+
+const auth = jwtExpress({
+  secret: currSecret
+})
 
 const fetchStaticJson = (req, res, next, jsonFileName) => {
   const url = `${SERVER_PROTOCOL}://${SERVER_HOST}/json/${jsonFileName}.json`
@@ -129,8 +158,7 @@ router.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 router.use(bodyParser.json())
 
-router.post('*', function (req, res) {
-  const url = `${apiHost}${req.url}`
+const basicPostRequst = (url, req, res) => {
   superagent
   .post(url)
   .send(req.body)
@@ -141,21 +169,60 @@ router.post('*', function (req, res) {
       res.json(err)
     }
   })
-})
-router.put('*', function (req, res) {
-  const url = `${apiHost}${req.url}`
-  superagent
-  .put(url)
-  .send(req.body)
-  .end((err, response) => {
-    if (!err && response) {
-      res.send(response)
-    } else {
-      res.json(err)
-    }
+}
+
+router.post('/login', (req, res) => {
+  consoleLogOnDev({
+    msg: `Got a new reuqest of login:
+          mail -> ${req.body.email}
+          At ${(new Date).toString()}`
   })
+  if (!req.body.email || !req.body.password) {
+    res.status(400).send({ message: 'Please offer id/password.' })
+    return
+  }
+
+  /**
+   * ToDo:
+   *    Should send a post req to the api server here.
+   *    Then send the proper res to client.
+   */
+
+  const token = generateJwt({
+    id: '--',
+    email: req.body.email,
+    keepAlive: req.body.keepAlive
+  })
+  res.status(200).send({ token })
 })
-router.delete('*', function (req, res) {
+
+router.post('/register', (req, res) => {
+  consoleLogOnDev({
+    msg: `Got a new reuqest of register:
+          nickname -> ${req.body.nickname}
+          mail -> ${req.body.email}
+          At ${(new Date).toString()}`
+  })
+  if (!req.body.email || !req.body.password || !req.body.nickname) {
+    res.status(400).send({ message: 'Please offer all requirements.' })
+    return
+  }
+  
+  const url = `${apiHost}/member`
+  basicPostRequst(url, req, res)
+})
+
+router.post('*', auth, function (req, res) {
+  const url = `${apiHost}${req.url}`
+  basicPostRequst(url, req, res)
+})
+
+router.put('*', auth, function (req, res) {
+  const url = `${apiHost}${req.url}`
+  basicPostRequst(url, req, res)
+})
+
+router.delete('*', auth, function (req, res) {
   const url = `${apiHost}${req.url}`
   superagent
   .delete(url)
