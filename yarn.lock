@@ -88,6 +88,10 @@ acorn-jsx@^3.0.0:
   dependencies:
     acorn "^3.0.4"
 
+acorn@^1.0.3:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/acorn/-/acorn-1.2.2.tgz#c8ce27de0acc76d896d2b1fad3df588d9e82f014"
+
 acorn@^3.0.4:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/acorn/-/acorn-3.3.0.tgz#45e37fb39e8da3f25baee3ff5369e2bb5f22017a"
@@ -890,6 +894,17 @@ big.js@^3.1.3:
 binary-extensions@^1.0.0:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-1.10.0.tgz#9aeb9a6c5e88638aad171e167f5900abe24835d0"
+
+blanket@^1.2.3:
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/blanket/-/blanket-1.2.3.tgz#151b4987c3bd84552bb5f03b90ef5f7e5931e473"
+  dependencies:
+    acorn "^1.0.3"
+    falafel "~1.2.0"
+    foreach "^2.0.5"
+    isarray "0.0.1"
+    object-keys "^1.0.6"
+    xtend "~4.0.0"
 
 blob@0.0.4:
   version "0.0.4"
@@ -1731,6 +1746,10 @@ debug@*, debug@^3.0.1, debug@^3.1.0:
   dependencies:
     ms "2.0.0"
 
+debug@0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/debug/-/debug-0.7.0.tgz#f5be05ec0434c992d79940e50b2695cfb2e01b08"
+
 debug@2, debug@2.6.9, debug@^2.1.0, debug@^2.2.0, debug@^2.6.8:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.9.tgz#5d128515df134ff327e90a4c93f4e077a536341f"
@@ -2555,6 +2574,15 @@ faker@^4.1.0:
   version "4.1.0"
   resolved "https://registry.yarnpkg.com/faker/-/faker-4.1.0.tgz#1e45bbbecc6774b3c195fad2835109c6d748cc3f"
 
+falafel@~1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/falafel/-/falafel-1.2.0.tgz#c18d24ef5091174a497f318cd24b026a25cddab4"
+  dependencies:
+    acorn "^1.0.3"
+    foreach "^2.0.5"
+    isarray "0.0.1"
+    object-keys "^1.0.6"
+
 fast-deep-equal@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/fast-deep-equal/-/fast-deep-equal-1.0.0.tgz#96256a3bc975595eb36d82e9929d060d893439ff"
@@ -2787,6 +2815,15 @@ friendly-errors-webpack-plugin@^1.6.1:
     error-stack-parser "^2.0.0"
     string-length "^1.0.1"
 
+fs-extra@0.3.1:
+  version "0.3.1"
+  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-0.3.1.tgz#c875886bd77717b9a8967604e7a94da2ed52b174"
+  dependencies:
+    jsonfile "0.0.x"
+    mkdirp "0.3.x"
+    ncp "0.2.x"
+    rimraf "~2.0.2"
+
 fs-extra@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-1.0.0.tgz#cd3ce5f7e7cb6145883fcae3191e9877f8587950"
@@ -3007,6 +3044,10 @@ got@^5.0.0:
 graceful-fs@^4.1.11, graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.1.9:
   version "4.1.11"
   resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-4.1.11.tgz#0e8bdfe4d1ddb8854d64e04ea7c00e2a026e5658"
+
+graceful-fs@~1.1:
+  version "1.1.14"
+  resolved "https://registry.yarnpkg.com/graceful-fs/-/graceful-fs-1.1.14.tgz#07078db5f6377f6321fceaaedf497de124dc9465"
 
 "graceful-readlink@>= 1.0.0":
   version "1.0.1"
@@ -3622,6 +3663,14 @@ jschardet@^1.4.2:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/jschardet/-/jschardet-1.6.0.tgz#c7d1a71edcff2839db2f9ec30fc5d5ebd3c1a678"
 
+jscover@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/jscover/-/jscover-1.0.0.tgz#1aaceabc0f638ed693976a7233dc53001b899aba"
+  dependencies:
+    debug "0.7.0"
+    fs-extra "0.3.1"
+    ndir "0.1.5"
+
 jsesc@^1.3.0:
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/jsesc/-/jsesc-1.3.0.tgz#46c3fec8c1892b12b0833db9bc7622176dbab34b"
@@ -3663,6 +3712,10 @@ json3@3.3.2:
 json5@^0.5.0, json5@^0.5.1:
   version "0.5.1"
   resolved "https://registry.yarnpkg.com/json5/-/json5-0.5.1.tgz#1eade7acc012034ad84e2396767ead9fa5495821"
+
+jsonfile@0.0.x:
+  version "0.0.1"
+  resolved "https://registry.yarnpkg.com/jsonfile/-/jsonfile-0.0.1.tgz#b5f9f515121b2844f2cbfe14338b55c79800e1d8"
 
 jsonfile@^2.1.0:
   version "2.4.0"
@@ -4314,6 +4367,10 @@ minimist@~0.0.1:
   version "0.0.10"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-0.0.10.tgz#de3f98543dbf96082be48ad1a0c7cda836301dcf"
 
+mkdirp@0.3.x:
+  version "0.3.5"
+  resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.3.5.tgz#de3e5f8961c88c787ee1368df849ac4413eca8d7"
+
 mkdirp@0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.5.0.tgz#1d73076a6df986cd9344e15e71fcc05a4c9abf12"
@@ -4387,6 +4444,10 @@ ms@^2.0.0:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.1.tgz#30a5864eb3ebb0a66f2ebe6d727af06a09d86e0a"
 
+muk@^0.5.3:
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/muk/-/muk-0.5.3.tgz#4e61b407751b862936350cdb223509e611ed039b"
+
 mute-stream@0.0.7, mute-stream@~0.0.4:
   version "0.0.7"
   resolved "https://registry.yarnpkg.com/mute-stream/-/mute-stream-0.0.7.tgz#3075ce93bc21b8fab43e1bc4da7e8115ed1e7bab"
@@ -4411,9 +4472,17 @@ nconf@0.6.9, nconf@~0.6.9:
     ini "1.x.x"
     optimist "0.6.0"
 
+ncp@0.2.x:
+  version "0.2.7"
+  resolved "https://registry.yarnpkg.com/ncp/-/ncp-0.2.7.tgz#46fac2b7dda2560a4cb7e628677bd5f64eac5be1"
+
 ncp@0.4.x:
   version "0.4.2"
   resolved "https://registry.yarnpkg.com/ncp/-/ncp-0.4.2.tgz#abcc6cbd3ec2ed2a729ff6e7c1fa8f01784a8574"
+
+ndir@0.1.5:
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/ndir/-/ndir-0.1.5.tgz#120891d7697bbbe8214cfeff09602060d3454558"
 
 negotiator@0.6.1:
   version "0.6.1"
@@ -4584,7 +4653,7 @@ object-component@0.0.3:
   version "0.0.3"
   resolved "https://registry.yarnpkg.com/object-component/-/object-component-0.0.3.tgz#f0c69aa50efc95b866c186f400a33769cb2f1291"
 
-object-keys@^1.0.8:
+object-keys@^1.0.6, object-keys@^1.0.8:
   version "1.0.11"
   resolved "https://registry.yarnpkg.com/object-keys/-/object-keys-1.0.11.tgz#c54601778ad560f1142ce0e01bcca8b56d13426d"
 
@@ -5728,6 +5797,12 @@ rimraf@2, rimraf@2.x.x, rimraf@^2.2.8, rimraf@^2.5.1, rimraf@^2.6.0, rimraf@^2.6
   resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.6.2.tgz#2ed8150d24a16ea8651e6d6ef0f47c4158ce7a36"
   dependencies:
     glob "^7.0.5"
+
+rimraf@~2.0.2:
+  version "2.0.3"
+  resolved "https://registry.yarnpkg.com/rimraf/-/rimraf-2.0.3.tgz#f50a2965e7144e9afd998982f15df706730f56a9"
+  optionalDependencies:
+    graceful-fs "~1.1"
 
 ripemd160@^2.0.0, ripemd160@^2.0.1:
   version "2.0.1"
@@ -6912,7 +6987,7 @@ xregexp@2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/xregexp/-/xregexp-2.0.0.tgz#52a63e56ca0b84a7f3a5f3d61872f126ad7a5943"
 
-xtend@^4.0.0, xtend@^4.0.1:
+xtend@^4.0.0, xtend@^4.0.1, xtend@~4.0.0:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/xtend/-/xtend-4.0.1.tgz#a5c6d532be656e23db820efb943a1f04998d63af"
 

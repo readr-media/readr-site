@@ -34,10 +34,7 @@ const generateJwt = ({ id, email, keepAlive }) => {
     exp: parseInt(expiry.getTime() / 1000)
   }, currSecret)
 }
-
-const auth = jwtExpress({
-  secret: currSecret
-})
+const auth = jwtExpress({ secret: currSecret })
 
 const fetchStaticJson = (req, res, next, jsonFileName) => {
   const url = `${SERVER_PROTOCOL}://${SERVER_HOST}/json/${jsonFileName}.json`
@@ -113,7 +110,9 @@ router.all('/', function(req, res, next) {
 router.use('/grouped', function(req, res, next) {
   fetchStaticJson(req, res, next, 'grouped')
 })
-
+router.use('/member', auth, function(req, res, next) {
+  next()
+})
 router.get('*', function(req, res) {
   console.log(apiHost)  
   console.log(decodeURIComponent(req.url))
@@ -164,7 +163,7 @@ const basicPostRequst = (url, req, res) => {
   .send(req.body)
   .end((err, response) => {
     if (!err && response) {
-      res.send(response)
+      res.status(200).end()
     } else {
       res.json(err)
     }
@@ -207,7 +206,7 @@ router.post('/register', (req, res) => {
     res.status(400).send({ message: 'Please offer all requirements.' })
     return
   }
-  
+  req.body.mail = req.body.email
   const url = `${apiHost}/member`
   basicPostRequst(url, req, res)
 })
@@ -219,16 +218,25 @@ router.post('*', auth, function (req, res) {
 
 router.put('*', auth, function (req, res) {
   const url = `${apiHost}${req.url}`
-  basicPostRequst(url, req, res)
+  superagent
+  .put(url)
+  .send(req.body)
+  .end((err, response) => {
+    if (!err && response) {
+      res.status(200).end()
+    } else {
+      res.json(err)
+    }
+  })
 })
 
 router.delete('*', auth, function (req, res) {
-  const url = `${apiHost}${req.url}`
+    const url = `${apiHost}${req.url}`
   superagent
   .delete(url)
   .end((err, response) => {
     if (!err && response) {
-      res.send(response)
+      res.status(200).end()
     } else {
       res.json(err)
     }
