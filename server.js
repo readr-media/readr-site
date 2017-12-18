@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const Cookies = require( "cookies" )
+const Cookies = require('cookies')
 const fs = require('fs')
 const path = require('path')
 const LRU = require('lru-cache')
