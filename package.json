@@ -4,7 +4,7 @@
   "author": "MirrorMedia <master@mirrormedia.mg>",
   "private": true,
   "scripts": {
-    "api": "mocha --timeout 5000 --reporter list test/api/specs/*.spec.js --exit",
+    "api": "nyc --reporter=lcov --reporter=text-lcov mocha --timeout 10000 --reporter list test/api/specs/*.spec.js --exit",
     "dev": "forever -e err.log serverCluster.js",
     "start": "cross-env NODE_ENV=production PORT=80 forever -e err.log serverCluster.js",
     "build": "rimraf dist && yarn run build:client && yarn run build:server",
@@ -22,6 +22,7 @@
   "dependencies": {
     "body-parser": "^1.18.2",
     "compression": "^1.7.0",
+    "cookies": "^0.7.1",
     "cross-env": "^5.0.5",
     "es6-promise": "^4.1.1",
     "express": "^4.15.4",
@@ -80,6 +81,7 @@
     "karma-webpack": "^2.0.6",
     "mocha": "^3.2.0",
     "nightwatch": "^0.9.16",
+    "nyc": "^11.3.0",
     "phantomjs-prebuilt": "^2.1.14",
     "rimraf": "^2.6.2",
     "selenium-server": "^3.7.1",
@@ -103,9 +105,7 @@
     "lint"
   ],
   "nyc": {
-    "exclude": [
-      "api/**/config.js"
-    ],
+    "exclude": ["api/config.js"],
     "include": [
       "api/**/*.js"
     ]

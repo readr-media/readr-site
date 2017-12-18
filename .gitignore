@@ -19,3 +19,6 @@ archives
 selenium-debug.log
 test/unit/coverage/*
 test/e2e/reports/*
+
+.nyc_output/
+coverage/
