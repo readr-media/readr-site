@@ -109,7 +109,7 @@ describe('/GET/member/:id', () => {
         res.body.should.have.property('active')
         done()
       })
-    }, 1000)
+    }, 500)
   })
 })
 
