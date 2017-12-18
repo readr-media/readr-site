@@ -1,3 +1,5 @@
+import Cookie from 'vue-cookie'
+import uuidv4 from 'uuid/v4'
 import { SITE_DOMAIN } from '../constants'
 
 export function consoleLogOnDev ({ msg }) {
@@ -25,4 +27,10 @@ export function getHost () {
     const port = parseInt(process.env.PORT) || 8080
     return `${host}:${port}`
   }
+}
+
+export function setReadrCookie () {
+  const uuid = uuidv4()
+  Cookie.set('mmid', uuid, { expires: (10 * 365 * 24) + 'h' })
+  return uuid
 }

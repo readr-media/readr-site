@@ -1,6 +1,7 @@
 const { API_DEADLINE, API_HOST, API_PORT, API_PROTOCOL, API_TIMEOUT } = require('./config')
 const { REDIS_AUTH, REDIS_MAX_CLIENT, REDIS_READ_HOST, REDIS_READ_PORT, REDIS_WRITE_HOST, REDIS_WRITE_PORT, REDIS_TIMEOUT } = require('./config')
 const { SERVER_PROTOCOL, SERVER_HOST } = require('./config')
+const Cookies = require('cookies')
 const RedisConnectionPool = require('redis-connection-pool')
 const bodyParser = require('body-parser')
 const crypto = require('crypto')
@@ -192,6 +193,8 @@ router.post('/login', (req, res) => {
     email: req.body.email,
     keepAlive: req.body.keepAlive
   })
+  const cookies = new Cookies( req, res, {} )
+  cookies.set('csrf', token, { httpOnly: false, expires: new Date(Date.now() + (req.body.keepAlive ? 30 : 1) * 24 * 60 * 60 * 1000) })
   res.status(200).send({ token })
 })
 
@@ -211,7 +214,7 @@ router.post('/register', (req, res) => {
   basicPostRequst(url, req, res)
 })
 
-router.post('*', auth, function (req, res) {
+router.post('/article', auth, function (req, res) {
   const url = `${apiHost}${req.url}`
   basicPostRequst(url, req, res)
 })
