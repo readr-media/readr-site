@@ -50,9 +50,9 @@ export function register (params) {
     )
     .end(function (err, res) {
       if (err) {
-        reject({ status: res.body.status })
+        reject({ status: res.status })
       } else {
-        resolve({ status: res.body.status })
+        resolve({ status: res.status })
       }
     })
   })

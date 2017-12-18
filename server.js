@@ -160,8 +160,9 @@ const server = app.listen(port, () => {
   console.log(`server started at localhost:${port}`)
 })
 module.exports = {
-  ready: readyPromise,
   close: () => {
     server.close()
-  }
+  },
+  ready: readyPromise,
+  app: server
 }
