@@ -10,7 +10,13 @@
     "yoda": [ 0, "never" ]
   },
   "globals": {
+    "FB": true,
+    "expect": true,
+    "gapi": true,
     "location": true,
     "source": true
+  },
+  "env": {
+    "mocha": true
   }
 }

@@ -11,7 +11,7 @@
     },
     name: 'login-page',
     methods: {},
-    mounted () {},
+    mounted () {}
   }
 </script>
 <style lang="stylus" scoped></style>

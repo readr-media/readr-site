@@ -9,7 +9,7 @@
 <script>
 export default {
   name: 'spinner',
-  props: ['show'],
+  props: [ 'show' ],
   serverCacheKey: props => props.show
 }
 </script>

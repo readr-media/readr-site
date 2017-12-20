@@ -1,10 +1,10 @@
-import Cookie from 'vue-cookie' 
+import Cookie from 'vue-cookie'
 
 export function saveToken (token) {
   window && (window.localStorage[ 'csrf' ] = token)
 }
 export function getToken () {
-  let token = Cookie.get('csrf') 
+  let token = Cookie.get('csrf')
   token = token || (window && window.localStorage[ 'csrf' ])
   return token
 }

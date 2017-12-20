@@ -2,7 +2,7 @@
   <div class="google-plus-login" @click="login">Google Login</div>
 </template>
 <script>
-  import { GOOGLE_API_KEY, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from '../../../api/config' 
+  import { GOOGLE_API_KEY, GOOGLE_CLIENT_ID } from '../../../api/config'
   import { consoleLogOnDev } from '../../util/comm'
 
   export default {
@@ -24,25 +24,25 @@
           this.updateSigninStatus(gapi.auth2.getAuthInstance().isSignedIn.get())
         })
       },
-      updateSigninStatus(isSignedIn) {
+      updateSigninStatus (isSignedIn) {
         if (isSignedIn) {
           this.makeApiCall()
         }
       },
-      makeApiCall() {
+      makeApiCall () {
         gapi.client.people.people.get({
           'resourceName': 'people/me',
           'requestMask.includeField': 'person.names'
-        }).then(function(response) {
+        }).then(function (response) {
           consoleLogOnDev({ msg: 'Hello, ' + response.result.names[0].givenName })
-        }, function(reason) {
+        }, function (reason) {
           consoleLogOnDev({ msg: 'Error: ' + reason.result.error.message })
         })
       }
     },
     mounted () {
       window.gapi && window.gapi.load('client', this.gapiLoadedHandler)
-    },
+    }
   }
 </script>
 <style lang="stylus" scoped>

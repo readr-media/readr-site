@@ -7,16 +7,16 @@
     name: 'facebook-login',
     methods: {
       login () {
-        FB.login(function(response) {
+        FB.login(function (response) {
           if (response.status === 'connected') {
-            FB.api('/me', function(response) {
+            FB.api('/me', function (response) {
               consoleLogOnDev({ msg: 'Successful login for: ' + response.name })
             })
           }
         }, { scope: 'public_profile,email' })
       }
     },
-    mounted () {},
+    mounted () {}
   }
 </script>
 <style lang="stylus" scoped>
