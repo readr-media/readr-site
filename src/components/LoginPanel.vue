@@ -61,7 +61,7 @@
     },
     mounted () {
       consoleLogOnDev({ msg: 'login panel' })
-    },
+    }
   }
 </script>
 <style lang="stylus" scoped>

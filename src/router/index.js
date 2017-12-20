@@ -1,7 +1,7 @@
-import _ from 'lodash'
+// import _ from 'lodash'
 import Vue from 'vue'
 import Router from 'vue-router'
-import { PROJECTS } from '../constants'
+// import { PROJECTS } from '../constants'
 
 Vue.use(Router)
 
@@ -15,7 +15,7 @@ export function createRouter () {
     fallback: false,
     scrollBehavior: () => ({ y: 0 }),
     routes: [
-      { path: '/', component: Index  },
+      { path: '/', component: Index },
       { path: '/login', component: Login }
     ]
   })

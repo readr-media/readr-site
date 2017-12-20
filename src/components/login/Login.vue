@@ -71,7 +71,7 @@
         })
       }
     },
-    mounted () {},
+    mounted () {}
   }
 </script>
 <style lang="stylus" scoped>

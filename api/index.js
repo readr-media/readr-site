@@ -114,7 +114,11 @@ router.use('/grouped', function(req, res, next) {
 router.use('/member', auth, function(req, res, next) {
   next()
 })
+router.use('/article', auth, function(req, res, next) {
+  next()
+})
 router.get('*', function(req, res) {
+  console.log('-- here ---')
   console.log(apiHost)  
   console.log(decodeURIComponent(req.url))
   const url = `${apiHost}${req.url}`
@@ -239,7 +243,8 @@ router.delete('*', auth, function (req, res) {
   .delete(url)
   .end((err, response) => {
     if (!err && response) {
-      res.status(200).end()
+      const resData = JSON.parse(response.text)
+      res.status(200).json(resData)
     } else {
       res.json(err)
     }

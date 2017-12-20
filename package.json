@@ -4,7 +4,7 @@
   "author": "MirrorMedia <master@mirrormedia.mg>",
   "private": true,
   "scripts": {
-    "api": "nyc --reporter=lcov --reporter=text-lcov mocha --timeout 10000 --reporter list test/api/specs/*.spec.js --exit",
+    "api": "nyc --reporter=lcov --reporter=text-lcov mocha --timeout 10000 --reporter list test/api/specs/article.spec.js --exit",
     "dev": "forever -e err.log serverCluster.js",
     "start": "cross-env NODE_ENV=production PORT=80 forever -e err.log serverCluster.js",
     "build": "rimraf dist && yarn run build:client && yarn run build:server",
@@ -84,6 +84,7 @@
     "nightwatch": "^0.9.16",
     "nyc": "^11.3.0",
     "phantomjs-prebuilt": "^2.1.14",
+    "pre-commit": "^1.2.2",
     "rimraf": "^2.6.2",
     "selenium-server": "^3.7.1",
     "sinon": "^2.1.0",
