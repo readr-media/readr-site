@@ -1,12 +1,12 @@
 <template>
-  <div class="index-page">index</div>
+  <div class="index-page">index</div> 
 </template>
 <script>
   export default {
-    components: {},
     name: 'index-page',
-    methods: {},
-    mounted () {}
+    components: {},
+    mounted () {},
+    methods: {}
   }
 </script>
 <style lang="stylus" scoped>

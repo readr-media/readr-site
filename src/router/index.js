@@ -6,6 +6,7 @@ import Router from 'vue-router'
 Vue.use(Router)
 
 // route-level code splitting
+const Account = () => import('../views/Account.vue')
 const Index = () => import('../views/index.vue')
 const Login = () => import('../views/Login.vue')
 
@@ -16,6 +17,7 @@ export function createRouter () {
     scrollBehavior: () => ({ y: 0 }),
     routes: [
       { path: '/', component: Index },
+      { path: '/account', component: Account },
       { path: '/login', component: Login }
     ]
   })
