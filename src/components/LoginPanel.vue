@@ -12,11 +12,11 @@
     </div>
     <div class="login-panel__right">
       <div class="title">
-        <span class="login-community active" v-text="wording['WORDING_LOGIN_COMMUNITY']"></span>
+        <span class="login-community active" v-text="''"></span>
       </div>
       <div class="container">
-        <FacebookLogin></FacebookLogin>
-        <GooglePlusLogin></GooglePlusLogin>
+        <FacebookLogin :type="isLoginTabAcitve ? 'login' : 'register'"></FacebookLogin>
+        <GooglePlusLogin :type="isLoginTabAcitve ? 'login' : 'register'"></GooglePlusLogin>
       </div>
     </div>
   </div>
@@ -28,6 +28,12 @@
   import GooglePlusLogin from './login/GooglePlusLogin.vue'
   import Login from './login/Login.vue'
   import Register from './register/Register.vue'
+
+  const getDisposableToken = (store) => {
+    return store.dispatch('DISPOSABLE_TOKEN', {
+      type: 'register'
+    })
+  }
 
   export default {
     components: {
@@ -61,28 +67,38 @@
     },
     mounted () {
       consoleLogOnDev({ msg: 'login panel' })
+    },
+    beforeMount () {
+      Promise.all([
+        getDisposableToken(this.$store)
+      ])
     }
   }
 </script>
 <style lang="stylus" scoped>
   .login-panel
-    background-color #bdbdbd
-    width 100%
-    max-width calc(800px - 100px)
-    padding 30px 50px
+    background-color #d8d8d8
+    width 660px
+    height 320px
+    padding 17.5px 30px
+    margin 0 auto
     > div
-      width calc(50% - 51px)
+      width calc(330px - 31px)
+      height 100%
       display inline-block
-      overflow hidden
+      // overflow hidden
       vertical-align top
+      position relative
       &:first-child
-        padding-right 50px
+        padding-right 30px
         border-right 2px solid #afafaf
       &:last-child
-        padding-left 50px
+        padding-left 30px
       > .title
-        color #909090
+        color #fff
         margin-bottom 15px
+        font-size 1.125rem
+        font-weight 600
         > span
           &.active
             color #000

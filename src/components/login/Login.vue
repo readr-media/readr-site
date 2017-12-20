@@ -27,13 +27,14 @@
 </template>
 <script>
   import { WORDING_EMAIL, WORDING_FORGET_PASSWORD, WORDING_KEEP_ALIVE, WORDING_LOGIN, WORDING_LOGIN_INFAIL_VALIDATION_ISSUE, WORDING_MEMBER_AGREEMENT, WORDING_PASSWORD, WORDING_REGISTER_NOTICE } from '../../constants'
-  const login = (store, profile) => {
+  const login = (store, profile, token) => {
     return store.dispatch('LOGIN', {
       params: {
         email: profile.email,
         password: profile.password,
         keepAlive: profile.keepAlive
-      }
+      },
+      token
     })
   }
 
@@ -61,7 +62,7 @@
           email: this.$refs[ 'mail' ].value,
           password: this.$refs[ 'pwd' ].value,
           keepAlive: this.$refs[ 'keep-alive' ].checked
-        }).then((res) => {
+        }, _.get(this.$store, [ 'state', 'register-token' ])).then((res) => {
           if (res.status === 200) {
             location.replace('/')
           } else {
