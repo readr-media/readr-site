@@ -93,6 +93,8 @@
             this.isRegistered = true
             if (status === 200) {
               this.resMsg = this.wording.WORDING_REGISTER_SUCESSFUL
+            } else {
+              this.resMsg = this.wording.WORDING_REGISTER_INFAIL
             }
           }).catch(({ status, err }) => {
             if (err === 'User Already Existed') {
@@ -100,7 +102,7 @@
               this.alertMsgs.mail = this.wording.WORDING_REGISTER_INFAIL_DUPLICATED
               this.$forceUpdate()
             } else {
-            //   this.resMsg = this.wording.WORDING_REGISTER_INFAIL
+              this.resMsg = this.wording.WORDING_REGISTER_INFAIL
             }
           })
         }
@@ -111,12 +113,11 @@
         this.$forceUpdate()
       },
       resetAlertShow (target) {
-        this.alertMsgShow[ target ] = false
-        this.$forceUpdate()
+        // this.alertMsgShow[ target ] = false
+        // this.$forceUpdate()
       },
       removeAlert (target) {
         this.alertFlags[ target ] = false
-        // this.alertMsgs [] = 
         this.$forceUpdate()
       },
       validatInput () {
@@ -165,30 +166,13 @@
 <style lang="stylus" scoped>
   .register
     height 100%
-    // position relative
     .register-container
       width 100%
       height calc(100% - 2rem)
-      margin 20px 0
-      // position relative
       padding-bottom 2rem
-      // > div
-      //   width 100%
-
-      &__input-email, &__input-nickname, &__input-pwd-check, &__input-pwd
-        margin 10px 0
-        width 100%
-        > input
-          border none
-          width calc(100% - 1rem)
-          height 2rem
-          font-size 1rem
-          padding 0 0.5rem
-          &::-webkit-input-placeholder
-            color #bdbdbd
+      color #000
       &__notice
         font-size 0.625rem
-        color #000
         text-align right
         > .agreement
           margin-left 20px

@@ -14,4 +14,9 @@
     mounted () {}
   }
 </script>
-<style lang="stylus" scoped></style>
+<style lang="stylus" scoped>
+.login-page
+  min-height 100vh
+  width 100%
+  background-color #fff
+</style>

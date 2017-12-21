@@ -78,20 +78,19 @@
 <style lang="stylus" scoped>
   .login-panel
     background-color #d8d8d8
-    width 660px
-    height 320px
+    width 720px
+    height 355px
     padding 17.5px 30px
     margin 0 auto
     > div
-      width calc(330px - 31px)
+      width 330px
       height 100%
       display inline-block
       // overflow hidden
       vertical-align top
       position relative
       &:first-child
-        padding-right 30px
-        border-right 2px solid #afafaf
+        border-right 1px solid #000
       &:last-child
         padding-left 30px
       > .title
@@ -99,16 +98,15 @@
         margin-bottom 15px
         font-size 1.125rem
         font-weight 600
+        height 20px
         > span
           &.active
             color #000
-        > span:first-child
-          margin-right 40px
-        > span:not(:first-dhild)
-          margin 0 40px
+        > span
+          margin 0 24.5px 0 0
       > .container
-        > div
-          margin 10px 0
+        width 300px
+        height calc(100% - 35px)
     &__left
       > .title
         > span

@@ -108,13 +108,15 @@
     justify-content flex-start
     align-items center
 
-    width 232px
-    height 25px
+    width 300px
+    height 35px
     padding 5px 34px
     background-color #ffffff
 
     font-size 1.125rem
     color #808080
+
+    margin-bottom 15px
 
     &__icon
       display inline-block
