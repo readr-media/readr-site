@@ -79,7 +79,7 @@
   .login-panel
     background-color #d8d8d8
     width 720px
-    height 355px
+    height 430px
     padding 17.5px 30px
     margin 0 auto
     > div

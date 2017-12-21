@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const { API_DEADLINE, API_HOST, API_PORT, API_PROTOCOL, API_TIMEOUT } = require('./config')
-const { GOOGLE_CLIENT_ID, DISPOSABLE_TOKEN_WHITE_LIST, SECRET_KEY } = require('./config')
+const { GOOGLE_CLIENT_ID, GOOGLE_RECAPTCHA_SECRET, DISPOSABLE_TOKEN_WHITE_LIST, SECRET_KEY } = require('./config')
 const { REDIS_AUTH, REDIS_MAX_CLIENT, REDIS_READ_HOST, REDIS_READ_PORT, REDIS_WRITE_HOST, REDIS_WRITE_PORT, REDIS_TIMEOUT } = require('./config')
 const { SERVER_PROTOCOL, SERVER_HOST } = require('./config')
 const Cookies = require('cookies')
@@ -164,10 +164,29 @@ const basicPostRequst = (url, req, res, cb) => {
   })
 }
 
+router.post('/verify-recaptcha-token', (req, res) => {
+  let url = 'https://www.google.com/recaptcha/api/siteverify'
+  superagent
+  .post(url)
+  .set('Content-Type', 'application/x-www-form-urlencoded; charset=utf-8')
+  .send({
+    secret: GOOGLE_RECAPTCHA_SECRET,
+    response: req.body.token
+  })
+  .end((err, response) => {
+    if (err) {
+      res.status(400).send(err)
+    } else {
+      res.send(response.body)
+    }
+  })
+})
+
 router.post('/token', (req, res) => {
   const type = _.get(req, [ 'body', 'type' ])
+  const host = _.get(req, [ 'body', 'host' ], '')
   if (_.findIndex(DISPOSABLE_TOKEN_WHITE_LIST, (o) => (o === type)) > -1) {
-    const token = jwtGenerator.generateDisposableJwt({ secret: currSecret })
+    const token = jwtGenerator.generateDisposableJwt({ host: host, secret: currSecret })
     res.status(200).send({ token })
   } else {
     res.status(403).send('Forbidden.')

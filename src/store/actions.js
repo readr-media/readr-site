@@ -1,7 +1,8 @@
 import {
   getDisposableToken,
   login,
-  register
+  register,
+  verifyRecaptchaToken
 } from '../api'
 
 export default {
@@ -15,5 +16,8 @@ export default {
   },
   REGISTER: ({ commit, dispatch, state }, { params, token }) => {
     return register(params, token)
+  },
+  VERIFY_RECAPTCHA_TOKEN: ({ commit, dispatch, state }, { token }) => {
+    return verifyRecaptchaToken(token)
   }
 }

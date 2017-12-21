@@ -1,4 +1,5 @@
 const getExpressApp = require('../helpers/getExpressApp')
+const { SERVER_HOST } = require('../../../api/config')
 const app = getExpressApp()
 
 const chai = require('chai')
@@ -62,9 +63,79 @@ const updatedData = {
 // })
 
 let token
+let disposableToken
+
+describe('/POST/token', () => {
+  it('should get disposable token in fail', (done) => {
+    supertest(app).post('/api/token')
+    .end(function (err, res) {
+      if (err) return console.log(err)
+      res.status.should.equal(200)
+      res.body.token.should.be.a('string')
+      disposableToken = res.body.token
+      done()
+    })
+  })
+  it('should get disposable token sucessfully', (done) => {
+    supertest(app).post('/api/token')
+    .send({
+      'type': 'register'
+    })
+    .end(function (err, res) {
+      if (err) return console.log(err)
+      res.status.should.equal(200)
+      res.body.token.should.be.a('string')
+      disposableToken = res.body.token
+      done()
+    })
+  }) 
+  it('should get disposable token sucessfully', (done) => {
+    supertest(app).post('/api/token')
+    .send({
+      'host': SERVER_HOST,
+    })
+    .end(function (err, res) {
+      if (err) return console.log(err)
+      res.status.should.equal(200)
+      res.body.token.should.be.a('string')
+      disposableToken = res.body.token
+      done()
+    })
+  })
+  it('should get disposable token sucessfully', (done) => {
+    supertest(app).post('/api/token')
+    .send({
+      'type': 'wrongtype',
+      'host': 'wronghost',
+    })
+    .end(function (err, res) {
+      if (err) return console.log(err)
+      res.status.should.equal(200)
+      res.body.token.should.be.a('string')
+      disposableToken = res.body.token
+      done()
+    })
+  })
+  it('should get disposable token sucessfully', (done) => {
+    supertest(app).post('/api/token')
+    .send({
+      'type': 'register',
+      'host': SERVER_HOST,
+    })
+    .end(function (err, res) {
+      if (err) return console.log(err)
+      res.status.should.equal(200)
+      res.body.token.should.be.a('string')
+      disposableToken = res.body.token
+      done()
+    })
+  })
+})
+
 describe('/POST/login', () => {
   it('should login & get token sucessfully', (done) => {
     supertest(app).post('/api/login')
+    .set('Authorization', `Bearer ${disposableToken}`)
     .send({
       'email': faker.internet.email(),
       'password': 'testfasdf',

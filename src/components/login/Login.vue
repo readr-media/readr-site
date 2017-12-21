@@ -77,8 +77,8 @@
         this.$forceUpdate()
       },
       resetAlertShow (target) {
-        // this.alertMsgShow[ target ] = false
-        // this.$forceUpdate()
+        this.alertMsgShow[ target ] = false
+        this.$forceUpdate()
       },
       removeAlert (target) {
         this.alertFlags[ target ] = false

@@ -95,11 +95,25 @@ export function register (params, token) {
     )
     .end(function (err, res) {
       if (err) {
-        console.log('res', res)
-        console.log('err', err)
         reject({ status: res.status, err: res.body.Error })
       } else {
         resolve({ status: res.status })
+      }
+    })
+  })
+}
+
+export function verifyRecaptchaToken ({ token }) {
+  return new Promise((resolve, reject) => {
+    let url = `${host}/api/verify-recaptcha-token`
+    superagent
+    .post(url)
+    .send({ token })
+    .end(function (err, res) {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(res.body)
       }
     })
   })

@@ -9,6 +9,9 @@
         <span class="notice" v-text="wording.WORDING_REGISTER_NOTICE"></span>
         <span class="agreement" v-text="wording.WORDING_MEMBER_AGREEMENT"></span>
       </div>
+      <div class="g-recaptcha" :class="{ warn: (!isRecaptchaPassed && isRegisterClicked) }">
+        <div id="g-recaptcha"></div>
+      </div>
       <div class="register-container__btn" @click="register">
         <span v-text="wording.WORDING_REGISTER"></span>
       </div>    
@@ -23,6 +26,7 @@
   import _ from 'lodash'
   import { WORDING_EMAIL, WORDING_MEMBER_AGREEMENT, WORDING_NICKNAME, WORDING_PASSWORD, WORDING_PASSWORD_CHECK, WORDING_REGISTER, WORDING_REGISTER_NOTICE, WORDING_REGISTER_SUCESSFUL, WORDING_REGISTER_INFAIL, WORDING_REGISTER_INFAIL_DUPLICATED } from '../../constants'
   import { WORDING_REGISTER_NICKNAME_EMPTY, WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL, WORDING_REGISTER_PWD_EMPTY, WORDING_REGISTER_PWD_CHECK_EMPTY, WORDING_REGISTER_PWD_CHECK_INFAIL } from '../../constants'
+  import { GOOGLE_RECAPTCHA_SITE_KEY } from '../../../api/config'
   import { consoleLogOnDev } from '../../util/comm'
   import InputItem from '../form/InputItem.vue'
   import validator from 'validator'
@@ -30,6 +34,12 @@
   const register = (store, profile, token) => {
     return store.dispatch('REGISTER', {
       params: profile,
+      token
+    })
+  }
+
+  const verifyRecaptchaToken = (store, token) => {
+    return store.dispatch('VERIFY_RECAPTCHA_TOKEN', {
       token
     })
   }
@@ -45,7 +55,11 @@
         alertMsgShow: {},
         formData: {},
         isRegistered: false,
+        isRegisterClicked: false,
+        isRecaptchaPassed: false,
         resMsg: '',
+        recaptcha: {},
+        recaptchaToken: '',
         wording: {
           WORDING_EMAIL,
           WORDING_MEMBER_AGREEMENT,
@@ -84,28 +98,33 @@
         }
       },
       register () {
-        if (this.validatInput()) {
-          register(this.$store, {
-            nickname: this.formData.nickname,
-            email: this.formData.mail,
-            password:this.formData.pwd,
-          }, _.get(this.$store, [ 'state', 'register-token' ])).then(({ status, err }) => {
-            this.isRegistered = true
-            if (status === 200) {
-              this.resMsg = this.wording.WORDING_REGISTER_SUCESSFUL
-            } else {
-              this.resMsg = this.wording.WORDING_REGISTER_INFAIL
-            }
-          }).catch(({ status, err }) => {
-            if (err === 'User Already Existed') {
-              this.alertFlags.mail = true
-              this.alertMsgs.mail = this.wording.WORDING_REGISTER_INFAIL_DUPLICATED
-              this.$forceUpdate()
-            } else {
-              this.resMsg = this.wording.WORDING_REGISTER_INFAIL
-            }
-          })
-        }
+        this.verifyRecaptchaToken().then((response) => {
+          // console.log(this.isRecaptchaPassed)
+          if (this.isRecaptchaPassed && this.validatInput()) {
+            register(this.$store, {
+              nickname: this.formData.nickname,
+              email: this.formData.mail,
+              password:this.formData.pwd,
+            }, _.get(this.$store, [ 'state', 'register-token' ])).then(({ status, err }) => {
+              this.isRegistered = true
+              if (status === 200) {
+                this.resMsg = this.wording.WORDING_REGISTER_SUCESSFUL
+              } else {
+                this.resMsg = this.wording.WORDING_REGISTER_INFAIL
+                window.grecaptcha.reset(this.recaptcha)
+              }
+            }).catch(({ status, err }) => {
+              if (err === 'User Already Existed') {
+                this.alertFlags.mail = true
+                this.alertMsgs.mail = this.wording.WORDING_REGISTER_INFAIL_DUPLICATED
+                this.$forceUpdate()
+              } else {
+                this.resMsg = this.wording.WORDING_REGISTER_INFAIL
+                window.grecaptcha.reset(this.recaptcha)
+              }
+            })
+          }
+        })
       },        
       resetAllAlertShow (excluding) {
         this.alertMsgShow = {}
@@ -113,8 +132,8 @@
         this.$forceUpdate()
       },
       resetAlertShow (target) {
-        // this.alertMsgShow[ target ] = false
-        // this.$forceUpdate()
+        this.alertMsgShow[ target ] = false
+        this.$forceUpdate()
       },
       removeAlert (target) {
         this.alertFlags[ target ] = false
@@ -157,15 +176,37 @@
           pass = false
         }
         this.$forceUpdate()
+        if (!pass) {
+          window.grecaptcha.reset(this.recaptcha)
+        }
         return pass
+      },
+      verifyRecaptchaToken () {
+        // console.log('this.recaptchaToken', this.recaptchaToken)
+        return verifyRecaptchaToken(this.$store, { token: this.recaptchaToken }).then((response) => {
+          // console.log('response', response)
+          this.isRecaptchaPassed = _.get(response, [ 'success' ], false)
+        })
       }
     },
-    mounted () {}
+    mounted () {
+      if (window.grecaptcha) {
+        this.recaptcha = window.grecaptcha.render('g-recaptcha', {
+          'sitekey' : GOOGLE_RECAPTCHA_SITE_KEY,
+          'callback' : (res) => {
+            this.recaptchaToken = res
+            // console.log('this.recaptchaToken', this.recaptchaToken)
+            // this.verifyRecaptchaToken()
+          }
+        })        
+      }
+    }
   }
 </script>
 <style lang="stylus" scoped>
   .register
     height 100%
+    
     .register-container
       width 100%
       height calc(100% - 2rem)
@@ -189,4 +230,38 @@
         justify-content center
         align-items center
         cursor pointer
+
+      .g-recaptcha
+        margin 15px 0
+        display flex
+        justify-content center
+        align-items center
+        position relative
+        &::before, &::after
+          display none
+        // &.warn
+        //   animation wran linear 2s
+        //   &::before
+        //     content ''
+        //     border-width 7.5px 17.5px 7.5px 0
+        //     border-color transparent rgba(0, 0, 0, 0.4) transparent transparent
+        //     border-style solid
+        //     position absolute
+        //     left -17.5px
+        //     top 8.5px
+        //     display block
+        //   &::after
+        //     content ''
+        //     border-width 7.5px 17.5px 7.5px 0
+        //     border-color transparent #ddcf21 transparent transparent
+        //     border-style solid
+        //     position absolute
+        //     left -17.5px
+        //     top 7.5px
+        //     display block
+  @keyframes wran
+    0%
+      border 5px solid #ddcf21
+    100%
+      border 5px solid #ddcf21
 </style>
