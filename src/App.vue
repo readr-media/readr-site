@@ -12,7 +12,7 @@ body
   font-size 16px
   background-color lighten(#eceef1, 30%)
   margin 0
-  padding-top 55px
+  // padding-top 55px
   color #34495e
   overflow-y scroll
 
@@ -62,7 +62,7 @@ a
   vertical-align middle
 
 .view
-  max-width 800px
+  // max-width 800px
   margin 0 auto
   position relative
 

@@ -1,6 +1,5 @@
 import { getHost } from '../util/comm'
-import { getToken, saveToken } from '../util/services'
-import uuidv4 from 'uuid/v4'
+import { currentUser, getToken, saveToken } from '../util/services' 
 const superagent = require('superagent')
 // import { camelizeKeys } from 'humps'
 const host = getHost()
@@ -36,36 +35,38 @@ function _doPost (url, params) {
   })
 }
 
-export function register (params) {
-  return new Promise((resolve, reject) => {
-    const url = `${host}/api/register`
-    const uuid = uuidv4()
-    params.id = uuid
-
+export function getDisposableToken (type) {
+  let url = `${host}/api/token`
+  return new Promise ((resolve, reject) => {
     superagent
-      .post(url)
-      .send(
-        params
-      )
-      .end(function (err, res) {
-        if (err) {
-          reject({ status: res.status })
-        } else {
-          resolve({ status: res.status })
-        }
-      })
+    .post(url)
+    .send({ type })
+    .end(function (err, res) {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(res.body.token)
+      }
+    })
   })
 }
 
-export function login (params) {
-  const url = `${host}/api/login`
-  return _doPost(url, {
-    email: params.email,
-    password: params.password,
-    keepAlive: params.keepAlive
-  }).then((res) => {
-    saveToken(res.body.token)
-    return { status: res.status }
+export function login (params, token) {
+  let url = `${host}/api/login`
+  return new Promise((resolve, reject) => {
+    superagent
+    .post(url)
+    .set('Authorization', `Bearer ${token}`)
+    .send(
+      params
+    ).end(function (err, res) {
+      if (err) {
+        reject(err)
+      } else {
+        saveToken(res.body.token)
+        resolve({ status: res.status } )
+      }
+    })  
   })
 }
 
@@ -81,4 +82,39 @@ export function articleAdd (params) {
   return _doPost(url, params)
     .then(res => res.status)
     .catch(err => err)
+}
+
+export function register (params, token) {
+  return new Promise((resolve, reject) => {
+    let url = `${host}/api/register`
+    superagent
+    .post(url)
+    .set('Authorization', `Bearer ${token}`)
+    .send(
+      params
+    )
+    .end(function (err, res) {
+      if (err) {
+        reject({ status: res.status, err: res.body.Error })
+      } else {
+        resolve({ status: res.status })
+      }
+    })
+  })
+}
+
+export function verifyRecaptchaToken ({ token }) {
+  return new Promise((resolve, reject) => {
+    let url = `${host}/api/verify-recaptcha-token`
+    superagent
+    .post(url)
+    .send({ token })
+    .end(function (err, res) {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(res.body)
+      }
+    })
+  })
 }

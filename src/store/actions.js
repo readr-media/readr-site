@@ -1,13 +1,23 @@
 import {
+  getDisposableToken,
   login,
-  register
+  register,
+  verifyRecaptchaToken
 } from '../api'
 
 export default {
-  LOGIN: ({ commit, dispatch, state }, { params }) => {
-    return login(params)
+  DISPOSABLE_TOKEN: ({ commit, dispatch, state }, { type }) => {
+    return getDisposableToken(type).then((token) => {
+      commit('SET_TOKEN', { token, type })
+    })
   },
-  REGISTER: ({ commit, dispatch, state }, { params }) => {
-    return register(params)
+  LOGIN: ({ commit, dispatch, state }, { params, token }) => {
+    return login(params, token)
+  },
+  REGISTER: ({ commit, dispatch, state }, { params, token }) => {
+    return register(params, token)
+  },
+  VERIFY_RECAPTCHA_TOKEN: ({ commit, dispatch, state }, { token }) => {
+    return verifyRecaptchaToken(token)
   }
 }

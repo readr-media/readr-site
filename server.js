@@ -10,7 +10,7 @@ const microcache = require('route-cache')
 const requestIp = require('request-ip')
 const resolve = file => path.resolve(__dirname, file)
 const uuidv4 = require('uuid/v4')
-const { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } = require('./api/config')
+const { GOOGLE_API_KEY, GOOGLE_CLIENT_ID } = require('./api/config')
 const { createBundleRenderer } = require('vue-server-renderer')
 
 const isProd = process.env.NODE_ENV === 'production'
@@ -126,6 +126,7 @@ function render (req, res, next) {
   const context = {
     title: 'Readr', // default title
     url: req.url,
+    GOOGLE_API_KEY: GOOGLE_API_KEY,
     GOOGLE_CLIENT_ID: GOOGLE_CLIENT_ID
   }
   renderer.renderToString(context, (err, html) => {

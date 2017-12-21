@@ -81,6 +81,14 @@
           version          : 'v2.9'
           });
           FB.AppEvents.logPageView();
+          FB.getLoginStatus(function(response) {
+            if (response.status === 'connected') {
+              window.fbStatus = {
+                status: 'connected',
+                uid: response.authResponse.userID
+              };
+            }
+          })
       };
 
       (function(d, s, id){
@@ -90,8 +98,27 @@
           js.src = "//connect.facebook.net/zh_TW/sdk.js";
           fjs.parentNode.insertBefore(js, fjs);
       }(document, 'script', 'facebook-jssdk'));
+
+      var gapiLoadedHandler = function () {
+        gapi.client.init({
+          discoveryDocs: [ 'https://people.googleapis.com/$discovery/rest?version=v1' ],
+          clientId: "{{ GOOGLE_CLIENT_ID }}",
+          scope: 'profile'
+        }).then((res) => {
+          const isSignedIn = gapi.auth2.getAuthInstance().isSignedIn.get()
+          if (isSignedIn) {
+            const currUser = gapi.auth2.getAuthInstance().currentUser.get()
+            window.googleStatus = {
+              status: 'singedIn',
+              idToken: currUser && (currUser.getAuthResponse().id_token)
+            }
+          }
+        })
+      } 
+      window.gapi && window.gapi.load('client', this.gapiLoadedHandler);
       </script>
     <!-- End of Facebook SDK code -->
+    <script src='https://www.google.com/recaptcha/api.js'></script>    
   </head>
   <body>
   <div id="skip"><a href="#app">skip to content</a></div>

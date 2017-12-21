@@ -1,24 +1,15 @@
 <template>
   <div class="login">
-    <div class="login__input-email">
-      <input type="text" :placeholder="wording.WORDING_EMAIL" ref="mail">
-    </div>
-    <div class="login__input-pwd">
-      <input type="text" :placeholder="wording.WORDING_PASSWORD" ref="pwd">
-    </div>
-    <div class="login__alert" v-if="isSomethingWrong" v-text="alertMsg"></div>
+    <InputItem class="login__input-email" type="text" :placeHolder="wording.WORDING_EMAIL" inputKey="mail" v-on:filled="setInputValue" v-on:inputFocus="resetAllAlertShow" v-on:inputFocusOut="resetAlertShow" v-on:removeAlert="removeAlert" :alertFlag="alertFlags.mail" :alertMsg="alertMsgs.mail" :alertMsgShow="alertMsgShow.mail"></InputItem>
+    <InputItem class="login__input-pwd" type="password" :placeHolder="wording.WORDING_PASSWORD" inputKey="pwd" v-on:filled="setInputValue" v-on:inputFocus="resetAllAlertShow" v-on:inputFocusOut="resetAlertShow" v-on:removeAlert="removeAlert" :alertFlag="alertFlags.pwd" :alertMsg="alertMsgs.pwd" :alertMsgShow="alertMsgShow.pwd"></InputItem>
     <div class="login__wrapper">
       <div class="keep-login-alive">
         <input type="checkbox" id="keep-alive" ref="keep-alive">
-        <label for="keep-alive" v-text="wording.WORDING_KEEP_ALIVE"></label>
+        <label for="keep-alive" v-text="' ' + wording.WORDING_KEEP_ALIVE"></label>
       </div>
       <div class="forget-pwd">
         <span v-text="wording.WORDING_FORGET_PASSWORD"></span>
       </div>
-    </div>
-    <div class="login__notice">
-      <span class="notice" v-text="wording.WORDING_REGISTER_NOTICE"></span>
-      <span class="agreement" v-text="wording.WORDING_MEMBER_AGREEMENT"></span>
     </div>
     <div class="login__btn" @click="login">
       <span v-text="wording.WORDING_LOGIN"></span>
@@ -26,49 +17,101 @@
   </div>
 </template>
 <script>
-  import { WORDING_EMAIL, WORDING_FORGET_PASSWORD, WORDING_KEEP_ALIVE, WORDING_LOGIN, WORDING_LOGIN_INFAIL_VALIDATION_ISSUE, WORDING_MEMBER_AGREEMENT, WORDING_PASSWORD, WORDING_REGISTER_NOTICE } from '../../constants'
-  const login = (store, profile) => {
+  import { WORDING_EMAIL, WORDING_FORGET_PASSWORD, WORDING_KEEP_ALIVE, WORDING_LOGIN, WORDING_LOGIN_INFAIL_VALIDATION_ISSUE, WORDING_PASSWORD, WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL, WORDING_REGISTER_PWD_EMPTY } from '../../constants'
+  import { consoleLogOnDev } from '../../util/comm'
+  import InputItem from '../form/InputItem.vue'
+  import validator from 'validator'
+
+  const login = (store, profile, token) => {
     return store.dispatch('LOGIN', {
       params: {
         email: profile.email,
         password: profile.password,
         keepAlive: profile.keepAlive
-      }
+      },
+      token
     })
   }
 
   export default {
+    components: {
+      InputItem
+    },
     data () {
       return {
-        alertMsg: '',
-        isSomethingWrong: false,
+        alertFlags: {},
+        alertMsgs: {},
+        alertMsgShow: {},
+        formData: {},
         wording: {
           WORDING_LOGIN,
           WORDING_LOGIN_INFAIL_VALIDATION_ISSUE,
-          WORDING_MEMBER_AGREEMENT,
-          WORDING_REGISTER_NOTICE,
           WORDING_PASSWORD,
           WORDING_EMAIL,
           WORDING_KEEP_ALIVE,
-          WORDING_FORGET_PASSWORD
+          WORDING_FORGET_PASSWORD,
+          WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL,
+          WORDING_REGISTER_PWD_EMPTY
         }
       }
     },
     name: 'login',
     methods: {
       login () {
-        login(this.$store, {
-          email: this.$refs[ 'mail' ].value,
-          password: this.$refs[ 'pwd' ].value,
-          keepAlive: this.$refs[ 'keep-alive' ].checked
-        }).then((res) => {
-          if (res.status === 200) {
-            location.replace('/')
-          } else {
-            this.alertMsg = this.wording.WORDING_LOGIN_INFAIL_VALIDATION_ISSUE
-            this.isSomethingWrong = true
-          }
-        })
+        if (this.validatInput()) {
+          login(this.$store, {
+            email: this.formData.mail,
+            password:this.formData.pwd,
+            keepAlive: this.$refs[ 'keep-alive' ].checked
+          }, _.get(this.$store, [ 'state', 'register-token' ])).then((res) => {
+            if (res.status === 200) {
+              location.replace('/')
+            } else {
+            }
+          })
+        }
+      },
+      resetAllAlertShow (excluding) {
+        this.alertMsgShow = {}
+        this.alertMsgShow[ excluding ] = true
+        this.$forceUpdate()
+      },
+      resetAlertShow (target) {
+        this.alertMsgShow[ target ] = false
+        this.$forceUpdate()
+      },
+      removeAlert (target) {
+        this.alertFlags[ target ] = false
+        this.$forceUpdate()
+      },
+      setInputValue (key, value) {
+        switch (key) {
+          case 'mail':
+            this.formData.mail = value
+            break
+          case 'pwd':
+            this.formData.pwd = value
+            break
+        }
+      },
+      validatInput () {
+        let pass = true
+        this.alertFlags = {}
+        this.alertMsgs = {}
+        if (!this.formData.mail || !validator.isEmail(this.formData.mail)) {
+          pass = false
+          this.alertFlags.mail = true
+          this.alertMsgs.mail = this.wording.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL
+          consoleLogOnDev({ msg: 'mail wrong, ' + this.formData.mail })
+        }
+        if (!this.formData.pwd || validator.isEmpty(this.formData.pwd)) {
+          pass = false
+          this.alertFlags.pwd = true
+          this.alertMsgs.pwd = this.wording.WORDING_REGISTER_PWD_EMPTY
+          consoleLogOnDev({ msg: 'pwd empty, ' + this.formData.pwd })
+        }
+        this.$forceUpdate()
+        return pass
       }
     },
     mounted () {}
@@ -77,52 +120,24 @@
 <style lang="stylus" scoped>
   .login
     width 100%
-    height calc(300px - 2rem)
-    margin 20px 0
+    height 100%
     position relative
     padding-bottom 2rem
-    > div
-      width 100%
-      color #666
-    &__input-email, &__input-pwd
-      margin 10px 0
-      > input
-        border none
-        width calc(100% - 1rem)
-        height 2rem
-        font-size 1rem
-        padding 0 0.5rem
-        &::-webkit-input-placeholder
-          color #bdbdbd
-    &__alert
-      font-size 0.9rem
-      text-align right
-      color #d26565 !important
-      font-weight bold
+    color #000
     &__wrapper
-      margin-top 40px
       display flex
       justify-content space-between
-      font-size 0.9rem
-    &__notice
-      margin-top 40px
-      font-size 0.9rem
-      text-align right
-      > .agreement
-        margin-left 20px
-        cursor pointer
+      font-size 0.625rem
     &__btn
       position absolute
       bottom 0
       left 0
-      width 100%
-      height 2rem
-      background-color #000
-      color yellow
+      width 300px
+      height 35px
+      background-color #444746
+      color #ddcf21
       display flex
       justify-content center
       align-items center
       cursor pointer
-        
-    
 </style>

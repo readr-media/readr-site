@@ -4,7 +4,7 @@
   "author": "MirrorMedia <master@mirrormedia.mg>",
   "private": true,
   "scripts": {
-    "api": "nyc --reporter=lcov --reporter=text-lcov mocha --timeout 10000 --reporter list test/api/specs/article.spec.js --exit",
+    "api": "nyc --reporter=lcov --reporter=text-lcov mocha --timeout 10000 --reporter list test/api/specs/member.spec.js --exit",
     "dev": "forever -e err.log serverCluster.js",
     "start": "cross-env NODE_ENV=production PORT=80 forever -e err.log serverCluster.js",
     "build": "rimraf dist && yarn run build:client && yarn run build:server",
@@ -28,6 +28,7 @@
     "express": "^4.15.4",
     "express-jwt": "^5.3.0",
     "extract-text-webpack-plugin": "^3.0.0",
+    "google-auth-library": "^0.12.0",
     "humps": "^2.0.1",
     "jsonwebtoken": "^8.1.0",
     "lodash": "^4.17.4",
