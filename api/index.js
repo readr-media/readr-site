@@ -10,6 +10,7 @@ const crypto = require('crypto')
 const bodyParser = require('body-parser')
 const express = require('express')
 const isProd = process.env.NODE_ENV === 'production'
+const isTest = process.env.NODE_ENV === 'test'
 const jwtExpress = require('express-jwt')
 const jwtGenerator = require('./service.js')
 
@@ -18,7 +19,7 @@ const superagent = require('superagent')
 
 const apiHost = API_PROTOCOL + '://' + API_HOST + ':' + API_PORT
 const consoleLogOnDev = ({ msg, showSplitLine }) => {
-  if (!isProd) {
+  if (!isProd && !isTest) {
     showSplitLine && console.log('####################')
     console.log(msg)
     showSplitLine && console.log('####################')
@@ -111,9 +112,8 @@ router.use('/article', auth, function(req, res, next) {
   next()
 })
 router.get('*', function(req, res) {
-  console.log('-- here ---')
-  console.log(apiHost)  
-  console.log(decodeURIComponent(req.url))
+  !isTest && console.log(apiHost)  
+  !isTest && console.log(decodeURIComponent(req.url))
   const url = `${apiHost}${req.url}`
   try {
     redisFetching(req.url, ({ err, data }) => {
@@ -184,9 +184,8 @@ router.post('/verify-recaptcha-token', (req, res) => {
 
 router.post('/token', (req, res) => {
   const type = _.get(req, [ 'body', 'type' ])
-  const host = _.get(req, [ 'body', 'host' ], '')
   if (_.findIndex(DISPOSABLE_TOKEN_WHITE_LIST, (o) => (o === type)) > -1) {
-    const token = jwtGenerator.generateDisposableJwt({ host: host, secret: currSecret })
+    const token = jwtGenerator.generateDisposableJwt({ host: SERVER_HOST, secret: currSecret })
     res.status(200).send({ token })
   } else {
     res.status(403).send('Forbidden.')
@@ -282,11 +281,15 @@ router.post('/register', auth, (req, res) => {
 
   if (req.body.register_mode === 'google') {
     const auth = new GoogleAuth
-    const client = new auth.OAuth2(GOOGLE_CLIENT_ID, '', '');
+    const client = new auth.OAuth2(GOOGLE_CLIENT_ID, '', '')
     client.verifyIdToken(
       req.body.idToken,
       GOOGLE_CLIENT_ID,
       (e, login) => {
+        if (e) {
+          res.status(403).send(e.message).end()
+          return
+        }
         const payload = login.getPayload()
         if (payload[ 'aud' ] !== GOOGLE_CLIENT_ID) {
           res.status(403).send('Forbidden. Invalid token detected.').end()
@@ -325,7 +328,7 @@ router.put('*', auth, function (req, res) {
 })
 
 router.delete('*', auth, function (req, res) {
-    const url = `${apiHost}${req.url}`
+  const url = `${apiHost}${req.url}`
   superagent
   .delete(url)
   .end((err, response) => {

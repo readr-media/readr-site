@@ -57,9 +57,8 @@
         if (window && !window.fbStatus) {
           FB.login((response) => {
             FB.api('/me', { fields: 'id,name,gender,email' }, (res) => {
-              console.log('res.gender', res.gender)
               register(this.$store, {
-                nickname: '-',
+                // nickname: '-',
                 email: res.email,
                 // gender: res.gender,
                 register_mode: 'facebook',
@@ -89,7 +88,6 @@
             })
           }, { scope: 'public_profile,email' })
         } else {
-          console.log('already login', window.fbStatus)
           readyToLogin({
             id: window.fbStatus.uid,
             login_mode: 'facebook'
