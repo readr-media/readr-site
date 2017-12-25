@@ -1,12 +1,16 @@
 import Cookie from 'vue-cookie'
 
 export function saveToken (token) {
-  window && (window.localStorage[ 'csrf' ] = token)
+  window && window.localStorage.setItem('csrf', token)
 }
 export function getToken () {
-  let token = Cookie.get('csrf')
-  token = token || (window && window.localStorage[ 'csrf' ])
-  return token
+  if (window) {
+    let token = Cookie.get('csrf')
+    token = token || (window && window.localStorage.getItem('csrf'))
+    return token
+  } else {
+    return undefined
+  }
 }
 export function isLoggedIn () {
   const token = getToken()
@@ -23,7 +27,16 @@ export function currentUser () {
     const payload = JSON.parse(window.atob(token.split('.')[1]))
     return {
       id: payload.id,
-      email: payload.email
+      email: payload.email,
+      name: payload.name,
+      nickname: payload.nickname
     }
   }
+}
+export function removeToken () {
+  return new Promise((resolve) => {
+    window && Cookie.delete('csrf')
+    window && (window.localStorage.removeItem('csrf'))
+    resolve()
+  })
 }

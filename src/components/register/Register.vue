@@ -104,7 +104,7 @@
             register(this.$store, {
               nickname: this.formData.nickname,
               email: this.formData.mail,
-              password:this.formData.pwd,
+              password: this.formData.pwd
             }, _.get(this.$store, [ 'state', 'register-token' ])).then(({ status, err }) => {
               this.isRegistered = true
               if (status === 200) {
@@ -125,7 +125,7 @@
             })
           }
         })
-      },        
+      },
       resetAllAlertShow (excluding) {
         this.alertMsgShow = {}
         this.alertMsgShow[ excluding ] = true
@@ -192,13 +192,13 @@
     mounted () {
       if (window.grecaptcha) {
         this.recaptcha = window.grecaptcha.render('g-recaptcha', {
-          'sitekey' : GOOGLE_RECAPTCHA_SITE_KEY,
-          'callback' : (res) => {
+          'sitekey': GOOGLE_RECAPTCHA_SITE_KEY,
+          'callback': (res) => {
             this.recaptchaToken = res
             // console.log('this.recaptchaToken', this.recaptchaToken)
             // this.verifyRecaptchaToken()
           }
-        })        
+        })
       }
     }
   }

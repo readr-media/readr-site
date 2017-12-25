@@ -214,6 +214,8 @@ router.post('/login', auth, (req, res) => {
     const token = jwtGenerator.generateJwt({
       id: req.body.id,
       email: req.body.email,
+      name: 'Readr Robot',
+      nickname: 'ReadrSilent',
       keepAlive: req.body.keepAlive,
       secret: currSecret
     })

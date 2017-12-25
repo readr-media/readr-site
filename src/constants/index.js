@@ -3,6 +3,7 @@ export const PROJECTS = projectList
 
 export const SITE_DOMAIN = 'readr.com'
 
+// Login and Rigester Page Use
 export const WORDING_EMAIL = '信箱'
 export const WORDING_FORGET_PASSWORD = '忘記密碼？'
 export const WORDING_KEEP_ALIVE = '保持登入'
@@ -27,3 +28,6 @@ export const WORDING_FACEBOOK_LOGIN = '使用 Facebook 帳號登入'
 export const WORDING_FACEBOOK_REGISTER = '使用 Facebook 帳號註冊'
 export const WORDING_GOOGLE_LOGIN = '使用 Google 帳號登入'
 export const WORDING_GOOGLE_REGISTER = '使用 Google 帳號註冊'
+// Header Use
+export const WORDING_HEADER_LOGIN = '登入'
+export const WORDING_HEADER_LOGOUT = '登出'

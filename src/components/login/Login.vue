@@ -17,6 +17,7 @@
   </div>
 </template>
 <script>
+  import _ from 'lodash'
   import { WORDING_EMAIL, WORDING_FORGET_PASSWORD, WORDING_KEEP_ALIVE, WORDING_LOGIN, WORDING_LOGIN_INFAIL_VALIDATION_ISSUE, WORDING_PASSWORD, WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL, WORDING_REGISTER_PWD_EMPTY } from '../../constants'
   import { consoleLogOnDev } from '../../util/comm'
   import InputItem from '../form/InputItem.vue'
@@ -61,7 +62,7 @@
         if (this.validatInput()) {
           login(this.$store, {
             email: this.formData.mail,
-            password:this.formData.pwd,
+            password: this.formData.pwd,
             keepAlive: this.$refs[ 'keep-alive' ].checked
           }, _.get(this.$store, [ 'state', 'register-token' ])).then((res) => {
             if (res.status === 200) {
