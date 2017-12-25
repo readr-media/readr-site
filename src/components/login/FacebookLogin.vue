@@ -5,6 +5,7 @@
   </div>
 </template>
 <script>
+  import _ from 'lodash'
   import { WORDING_FACEBOOK_LOGIN, WORDING_FACEBOOK_REGISTER } from '../../constants'
   import { consoleLogOnDev } from '../../util/comm'
 
@@ -47,12 +48,12 @@
     methods: {
       login () {
         const readyToLogin = (params) => {
-          login(this.$store, params,  _.get(this.$store, [ 'state', 'register-token' ]))
+          login(this.$store, params, _.get(this.$store, [ 'state', 'register-token' ]))
             .then((res) => {
               if (res.status === 200) {
                 location.replace('/')
-            }
-          })
+              }
+            })
         }
         if (window && !window.fbStatus) {
           FB.login((response) => {

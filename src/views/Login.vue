@@ -4,7 +4,7 @@
   </div>
 </template>
 <script>
-  import { currentUser, isLoggedIn } from '../util/services'
+  import { isLoggedIn } from '../util/services'
   import LoginPanel from '../components/LoginPanel.vue'
   
   export default {
@@ -26,9 +26,7 @@
       }
     },
     name: 'login-page',
-    methods: {
-      
-    },
+    methods: {},
     mounted () {
       this.isClientSide = true
       this.isLoggedIn && location.replace('/')

@@ -5,8 +5,8 @@
   </div>
 </template>
 <script>
+  import _ from 'lodash'
   import { WORDING_GOOGLE_LOGIN, WORDING_GOOGLE_REGISTER } from '../../constants'
-  import { GOOGLE_API_KEY, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from '../../../api/config' 
   import { consoleLogOnDev } from '../../util/comm'
 
   const login = (store, profile, token) => {
@@ -34,7 +34,7 @@
           default:
             return ''
         }
-      }      
+      }
     },
     data () {
       return {
@@ -48,7 +48,7 @@
     methods: {
       login () {
         const readyToLogin = (idToken) => {
-          login(this.$store, { idToken, login_mode: 'google' },  _.get(this.$store, [ 'state', 'register-token' ]))
+          login(this.$store, { idToken, login_mode: 'google' }, _.get(this.$store, [ 'state', 'register-token' ]))
             .then((res) => {
               if (res.status === 200) {
                 location.replace('/')
@@ -56,7 +56,7 @@
             })
         }
         if (window && !window.googleStatus) {
-           gapi && gapi.auth2.getAuthInstance().signIn({ scope: 'profile email' }).then((currUser) => {
+          gapi && gapi.auth2.getAuthInstance().signIn({ scope: 'profile email' }).then((currUser) => {
             const idToken = currUser.getAuthResponse().id_token
             gapi.client.people.people.get({
               'resourceName': 'people/me',
@@ -81,11 +81,11 @@
                 } else {
                   console.log(err)
                 }
-              })             
-            }, function(reason) {
+              })
+            }, function (reason) {
               consoleLogOnDev({ msg: 'Error: ' + reason.result.error.message })
             })
-           })
+          })
         } else {
           readyToLogin(window.googleStatus.idToken)
         }

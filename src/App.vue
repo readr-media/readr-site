@@ -17,7 +17,7 @@ body
   overflow-y scroll
 
 a
-  color #34495e
+  // color #34495e
   text-decoration none
 
 .logo

@@ -17,23 +17,51 @@
         <div class="nav">
           <a v-for="(section, name) in sections" class="nav__item" :class="name" v-text="section" href="/"></a>
         </div>
-        <div class="login-status">
-          <div class="login-status__login-btn"></div>
-          <div class="login-status__logout-btn"></div>
-          <div class="login-status__nickname"></div>
-          <div class="login-status__icon"></div>
+        <div class="login-status" v-if="isClientSide">
+          <div class="login-status__nickname" v-text="userNickname" v-if="isLoggedIn"></div>
+          <!--div class="login-status__logout-btn" v-text="wording.WORDING_HEADER_LOGOUT" v-if="isLoggedIn"></div-->
+          <a class="login-status__login-btn" href="/login" v-text="wording.WORDING_HEADER_LOGIN" v-if="!isLoggedIn"></a>
+          <div class="login-status__icon" :class="{ login: !isLoggedIn, logout: isLoggedIn }" v-if="isLoggedIn" @click="logout"></div>
+          <a class="login-status__icon" href="/login" :class="{ login: !isLoggedIn, logout: isLoggedIn }" v-else="!isLoggedIn"></a>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
+  import _ from 'lodash'
+  import { WORDING_HEADER_LOGIN, WORDING_HEADER_LOGOUT } from '../constants'
+  import { isLoggedIn, currentUser, removeToken } from '../util/services'
 
   export default {
-    computed: {},
+    computed: {
+      isLoggedIn () {
+        return isLoggedIn()
+      },
+      userNickname () {
+        return _.get(currentUser(), [ 'nickname' ], _.get(currentUser(), [ 'name' ], ''))
+      }
+    },
+    data () {
+      return {
+        isClientSide: false,
+        wording: {
+          WORDING_HEADER_LOGIN,
+          WORDING_HEADER_LOGOUT
+        }
+      }
+    },
     name: 'header',
-    methods: {},
-    mounted () {},
+    methods: {
+      logout () {
+        removeToken().then(() => {
+          location && location.reload()
+        })
+      }
+    },
+    mounted () {
+      this.isClientSide = true
+    },
     props: [ 'sections' ]
   }
 </script>
@@ -90,7 +118,7 @@
         height 100%
         display flex
         align-items center
-        // justify-content center
+        justify-content space-between
         .nav
           display flex
           align-items center
@@ -105,7 +133,34 @@
             border-left 1px solid #fff
         .login-status
           min-width 74px
-          padding 0 11px
+          padding 0 7.5px 0 13px
+          border-right 1px solid #fff
+          border-left 1px solid #fff
+          font-size 12px
+          height 100%
+          display flex
+          justify-content center
+          align-items center
+          a, a:hover, a:link, a:visited
+            color #fff
+          &__login-btn
+            padding-right 5.5px
+          &__nickname
+            padding-right 5.5px
+            // cursor pointer
+          &__icon
+            height 100%
+            width 24px
+            background-position center center
+            background-repeat no-repeat
+            background-size contain
+            cursor pointer
+            &.login
+              background-image url(/public/icons/log-in.png)
+            &.logout
+              background-image url(/public/icons/log-out.png)
+
+            
   @media (min-width 720px)
     .header
       > div

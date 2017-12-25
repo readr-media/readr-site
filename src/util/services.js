@@ -27,11 +27,16 @@ export function currentUser () {
     const payload = JSON.parse(window.atob(token.split('.')[1]))
     return {
       id: payload.id,
-      email: payload.email
+      email: payload.email,
+      name: payload.name,
+      nickname: payload.nickname
     }
   }
 }
 export function removeToken () {
-  window && Cookie.delete('csrf')
-  window && (window.localStorage.removeItem('csrf'))
+  return new Promise((resolve) => {
+    window && Cookie.delete('csrf')
+    window && (window.localStorage.removeItem('csrf'))
+    resolve()
+  })
 }

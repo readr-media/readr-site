@@ -35,7 +35,7 @@
     mounted () {
       console.log('currentUser', currentUser())
       console.log('isLoggedIn', isLoggedIn())
-    },
+    }
   }
 </script>
 <style lang="stylus" scoped>
