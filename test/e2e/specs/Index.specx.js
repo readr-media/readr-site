@@ -6,6 +6,6 @@ module.exports = {
       .page.loginPanel().loginPanelShouldBeVisible()
       .page.loginPanel().facebookLoginShouldBeVisiblee()
       .page.loginPanel().googlePlusLoginShouldBeVisiblee()
-      .end();
+      .end()
   }
-};
+}
