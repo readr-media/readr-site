@@ -12,7 +12,7 @@ const faker = require('faker')
 const random = Math.round(Math.random() * 10000)
 const id = `test${random}`
 const updatedData = {
-  'id': 'test9474',
+  'id': id,
   'name': `UPDATED NAME ${random}`,
   'nickname': `UPDATED TITLE ${random}`,
   'birthday': faker.date.past(),
@@ -87,20 +87,20 @@ describe('/POST/register', () => {
   //     done()
   //   })
   // })
-  it('should register by google account in fail with a expired token', (done) => {
-    supertest(app).post('/api/register')
-    .set('Authorization', `Bearer ${disposableToken}`)
-    .send({
-      idToken: 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjM1M2JhOTlhOTgyMWZmNDhlMzAzNjVlZjFjMjRhMzAzZmIzMzE3ZTYifQ.eyJhenAiOiI5ODM5NTY5MzE1NTMtYm50anNhM2M2bWs2dmtrc2NhdTMxZTZyZHYxa2pydm8uYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI5ODM5NTY5MzE1NTMtYm50anNhM2M2bWs2dmtrc2NhdTMxZTZyZHYxa2pydm8uYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDA3Nzk0OTEwNjk0NDQ5Mzg5NzMiLCJoZCI6Im1pcnJvcm1lZGlhLm1nIiwiZW1haWwiOiJrZWl0aGNoaWFuZ0BtaXJyb3JtZWRpYS5tZyIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhdF9oYXNoIjoidm9xcjF1MXlsR3Vtb2dac1BLUzVHUSIsImlzcyI6ImFjY291bnRzLmdvb2dsZS5jb20iLCJqdGkiOiJmMmY0NmI0NThhYzU4YzdkNGVkZmE1NDdmYmQyZTc5ZmQyNmY3MjdkIiwiaWF0IjoxNTEzODQ3NTE1LCJleHAiOjE1MTM4NTExMTUsIm5hbWUiOiLmsZ_pjqfoh7MiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDUuZ29vZ2xldXNlcmNvbnRlbnQuY29tLy12djk3aktWME5RQS9BQUFBQUFBQUFBSS9BQUFBQUFBQUFBQS9BRmlZb2YzM084WTllbnpZNU1Tbldwczc4MW92dTE5WUpBL3M5Ni1jL3Bob3RvLmpwZyIsImdpdmVuX25hbWUiOiLpjqfoh7MiLCJmYW1pbHlfbmFtZSI6IuaxnyIsImxvY2FsZSI6InpoLVRXIn0.Cu7OStT4jUzmk07d0yZTBcDarxhypVAEPmUvM8usfDkQM870Q-9oOo-0taUAwIj8pRVUQDFTziXPLgQev56Xv355kIVmRh74-LDGMjcc2xtiF_3wrpZVuVvKtqiMjN3jmSwwAarv9KWNCc_nzFBH986Jgp06JlBDokke0C_hTI1DkRJvHxpttq24jEzqHayRzwVxoz3UH2EpOENMxDCmT0JT1fkpGDBMNW_ikz55si4cVXzXS7TThjzvIaIIkGitJYvwAgIQC4CJlZqlBHSMzu7QEePdig-rPrOCqco4RUy7rjM2_kXpLoSEDlDi2ZZgJWKmuq9_gY1ueacONDqy_g',
-      register_mode: 'google'
-    })
-    .end(function (err, res) {
-      if (err) return console.log(err)
-      res.text.should.have.string('Token used too late')
-      res.status.should.equal(403)
-      done()
-    })
-  })
+  // it('should register by google account in fail with a expired token', (done) => {
+  //   supertest(app).post('/api/register')
+  //   .set('Authorization', `Bearer ${disposableToken}`)
+  //   .send({
+  //     idToken: 'eyJhbGciOiJSUzI1NiIsImtpZCI6IjM1M2JhOTlhOTgyMWZmNDhlMzAzNjVlZjFjMjRhMzAzZmIzMzE3ZTYifQ.eyJhenAiOiI5ODM5NTY5MzE1NTMtYm50anNhM2M2bWs2dmtrc2NhdTMxZTZyZHYxa2pydm8uYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJhdWQiOiI5ODM5NTY5MzE1NTMtYm50anNhM2M2bWs2dmtrc2NhdTMxZTZyZHYxa2pydm8uYXBwcy5nb29nbGV1c2VyY29udGVudC5jb20iLCJzdWIiOiIxMDA3Nzk0OTEwNjk0NDQ5Mzg5NzMiLCJoZCI6Im1pcnJvcm1lZGlhLm1nIiwiZW1haWwiOiJrZWl0aGNoaWFuZ0BtaXJyb3JtZWRpYS5tZyIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJhdF9oYXNoIjoidm9xcjF1MXlsR3Vtb2dac1BLUzVHUSIsImlzcyI6ImFjY291bnRzLmdvb2dsZS5jb20iLCJqdGkiOiJmMmY0NmI0NThhYzU4YzdkNGVkZmE1NDdmYmQyZTc5ZmQyNmY3MjdkIiwiaWF0IjoxNTEzODQ3NTE1LCJleHAiOjE1MTM4NTExMTUsIm5hbWUiOiLmsZ_pjqfoh7MiLCJwaWN0dXJlIjoiaHR0cHM6Ly9saDUuZ29vZ2xldXNlcmNvbnRlbnQuY29tLy12djk3aktWME5RQS9BQUFBQUFBQUFBSS9BQUFBQUFBQUFBQS9BRmlZb2YzM084WTllbnpZNU1Tbldwczc4MW92dTE5WUpBL3M5Ni1jL3Bob3RvLmpwZyIsImdpdmVuX25hbWUiOiLpjqfoh7MiLCJmYW1pbHlfbmFtZSI6IuaxnyIsImxvY2FsZSI6InpoLVRXIn0.Cu7OStT4jUzmk07d0yZTBcDarxhypVAEPmUvM8usfDkQM870Q-9oOo-0taUAwIj8pRVUQDFTziXPLgQev56Xv355kIVmRh74-LDGMjcc2xtiF_3wrpZVuVvKtqiMjN3jmSwwAarv9KWNCc_nzFBH986Jgp06JlBDokke0C_hTI1DkRJvHxpttq24jEzqHayRzwVxoz3UH2EpOENMxDCmT0JT1fkpGDBMNW_ikz55si4cVXzXS7TThjzvIaIIkGitJYvwAgIQC4CJlZqlBHSMzu7QEePdig-rPrOCqco4RUy7rjM2_kXpLoSEDlDi2ZZgJWKmuq9_gY1ueacONDqy_g',
+  //     register_mode: 'google'
+  //   })
+  //   .end(function (err, res) {
+  //     if (err) return console.log(err)
+  //     res.text.should.have.string('Token used too late')
+  //     res.status.should.equal(403)
+  //     done()
+  //   })
+  // })
   it('should register in fail without any param', (done) => {
     supertest(app).post('/api/register')
     .set('Authorization', `Bearer ${disposableToken}`)
@@ -205,7 +205,7 @@ describe('/GET/member/:id', () => {
         res.body.should.have.property('active')
         done()
       })
-    }, 500)
+    }, 1000)
   })
 })
 

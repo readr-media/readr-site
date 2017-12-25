@@ -81,7 +81,7 @@
     width 720px
     height 430px
     padding 17.5px 30px
-    margin 0 auto
+    margin 40px auto 0
     > div
       width 330px
       height 100%
