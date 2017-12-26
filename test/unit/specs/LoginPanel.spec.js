@@ -3,6 +3,7 @@ import LoginPanel from 'src/components/LoginPanel.vue'
 import FacebookLogin from 'src/components/login/FacebookLogin.vue'
 import GooglePlusLogin from 'src/components/login/GooglePlusLogin.vue'
 import Register from 'src/components/register/Register.vue'
+import Vue from 'vue'
 import sinon from 'sinon'
 import { WORDING_LOGIN, WORDING_REGISTER } from 'src/constants'
 import { mount } from 'avoriaz'
@@ -12,6 +13,11 @@ describe('LoginPanel.vue', () => {
   const LoginPanelComponent = mount(LoginPanel)
   const blockLeft = LoginPanelComponent.find('.login-panel__left')[0]
   const blockRight = LoginPanelComponent.find('.login-panel__right')[0]
+  const mockRouterLink = {
+    name: 'router-link',
+    render: h => h('div')
+  }
+  Vue.component('router-link', mockRouterLink)
   it('should display two blocks: left and right', () => {
     expect(blockLeft).to.not.be.undefined
     expect(blockRight).to.not.be.undefined

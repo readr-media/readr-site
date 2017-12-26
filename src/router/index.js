@@ -7,6 +7,8 @@ Vue.use(Router)
 
 // route-level code splitting
 const Account = () => import('../views/Account.vue')
+const Admin = () => import('../views/Admin.vue')
+const Agreement = () => import('../views/Agreement.vue')
 const Index = () => import('../views/index.vue')
 const Login = () => import('../views/Login.vue')
 
@@ -18,6 +20,8 @@ export function createRouter () {
     routes: [
       { path: '/', component: Index },
       { path: '/account', component: Account },
+      { path: '/admin', component: Admin },
+      { path: '/agreement', component: Agreement },
       { path: '/login', component: Login }
     ]
   })

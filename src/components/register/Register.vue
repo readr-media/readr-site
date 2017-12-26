@@ -7,7 +7,7 @@
       <InputItem class="register-container__input-pwd-check" type="password" :placeHolder="wording.WORDING_PASSWORD_CHECK" inputKey="pwd-check" v-on:filled="setInputValue" v-on:inputFocus="resetAllAlertShow" v-on:inputFocusOut="resetAlertShow" v-on:removeAlert="removeAlert" :alertFlag="alertFlags[ 'pwd-check' ]" :alertMsg="alertMsgs[ 'pwd-check' ]" :alertMsgShow="alertMsgShow[ 'pwd-check' ]"></InputItem>
       <div class="register-container__notice">
         <span class="notice" v-text="wording.WORDING_REGISTER_NOTICE"></span>
-        <span class="agreement" v-text="wording.WORDING_MEMBER_AGREEMENT"></span>
+        <router-link to="/agreement" target="_blank" class="agreement" v-text="wording.WORDING_MEMBER_AGREEMENT"></router-link>
       </div>
       <div class="g-recaptcha" :class="{ warn: (!isRecaptchaPassed && isRegisterClicked) }">
         <div id="g-recaptcha"></div>

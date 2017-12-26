@@ -215,13 +215,16 @@ router.post('/login', auth, (req, res) => {
       id: req.body.id,
       email: req.body.email,
       name: 'Readr Robot',
-      nickname: 'ReadrSilent',
       keepAlive: req.body.keepAlive,
       secret: currSecret
     })
     const cookies = new Cookies( req, res, {} )
     cookies.set('csrf', token, { httpOnly: false, expires: new Date(Date.now() + (req.body.keepAlive ? 30 : 1) * 24 * 60 * 60 * 1000) })
-    res.status(200).send({ token })    
+    res.status(200).send({ token, profile: {
+      name: 'Readr Robot',
+      nickname: 'ReadrSilent',
+      description: '先速不生間發，處水是車內可紅，這在心相日價得推會當術重而而地後，把人司小一活整資為，家身無就好空人算請著營種的變車商突：臉我安以可吃結出而技冷水新戰口都紀！通快低死事媽兩建子那與的畫語了係來站車外。'
+    }})    
   }
 
   if (req.body.login_mode === 'google') {
