@@ -64,7 +64,7 @@ export function login (params, token) {
           reject(err)
         } else {
           saveToken(res.body.token)
-          resolve({ status: res.status })
+          resolve({ status: res.status, profile: res.body.profile })
         }
       })
   })

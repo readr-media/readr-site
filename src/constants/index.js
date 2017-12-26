@@ -31,3 +31,13 @@ export const WORDING_GOOGLE_REGISTER = '使用 Google 帳號註冊'
 // Header Use
 export const WORDING_HEADER_LOGIN = '登入'
 export const WORDING_HEADER_LOGOUT = '登出'
+// Admin use
+export const WORDING_ADMIN_ACCOUNT = '帳號'
+export const WORDING_ADMIN_EMAIL = '信箱'
+export const WORDING_ADMIN_ROLE = '身份'
+export const WORDING_ADMIN_UPDATE = '修改'
+export const WORDING_ADMIN_DELETE = '刪除'
+// Agreement Use
+export const WORDING_AGREEMENT_TERMS_AND_SERVICE = '會員服務條款'
+export const WORDING_AGREEMENT_IPR = '著作權、智慧財產權政策'
+export const WORDING_AGREEMENT_PRIVACY = '隱私權政策'
