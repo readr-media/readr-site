@@ -8,16 +8,31 @@ const host = getHost()
 //   return new Promise((resolve, reject) => {
 //     superagent
 //     .get(url)
-//     // .query('')
 //     .end(function (err, res) {
 //       if (err) {
 //         reject(err)
 //       } else {
-//         resolve(camelizeKeys(res.body))
+//         // resolve(camelizeKeys(res.body))
 //       }
 //     })
 //   })
 // }
+
+function _doFetchStrict (url) {
+  return new Promise((resolve, reject) => {
+    superagent
+      .get(url)
+      .set('Authorization', `Bearer ${getToken()}`)
+      .end(function (err, res) {
+        if (err) {
+          reject(err)
+        } else {
+          // resolve(camelizeKeys(res.body))
+          resolve({ status: res.status, body: res.body })
+        }
+      })
+  })
+}
 
 function _doPost (url, params) {
   return new Promise((resolve, reject) => {
@@ -49,6 +64,11 @@ export function getDisposableToken (type) {
         }
       })
   })
+}
+
+export function getProfile () {
+  const url = `${host}/api/profile`
+  return _doFetchStrict(url)
 }
 
 export function login (params, token) {

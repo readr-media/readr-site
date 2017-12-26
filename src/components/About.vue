@@ -5,7 +5,7 @@
     </div>
     <div class="about__name">
       <span class="name" v-text="name"></span>
-      <span class="role" v-text="`（${role}）`"></span>
+      <span class="role" v-text="`（${role}）`" v-if="role"></span>
     </div>
     <div class="about__introduction" v-text="introduction"></div>
   </div>
@@ -16,13 +16,13 @@
   export default {
     computed: {
       introduction () {
-        return _.get(this.profile, [ 'introduction' ], '')
+        return _.get(this.profile, [ 'description' ], '')
       },
       name () {
-        return _.get(this.profile, [ 'name' ], '')
+        return _.get(this.profile, [ 'name' ]) || _.get(this.profile, [ 'nickname' ]) || _.get(this.profile, [ 'mail' ])
       },
       role () {
-        return _.get(this.profile, [ 'role' ], '')
+        return _.get(this.profile, [ 'role' ])
       },
       thumbnail () {
         return _.get(this.profile, [ 'image', 'url' ], '/public/icons/exclamation.png')

@@ -12,7 +12,7 @@ const express = require('express')
 const isProd = process.env.NODE_ENV === 'production'
 const isTest = process.env.NODE_ENV === 'test'
 const jwtExpress = require('express-jwt')
-const jwtGenerator = require('./service.js')
+const jwtService = require('./service.js')
 
 const router = express.Router()
 const superagent = require('superagent')
@@ -105,16 +105,8 @@ router.all('/', function(req, res, next) {
 router.use('/grouped', function(req, res, next) {
   fetchStaticJson(req, res, next, 'grouped')
 })
-router.use('/member', auth, function(req, res, next) {
-  next()
-})
-router.use('/article', auth, function(req, res, next) {
-  next()
-})
-router.get('*', function(req, res) {
-  !isTest && console.log(apiHost)  
-  !isTest && console.log(decodeURIComponent(req.url))
-  const url = `${apiHost}${req.url}`
+
+const basicGetRequest = (url, req, res, cb) => {
   try {
     redisFetching(req.url, ({ err, data }) => {
       if (!err && data) {
@@ -128,19 +120,7 @@ router.get('*', function(req, res) {
             deadline: API_DEADLINE ? API_DEADLINE : 60000, // but allow 1 minute for the file to finish loading.
           }
         )
-        .end((err, response) => {
-          if (!err && response) {
-            const resData = JSON.parse(response.text)
-            if (Object.keys(resData).length !== 0 && resData.constructor === Object) {
-              // redisWriting(req.url, response.text)
-            }
-            res.json(resData)
-          } else {
-            res.json(err)
-            console.error(`error during fetch data from : ${url}`)
-            console.error(err)  
-          }
-        })
+        .end(cb)
       }
     })
   } catch (e) {
@@ -148,6 +128,53 @@ router.get('*', function(req, res) {
     console.error(`error during fetch data from api : ${req.url}`)
     console.error(e)
   }
+}
+
+router.use('/profile', auth, function(req, res, next) {
+  const targetProfile = jwtService.getId(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
+  const url = `${apiHost}/member/${targetProfile}`
+  basicGetRequest(url, req, res, (err, response) => {
+    if (!err && response) {
+      const resData = JSON.parse(response.text)
+      if (Object.keys(resData).length !== 0 && resData.constructor === Object) {
+        // redisWriting(req.url, response.text)
+      }
+      res.json({
+        name: resData.name,
+        nickname: resData.nickname,
+        mail: resData.mail,
+        description: resData.description
+      })
+    } else {
+      res.json(err)
+      console.error(`error during fetch data from : ${url}`)
+      console.error(err)  
+    }
+  })
+})
+router.use('/member', auth, function(req, res, next) {
+  next()
+})
+router.use('/article', auth, function(req, res, next) {
+  next()
+})
+router.get('*', function(req, res) {
+  !isTest && console.log(apiHost)  
+  !isTest && console.log(decodeURIComponent(req.url))
+  const url = `${apiHost}${req.url}`
+  basicGetRequest(url, req, res, (err, response) => {
+    if (!err && response) {
+      const resData = JSON.parse(response.text)
+      if (Object.keys(resData).length !== 0 && resData.constructor === Object) {
+        // redisWriting(req.url, response.text)
+      }
+      res.json(resData)
+    } else {
+      res.json(err)
+      console.error(`error during fetch data from : ${url}`)
+      console.error(err)  
+    }
+  })
 })
 
 // parse application/x-www-form-urlencoded
@@ -185,7 +212,7 @@ router.post('/verify-recaptcha-token', (req, res) => {
 router.post('/token', (req, res) => {
   const type = _.get(req, [ 'body', 'type' ])
   if (_.findIndex(DISPOSABLE_TOKEN_WHITE_LIST, (o) => (o === type)) > -1) {
-    const token = jwtGenerator.generateDisposableJwt({ host: SERVER_HOST, secret: currSecret })
+    const token = jwtService.generateDisposableJwt({ host: SERVER_HOST, secret: currSecret })
     res.status(200).send({ token })
   } else {
     res.status(403).send('Forbidden.')
@@ -211,10 +238,11 @@ router.post('/login', auth, (req, res) => {
      *    Then send the proper res to client.
      */
   
-    const token = jwtGenerator.generateJwt({
+    const token = jwtService.generateJwt({
       id: req.body.id,
       email: req.body.email,
       name: 'Readr Robot',
+      role: 'admin',
       keepAlive: req.body.keepAlive,
       secret: currSecret
     })
@@ -223,7 +251,7 @@ router.post('/login', auth, (req, res) => {
     res.status(200).send({ token, profile: {
       name: 'Readr Robot',
       nickname: 'ReadrSilent',
-      description: '先速不生間發，處水是車內可紅，這在心相日價得推會當術重而而地後，把人司小一活整資為，家身無就好空人算請著營種的變車商突：臉我安以可吃結出而技冷水新戰口都紀！通快低死事媽兩建子那與的畫語了係來站車外。'
+      description: '先速不生間發，處水是車內可紅，這在心相日價得推會當術重而而地後，把人司小一活整資為，家身無就好空人算請著營種的變車商突：臉我安以可吃結出而技冷水新戰口都紀！通快低死事媽兩建子那與的畫語了係來站車外。',
     }})    
   }
 

@@ -31,15 +31,22 @@
 <script>
   import _ from 'lodash'
   import { WORDING_HEADER_LOGIN, WORDING_HEADER_LOGOUT } from '../constants'
-  import { isLoggedIn, currentUser, removeToken } from '../util/services'
+  import { isLoggedIn, removeToken } from '../util/services'
+
+  const getProfile = (store) => {
+    return store.dispatch('GET_PROFILE')
+  }
 
   export default {
     computed: {
+      currentUser () {
+        return _.get(this.$store, [ 'state', 'profile' ], {})
+      },
       isLoggedIn () {
         return isLoggedIn()
       },
       userNickname () {
-        return _.get(currentUser(), [ 'nickname' ], _.get(currentUser(), [ 'name' ], ''))
+        return _.get(this.currentUser, [ 'nickname' ], _.get(this.currentUser, [ 'name' ], ''))
       }
     },
     data () {
@@ -61,6 +68,9 @@
     },
     mounted () {
       this.isClientSide = true
+      if (this.isLoggedIn) {
+        getProfile(this.$store)
+      }
     },
     props: [ 'sections' ]
   }

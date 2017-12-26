@@ -7,5 +7,8 @@ export default {
         state['register-token'] = token
         break
     }
+  },
+  SET_PROFILE: (state, { profile }) => {
+    state['profile'] = profile
   }
 }

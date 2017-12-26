@@ -1,5 +1,6 @@
 import {
   getDisposableToken,
+  getProfile,
   login,
   register,
   verifyRecaptchaToken
@@ -11,8 +12,15 @@ export default {
       commit('SET_TOKEN', { token, type })
     })
   },
+  GET_PROFILE: ({ commit, dispatch }) => {
+    return getProfile().then(({ body }) => {
+      commit('SET_PROFILE', { profile: body })
+    })
+  },
   LOGIN: ({ commit, dispatch, state }, { params, token }) => {
-    return login(params, token)
+    return login(params, token).then(({ profile }) => {
+      commit('SET_PROFILE', { profile })
+    })
   },
   REGISTER: ({ commit, dispatch, state }, { params, token }) => {
     return register(params, token)

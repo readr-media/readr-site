@@ -20,7 +20,13 @@ const generateDisposableJwt = ({ host, secret }) => {
   }, secret)
 }
 
+const getId = (token, secret) => {
+  const decoded = jwt.verify(token, secret)
+  return decoded.id
+}
+
 module.exports = {
   generateJwt,
-  generateDisposableJwt
+  generateDisposableJwt,
+  getId
 }
