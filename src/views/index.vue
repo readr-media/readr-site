@@ -6,7 +6,7 @@
   
 </template>
 <script>
-  import { currentUser, isLoggedIn, removeToken } from '../util/services'
+  import { isLoggedIn, removeToken } from '../util/services'
   import Header from '../components/Header.vue'
 
   const SECTIONS_DEFAULT = {
@@ -33,7 +33,7 @@
       }
     },
     mounted () {
-      console.log('currentUser', currentUser())
+      // console.log('currentUser', currentUser())
       console.log('isLoggedIn', isLoggedIn())
     }
   }

@@ -21,18 +21,6 @@ export function isLoggedIn () {
     return false
   }
 }
-export function currentUser () {
-  if (isLoggedIn()) {
-    const token = getToken()
-    const payload = JSON.parse(window.atob(token.split('.')[1]))
-    return {
-      id: payload.id,
-      email: payload.email,
-      name: payload.name,
-      nickname: payload.nickname
-    }
-  }
-}
 export function removeToken () {
   return new Promise((resolve) => {
     window && Cookie.delete('csrf')
