@@ -162,8 +162,8 @@ describe('/POST/login', () => {
     supertest(app).post('/api/login')
     .set('Authorization', `Bearer ${disposableToken}`)
     .send({
-      'email': faker.internet.email(),
-      'password': 'testfasdf',
+      'email': 'wonderwomen@wonderwomen.com',
+      'password': 'wonderwomen@wonderwomen.com',
     })
     .end(function (err, res) {
       if (err) return console.log(err)

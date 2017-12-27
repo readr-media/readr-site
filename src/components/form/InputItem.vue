@@ -46,6 +46,15 @@
   .input-item
     margin 15px 0
     position relative
+    &.admin
+      height 14px
+      width 100%
+      > input
+        border-bottom 1px solid #d3d3d3
+        height 14px
+        padding 0
+        color #000
+        font-size 0.625rem
     &.alert
       margin calc(10px - 1.5px) 0
       > input
@@ -54,7 +63,6 @@
         border-left 1.5px solid #ddcf21
         height 35px
         width calc(100% - 35px)
-        outline: none
       .input-item__alert
         border-top 1.5px solid #ddcf21
         border-bottom 1.5px solid #ddcf21
@@ -74,6 +82,7 @@
       padding 0 10px
       vertical-align top
       background-color #ffffff
+      outline none
       &::-webkit-input-placeholder
         color #bdbdbd
 

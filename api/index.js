@@ -313,6 +313,7 @@ router.post('/register', auth, (req, res) => {
   })
 
   const sendRequest = () => {
+    console.log('req.bo', req.body)
     if (!req.body.email || !(req.body.password || req.body.social_id)) {
       res.status(400).send({ message: 'Please offer all requirements.' })
       return
@@ -356,6 +357,9 @@ router.post('/register', auth, (req, res) => {
   } else {
     req.body.mail = req.body.email
     req.body.id = req.body.social_id ? req.body.social_id : req.body.email
+    if (req.body.role !== null && req.body.role !== undefined && !req.body.password) {
+      req.body.password = 'none'
+    }
     sendRequest()
   }
 })

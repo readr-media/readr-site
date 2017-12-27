@@ -119,7 +119,7 @@ export function register (params, token) {
     const url = `${host}/api/register`
     superagent
       .post(url)
-      .set('Authorization', `Bearer ${token}`)
+      .set('Authorization', `Bearer ${token || getToken()}`)
       .send(
         params
       )
