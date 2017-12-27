@@ -9,8 +9,10 @@ Vue.use(Vuex)
 export function createStore () {
   return new Vuex.Store({
     state: {
+      'isLoggedIn': false,
       'register-token': '',
-      'profile': {}
+      'profile': {},
+      'members': []
     },
     actions,
     mutations,

@@ -155,9 +155,22 @@ router.use('/profile', auth, function(req, res, next) {
 router.use('/member', auth, function(req, res, next) {
   next()
 })
+router.use('/members', auth, function(req, res, next) {
+  const role = jwtService.getRole(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
+  if (role === 1) {
+    next()
+  } else {
+    res.status(403).send('Forbidden. Invalid token detected.').end()
+  }
+})
 router.use('/article', auth, function(req, res, next) {
   next()
 })
+
+router.use('/status', auth, function(req, res) {
+  res.status(200).send(true)
+})
+
 router.get('*', function(req, res) {
   !isTest && console.log(apiHost)  
   !isTest && console.log(decodeURIComponent(req.url))
@@ -231,28 +244,31 @@ router.post('/login', auth, (req, res) => {
       res.status(400).send({ message: 'Please offer id/password.' })
       return
     }
-
-    /**
-     * ToDo:
-     *    Should send a post req to the api server here.
-     *    Then send the proper res to client.
-     */
-  
-    const token = jwtService.generateJwt({
-      id: req.body.id,
-      email: req.body.email,
-      name: 'Readr Robot',
-      role: 'admin',
-      keepAlive: req.body.keepAlive,
-      secret: currSecret
+    const url = `${apiHost}/login`
+    basicPostRequst(url, req, res, (err, response) => {
+      if (!err && response) {
+        const mem = _.get(response, [ 'body', 'member' ], {})
+        const perm = _.get(response, [ 'body', 'permissions' ], [])
+        const token = jwtService.generateJwt({
+          id: _.get(mem, [ 'id' ], req.body.id),
+          email: _.get(mem, [ 'mail' ], req.body.email),
+          name: _.get(mem, [ 'name' ]),
+          role: _.get(mem, [ 'role' ], 1),
+          keepAlive: req.body.keepAlive,
+          secret: currSecret
+        })
+        const cookies = new Cookies( req, res, {} )
+        cookies.set('csrf', token, { httpOnly: false, expires: new Date(Date.now() + (req.body.keepAlive ? 30 : 1) * 24 * 60 * 60 * 1000) })
+        res.status(200).send({ token, profile: {
+          name: _.get(mem, [ 'name' ]),
+          nickname: _.get(mem, [ 'nickname' ]),
+          description: _.get(mem, [ 'description' ])
+        }})    
+      } else {
+        res.status(400).send('Validated in fail. Please offer correct credentials.')
+      }
     })
-    const cookies = new Cookies( req, res, {} )
-    cookies.set('csrf', token, { httpOnly: false, expires: new Date(Date.now() + (req.body.keepAlive ? 30 : 1) * 24 * 60 * 60 * 1000) })
-    res.status(200).send({ token, profile: {
-      name: 'Readr Robot',
-      nickname: 'ReadrSilent',
-      description: '先速不生間發，處水是車內可紅，這在心相日價得推會當術重而而地後，把人司小一活整資為，家身無就好空人算請著營種的變車商突：臉我安以可吃結出而技冷水新戰口都紀！通快低死事媽兩建子那與的畫語了係來站車外。',
-    }})    
+    
   }
 
   if (req.body.login_mode === 'google') {
@@ -270,14 +286,17 @@ router.post('/login', auth, (req, res) => {
         req.body.id = payload[ 'sub' ]
         req.body.mail = payload[ 'email' ]
         req.body.email = payload[ 'email' ]
+        req.body.mode = 'oauth-goo'
         sendRequest()
       })
   } else if (req.body.login_mode === 'facebook') {
     // req.body.mail = payload[ 'email' ]
     // req.body.email = payload[ 'email' ]
+    req.body.mode = 'oauth-fb'    
     sendRequest()
   } else {
     req.body.id = req.body.email
+    req.body.mode = 'ordinary'    
     sendRequest()
   }  
 })
@@ -372,6 +391,18 @@ router.delete('*', auth, function (req, res) {
       res.json(err)
     }
   })
+})
+
+router.use(function (err, req, res, next) {
+  if (err.name === 'UnauthorizedError' && req.url.indexOf('/status') === -1) {
+    res.status(401).send('invalid token...')
+  } else if (err && req.url.indexOf('/status') > -1) {
+    if (err.name === 'UnauthorizedError') {
+      res.status(200).send(false)
+    } else {
+      console.log('Error occurred when checking login status', err)
+    }
+  }
 })
 
 module.exports = router

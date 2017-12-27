@@ -9,7 +9,7 @@
       </div>
       <div class="member-panel__items__item" v-for="(m, k) in members">
         <div class="id" v-text="getValue(m, [ 'id' ])"></div>
-        <div class="email" v-text="getValue(m, [ 'email' ])"></div>
+        <div class="email" v-text="getValue(m, [ 'mail' ])"></div>
         <div class="role" v-text="getValue(m, [ 'role' ])"></div>
         <div class="actions">
           <div class="actions__update" v-text="wording.WORDING_ADMIN_UPDATE"></div>
@@ -20,18 +20,18 @@
   </div>
 </template>
 <script>
+  import _ from 'lodash'
   import { WORDING_ADMIN_ACCOUNT, WORDING_ADMIN_EMAIL, WORDING_ADMIN_ROLE, WORDING_ADMIN_UPDATE, WORDING_ADMIN_DELETE } from '../../constants'
   import { getValue } from '../../util/comm'
+
+  const getMembers = (store) => {
+    return store.dispatch('GET_MEMBERS', {})
+  }
 
   export default {
     computed: {
       members () {
-        return [
-          { id: '1', email: 'a', role: 'q' },
-          { id: '2', email: 'b', role: 'w' },
-          { id: '3', email: 'c', role: 'e' },
-          { id: '4', email: 'd', role: 'r' }
-        ]
+        return _.get(this.$store, [ 'state', 'members' ], [])
       }
     },
     data () {
@@ -49,7 +49,12 @@
     methods: {
       getValue
     },
-    mounted () {}
+    mounted () {},
+    beforeMount () {
+      Promise.all([
+        getMembers(this.$store)
+      ])
+    }
   }
 </script>
 <style lang="stylus" scoped>
@@ -68,6 +73,8 @@
         > div
           display inline-block
           font-size 0.625rem
+          word-break break-all
+          vertical-align top
           &.title
             font-size 0.9375rem
             margin 10px 0
