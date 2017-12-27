@@ -4,6 +4,7 @@ import { WORDING_ADMIN_ACCOUNT, WORDING_ADMIN_EMAIL, WORDING_ADMIN_ROLE } from '
 import { mount } from 'avoriaz'
 
 describe('MembersPanel.vue', () => {
+  // sinon.stub(MembersPanel, 'beforeMount')
   const MembersPanelComponent = mount(MembersPanel)
   // const id = MembersPanelComponent.find('member-panel__id')
   // const email = MembersPanelComponent.find('member-panel__email')
@@ -18,10 +19,10 @@ describe('MembersPanel.vue', () => {
   })
 
   const memberList = [
-    { id: '1', email: 'a', role: 'q' },
-    { id: '2', email: 'b', role: 'w' },
-    { id: '3', email: 'c', role: 'e' },
-    { id: '4', email: 'd', role: 'r' }
+    { id: '1', mail: 'a', role: 'q' },
+    { id: '2', mail: 'b', role: 'w' },
+    { id: '3', mail: 'c', role: 'e' },
+    { id: '4', mail: 'd', role: 'r' }
   ]
   const MembersPanelComponentWidthMemberList = mount(MembersPanel, {
     computed: {
@@ -39,7 +40,7 @@ describe('MembersPanel.vue', () => {
       const role = m.find('.role')[0]
       if (i !== 0) {
         expect(id.text()).to.be.string(memberList[i - 1].id)
-        expect(email.text()).to.be.string(memberList[i - 1].email)
+        expect(email.text()).to.be.string(memberList[i - 1].mail)
         expect(role.text()).to.be.string(memberList[i - 1].role)
       } else {
         expect(id.text()).to.be.string(WORDING_ADMIN_ACCOUNT)

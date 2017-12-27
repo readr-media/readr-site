@@ -5,7 +5,7 @@
   </div>
 </template>
 <script>
-  import { isLoggedIn } from '../util/services'
+  import _ from 'lodash'
   import LoginPanel from '../components/LoginPanel.vue'
   import Header from '../components/Header.vue'
 
@@ -24,11 +24,7 @@
     },
     computed: {
       isLoggedIn () {
-        if (window) {
-          return isLoggedIn()
-        } else {
-          return false
-        }
+        return _.get(this.$store, [ 'state', 'isLoggedIn' ], false)
       },
       sections () {
         return SECTIONS_DEFAULT
@@ -44,6 +40,11 @@
     mounted () {
       this.isClientSide = true
       this.isLoggedIn && location.replace('/')
+    },
+    watch: {
+      isLoggedIn: function () {
+        this.isLoggedIn && location.replace('/')
+      }
     }
   }
 </script>

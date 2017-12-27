@@ -15,17 +15,11 @@ describe('About.vue', () => {
     expect(name).to.not.be.undefined
     expect(introduction).to.not.be.undefined
   })
-  it('block name should contain span.name and span.role', () => {
-    const spanName = name.find('.name')[0]
-    const spanRole = name.find('.role')[0]
-    expect(spanName).to.not.be.undefined
-    expect(spanRole).to.not.be.undefined
-  })
   it('block name should render correct name and introduction', () => {
     const profile = {
       name: 'Justin BB',
       role: 'admin',
-      introduction: '先速不生間發，處水是車內可紅，這在心相日價得推會當術重而而地後，把人司小一活整資為，家身無就好空人算請著營種的變車商突：臉我安以可吃結出而技冷水新戰口都紀！通快低死事媽兩建子那與的畫語了係來站車外。',
+      description: '先速不生間發，處水是車內可紅，這在心相日價得推會當術重而而地後，把人司小一活整資為，家身無就好空人算請著營種的變車商突：臉我安以可吃結出而技冷水新戰口都紀！通快低死事媽兩建子那與的畫語了係來站車外。',
       image: {
         url: '/public/icons/exclamation.png'
       }
@@ -40,7 +34,7 @@ describe('About.vue', () => {
     const imageWithProfile = AboutWithProfile.find('.about__thumbnail > img')[0]
     expect(nameWithProfile.text()).to.be.string(profile.name)
     expect(roleWithProfile.text()).to.be.string(profile.role)
-    expect(introductionWithProfile.text()).to.be.string(profile.introduction)
+    expect(introductionWithProfile.text()).to.be.string(profile.description)
     expect(imageWithProfile.getAttribute('src')).to.be.string(profile.image.url)
   })
 })

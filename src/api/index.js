@@ -66,8 +66,18 @@ export function getDisposableToken (type) {
   })
 }
 
+export function getMembers ({ params }) {
+  const url = `${host}/api/members`
+  return _doFetchStrict(url)
+}
+
 export function getProfile () {
   const url = `${host}/api/profile`
+  return _doFetchStrict(url)
+}
+
+export function checkLoginStatus () {
+  const url = `${host}/api/status`
   return _doFetchStrict(url)
 }
 

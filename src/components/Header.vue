@@ -31,7 +31,7 @@
 <script>
   import _ from 'lodash'
   import { WORDING_HEADER_LOGIN, WORDING_HEADER_LOGOUT } from '../constants'
-  import { isLoggedIn, removeToken } from '../util/services'
+  import { removeToken } from '../util/services'
 
   const getProfile = (store) => {
     return store.dispatch('GET_PROFILE')
@@ -43,10 +43,10 @@
         return _.get(this.$store, [ 'state', 'profile' ], {})
       },
       isLoggedIn () {
-        return isLoggedIn()
+        return _.get(this.$store, [ 'state', 'isLoggedIn' ])
       },
       userNickname () {
-        return _.get(this.currentUser, [ 'nickname' ], _.get(this.currentUser, [ 'name' ], ''))
+        return this.isLoggedIn && _.get(this.currentUser, [ 'nickname' ], _.get(this.currentUser, [ 'name' ], ''))
       }
     },
     data () {
@@ -68,11 +68,13 @@
     },
     mounted () {
       this.isClientSide = true
-      if (this.isLoggedIn) {
-        getProfile(this.$store)
-      }
     },
-    props: [ 'sections' ]
+    props: [ 'sections' ],
+    watch: {
+      isLoggedIn: function () {
+        this.isLoggedIn && getProfile(this.$store)
+      }
+    }
   }
 </script>
 <style lang="stylus" scoped>

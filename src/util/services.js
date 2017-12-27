@@ -12,15 +12,6 @@ export function getToken () {
     return undefined
   }
 }
-export function isLoggedIn () {
-  const token = getToken()
-  if (window && token) {
-    const payload = JSON.parse(window.atob(token.split('.')[1]))
-    return payload.exp > Date.now() / 1000
-  } else {
-    return false
-  }
-}
 export function removeToken () {
   return new Promise((resolve) => {
     window && Cookie.delete('csrf')

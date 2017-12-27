@@ -2,8 +2,11 @@
   <div class="admin">
     <app-header :section="section"></app-header>
     <About :profile="profile"></About>
-    <div class="management-items"></div>
+    <div class="management-items">
+      <div style="width: 200px; height: 50px; margin: 0 auto;" @click="addMember">add</div>
+    </div>
     <MembersPanel></MembersPanel>
+    <MemberAccountEditor :shouldShow="shouldShow"></MemberAccountEditor>
   </div>
 </template>
 <script>
@@ -11,6 +14,7 @@
   import About from '../components/About.vue'
   import Header from '../components/Header.vue'
   import MembersPanel from '../components/admin/MembersPanel.vue'
+  import MemberAccountEditor from '../components/admin/MemberAccountEditor.vue'
 
   const SECTIONS_DEFAULT = {
     'chief-editor-talk': '總編評論',
@@ -24,7 +28,8 @@
     components: {
       'app-header': Header,
       About,
-      MembersPanel
+      MembersPanel,
+      MemberAccountEditor
     },
     computed: {
       profile () {
@@ -34,8 +39,18 @@
         return SECTIONS_DEFAULT
       }
     },
+    data () {
+      return {
+        shouldShow: false
+      }
+    },
     name: 'admin-page',
-    methods: {},
+    methods: {
+      addMember () {
+        console.log('open member panel')
+        this.shouldShow = true
+      }
+    },
     mounted () {}
   }
 </script>

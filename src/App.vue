@@ -6,6 +6,20 @@
   </div>
 </template>
 
+<script>
+  const checkLoginStatus = (store) => {
+    return store.dispatch('CHECK_LOGIN_STATUS')
+  }
+
+  export default {
+    mounted () {
+      Promise.all([
+        checkLoginStatus(this.$store)
+      ])
+    }
+  }
+</script>
+
 <style lang="stylus">
 body
   font-family -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
