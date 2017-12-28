@@ -286,17 +286,17 @@ router.post('/login', auth, (req, res) => {
         req.body.id = payload[ 'sub' ]
         req.body.mail = payload[ 'email' ]
         req.body.email = payload[ 'email' ]
-        req.body.mode = 'oauth-goo'
+        req.body.register_mode = 'oauth-goo'
         sendRequest()
       })
   } else if (req.body.login_mode === 'facebook') {
     // req.body.mail = payload[ 'email' ]
     // req.body.email = payload[ 'email' ]
-    req.body.mode = 'oauth-fb'    
+    req.body.register_mode = 'oauth-fb'    
     sendRequest()
   } else {
     req.body.id = req.body.email
-    req.body.mode = 'ordinary'    
+    req.body.register_mode = 'ordinary'    
     sendRequest()
   }  
 })
