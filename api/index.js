@@ -328,7 +328,7 @@ router.post('/register', auth, (req, res) => {
     delete req.body.idToken
     delete req.body.email
 
-    const url = `${apiHost}/member`
+    const url = `${apiHost}/register`
     basicPostRequst(url, req, res, (err, resp) => {
       if (!err && resp) {
         res.status(200).end()
@@ -338,7 +338,7 @@ router.post('/register', auth, (req, res) => {
     })
   }
 
-  if (req.body.register_mode === 'google') {
+  if (req.body.register_mode === 'oauth-goo') {
     const auth = new GoogleAuth
     const client = new auth.OAuth2(GOOGLE_CLIENT_ID, '', '')
     client.verifyIdToken(
@@ -360,9 +360,13 @@ router.post('/register', auth, (req, res) => {
         req.body.social_id = payload[ 'sub' ]
         sendRequest()
       })
+  } else if (req.body.register_mode === 'oauth-fb') {
+    req.body.mail = req.body.email
+    req.body.id = req.body.social_id
   } else {
     req.body.mail = req.body.email
-    req.body.id = req.body.social_id ? req.body.social_id : req.body.email
+    req.body.id = req.body.email
+    req.body.register_mode = 'ordinary'
     if (req.body.role !== null && req.body.role !== undefined && !req.body.password) {
       req.body.password = 'none'
     }

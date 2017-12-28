@@ -62,7 +62,7 @@
                 // nickname: '-',
                 email: res.email,
                 // gender: res.gender,
-                register_mode: 'facebook',
+                register_mode: 'oauth-fb',
                 social_id: res.id
               }, _.get(this.$store, [ 'state', 'register-token' ])).then(({ status, err }) => {
                 this.isRegistered = true
