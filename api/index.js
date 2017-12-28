@@ -407,6 +407,7 @@ router.post('/uploadImg', upload.single('image'), (req, res) => {
 
 router.put('*', auth, function (req, res) {
   const url = `${apiHost}${req.url}`
+  console.log('req.body', req.body)
   superagent
   .put(url)
   .send(req.body)
@@ -414,6 +415,7 @@ router.put('*', auth, function (req, res) {
     if (!err && response) {
       res.status(200).end()
     } else {
+      console.log(err)
       res.json(err)
     }
   })

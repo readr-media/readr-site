@@ -1,7 +1,6 @@
 <template>
   <div class="radio-container" :class="{ disabled: disabled }">
-    <input type="radio" class="radio--hidden" :name="name" :id="`${name}${value}`" v-if="!disabled">
-    <input type="radio" class="radio--hidden" :name="name" :id="`${name}${value}`" v-else disabled>
+    <input type="radio" class="radio--hidden" :name="name" :id="`${name}${value}`" :disabled="disabled" :checked="value === initValue">
     <label class="radio--mock" @click="clickHandler" :for="`${name}${value}`">
       {{ label }}
       <span class="radio"></span>
@@ -18,11 +17,11 @@
     name: 'radio',
     methods: {
       clickHandler () {
-        this.$emit('selected', this.name, this.value)
+        !this.disabled && this.$emit('selected', this.name, this.value)
       }
     },
     mounted () {},
-    props: [ 'label', 'value', 'name', 'disabled' ]
+    props: [ 'label', 'value', 'name', 'disabled', 'initValue' ]
   }
 </script>
 <style lang="stylus" scoped>
