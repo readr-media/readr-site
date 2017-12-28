@@ -50,6 +50,13 @@ function _doPost (url, params) {
   })
 }
 
+export function addPost (params) {
+  const url = `${host}/api/post`
+  return _doPost(url, params)
+    .then(res => res.status)
+    .catch(err => err)
+}
+
 export function getDisposableToken (type) {
   const url = `${host}/api/token`
   return new Promise((resolve, reject) => {
@@ -105,13 +112,6 @@ export function logout () {
     window && (window.localStorage.removeItem('csrf'))
     resolve()
   })
-}
-
-export function articleAdd (params) {
-  const url = `${host}/api/article`
-  return _doPost(url, params)
-    .then(res => res.status)
-    .catch(err => err)
 }
 
 export function register (params, token) {

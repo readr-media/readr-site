@@ -11,6 +11,7 @@
   },
   "globals": {
     "FB": true,
+    "FormData": true,
     "expect": true,
     "gapi": true,
     "location": true,
