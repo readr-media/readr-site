@@ -1,7 +1,6 @@
 <template>
   <div class="input-item" :class="{ alert: alertFlag }">
-    <input v-if="!disabled" :type="type" :placeholder="placeHolder" @change="valueChange" ref="input" @focus="focus" @focusout="focusout" @keyup="keyup">
-    <input v-else disabled :type="type" :placeholder="placeHolder" @change="valueChange" ref="input" @focus="focus" @focusout="focusout" @keyup="keyup">
+    <input :disabled="disabled" :value="initValue" :type="type" :placeholder="placeHolder" @change="valueChange" ref="input" @focus="focus" @focusout="focusout" @keyup="keyup">
     <span class="input-item__alert" @click="doFucus"></span>
     <span class="input-item__msg" :class="{ long: isTooLong }" v-text="alertMsg" v-if="alertMsgShow"></span>
   </div>
@@ -32,7 +31,7 @@
       }
     },
     mounted () {},
-    props: [ 'inputKey', 'type', 'placeHolder', 'alertFlag', 'alertMsg', 'alertMsgShow', 'disabled' ],
+    props: [ 'inputKey', 'type', 'placeHolder', 'alertFlag', 'alertMsg', 'alertMsgShow', 'disabled', 'initValue' ],
     watch: {
       alertMsg: function () {
         const len = this.alertMsg ? this.alertMsg.length : 0

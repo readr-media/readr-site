@@ -12,17 +12,18 @@
         <div class="email" v-text="getValue(m, [ 'mail' ])"></div>
         <div class="role" v-text="getValue(m, [ 'role' ])"></div>
         <div class="actions">
-          <div class="actions__update" v-text="wording.WORDING_ADMIN_UPDATE"></div>
-          <div class="actions__delete" v-text="wording.WORDING_ADMIN_DELETE"></div>
+          <div class="actions__update" v-text="wording.WORDING_ADMIN_UPDATE" @click="update(k)"></div>
+          <div class="actions__delete" v-text="wording.WORDING_ADMIN_DELETE" @click="del(k)"></div>
         </div>      
       </div>
-      <MemberAccountEditor :shouldShow="shouldShowEditor" @close="closeEditor"></MemberAccountEditor>
+      <MemberAccountEditor :shouldShow="shouldShowEditor" @close="closeEditor" :title="editorTitle" :member="targMember" :action="action"></MemberAccountEditor>
     </div>
   </div>
 </template>
 <script>
   import _ from 'lodash'
   import { WORDING_ADMIN_ACCOUNT, WORDING_ADMIN_EMAIL, WORDING_ADMIN_ROLE, WORDING_ADMIN_UPDATE, WORDING_ADMIN_DELETE } from '../../constants'
+  import { WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER, WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION } from '../../constants'
   import { getValue } from '../../util/comm'
   import MemberAccountEditor from './MemberAccountEditor.vue'
 
@@ -37,24 +38,44 @@
     computed: {
       members () {
         return _.get(this.$store, [ 'state', 'members' ], [])
-      }
+      },
+      title () {}
     },
     data () {
       return {
+        action: 'update',
         shouldShowEditor: false,
+        targMember: null,
+        editorTitle: '',
         wording: {
           WORDING_ADMIN_ACCOUNT,
           WORDING_ADMIN_EMAIL,
           WORDING_ADMIN_ROLE,
           WORDING_ADMIN_UPDATE,
-          WORDING_ADMIN_DELETE
+          WORDING_ADMIN_DELETE,
+          WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER,
+          WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION
         }
       }
     },
     name: 'member-panel',
     methods: {
-      closeEditor () {},
-      getValue
+      closeEditor () {
+        this.shouldShowEditor = false
+      },
+      del (index) {
+        this.action = 'delete'
+        this.shouldShowEditor = true
+        this.targMember = this.members[ index ]
+        this.editorTitle = this.wording.WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION
+      },
+      getValue,
+      update (index) {
+        this.action = 'update'
+        this.shouldShowEditor = true
+        this.targMember = this.members[ index ]
+        this.editorTitle = this.wording.WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER
+      }
     },
     mounted () {},
     beforeMount () {

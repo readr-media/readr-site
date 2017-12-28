@@ -1,11 +1,13 @@
 import {
   addPost,
   checkLoginStatus,
+  deleteMember,
   getDisposableToken,
   getProfile,
   getMembers,
   login,
   register,
+  updateMember,
   verifyRecaptchaToken
 } from '../api'
 
@@ -22,6 +24,9 @@ export default {
     return getDisposableToken(type).then((token) => {
       commit('SET_TOKEN', { token, type })
     })
+  },
+  DELETE_MEMBER: ({ commit, dispatch, state }, { params }) => {
+    return deleteMember({ params })
   },
   GET_MEMBERS: ({ commit, dispatch, state }, { params }) => {
     return getMembers({ params }).then(({ status, body }) => {
@@ -45,6 +50,9 @@ export default {
   },
   REGISTER: ({ commit, dispatch, state }, { params, token }) => {
     return register(params, token)
+  },
+  UPDATE_MEMBER: ({ commit, dispatch, state }, { params }) => {
+    return updateMember({ params })
   },
   VERIFY_RECAPTCHA_TOKEN: ({ commit, dispatch, state }, { token }) => {
     return verifyRecaptchaToken(token)

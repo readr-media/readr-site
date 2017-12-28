@@ -1,21 +1,32 @@
 <template>
   <div class="member-editor" v-if="shouldShow">
     <div class="member-editor__modal" @click="closeEditor"></div>
-    <div class="member-editor__form">
+    <div class="member-editor__form" v-if="action !== 'delete'">
       <div class="title" v-text="title"></div>
       <div class="email">
         <span class="label" v-text="wording.WORDING_ADMIN_MEMBER_EDITOR_EMAIL + '：'"></span>
-        <InputItem class="admin" inputKey="email" v-on:filled="fillHandler" :disabled="!isEdible"></InputItem>
+        <InputItem class="admin" inputKey="email" v-on:filled="fillHandler" :disabled="!isEdible" :initValue="emailVal"></InputItem>
       </div>
       <div class="role">
         <span class="label" v-text="wording.WORDING_ADMIN_ROLE + '：'"></span>
         <div class="options">
-          <Radio class="admin" :label="role.title" v-for="role in roles" :key="role.role" :value="role.role" name="role" v-on:selected="selectedHandler" :disabled="!isEdible"></Radio>
+          <Radio class="admin" :label="role.title" v-for="role in roles" :key="role.role" :value="role.role" name="role" v-on:selected="selectedHandler" :disabled="!isEdible" :initValue="roleValue"></Radio>
         </div>
       </div>
       <div class="btn--save" v-text="wording.WORDING_ADMIN_MEMBER_EDITOR_SAVE" @click="save" v-if="!message"></div>
-      <div class="message" v-else v-text="message"></div>
-      <div class="btn--set" v-if="shouldShowBtnSet">
+      <div class="message" v-else v-text="message"></div>      
+    </div>
+    <div class="member-editor__form" v-else>
+      <div class="title" v-text="title"></div>
+      <div class="nickname">
+        <span class="label" v-text="wording.WORDING_ADMIN_MEMBER_EDITOR_NICKNAME + '：'"></span>
+        <InputItem class="admin" inputKey="nickname" :disabled="true" :initValue="nicknameVal"></InputItem>
+      </div>
+      <div class="email">
+        <span class="label" v-text="wording.WORDING_ADMIN_MEMBER_EDITOR_EMAIL + '：'"></span>
+        <InputItem class="admin" inputKey="email" :disabled="true" :initValue="emailVal"></InputItem>
+      </div>
+      <div class="btn--set">
         <div class="btn--set__confirm"></div>
         <div class="btn--set__cancel"></div>
       </div>
@@ -23,8 +34,9 @@
   </div>
 </template>
 <script>
+  import _ from 'lodash'
   import { WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER, WORDING_ADMIN_MEMBER_EDITOR_EMAIL, WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER, WORDING_ADMIN_MEMBER_EDITOR_SAVE, WORDING_ADMIN_ROLE } from '../../constants'
-  import { WORDING_ADMIN_SUCCESS, WORDING_ADMIN_INFAIL } from '../../constants'
+  import { WORDING_ADMIN_SUCCESS, WORDING_ADMIN_INFAIL, WORDING_ADMIN_MEMBER_EDITOR_NICKNAME } from '../../constants'
   import { consoleLogOnDev } from '../../util/comm'
   import InputItem from '../form/InputItem.vue'
   import Radio from '../form/Radio.vue'
@@ -45,14 +57,35 @@
     })
   }
 
+  const updateMember = (store, profile) => {
+    return store.dispatch('UPDATE_MEMBER', {
+      params: profile
+    })
+  }
+
+  // const deleteMember = (store, profile) => {
+  //   return store.dispatch('DELETE_MEMBER', {
+  //     params: profile
+  //   })
+  // }
+
   export default {
     components: {
       InputItem,
       Radio
     },
     computed: {
-      title () {
-        return this.wording.WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER
+      emailVal () {
+        return this.typedEmail || _.get(this.member, [ 'mail' ])
+      },
+      id () {
+        return _.get(this.member, [ 'id' ])
+      },
+      nicknameVal () {
+        return _.get(this.member, [ 'nickname' ])
+      },
+      roleValue () {
+        return this.selectedRole || _.get(this.member, [ 'role' ])
       },
       roles () {
         return RoleList
@@ -72,7 +105,8 @@
           WORDING_ADMIN_MEMBER_EDITOR_SAVE,
           WORDING_ADMIN_ROLE,
           WORDING_ADMIN_SUCCESS,
-          WORDING_ADMIN_INFAIL
+          WORDING_ADMIN_INFAIL,
+          WORDING_ADMIN_MEMBER_EDITOR_NICKNAME
         }
       }
     },
@@ -90,17 +124,31 @@
       },
       save () {
         if (this.validate()) {
-          register(this.$store, {
-            email: this.typedEmail,
-            role: this.selectedRole
-          }).then(({ status }) => {
+          const callback = (status) => {
             this.isEdible = false
             if (status === 200) {
               this.message = this.title + this.wording.WORDING_ADMIN_SUCCESS + '！'
             } else {
               this.message = this.title + this.wording.WORDING_ADMIN_INFAIL
             }
-          })
+          }
+          if (this.action === 'update') {
+            updateMember(this.$store, {
+              id: this.id,
+              mail: this.typedEmail,
+              role: this.selectedRole
+            }).then(callback)
+          } else if (this.action === 'add') {
+            register(this.$store, {
+              email: this.typedEmail,
+              role: this.selectedRole
+            }).then(callback)
+          }
+          // else if (this.action === 'del') {
+          //   deleteMember(this.$store, {
+          //     id: this.id
+          //   }).then()
+          // }
         }
       },
       selectedHandler (group, value) {
@@ -112,12 +160,8 @@
       },
       validate () {
         let pass = true
-        // this.alertFlags = {}
-        // this.alertMsgs = {}
         if (!this.typedEmail || !validator.isEmail(this.typedEmail)) {
           pass = false
-          // this.alertFlags.mail = true
-          // this.alertMsgs.mail = this.wording.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL
           consoleLogOnDev({ msg: 'mail wrong, ' + this.typedEmail })
         }
         if (this.selectedRole === null || this.selectedRole === undefined || !validator.isInt(this.selectedRole.toString())) {
@@ -131,8 +175,25 @@
         return pass
       }
     },
-    mounted () {},
-    props: [ 'shouldShow' ]
+    mounted () {
+      console.log([
+        this.shouldShow,
+        this.title,
+        this.member,
+        this.action
+      ])
+    },
+    props: [ 'shouldShow', 'title', 'member', 'action' ],
+    watch: {
+      action: function () {
+        console.log([
+          this.shouldShow,
+          this.title,
+          this.member,
+          this.action
+        ])
+      }
+    }
   }
 </script>
 <style lang="stylus" scoped>
@@ -172,6 +233,9 @@
         > .label
           margin-right 11px
           width 50px
+        &.nickname
+          > .label
+            width 80px
         &.role
           > .options
             // margin-right 10px
@@ -194,6 +258,9 @@
           font-size 0.9375rem
           font-weight 600
           color #4280a2
+        &.btn--set
+          width 100%
+          height 33px
 
       // > .title
 </style>
