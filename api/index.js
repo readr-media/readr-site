@@ -147,7 +147,8 @@ router.use('/profile', auth, function(req, res, next) {
         name: resData.name,
         nickname: resData.nickname,
         mail: resData.mail,
-        description: resData.description
+        description: resData.description,
+        id: resData.id
       })
     } else {
       res.json(err)
@@ -266,7 +267,9 @@ router.post('/login', auth, (req, res) => {
         res.status(200).send({ token, profile: {
           name: _.get(mem, [ 'name' ]),
           nickname: _.get(mem, [ 'nickname' ]),
-          description: _.get(mem, [ 'description' ])
+          description: _.get(mem, [ 'description' ]),
+          id: _.get(mem, [ 'id' ]),
+          mail: _.get(mem, [ 'mail' ], req.body.email)
         }})    
       } else {
         res.status(400).send('Validated in fail. Please offer correct credentials.')
@@ -407,15 +410,13 @@ router.post('/uploadImg', upload.single('image'), (req, res) => {
 
 router.put('*', auth, function (req, res) {
   const url = `${apiHost}${req.url}`
-  console.log('req.body', req.body)
-  superagent
+   superagent
   .put(url)
   .send(req.body)
   .end((err, response) => {
     if (!err && response) {
       res.status(200).end()
     } else {
-      console.log(err)
       res.json(err)
     }
   })
@@ -430,7 +431,7 @@ router.delete('*', auth, function (req, res) {
       const resData = JSON.parse(response.text)
       res.status(200).json(resData)
     } else {
-      res.json(err)
+      res.status(response.status).json(err)
     }
   })
 })

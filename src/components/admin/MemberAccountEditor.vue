@@ -1,11 +1,11 @@
 <template>
-  <div class="member-editor" v-if="shouldShow">
+  <div class="member-editor" :class="{ result: message }" v-if="shouldShow">
     <div class="member-editor__modal" @click="closeEditor"></div>
     <div class="member-editor__form" v-if="action !== 'delete'">
-      <div class="title" v-text="title"></div>
+      <div class="title" v-text="title" v-if="!message"></div>
       <div class="email">
         <span class="label" v-text="wording.WORDING_ADMIN_MEMBER_EDITOR_EMAIL + '：'"></span>
-        <InputItem class="admin" inputKey="email" v-on:filled="fillHandler" :disabled="!isEdible" :initValue="emailVal"></InputItem>
+        <div><InputItem class="admin" inputKey="email" v-on:filled="fillHandler" :disabled="!isEdible" :initValue="emailVal"></InputItem></div>
       </div>
       <div class="role">
         <span class="label" v-text="wording.WORDING_ADMIN_ROLE + '：'"></span>
@@ -17,26 +17,27 @@
       <div class="message" v-else v-text="message"></div>      
     </div>
     <div class="member-editor__form" v-else>
-      <div class="title" v-text="title"></div>
+      <div class="title" v-text="title" v-if="!message"></div>
       <div class="nickname">
         <span class="label" v-text="wording.WORDING_ADMIN_MEMBER_EDITOR_NICKNAME + '：'"></span>
-        <InputItem class="admin" inputKey="nickname" :disabled="true" :initValue="nicknameVal"></InputItem>
+        <div><InputItem class="admin" inputKey="nickname" :disabled="true" :initValue="nicknameVal"></InputItem></div>
       </div>
       <div class="email">
         <span class="label" v-text="wording.WORDING_ADMIN_MEMBER_EDITOR_EMAIL + '：'"></span>
-        <InputItem class="admin" inputKey="email" :disabled="true" :initValue="emailVal"></InputItem>
+        <div><InputItem class="admin" inputKey="email" :disabled="true" :initValue="emailVal"></InputItem></div>
       </div>
-      <div class="btn--set">
-        <div class="btn--set__confirm"></div>
-        <div class="btn--set__cancel"></div>
+      <div class="btn--set" v-if="!message">
+        <div class="btn--set__confirm" @click="save"><span v-text="wording.WORDING_ADMIN_YES"></span></div>
+        <div class="btn--set__cancel" @click="closeEditor"><span v-text="wording.WORDING_ADMIN_CANCEL"></span></div>
       </div>
+      <div class="message" v-else v-text="message"></div>
     </div>
   </div>
 </template>
 <script>
   import _ from 'lodash'
   import { WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER, WORDING_ADMIN_MEMBER_EDITOR_EMAIL, WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER, WORDING_ADMIN_MEMBER_EDITOR_SAVE, WORDING_ADMIN_ROLE } from '../../constants'
-  import { WORDING_ADMIN_SUCCESS, WORDING_ADMIN_INFAIL, WORDING_ADMIN_MEMBER_EDITOR_NICKNAME } from '../../constants'
+  import { WORDING_ADMIN_SUCCESS, WORDING_ADMIN_INFAIL, WORDING_ADMIN_MEMBER_EDITOR_NICKNAME, WORDING_ADMIN_CANCEL, WORDING_ADMIN_YES, WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL } from '../../constants'
   import { consoleLogOnDev } from '../../util/comm'
   import InputItem from '../form/InputItem.vue'
   import Radio from '../form/Radio.vue'
@@ -63,11 +64,11 @@
     })
   }
 
-  // const deleteMember = (store, profile) => {
-  //   return store.dispatch('DELETE_MEMBER', {
-  //     params: profile
-  //   })
-  // }
+  const deleteMember = (store, profile) => {
+    return store.dispatch('DELETE_MEMBER', {
+      params: profile
+    })
+  }
 
   export default {
     components: {
@@ -106,7 +107,10 @@
           WORDING_ADMIN_ROLE,
           WORDING_ADMIN_SUCCESS,
           WORDING_ADMIN_INFAIL,
-          WORDING_ADMIN_MEMBER_EDITOR_NICKNAME
+          WORDING_ADMIN_MEMBER_EDITOR_NICKNAME,
+          WORDING_ADMIN_CANCEL,
+          WORDING_ADMIN_YES,
+          WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL
         }
       }
     },
@@ -123,11 +127,15 @@
         }
       },
       save () {
-        if (this.validate()) {
-          const callback = (status) => {
+        if (this.validate() || this.action === 'delete') {
+          const callback = ({ status }) => {
             this.isEdible = false
             if (status === 200) {
-              this.message = this.title + this.wording.WORDING_ADMIN_SUCCESS + '！'
+              if (this.action !== 'delete') {
+                this.message = this.title + this.wording.WORDING_ADMIN_SUCCESS + '！'
+              } else {
+                this.message = this.wording.WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL + '！'
+              }
             } else {
               this.message = this.title + this.wording.WORDING_ADMIN_INFAIL
             }
@@ -143,12 +151,11 @@
               email: this.typedEmail,
               role: this.selectedRole
             }).then(callback)
+          } else if (this.action === 'delete') {
+            deleteMember(this.$store, {
+              id: this.id
+            }).then(callback)
           }
-          // else if (this.action === 'del') {
-          //   deleteMember(this.$store, {
-          //     id: this.id
-          //   }).then()
-          // }
         }
       },
       selectedHandler (group, value) {
@@ -207,6 +214,9 @@
     display flex
     justify-content center
     align-items center
+    &.result
+      .member-editor__form
+        height 112px
     &__modal
       position absolute
       z-index 1
@@ -220,7 +230,7 @@
       background-color #fff
       width 250px
       height 140px
-      padding 13.5px 23.5px
+      padding 13.5px 0 34.5px
       color #000
       > div
         font-size 0.9375rem
@@ -230,12 +240,18 @@
         display flex
         justify-content flex-start
         align-items center
+        padding 0 23.5px
         > .label
           margin-right 11px
           width 50px
-        &.nickname
-          > .label
-            width 80px
+          // display block
+        > div
+          width calc(100% - 50px)
+          display flex
+          justify-content center
+        // &.nickname
+        //   > .label
+        //     width 80px
         &.role
           > .options
             // margin-right 10px
@@ -247,20 +263,36 @@
         &.btn--save
           background-color #4280a2
           color #fff
-          width 100%
+          width 203px
           height 25px
           display flex
           justify-content center
           align-items center
-          margin-top 12.5px
+          margin 12.5px auto 0
           cursor pointer
         &.message
           font-size 0.9375rem
           font-weight 600
           color #4280a2
+          margin-top 10px
         &.btn--set
+          position absolute
+          bottom 0
+          left 0
           width 100%
-          height 33px
+          height 34.5px
+          padding 0
+          border-top 1px solid #d3d3d3
+          margin-bottom 0
+          cursor pointer
+          > div
+            width 50%
+            height 100%
+            display inline-flex
+            justify-content center
+            align-items center
+            font-size 0.625rem
+          > div:first-child
+            border-right 1px solid #d3d3d3
 
-      // > .title
 </style>

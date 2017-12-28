@@ -82,7 +82,7 @@ function _doDelete (url) {
 }
 
 export function deleteMember ({ params }) {
-  const url = `${host}/api/members/${params.id}`
+  const url = `${host}/api/member/${params.id}`
   return _doDelete(url)
 }
 
@@ -172,7 +172,7 @@ export function register (params, token) {
 export function updateMember ({ params }) {
   const url = `${host}/api/member`
   return _doPut(url, params)
-    .then(res => res.status)
+    .then(res => ({ status: res.status }))
     .catch(err => err)
 }
 
