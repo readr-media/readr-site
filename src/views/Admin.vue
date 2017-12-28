@@ -6,7 +6,7 @@
       <div style="width: 200px; height: 50px; margin: 0 auto;" @click="addMember">add</div>
     </div>
     <MembersPanel></MembersPanel>
-    <MemberAccountEditor :shouldShow="shouldShow"></MemberAccountEditor>
+    <MemberAccountEditor :shouldShow="shouldShow" @close="closeEditor"></MemberAccountEditor>
   </div>
 </template>
 <script>
@@ -47,8 +47,10 @@
     name: 'admin-page',
     methods: {
       addMember () {
-        console.log('open member panel')
         this.shouldShow = true
+      },
+      closeEditor () {
+        this.shouldShow = false
       }
     },
     mounted () {}

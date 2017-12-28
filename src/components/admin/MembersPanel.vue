@@ -16,6 +16,7 @@
           <div class="actions__delete" v-text="wording.WORDING_ADMIN_DELETE"></div>
         </div>      
       </div>
+      <MemberAccountEditor :shouldShow="shouldShowEditor" @close="closeEditor"></MemberAccountEditor>
     </div>
   </div>
 </template>
@@ -23,12 +24,16 @@
   import _ from 'lodash'
   import { WORDING_ADMIN_ACCOUNT, WORDING_ADMIN_EMAIL, WORDING_ADMIN_ROLE, WORDING_ADMIN_UPDATE, WORDING_ADMIN_DELETE } from '../../constants'
   import { getValue } from '../../util/comm'
+  import MemberAccountEditor from './MemberAccountEditor.vue'
 
   const getMembers = (store) => {
     return store.dispatch('GET_MEMBERS', {})
   }
 
   export default {
+    components: {
+      MemberAccountEditor
+    },
     computed: {
       members () {
         return _.get(this.$store, [ 'state', 'members' ], [])
@@ -36,6 +41,7 @@
     },
     data () {
       return {
+        shouldShowEditor: false,
         wording: {
           WORDING_ADMIN_ACCOUNT,
           WORDING_ADMIN_EMAIL,
@@ -47,6 +53,7 @@
     },
     name: 'member-panel',
     methods: {
+      closeEditor () {},
       getValue
     },
     mounted () {},
