@@ -1,4 +1,5 @@
 import {
+  addPost,
   checkLoginStatus,
   getDisposableToken,
   getProfile,
@@ -9,6 +10,9 @@ import {
 } from '../api'
 
 export default {
+  ADD_POST: ({ commit, dispatch, state }, { params }) => {
+    return addPost(params)
+  },
   CHECK_LOGIN_STATUS: ({ commit, dispatch, state }) => {
     return checkLoginStatus().then(({ status, body }) => {
       commit('SET_LOGGEIN_STATUS', { status, body })

@@ -1,18 +1,22 @@
 const _ = require('lodash')
 const { API_DEADLINE, API_HOST, API_PORT, API_PROTOCOL, API_TIMEOUT } = require('./config')
-const { GOOGLE_CLIENT_ID, GOOGLE_RECAPTCHA_SECRET, DISPOSABLE_TOKEN_WHITE_LIST, SECRET_KEY } = require('./config')
+const { GCP_FILE_BUCKET, GOOGLE_CLIENT_ID, GOOGLE_RECAPTCHA_SECRET, DISPOSABLE_TOKEN_WHITE_LIST, SECRET_KEY } = require('./config')
 const { REDIS_AUTH, REDIS_MAX_CLIENT, REDIS_READ_HOST, REDIS_READ_PORT, REDIS_WRITE_HOST, REDIS_WRITE_PORT, REDIS_TIMEOUT } = require('./config')
 const { SERVER_PROTOCOL, SERVER_HOST } = require('./config')
+const { initBucket, makeFilePublic, uploadFileToBucket } = require('./gcs.js')
 const Cookies = require('cookies')
 const GoogleAuth = require('google-auth-library')
 const RedisConnectionPool = require('redis-connection-pool')
 const crypto = require('crypto')
 const bodyParser = require('body-parser')
 const express = require('express')
+const fs = require('fs')
 const isProd = process.env.NODE_ENV === 'production'
 const isTest = process.env.NODE_ENV === 'test'
 const jwtExpress = require('express-jwt')
 const jwtService = require('./service.js')
+const multer  = require('multer')
+const upload = multer({ dest: 'tmp/' })
 
 const router = express.Router()
 const superagent = require('superagent')
@@ -163,7 +167,7 @@ router.use('/members', auth, function(req, res, next) {
     res.status(403).send('Forbidden. Invalid token detected.').end()
   }
 })
-router.use('/article', auth, function(req, res, next) {
+router.use('/post', auth, function(req, res, next) {
   next()
 })
 
@@ -363,9 +367,42 @@ router.post('/register', auth, (req, res) => {
   }
 })
 
-router.post('/article', auth, function (req, res) {
+router.post('/post', auth, (req, res) => {
   const url = `${apiHost}${req.url}`
-  basicPostRequst(url, req, res)
+  basicPostRequst(url, req, res, (err, resp) => {
+    if (!err && resp) {
+      res.status(200).end()
+    } else {
+      res.status(400).json(_.get(err, [ 'response', 'body' ], { Error: 'Error occured.' }))
+    }
+  })
+})
+
+router.post('/uploadImg', upload.single('image'), (req, res) => {
+  const url = `${apiHost}${req.url}`
+  const bucket = initBucket(GCP_FILE_BUCKET)
+  const file = req.file
+  
+  uploadFileToBucket(bucket, file.path, {
+    destination: `/assets/images/${file.originalname}`,
+    metadata: {
+      contentType: file.mimetype
+    }
+  }).then((bucketFile) => {
+    console.info(`file ${file.originalname}(${file.path}) completed uploading to bucket `)
+    fs.unlink(file.path, (err) => {
+      if (err) {
+        console.error(`Error: delete ${file.path} fail`)
+      }
+      console.info(`successfully deleted ${file.path}`)
+    })
+    return makeFilePublic(bucketFile)
+  }).then((bucketFile) => {
+    res.status(200).send({url: `https://storage.cloud.google.com/${GCP_FILE_BUCKET}/${bucketFile.name}`})
+  })
+  .catch((err) => {
+    res.status(400).send('Upload Fail').end()
+  })
 })
 
 router.put('*', auth, function (req, res) {
