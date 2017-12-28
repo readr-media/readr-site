@@ -125,6 +125,8 @@
     position relative
     padding-bottom 2rem
     color #000
+    &__input-email, &__input-pwd
+      margin 15px 0
     &__wrapper
       display flex
       justify-content space-between

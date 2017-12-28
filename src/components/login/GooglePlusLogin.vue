@@ -67,7 +67,7 @@
                 nickname: _.get(response, [ 'nicknames', 0, 'value' ], '-'),
                 // gender:  _.get(response, [ 'nicknames', 0, 'value' ], '-'),
                 // occupation: _.get(response, [ 'occupations', 0, 'value' ], '-'),
-                register_mode: 'google'
+                register_mode: 'oauth-goo'
               }, _.get(this.$store, [ 'state', 'register-token' ])).then(({ status, err }) => {
                 this.isRegistered = true
                 if (status === 200) {

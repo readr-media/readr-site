@@ -206,8 +206,9 @@
 <style lang="stylus" scoped>
   .register
     height 100%
-    
     .register-container
+      &__input-nickname, &__input-email, &__input-pwd, &__input-pwd-check
+        margin 15px 0
       width 100%
       height calc(100% - 2rem)
       padding-bottom 2rem
