@@ -46,7 +46,7 @@
   // input-width = calc(100% - 20px)
   input-width-alert = calc(100% - 20px - 35px - 1.5px)
   .input-item
-    margin 15px 0
+    // margin 15px 0
     position relative
     &.admin
       height 14px
@@ -57,6 +57,8 @@
         padding 0
         color #000
         font-size 0.625rem
+        &:disabled
+          border-bottom none
     &.alert
       margin calc(10px - 1.5px) 0
       > input
