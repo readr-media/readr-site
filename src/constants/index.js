@@ -41,6 +41,8 @@ export const WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER = '新增會員'
 export const WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER = '修改會員'
 export const WORDING_ADMIN_MEMBER_EDITOR_EMAIL = 'Email'
 export const WORDING_ADMIN_MEMBER_EDITOR_SAVE = 'SAVE'
+export const WORDING_ADMIN_SUCCESS = '成功'
+export const WORDING_ADMIN_INFAIL = '發生錯誤'
 // Agreement Use
 export const WORDING_AGREEMENT_TERMS_AND_SERVICE = '會員服務條款'
 export const WORDING_AGREEMENT_IPR = '著作權、智慧財產權政策'

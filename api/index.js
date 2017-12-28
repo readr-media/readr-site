@@ -313,7 +313,6 @@ router.post('/register', auth, (req, res) => {
   })
 
   const sendRequest = () => {
-    console.log('req.bo', req.body)
     if (!req.body.email || !(req.body.password || req.body.social_id)) {
       res.status(400).send({ message: 'Please offer all requirements.' })
       return
