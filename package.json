@@ -36,6 +36,7 @@
     "lru-cache": "^4.1.1",
     "moment": "^2.19.3",
     "multer": "^1.3.0",
+    "qs": "^6.5.1",
     "redis-connection-pool": "^1.6.1",
     "request-ip": "^2.0.2",
     "route-cache": "0.4.3",

@@ -2,15 +2,15 @@
   <div class="member-panel">
     <div class="member-panel__items">
       <div class="member-panel__items__item">
-        <div class="id title" v-text="wording.WORDING_ADMIN_ACCOUNT"></div>
+        <div class="id title" v-text="wording.WORDING_ADMIN_NICKNAME"></div>
         <div class="email title" v-text="wording.WORDING_ADMIN_EMAIL"></div>
         <div class="role title" v-text="wording.WORDING_ADMIN_ROLE"></div>
         <div class="actions title"></div>
       </div>
       <div class="member-panel__items__item" v-for="(m, k) in members">
-        <div class="id" v-text="getValue(m, [ 'id' ])"></div>
+        <div class="id" v-text="getValue(m, [ 'nickname' ])"></div>
         <div class="email" v-text="getValue(m, [ 'mail' ])"></div>
-        <div class="role" v-text="getValue(m, [ 'role' ])"></div>
+        <div class="role" v-text="getValue(roles, [ getValue(m, [ 'role' ], 1) ], '-')"></div>
         <div class="actions">
           <div class="actions__update" v-text="wording.WORDING_ADMIN_UPDATE" @click="update(k)"></div>
           <div class="actions__delete" v-text="wording.WORDING_ADMIN_DELETE" @click="del(k)"></div>
@@ -23,12 +23,23 @@
 <script>
   import _ from 'lodash'
   import { WORDING_ADMIN_ACCOUNT, WORDING_ADMIN_EMAIL, WORDING_ADMIN_ROLE, WORDING_ADMIN_UPDATE, WORDING_ADMIN_DELETE } from '../../constants'
-  import { WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER, WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION } from '../../constants'
+  import { WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER, WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION, WORDING_ADMIN_NICKNAME } from '../../constants'
+  import { ROLE_MAP } from '../../constants'
   import { getValue } from '../../util/comm'
   import MemberAccountEditor from './MemberAccountEditor.vue'
 
-  const getMembers = (store) => {
-    return store.dispatch('GET_MEMBERS', {})
+  const MAXRESULT = 5
+  const PAGE = 3
+  const SORT = 'updated_at'
+
+  const getMembers = (store, { page }) => {
+    return store.dispatch('GET_MEMBERS', {
+      params: {
+        max_result: MAXRESULT,
+        page: page || PAGE,
+        sort: SORT
+      }
+    })
   }
 
   export default {
@@ -44,9 +55,10 @@
     data () {
       return {
         action: 'update',
+        editorTitle: '',
+        roles: ROLE_MAP,
         shouldShowEditor: false,
         targMember: null,
-        editorTitle: '',
         wording: {
           WORDING_ADMIN_ACCOUNT,
           WORDING_ADMIN_EMAIL,
@@ -54,7 +66,8 @@
           WORDING_ADMIN_UPDATE,
           WORDING_ADMIN_DELETE,
           WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER,
-          WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION
+          WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION,
+          WORDING_ADMIN_NICKNAME
         }
       }
     },
@@ -80,7 +93,7 @@
     mounted () {},
     beforeMount () {
       Promise.all([
-        getMembers(this.$store)
+        getMembers(this.$store, {})
       ])
     }
   }
