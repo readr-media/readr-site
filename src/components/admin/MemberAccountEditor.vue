@@ -182,25 +182,8 @@
         return pass
       }
     },
-    mounted () {
-      console.log([
-        this.shouldShow,
-        this.title,
-        this.member,
-        this.action
-      ])
-    },
-    props: [ 'shouldShow', 'title', 'member', 'action' ],
-    watch: {
-      action: function () {
-        console.log([
-          this.shouldShow,
-          this.title,
-          this.member,
-          this.action
-        ])
-      }
-    }
+    mounted () {},
+    props: [ 'shouldShow', 'title', 'member', 'action' ]
   }
 </script>
 <style lang="stylus" scoped>
