@@ -405,7 +405,7 @@ router.post('/uploadImg', upload.single('image'), (req, res) => {
     })
     return makeFilePublic(bucketFile)
   }).then((bucketFile) => {
-    res.status(200).send({url: `https://storage.cloud.google.com/${GCP_FILE_BUCKET}/${bucketFile.name}`})
+    res.status(200).send({url: `https://dev.readr.tw/${bucketFile.name}`})
   })
   .catch((err) => {
     res.status(400).send('Upload Fail').end()

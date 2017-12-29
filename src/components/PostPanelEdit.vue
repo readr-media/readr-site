@@ -1,7 +1,7 @@
 <template>
   <section class="postPanelEdit">
     <input v-model="title" type="text" class="postPanelEdit__title" placeholder="輸入標題">
-    <app-editor v-on:updateContent="$_postPanelEdit_updateContent"></app-editor>
+    <app-editor :needReset="resetToggle" v-on:updateContent="$_postPanelEdit_updateContent"></app-editor>
     <div class="postPanelEdit__control">
       <div class="postPanelEdit__link">
         <label for="">新聞連結：</label>
@@ -15,6 +15,7 @@
   </section>
 </template>
 <script>
+  import _ from 'lodash'
   import Editor from './Editor.vue'
   
   const addPost = (store, params) => {
@@ -26,26 +27,52 @@
     components: {
       'app-editor': Editor
     },
+    props: {
+      showLightBox: {
+        type: Boolean
+      }
+    },
     data () {
       return {
         content: '',
         link: '',
+        resetToggle: true,
         title: ''
+      }
+    },
+    computed: {
+      isChange () {
+        return !_.isEmpty(this.link.trim()) || !_.isEmpty(this.title.trim()) || !_.isEmpty(this.content.replace(/<[^>]*>/g, '').trim())
+      }
+    },
+    watch: {
+      showLightBox (val) {
+        if (!val) {
+          if (this.isChange) {
+            this.$_postPanelEdit_submit()
+          }
+        }
       }
     },
     mounted () {},
     methods: {
+      $_postPanelEdit_resetContent () {
+        this.link = ''
+        this.title = ''
+        this.resetToggle = !this.resetToggle
+      },
       $_postPanelEdit_submit (status = undefined) {
         const params = {}
         if (status === 'pending') {
           params.active = 2
         }
-        // params.author =
+        params.author = _.get(this.$store.state, [ 'profile', 'id' ])
         params.title = this.title
         params.content = this.content
         params.link = this.link
         addPost(this.$store, params)
           .then(() => {
+            this.$_postPanelEdit_resetContent()
             this.$emit('closeLightBox')
           })
       },
@@ -65,18 +92,18 @@
   &__title
     padding-left 10px
     color #000
-    font-size 15px
+    font-size 18px
     font-weight 600
   &__control
     display flex
     justify-content space-between
-    width 550px
+    width 100%
     margin-top 15px
     label
       line-height 25px
     input
       padding-left 10px
-      width 250px
+      width 440px
       height 25px
       color #808080
   &__btn
@@ -84,8 +111,9 @@
     justify-content center
     align-items center
     width 80px
-    height 45px
+    height 70px
     margin-left 10px
+    font-size 14px
     font-weight 300
     border 1px solid #d3d3d3
     cursor pointer

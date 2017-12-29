@@ -12,15 +12,13 @@
 </template>
 
 <script>
-
-import { getHost } from '../util/comm'
-import superagent from 'superagent'
-
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 
-const host = getHost()
+const uploadImage = (store, file) => {
+  return store.dispatch('UPLOAD_IMAGE', { file })
+}
 
 export default {
   name: 'AppEditor',
@@ -40,9 +38,17 @@ export default {
       showHtml: false
     }
   },
+  props: {
+    needReset: {
+      type: Boolean
+    }
+  },
   watch: {
-    content: function () {
+    content () {
       this.$emit('updateContent', this.content)
+    },
+    needReset () {
+      this.content = ''
     }
   },
   methods: {
@@ -56,16 +62,12 @@ export default {
     $_editor_saveImage (file) {
       const fd = new FormData()
       fd.append('image', file)
-
-      superagent
-        .post(`${host}/api/uploadImg`)
-        .send(fd)
-        .end((err, res) => {
-          if (err) {
-            console.log(err)
-          } else {
-            this.$_editor_insertToEditor(res.body.url)
-          }
+      uploadImage(this.$store, fd)
+        .then((res) => {
+          this.$_editor_insertToEditor(res.body.url)
+        })
+        .catch((err) => {
+          console.log(err)
         })
     },
     $_editor_selectImage () {
@@ -99,7 +101,7 @@ export default {
 
 .editor
   position relative
-  width 550px
+  width 100%
   height 400px
   margin-top 15px
   border-bottom 1px solid #d3d3d3

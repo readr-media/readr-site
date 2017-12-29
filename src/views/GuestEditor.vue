@@ -6,7 +6,7 @@
         <button class="guestEditor__btn" @click="$_guestEditor_lightBoxHandler(true)">新增評論</button>
       </section>
       <base-light-box :showLightBox.sync="showLightBox">
-        <post-panel-edit slot="postPanelEdit" v-on:closeLightBox="$_guestEditor_lightBoxHandler(false)"></post-panel-edit>
+        <post-panel-edit slot="postPanelEdit" :showLightBox="showLightBox" v-on:closeLightBox="$_guestEditor_lightBoxHandler(false)"></post-panel-edit>
       </base-light-box>
     </main>
   </div>

@@ -8,6 +8,7 @@ import {
   login,
   register,
   updateMember,
+  uploadImage,
   verifyRecaptchaToken
 } from '../api'
 
@@ -53,6 +54,9 @@ export default {
   },
   UPDATE_MEMBER: ({ commit, dispatch, state }, { params }) => {
     return updateMember({ params })
+  },
+  UPLOAD_IMAGE: ({ commit, dispatch }, { file }) => {
+    return uploadImage(file)
   },
   VERIFY_RECAPTCHA_TOKEN: ({ commit, dispatch, state }, { token }) => {
     return verifyRecaptchaToken(token)
