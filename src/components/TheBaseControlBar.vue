@@ -2,7 +2,7 @@
   <section class="controlBar">
     <div class="controlBar__btnBox" :class="{ open: openBtnBox }">
       <button class="controlBar--btn" @click="$_baseControlBar_btnBoxToggle">新增評論</button>
-      <button class="controlBar--subBtn first">直接新增</button>
+      <button class="controlBar--subBtn first" @click="$_baseControlBar_addPost">直接新增</button>
       <button class="controlBar--subBtn second">編輯草稿</button>
     </div>
     <button class="controlBar--btn">文章管理</button>
@@ -20,6 +20,9 @@
       }
     },
     methods: {
+      $_baseControlBar_addPost () {
+        this.$emit('addPost')
+      },
       $_baseControlBar_btnBoxToggle () {
         this.openBtnBox = !this.openBtnBox
       }
@@ -47,7 +50,7 @@
         color #fff
         background-color #808080
       .controlBar--subBtn
-        
+        z-index auto
         transition-timing-function ease-in-out
         &.first
           transition-duration .7s

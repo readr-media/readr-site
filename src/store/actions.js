@@ -4,6 +4,7 @@ import {
   deleteMember,
   getDisposableToken,
   getProfile,
+  getPosts,
   getMembers,
   login,
   register,
@@ -33,6 +34,13 @@ export default {
     return getMembers({ params }).then(({ status, body }) => {
       if (status === 200) {
         commit('SET_MEMBERS', { members: body })
+      }
+    })
+  },
+  GET_POSTS: ({ commit, dispatch, state }, { params }) => {
+    return getPosts({ params }).then(({ status, body }) => {
+      if (status === 200) {
+        commit('SET_POSTS', { members: body })
       }
     })
   },

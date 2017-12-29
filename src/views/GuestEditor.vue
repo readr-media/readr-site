@@ -3,9 +3,12 @@
     <app-header :sections="sections"></app-header>
     <main class="guestEditor__main">
       <app-about :profile="profile"></app-about>
-      <base-control-bar></base-control-bar>
+      <base-control-bar v-on:addPost="$_guestEditor_lightBoxHandler(true)"></base-control-bar>
       <section class="guestEditor__manager">
-        <button class="guestEditor__btn" @click="$_guestEditor_lightBoxHandler(true)">新增評論</button>
+        <template>
+          <div class="guestEditor__List">
+          </div>
+        </template>
       </section>
       <base-light-box :showLightBox.sync="showLightBox">
         <post-panel-edit slot="postPanelEdit" :showLightBox="showLightBox" v-on:closeLightBox="$_guestEditor_lightBoxHandler(false)"></post-panel-edit>
