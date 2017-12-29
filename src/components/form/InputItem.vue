@@ -87,8 +87,10 @@
       vertical-align top
       background-color #ffffff
       outline none
+      font-weight 100
       &::-webkit-input-placeholder
         color #bdbdbd
+        font-weight 100
     &__alert
       background-color #fff
       display inline-block

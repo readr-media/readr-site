@@ -2,7 +2,9 @@
   <div class="header">
     <div class="header__top">
       <div class="header__top__wrapper">
-        <div class="logo"></div>
+        <div class="logo">
+          <div class="logo__container"></div>
+        </div>
         <div class="sharebar">
           <span></span>
           <i class="sharebar__search"></i>
@@ -18,11 +20,9 @@
           <a v-for="(section, name) in sections" class="nav__item" :class="name" v-text="section" href="/"></a>
         </div>
         <div class="login-status" v-if="isClientSide">
-          <div class="login-status__nickname" v-text="userNickname" v-if="isLoggedIn"></div>
-          <!--div class="login-status__logout-btn" v-text="wording.WORDING_HEADER_LOGOUT" v-if="isLoggedIn"></div-->
-          <a class="login-status__login-btn" href="/login" v-text="wording.WORDING_HEADER_LOGIN" v-if="!isLoggedIn"></a>
-          <div class="login-status__icon" :class="{ login: !isLoggedIn, logout: isLoggedIn }" v-if="isLoggedIn" @click="logout"></div>
-          <a class="login-status__icon" href="/login" :class="{ login: !isLoggedIn, logout: isLoggedIn }" v-else="!isLoggedIn"></a>
+          <div class="login-status__nickname login-status__item" v-text="userNickname" v-if="isLoggedIn"></div>
+          <a class="login-status__login-btn login-status__item" href="/login" v-text="wording.WORDING_HEADER_LOGIN" v-if="!isLoggedIn"></a>
+          <div class="login-status__logout-btn login-status__item" v-text="wording.WORDING_HEADER_LOGOUT" v-else-if="isLoggedIn" @click="logout"></div>
         </div>
       </div>
     </div>
@@ -30,7 +30,7 @@
 </template>
 <script>
   import _ from 'lodash'
-  import { WORDING_HEADER_LOGIN, WORDING_HEADER_LOGOUT } from '../constants'
+  import { WORDING_HEADER_LOGIN, WORDING_HEADER_LOGOUT, WORIDNG_HEADER_MEMBER_CENTRE } from '../constants'
   import { removeToken } from '../util/services'
 
   const getProfile = (store) => {
@@ -46,7 +46,7 @@
         return _.get(this.$store, [ 'state', 'isLoggedIn' ])
       },
       userNickname () {
-        return this.isLoggedIn && _.get(this.currentUser, [ 'nickname' ], _.get(this.currentUser, [ 'name' ], ''))
+        return this.isLoggedIn && _.get(this.currentUser, [ 'nickname' ], _.get(this.currentUser, [ 'name' ], this.wording.WORIDNG_HEADER_MEMBER_CENTRE))
       }
     },
     data () {
@@ -54,7 +54,8 @@
         isClientSide: false,
         wording: {
           WORDING_HEADER_LOGIN,
-          WORDING_HEADER_LOGOUT
+          WORDING_HEADER_LOGOUT,
+          WORIDNG_HEADER_MEMBER_CENTRE
         }
       }
     },
@@ -85,32 +86,39 @@
         width 100%
         margin 0 auto
     &__top
-      height 45px
+      height 75px
       background-color #444746
       &__wrapper
-        padding 5px 0
+        padding 15px 0
         height 100%
         display flex
         justify-content space-between
-        align-items center
+        align-items flex-start
         // > div
           // display inline-block
         .logo
-          background-image url(/public/icons/readr-logo.png)
-          background-position center center
-          background-repeat no-repeat
-          background-size contain
-          width 38px
-          height 35px
+          position relative
+          width 93.6px
+          height 100%
+          &__container
+            background-image url(/public/icons/readr-logo.png)
+            background-position center center
+            background-repeat no-repeat
+            background-size contain          
+            width 93.6px
+            height 86.5px
+            position absolute
+            left 0
+            top 0
         .sharebar
           > i
             background-position center center
             background-repeat no-repeat
             background-size contain
-            width 20px
-            height 20px
+            width 30px
+            height 30px
             display inline-block
-            margin-left 7px
+            margin-left 10px
             vertical-align top
             cursor pointer
           &__search
@@ -123,7 +131,7 @@
             background-image url(/public/icons/info.png)
 
     &__bottom
-      height 25px
+      height 35px
       background-color #000
       color #fff
       &__wrapper
@@ -134,48 +142,93 @@
         .nav
           display flex
           align-items center
+          padding-left 110px
           &__item
             color #fff
             display inline-block
-            font-size 0.75rem
+            font-size 1.125rem
+            font-weight 100
             // margin-right 26.5px
-            border-right 1px solid #fff
-            padding 0 13px
+            // border-right 1px solid #fff
+            padding 0 8px
+            position relative
+            &::after
+              content ''
+              position absolute
+              right 0
+              top 50%
+              margin-top -7px
+              width 1px
+              height 14px
+              background-color #fff
+              display block
           &__item:first-child
-            border-left 1px solid #fff
+            // border-left 1px solid #fff
+            &::before
+              content ''
+              position absolute
+              left 0
+              top 50%
+              margin-top -7px
+              width 1px
+              height 14px
+              background-color #fff
+              display block
         .login-status
           min-width 74px
           padding 0 7.5px 0 13px
-          border-right 1px solid #fff
-          border-left 1px solid #fff
-          font-size 12px
+          // border-right 1px solid #fff
+          // border-left 1px solid #fff
+          font-size 0.875rem
           height 100%
           display flex
           justify-content center
           align-items center
           a, a:hover, a:link, a:visited
             color #fff
-          &__login-btn
-            padding-right 5.5px
-          &__nickname
-            padding-right 5.5px
-            // cursor pointer
-          &__icon
-            height 100%
-            width 24px
-            background-position center center
-            background-repeat no-repeat
-            background-size contain
+          &__logout-btn
             cursor pointer
-            &.login
-              background-image url(/public/icons/log-in.png)
-            &.logout
-              background-image url(/public/icons/log-out.png)
+          &__item
+            position relative
+            padding 0 16.5px
+            height 100%
+            display flex
+            justify-content center
+            align-items center
+            &::after
+              content ''
+              position absolute
+              left 0
+              top 50%
+              margin-top -7px
+              width 1px
+              height 14px
+              background-color #fff
+              display block
+            
+          &__nickname
+            padding-right 38px
+            color #ddcf21
+            &::before
+              content ''
+              width 28px
+              height 30px
+              display block
+              position absolute
+              background-color transparent
+              background-image url(/public/icons/account.png)
+              background-position center center
+              background-repeat no-repeat
+              background-size contain
+              bottom 0
+              right 10px
+            cursor pointer
+
 
             
-  @media (min-width 720px)
+  @media (min-width 950px)
     .header
       > div
         > div
-          max-width 720px
+          max-width 950px
 </style>

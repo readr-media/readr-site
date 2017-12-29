@@ -1,7 +1,9 @@
 <template>
   <div class="google-plus-login" @click="login">
-    <i class="google-plus-login__icon"></i>
-    <span class="google-plus-login__wording" v-text="labelWording"></span>
+    <div class="google-plus-login__container">
+      <i class="icon"></i>
+      <span class="wording" v-text="labelWording"></span>
+    </div>
   </div>
 </template>
 <script>
@@ -98,11 +100,8 @@
 <style lang="stylus" scoped>
   .google-plus-login
     cursor pointer
-    display flex
-    justify-content flex-start
-    align-items center
 
-    width 300px
+    width 100%
     height 35px
     padding 5px 34px
     background-color #ffffff
@@ -112,16 +111,23 @@
 
     margin-bottom 15px
 
-    &__icon
-      display inline-block
-      width 18px
-      height 18px
-      background-image url(/public/icons/google-logo-58x58.png)
-      background-position center center
-      background-size contain
-      background-repeat no-repeat
-      border-radius 3px
-    &__wording
-      margin-left 11px
+    &__container
+      display flex
+      justify-content flex-start
+      align-items center
+      margin 0 auto
+      width 240px
+      height 100%
+      > .icon
+        display inline-block
+        width 18px
+        height 18px
+        background-image url(/public/icons/google-logo-58x58.png)
+        background-position center center
+        background-size contain
+        background-repeat no-repeat
+        border-radius 3px
+      > .wording
+        margin-left 11px
 
 </style>

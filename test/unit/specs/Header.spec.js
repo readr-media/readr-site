@@ -1,6 +1,6 @@
 import Header from 'src/components/Header.vue'
 // import Vue from 'vue'
-import { WORDING_HEADER_LOGIN } from 'src/constants'
+import { WORDING_HEADER_LOGIN, WORDING_HEADER_LOGOUT, WORIDNG_HEADER_MEMBER_CENTRE } from 'src/constants'
 import { mount } from 'avoriaz'
 
 describe('Header.vue', () => {
@@ -66,7 +66,7 @@ describe('Header.vue', () => {
     expect(nav.contains('.nav__item.chief-editor-list')).to.equal(true)
     expect(nav.contains('.nav__item.projects')).to.equal(true)
   })
-  it('if user dose not log in yet, should show login btn and account icon', () => {
+  it('if user dose not log in yet, should show login btn', () => {
     // arrange
     // act
     const HeaderComponentForLogin = mount(Header, {
@@ -84,19 +84,14 @@ describe('Header.vue', () => {
     const loginBtn = HeaderComponentForLogin.find('.login-status__login-btn')[0]
     const logoutBtn = HeaderComponentForLogin.find('.login-status__logout-btn')[0]
     const nickname = HeaderComponentForLogin.find('.login-status__nickname')[0]
-    const accountIcon = HeaderComponentForLogin.find('.login-status__icon')[0]
     // assert
     expect(loginBtn).to.not.be.undefined
     expect(loginBtn.text()).to.be.string(WORDING_HEADER_LOGIN)
     expect(loginBtn.getAttribute('href')).to.be.string('/login')
-    expect(accountIcon).to.not.be.undefined
-    expect(accountIcon.getAttribute('href')).to.be.string('/login')
-    expect(accountIcon.hasClass('login')).to.equal(true)
-
     expect(logoutBtn).to.be.undefined
     expect(nickname).to.be.undefined
   })
-  it('if user has logged in, should show user nickname and account icon', () => {
+  it('if user has logged in, should show user nickname', () => {
     const nicknameText = 'test'
     const HeaderComponentForLogout = mount(Header, {
       computed: {
@@ -114,15 +109,59 @@ describe('Header.vue', () => {
       }
     })
     const loginBtn = HeaderComponentForLogout.find('.login-status__login-btn')[0]
-    //   const logoutBtn = HeaderComponentForLogout.find('.login-status__logout-btn')[0]
+    const logoutBtn = HeaderComponentForLogout.find('.login-status__logout-btn')[0]
     const nickname = HeaderComponentForLogout.find('.login-status__nickname')[0]
-    const accountIcon = HeaderComponentForLogout.find('.login-status__icon')[0]
     expect(loginBtn).to.be.undefined
-    //   expect(logoutBtn).to.not.be.undefined
-    //   expect(logoutBtn.text()).to.be.string(WORDING_HEADER_LOGOUT)
+    expect(logoutBtn).to.not.be.undefined
+    expect(logoutBtn.text()).to.be.string(WORDING_HEADER_LOGOUT)
     expect(nickname).to.not.be.undefined
     expect(nickname.text()).to.be.string(nicknameText)
-    expect(accountIcon).to.not.be.undefined
-    expect(accountIcon.hasClass('logout')).to.equal(true)
+  })
+  it('if user has logged in, should show user nickname should be rendered by cases', () => {
+    const basicSet = {
+      data () {
+        return {
+          isClientSide: true
+        }
+      }
+    }
+    const nicknameText = 'GotNickname'
+    const HeaderComponentForNicknameExisting = mount(Header, Object.assign({}, basicSet, {
+      computed: {
+        isLoggedIn: () => (true),
+        currentUser: () => {
+          return {
+            nickname: nicknameText
+          }
+        }
+      }
+    }))
+    let nickname = HeaderComponentForNicknameExisting.find('.login-status__nickname')[0]
+    expect(nickname.text()).to.be.string(nicknameText)
+
+    const nameText = 'GotName'
+    const HeaderComponentForNicknameNoneButNameExisting = mount(Header, Object.assign({}, basicSet, {
+      computed: {
+        isLoggedIn: () => (true),
+        currentUser: () => {
+          return {
+            name: nameText
+          }
+        }
+      }
+    }))
+    nickname = HeaderComponentForNicknameNoneButNameExisting.find('.login-status__nickname')[0]
+    expect(nickname.text()).to.be.string(nameText)
+
+    const HeaderComponentForNicknameAndNameNone = mount(Header, Object.assign({}, basicSet, {
+      computed: {
+        isLoggedIn: () => (true),
+        currentUser: () => {
+          return {}
+        }
+      }
+    }))
+    nickname = HeaderComponentForNicknameAndNameNone.find('.login-status__nickname')[0]
+    expect(nickname.text()).to.be.string(WORIDNG_HEADER_MEMBER_CENTRE)
   })
 })

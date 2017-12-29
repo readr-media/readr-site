@@ -31,6 +31,7 @@ export const WORDING_GOOGLE_REGISTER = '使用 Google 帳號註冊'
 // Header Use
 export const WORDING_HEADER_LOGIN = '登入'
 export const WORDING_HEADER_LOGOUT = '登出'
+export const WORIDNG_HEADER_MEMBER_CENTRE = '會員中心'
 // Admin use
 export const WORDING_ADMIN_ACCOUNT = '帳號'
 export const WORDING_ADMIN_EMAIL = '信箱'
