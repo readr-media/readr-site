@@ -130,12 +130,17 @@
     &__wrapper
       display flex
       justify-content space-between
-      font-size 0.625rem
+      font-size 0.875rem
+      .keep-login-alive
+        > input
+          vertical-align top
+          width 15px
+          height 15px
     &__btn
       position absolute
       bottom 0
       left 0
-      width 300px
+      width 100%
       height 35px
       background-color #444746
       color #ddcf21

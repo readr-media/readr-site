@@ -1,7 +1,9 @@
 <template>
   <div class="facebook-login" @click="login">
-    <i class="facebook-login__icon"></i>
-    <span class="facebook-login__wording" v-text="labelWording"></span>
+    <div class="facebook-login__container">
+      <i class="icon"></i>
+      <span class="wording" v-text="labelWording"></span>
+    </div>
   </div>
 </template>
 <script>
@@ -103,11 +105,9 @@
 <style lang="stylus" scoped>
   .facebook-login
     cursor pointer
-    display flex
-    justify-content flex-start
-    align-items center
 
-    width 300px
+
+    width 100%
     height 35px
     padding 5px 34px
     background-color #ffffff
@@ -116,18 +116,24 @@
     color #808080
 
     margin-bottom 15px
-
-    &__icon
-      display inline-block
-      width 18px
-      height 18px
-      background-image url(/public/icons/facebook-logo-58x58.png)
-      background-position center center
-      background-size contain
-      background-repeat no-repeat
-      border-radius 3px
-    &__wording
-      margin-left 11px
+    &__container
+      width 240px
+      height 100%
+      display flex
+      justify-content flex-start
+      align-items center
+      margin 0 auto
+      > .icon
+        display inline-block
+        width 18px
+        height 18px
+        background-image url(/public/icons/facebook-logo-58x58.png)
+        background-position center center
+        background-size contain
+        background-repeat no-repeat
+        border-radius 3px
+      > .wording
+        margin-left 11px
 
     
 </style>
