@@ -24,8 +24,6 @@ const updatedData = {
   link: 'https://dev.readr.tw/'
 }
 
-const tt = require('../../../public/404.jpg')
-console.log('-- tt', tt)
 let disposableToken
 let token
 
@@ -51,8 +49,8 @@ describe('/POST/login', () => {
     supertest(app).post('/api/login')
     .set('Authorization', `Bearer ${disposableToken}`)
     .send({
-      'email': faker.internet.email(),
-      'password': 'testfasdf',
+      'email': 'wonderwomen@wonderwomen.com',
+      'password': 'wonderwomen@wonderwomen.com',
     })
     .end(function (err, res) {
       if (err) return console.log(err)
@@ -119,6 +117,19 @@ describe('/DELETE/post/:id', () => {
       if (err) return console.log(err)
       res.status.should.equal(200)
       // res.body.should.have.property('active').and.to.equal(0)
+      done()
+    })
+  }).timeout(100)
+})
+
+describe('/GET/posts', () => {
+  it(`should get articles data through api`, (done) => {
+    supertest(app).get('/api/posts/')
+    .set('Authorization', `Bearer ${token}`)
+    .end((err, res) => {
+      if (err) return console.log(err)
+      res.status.should.equal(200)
+      res.body.should.be.an('array')
       done()
     })
   }).timeout(100)

@@ -2,6 +2,8 @@
   <div class="guestEditor">
     <app-header :sections="sections"></app-header>
     <main class="guestEditor__main">
+      <app-about :profile="profile"></app-about>
+      <base-control-bar></base-control-bar>
       <section class="guestEditor__manager">
         <button class="guestEditor__btn" @click="$_guestEditor_lightBoxHandler(true)">新增評論</button>
       </section>
@@ -12,9 +14,12 @@
   </div>
 </template>
 <script>
+  import _ from 'lodash'
+  import About from '../components/About.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
   import Header from '../components/Header.vue'
   import PostPanelEdit from '../components/PostPanelEdit.vue'
+  import TheBaseControlBar from '../components/TheBaseControlBar.vue'
 
   const SECTIONS_DEFAULT = {
     'chief-editor-talk': '總編評論',
@@ -27,18 +32,23 @@
   export default {
     name: 'GuestEditor',
     components: {
+      'app-about': About,
       'app-header': Header,
+      'base-control-bar': TheBaseControlBar,
       'base-light-box': BaseLightBox,
       'post-panel-edit': PostPanelEdit
-    },
-    computed: {
-      sections () {
-        return SECTIONS_DEFAULT
-      }
     },
     data () {
       return {
         showLightBox: false
+      }
+    },
+    computed: {
+      profile () {
+        return _.get(this.$store, [ 'state', 'profile' ], {})
+      },
+      sections () {
+        return SECTIONS_DEFAULT
       }
     },
     mounted () {},
@@ -52,8 +62,8 @@
 <style lang="stylus" scoped>
 .guestEditor
   &__main
-    width 720px
-    max-width 720px
+    width 950px
+    max-width 950px
     margin 22px auto 0
   &__btn
     padding .2em 0
