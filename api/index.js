@@ -363,6 +363,7 @@ router.post('/register', auth, (req, res) => {
   } else if (req.body.register_mode === 'oauth-fb') {
     req.body.mail = req.body.email
     req.body.id = req.body.social_id
+    sendRequest()
   } else {
     req.body.mail = req.body.email
     req.body.id = req.body.email

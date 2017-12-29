@@ -116,7 +116,7 @@ describe('/POST/register', () => {
     .set('Authorization', `Bearer ${disposableToken}`)
     .send({
       email: 'test@test.test',
-      register_mode: 'facebook',
+      register_mode: 'oauth-fb',
       social_id: 'test' + random
     })
     .end(function (err, res) {
@@ -124,7 +124,7 @@ describe('/POST/register', () => {
       res.status.should.equal(200)
       done()
     })
-  })
+  }).timeout(50000)
   it('should register sucessfully', (done) => {
     supertest(app).post('/api/register')
     .set('Authorization', `Bearer ${disposableToken}`)
@@ -164,6 +164,7 @@ describe('/POST/login', () => {
     .send({
       'email': 'wonderwomen@wonderwomen.com',
       'password': 'wonderwomen@wonderwomen.com',
+      'register_mode': 'ordinary'
     })
     .end(function (err, res) {
       if (err) return console.log(err)
