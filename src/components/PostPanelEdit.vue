@@ -57,6 +57,7 @@
     mounted () {},
     methods: {
       $_postPanelEdit_resetContent () {
+        this.content = ''
         this.link = ''
         this.title = ''
         this.resetToggle = !this.resetToggle

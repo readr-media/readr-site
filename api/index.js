@@ -172,6 +172,10 @@ router.use('/post', auth, function(req, res, next) {
   next()
 })
 
+router.use('/posts', auth, function(req, res, next) {
+  next()
+})
+
 router.use('/status', auth, function(req, res) {
   res.status(200).send(true)
 })
