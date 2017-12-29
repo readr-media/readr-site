@@ -2,13 +2,13 @@
   <div class="member-panel">
     <div class="member-panel__items">
       <div class="member-panel__items__item">
-        <div class="id title" v-text="wording.WORDING_ADMIN_NICKNAME"></div>
+        <div class="nickname title" v-text="wording.WORDING_ADMIN_NICKNAME"></div>
         <div class="email title" v-text="wording.WORDING_ADMIN_EMAIL"></div>
         <div class="role title" v-text="wording.WORDING_ADMIN_ROLE"></div>
         <div class="actions title"></div>
       </div>
       <div class="member-panel__items__item" v-for="(m, k) in members">
-        <div class="id" v-text="getValue(m, [ 'nickname' ])"></div>
+        <div class="nickname" v-text="getValue(m, [ 'nickname' ])"></div>
         <div class="email" v-text="getValue(m, [ 'mail' ])"></div>
         <div class="role" v-text="getValue(roles, [ getValue(m, [ 'role' ], 1) ], '-')"></div>
         <div class="actions">
@@ -121,7 +121,7 @@
             margin 10px 0
           &:not(.title)
             padding 5px 5px 5px 0
-          &.id
+          &.nickname
             width 80px
           &.email
             width 165px
