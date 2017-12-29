@@ -1,6 +1,7 @@
 import MembersPanel from 'src/components/admin/MembersPanel.vue'
 // import sinon from 'sinon'
-import { WORDING_ADMIN_ACCOUNT, WORDING_ADMIN_EMAIL, WORDING_ADMIN_ROLE } from 'src/constants'
+import { WORDING_ADMIN_NICKNAME, WORDING_ADMIN_EMAIL, WORDING_ADMIN_ROLE } from 'src/constants'
+import { ROLE_MAP } from 'src/constants'
 import { mount } from 'avoriaz'
 
 describe('MembersPanel.vue', () => {
@@ -19,10 +20,10 @@ describe('MembersPanel.vue', () => {
   })
 
   const memberList = [
-    { id: '1', mail: 'a', role: 'q' },
-    { id: '2', mail: 'b', role: 'w' },
-    { id: '3', mail: 'c', role: 'e' },
-    { id: '4', mail: 'd', role: 'r' }
+    { nickname: '1', mail: 'a', role: 1 },
+    { nickname: '2', mail: 'b', role: 2 },
+    { nickname: '3', mail: 'c', role: 3 },
+    { nickname: '4', mail: 'd', role: 9 }
   ]
   const MembersPanelComponentWidthMemberList = mount(MembersPanel, {
     computed: {
@@ -35,15 +36,15 @@ describe('MembersPanel.vue', () => {
   it('component MembersPanel should render correct member list', () => {
     expect(memberItemsWidthMemberList.length).to.equal(5)
     memberItemsWidthMemberList.map((m, i) => {
-      const id = m.find('.id')[0]
+      const nickname = m.find('.nickname')[0]
       const email = m.find('.email')[0]
       const role = m.find('.role')[0]
       if (i !== 0) {
-        expect(id.text()).to.be.string(memberList[i - 1].id)
+        expect(nickname.text()).to.be.string(memberList[i - 1].nickname)
         expect(email.text()).to.be.string(memberList[i - 1].mail)
-        expect(role.text()).to.be.string(memberList[i - 1].role)
+        expect(role.text()).to.be.string(ROLE_MAP[ memberList[i - 1].role ])
       } else {
-        expect(id.text()).to.be.string(WORDING_ADMIN_ACCOUNT)
+        expect(nickname.text()).to.be.string(WORDING_ADMIN_NICKNAME)
         expect(email.text()).to.be.string(WORDING_ADMIN_EMAIL)
         expect(role.text()).to.be.string(WORDING_ADMIN_ROLE)
       }

@@ -3,6 +3,8 @@ export const PROJECTS = projectList
 
 export const SITE_DOMAIN = 'readr.com'
 
+export const ROLE_MAP = { 1: '會員', 2: '總編', 3: '編輯', 9: 'Admin' }
+
 // Login and Rigester Page Use
 export const WORDING_EMAIL = '信箱'
 export const WORDING_FORGET_PASSWORD = '忘記密碼？'
@@ -36,6 +38,7 @@ export const WORIDNG_HEADER_MEMBER_CENTRE = '會員中心'
 export const WORDING_ADMIN_ACCOUNT = '帳號'
 export const WORDING_ADMIN_EMAIL = '信箱'
 export const WORDING_ADMIN_ROLE = '身份'
+export const WORDING_ADMIN_NICKNAME = '暱稱'
 export const WORDING_ADMIN_UPDATE = '修改'
 export const WORDING_ADMIN_DELETE = '刪除'
 export const WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER = '新增會員'

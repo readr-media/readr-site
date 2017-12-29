@@ -10,7 +10,7 @@
       <div class="role">
         <span class="label" v-text="wording.WORDING_ADMIN_ROLE + '：'"></span>
         <div class="options">
-          <Radio class="admin" :label="role.title" v-for="role in roles" :key="role.role" :value="role.role" name="role" v-on:selected="selectedHandler" :disabled="!isEdible" :initValue="roleValue"></Radio>
+          <Radio class="admin" :label="role" v-for="(role, key) in roles" :key="role" :value="key" v-if="key > 1" name="role" v-on:selected="selectedHandler" :disabled="!isEdible" :initValue="roleValue"></Radio>
         </div>
       </div>
       <div class="btn--save" v-text="wording.WORDING_ADMIN_MEMBER_EDITOR_SAVE" @click="save" v-if="!message"></div>
@@ -38,19 +38,11 @@
   import _ from 'lodash'
   import { WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER, WORDING_ADMIN_MEMBER_EDITOR_EMAIL, WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER, WORDING_ADMIN_MEMBER_EDITOR_SAVE, WORDING_ADMIN_ROLE } from '../../constants'
   import { WORDING_ADMIN_SUCCESS, WORDING_ADMIN_INFAIL, WORDING_ADMIN_MEMBER_EDITOR_NICKNAME, WORDING_ADMIN_CANCEL, WORDING_ADMIN_YES, WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL } from '../../constants'
+  import { ROLE_MAP } from '../../constants'
   import { consoleLogOnDev } from '../../util/comm'
   import InputItem from '../form/InputItem.vue'
   import Radio from '../form/Radio.vue'
   import validator from 'validator'
-
-  /**
-   * ToDo: should fetch role list from api. But, instead, we hard code temporarily.
-   */
-  const RoleList = [
-    { role: 0, title: '管理員' },
-    { role: 1, title: '編輯' },
-    { role: 2, title: '總編' }
-  ]
 
   const register = (store, profile) => {
     return store.dispatch('REGISTER', {
@@ -89,15 +81,15 @@
         return this.selectedRole || _.get(this.member, [ 'role' ])
       },
       roles () {
-        return RoleList
+        return ROLE_MAP
       }
     },
     data () {
       return {
         isEdible: true,
         message: null,
-        typedEmail: null,
-        selectedRole: null,
+        typedEmail: _.get(this.member, [ 'mail' ], null),
+        selectedRole: _.get(this.member, [ 'role' ], null),
         shouldShowBtnSet: false,
         wording: {
           WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER,
@@ -144,12 +136,12 @@
             updateMember(this.$store, {
               id: this.id,
               mail: this.typedEmail,
-              role: this.selectedRole
+              role: validator.toInt(this.selectedRole)
             }).then(callback)
           } else if (this.action === 'add') {
             register(this.$store, {
               email: this.typedEmail,
-              role: this.selectedRole
+              role: validator.toInt(this.selectedRole)
             }).then(callback)
           } else if (this.action === 'delete') {
             deleteMember(this.$store, {
@@ -183,7 +175,13 @@
       }
     },
     mounted () {},
-    props: [ 'shouldShow', 'title', 'member', 'action' ]
+    props: [ 'shouldShow', 'title', 'member', 'action' ],
+    watch: {
+      member: function () {
+        this.typedEmail = _.get(this.member, [ 'mail' ], null)
+        this.selectedRole = _.get(this.member, [ 'role' ], null)
+      }
+    }
   }
 </script>
 <style lang="stylus" scoped>

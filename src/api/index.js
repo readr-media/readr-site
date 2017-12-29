@@ -1,8 +1,25 @@
 import { getHost } from '../util/comm'
 import { getToken, saveToken } from '../util/services'
+import qs from 'qs'
 const superagent = require('superagent')
 // import { camelizeKeys } from 'humps'
 const host = getHost()
+
+function _buildQuery (params = {}) {
+  let query = {}
+  const whitelist = [ 'where', 'max_result', 'page', 'sort' ]
+  whitelist.forEach((ele) => {
+    if (params.hasOwnProperty(ele)) {
+      if (ele === 'where') {
+        query[ele] = JSON.stringify(params[ele])
+      } else {
+        query[ele] = params[ele]
+      }
+    }
+  })
+  query = qs.stringify(query)
+  return query
+}
 
 // function _doFetch (url) {
 //   return new Promise((resolve, reject) => {
@@ -110,7 +127,11 @@ export function getDisposableToken (type) {
 }
 
 export function getMembers ({ params }) {
-  const url = `${host}/api/members`
+  let url = `${host}/api/members`
+  const query = _buildQuery(params)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }
   return _doFetchStrict(url)
 }
 
