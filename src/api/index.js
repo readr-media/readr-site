@@ -135,6 +135,11 @@ export function getMembers ({ params }) {
   return _doFetchStrict(url)
 }
 
+export function getPosts ({ params }) {
+  const url = `${host}/api/posts`
+  return _doFetchStrict(url)
+}
+
 export function getProfile () {
   const url = `${host}/api/profile`
   return _doFetchStrict(url)
