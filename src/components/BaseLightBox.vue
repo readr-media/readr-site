@@ -21,7 +21,6 @@
     mounted () {},
     methods: {
       $_baseLightBox_close () {
-        console.log('qwqwq')
         this.$emit('update:showLightBox', false)
       }
     }
@@ -57,8 +56,8 @@
     justify-content center
     align-items center
     position relative
-    width 700px
-    padding 25px 70px
+    width 900px
+    padding 25px 95px
     background-color #fff
     border 5px solid #d8ca21
   &__curtain

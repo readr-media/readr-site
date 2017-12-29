@@ -176,6 +176,23 @@ export function updateMember ({ params }) {
     .catch(err => err)
 }
 
+export function uploadImage (file) {
+  const url = `${host}/api/uploadImg`
+  return new Promise((resolve, reject) => {
+    superagent
+      .post(url)
+      .set('Authorization', `Bearer ${getToken()}`)
+      .send(file)
+      .end((err, res) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(res)
+        }
+      })
+  })
+}
+
 export function verifyRecaptchaToken ({ token }) {
   return new Promise((resolve, reject) => {
     const url = `${host}/api/verify-recaptcha-token`
