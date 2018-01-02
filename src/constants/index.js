@@ -4,11 +4,19 @@ export const PROJECTS = projectList
 export const SITE_DOMAIN = 'readr.com'
 
 export const ROLE_MAP = [
-  { key: 9, value: '管理員' },
-  { key: 3, value: '編輯' },
-  { key: 2, value: '總編' },
-  { key: 1, value: '會員' }
+  { key: 9, value: '管理員', route: 'admin' },
+  { key: 3, value: '編輯', route: 'editor' },
+  { key: 2, value: '總編', route: 'guesteditor' },
+  { key: 1, value: '會員', route: 'member' }
 ]
+
+export const SECTIONS_DEFAULT = {
+  'chief-editor-talk': '總編評論',
+  'celebrity-talk': '名人聊新聞',
+  'hot-talk': '熱門評論',
+  'chief-editor-list': '總編列表',
+  'projects': '新聞專題'
+}
 
 // Login and Rigester Page Use
 export const WORDING_EMAIL = '信箱'

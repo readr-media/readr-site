@@ -8,6 +8,9 @@
       <span class="role" v-text="`（${role}）`" v-if="role"></span>
     </div>
     <div class="about__introduction" v-text="introduction"></div>
+    <div class="about__edit">
+      <span class="about__edit__btn" v-text="editText"></span>
+    </div>
   </div>
 </template>
 <script>
@@ -28,6 +31,11 @@
         return _.get(this.profile, [ 'image', 'url' ], '/public/icons/exclamation.png')
       }
     },
+    data () {
+      return {
+        editText: '(edit)'
+      }
+    },
     name: 'about',
     methods: {},
     mounted () {},
@@ -37,16 +45,17 @@
 <style lang="stylus" scoped>
   .about
     width 100%
-    margin 25px auto
-    padding-left 55px
+    min-height 100px
+    margin 40px auto
+    padding-left 130px
     position relative
     color #000
     &__thumbnail
       position absolute
       left 0
       top 0
-      width 45px
-      height 45px
+      width 100px
+      height 100px
       border 1px solid #979797
       border-radius 50%
       overflow hidden
@@ -57,13 +66,19 @@
         object-position center center
         // box-shadow inset 0 0 0 10px #fff
     &__name
-      font-size 0.9375rem
+      font-size 1.125rem
     &__introduction
-      margin-top 5px
-      font-size 0.625rem
+      margin-top 10px
+      font-size 0.9375rem
       font-weight 300
-      line-height 0.875rem
-  @media (min-width 720px)
+      line-height 1.375rem
+    &__edit
+      text-align right
+      &__btn
+        color #4280a2
+        font-weight 600
+        cursor pointer
+  @media (min-width 950px)
     .about
-      width 720px
+      width 950px
 </style>

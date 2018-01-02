@@ -55,7 +55,6 @@
         _.map(ROLE_MAP, (role) => {
           roles[ role.key ] = role.value
         })
-        console.log(roles)
         return roles
       },
       title () {}
