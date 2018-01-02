@@ -276,7 +276,7 @@ router.post('/login', auth, (req, res) => {
           mail: _.get(mem, [ 'mail' ], req.body.email)
         }})    
       } else {
-        res.status(400).send('Validated in fail. Please offer correct credentials.')
+        res.status(401).send('Validated in fail. Please offer correct credentials.')
       }
     })
     
