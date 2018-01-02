@@ -16,7 +16,9 @@
           <div class="actions__delete" v-text="wording.WORDING_ADMIN_DELETE" @click="del(k)"></div>
         </div>      
       </div>
-      <MemberAccountEditor :shouldShow="shouldShowEditor" @close="closeEditor" :title="editorTitle" :member="targMember" :action="action"></MemberAccountEditor>
+      <BaseLightBox :showLightBox.sync="showLightBox">
+        <MemberAccountEditor :title="editorTitle" :member="targMember" :action="action"></MemberAccountEditor>
+      </BaseLightBox>
     </div>
   </div>
 </template>
@@ -26,6 +28,7 @@
   import { WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER, WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION, WORDING_ADMIN_NICKNAME } from '../../constants'
   import { ROLE_MAP } from '../../constants'
   import { getValue } from '../../util/comm'
+  import BaseLightBox from '../BaseLightBox.vue'
   import MemberAccountEditor from './MemberAccountEditor.vue'
 
   const MAXRESULT = 5
@@ -44,6 +47,7 @@
 
   export default {
     components: {
+      BaseLightBox,
       MemberAccountEditor
     },
     computed: {
@@ -63,7 +67,7 @@
       return {
         action: 'update',
         editorTitle: '',
-        shouldShowEditor: false,
+        showLightBox: false,
         targMember: null,
         wording: {
           WORDING_ADMIN_ACCOUNT,
@@ -80,18 +84,18 @@
     name: 'member-panel',
     methods: {
       closeEditor () {
-        this.shouldShowEditor = false
+        this.showLightBox = false
       },
       del (index) {
         this.action = 'delete'
-        this.shouldShowEditor = true
+        this.showLightBox = true
         this.targMember = this.members[ index ]
         this.editorTitle = this.wording.WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION
       },
       getValue,
       update (index) {
         this.action = 'update'
-        this.shouldShowEditor = true
+        this.showLightBox = true
         this.targMember = this.members[ index ]
         this.editorTitle = this.wording.WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER
       }
