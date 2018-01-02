@@ -50,13 +50,20 @@
       members () {
         return _.get(this.$store, [ 'state', 'members' ], [])
       },
+      roles () {
+        const roles = {}
+        _.map(ROLE_MAP, (role) => {
+          roles[ role.key ] = role.value
+        })
+        console.log(roles)
+        return roles
+      },
       title () {}
     },
     data () {
       return {
         action: 'update',
         editorTitle: '',
-        roles: ROLE_MAP,
         shouldShowEditor: false,
         targMember: null,
         wording: {

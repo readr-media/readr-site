@@ -6,7 +6,6 @@
         <div slot="0">{{ agreementContent }}</div>
         <div slot="1">NA</div>
         <div slot="2">NA</div>
-        <div slot="3">NA</div>
       </Tab>
     </div>
   </div>
@@ -28,8 +27,7 @@
         tabs: [
           WORDING_AGREEMENT_TERMS_AND_SERVICE,
           WORDING_AGREEMENT_IPR,
-          WORDING_AGREEMENT_PRIVACY,
-          'NA'
+          WORDING_AGREEMENT_PRIVACY
         ]
       }
     },

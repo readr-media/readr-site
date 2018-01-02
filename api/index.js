@@ -162,7 +162,7 @@ router.use('/member', auth, function(req, res, next) {
 })
 router.use('/members', auth, function(req, res, next) {
   const role = jwtService.getRole(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
-  if (role === 1) {
+  if (role === 9) {
     next()
   } else {
     res.status(403).send('Forbidden. Invalid token detected.').end()
@@ -276,7 +276,7 @@ router.post('/login', auth, (req, res) => {
           mail: _.get(mem, [ 'mail' ], req.body.email)
         }})    
       } else {
-        res.status(400).send('Validated in fail. Please offer correct credentials.')
+        res.status(401).send('Validated in fail. Please offer correct credentials.')
       }
     })
     

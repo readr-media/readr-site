@@ -10,7 +10,7 @@
       <div class="role">
         <span class="label" v-text="wording.WORDING_ADMIN_ROLE + '：'"></span>
         <div class="options">
-          <Radio class="admin" :label="role" v-for="(role, key) in roles" :key="role" :value="key" v-if="key > 1" name="role" v-on:selected="selectedHandler" :disabled="!isEdible" :initValue="roleValue"></Radio>
+          <Radio class="admin" :label="role.value" v-for="role in roles" :key="role.key" :value="role.key" v-if="role.key > 1" name="role" v-on:selected="selectedHandler" :disabled="!isEdible" :initValue="roleValue"></Radio>
         </div>
       </div>
       <div class="btn--save" v-text="wording.WORDING_ADMIN_MEMBER_EDITOR_SAVE" @click="save" v-if="!message"></div>

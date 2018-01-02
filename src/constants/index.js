@@ -3,7 +3,12 @@ export const PROJECTS = projectList
 
 export const SITE_DOMAIN = 'readr.com'
 
-export const ROLE_MAP = { 1: '會員', 2: '總編', 3: '編輯', 9: 'Admin' }
+export const ROLE_MAP = [
+  { key: 9, value: '管理員' },
+  { key: 3, value: '編輯' },
+  { key: 2, value: '總編' },
+  { key: 1, value: '會員' }
+]
 
 // Login and Rigester Page Use
 export const WORDING_EMAIL = '信箱'
@@ -12,6 +17,7 @@ export const WORDING_KEEP_ALIVE = '保持登入'
 export const WORDING_LOGIN = '登入'
 export const WORDING_LOGIN_COMMUNITY = '社群登入'
 export const WORDING_LOGIN_INFAIL_VALIDATION_ISSUE = '請提供正確帳號密碼。'
+export const WORDING_LOGIN_UNAUTHORIZED = '此帳號尚未啟用或被拒絕登入。'
 export const WORDING_MEMBER_AGREEMENT = '會員服務協議'
 export const WORDING_NICKNAME = '暱稱'
 export const WORDING_PASSWORD = '密碼'

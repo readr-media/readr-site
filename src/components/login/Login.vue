@@ -11,6 +11,9 @@
         <span v-text="wording.WORDING_FORGET_PASSWORD"></span>
       </div>
     </div>
+    <div class="login__msg">
+      <div class='content' v-text="resMsg"></div>
+    </div>
     <div class="login__btn" @click="login">
       <span v-text="wording.WORDING_LOGIN"></span>
     </div>
@@ -18,7 +21,7 @@
 </template>
 <script>
   import _ from 'lodash'
-  import { WORDING_EMAIL, WORDING_FORGET_PASSWORD, WORDING_KEEP_ALIVE, WORDING_LOGIN, WORDING_LOGIN_INFAIL_VALIDATION_ISSUE, WORDING_PASSWORD, WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL, WORDING_REGISTER_PWD_EMPTY } from '../../constants'
+  import { WORDING_EMAIL, WORDING_FORGET_PASSWORD, WORDING_KEEP_ALIVE, WORDING_LOGIN, WORDING_LOGIN_UNAUTHORIZED, WORDING_LOGIN_INFAIL_VALIDATION_ISSUE, WORDING_PASSWORD, WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL, WORDING_REGISTER_PWD_EMPTY } from '../../constants'
   import { consoleLogOnDev } from '../../util/comm'
   import InputItem from '../form/InputItem.vue'
   import validator from 'validator'
@@ -44,9 +47,11 @@
         alertMsgs: {},
         alertMsgShow: {},
         formData: {},
+        resMsg: null,
         wording: {
           WORDING_LOGIN,
           WORDING_LOGIN_INFAIL_VALIDATION_ISSUE,
+          WORDING_LOGIN_UNAUTHORIZED,
           WORDING_PASSWORD,
           WORDING_EMAIL,
           WORDING_KEEP_ALIVE,
@@ -68,6 +73,11 @@
             if (res.status === 200) {
               location.replace('/')
             } else {
+              this.resMsg = this.wording.WORDING_LOGIN_INFAIL_VALIDATION_ISSUE
+            }
+          }).catch((err) => {
+            if (err.status === 401) {
+              this.resMsg = this.wording.WORDING_LOGIN_UNAUTHORIZED
             }
           })
         }
@@ -136,6 +146,11 @@
           vertical-align top
           width 15px
           height 15px
+    &__msg
+      margin 15px 0
+      width 100%
+      text-align right
+      color red
     &__btn
       position absolute
       bottom 0
