@@ -20,7 +20,7 @@
           <a v-for="(section, name) in sections" class="nav__item" :class="name" v-text="section" href="/"></a>
         </div>
         <div class="login-status" v-if="isClientSide">
-          <div class="login-status__nickname login-status__item" v-text="userNickname" v-if="isLoggedIn"></div>
+          <div class="login-status__nickname login-status__item" v-text="userNickname" v-if="isLoggedIn" @click="goMemberCenter"></div>
           <a class="login-status__login-btn login-status__item" href="/login" v-text="wording.WORDING_HEADER_LOGIN" v-if="!isLoggedIn"></a>
           <div class="login-status__logout-btn login-status__item" v-text="wording.WORDING_HEADER_LOGOUT" v-else-if="isLoggedIn" @click="logout"></div>
         </div>
@@ -31,6 +31,7 @@
 <script>
   import _ from 'lodash'
   import { WORDING_HEADER_LOGIN, WORDING_HEADER_LOGOUT, WORIDNG_HEADER_MEMBER_CENTRE } from '../constants'
+  import { ROLE_MAP } from '../constants'
   import { removeToken } from '../util/services'
 
   const getProfile = (store) => {
@@ -61,6 +62,10 @@
     },
     name: 'header',
     methods: {
+      goMemberCenter () {
+        const memberCenter = _.get(_.filter(ROLE_MAP, { key: _.get(this.$store, [ 'state', 'profile', 'role' ]) }), [ 0, 'route' ], 'member')
+        location && location.replace(`/${memberCenter}`)
+      },
       logout () {
         removeToken().then(() => {
           location && location.reload()
@@ -195,6 +200,8 @@
             display flex
             justify-content center
             align-items center
+            &:last-child
+              padding-right 0
             &::after
               content ''
               position absolute

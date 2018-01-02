@@ -148,7 +148,8 @@ router.use('/profile', auth, function(req, res, next) {
         nickname: resData.nickname,
         mail: resData.mail,
         description: resData.description,
-        id: resData.id
+        id: resData.id,
+        role: resData.role
       })
     } else {
       res.json(err)
@@ -273,7 +274,8 @@ router.post('/login', auth, (req, res) => {
           nickname: _.get(mem, [ 'nickname' ]),
           description: _.get(mem, [ 'description' ]),
           id: _.get(mem, [ 'id' ]),
-          mail: _.get(mem, [ 'mail' ], req.body.email)
+          mail: _.get(mem, [ 'mail' ], req.body.email),
+          role: _.get(mem, [ 'role' ], req.body.email)
         }})    
       } else {
         res.status(401).send('Validated in fail. Please offer correct credentials.')
