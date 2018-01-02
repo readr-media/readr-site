@@ -15,6 +15,7 @@
 </template>
 <script>
   import _ from 'lodash'
+  import { ROLE_MAP } from '../constants'
 
   export default {
     computed: {
@@ -25,7 +26,7 @@
         return _.get(this.profile, [ 'name' ]) || _.get(this.profile, [ 'nickname' ]) || _.get(this.profile, [ 'mail' ])
       },
       role () {
-        return _.get(this.profile, [ 'role' ])
+        return _.get(_.filter(ROLE_MAP, { key: _.get(this.profile, [ 'role' ]) }), [ 0, 'value' ])
       },
       thumbnail () {
         return _.get(this.profile, [ 'image', 'url' ], '/public/icons/exclamation.png')

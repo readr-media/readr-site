@@ -43,6 +43,7 @@
   background-color rgba(0,0,0,.6)
   &__btn
     &--close
+      cursor pointer
       position absolute
       top -5px
       right -55px
@@ -56,8 +57,6 @@
     justify-content center
     align-items center
     position relative
-    width 900px
-    padding 25px 95px
     background-color #fff
     border 5px solid #d8ca21
   &__curtain

@@ -1,6 +1,5 @@
 <template>
-  <div class="member-editor" :class="{ result: message }" v-if="shouldShow">
-    <div class="member-editor__modal" @click="closeEditor"></div>
+  <div class="member-editor" :class="{ result: message }">
     <div class="member-editor__form" v-if="action !== 'delete'">
       <div class="title" v-text="title" v-if="!message"></div>
       <div class="email">
@@ -108,9 +107,6 @@
     },
     name: 'mamber-editor',
     methods: {
-      closeEditor () {
-        this.$emit('close')
-      },
       fillHandler (key, value) {
         switch (key) {
           case 'email':
@@ -170,7 +166,6 @@
           consoleLogOnDev({ msg: 'role wrong, ' + this.selectedRole })
         }
         this.$forceUpdate()
-        console.log('pass', pass)
         return pass
       }
     },
@@ -188,26 +183,15 @@
   .member-editor
     width 100%
     height 100%
-    background-color rgba(0, 0, 0, 0.5)
-    position fixed
-    top 0
-    left 0
     display flex
     justify-content center
     align-items center
+    position relative
     &.result
       .member-editor__form
         height 112px
-    &__modal
-      position absolute
-      z-index 1
-      top 0
-      left 0
-      width 100%
-      height 100%
     &__form
       position relative
-      z-index 2
       background-color #fff
       width 250px
       height 140px

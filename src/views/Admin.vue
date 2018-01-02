@@ -9,7 +9,9 @@
       <div style="width: 200px; height: 50px; margin: 0 auto;" @click="addMember">add</div>
     </div>
     <MembersPanel></MembersPanel>
-    <MemberAccountEditor :shouldShow="shouldShow" @close="closeEditor" :title="wording.WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER" action="add"></MemberAccountEditor>
+    <BaseLightBox :showLightBox.sync="showLightBox">
+      <MemberAccountEditor slot="postPanelEdit" :shouldShow="showLightBox" :title="wording.WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER" action="add"></MemberAccountEditor>
+    </BaseLightBox>
   </div>
 </template>
 <script>
@@ -17,6 +19,7 @@
   import { WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER } from '../constants'
   import { SECTIONS_DEFAULT } from '../constants'
   import About from '../components/About.vue'
+  import BaseLightBox from '../components/BaseLightBox.vue'
   import Header from '../components/Header.vue'
   import MembersPanel from '../components/admin/MembersPanel.vue'
   import MemberAccountEditor from '../components/admin/MemberAccountEditor.vue'
@@ -26,6 +29,7 @@
     components: {
       'app-header': Header,
       About,
+      BaseLightBox,
       MembersPanel,
       MemberAccountEditor,
       TheBaseControlBar
@@ -40,7 +44,7 @@
     },
     data () {
       return {
-        shouldShow: false,
+        showLightBox: false,
         wording: {
           WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER
         }
@@ -49,10 +53,7 @@
     name: 'admin-page',
     methods: {
       addMember () {
-        this.shouldShow = true
-      },
-      closeEditor () {
-        this.shouldShow = false
+        this.showLightBox = true
       }
     },
     mounted () {}
