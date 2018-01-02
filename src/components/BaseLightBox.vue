@@ -1,8 +1,8 @@
 <template>
   <section v-show="showLightBox" class="baseLightBox">
-    <div class="baseLightBox__container">
+    <div class="baseLightBox__container" :class="containerClass">
       <slot name="postPanelEdit"></slot>
-      <button class="baseLightBox__btn--close" @click="$_baseLightBox_close">close</button>
+      <button class="baseLightBox__btn--close" :class="closeButtonClass" @click="$_baseLightBox_close">close</button>
     </div>
     <div class="baseLightBox__curtain" @click="$_baseLightBox_close"></div>
   </section>
@@ -12,7 +12,25 @@
     name: 'BaseLightBox',
     components: {
     },
+    computed: {
+      closeButtonClass () {
+        return {
+          'hide': this.hideCloseButton
+        }
+      },
+      containerClass () {
+        return {
+          'non-border': this.borderStyle === 'nonBorder' 
+        }
+      }
+    },
     props: {
+      hideCloseButton: {
+        default: false
+      },
+      borderStyle: {
+        default: 'normal'
+      },
       showLightBox: {
         type: Boolean,
         default: false
@@ -49,6 +67,8 @@
       right -55px
       width 50px
       height 50px
+      &.hide
+        display none
   &__container
     position relative
     z-index 10
@@ -59,6 +79,11 @@
     position relative
     background-color #fff
     border 5px solid #d8ca21
+    &.non-border
+      border 5px solid #fff
+    &.non-border ~ .baseLightBox__btn--close
+      top 0
+      left 100%
   &__curtain
     position absolute
     top 0

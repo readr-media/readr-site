@@ -38,6 +38,9 @@
       alertMsg: function () {
         const len = this.alertMsg ? this.alertMsg.length : 0
         this.isTooLong = len > 10
+      },
+      initValue: function () {
+        this.$refs['input'].value = this.initValue
       }
     }
   }

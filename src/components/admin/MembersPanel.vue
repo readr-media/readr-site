@@ -16,8 +16,8 @@
           <div class="actions__delete" v-text="wording.WORDING_ADMIN_DELETE" @click="del(k)"></div>
         </div>      
       </div>
-      <BaseLightBox :showLightBox.sync="showLightBox">
-        <MemberAccountEditor :title="editorTitle" :member="targMember" :action="action"></MemberAccountEditor>
+      <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder" :hideCloseButton="true">
+        <MemberAccountEditor slot="postPanelEdit" v-on:closeLightBox="closeLightBox" :title="editorTitle" :member="targMember" :action="action"></MemberAccountEditor>
       </BaseLightBox>
     </div>
   </div>
@@ -83,7 +83,7 @@
     },
     name: 'member-panel',
     methods: {
-      closeEditor () {
+      closeLightBox () {
         this.showLightBox = false
       },
       del (index) {

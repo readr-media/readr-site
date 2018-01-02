@@ -4,7 +4,7 @@
       <div class="title" v-text="title" v-if="!message"></div>
       <div class="email">
         <span class="label" v-text="wording.WORDING_ADMIN_MEMBER_EDITOR_EMAIL + '：'"></span>
-        <div><InputItem class="admin" inputKey="email" v-on:filled="fillHandler" :disabled="!isEdible" :initValue="emailVal"></InputItem></div>
+        <div><InputItem class="admin" inputKey="email" v-on:filled="fillHandler" :disabled="action === 'add' ? !isEdible : true" :initValue="emailVal"></InputItem></div>
       </div>
       <div class="role">
         <span class="label" v-text="wording.WORDING_ADMIN_ROLE + '：'"></span>
@@ -107,6 +107,9 @@
     },
     name: 'mamber-editor',
     methods: {
+      closeEditor () {
+        this.$emit('closeLightBox')
+      },
       fillHandler (key, value) {
         switch (key) {
           case 'email':
@@ -132,12 +135,12 @@
             updateMember(this.$store, {
               id: this.id,
               mail: this.typedEmail,
-              role: validator.toInt(this.selectedRole)
+              role: this.selectedRole
             }).then(callback)
           } else if (this.action === 'add') {
             register(this.$store, {
               email: this.typedEmail,
-              role: validator.toInt(this.selectedRole)
+              role: this.selectedRole
             }).then(callback)
           } else if (this.action === 'delete') {
             deleteMember(this.$store, {
@@ -175,6 +178,8 @@
       member: function () {
         this.typedEmail = _.get(this.member, [ 'mail' ], null)
         this.selectedRole = _.get(this.member, [ 'role' ], null)
+        this.message = null
+        this.isEdible = true
       }
     }
   }
