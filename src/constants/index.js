@@ -3,7 +3,12 @@ export const PROJECTS = projectList
 
 export const SITE_DOMAIN = 'readr.com'
 
-export const ROLE_MAP = { 1: '會員', 2: '總編', 3: '編輯', 9: 'Admin' }
+export const ROLE_MAP = [
+  { key: 9, value: '管理員' },
+  { key: 3, value: '編輯' },
+  { key: 2, value: '總編' },
+  { key: 1, value: '會員' }
+]
 
 // Login and Rigester Page Use
 export const WORDING_EMAIL = '信箱'

@@ -162,7 +162,7 @@ router.use('/member', auth, function(req, res, next) {
 })
 router.use('/members', auth, function(req, res, next) {
   const role = jwtService.getRole(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
-  if (role === 1) {
+  if (role === 9) {
     next()
   } else {
     res.status(403).send('Forbidden. Invalid token detected.').end()
