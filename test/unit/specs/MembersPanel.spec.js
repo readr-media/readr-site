@@ -19,6 +19,26 @@ describe('MembersPanel.vue', () => {
   it('component MembersPanel should contain a list block', () => {
     expect(memberItems).to.not.be.undefined
   })
+  it('pagination should exist', () => {
+    const pagination = MembersPanelComponent.find('.member-panel__pagination')[0]
+    expect(pagination).to.not.be.undefined
+  })
+  it('component MembersPanel should contain a title bar', () => {
+    const titleBar = memberItems.find('.member-panel__items__item')[0]
+    const checkbox = titleBar.find('.checkbox')[0]
+    const nickname = titleBar.find('.nickname')[0]
+    const email = titleBar.find('.email')[0]
+    const role = titleBar.find('.role')[0]
+    const actions = titleBar.find('.actions')[0]
+    const filter = titleBar.find('.filter')[0]
+    expect(titleBar).to.not.be.undefined
+    expect(checkbox).to.not.be.undefined
+    expect(nickname).to.not.be.undefined
+    expect(email).to.not.be.undefined
+    expect(role).to.not.be.undefined
+    expect(actions).to.not.be.undefined
+    expect(filter).to.not.be.undefined
+  })
 
   const memberList = [
     { nickname: '1', mail: 'a', role: 1 },
