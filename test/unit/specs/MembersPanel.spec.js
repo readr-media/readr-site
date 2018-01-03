@@ -1,5 +1,6 @@
 import MembersPanel from 'src/components/admin/MembersPanel.vue'
 // import sinon from 'sinon'
+import _ from 'lodash'
 import { WORDING_ADMIN_NICKNAME, WORDING_ADMIN_EMAIL, WORDING_ADMIN_ROLE } from 'src/constants'
 import { ROLE_MAP } from 'src/constants'
 import { mount } from 'avoriaz'
@@ -42,7 +43,7 @@ describe('MembersPanel.vue', () => {
       if (i !== 0) {
         expect(nickname.text()).to.be.string(memberList[i - 1].nickname)
         expect(email.text()).to.be.string(memberList[i - 1].mail)
-        expect(role.text()).to.be.string(ROLE_MAP[ memberList[i - 1].role ])
+        expect(role.text()).to.be.string(_.get(_.filter(ROLE_MAP, { key: memberList[i - 1].role }), [ 0, 'value' ]))
       } else {
         expect(nickname.text()).to.be.string(WORDING_ADMIN_NICKNAME)
         expect(email.text()).to.be.string(WORDING_ADMIN_EMAIL)
