@@ -17,7 +17,7 @@
           <div class="actions__guesteditor" v-text="wording.WORDING_ADMIN_GUESTEDITOR"></div>
         </div>
         <div class="filter title">
-          <select>
+          <select @change="filterChanged">
             <option v-for="opt in filterOpts" v-text="opt.title" :value="opt.key"></option>
           </select>
         </div>
@@ -55,12 +55,12 @@
   const PAGE = 1
   const SORT = 'updated_at'
 
-  const getMembers = (store, { page }) => {
+  const getMembers = (store, { page, sort }) => {
     return store.dispatch('GET_MEMBERS', {
       params: {
         max_result: MAXRESULT,
         page: page || PAGE,
-        sort: SORT
+        sort: sort || SORT
       }
     })
   }
@@ -92,6 +92,8 @@
     data () {
       return {
         action: 'update',
+        currPage: 1,
+        currSort: 'updated_at',
         editorTitle: '',
         showLightBox: false,
         targMember: null,
@@ -119,10 +121,19 @@
         this.targMember = this.members[ index ]
         this.editorTitle = this.wording.WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION
       },
+      filterChanged (event) {
+        this.currSort = event.target.value
+        getMembers(this.$store, {
+          page: this.currPage,
+          sort: this.currSort
+        })
+      },
       getValue,
       pageChanged (index) {
+        this.currPage = index
         getMembers(this.$store, {
-          page: index
+          page: this.currPage,
+          sort: this.currSort
         })
       },
       update (index) {
@@ -213,11 +224,52 @@
               &.actions__guesteditor
                 width 100px
           &.filter
-            width 110px
+            width 105px
+            position relative
+            padding 0
+            border 1px solid #808080
+            border-radius 4px
+            overflow hidden
+            background-color #fff
+            cursor pointer
+            
+            &:hover
+              padding 0
+              border 1px solid rgba(128, 128, 128, 0.5)
+              &::before
+                opacity 0.5
+
+
+            &::before
+              content ''
+              position absolute
+              top 0
+              right 0
+              background-color #fff
+              background-repeat no-repeat
+              background-position center center
+              background-size 7px auto
+              background-image url(/public/icons/triangle-grey.png)
+              display block
+              width 15px
+              height 100%
+              border-left 1px solid #808080
+              z-index 1
+
             > select
               color #808080
-              padding 0
-              // > option
+              padding 5px 15px 5px 8px
+              width 130%
+              border none
+              box-shadow none
+              background-color transparent
+              background-image none
+              appearance none
+              outline none
+              cursor pointer
+              position relative
+              z-index 2
+
 
   @media (min-width 800px)
     .member-panel
