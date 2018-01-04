@@ -17,7 +17,7 @@
           <div class="actions__guesteditor" v-text="wording.WORDING_ADMIN_GUESTEDITOR"></div>
         </div>
         <div class="filter title">
-          <select>
+          <select @change="filterChanged">
             <option v-for="opt in filterOpts" v-text="opt.title" :value="opt.key"></option>
           </select>
         </div>
@@ -55,12 +55,12 @@
   const PAGE = 1
   const SORT = 'updated_at'
 
-  const getMembers = (store, { page }) => {
+  const getMembers = (store, { page, sort }) => {
     return store.dispatch('GET_MEMBERS', {
       params: {
         max_result: MAXRESULT,
         page: page || PAGE,
-        sort: SORT
+        sort: sort || SORT
       }
     })
   }
@@ -92,6 +92,8 @@
     data () {
       return {
         action: 'update',
+        currPage: 1,
+        currSort: 'updated_at',
         editorTitle: '',
         showLightBox: false,
         targMember: null,
@@ -119,10 +121,19 @@
         this.targMember = this.members[ index ]
         this.editorTitle = this.wording.WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION
       },
+      filterChanged (event) {
+        this.currSort = event.target.value
+        getMembers(this.$store, {
+          page: this.currPage,
+          sort: this.currSort
+        })
+      },
       getValue,
       pageChanged (index) {
+        this.currPage = index
         getMembers(this.$store, {
-          page: index
+          page: this.currPage,
+          sort: this.currSort
         })
       },
       update (index) {
