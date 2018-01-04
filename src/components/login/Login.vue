@@ -22,6 +22,7 @@
 <script>
   import _ from 'lodash'
   import { WORDING_EMAIL, WORDING_FORGET_PASSWORD, WORDING_KEEP_ALIVE, WORDING_LOGIN, WORDING_LOGIN_UNAUTHORIZED, WORDING_LOGIN_INFAIL_VALIDATION_ISSUE, WORDING_PASSWORD, WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL, WORDING_REGISTER_PWD_EMPTY } from '../../constants'
+  import { ROLE_MAP } from '../../constants'
   import { consoleLogOnDev } from '../../util/comm'
   import InputItem from '../form/InputItem.vue'
   import validator from 'validator'
@@ -71,7 +72,8 @@
             keepAlive: this.$refs[ 'keep-alive' ].checked
           }, _.get(this.$store, [ 'state', 'register-token' ])).then((res) => {
             if (res.status === 200) {
-              location.replace('/')
+              const memberCenter = _.get(_.filter(ROLE_MAP, { key: _.get(this.$store, [ 'state', 'profile', 'role' ]) }), [ 0, 'route' ], 'member')
+              location.replace(`/${memberCenter}`)
             } else {
               this.resMsg = this.wording.WORDING_LOGIN_INFAIL_VALIDATION_ISSUE
             }

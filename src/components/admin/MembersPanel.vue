@@ -8,9 +8,9 @@
         <div class="checkbox select-all title">
           <input type="checkbox">
         </div>
-        <div class="nickname title" v-text="wording.WORDING_ADMIN_NICKNAME"></div>
-        <div class="email title" v-text="wording.WORDING_ADMIN_EMAIL"></div>
-        <div class="role title" v-text="wording.WORDING_ADMIN_ROLE"></div>
+        <div class="nickname title"><span v-text="wording.WORDING_ADMIN_NICKNAME"></span></div>
+        <div class="email title"><span v-text="wording.WORDING_ADMIN_EMAIL"></span></div>
+        <div class="role title"><span v-text="wording.WORDING_ADMIN_ROLE"></span></div>
         <div class="actions title">
           <div class="actions__update" v-text="wording.WORDING_ADMIN_UPDATE"></div>
           <div class="actions__delete" v-text="wording.WORDING_ADMIN_DELETE"></div>
@@ -186,6 +186,20 @@
             color #808080
             margin 10px 0
             height 25px
+            cursor pointer
+            > span
+              position relative
+              &::before
+                content ''
+                position absolute
+                top 0
+                left 100%
+                width 15px
+                height 100%
+                background-position center center
+                background-repeat no-repeat
+                background-size 7px auto
+                background-image url(/public/icons/double-triangle.png)
             &.actions
               > div
                 height 100%
