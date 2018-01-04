@@ -44,7 +44,7 @@
   import validator from 'validator'
 
   const register = (store, profile) => {
-    return store.dispatch('REGISTER', {
+    return store.dispatch('ADD_MEMBER', {
       params: profile
     })
   }

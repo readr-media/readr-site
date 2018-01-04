@@ -195,6 +195,16 @@ export function register (params, token) {
   })
 }
 
+export function addMember (params, token) {
+  const url = `${host}/api/member`
+  params.register_mode = 'ordinary'
+  params.id = params.email
+  params.mail = params.email
+  return _doPost(url, params)
+    .then(res => ({ status: res.status }))
+    .catch(err => err)
+}
+
 export function updateMember ({ params }) {
   const url = `${host}/api/member`
   return _doPut(url, params)
