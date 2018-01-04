@@ -34,7 +34,7 @@
           <div class="actions__delete" v-text="wording.WORDING_ADMIN_DELETE" @click="del(k)"></div>
         </div>      
       </div>
-      <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder" :hideCloseButton="true">
+      <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder">
         <MemberAccountEditor slot="postPanelEdit" v-on:closeLightBox="closeLightBox" :title="editorTitle" :member="targMember" :action="action"></MemberAccountEditor>
       </BaseLightBox>
     </div>

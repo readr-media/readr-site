@@ -1,5 +1,5 @@
 <template>
-  <div class="member-editor" :class="{ result: message }">
+  <div class="member-editor" :class="{ result: message, confirm: action === 'delete' }">
     <div class="member-editor__form" v-if="action !== 'delete'">
       <div class="title" v-text="title" v-if="!message"></div>
       <div class="email">
@@ -192,25 +192,28 @@
     justify-content center
     align-items center
     position relative
-    &.result
+    // &.result
+    //   .member-editor__form
+    //     height 112px
+    &.confirm:not(.result)
       .member-editor__form
-        height 112px
+        padding 13.5px 0 50px
     &__form
       position relative
       background-color #fff
-      width 250px
-      height 140px
-      padding 13.5px 0 34.5px
+      width 325px
+      // height 140px
+      padding 13.5px 0 10px
       color #000
       > div
         font-size 0.9375rem
         font-weight 600
-        margin-bottom 5px
+        margin-bottom 6px
         height 21px
         display flex
         justify-content flex-start
         align-items center
-        padding 0 23.5px
+        padding 0 24.5px
         > .label
           margin-right 11px
           width 50px
@@ -222,6 +225,9 @@
         // &.nickname
         //   > .label
         //     width 80px
+        &.title
+          color #4280a2
+          margin-bottom 14px
         &.role
           > .options
             // margin-right 10px
@@ -233,18 +239,20 @@
         &.btn--save
           background-color #4280a2
           color #fff
-          width 203px
+          width calc(100% - 49px)
           height 25px
           display flex
           justify-content center
           align-items center
-          margin 12.5px auto 0
+          margin 20px auto 0
           cursor pointer
+          border-radius 5px
+          
         &.message
           font-size 0.9375rem
           font-weight 600
           color #4280a2
-          margin-top 10px
+          margin-top 23px
         &.btn--set
           position absolute
           bottom 0
@@ -261,7 +269,7 @@
             display inline-flex
             justify-content center
             align-items center
-            font-size 0.625rem
+            font-size 0.9375rem
           > div:first-child
             border-right 1px solid #d3d3d3
 

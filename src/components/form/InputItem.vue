@@ -56,10 +56,10 @@
       width 100%
       > input
         border-bottom 1px solid #d3d3d3
-        height 14px
+        height 16px
         padding 0
         color #000
-        font-size 0.625rem
+        font-size 0.9375rem
         &:disabled
           border-bottom none
     &.alert

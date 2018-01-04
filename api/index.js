@@ -377,6 +377,7 @@ router.post('/register', auth, (req, res) => {
     if (req.body.role !== null && req.body.role !== undefined && !req.body.password) {
       req.body.password = 'none'
     }
+    console.log(req.body)
     sendRequest()
   }
 })
