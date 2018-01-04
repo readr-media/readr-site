@@ -2,7 +2,7 @@ const _ = require('lodash')
 const { API_DEADLINE, API_HOST, API_PORT, API_PROTOCOL, API_TIMEOUT } = require('./config')
 const { GCP_FILE_BUCKET, GOOGLE_CLIENT_ID, GOOGLE_RECAPTCHA_SECRET, DISPOSABLE_TOKEN_WHITE_LIST, SECRET_KEY } = require('./config')
 const { REDIS_AUTH, REDIS_MAX_CLIENT, REDIS_READ_HOST, REDIS_READ_PORT, REDIS_WRITE_HOST, REDIS_WRITE_PORT, REDIS_TIMEOUT } = require('./config')
-const { SERVER_PROTOCOL, SERVER_HOST } = require('./config')
+const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT } = require('./config')
 const { initBucket, makeFilePublic, uploadFileToBucket } = require('./gcs.js')
 const Cookies = require('cookies')
 const GoogleAuth = require('google-auth-library')
@@ -36,7 +36,7 @@ const currSecret = SECRET_KEY || '_csrf_token_key'
 const auth = jwtExpress({ secret: currSecret })
 
 const fetchStaticJson = (req, res, next, jsonFileName) => {
-  const url = `${SERVER_PROTOCOL}://${SERVER_HOST}/json/${jsonFileName}.json`
+  const url = `${SERVER_PROTOCOL}${SERVER_PORT ? ':' + SERVER_PORT : ''}://${SERVER_HOST}/json/${jsonFileName}.json`
   superagent
   .get(url)
   .end((err, response) => {
@@ -96,6 +96,8 @@ const redisWriting = (url, data, callback) => {
       redisPoolWrite.expire(decodeURIComponent(url), REDIS_TIMEOUT, function(error, d) {
         if(error) {
           console.log('failed to set redis expire time. ', decodeURIComponent(url), err)
+        } else {
+          callback && callback()
         }
       })
     }
@@ -109,6 +111,20 @@ router.all('/', function(req, res, next) {
 router.use('/grouped', function(req, res, next) {
   fetchStaticJson(req, res, next, 'grouped')
 })
+
+// parse application/x-www-form-urlencoded
+router.use(bodyParser.urlencoded({ extended: false }))
+// parse application/json
+router.use(bodyParser.json())
+
+const basicPostRequst = (url, req, res, cb) => {
+  superagent
+  .post(url)
+  .send(req.body)
+  .end((err, response) => {
+    cb && cb(err, response)
+  })
+}
 
 const basicGetRequest = (url, req, res, cb) => {
   try {
@@ -159,7 +175,12 @@ router.use('/profile', auth, function(req, res, next) {
   })
 })
 router.use('/member', auth, function(req, res, next) {
-  next()
+  const role = jwtService.getRole(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
+  if (role === 9) {
+    next()
+  } else {
+    res.status(403).send('Forbidden. No right to access.').end()
+  }
 })
 router.use('/members', auth, function(req, res, next) {
   const role = jwtService.getRole(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
@@ -181,6 +202,32 @@ router.use('/status', auth, function(req, res) {
   res.status(200).send(true)
 })
 
+router.use('/activate', function(req, res) {
+  const tokenForActivation = req.url.split('/')[1]
+  jwtService.verifyToken(tokenForActivation, currSecret, (error, decoded) => {
+    const url = `${apiHost}/member`
+     superagent
+    .put(url)
+    .send({
+      id: decoded.id,
+      role: decoded.role || 1,
+      active: 1
+    })
+    .end((err, response) => {
+      if (!err && response) {
+        const redirect_path = decoded.way !== 'admin' ? '/login' : '/change-password'
+        res.status(200).send(`
+          <script>location.replace('${redirect_path}')</script>
+        `)
+      } else {
+        console.log(response.status)
+        console.log(err)
+        res.status(response.status).json(err)
+      }
+    })
+  })
+})
+
 router.get('*', function(req, res) {
   !isTest && console.log(apiHost)  
   !isTest && console.log(decodeURIComponent(req.url))
@@ -199,20 +246,6 @@ router.get('*', function(req, res) {
     }
   })
 })
-
-// parse application/x-www-form-urlencoded
-router.use(bodyParser.urlencoded({ extended: false }))
-// parse application/json
-router.use(bodyParser.json())
-
-const basicPostRequst = (url, req, res, cb) => {
-  superagent
-  .post(url)
-  .send(req.body)
-  .end((err, response) => {
-    cb && cb(err, response)
-  })
-}
 
 router.post('/verify-recaptcha-token', (req, res) => {
   let url = 'https://www.google.com/recaptcha/api/siteverify'
@@ -314,6 +347,23 @@ router.post('/login', auth, (req, res) => {
   }  
 })
 
+const sendActivationMail = ({ id, role, way }, cb) => {
+  const tokenForActivation = jwtService.generateActivateAccountJwt({
+    id, role, way, secret: currSecret
+  })
+  basicPostRequst(`${apiHost}/mail`, { 
+    body: {
+      receiver: ['keithchiang@mirrormedia.mg'],
+      subject: 'Active',
+      content: `
+        hit the following url: <br>
+        <a href="${SERVER_PROTOCOL}://${SERVER_HOST}${SERVER_PORT ? ':' + SERVER_PORT : ''}/api/activate/${tokenForActivation}">click me</a>
+      `
+    }
+  }, {}, (err, res) => {
+    cb && cb(err, res)
+  })
+}
 router.post('/register', auth, (req, res) => {
   consoleLogOnDev({
     msg: `Got a new reuqest of register:
@@ -337,9 +387,19 @@ router.post('/register', auth, (req, res) => {
     const url = `${apiHost}/register`
     basicPostRequst(url, req, res, (err, resp) => {
       if (!err && resp) {
-        res.status(200).end()
+        sendActivationMail({ id: req.body.id, way: 'member' }, (e, response) => {
+          if (!e && response) {
+            res.status(200).end()
+          } else {
+            res.status(response.status).json(e)
+            console.error(`error during register: ${url}`)
+            console.error(e)
+          }
+        })
       } else {
-        res.status(400).json(_.get(err, [ 'response', 'body' ], { Error: 'Error occured.' }))
+        res.status(500).json(_.get(err, [ 'response', 'body' ], { Error: 'Error occured.' }))
+        console.error(`error during register: ${url}`)
+        console.error(err)
       }
     })
   }
@@ -377,7 +437,6 @@ router.post('/register', auth, (req, res) => {
     if (req.body.role !== null && req.body.role !== undefined && !req.body.password) {
       req.body.password = 'none'
     }
-    console.log(req.body)
     sendRequest()
   }
 })
@@ -420,6 +479,34 @@ router.post('/uploadImg', upload.single('image'), (req, res) => {
   })
 })
 
+router.post('*', auth, (req, res) => {
+  const url = `${apiHost}${req.url}`
+   superagent
+  .post(url)
+  .send(req.body)
+  .end((err, response) => {
+    if (!err && response) {
+      if (req.url.indexOf('member') === -1) {
+        res.status(200).end()
+      } else {
+        sendActivationMail({ id: req.body.id, role: req.body.role, way: 'admin' }, (e, response) => {
+          if (!e && response) {
+            res.status(200).end()
+          } else {
+            res.status(response.status).json(e)
+            console.error(`error during register: ${url}`)
+            console.error(e)
+          }
+        })
+      }
+    } else {
+      console.log('error occurred when handling a req,', req.url)
+      console.log(err)
+      res.status(500).json(err)
+    }
+  })
+})
+
 router.put('*', auth, function (req, res) {
   const url = `${apiHost}${req.url}`
    superagent
@@ -429,7 +516,7 @@ router.put('*', auth, function (req, res) {
     if (!err && response) {
       res.status(200).end()
     } else {
-      res.json(err)
+      res.status(500).json(err)
     }
   })
 })

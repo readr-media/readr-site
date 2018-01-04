@@ -1,4 +1,5 @@
 import {
+  addMember,
   addPost,
   checkLoginStatus,
   deleteMember,
@@ -14,6 +15,9 @@ import {
 } from '../api'
 
 export default {
+  ADD_MEMBER: ({ commit, dispatch, state }, { params }) => {
+    return addMember(params)
+  },
   ADD_POST: ({ commit, dispatch, state }, { params }) => {
     return addPost(params)
   },
