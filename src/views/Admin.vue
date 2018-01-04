@@ -3,10 +3,7 @@
     <app-header :sections="sections"></app-header>
     <About :profile="profile"></About>
     <div class="control-bar">
-      <TheBaseControlBar></TheBaseControlBar>
-    </div>
-    <div class="management-items">
-      <div style="width: 200px; height: 50px; margin: 0 auto;" @click="addMember">add</div>
+      <TheBaseControlBar @manageAccount="manageMember" @addAccount="addMember"></TheBaseControlBar>
     </div>
     <MembersPanel></MembersPanel>
     <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder">
@@ -54,6 +51,9 @@
     methods: {
       addMember () {
         this.showLightBox = true
+      },
+      manageMember () {
+
       }
     },
     mounted () {}
