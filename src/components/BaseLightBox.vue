@@ -20,7 +20,7 @@
       },
       containerClass () {
         return {
-          'non-border': this.borderStyle === 'nonBorder' 
+          'non-border': this.borderStyle === 'nonBorder'
         }
       }
     },

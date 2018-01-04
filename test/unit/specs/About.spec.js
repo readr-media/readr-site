@@ -1,5 +1,6 @@
+import _ from 'lodash'
 import About from 'src/components/About.vue'
-// import sinon from 'sinon'
+import { ROLE_MAP } from 'src/constants'
 import { mount } from 'avoriaz'
 
 describe('About.vue', () => {
@@ -18,11 +19,11 @@ describe('About.vue', () => {
   it('block name should render correct name and introduction', () => {
     const profile = {
       name: 'Justin BB',
-      role: 'admin',
       description: '先速不生間發，處水是車內可紅，這在心相日價得推會當術重而而地後，把人司小一活整資為，家身無就好空人算請著營種的變車商突：臉我安以可吃結出而技冷水新戰口都紀！通快低死事媽兩建子那與的畫語了係來站車外。',
       image: {
         url: '/public/icons/exclamation.png'
-      }
+      },
+      role: 1
     }
     const AboutWithProfile = mount(About)
     AboutWithProfile.setProps({
@@ -33,7 +34,7 @@ describe('About.vue', () => {
     const introductionWithProfile = AboutWithProfile.find('.about__introduction')[0]
     const imageWithProfile = AboutWithProfile.find('.about__thumbnail > img')[0]
     expect(nameWithProfile.text()).to.be.string(profile.name)
-    expect(roleWithProfile.text()).to.be.string(profile.role)
+    expect(roleWithProfile.text()).to.be.string(_.get(_.filter(ROLE_MAP, { key: profile.role }), [ 0, 'value' ]))
     expect(introductionWithProfile.text()).to.be.string(profile.description)
     expect(imageWithProfile.getAttribute('src')).to.be.string(profile.image.url)
   })

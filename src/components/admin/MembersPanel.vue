@@ -1,13 +1,31 @@
 <template>
   <div class="member-panel">
+    <div class="member-panel__pagination">
+      <PaginationNav :totalPages="10" @pageChanged="pageChanged"></PaginationNav>
+    </div>
     <div class="member-panel__items">
       <div class="member-panel__items__item">
+        <div class="checkbox select-all title">
+          <input type="checkbox">
+        </div>
         <div class="nickname title" v-text="wording.WORDING_ADMIN_NICKNAME"></div>
         <div class="email title" v-text="wording.WORDING_ADMIN_EMAIL"></div>
         <div class="role title" v-text="wording.WORDING_ADMIN_ROLE"></div>
-        <div class="actions title"></div>
+        <div class="actions title">
+          <div class="actions__update" v-text="wording.WORDING_ADMIN_UPDATE"></div>
+          <div class="actions__delete" v-text="wording.WORDING_ADMIN_DELETE"></div>
+          <div class="actions__guesteditor" v-text="wording.WORDING_ADMIN_GUESTEDITOR"></div>
+        </div>
+        <div class="filter title">
+          <select>
+            <option v-for="opt in filterOpts" v-text="opt.title" :value="opt.key"></option>
+          </select>
+        </div>
       </div>
       <div class="member-panel__items__item" v-for="(m, k) in members">
+        <div class="checkbox">
+          <input type="checkbox">
+        </div>
         <div class="nickname" v-text="getValue(m, [ 'nickname' ])"></div>
         <div class="email" v-text="getValue(m, [ 'mail' ])"></div>
         <div class="role" v-text="getValue(roles, [ getValue(m, [ 'role' ], 1) ], '-')"></div>
@@ -25,14 +43,16 @@
 <script>
   import _ from 'lodash'
   import { WORDING_ADMIN_ACCOUNT, WORDING_ADMIN_EMAIL, WORDING_ADMIN_ROLE, WORDING_ADMIN_UPDATE, WORDING_ADMIN_DELETE } from '../../constants'
-  import { WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER, WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION, WORDING_ADMIN_NICKNAME } from '../../constants'
+  import { WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER, WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION, WORDING_ADMIN_NICKNAME, WORDING_ADMIN_GUESTEDITOR } from '../../constants'
+  import { FILTER } from '../../constants/admin'
   import { ROLE_MAP } from '../../constants'
   import { getValue } from '../../util/comm'
   import BaseLightBox from '../BaseLightBox.vue'
   import MemberAccountEditor from './MemberAccountEditor.vue'
+  import PaginationNav from '../PaginationNav.vue'
 
-  const MAXRESULT = 5
-  const PAGE = 3
+  const MAXRESULT = 20
+  const PAGE = 1
   const SORT = 'updated_at'
 
   const getMembers = (store, { page }) => {
@@ -45,14 +65,20 @@
     })
   }
 
+  // const FAKE_PAGES = 10
+
   export default {
     components: {
       BaseLightBox,
-      MemberAccountEditor
+      MemberAccountEditor,
+      PaginationNav
     },
     computed: {
       members () {
         return _.get(this.$store, [ 'state', 'members' ], [])
+      },
+      filterOpts () {
+        return FILTER
       },
       roles () {
         const roles = {}
@@ -77,7 +103,8 @@
           WORDING_ADMIN_DELETE,
           WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER,
           WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION,
-          WORDING_ADMIN_NICKNAME
+          WORDING_ADMIN_NICKNAME,
+          WORDING_ADMIN_GUESTEDITOR
         }
       }
     },
@@ -93,6 +120,11 @@
         this.editorTitle = this.wording.WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION
       },
       getValue,
+      pageChanged (index) {
+        getMembers(this.$store, {
+          page: index
+        })
+      },
       update (index) {
         this.action = 'update'
         this.showLightBox = true
@@ -113,43 +145,85 @@
     width 100%
     margin 30px auto
     border solid 2.5px #d8ca21
-    padding 23.5px 0
+    padding 23.5px 75px 45px
+    &__pagination
+      height 20px
+      top 36px
+      width 100%
+      text-align right
     &__items
       width 100%
-      margin 0 auto
+      margin 25px auto 0
       &__item
-        padding 0 85px
-        &:not(:first-child)
+        // padding 0 85px
+        &:first-child
+          border-bottom 2px solid #808080
+          margin-bottom 8px
+        &:not(:first-child):not(:nth-child(2))
           border-top 1px solid #d3d3d3
         > div
-          display inline-block
-          font-size 0.625rem
+          display inline-flex
+          justify-content flex-start
+          align-items center
+
+          font-size 0.9375rem
           word-break break-all
           vertical-align top
           &.title
-            font-size 0.9375rem
+            font-size 1.125rem
+            font-weight 600
+            color #808080
             margin 10px 0
+            height 25px
+            &.actions
+              > div
+                height 100%
+                color #fff
+                background-color #808080
+                border-radius 4px
+
           &:not(.title)
-            padding 5px 5px 5px 0
+            padding 5px 10px 5px 0
+          &.checkbox
+            width 25px
+            > input[type="checkbox"]
+              vertical-align top
+              width 15px
+              height 15px
           &.nickname
             width 80px
           &.email
-            width 165px
+            width 275px
           &.role
-            width 80px
+            width 63px
           &.actions
-            width 70px
+            width 240px
             > div
-              display inline-block
+              display inline-flex
+              justify-content center
+              align-items center
+              padding 0 12px
               color #4280a2
               cursor pointer
               margin-right 6.5px
+              &.actions__update
+                width 60px
+              &.actions__delete
+                width 60px
+              &.actions__guesteditor
+                width 100px
+          &.filter
+            width 110px
+            > select
+              color #808080
+              padding 0
+              // > option
 
-  @media (min-width 550px)
+  @media (min-width 800px)
     .member-panel
-      &__items
-        max-width 570px    
-  @media (min-width 720px)
+      &__items, &__pagination
+        max-width 800px
+  @media (min-width 950px)
     .member-panel
-      max-width 720px
+      max-width 950px
 </style>
