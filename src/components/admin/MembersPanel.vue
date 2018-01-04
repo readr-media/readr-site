@@ -224,11 +224,52 @@
               &.actions__guesteditor
                 width 100px
           &.filter
-            width 110px
+            width 105px
+            position relative
+            padding 0
+            border 1px solid #808080
+            border-radius 4px
+            overflow hidden
+            background-color #fff
+            cursor pointer
+            
+            &:hover
+              padding 0
+              border 1px solid rgba(128, 128, 128, 0.5)
+              &::before
+                opacity 0.5
+
+
+            &::before
+              content ''
+              position absolute
+              top 0
+              right 0
+              background-color #fff
+              background-repeat no-repeat
+              background-position center center
+              background-size 7px auto
+              background-image url(/public/icons/triangle-grey.png)
+              display block
+              width 15px
+              height 100%
+              border-left 1px solid #808080
+              z-index 1
+
             > select
               color #808080
-              padding 0
-              // > option
+              padding 5px 15px 5px 8px
+              width 130%
+              border none
+              box-shadow none
+              background-color transparent
+              background-image none
+              appearance none
+              outline none
+              cursor pointer
+              position relative
+              z-index 2
+
 
   @media (min-width 800px)
     .member-panel

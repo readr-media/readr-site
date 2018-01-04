@@ -1,18 +1,23 @@
 import PaginationNav from 'src/components/PaginationNav.vue'
-// import sinon from 'sinon'
+import sinon from 'sinon'
 // import _ from 'lodash'
 import { mount } from 'avoriaz'
 
 describe('PaginationNav.vue', () => {
-  const PaginationNavCom = mount(PaginationNav, {
-    props: {
-      totalPages: 10
-    }
-  })
+  sinon.stub(PaginationNav, 'mounted').callsFake(() => {})
+  const PaginationNavCom = mount(PaginationNav)
   it('component PaginationNav should have class name \"pagination-nav\"', () => {
+    const totalPages = 10
+    PaginationNavCom.setProps({
+      totalPages
+    })
     expect(PaginationNavCom.hasClass('pagination-nav')).to.equal(true)
   })
   it('component paginationNav should contain few block', () => {
+    const totalPages = 10
+    PaginationNavCom.setProps({
+      totalPages
+    })
     const prev = PaginationNavCom.find('.pagination-nav__prev')[0]
     const next = PaginationNavCom.find('.pagination-nav__next')[0]
     expect(prev).to.not.be.undefined
