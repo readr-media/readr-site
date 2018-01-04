@@ -28,7 +28,8 @@
   .radio-container
     cursor pointer
     &.admin
-      font-size 0.625rem
+      font-size 0.9375rem
+      font-weight 300
     &.disabled
       .radio--mock
         cursor default
@@ -36,19 +37,19 @@
       display none
       &:checked ~ .radio--mock
         > .radio
-          background-color #979797
+          background-color #000
     .radio--mock
       position relative
-      padding-left 15px
+      padding-left 20px
       cursor pointer
       > .radio
         display block
         position absolute
         left 0
         top 50%
-        border solid 1px #979797
-        border-radius 2.5px
-        width 10px
-        height 10px
-        margin-top -5px
+        border solid 1px #000
+        border-radius 50%
+        width 16px
+        height 16px
+        margin-top -8px
 </style>

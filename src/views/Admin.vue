@@ -9,7 +9,7 @@
       <div style="width: 200px; height: 50px; margin: 0 auto;" @click="addMember">add</div>
     </div>
     <MembersPanel></MembersPanel>
-    <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder" :hideCloseButton="true">
+    <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder">
       <MemberAccountEditor slot="postPanelEdit" :shouldShow="showLightBox" :title="wording.WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER" action="add"></MemberAccountEditor>
     </BaseLightBox>
   </div>
