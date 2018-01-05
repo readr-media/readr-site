@@ -1,17 +1,12 @@
 import MembersPanel from 'src/components/admin/MembersPanel.vue'
-// import sinon from 'sinon'
+import PaginationNav from 'src/components/PaginationNav.vue'
 import _ from 'lodash'
 import { WORDING_ADMIN_NICKNAME, WORDING_ADMIN_EMAIL, WORDING_ADMIN_ROLE } from 'src/constants'
 import { ROLE_MAP } from 'src/constants'
 import { mount } from 'avoriaz'
 
 describe('MembersPanel.vue', () => {
-  // sinon.stub(MembersPanel, 'beforeMount')
   const MembersPanelComponent = mount(MembersPanel)
-  // const id = MembersPanelComponent.find('member-panel__id')
-  // const email = MembersPanelComponent.find('member-panel__email')
-  // const role = MembersPanelComponent.find('member-panel__role')
-  // const actions = MembersPanelComponent.find('member-panel__actions')
   const memberItems = MembersPanelComponent.find('.member-panel__items')[0]
   it('component MembersPanel should have class=member-panel', () => {
     expect(MembersPanelComponent.hasClass('member-panel')).to.equal(true)
@@ -22,6 +17,7 @@ describe('MembersPanel.vue', () => {
   it('pagination should exist', () => {
     const pagination = MembersPanelComponent.find('.member-panel__pagination')[0]
     expect(pagination).to.not.be.undefined
+    expect(pagination.contains(PaginationNav)).to.equal(true)
   })
   it('component MembersPanel should contain a title bar', () => {
     const titleBar = memberItems.find('.member-panel__items__item')[0]
@@ -68,6 +64,24 @@ describe('MembersPanel.vue', () => {
         expect(nickname.text()).to.be.string(WORDING_ADMIN_NICKNAME)
         expect(email.text()).to.be.string(WORDING_ADMIN_EMAIL)
         expect(role.text()).to.be.string(WORDING_ADMIN_ROLE)
+      }
+    })
+  })
+  it('click update or del btn on each member data would call up member editor', () => {
+    memberItemsWidthMemberList.map((m, i) => {
+      if (i > 0) {
+        const updateBtn = m.first('.actions__update')
+        const deleteBtn = m.first('.actions__delete')
+        updateBtn.trigger('click')
+        expect(MembersPanelComponentWidthMemberList.vm.showLightBox).to.equal(true)
+        MembersPanelComponentWidthMemberList.setData({
+          showLightBox: false
+        })
+        deleteBtn.trigger('click')
+        expect(MembersPanelComponentWidthMemberList.vm.showLightBox).to.equal(true)
+        MembersPanelComponentWidthMemberList.setData({
+          showLightBox: false
+        })
       }
     })
   })
