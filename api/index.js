@@ -353,7 +353,7 @@ const sendActivationMail = ({ id, role, way }, cb) => {
   })
   basicPostRequst(`${apiHost}/mail`, { 
     body: {
-      receiver: ['keithchiang@mirrormedia.mg'],
+      receiver: ['keithchiang@mirrormedia.mg','mushin@mirrormedia.mg'],
       subject: 'Active',
       content: `
         hit the following url: <br>
