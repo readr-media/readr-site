@@ -1,12 +1,15 @@
 import About from 'src/components/About.vue'
 import Admin from 'src/views/Admin.vue'
+import BaseLightBox from 'src/components/BaseLightBox.vue'
 import Header from 'src/components/Header.vue'
 import MembersPanel from 'src/components/admin/MembersPanel.vue'
+import MemberAccountEditor from 'src/components/admin/MemberAccountEditor.vue'
+import TheBaseControlBar from 'src/components/TheBaseControlBar.vue'
 import sinon from 'sinon'
 import { mount } from 'avoriaz'
 
 describe('Admin.vue', () => {
-  sinon.stub(MembersPanel, 'beforeMount')
+  sinon.stub(Admin, 'beforeMount')
   const viewAdminComponent = mount(Admin)
   it('view admin should have class=admin', () => {
     expect(viewAdminComponent.hasClass('admin')).to.equal(true)
@@ -18,8 +21,25 @@ describe('Admin.vue', () => {
     expect(viewAdminComponent.contains(About)).to.equal(true)
   })
   it('view admin should contain management block', () => {
-    const management = viewAdminComponent.find('.management-items')[0]
-    expect(management).to.not.be.undefined
+    expect(viewAdminComponent.contains(TheBaseControlBar)).to.equal(true)
+  })
+  it('there\'s a add member btn, after clicking it, the var showLightBox would be true', () => {
+    const addMemberBtn = viewAdminComponent.find('.controlBar--btn').filter((btn) => {
+      return btn.text() === '新增帳號'
+    })[ 0 ]
+    expect(addMemberBtn).to.not.be.undefind
+
+    addMemberBtn.trigger('click')
+    expect(viewAdminComponent.vm.showLightBox).to.equal(true)
+  })
+  it('view admin should contain a lighbox which is used to contain the mamber editor', () => {
+    expect(viewAdminComponent.contains(BaseLightBox)).to.equal(true)
+  })
+  it('lightbox should contain component member editor', () => {
+    const lightBoxes = viewAdminComponent.find(BaseLightBox)
+    for (let i = 0; i < lightBoxes.length; i += 1) {
+      expect(lightBoxes[ i ].contains(MemberAccountEditor)).to.equal(true)
+    }
   })
   it('view admin should contain component membersPanel', () => {
     expect(viewAdminComponent.contains(MembersPanel)).to.equal(true)
