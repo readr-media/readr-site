@@ -68,7 +68,7 @@
       },
       logout () {
         removeToken().then(() => {
-          location && location.reload()
+          location && location.replace('/')
         })
       }
     },
