@@ -127,6 +127,7 @@
               } else {
                 this.message = this.wording.WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL + '！'
               }
+              this.$emit('updated')
             } else {
               this.message = this.title + this.wording.WORDING_ADMIN_INFAIL
             }

@@ -2,7 +2,7 @@
   <section v-show="showLightBox" class="baseLightBox">
     <div class="baseLightBox__container" :class="containerClass">
       <slot name="postPanelEdit"></slot>
-      <button class="baseLightBox__btn--close" :class="closeButtonClass" @click="$_baseLightBox_close">close</button>
+      <button class="baseLightBox__btn--close" :class="closeButtonClass" @click="$_baseLightBox_close"></button>
     </div>
     <div class="baseLightBox__curtain" @click="$_baseLightBox_close"></div>
   </section>
@@ -20,16 +20,20 @@
       },
       containerClass () {
         return {
-          'non-border': this.borderStyle === 'nonBorder'
+          'non-border': this.borderStyle === 'nonBorder',
+          'conversation': this.isConversation
         }
       }
     },
     props: {
-      hideCloseButton: {
-        default: false
-      },
       borderStyle: {
         default: 'normal'
+      },
+      isConversation: {
+        default: false
+      },
+      hideCloseButton: {
+        default: false
       },
       showLightBox: {
         type: Boolean,
@@ -67,6 +71,12 @@
       right -55px
       width 50px
       height 50px
+      background-position center center
+      background-repeat no-repeat
+      background-size cover
+      background-image url(/public/icons/shutdown.jpg)
+      outline none
+      border none
       &.hide
         display none
   &__container
@@ -80,10 +90,16 @@
     background-color #fff
     border 5px solid #d8ca21
     &.non-border
-      border 5px solid #fff
-    &.non-border ~ .baseLightBox__btn--close
-      top 0
-      left 100%
+      border none
+    &.non-border 
+      > .baseLightBox__btn--close
+        top 0
+        left 100%
+        right auto
+    &.conversation
+      > .baseLightBox__btn--close
+        width 25px
+        height 25px
   &__curtain
     position absolute
     top 0
