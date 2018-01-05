@@ -34,8 +34,8 @@
           <div class="actions__delete" v-text="wording.WORDING_ADMIN_DELETE" @click="del(k)"></div>
         </div>      
       </div>
-      <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder">
-        <MemberAccountEditor slot="postPanelEdit" v-on:closeLightBox="closeLightBox" :title="editorTitle" :member="targMember" :action="action"></MemberAccountEditor>
+      <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder" :isConversation="true">
+        <MemberAccountEditor slot="postPanelEdit" @updated="updated" @closeLightBox="closeLightBox" :title="editorTitle" :member="targMember" :action="action"></MemberAccountEditor>
       </BaseLightBox>
     </div>
   </div>
@@ -50,22 +50,6 @@
   import BaseLightBox from '../BaseLightBox.vue'
   import MemberAccountEditor from './MemberAccountEditor.vue'
   import PaginationNav from '../PaginationNav.vue'
-
-  const MAXRESULT = 20
-  const PAGE = 1
-  const SORT = 'updated_at'
-
-  const getMembers = (store, { page, sort }) => {
-    return store.dispatch('GET_MEMBERS', {
-      params: {
-        max_result: MAXRESULT,
-        page: page || PAGE,
-        sort: sort || SORT
-      }
-    })
-  }
-
-  // const FAKE_PAGES = 10
 
   export default {
     components: {
@@ -92,8 +76,6 @@
     data () {
       return {
         action: 'update',
-        currPage: 1,
-        currSort: 'updated_at',
         editorTitle: '',
         showLightBox: false,
         targMember: null,
@@ -122,33 +104,23 @@
         this.editorTitle = this.wording.WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION
       },
       filterChanged (event) {
-        this.currSort = event.target.value
-        getMembers(this.$store, {
-          page: this.currPage,
-          sort: this.currSort
-        })
+        this.$emit('filterChanged', { sort: event.target.value })
       },
       getValue,
       pageChanged (index) {
-        this.currPage = index
-        getMembers(this.$store, {
-          page: this.currPage,
-          sort: this.currSort
-        })
+        this.$emit('filterChanged', { page: index })
       },
       update (index) {
         this.action = 'update'
         this.showLightBox = true
         this.targMember = this.members[ index ]
         this.editorTitle = this.wording.WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER
+      },
+      updated () {
+        this.$emit('filterChanged')
       }
     },
-    mounted () {},
-    beforeMount () {
-      Promise.all([
-        getMembers(this.$store, {})
-      ])
-    }
+    mounted () {}
   }
 </script>
 <style lang="stylus" scoped>
