@@ -136,7 +136,11 @@ export function getMembers ({ params }) {
 }
 
 export function getPosts ({ params }) {
-  const url = `${host}/api/posts`
+  let url = `${host}/api/posts`
+  const query = _buildQuery(params)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }
   return _doFetchStrict(url)
 }
 

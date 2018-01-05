@@ -44,7 +44,7 @@ export default {
   GET_POSTS: ({ commit, dispatch, state }, { params }) => {
     return getPosts({ params }).then(({ status, body }) => {
       if (status === 200) {
-        commit('SET_POSTS', { members: body })
+        commit('SET_POSTS', { posts: body })
       }
     })
   },
