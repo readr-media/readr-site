@@ -15,6 +15,9 @@ export default {
   SET_MEMBERS: (state, { members }) => {
     state['members'] = members
   },
+  SET_POSTS: (state, { posts }) => {
+    state['posts'] = posts
+  },
   SET_PROFILE: (state, { profile }) => {
     state['profile'] = profile
   }

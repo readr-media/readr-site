@@ -3,15 +3,14 @@
     <app-header :sections="sections"></app-header>
     <main class="guestEditor__main">
       <app-about :profile="profile"></app-about>
-      <base-control-bar v-on:addPost="$_guestEditor_lightBoxHandler(true)"></base-control-bar>
+      <base-control-bar v-on:addPost="$_guestEditor_lightBoxHandler(true, 'add')"></base-control-bar>
       <section class="guestEditor__manager">
         <template>
-          <div class="guestEditor__List">
-          </div>
+          <post-list :posts="posts" v-on:editPost="$_guestEditor_editPost"></post-list>
         </template>
       </section>
       <base-light-box :showLightBox.sync="showLightBox">
-        <post-panel-edit slot="postPanelEdit" :showLightBox="showLightBox" v-on:closeLightBox="$_guestEditor_lightBoxHandler(false)"></post-panel-edit>
+        <post-panel-edit slot="postPanelEdit" :post="post" :showLightBox="showLightBox" :status="status" v-on:closeLightBox="$_guestEditor_lightBoxHandler(false)"></post-panel-edit>
       </base-light-box>
     </main>
   </div>
@@ -21,6 +20,7 @@
   import About from '../components/About.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
   import Header from '../components/Header.vue'
+  import PostList from '../components/PostList.vue'
   import PostPanelEdit from '../components/PostPanelEdit.vue'
   import TheBaseControlBar from '../components/TheBaseControlBar.vue'
 
@@ -32,6 +32,16 @@
     'projects': '新聞專題'
   }
 
+  const fetchPosts = (store, id) => {
+    return store.dispatch('GET_POSTS', {
+      params: {
+        where: {
+          author: id
+        }
+      }
+    })
+  }
+
   export default {
     name: 'GuestEditor',
     components: {
@@ -39,14 +49,20 @@
       'app-header': Header,
       'base-control-bar': TheBaseControlBar,
       'base-light-box': BaseLightBox,
+      'post-list': PostList,
       'post-panel-edit': PostPanelEdit
     },
     data () {
       return {
-        showLightBox: false
+        post: {},
+        showLightBox: false,
+        status: ''
       }
     },
     computed: {
+      posts () {
+        return _.get(this.$store, [ 'state', 'posts' ], [])
+      },
       profile () {
         return _.get(this.$store, [ 'state', 'profile' ], {})
       },
@@ -54,10 +70,23 @@
         return SECTIONS_DEFAULT
       }
     },
-    mounted () {},
+    mounted () {
+    },
     methods: {
-      $_guestEditor_lightBoxHandler (value) {
+      $_guestEditor_editPost (id) {
+        this.status = 'edit'
+        this.showLightBox = true
+        this.post = _.find(this.posts, { 'id': id })
+      },
+      $_guestEditor_lightBoxHandler (value, status) {
+        this.post = {}
         this.showLightBox = value
+        this.status = status
+      }
+    },
+    watch: {
+      profile: function () {
+        fetchPosts(this.$store, _.get(this.profile, [ 'id' ]))
       }
     }
   }
@@ -68,18 +97,9 @@
     width 950px
     max-width 950px
     margin 22px auto 0
-  &__btn
-    padding .2em 0
-    margin 0 .5em
-    color #4280a2
-    font-size 15px
-    font-weight 600
-    background transparent
-    border none
-    border-bottom 1px solid #4280a2
-    cursor pointer
   &__manager
     width 100%
     padding 22px 84px 33px
     border 2px solid #d8ca21
+  
 </style>

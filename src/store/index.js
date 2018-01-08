@@ -11,6 +11,7 @@ export function createStore () {
     state: {
       'isLoggedIn': false,
       'register-token': '',
+      'posts': [],
       'profile': {},
       'members': []
     },

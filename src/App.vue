@@ -12,7 +12,7 @@
   }
 
   export default {
-    mounted () {
+    beforeMount () {
       Promise.all([
         checkLoginStatus(this.$store)
       ])
