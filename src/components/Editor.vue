@@ -39,6 +39,9 @@ export default {
     }
   },
   props: {
+    contentEdit: {
+      default: ''
+    },
     needReset: {
       type: Boolean
     }
@@ -46,6 +49,9 @@ export default {
   watch: {
     content () {
       this.$emit('updateContent', this.content)
+    },
+    contentEdit (val) {
+      this.content = val
     },
     needReset () {
       this.content = ''

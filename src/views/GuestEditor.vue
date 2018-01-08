@@ -3,14 +3,14 @@
     <app-header :sections="sections"></app-header>
     <main class="guestEditor__main">
       <app-about :profile="profile"></app-about>
-      <base-control-bar v-on:addPost="$_guestEditor_lightBoxHandler(true)"></base-control-bar>
+      <base-control-bar v-on:addPost="$_guestEditor_lightBoxHandler(true, 'add')"></base-control-bar>
       <section class="guestEditor__manager">
         <template>
           <post-list :posts="posts" v-on:editPost="$_guestEditor_editPost"></post-list>
         </template>
       </section>
       <base-light-box :showLightBox.sync="showLightBox">
-        <post-panel-edit slot="postPanelEdit" :showLightBox="showLightBox" v-on:closeLightBox="$_guestEditor_lightBoxHandler(false)"></post-panel-edit>
+        <post-panel-edit slot="postPanelEdit" :post="post" :showLightBox="showLightBox" :status="status" v-on:closeLightBox="$_guestEditor_lightBoxHandler(false)"></post-panel-edit>
       </base-light-box>
     </main>
   </div>
@@ -54,7 +54,9 @@
     },
     data () {
       return {
-        showLightBox: false
+        post: {},
+        showLightBox: false,
+        status: ''
       }
     },
     computed: {
@@ -72,11 +74,14 @@
     },
     methods: {
       $_guestEditor_editPost (id) {
+        this.status = 'edit'
         this.showLightBox = true
-        console.log('id', id)
+        this.post = _.find(this.posts, { 'id': id })
       },
-      $_guestEditor_lightBoxHandler (value) {
+      $_guestEditor_lightBoxHandler (value, status) {
+        this.post = {}
         this.showLightBox = value
+        this.status = status
       }
     },
     watch: {
