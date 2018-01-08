@@ -2,7 +2,7 @@
   <table class="postList">
     <thead>
       <tr>
-        <th></th>
+        <th><input type="checkbox"></th>
         <th>暱稱</th>
         <th>標題</th>
         <th>狀態</th>
@@ -38,7 +38,7 @@
     mounted () {},
     methods: {
       $_postList_deletePost (id) {
-        console.log('id', id)
+        this.$emit('deletePost', id)
       },
       $_postList_editPost (id) {
         this.$emit('editPost', id)

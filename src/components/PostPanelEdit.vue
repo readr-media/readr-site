@@ -7,8 +7,8 @@
       <input v-model="link" type="url">
     </div>
     <div class="postPanelEdit__submit">
-      <div class="postPanelEdit__btn draft" @click="$_postPanelEdit_submit">存成草稿</div>
-      <div class="postPanelEdit__btn submit" @click="$_postPanelEdit_submit('pending')">提交</div>
+      <div class="postPanelEdit__btn draft" @click="$_postPanelEdit_submit()">存成草稿</div>
+      <div class="postPanelEdit__btn submit" @click="$_postPanelEdit_submit(2)">提交</div>
     </div>
   </section>
 </template>
@@ -18,6 +18,10 @@
   
   const addPost = (store, params) => {
     return store.dispatch('ADD_POST', { params })
+  }
+
+  const updatePost = (store, params) => {
+    return store.dispatch('UPDATE_POST', { params })
   }
 
   export default {
@@ -48,7 +52,7 @@
     },
     computed: {
       isChange () {
-        return !_.isEmpty(this.link.trim()) || !_.isEmpty(this.title.trim()) || !_.isEmpty(this.content.replace(/<[^>]*>/g, '').trim())
+        return !_.isEmpty(_.trim(this.link)) || !_.isEmpty(_.trim(this.title)) || !_.isEmpty(_.trim(_.replace(this.content, /<[^>]*>/g, '')))
       }
     },
     watch: {
@@ -73,11 +77,9 @@
         this.title = ''
         this.resetToggle = !this.resetToggle
       },
-      $_postPanelEdit_submit (status = undefined) {
+      $_postPanelEdit_submit (status = 3) {
         const params = {}
-        if (status === 'pending') {
-          params.active = 2
-        }
+        params.active = status
         params.author = _.get(this.$store.state, [ 'profile', 'id' ])
         params.updated_by = _.get(this.$store.state, [ 'profile', 'id' ])
         params.title = this.title
@@ -88,6 +90,16 @@
             .then(() => {
               this.$_postPanelEdit_resetContent()
               this.$emit('closeLightBox')
+              this.$emit('updatePostList')
+            })
+        }
+        if (this.status === 'edit') {
+          params.id = _.get(this.post, [ 'id' ])
+          updatePost(this.$store, params)
+            .then(() => {
+              this.$_postPanelEdit_resetContent()
+              this.$emit('closeLightBox')
+              this.$emit('updatePostList')
             })
         }
       },

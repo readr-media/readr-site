@@ -3,6 +3,7 @@ import {
   addPost,
   checkLoginStatus,
   deleteMember,
+  deletePost,
   getDisposableToken,
   getProfile,
   getPosts,
@@ -10,6 +11,7 @@ import {
   login,
   register,
   updateMember,
+  updatePost,
   uploadImage,
   verifyRecaptchaToken
 } from '../api'
@@ -33,6 +35,9 @@ export default {
   },
   DELETE_MEMBER: ({ commit, dispatch, state }, { params }) => {
     return deleteMember({ params })
+  },
+  DELETE_POST: ({ commit, dispatch, state }, { id }) => {
+    return deletePost(id)
   },
   GET_MEMBERS: ({ commit, dispatch, state }, { params }) => {
     return getMembers({ params }).then(({ status, body }) => {
@@ -66,6 +71,9 @@ export default {
   },
   UPDATE_MEMBER: ({ commit, dispatch, state }, { params }) => {
     return updateMember({ params })
+  },
+  UPDATE_POST: ({ commit, dispatch, state }, { params }) => {
+    return updatePost({ params })
   },
   UPLOAD_IMAGE: ({ commit, dispatch }, { file }) => {
     return uploadImage(file)

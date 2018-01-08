@@ -6,11 +6,11 @@
       <base-control-bar v-on:addPost="$_guestEditor_lightBoxHandler(true, 'add')"></base-control-bar>
       <section class="guestEditor__manager">
         <template>
-          <post-list :posts="posts" v-on:editPost="$_guestEditor_editPost"></post-list>
+          <post-list :posts="posts" v-on:deletePost="$_guestEditor_deletePost" v-on:editPost="$_guestEditor_editPost"></post-list>
         </template>
       </section>
       <base-light-box :showLightBox.sync="showLightBox">
-        <post-panel-edit slot="postPanelEdit" :post="post" :showLightBox="showLightBox" :status="status" v-on:closeLightBox="$_guestEditor_lightBoxHandler(false)"></post-panel-edit>
+        <post-panel-edit slot="postPanelEdit" :post="post" :showLightBox="showLightBox" :status="status" v-on:closeLightBox="$_guestEditor_lightBoxHandler(false)" v-on:updatePostList="$_guestEditor_updatePostList"></post-panel-edit>
       </base-light-box>
     </main>
   </div>
@@ -40,6 +40,10 @@
         }
       }
     })
+  }
+
+  const deletePost = (store, id) => {
+    return store.dispatch('DELETE_POST', { id: id })
   }
 
   export default {
@@ -73,6 +77,12 @@
     mounted () {
     },
     methods: {
+      $_guestEditor_deletePost (id) {
+        deletePost(this.$store, id)
+          .then(() => {
+            this.$_guestEditor_updatePostList()
+          })
+      },
       $_guestEditor_editPost (id) {
         this.status = 'edit'
         this.showLightBox = true
@@ -82,6 +92,9 @@
         this.post = {}
         this.showLightBox = value
         this.status = status
+      },
+      $_guestEditor_updatePostList () {
+        fetchPosts(this.$store, _.get(this.profile, [ 'id' ]))
       }
     },
     watch: {

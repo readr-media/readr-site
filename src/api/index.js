@@ -110,6 +110,11 @@ export function addPost (params) {
     .catch(err => err)
 }
 
+export function deletePost (id) {
+  const url = `${host}/api/post/${id}`
+  return _doDelete(url)
+}
+
 export function getDisposableToken (type) {
   const url = `${host}/api/token`
   return new Promise((resolve, reject) => {
@@ -211,6 +216,13 @@ export function addMember (params, token) {
 
 export function updateMember ({ params }) {
   const url = `${host}/api/member`
+  return _doPut(url, params)
+    .then(res => ({ status: res.status }))
+    .catch(err => err)
+}
+
+export function updatePost ({ params }) {
+  const url = `${host}/api/post`
   return _doPut(url, params)
     .then(res => ({ status: res.status }))
     .catch(err => err)
