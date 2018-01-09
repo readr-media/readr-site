@@ -13,6 +13,25 @@ export function getToken () {
     return undefined
   }
 }
+export class ReadrPerm {
+  init (store) {
+    this.store = store
+  }
+  permVerify (comp) {
+    console.log('call', this.store)
+  }
+}
+const readrPerm = new ReadrPerm()
+ReadrPerm.install = (Vue) => {
+  Vue.mixin({
+    created () {
+      readrPerm.init(this.$store)
+    }
+  })
+
+  Vue.prototype.$can = (comp) => readrPerm.permVerify(comp)
+}
+export default ReadrPerm
 export function permVerify (comp) {
   const token = getToken()
   if (token) {

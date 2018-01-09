@@ -42,6 +42,7 @@
     },
     mounted () {
       this.isClientSide = true
+      this.$can('test')
     }
   }
 </script>
