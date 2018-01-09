@@ -10,7 +10,7 @@ const microcache = require('route-cache')
 const requestIp = require('request-ip')
 const resolve = file => path.resolve(__dirname, file)
 const uuidv4 = require('uuid/v4')
-const { GOOGLE_CLIENT_ID } = require('./api/config')
+const { PAGE_CACHE_EXCLUDING, GOOGLE_CLIENT_ID } = require('./api/config')
 const { createBundleRenderer } = require('vue-server-renderer')
 
 const isProd = process.env.NODE_ENV === 'production'
@@ -100,7 +100,9 @@ function render (req, res, next) {
   let isPageNotFound = false
   let isErrorOccurred = false  
 
-  // res.setHeader('Cache-Control', 'public, max-age=3600')  
+  if (_.filter(PAGE_CACHE_EXCLUDING, (p) => (req.url.indexOf(p) > -1)).length === 0) {
+    res.setHeader('Cache-Control', 'public, max-age=3600')  
+  }
   res.setHeader("Content-Type", "text/html")
   res.setHeader("Server", serverInfo)
 

@@ -127,11 +127,11 @@ const basicPostRequst = (url, req, res, cb) => {
   })
 }
 
-const basicGetRequest = (url, req, res, cb) => {
+const basicGetRequest = (url, req, cb) => {
   try {
     redisFetching(req.url, ({ err, data }) => {
       if (!err && data) {
-        res.json(JSON.parse(data))
+        cb && cb( err, data )
       } else {
         superagent
         .get(url)
@@ -141,39 +141,69 @@ const basicGetRequest = (url, req, res, cb) => {
             deadline: API_DEADLINE ? API_DEADLINE : 60000, // but allow 1 minute for the file to finish loading.
           }
         )
-        .end(cb)
+        .end((e, r) => {
+          const dt = JSON.parse(r.text)
+          if (Object.keys(dt).length !== 0 && dt.constructor === Object) {
+            // redisWriting(req.url, r.text)
+          }
+          cb && cb(e, r)
+        })
       }
     })
   } catch (e) {
-    res.send(e)
-    console.error(`error during fetch data from api : ${req.url}`)
-    console.error(e)
+    cb && cb( e, null )
   }
+}
+
+const fetchPermissions = () => {
+  return new Promise((resolve, reject) => {
+    const url = `${apiHost}/permission/all`
+    basicGetRequest(url, { url }, (err, res) => {
+      if (!err && res) {
+        resolve(res.body)
+      } else {
+        reject(err)
+      }
+    })
+  })
+}
+const fetchProfile = (url, req) => {
+  return new Promise((resolve, reject) => {
+    basicGetRequest(url, req, (err, response) => {
+      if (!err && response) {
+        resolve(JSON.parse(response.text))
+      } else {
+        reject(err)
+        console.error(`error during fetch data from : ${url}`)
+        console.error(err)  
+      }
+    })
+  })
 }
 
 router.use('/profile', auth, function(req, res, next) {
   const targetProfile = jwtService.getId(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
   const url = `${apiHost}/member/${targetProfile}`
-  basicGetRequest(url, req, res, (err, response) => {
-    if (!err && response) {
-      const resData = JSON.parse(response.text)
-      // const scopes = _.map( _.filter(SCOPES, (comp) => _.find(comp.perm, (perm) => (_.find(_.get(response, [ 'body', 'permissions' ]), (p) => (perm === p))))), (p) => (p.comp))
-      if (Object.keys(resData).length !== 0 && resData.constructor === Object) {
-        // redisWriting(req.url, response.text)
-      }
-      res.json({
-        name: resData.name,
-        nickname: resData.nickname,
-        mail: resData.mail,
-        description: resData.description,
-        id: resData.id,
-        role: resData.role
-      })
-    } else {
-      res.json(err)
-      console.error(`error during fetch data from : ${url}`)
-      console.error(err)  
-    }
+  Promise.all([
+    fetchProfile(url, req),
+    fetchPermissions()
+  ]).then((response) => {
+    const profile = response[ 0 ]
+    const perms = response[ 1 ]
+    const scopes = _.map( _.filter(SCOPES, (comp) => _.find(comp.perm, (perm) => (_.find(perms, (p) => (perm === p.object && p.role === profile.role))))), (p) => (p.comp))    
+    res.json({
+      name: profile.name,
+      nickname: profile.nickname,
+      mail: profile.mail,
+      description: profile.description,
+      id: profile.id,
+      role: profile.role,
+      scopes
+    })
+  }).catch((err) => {
+    res.status(500).send(err)
+    console.error(`error during fetch data from : ${url}`)
+    console.error(err)
   })
 })
 router.use('/member', auth, function(req, res, next) {
@@ -234,12 +264,9 @@ router.get('*', function(req, res) {
   !isTest && console.log(apiHost)  
   !isTest && console.log(decodeURIComponent(req.url))
   const url = `${apiHost}${req.url}`
-  basicGetRequest(url, req, res, (err, response) => {
+  basicGetRequest(url, req, (err, response) => {
     if (!err && response) {
       const resData = JSON.parse(response.text)
-      if (Object.keys(resData).length !== 0 && resData.constructor === Object) {
-        // redisWriting(req.url, response.text)
-      }
       res.json(resData)
     } else {
       res.json(err)
@@ -311,7 +338,8 @@ router.post('/login', auth, (req, res) => {
           description: _.get(mem, [ 'description' ]),
           id: _.get(mem, [ 'id' ]),
           mail: _.get(mem, [ 'mail' ], req.body.email),
-          role: _.get(mem, [ 'role' ], req.body.email)
+          role: _.get(mem, [ 'role' ], req.body.email),
+          scopes
         }})    
       } else {
         res.status(401).send('Validated in fail. Please offer correct credentials.')

@@ -149,15 +149,15 @@ export function getPosts ({ params }) {
   return _doFetchStrict(url, {})
 }
 
-export function getProfile ({ params: { cookie }}) {
+export function getProfile ({ params = {}}) {
   const url = `${host}/api/profile`
-  return _doFetchStrict(url, { cookie })
+  return _doFetchStrict(url, { cookie: params.cookie })
 }
 
-export function checkLoginStatus ({ params: { cookie }}) {
+export function checkLoginStatus ({ params = {}}) {
   const url = `${host}/api/status`
 
-  return _doFetchStrict(url, { cookie })
+  return _doFetchStrict(url, { cookie: params.cookie })
 }
 
 export function login (params, token) {

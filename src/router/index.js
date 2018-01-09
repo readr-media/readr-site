@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import { ReadrPerm } from '../util/services'
 
 Vue.use(Router)
+Vue.use(ReadrPerm)
 
 if (process.browser) {
   const VueQuillEditor = require('vue-quill-editor/dist/ssr')
