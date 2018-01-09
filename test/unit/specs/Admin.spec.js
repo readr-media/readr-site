@@ -5,11 +5,17 @@ import Header from 'src/components/Header.vue'
 import MembersPanel from 'src/components/admin/MembersPanel.vue'
 import MemberAccountEditor from 'src/components/admin/MemberAccountEditor.vue'
 import TheBaseControlBar from 'src/components/TheBaseControlBar.vue'
+import Vue from 'vue'
 import sinon from 'sinon'
 import { mount } from 'avoriaz'
 
 describe('Admin.vue', () => {
   sinon.stub(Admin, 'beforeMount')
+  sinon.stub(Header, 'beforeMount')
+  // mock $can
+  Vue.use((Vue) => {
+    Vue.prototype.$can = () => (true)
+  })
   const viewAdminComponent = mount(Admin)
   it('view admin should have class=admin', () => {
     expect(viewAdminComponent.hasClass('admin')).to.equal(true)
@@ -23,7 +29,7 @@ describe('Admin.vue', () => {
   it('view admin should contain management block', () => {
     expect(viewAdminComponent.contains(TheBaseControlBar)).to.equal(true)
   })
-  it('there\'s a add member btn, after clicking it, the var showLightBox would be true', () => {
+  it('there\'s an add member btn, after clicking it, the var showLightBox would be true', () => {
     const addMemberBtn = viewAdminComponent.find('.controlBar--btn').filter((btn) => {
       return btn.text() === '新增帳號'
     })[ 0 ]
