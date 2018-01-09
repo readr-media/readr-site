@@ -7,15 +7,22 @@
     </div>
     <button class="controlBar--btn">文章管理</button>
     <button class="controlBar--btn">記錄管理</button>
-    <button class="controlBar--btn" @click="$_baseControlBar_addAccount">新增帳號</button>
+    <button class="controlBar--btn" @click="$_baseControlBar_addAccount" v-if="isClientSide && shouldShowBtnAddAccount">新增帳號</button>
     <button class="controlBar--btn" @click="$_baseControlBar_manageAccount">帳號管理</button>
   </section>
 </template>
 <script>
+  import { permVerify } from '../util/services'
   export default {
     name: 'TheBaseControlBar',
+    computed: {
+      shouldShowBtnAddAccount () {
+        return permVerify('addAccount')
+      }
+    },
     data () {
       return {
+        isClientSide: false,
         openBtnBox: false
       }
     },
@@ -32,6 +39,9 @@
       $_baseControlBar_btnBoxToggle () {
         this.openBtnBox = !this.openBtnBox
       }
+    },
+    mounted () {
+      this.isClientSide = true
     }
   }
 </script>

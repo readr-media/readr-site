@@ -1,13 +1,14 @@
 const jwt = require('jsonwebtoken')
 const { SERVER_HOST } = require('./config')
 
-const generateJwt = ({ id, email, name, nickname, role, keepAlive, secret }) => {
+const generateJwt = ({ id, email, name, nickname, role, keepAlive, scopes, secret }) => {
   const expiry = new Date(Date.now() + (keepAlive ? 30 : 1) * 24 * 60 * 60 * 1000)
   return jwt.sign({
     id: id,
     email,
-    name,
+    username: name,
     nickname,
+    scopes,
     role, 
     exp: parseInt(expiry.getTime() / 1000)
   }, secret)

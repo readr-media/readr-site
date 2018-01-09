@@ -30,6 +30,11 @@ if (window.__INITIAL_STATE__) {
   store.replaceState(window.__INITIAL_STATE__)
 }
 
+if (store.state.unauthorized) {
+  delete store.state.unauthorized
+  router.push('/')
+}
+
 // wait until router has resolved all async before hooks
 // and async components...
 router.onReady(() => {

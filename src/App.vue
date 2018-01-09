@@ -7,17 +7,7 @@
 </template>
 
 <script>
-  const checkLoginStatus = (store) => {
-    return store.dispatch('CHECK_LOGIN_STATUS')
-  }
-
-  export default {
-    beforeMount () {
-      Promise.all([
-        checkLoginStatus(this.$store)
-      ])
-    }
-  }
+  export default {}
 </script>
 
 <style lang="stylus">

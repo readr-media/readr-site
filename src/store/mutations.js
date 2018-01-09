@@ -2,7 +2,6 @@
 
 export default {
   SET_LOGGEIN_STATUS: (state, { status, body }) => {
-    // console.log('body', body)
     state['isLoggedIn'] = body
   },
   SET_TOKEN: (state, { token, type }) => {
