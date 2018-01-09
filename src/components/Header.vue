@@ -34,12 +34,21 @@
   import { ROLE_MAP } from '../constants'
   import { removeToken } from '../util/services'
 
+  const checkLoginStatus = (store) => {
+    return store.dispatch('CHECK_LOGIN_STATUS', {})
+  }
+  const getProfile = (store) => {
+    return store.dispatch('GET_PROFILE', {})
+  }
   const logout = (store) => {
     return store.dispatch('LOGOUT', {})
   }
 
   export default {
     computed: {
+      currUrl () {
+        return _.get(this.$router, [ 'fullpath' ])
+      },
       currentUser () {
         return _.get(this.$store, [ 'state', 'profile' ], {})
       },
@@ -76,6 +85,14 @@
     },
     mounted () {
       this.isClientSide = true
+    },
+    beforeMount () {
+      checkLoginStatus(this.$store).then(() => {
+        if (this.isLoggedIn) {
+          return getProfile(this.$store)
+        }
+        return
+      })
     },
     props: [ 'sections' ]
   }

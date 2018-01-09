@@ -62,6 +62,7 @@ export default {
   },
   LOGIN: ({ commit, dispatch, state }, { params, token }) => {
     return login(params, token).then(({ status, profile }) => {
+      commit('SET_LOGGEIN_STATUS', { body: true })
       commit('SET_PROFILE', { profile })
       return { status }
     })
