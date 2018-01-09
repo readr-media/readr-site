@@ -35,11 +35,11 @@ function _buildQuery (params = {}) {
 //   })
 // }
 
-function _doFetchStrict (url) {
+function _doFetchStrict (url, { cookie }) {
   return new Promise((resolve, reject) => {
     superagent
       .get(url)
-      .set('Authorization', `Bearer ${getToken()}`)
+      .set('Authorization', `Bearer ${cookie || getToken()}`)
       .end(function (err, res) {
         if (err) {
           reject(err)
@@ -137,7 +137,7 @@ export function getMembers ({ params }) {
   if (query && (query.length > 0)) {
     url = url + `?${query}`
   }
-  return _doFetchStrict(url)
+  return _doFetchStrict(url, {})
 }
 
 export function getPosts ({ params }) {
@@ -146,17 +146,18 @@ export function getPosts ({ params }) {
   if (query && (query.length > 0)) {
     url = url + `?${query}`
   }
-  return _doFetchStrict(url)
+  return _doFetchStrict(url, {})
 }
 
-export function getProfile () {
+export function getProfile ({ params: { cookie }}) {
   const url = `${host}/api/profile`
-  return _doFetchStrict(url)
+  return _doFetchStrict(url, { cookie })
 }
 
-export function checkLoginStatus () {
+export function checkLoginStatus ({ params: { cookie }}) {
   const url = `${host}/api/status`
-  return _doFetchStrict(url)
+
+  return _doFetchStrict(url, { cookie })
 }
 
 export function login (params, token) {

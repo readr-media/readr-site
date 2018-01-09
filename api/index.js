@@ -2,6 +2,7 @@ const _ = require('lodash')
 const { API_DEADLINE, API_HOST, API_PORT, API_PROTOCOL, API_TIMEOUT } = require('./config')
 const { GCP_FILE_BUCKET, GOOGLE_CLIENT_ID, GOOGLE_RECAPTCHA_SECRET, DISPOSABLE_TOKEN_WHITE_LIST, SECRET_KEY } = require('./config')
 const { REDIS_AUTH, REDIS_MAX_CLIENT, REDIS_READ_HOST, REDIS_READ_PORT, REDIS_WRITE_HOST, REDIS_WRITE_PORT, REDIS_TIMEOUT } = require('./config')
+const { SCOPES } = require('./config')
 const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT } = require('./config')
 const { initBucket, makeFilePublic, uploadFileToBucket } = require('./gcs.js')
 const Cookies = require('cookies')
@@ -156,6 +157,7 @@ router.use('/profile', auth, function(req, res, next) {
   basicGetRequest(url, req, res, (err, response) => {
     if (!err && response) {
       const resData = JSON.parse(response.text)
+      // const scopes = _.map( _.filter(SCOPES, (comp) => _.find(comp.perm, (perm) => (_.find(_.get(response, [ 'body', 'permissions' ]), (p) => (perm === p))))), (p) => (p.comp))
       if (Object.keys(resData).length !== 0 && resData.constructor === Object) {
         // redisWriting(req.url, response.text)
       }
@@ -291,13 +293,14 @@ router.post('/login', auth, (req, res) => {
     basicPostRequst(url, req, res, (err, response) => {
       if (!err && response) {
         const mem = _.get(response, [ 'body', 'member' ], {})
-        const perm = _.get(response, [ 'body', 'permissions' ], [])
+        const scopes = _.map( _.filter(SCOPES, (comp) => _.find(comp.perm, (perm) => (_.find(_.get(response, [ 'body', 'permissions' ]), (p) => (perm === p))))), (p) => (p.comp))
         const token = jwtService.generateJwt({
           id: _.get(mem, [ 'id' ], req.body.id),
           email: _.get(mem, [ 'mail' ], req.body.email),
           name: _.get(mem, [ 'name' ]),
           role: _.get(mem, [ 'role' ], 1),
           keepAlive: req.body.keepAlive,
+          scopes,
           secret: currSecret
         })
         const cookies = new Cookies( req, res, {} )

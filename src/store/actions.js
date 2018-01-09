@@ -23,8 +23,8 @@ export default {
   ADD_POST: ({ commit, dispatch, state }, { params }) => {
     return addPost(params)
   },
-  CHECK_LOGIN_STATUS: ({ commit, dispatch, state }) => {
-    return checkLoginStatus().then(({ status, body }) => {
+  CHECK_LOGIN_STATUS: ({ commit, dispatch, state }, { params }) => {
+    return checkLoginStatus({ params }).then(({ status, body }) => {
       commit('SET_LOGGEIN_STATUS', { status, body })
     })
   },
@@ -53,8 +53,8 @@ export default {
       }
     })
   },
-  GET_PROFILE: ({ commit, dispatch, state }) => {
-    return getProfile().then(({ status, body }) => {
+  GET_PROFILE: ({ commit, dispatch, state }, { params }) => {
+    return getProfile({ params }).then(({ status, body }) => {
       if (status === 200) {
         commit('SET_PROFILE', { profile: body })
       }
@@ -64,6 +64,13 @@ export default {
     return login(params, token).then(({ status, profile }) => {
       commit('SET_PROFILE', { profile })
       return { status }
+    })
+  },
+  LOGOUT: ({ commit, dispatch, state }) => {
+    return new Promise((resolve) => {
+      commit('SET_LOGGEIN_STATUS', { body: false })
+      commit('SET_PROFILE', { profile: {}})
+      resolve()
     })
   },
   REGISTER: ({ commit, dispatch, state }, { params, token }) => {

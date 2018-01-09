@@ -10,7 +10,7 @@ const microcache = require('route-cache')
 const requestIp = require('request-ip')
 const resolve = file => path.resolve(__dirname, file)
 const uuidv4 = require('uuid/v4')
-const { GOOGLE_API_KEY, GOOGLE_CLIENT_ID } = require('./api/config')
+const { GOOGLE_CLIENT_ID } = require('./api/config')
 const { createBundleRenderer } = require('vue-server-renderer')
 
 const isProd = process.env.NODE_ENV === 'production'
@@ -85,7 +85,7 @@ app.use('/service-worker.js', serve('./distribution/service-worker.js'))
 // headers.
 // 1-second microcache.
 // https://www.nginx.com/blog/benefits-of-microcaching-nginx/
-app.use(microcache.cacheSeconds(1, req => useMicroCache && req.originalUrl))
+// app.use(microcache.cacheSeconds(1, req => useMicroCache && req.originalUrl))
 
 function render (req, res, next) {
   if (req.url.indexOf('/api/') === 0) {
@@ -100,7 +100,7 @@ function render (req, res, next) {
   let isPageNotFound = false
   let isErrorOccurred = false  
 
-  res.setHeader('Cache-Control', 'public, max-age=3600')  
+  // res.setHeader('Cache-Control', 'public, max-age=3600')  
   res.setHeader("Content-Type", "text/html")
   res.setHeader("Server", serverInfo)
 
@@ -124,9 +124,9 @@ function render (req, res, next) {
   }
 
   const context = {
-    title: 'Readr', // default title
+    title: 'Readr',
     url: req.url,
-    GOOGLE_API_KEY: GOOGLE_API_KEY,
+    cookie: cookies.get('csrf'),
     GOOGLE_CLIENT_ID: GOOGLE_CLIENT_ID
   }
   renderer.renderToString(context, (err, html) => {

@@ -74,6 +74,7 @@
             if (res.status === 200) {
               const memberCenter = _.get(_.filter(ROLE_MAP, { key: _.get(this.$store, [ 'state', 'profile', 'role' ]) }), [ 0, 'route' ], 'member')
               location.replace(`/${memberCenter}`)
+              // this.$router.replace(`/${memberCenter}`)
             } else {
               this.resMsg = this.wording.WORDING_LOGIN_INFAIL_VALIDATION_ISSUE
             }

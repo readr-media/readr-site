@@ -34,8 +34,8 @@
   import { ROLE_MAP } from '../constants'
   import { removeToken } from '../util/services'
 
-  const getProfile = (store) => {
-    return store.dispatch('GET_PROFILE')
+  const logout = (store) => {
+    return store.dispatch('LOGOUT', {})
   }
 
   export default {
@@ -67,20 +67,17 @@
         location && location.replace(`/${memberCenter}`)
       },
       logout () {
-        removeToken().then(() => {
-          location && location.replace('/')
+        logout(this.$store).then(() => {
+          return removeToken().then(() => {
+            location && location.replace('/')
+          })
         })
       }
     },
     mounted () {
       this.isClientSide = true
     },
-    props: [ 'sections' ],
-    watch: {
-      isLoggedIn: function () {
-        this.isLoggedIn && getProfile(this.$store)
-      }
-    }
+    props: [ 'sections' ]
   }
 </script>
 <style lang="stylus" scoped>

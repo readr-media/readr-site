@@ -21,7 +21,7 @@ const router = new Router({
   scrollBehavior: () => ({ y: 0 }),
   routes: [
     { path: '/', component: Index },
-    { path: '/admin', component: Admin, meta: { requiresAuth: true }},
+    { path: '/admin', component: Admin, meta: { requiresAuth: true, permission: 'admin' }},
     { path: '/agreement', component: Agreement },
     { path: '/guesteditor', component: GuestEditor, meta: { requiresAuth: true }},
     { path: '/login', component: Login }
