@@ -16,6 +16,12 @@
   margin 0 auto
   position relative
 
+.datepicker__input
+  padding-left 10px
+  width 100%
+  height 25px
+  color #808080
+
 .fade-enter-active, .fade-leave-active
   transition all .2s ease
 
