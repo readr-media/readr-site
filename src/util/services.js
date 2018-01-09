@@ -18,7 +18,7 @@ export class ReadrPerm {
     this.store = store
   }
   permVerify (comp) {
-    console.log('call', this.store)
+    return _.filter(_.get(this.store, [ 'state', 'profile', 'scopes' ]), (s) => (s === comp)).length > 0
   }
 }
 const readrPerm = new ReadrPerm()
@@ -32,14 +32,6 @@ ReadrPerm.install = (Vue) => {
   Vue.prototype.$can = (comp) => readrPerm.permVerify(comp)
 }
 export default ReadrPerm
-export function permVerify (comp) {
-  const token = getToken()
-  if (token) {
-    return _.filter(_.get(JSON.parse(window.atob(token.split('.')[1])), [ 'scopes' ]), (s) => (s === comp)).length
-  } else {
-    return false
-  }
-}
 export function removeToken () {
   return new Promise((resolve) => {
     window && Cookie.delete('csrf')
