@@ -1,8 +1,9 @@
+import { camelizeKeys } from 'humps'
 import { getHost } from '../util/comm'
 import { getToken, saveToken } from '../util/services'
 import qs from 'qs'
+
 const superagent = require('superagent')
-// import { camelizeKeys } from 'humps'
 const host = getHost()
 
 function _buildQuery (params = {}) {
@@ -45,7 +46,7 @@ function _doFetchStrict (url, { cookie }) {
           reject(err)
         } else {
           // resolve(camelizeKeys(res.body))
-          resolve({ status: res.status, body: res.body })
+          resolve({ status: res.status, body: camelizeKeys(res.body) })
         }
       })
   })
@@ -61,7 +62,7 @@ function _doPost (url, params) {
         if (err) {
           reject(err)
         } else {
-          resolve({ status: res.status, body: res.body })
+          resolve({ status: res.status, body: camelizeKeys(res.body) })
         }
       })
   })
@@ -77,7 +78,7 @@ function _doPut (url, params) {
         if (err) {
           reject(err)
         } else {
-          resolve({ status: res.status, body: res.body })
+          resolve({ status: res.status, body: camelizeKeys(res.body) })
         }
       })
   })
@@ -92,7 +93,7 @@ function _doDelete (url) {
         if (err) {
           reject(err)
         } else {
-          resolve({ status: res.status, body: res.body })
+          resolve({ status: res.status, body: camelizeKeys(res.body) })
         }
       })
   })

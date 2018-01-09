@@ -65,7 +65,7 @@
     },
     computed: {
       posts () {
-        return _.get(this.$store, [ 'state', 'posts' ], [])
+        return _.get(this.$store, [ 'state', 'posts', 'items' ], [])
       },
       profile () {
         return _.get(this.$store, [ 'state', 'profile' ], {})
