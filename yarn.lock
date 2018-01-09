@@ -7230,6 +7230,10 @@ vue-loader@^13.0.5:
     vue-style-loader "^3.0.0"
     vue-template-es2015-compiler "^1.6.0"
 
+vue-no-ssr@^0.2.2:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/vue-no-ssr/-/vue-no-ssr-0.2.2.tgz#e1a0ef0ba39fc54972edd71a2ae11a7988312b19"
+
 vue-quill-editor@^3.0.4:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/vue-quill-editor/-/vue-quill-editor-3.0.4.tgz#af55880994baa8a61f652c2e6818d68a9d2251fd"
@@ -7275,6 +7279,10 @@ vue-template-es2015-compiler@^1.6.0:
 vue@^2.4.4:
   version "2.5.3"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.3.tgz#e1a3b1f49b6e93e574ce040b95cbc873912fecc1"
+
+vuejs-datepicker@^0.9.22:
+  version "0.9.22"
+  resolved "https://registry.yarnpkg.com/vuejs-datepicker/-/vuejs-datepicker-0.9.22.tgz#3411edf407e5d38468dfbe6eda72d9fc1478b767"
 
 vuex-router-sync@^4.3.2:
   version "4.3.2"
