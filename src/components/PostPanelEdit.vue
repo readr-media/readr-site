@@ -98,11 +98,12 @@
     watch: {
       post (val) {
         this.content = _.get(val, [ 'content' ])
+        this.date = _.get(val, [ 'publishedAt' ])
         this.link = _.get(val, [ 'link' ])
         this.title = _.get(val, [ 'title' ])
-        this.ogDescription = _.get(val, [ 'og_description' ])
-        this.ogImage = _.get(val, [ 'og_image' ])
-        this.ogTitle = _.get(val, [ 'og_title' ])
+        this.ogDescription = _.get(val, [ 'ogDescription' ])
+        this.ogImage = _.get(val, [ 'ogImage' ])
+        this.ogTitle = _.get(val, [ 'ogTitle' ])
       },
       showLightBox (val) {
         if (!val) {
@@ -136,9 +137,13 @@
         params.og_description = this.ogDescription
         params.og_image = this.ogImage
         params.og_title = this.ogTitle || this.title
-        // params.published_at = this.date
         params.title = this.title
         params.updated_by = _.get(this.$store.state, [ 'profile', 'id' ])
+
+        if (Date.parse(this.date)) {
+          params.published_at = this.date
+        }
+
         if (this.status === 'add') {
           addPost(this.$store, params)
             .then(() => {
