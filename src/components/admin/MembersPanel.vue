@@ -59,7 +59,7 @@
     },
     computed: {
       members () {
-        return _.get(this.$store, [ 'state', 'members' ], [])
+        return _.get(this.$store, [ 'state', 'members', 'items' ], [])
       },
       filterOpts () {
         return FILTER

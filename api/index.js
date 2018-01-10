@@ -4,6 +4,7 @@ const { GCP_FILE_BUCKET, GOOGLE_CLIENT_ID, GOOGLE_RECAPTCHA_SECRET, DISPOSABLE_T
 const { REDIS_AUTH, REDIS_MAX_CLIENT, REDIS_READ_HOST, REDIS_READ_PORT, REDIS_WRITE_HOST, REDIS_WRITE_PORT, REDIS_TIMEOUT } = require('./config')
 const { SCOPES } = require('./config')
 const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT } = require('./config')
+const { camelizeKeys } = require('humps')
 const { initBucket, makeFilePublic, uploadFileToBucket } = require('./gcs.js')
 const Cookies = require('cookies')
 const GoogleAuth = require('google-auth-library')
@@ -171,7 +172,7 @@ const fetchProfile = (url, req) => {
   return new Promise((resolve, reject) => {
     basicGetRequest(url, req, (err, response) => {
       if (!err && response) {
-        resolve(JSON.parse(response.text))
+        resolve(camelizeKeys(JSON.parse(response.text)))
       } else {
         reject(err)
         console.error(`error during fetch data from : ${url}`)
@@ -188,7 +189,7 @@ router.use('/profile', auth, function(req, res, next) {
     fetchProfile(url, req),
     fetchPermissions()
   ]).then((response) => {
-    const profile = response[ 0 ]
+    const profile = response[ 0 ][ 'items' ][ 0 ]
     const perms = response[ 1 ]
     const scopes = _.map( _.filter(SCOPES, (comp) => _.find(comp.perm, (perm) => (_.find(perms, (p) => (perm === p.object && p.role === profile.role && (comp.role && typeof(comp.role) === 'object' && comp.role.length > 0 ? _.find(comp.role, (r) => (r === profile.role)) : true)))))), (p) => (p.comp))    
     res.json({
