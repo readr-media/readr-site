@@ -540,7 +540,7 @@ router.post('*', auth, (req, res) => {
 
 router.put('*', auth, function (req, res) {
   const url = `${apiHost}${req.url}`
-   superagent
+  superagent
   .put(url)
   .send(req.body)
   .end((err, response) => {
@@ -558,10 +558,9 @@ router.delete('*', auth, function (req, res) {
   .delete(url)
   .end((err, response) => {
     if (!err && response) {
-      const resData = JSON.parse(response.text)
-      res.status(200).json(resData)
+      res.status(200).end()
     } else {
-      res.status(response.status).json(err)
+      res.status(500).json(err)
     }
   })
 })

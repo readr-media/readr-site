@@ -1,7 +1,7 @@
 <template>
   <section class="postPanelEdit">
     <input v-model="title" type="text" class="postPanelEdit__title" placeholder="輸入標題">
-    <app-editor :contentEdit="content" :needReset="resetToggle" v-on:updateContent="$_postPanelEdit_updateContent"></app-editor>
+    <text-editor :contentEdit="content" :needReset="resetToggle" v-on:updateContent="$_postPanelEdit_updateContent"></text-editor>
     <div class="postPanelEdit__input postPanelEdit__link">
       <label for="">新聞連結：</label>
       <input v-model="link" type="url">
@@ -39,7 +39,7 @@
 <script>
   import _ from 'lodash'
   import Datepicker from 'vuejs-datepicker'
-  import Editor from './Editor.vue'
+  import TextEditor from './TextEditor.vue'
   import NoSSR from 'vue-no-ssr'
   
   const addPost = (store, params) => {
@@ -57,7 +57,7 @@
   export default {
     name: 'PostPanelEdit',
     components: {
-      'app-editor': Editor,
+      'text-editor': TextEditor,
       'datepicker': Datepicker,
       'no-ssr': NoSSR
     },

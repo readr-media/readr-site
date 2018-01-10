@@ -21,7 +21,7 @@ const uploadImage = (store, file) => {
 }
 
 export default {
-  name: 'AppEditor',
+  name: 'TextEditor',
   data () {
     return {
       content: '',
