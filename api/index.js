@@ -190,7 +190,7 @@ router.use('/profile', auth, function(req, res, next) {
   ]).then((response) => {
     const profile = response[ 0 ]
     const perms = response[ 1 ]
-    const scopes = _.map( _.filter(SCOPES, (comp) => _.find(comp.perm, (perm) => (_.find(perms, (p) => (perm === p.object && p.role === profile.role && profile.role === comp.role))))), (p) => (p.comp))    
+    const scopes = _.map( _.filter(SCOPES, (comp) => _.find(comp.perm, (perm) => (_.find(perms, (p) => (perm === p.object && p.role === profile.role && (comp.role ? profile.role === comp.role : true)))))), (p) => (p.comp))    
     res.json({
       name: profile.name,
       nickname: profile.nickname,
@@ -320,7 +320,7 @@ router.post('/login', auth, (req, res) => {
     basicPostRequst(url, req, res, (err, response) => {
       if (!err && response) {
         const mem = _.get(response, [ 'body', 'member' ], {})
-        const scopes = _.map( _.filter(SCOPES, (comp) => _.find(comp.perm, (perm) => (_.find(_.get(response, [ 'body', 'permissions' ]), (p) => (perm === p && comp.role === _.get(mem, [ 'role' ], 1)))))), (p) => (p.comp))
+        const scopes = _.map( _.filter(SCOPES, (comp) => _.find(comp.perm, (perm) => (_.find(_.get(response, [ 'body', 'permissions' ]), (p) => (perm === p && (comp.role ? comp.role === _.get(mem, [ 'role' ], 1) : true)))))), (p) => (p.comp))
         const token = jwtService.generateJwt({
           id: _.get(mem, [ 'id' ], req.body.id),
           email: _.get(mem, [ 'mail' ], req.body.email),
