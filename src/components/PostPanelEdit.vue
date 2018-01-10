@@ -6,33 +6,33 @@
       <label for="">新聞連結：</label>
       <input v-model="link" type="url">
     </div>
-    <div class="postPanelEdit__input postPanelEdit--publishDate">
+    <div v-if="$can('editPostOg')" class="postPanelEdit__input postPanelEdit--publishDate">
       <label for="">發佈日期：</label>
       <no-ssr>
         <datepicker v-model="date" :format="dateFormat" :input-class="'datepicker__input'" :language="'zh'"></datepicker>
       </no-ssr>
     </div>
-    <div class="postPanelEdit__input">
+    <div v-if="$can('editPostOg')" class="postPanelEdit__input">
       <label for="">分享標題：</label>
       <input v-model="ogTitle" type="text">
     </div>
-    <div class="postPanelEdit__input">
+    <div v-if="$can('editPostOg')" class="postPanelEdit__input">
       <label for="">分享說明：</label>
       <input v-model="ogDescription" type="text">
     </div>
-    <div class="postPanelEdit__input">
+    <div v-if="$can('editPostOg')" class="postPanelEdit__input">
       <label for="">分享縮圖：</label>
       <input v-model="ogImage" type="text" readonly>
       <button class="postPanelEdit__btn--img" @click="$_postPanelEdit_uploadImage"><img src="/public/icons/upload.png" alt="上傳"></button>
       <button class="postPanelEdit__btn--img" @click="$_postPanelEdit_cleanOgImage"><img src="/public/icons/delete.png" alt="刪除"></button>
     </div>
-    <div v-show="ogImage" class="postPanelEdit__ogImg">
+    <div v-show="ogImage && $can('editPostOg')" class="postPanelEdit__ogImg">
       <img :src="ogImage" :alt="ogTitle">
     </div>
-    <div class="postPanelEdit__submit">
+    <div :class="{ advanced: $can('publishPost') }" class="postPanelEdit__submit">
       <div class="postPanelEdit__btn draft" @click="$_postPanelEdit_submit()">存成草稿</div>
       <div class="postPanelEdit__btn submit" @click="$_postPanelEdit_submit(2)">提交</div>
-      <div class="postPanelEdit__btn" @click="$_postPanelEdit_submit(1)">發佈</div>
+      <div v-if="$can('publishPost')" class="postPanelEdit__btn" @click="$_postPanelEdit_submit(1)">發佈</div>
     </div>
   </section>
 </template>
@@ -71,7 +71,7 @@
         default: {}
       },
       showLightBox: {
-        type: Boolean
+        default: false
       }
     },
     data () {
@@ -235,11 +235,14 @@
     justify-content space-between
     width 100%
     margin-top 20px
+    &.advanced
+      .postPanelEdit__btn
+        width 210px
   &__btn
     display inline-flex
     justify-content center
     align-items center
-    width 210px
+    width 340px
     height 30px
     margin 0
     font-size 14px
