@@ -13,6 +13,7 @@ if (process.browser) {
 // route-level code splitting
 const Admin = () => import('../views/Admin.vue')
 const Agreement = () => import('../views/Agreement.vue')
+const Editor = () => import('../views/Editor.vue')
 const GuestEditor = () => import('../views/GuestEditor.vue')
 const Home = () => import('../views/Home.vue')
 const Login = () => import('../views/Login.vue')
@@ -23,17 +24,12 @@ const router = new Router({
   scrollBehavior: () => ({ y: 0 }),
   routes: [
     { path: '/', component: Home },
-    { path: '/admin', component: Admin, meta: { requiresAuth: true, permission: 'admin' }},
+    { path: '/admin', component: Admin, meta: { permission: 'admin' }},
     { path: '/agreement', component: Agreement },
-    { path: '/guesteditor', component: GuestEditor, meta: { requiresAuth: true }},
+    { path: '/editor', component: Editor, meta: { permission: 'editor' }},
+    { path: '/guesteditor', component: GuestEditor, meta: { permission: 'guesteditor' }},
     { path: '/login', component: Login }
   ]
-})
-
-router.beforeEach((to, from, next) => {
-  // if (to.matched.some(record => record.meta.requiresAuth)) {
-  // }
-  next()
 })
 
 export function createRouter () {

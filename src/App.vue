@@ -16,6 +16,16 @@
   margin 0 auto
   position relative
 
+.main-container
+  width 950px
+  max-width 950px
+  margin 22px auto 0
+
+.main-panel
+  width 100%
+  padding 22px 84px 33px
+  border 2px solid #d8ca21
+
 .datepicker__input
   padding-left 10px
   width 100%

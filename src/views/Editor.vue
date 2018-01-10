@@ -1,16 +1,14 @@
 <template>
-  <div class="guestEditor">
+  <div class="editor">
     <app-header :sections="sections"></app-header>
     <main class="main-container">
       <app-about :profile="profile"></app-about>
-      <base-control-bar v-on:addPost="$_guestEditor_lightBoxHandler('postPanelEdit', 'add')"></base-control-bar>
+      <base-control-bar v-on:addPost="$_editor_lightBoxHandler('postPanelEdit', 'add')"></base-control-bar>
       <section class="main-panel">
-        <template>
-          <post-list :posts="posts" v-on:deletePost="$_guestEditor_deletePost" v-on:editPost="$_guestEditor_editPost"></post-list>
-        </template>
+        
       </section>
       <base-light-box :showLightBox.sync="showLightBox">
-        <post-panel-edit slot="postPanelEdit" :post="post" :showLightBox="showLightBox" :status="status" v-on:closeLightBox="$_guestEditor_lightBoxHandler(false)" v-on:updatePostList="$_guestEditor_updatePostList"></post-panel-edit>
+        <post-panel-edit slot="postPanelEdit" :post="post" :showLightBox="showLightBox" :status="status" v-on:closeLightBox="$_editor_lightBoxHandler(false)"></post-panel-edit>
       </base-light-box>
     </main>
   </div>
@@ -32,22 +30,8 @@
     'projects': '新聞專題'
   }
 
-  const fetchPosts = (store, id) => {
-    return store.dispatch('GET_POSTS', {
-      params: {
-        where: {
-          author: id
-        }
-      }
-    })
-  }
-
-  const deletePost = (store, id) => {
-    return store.dispatch('DELETE_POST', { id: id })
-  }
-
   export default {
-    name: 'GuestEditor',
+    name: 'AppEditor',
     components: {
       'app-about': About,
       'app-header': Header,
@@ -77,30 +61,13 @@
     mounted () {
     },
     methods: {
-      $_guestEditor_deletePost (id) {
-        deletePost(this.$store, id)
-          .then(() => {
-            this.$_guestEditor_updatePostList()
-          })
-      },
-      $_guestEditor_editPost (id) {
-        this.status = 'edit'
-        this.showLightBox = 'postPanelEdit'
-        this.post = _.find(this.posts, { 'id': id })
-      },
-      $_guestEditor_lightBoxHandler (value, status) {
+      $_editor_lightBoxHandler (value, status) {
         this.post = {}
         this.showLightBox = value
         this.status = status
-      },
-      $_guestEditor_updatePostList () {
-        fetchPosts(this.$store, _.get(this.profile, [ 'id' ]))
       }
     },
     watch: {
-      profile: function () {
-        fetchPosts(this.$store, _.get(this.profile, [ 'id' ]))
-      }
     }
   }
 </script>

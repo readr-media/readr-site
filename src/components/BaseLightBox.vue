@@ -1,7 +1,8 @@
 <template>
   <section v-show="showLightBox" class="baseLightBox">
     <div class="baseLightBox__container" :class="containerClass">
-      <slot name="postPanelEdit"></slot>
+      <slot v-if="showLightBox === 'postPanelEdit'" name="postPanelEdit"></slot>
+      <slot v-if="showLightBox === 'memberAccountEditor'" name="memberAccountEditor"></slot>
       <button class="baseLightBox__btn--close" :class="closeButtonClass" @click="$_baseLightBox_close"></button>
     </div>
     <div class="baseLightBox__curtain" @click="$_baseLightBox_close"></div>
@@ -36,7 +37,6 @@
         default: false
       },
       showLightBox: {
-        type: Boolean,
         default: false
       }
     },
