@@ -12,7 +12,7 @@ export const ROLE_MAP = [
 
 export const SECTIONS_DEFAULT = {
   'chief-editor-talk': '總編評論',
-  'celebrity-talk': '名人聊新聞',
+  'celebrities-talk': '名人聊新聞',
   'hot-talk': '熱門評論',
   'chief-editor-list': '總編列表',
   'projects': '新聞專題'

@@ -14,7 +14,7 @@ if (process.browser) {
 const Admin = () => import('../views/Admin.vue')
 const Agreement = () => import('../views/Agreement.vue')
 const GuestEditor = () => import('../views/GuestEditor.vue')
-const Index = () => import('../views/index.vue')
+const Home = () => import('../views/Home.vue')
 const Login = () => import('../views/Login.vue')
 
 const router = new Router({
@@ -22,7 +22,7 @@ const router = new Router({
   fallback: false,
   scrollBehavior: () => ({ y: 0 }),
   routes: [
-    { path: '/', component: Index },
+    { path: '/', component: Home },
     { path: '/admin', component: Admin, meta: { requiresAuth: true, permission: 'admin' }},
     { path: '/agreement', component: Agreement },
     { path: '/guesteditor', component: GuestEditor, meta: { requiresAuth: true }},

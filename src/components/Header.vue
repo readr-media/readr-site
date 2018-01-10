@@ -244,9 +244,30 @@
               bottom 0
               right 10px
             cursor pointer
+  
+  @media (max-width 768px)
+    .header
+      &__top
+        height 25px
+        &__wrapper
+          padding 5px 0 5px 17px
+          .sharebar
+            display none
+          .logo
+            width 33px
+            height 30px
+            &__container
+              width 100%
+              height 100%
+
+      &__bottom
+        height 15px
+        &__wrapper
+          .nav, .login-status
+            display none
 
 
-            
+
   @media (min-width 950px)
     .header
       > div
