@@ -35,7 +35,7 @@
         </div>      
       </div>
       <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder" :isConversation="true">
-        <MemberAccountEditor slot="postPanelEdit" @updated="updated" @closeLightBox="closeLightBox" :title="editorTitle" :member="targMember" :action="action"></MemberAccountEditor>
+        <MemberAccountEditor slot="memberAccountEditor" @updated="updated" @closeLightBox="closeLightBox" :title="editorTitle" :member="targMember" :action="action"></MemberAccountEditor>
       </BaseLightBox>
     </div>
   </div>

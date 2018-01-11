@@ -181,6 +181,19 @@ const fetchProfile = (url, req) => {
     })
   })
 }
+const constructScope = (perms, role) => (
+  _.map(_.filter(SCOPES, (comp) => (
+    _.get(comp, [ 'perm', 'length' ], 0) === _.filter(comp.perm, (perm) => (
+      _.find(perms, (p) => (
+        perm === p.object && p.role === role
+      ))
+    )).length && (comp.role 
+      && typeof(comp.role) === 'object' 
+      && comp.role.length > 0
+        ? _.find(comp.role, (r) => (r === role))
+        : true)
+  )), (p) => (p.comp)) 
+)
 
 router.use('/profile', auth, function(req, res, next) {
   const targetProfile = jwtService.getId(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
@@ -191,7 +204,7 @@ router.use('/profile', auth, function(req, res, next) {
   ]).then((response) => {
     const profile = response[ 0 ][ 'items' ][ 0 ]
     const perms = response[ 1 ]
-    const scopes = _.map( _.filter(SCOPES, (comp) => _.find(comp.perm, (perm) => (_.find(perms, (p) => (perm === p.object && p.role === profile.role && (comp.role && typeof(comp.role) === 'object' && comp.role.length > 0 ? _.find(comp.role, (r) => (r === profile.role)) : true)))))), (p) => (p.comp))    
+    const scopes = constructScope(perms, profile.role)
     res.json({
       name: profile.name,
       nickname: profile.nickname,
@@ -321,7 +334,7 @@ router.post('/login', auth, (req, res) => {
     basicPostRequst(url, req, res, (err, response) => {
       if (!err && response) {
         const mem = _.get(response, [ 'body', 'member' ], {})
-        const scopes = _.map( _.filter(SCOPES, (comp) => _.find(comp.perm, (perm) => (_.find(_.get(response, [ 'body', 'permissions' ]), (p) => (perm === p && (comp.role && typeof(comp.role) === 'object' && comp.role.length > 0 ? _.find(comp.role, (r) => (r === _.get(mem, [ 'role' ], 1))) : true)))))), (p) => (p.comp))
+        const scopes = constructScope(_.get(response, [ 'body', 'permissions' ]), _.get(mem, [ 'role' ], 1))
         const token = jwtService.generateJwt({
           id: _.get(mem, [ 'id' ], req.body.id),
           email: _.get(mem, [ 'mail' ], req.body.email),

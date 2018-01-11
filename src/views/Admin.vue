@@ -7,7 +7,7 @@
     </div>
     <MembersPanel @filterChanged="filterChanged"></MembersPanel>
     <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder" :isConversation="true">
-      <MemberAccountEditor @updated="filterChanged" slot="postPanelEdit" :shouldShow="showLightBox" :title="wording.WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER" action="add"></MemberAccountEditor>
+      <MemberAccountEditor @updated="filterChanged" slot="memberAccountEditor" :shouldShow="showLightBox" :title="wording.WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER" action="add"></MemberAccountEditor>
     </BaseLightBox>
   </div>
 </template>
