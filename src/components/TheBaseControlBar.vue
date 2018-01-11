@@ -8,7 +8,7 @@
     <button class="controlBar--btn">文章管理</button>
     <button class="controlBar--btn">記錄管理</button>
     <button class="controlBar--btn" @click="$_baseControlBar_addAccount" v-if="$can('addAccount')">新增帳號</button>
-    <button class="controlBar--btn" @click="$_baseControlBar_manageAccount">帳號管理</button>
+    <button class="controlBar--btn" @click="$_baseControlBar_manageAccount" v-if="$can('memberManage')">帳號管理</button>
   </section>
 </template>
 <script>
