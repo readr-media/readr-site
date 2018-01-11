@@ -20,6 +20,7 @@
   width 950px
   max-width 950px
   margin 22px auto 0
+  overflow hidden
 
 .main-panel
   width 100%
