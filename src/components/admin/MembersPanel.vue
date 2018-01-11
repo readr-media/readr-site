@@ -12,8 +12,8 @@
         <div class="email title"><span v-text="wording.WORDING_ADMIN_EMAIL"></span></div>
         <div class="role title"><span v-text="wording.WORDING_ADMIN_ROLE"></span></div>
         <div class="actions title">
-          <div class="actions__update" v-text="wording.WORDING_ADMIN_UPDATE"></div>
-          <div class="actions__delete" v-text="wording.WORDING_ADMIN_DELETE"></div>
+          <div class="actions__update" v-if="$can('updateAccount')" v-text="wording.WORDING_ADMIN_UPDATE"></div>
+          <div class="actions__delete" v-if="$can('deleteAccount')" v-text="wording.WORDING_ADMIN_DELETE"></div>
           <div class="actions__guesteditor" v-text="wording.WORDING_ADMIN_GUESTEDITOR"></div>
         </div>
         <div class="filter title">
@@ -30,8 +30,8 @@
         <div class="email" v-text="getValue(m, [ 'mail' ])"></div>
         <div class="role" v-text="getValue(roles, [ getValue(m, [ 'role' ], 1) ], '-')"></div>
         <div class="actions">
-          <div class="actions__update" v-text="wording.WORDING_ADMIN_UPDATE" @click="update(k)"></div>
-          <div class="actions__delete" v-text="wording.WORDING_ADMIN_DELETE" @click="del(k)"></div>
+          <div class="actions__update" v-if="$can('updateAccount')" v-text="wording.WORDING_ADMIN_UPDATE" @click="update(k)"></div>
+          <div class="actions__delete" v-if="$can('deleteAccount')" v-text="wording.WORDING_ADMIN_DELETE" @click="del(k)"></div>
         </div>      
       </div>
       <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder" :isConversation="true">

@@ -5,7 +5,7 @@
     <div class="control-bar">
       <TheBaseControlBar @manageAccount="manageMember" @addAccount="addMember"></TheBaseControlBar>
     </div>
-    <MembersPanel @filterChanged="filterChanged"></MembersPanel>
+    <MembersPanel v-if="$can('memberManage')" @filterChanged="filterChanged"></MembersPanel>
     <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder" :isConversation="true">
       <MemberAccountEditor @updated="filterChanged" slot="memberAccountEditor" :shouldShow="showLightBox" :title="wording.WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER" action="add"></MemberAccountEditor>
     </BaseLightBox>
@@ -82,7 +82,7 @@
     },
     mounted () {},
     beforeMount () {
-      Promise.all([
+      this.$can('memberManage') && Promise.all([
         getMembers(this.$store, {})
       ])
     }
