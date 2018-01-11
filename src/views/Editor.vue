@@ -3,12 +3,12 @@
     <app-header :sections="sections"></app-header>
     <main class="main-container">
       <app-about :profile="profile"></app-about>
-      <base-control-bar v-on:addPost="$_editor_lightBoxHandler('postPanelEdit', 'add')"></base-control-bar>
+      <base-control-bar v-on:addPost="$_editor_lightBoxHandler(true, 'add')"></base-control-bar>
       <section class="main-panel">
         
       </section>
       <base-light-box :showLightBox.sync="showLightBox">
-        <post-panel-edit slot="postPanelEdit" :post="post" :showLightBox="showLightBox" :status="status" v-on:closeLightBox="$_editor_lightBoxHandler(false)"></post-panel-edit>
+        <post-panel-edit :post="post" :showLightBox="showLightBox" :status="status" v-on:closeLightBox="$_editor_lightBoxHandler(false)"></post-panel-edit>
       </base-light-box>
     </main>
   </div>
