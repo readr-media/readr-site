@@ -107,7 +107,6 @@
       filterChanged (event) {
         this.$refs[ 'selectAll' ].checked = false
         this.toggoleSelectAll()
-
         this.$emit('filterChanged', { sort: event.target.value })
       },
       getValue,

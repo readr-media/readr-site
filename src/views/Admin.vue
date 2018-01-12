@@ -73,7 +73,7 @@
         this.currSort = filter.sort || this.currSort
         getMembers(this.$store, {
           page: this.currPage,
-          sort: this.currPage
+          sort: this.currSort
         })
       },
       manageMember () {
