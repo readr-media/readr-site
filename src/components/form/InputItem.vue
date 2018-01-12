@@ -54,6 +54,18 @@
     &.admin
       height 14px
       width 100%
+      &.alert
+        height 24px
+        > input
+          height 24px
+          padding-left 5px
+        .input-item__alert
+          height 24px
+          background-size 14px 14px
+        .input-item__msg
+          font-size 0.9375rem
+          line-height 1.25rem
+
       > input
         border-bottom 1px solid #d3d3d3
         height 16px

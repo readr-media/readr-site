@@ -211,6 +211,7 @@ export function addMember (params, token) {
   params.register_mode = 'ordinary'
   params.id = params.email
   params.mail = params.email
+  params.active = 0
   return _doPost(url, params)
     .then(res => ({ status: res.status }))
     .catch(err => err)
