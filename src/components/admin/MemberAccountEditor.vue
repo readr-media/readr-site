@@ -69,7 +69,7 @@
     },
     computed: {
       emailVal () {
-        return this.typedEmail || _.get(this.member, [ 'mail' ])
+        return this.typedEmail || _.get(this.member, [ 'mail' ], '')
       },
       id () {
         return _.get(this.member, [ 'id' ])
@@ -198,6 +198,12 @@
       member: function () {
         this.typedEmail = _.get(this.member, [ 'mail' ], null)
         this.selectedRole = _.get(this.member, [ 'role' ], null)
+        this.message = null
+        this.isEdible = true
+      },
+      shouldShow: function () {
+        this.typedEmail = _.get(this.member, [ 'mail' ], '')
+        this.selectedRole = _.get(this.member, [ 'role' ])
         this.message = null
         this.isEdible = true
       }
