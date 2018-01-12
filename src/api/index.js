@@ -8,10 +8,10 @@ const host = getHost()
 
 function _buildQuery (params = {}) {
   let query = {}
-  const whitelist = [ 'where', 'max_result', 'page', 'sort' ]
+  const whitelist = [ 'where', 'max_result', 'page', 'sort', 'ids' ]
   whitelist.forEach((ele) => {
     if (params.hasOwnProperty(ele)) {
-      if (ele === 'where') {
+      if (ele === 'where' || ele === 'ids') {
         query[ele] = JSON.stringify(params[ele])
       } else {
         query[ele] = params[ele]
@@ -101,6 +101,15 @@ function _doDelete (url) {
 
 export function deleteMember ({ params }) {
   const url = `${host}/api/member/${params.id}`
+  return _doDelete(url)
+}
+
+export function deleteMembers ({ params }) {
+  let url = `${host}/api/members`
+  const query = _buildQuery(params)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }
   return _doDelete(url)
 }
 

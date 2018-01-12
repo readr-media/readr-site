@@ -13,7 +13,7 @@
         <div class="role title"><span v-text="wording.WORDING_ADMIN_ROLE"></span></div>
         <div class="actions title">
           <div class="actions__update" v-if="$can('updateAccount')" v-text="wording.WORDING_ADMIN_UPDATE"></div>
-          <div class="actions__delete" v-if="$can('deleteAccount')" v-text="wording.WORDING_ADMIN_DELETE"></div>
+          <div class="actions__delete" v-if="$can('deleteAccount')" v-text="wording.WORDING_ADMIN_DELETE" @click="delMultiple"></div>
           <div class="actions__guesteditor" v-text="wording.WORDING_ADMIN_GUESTEDITOR"></div>
         </div>
         <div class="filter title">
@@ -24,7 +24,7 @@
       </div>
       <div class="member-panel__items__item" v-for="(m, k) in members">
         <div class="checkbox">
-          <input type="checkbox" @click="toggleCheckboxItem" :ref="`checkboxItems`">
+          <input type="checkbox" @click="toggleCheckboxItem" :ref="`checkboxItems`" :value="k">
         </div>
         <div class="nickname" v-text="getValue(m, [ 'nickname' ])"></div>
         <div class="email" v-text="getValue(m, [ 'mail' ])"></div>
@@ -35,7 +35,7 @@
         </div>      
       </div>
       <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder" :isConversation="true">
-        <MemberAccountEditor @updated="updated" @closeLightBox="closeLightBox" :title="editorTitle" :member="targMember" :action="action"></MemberAccountEditor>
+        <MemberAccountEditor @updated="updated" @closeLightBox="closeLightBox" :title="editorTitle" :members="targMember" :action="action"></MemberAccountEditor>
       </BaseLightBox>
     </div>
   </div>
@@ -101,7 +101,13 @@
       del (index) {
         this.action = 'delete'
         this.showLightBox = true
-        this.targMember = this.members[ index ]
+        this.targMember = [ this.members[ index ] ]
+        this.editorTitle = this.wording.WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION
+      },
+      delMultiple () {
+        this.action = 'delete'
+        this.showLightBox = true
+        this.targMember = _.map(_.filter(this.$refs[ 'checkboxItems' ], (checkbox) => (checkbox.checked)), (checkbox) => (this.members[ checkbox.value ]))
         this.editorTitle = this.wording.WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION
       },
       filterChanged (event) {
@@ -129,7 +135,7 @@
       update (index) {
         this.action = 'update'
         this.showLightBox = true
-        this.targMember = this.members[ index ]
+        this.targMember = [ this.members[ index ] ]
         this.editorTitle = this.wording.WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER
       },
       updated () {

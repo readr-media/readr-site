@@ -17,14 +17,16 @@
     </div>
     <div class="member-editor__form" v-else>
       <div class="title" v-text="title" v-if="!message"></div>
-      <div class="nickname">
-        <span class="label" v-text="wording.WORDING_ADMIN_MEMBER_EDITOR_NICKNAME + '：'"></span>
-        <div><InputItem class="admin" inputKey="nickname" :disabled="true" :initValue="nicknameVal"></InputItem></div>
-      </div>
-      <div class="email">
-        <span class="label" v-text="wording.WORDING_ADMIN_MEMBER_EDITOR_EMAIL + '：'"></span>
-        <div><InputItem class="admin" inputKey="email" :disabled="true" :initValue="emailVal"></InputItem></div>
-      </div>
+      <template v-for="(m, k) in members">
+        <div class="nickname" :class="{ multiple: k > 0 }">
+          <span class="label" v-text="wording.WORDING_ADMIN_MEMBER_EDITOR_NICKNAME + '：'"></span>
+          <div><InputItem class="admin" inputKey="nickname" :disabled="true" :initValue="getValue(m, [ 'nickname' ], '')"></InputItem></div>
+        </div>
+        <div class="email" :class="{ multiple: k > 0 }">
+          <span class="label" v-text="wording.WORDING_ADMIN_MEMBER_EDITOR_EMAIL + '：'"></span>
+          <div><InputItem class="admin" inputKey="email" :disabled="true" :initValue="getValue(m, [ 'mail' ], '')"></InputItem></div>
+        </div>      
+      </template>
       <div class="btn--set" v-if="!message">
         <div class="btn--set__confirm" @click="save"><span v-text="wording.WORDING_ADMIN_YES"></span></div>
         <div class="btn--set__cancel" @click="closeEditor"><span v-text="wording.WORDING_ADMIN_CANCEL"></span></div>
@@ -39,7 +41,7 @@
   import { WORDING_ADMIN_SUCCESS, WORDING_ADMIN_INFAIL, WORDING_ADMIN_MEMBER_EDITOR_NICKNAME, WORDING_ADMIN_CANCEL, WORDING_ADMIN_YES, WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL } from '../../constants'
   import { WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL } from '../../constants'
   import { ROLE_MAP } from '../../constants'
-  import { consoleLogOnDev } from '../../util/comm'
+  import { consoleLogOnDev, getValue } from '../../util/comm'
   import InputItem from '../form/InputItem.vue'
   import Radio from '../form/Radio.vue'
   import validator from 'validator'
@@ -62,6 +64,13 @@
     })
   }
 
+  const deleteMembers = (store, params) => {
+    return store.dispatch('DELETE_MEMBERS', {
+      params
+    })
+  }
+
+
   export default {
     components: {
       InputItem,
@@ -69,16 +78,16 @@
     },
     computed: {
       emailVal () {
-        return this.typedEmail || _.get(this.member, [ 'mail' ], '')
+        return this.typedEmail || _.get(this.members, [ 0, 'mail' ], '')
       },
       id () {
-        return _.get(this.member, [ 'id' ])
+        return _.get(this.members, [ 0, 'id' ])
       },
       nicknameVal () {
-        return _.get(this.member, [ 'nickname' ])
+        return _.get(this.members, [ 0, 'nickname' ])
       },
       roleValue () {
-        return this.selectedRole || _.get(this.member, [ 'role' ])
+        return this.selectedRole || _.get(this.members, [ 0, 'role' ])
       },
       roles () {
         return ROLE_MAP
@@ -91,8 +100,8 @@
         alertMsgShow: {},
         isEdible: true,
         message: null,
-        typedEmail: _.get(this.member, [ 'mail' ], null),
-        selectedRole: _.get(this.member, [ 'role' ], null),
+        typedEmail: _.get(this.members, [ 0, 'mail' ], null),
+        selectedRole: _.get(this.members, [ 0, 'role' ], null),
         shouldShowBtnSet: false,
         wording: {
           WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER,
@@ -122,6 +131,7 @@
             break
         }
       },
+      getValue,
       resetAllAlertShow (excluding) {
         this.alertMsgShow = {}
         this.alertMsgShow[ excluding ] = true
@@ -162,9 +172,15 @@
               role: this.selectedRole
             }).then(callback)
           } else if (this.action === 'delete') {
-            deleteMember(this.$store, {
-              id: this.id
-            }).then(callback)
+            if (this.members.length > 1) {
+              deleteMembers(this.$store, {
+                ids: _.map(this.members, (m) => (m.id))
+              }).then(callback)
+            } else {
+              deleteMember(this.$store, {
+                id: this.id
+              }).then(callback)
+            }
           }
         }
       },
@@ -193,17 +209,17 @@
       }
     },
     mounted () {},
-    props: [ 'shouldShow', 'title', 'member', 'action' ],
+    props: [ 'shouldShow', 'title', 'members', 'action' ],
     watch: {
-      member: function () {
-        this.typedEmail = _.get(this.member, [ 'mail' ], null)
-        this.selectedRole = _.get(this.member, [ 'role' ], null)
+      members: function () {
+        this.typedEmail = _.get(this.members, [ 0, 'mail' ], null)
+        this.selectedRole = _.get(this.members, [ 0, 'role' ], null)
         this.message = null
         this.isEdible = true
       },
       shouldShow: function () {
-        this.typedEmail = _.get(this.member, [ 'mail' ], '')
-        this.selectedRole = _.get(this.member, [ 'role' ])
+        this.typedEmail = _.get(this.members, [ 0, 'mail' ], '')
+        this.selectedRole = _.get(this.members, [ 0, 'role' ])
         this.message = null
         this.isEdible = true
       }
@@ -248,9 +264,21 @@
           width calc(100% - 50px)
           display flex
           justify-content center
-        // &.nickname
-        //   > .label
-        //     width 80px
+        &.nickname
+          position relative
+          &.multiple
+            padding-top 12px
+            height 33px
+            &::before
+              content ''
+              position absolute
+              top 0
+              width calc(100% - 50px)
+              display block
+              border-top 1px solid #d3d3d3
+        &.email
+          &.multiple
+            margin-bottom 12px
         &.title
           color #4280a2
           margin-bottom 14px

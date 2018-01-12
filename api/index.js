@@ -568,12 +568,14 @@ router.put('*', auth, function (req, res) {
 
 router.delete('*', auth, function (req, res) {
   const url = `${apiHost}${req.url}`
+  const params = req.body || {}
   superagent
   .delete(url)
   .end((err, response) => {
     if (!err && response) {
       res.status(200).end()
     } else {
+      console.log('Error occurred when deleting stuff', err)
       res.status(500).json(err)
     }
   })
