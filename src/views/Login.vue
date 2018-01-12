@@ -8,11 +8,11 @@
   import _ from 'lodash'
   import { SECTIONS_DEFAULT } from '../constants'
   import LoginPanel from '../components/LoginPanel.vue'
-  import Header from '../components/Header.vue'
+  import AppHeader from '../components/AppHeader.vue'
   
   export default {
     components: {
-      'app-header': Header,
+      'app-header': AppHeader,
       LoginPanel
     },
     computed: {

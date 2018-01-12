@@ -545,7 +545,7 @@ router.post('*', auth, (req, res) => {
         })
       }
     } else {
-      console.log('error occurred when handling a req,', req.url)
+      console.log('error occurred when handling a req: ', req.url)
       console.log(err)
       res.status(500).json(err)
     }

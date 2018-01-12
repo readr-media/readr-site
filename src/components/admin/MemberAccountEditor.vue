@@ -4,12 +4,12 @@
       <div class="title" v-text="title" v-if="!message"></div>
       <div class="email">
         <span class="label" v-text="wording.WORDING_ADMIN_MEMBER_EDITOR_EMAIL + '：'"></span>
-        <div><InputItem class="admin" inputKey="email" v-on:filled="fillHandler" :disabled="action === 'add' ? !isEdible : true" :initValue="emailVal"></InputItem></div>
+        <div><InputItem class="admin" inputKey="mail" @filled="fillHandler" :disabled="action === 'add' ? !isEdible : true" :initValue="emailVal" :alertFlag="alertFlags.mail" :alertMsg="alertMsgs.mail" :alertMsgShow="alertMsgShow.mail" @inputFocus="resetAllAlertShow" @inputFocusOut="resetAlertShow" @removeAlert="removeAlert"></InputItem></div>
       </div>
       <div class="role">
         <span class="label" v-text="wording.WORDING_ADMIN_ROLE + '：'"></span>
         <div class="options">
-          <Radio class="admin" :label="role.value" v-for="role in roles" :key="role.key" :value="role.key" v-if="role.key > 1" name="role" v-on:selected="selectedHandler" :disabled="!isEdible" :initValue="roleValue"></Radio>
+          <Radio class="admin" :label="role.value" v-for="role in roles" :key="role.key" :value="role.key" v-if="role.key > 1" name="role" @selected="selectedHandler" :disabled="!isEdible" :initValue="roleValue"></Radio>
         </div>
       </div>
       <div class="btn--save" v-text="wording.WORDING_ADMIN_MEMBER_EDITOR_SAVE" @click="save" v-if="!message"></div>
@@ -37,6 +37,7 @@
   import _ from 'lodash'
   import { WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER, WORDING_ADMIN_MEMBER_EDITOR_EMAIL, WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER, WORDING_ADMIN_MEMBER_EDITOR_SAVE, WORDING_ADMIN_ROLE } from '../../constants'
   import { WORDING_ADMIN_SUCCESS, WORDING_ADMIN_INFAIL, WORDING_ADMIN_MEMBER_EDITOR_NICKNAME, WORDING_ADMIN_CANCEL, WORDING_ADMIN_YES, WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL } from '../../constants'
+  import { WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL } from '../../constants'
   import { ROLE_MAP } from '../../constants'
   import { consoleLogOnDev } from '../../util/comm'
   import InputItem from '../form/InputItem.vue'
@@ -85,6 +86,9 @@
     },
     data () {
       return {
+        alertFlags: {},
+        alertMsgs: {},
+        alertMsgShow: {},
         isEdible: true,
         message: null,
         typedEmail: _.get(this.member, [ 'mail' ], null),
@@ -101,7 +105,8 @@
           WORDING_ADMIN_MEMBER_EDITOR_NICKNAME,
           WORDING_ADMIN_CANCEL,
           WORDING_ADMIN_YES,
-          WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL
+          WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL,
+          WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL
         }
       }
     },
@@ -112,10 +117,23 @@
       },
       fillHandler (key, value) {
         switch (key) {
-          case 'email':
+          case 'mail':
             this.typedEmail = value
             break
         }
+      },
+      resetAllAlertShow (excluding) {
+        this.alertMsgShow = {}
+        this.alertMsgShow[ excluding ] = true
+        this.$forceUpdate()
+      },
+      resetAlertShow (target) {
+        this.alertMsgShow[ target ] = false
+        this.$forceUpdate()
+      },
+      removeAlert (target) {
+        this.alertFlags[ target ] = false
+        this.$forceUpdate()
       },
       save () {
         if (this.validate() || this.action === 'delete') {
@@ -161,13 +179,14 @@
         let pass = true
         if (!this.typedEmail || !validator.isEmail(this.typedEmail)) {
           pass = false
+          this.alertFlags.mail = true
+          this.alertMsgs.mail = this.wording.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL
           consoleLogOnDev({ msg: 'mail wrong, ' + this.typedEmail })
         }
         if (this.selectedRole === null || this.selectedRole === undefined || !validator.isInt(this.selectedRole.toString())) {
-          pass = false
-          // this.alertFlags.mail = true
-          // this.alertMsgs.mail = this.wording.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL
-          consoleLogOnDev({ msg: 'role wrong, ' + this.selectedRole })
+          // pass = false
+          // consoleLogOnDev({ msg: 'role wrong, ' + this.selectedRole })
+          this.selectedRole = 1
         }
         this.$forceUpdate()
         return pass

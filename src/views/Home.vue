@@ -31,11 +31,11 @@
 <script>
   import { SECTIONS_DEFAULT } from '../constants'
   import { removeToken } from '../util/services'
-  import Header from '../components/Header.vue'
+  import AppHeader from '../components/AppHeader.vue'
 
   export default {
     components: {
-      'app-header': Header
+      'app-header': AppHeader
     },
     computed: {
       sections () {

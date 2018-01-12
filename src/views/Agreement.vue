@@ -13,12 +13,12 @@
 <script>
   import { AGREEMENT_CONTENT } from '../constants/agreement'
   import { WORDING_AGREEMENT_TERMS_AND_SERVICE, WORDING_AGREEMENT_IPR, WORDING_AGREEMENT_PRIVACY } from '../constants'
-  import Header from '../components/Header.vue'
+  import AppHeader from '../components/AppHeader.vue'
   import Tab from '../components/Tab.vue'
 
   export default {
     components: {
-      'app-header': Header,
+      'app-header': AppHeader,
       Tab
     },
     data () {

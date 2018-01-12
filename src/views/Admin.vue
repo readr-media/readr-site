@@ -17,7 +17,7 @@
   import { SECTIONS_DEFAULT } from '../constants'
   import About from '../components/About.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
-  import Header from '../components/Header.vue'
+  import AppHeader from '../components/AppHeader.vue'
   import MembersPanel from '../components/admin/MembersPanel.vue'
   import MemberAccountEditor from '../components/admin/MemberAccountEditor.vue'
   import TheBaseControlBar from '../components/TheBaseControlBar.vue'
@@ -38,7 +38,7 @@
 
   export default {
     components: {
-      'app-header': Header,
+      'app-header': AppHeader,
       About,
       BaseLightBox,
       MembersPanel,
