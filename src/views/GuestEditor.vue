@@ -19,7 +19,7 @@
   import _ from 'lodash'
   import About from '../components/About.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
-  import Header from '../components/Header.vue'
+  import AppHeader from '../components/AppHeader.vue'
   import PostList from '../components/PostList.vue'
   import PostPanelEdit from '../components/PostPanelEdit.vue'
   import TheBaseControlBar from '../components/TheBaseControlBar.vue'
@@ -50,7 +50,7 @@
     name: 'GuestEditor',
     components: {
       'app-about': About,
-      'app-header': Header,
+      'app-header': AppHeader,
       'base-control-bar': TheBaseControlBar,
       'base-light-box': BaseLightBox,
       'post-list': PostList,

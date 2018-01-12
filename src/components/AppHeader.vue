@@ -69,7 +69,7 @@
         }
       }
     },
-    name: 'header',
+    name: 'AppHeader',
     methods: {
       goMemberCenter () {
         const memberCenter = _.get(_.filter(ROLE_MAP, { key: _.get(this.$store, [ 'state', 'profile', 'role' ]) }), [ 0, 'route' ], 'member')
