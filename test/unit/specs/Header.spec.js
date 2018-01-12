@@ -1,10 +1,10 @@
-import Header from 'src/components/Header.vue'
+import AppHeader from 'src/components/AppHeader.vue'
 // import Vue from 'vue'
 import { WORDING_HEADER_LOGIN, WORDING_HEADER_LOGOUT, WORIDNG_HEADER_MEMBER_CENTRE } from 'src/constants'
 import { mount } from 'avoriaz'
 
-describe('Header.vue', () => {
-  const HeaderComponent = mount(Header, {
+describe('AppHeader.vue', () => {
+  const HeaderComponent = mount(AppHeader, {
     data () {
       return {
         isClientSide: true
@@ -69,7 +69,7 @@ describe('Header.vue', () => {
   it('if user dose not log in yet, should show login btn', () => {
     // arrange
     // act
-    const HeaderComponentForLogin = mount(Header, {
+    const HeaderComponentForLogin = mount(AppHeader, {
       computed: {
         isLoggedIn: () => {
           return false
@@ -93,7 +93,7 @@ describe('Header.vue', () => {
   })
   it('if user has logged in, should show user nickname', () => {
     const nicknameText = 'test'
-    const HeaderComponentForLogout = mount(Header, {
+    const HeaderComponentForLogout = mount(AppHeader, {
       computed: {
         isLoggedIn: () => {
           return true
@@ -126,7 +126,7 @@ describe('Header.vue', () => {
       }
     }
     const nicknameText = 'GotNickname'
-    const HeaderComponentForNicknameExisting = mount(Header, Object.assign({}, basicSet, {
+    const HeaderComponentForNicknameExisting = mount(AppHeader, Object.assign({}, basicSet, {
       computed: {
         isLoggedIn: () => (true),
         currentUser: () => {
@@ -140,7 +140,7 @@ describe('Header.vue', () => {
     expect(nickname.text()).to.be.string(nicknameText)
 
     const nameText = 'GotName'
-    const HeaderComponentForNicknameNoneButNameExisting = mount(Header, Object.assign({}, basicSet, {
+    const HeaderComponentForNicknameNoneButNameExisting = mount(AppHeader, Object.assign({}, basicSet, {
       computed: {
         isLoggedIn: () => (true),
         currentUser: () => {
@@ -153,7 +153,7 @@ describe('Header.vue', () => {
     nickname = HeaderComponentForNicknameNoneButNameExisting.find('.login-status__nickname')[0]
     expect(nickname.text()).to.be.string(nameText)
 
-    const HeaderComponentForNicknameAndNameNone = mount(Header, Object.assign({}, basicSet, {
+    const HeaderComponentForNicknameAndNameNone = mount(AppHeader, Object.assign({}, basicSet, {
       computed: {
         isLoggedIn: () => (true),
         currentUser: () => {

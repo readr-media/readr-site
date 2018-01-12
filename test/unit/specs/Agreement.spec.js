@@ -1,5 +1,5 @@
 import Agreement from 'src/views/Agreement.vue'
-import Header from 'src/components/Header.vue'
+import AppHeader from 'src/components/AppHeader.vue'
 import Tab from 'src/components/Tab.vue'
 // import sinon from 'sinon'
 import { mount } from 'avoriaz'
@@ -11,7 +11,7 @@ describe('Agreement.vue', () => {
     expect(AgreementComponent.hasClass('agreement')).to.equal(true)
   })
   it('view Agreement should contain component Header', () => {
-    expect(AgreementComponent.contains(Header)).to.equal(true)
+    expect(AgreementComponent.contains(AppHeader)).to.equal(true)
   })
   it('view Agreement should contain terms block', () => {
     expect(terms).to.not.be.undefined

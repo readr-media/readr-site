@@ -6,7 +6,7 @@
     <div class="member-panel__items">
       <div class="member-panel__items__item">
         <div class="checkbox select-all title">
-          <input type="checkbox">
+          <input type="checkbox" @click="toggoleSelectAll" ref="selectAll">
         </div>
         <div class="nickname title"><span v-text="wording.WORDING_ADMIN_NICKNAME"></span></div>
         <div class="email title"><span v-text="wording.WORDING_ADMIN_EMAIL"></span></div>
@@ -24,7 +24,7 @@
       </div>
       <div class="member-panel__items__item" v-for="(m, k) in members">
         <div class="checkbox">
-          <input type="checkbox">
+          <input type="checkbox" @click="toggleCheckboxItem" :ref="`checkboxItems`">
         </div>
         <div class="nickname" v-text="getValue(m, [ 'nickname' ])"></div>
         <div class="email" v-text="getValue(m, [ 'mail' ])"></div>
@@ -76,6 +76,7 @@
     data () {
       return {
         action: 'update',
+        isAllSelected: false,
         editorTitle: '',
         showLightBox: false,
         targMember: null,
@@ -104,11 +105,27 @@
         this.editorTitle = this.wording.WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION
       },
       filterChanged (event) {
+        this.$refs[ 'selectAll' ].checked = false
+        this.toggoleSelectAll()
+
         this.$emit('filterChanged', { sort: event.target.value })
       },
       getValue,
       pageChanged (index) {
+        this.$refs[ 'selectAll' ].checked = false
+        this.toggoleSelectAll()
         this.$emit('filterChanged', { page: index })
+      },
+      toggleCheckboxItem (e) {
+        if (!e.target.checked) {
+          this.$refs[ 'selectAll' ].checked = false
+        }
+      },
+      toggoleSelectAll () {
+        this.isAllSelected = this.$refs[ 'selectAll' ].checked
+        _.map(this.$refs[ 'checkboxItems' ], (checkbox) => {
+          checkbox.checked = this.$refs[ 'selectAll' ].checked
+        })
       },
       update (index) {
         this.action = 'update'
