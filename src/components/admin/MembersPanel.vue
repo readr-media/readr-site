@@ -8,9 +8,9 @@
         <div class="checkbox select-all title">
           <input type="checkbox" @click="toggoleSelectAll" ref="selectAll">
         </div>
-        <div class="nickname title"><span v-text="wording.WORDING_ADMIN_NICKNAME"></span></div>
-        <div class="email title"><span v-text="wording.WORDING_ADMIN_EMAIL"></span></div>
-        <div class="role title"><span v-text="wording.WORDING_ADMIN_ROLE"></span></div>
+        <div class="nickname title"><span v-text="wording.WORDING_ADMIN_NICKNAME" @click="orderBy('nickname')"></span></div>
+        <div class="email title"><span v-text="wording.WORDING_ADMIN_EMAIL" @click="orderBy('mail')"></span></div>
+        <div class="role title"><span v-text="wording.WORDING_ADMIN_ROLE" @click="orderBy('role')"></span></div>
         <div class="actions title">
           <div class="actions__update" v-if="$can('updateAccount')" v-text="wording.WORDING_ADMIN_UPDATE"></div>
           <div class="actions__delete" v-if="$can('deleteAccount')" v-text="wording.WORDING_ADMIN_DELETE" @click="delMultiple"></div>
@@ -76,6 +76,7 @@
     data () {
       return {
         action: 'update',
+        currOrder: '',
         isAllSelected: false,
         editorTitle: '',
         showLightBox: false,
@@ -131,6 +132,15 @@
         _.map(this.$refs[ 'checkboxItems' ], (checkbox) => {
           checkbox.checked = this.$refs[ 'selectAll' ].checked
         })
+      },
+      orderBy (field) {
+        if (this.currOrder === field || this.currOrder === `-${field}`) {
+          this.currOrder = this.currOrder.indexOf('-') === 0 ? field : `-${field}`
+          this.$emit('filterChanged', { sort: this.currOrder })
+        } else {
+          this.currOrder = field
+          this.$emit('filterChanged', { sort: field })
+        }
       },
       update (index) {
         this.action = 'update'
