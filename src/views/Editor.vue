@@ -8,7 +8,7 @@
         
       </section>
       <base-light-box :showLightBox.sync="showLightBox">
-        <post-panel-edit :post="post" :showLightBox="showLightBox" :status="status" v-on:closeLightBox="$_editor_lightBoxHandler(false)"></post-panel-edit>
+        <post-panel :post="post" :showLightBox="showLightBox" :status="status" v-on:closeLightBox="$_editor_lightBoxHandler(false)"></post-panel>
       </base-light-box>
     </main>
   </div>
@@ -19,7 +19,7 @@
   import BaseLightBox from '../components/BaseLightBox.vue'
   import AppHeader from '../components/AppHeader.vue'
   import PostList from '../components/PostList.vue'
-  import PostPanelEdit from '../components/PostPanelEdit.vue'
+  import PostPanel from '../components/PostPanel.vue'
   import TheBaseControlBar from '../components/TheBaseControlBar.vue'
 
   const SECTIONS_DEFAULT = {
@@ -38,7 +38,7 @@
       'base-control-bar': TheBaseControlBar,
       'base-light-box': BaseLightBox,
       'post-list': PostList,
-      'post-panel-edit': PostPanelEdit
+      'post-panel': PostPanel
     },
     data () {
       return {

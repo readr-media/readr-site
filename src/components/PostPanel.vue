@@ -1,43 +1,45 @@
 <template>
   <section class="postPanelEdit">
-    <input v-model="title" type="text" class="postPanelEdit__title" placeholder="輸入標題">
-    <text-editor :contentEdit="content" :needReset="resetToggle" v-on:updateContent="$_postPanelEdit_updateContent"></text-editor>
+    <input v-model="post.title" type="text" class="postPanelEdit__title" placeholder="輸入標題">
+    <text-editor :contentEdit="post.content" :needReset="resetToggle" v-on:updateContent="$_postPanelEdit_updateContent"></text-editor>
     <div class="postPanelEdit__input postPanelEdit__link">
       <label for="">新聞連結：</label>
-      <input v-model="link" type="url">
+      <input v-model="post.link" type="url">
     </div>
     <div v-if="$can('editPostOg')" class="postPanelEdit__input postPanelEdit--publishDate">
-      <label for="">發佈日期：</label>
+      <label for="">發布日期：</label>
       <no-ssr>
-        <datepicker v-model="date" :format="dateFormat" :input-class="'datepicker__input'" :language="'zh'"></datepicker>
+        <datepicker v-model="post.date" :format="dateFormat" :input-class="'datepicker__input'" :language="'zh'"></datepicker>
       </no-ssr>
     </div>
     <div v-if="$can('editPostOg')" class="postPanelEdit__input">
       <label for="">分享標題：</label>
-      <input v-model="ogTitle" type="text">
+      <input v-model="post.ogTitle" type="text">
     </div>
     <div v-if="$can('editPostOg')" class="postPanelEdit__input">
       <label for="">分享說明：</label>
-      <input v-model="ogDescription" type="text">
+      <input v-model="post.ogDescription" type="text">
     </div>
     <div v-if="$can('editPostOg')" class="postPanelEdit__input">
       <label for="">分享縮圖：</label>
-      <input v-model="ogImage" type="text" readonly>
+      <input v-model="post.ogImage" type="text" readonly>
       <button class="postPanelEdit__btn--img" @click="$_postPanelEdit_uploadImage"><img src="/public/icons/upload.png" alt="上傳"></button>
       <button class="postPanelEdit__btn--img" @click="$_postPanelEdit_cleanOgImage"><img src="/public/icons/delete.png" alt="刪除"></button>
     </div>
-    <div v-show="ogImage && $can('editPostOg')" class="postPanelEdit__ogImg">
-      <img :src="ogImage" :alt="ogTitle">
+    <div v-show="post.ogImage && $can('editPostOg')" class="postPanelEdit__ogImg">
+      <img :src="post.ogImage" :alt="post.ogTitle">
     </div>
     <div :class="{ advanced: $can('publishPost') }" class="postPanelEdit__submit">
-      <div class="postPanelEdit__btn draft" @click="$_postPanelEdit_submit()">存成草稿</div>
-      <div class="postPanelEdit__btn submit" @click="$_postPanelEdit_submit(2)">提交</div>
-      <div v-if="$can('publishPost')" class="postPanelEdit__btn" @click="$_postPanelEdit_submit(1)">發佈</div>
+      <button :disabled="(action === 'add') && isEmpty" class="postPanelEdit__btn draft" @click="$_postPanelEdit_submit(3)">存成草稿</button>
+      <button :disabled="(action === 'add') && isEmpty" class="postPanelEdit__btn submit" @click="$_postPanelEdit_submit(2)">提交</button>
+      <button v-if="$can('publishPost')" :disabled="(action === 'add') && isEmpty" class="postPanelEdit__btn" @click="$_postPanelEdit_submit(1)">發布</button>
     </div>
   </section>
 </template>
 <script>
   import _ from 'lodash'
+  import AlertPanel from './AlertPanel.vue'
+  import BaseLightBox from './BaseLightBox.vue'
   import Datepicker from 'vuejs-datepicker'
   import TextEditor from './TextEditor.vue'
   import NoSSR from 'vue-no-ssr'
@@ -55,16 +57,20 @@
   }
 
   export default {
-    name: 'PostPanelEdit',
+    name: 'PostPanel',
     components: {
-      'text-editor': TextEditor,
+      'alert-panel': AlertPanel,
+      'base-light-box': BaseLightBox,
       'datepicker': Datepicker,
+      'text-editor': TextEditor,
       'no-ssr': NoSSR
     },
     props: {
-      status: {
-        type: String,
-        default: 'add'
+      action: {
+        default: undefined
+      },
+      isCompleted: {
+        default: false
       },
       post: {
         type: Object,
@@ -76,38 +82,31 @@
     },
     data () {
       return {
-        content: '',
-        date: '',
+        active: undefined,
         dateFormat: 'yyyy/MM/d',
-        link: '',
-        ogDescription: '',
-        ogImage: '',
-        ogTitle: '',
         resetToggle: true,
-        title: ''
+        showAlert: false,
       }
     },
     computed: {
       isEmpty () {
-        return _.isEmpty(_.trim(this.link)) && _.isEmpty(_.trim(this.title)) && _.isEmpty(_.trim(_.replace(this.content, /<[^>]*>/g, '')))
+        return _.isEmpty(_.trim(_.get(this.post, [ 'link' ], '')))
+          && _.isEmpty(_.trim(_.get(this.post, [ 'title' ], '')))
+          && _.isEmpty(_.trim(_.replace(_.get(this.post, [ 'content' ], ''), /<[^>]*>/g, '')))
       },
       postActive () {
         return _.get(this.post, [ 'active' ])
       }
     },
     watch: {
-      post (val) {
-        this.content = _.get(val, [ 'content' ])
-        this.date = _.get(val, [ 'publishedAt' ])
-        this.link = _.get(val, [ 'link' ])
-        this.title = _.get(val, [ 'title' ])
-        this.ogDescription = _.get(val, [ 'ogDescription' ])
-        this.ogImage = _.get(val, [ 'ogImage' ])
-        this.ogTitle = _.get(val, [ 'ogTitle' ])
+      showAlert (val) {
+        if (!val) {
+          this.$emit('closeLightBox')
+        }
       },
       showLightBox (val) {
         if (!val) {
-          if (!this.isEmpty) {
+          if (!this.isEmpty && !this.isCompleted) {
             this.$_postPanelEdit_submit(this.postActive)
           }
         }
@@ -116,54 +115,49 @@
     mounted () {},
     methods: {
       $_postPanelEdit_cleanOgImage () {
-        this.ogImage = ''
+        this.post.ogImage = ''
       },
       $_postPanelEdit_resetContent () {
-        this.content = ''
-        this.date = ''
-        this.link = ''
-        this.ogDescription = ''
-        this.ogImage = ''
-        this.ogTitle = ''
-        this.title = ''
         this.resetToggle = !this.resetToggle
       },
-      $_postPanelEdit_submit (status = 3) {
+      $_postPanelEdit_submit (active = 3) {
         const params = {}
-        params.active = status
+        params.active = active
         params.author = _.get(this.$store.state, [ 'profile', 'id' ])
-        params.content = this.content
-        params.link = this.link
-        params.og_description = this.ogDescription
-        params.og_image = this.ogImage
-        params.og_title = this.ogTitle || this.title
-        params.title = this.title
+        params.content = _.get(this.post, [ 'content' ])
+        params.link = _.get(this.post, [ 'link' ])
+        params.og_description = _.get(this.post, [ 'ogDescription' ])
+        params.og_image = _.get(this.post, [ 'ogImage' ])
+        params.og_title = _.get(this.post, [ 'ogTitle' ]) || _.get(this.post, [ 'title' ])
+        params.title = _.get(this.post, [ 'title' ])
         params.updated_by = _.get(this.$store.state, [ 'profile', 'id' ])
+        
+        this.active = active
 
-        if (Date.parse(this.date)) {
-          params.published_at = this.date
+        if (Date.parse(_.get(this.post, [ 'date' ]))) {
+          params.published_at = _.get(this.post, [ 'date' ])
         }
 
-        if (this.status === 'add') {
+        if (this.action === 'add') {
           addPost(this.$store, params)
             .then(() => {
-              this.$_postPanelEdit_resetContent()
-              this.$emit('closeLightBox')
-              this.$emit('updatePostList')
+              this.$emit('showAlert', true, active, true)
             })
         }
-        if (this.status === 'edit') {
+        if (this.action === 'edit') {
           params.id = _.get(this.post, [ 'id' ])
-          updatePost(this.$store, params)
-            .then(() => {
-              this.$_postPanelEdit_resetContent()
-              this.$emit('closeLightBox')
-              this.$emit('updatePostList')
-            })
+          
+
+          if (this.active === 2 || this.active === 3) {
+            updatePost(this.$store, params)
+              .then(() => {
+                this.$emit('showAlert', true, active, true)
+              })
+          }
         }
       },
       $_postPanelEdit_updateContent (content) {
-        this.content = content
+        this.post.content = content
       },
       $_postPanelEdit_uploadImage () {
         const input = document.createElement('input')
@@ -248,7 +242,6 @@
     font-size 14px
     font-weight 300
     border 1px solid #d3d3d3
-    cursor pointer
     user-select none
     &.submit
       color #fff
@@ -263,5 +256,31 @@
       user-select none
       &:first-of-type
         margin-left 10px
+
+.alert
+  width 325px
+  color #000
+  font-size 15px
+  background #fff
+  box-shadow: 1px 1px 2.5px 0 rgba(0, 0, 0, 0.5)
+  > p
+    margin .5em 25px
+  &__control
+    display flex
+    justify-content space-between
+    margin-top 30px
+  &__title
+    display block
+    margin 15px 25px 0
+    color #4280a2
+  &__btn
+    flex 1
+    height 30px
+    background transparent
+    border .5px solid #d3d3d3
+    border-collapse collapse
+    outline none
+    &:first-of-type
+      border-right none
 
 </style>

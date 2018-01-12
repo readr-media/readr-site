@@ -11,6 +11,13 @@
 </script>
 
 <style lang="stylus">
+a
+  text-decoration none
+
+button
+  cursor pointer
+  &:disabled
+    cursor not-allowed
 .view
   // max-width 800px
   margin 0 auto

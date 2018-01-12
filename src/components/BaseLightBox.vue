@@ -20,6 +20,7 @@
       },
       containerClass () {
         return {
+          'alert': this.isAlert,
           'non-border': this.borderStyle === 'nonBorder',
           'conversation': this.isConversation
         }
@@ -29,6 +30,10 @@
       borderStyle: {
         default: 'normal'
       },
+      isAlert: {
+        type: Boolean,
+        default: false
+      },
       isConversation: {
         default: false
       },
@@ -36,6 +41,7 @@
         default: false
       },
       showLightBox: {
+        type: Boolean,
         default: false
       }
     },
@@ -99,6 +105,10 @@
       > .baseLightBox__btn--close
         width 25px
         height 25px
+    &.alert
+      border none
+      > .baseLightBox__btn--close
+        display none
   &__curtain
     position absolute
     top 0

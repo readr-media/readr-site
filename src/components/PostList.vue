@@ -41,7 +41,7 @@
         this.$emit('deletePost', id)
       },
       $_postList_editPost (id) {
-        this.$emit('editPost', id)
+        this.$emit('editPost', true, 'edit', id)
       },
       $_postList_getAuthorId (post) {
         return _.get(post, [ 'author', 'nickname' ])

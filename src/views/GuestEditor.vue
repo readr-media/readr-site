@@ -3,14 +3,17 @@
     <app-header :sections="sections"></app-header>
     <main class="main-container">
       <app-about :profile="profile"></app-about>
-      <base-control-bar v-on:addPost="$_guestEditor_lightBoxHandler(true, 'add')"></base-control-bar>
+      <base-control-bar @addPost="$_guestEditor_editorHandler(true, 'add')"></base-control-bar>
       <section class="main-panel">
         <template>
-          <post-list :posts="posts" v-on:deletePost="$_guestEditor_deletePost" v-on:editPost="$_guestEditor_editPost"></post-list>
+          <post-list :posts="posts" @deletePost="$_guestEditor_showAlert" @editPost="$_guestEditor_editorHandler"></post-list>
         </template>
       </section>
-      <base-light-box :showLightBox.sync="showLightBox">
-        <post-panel-edit :post="post" :showLightBox="showLightBox" :status="status" v-on:closeLightBox="$_guestEditor_lightBoxHandler(false)" v-on:updatePostList="$_guestEditor_updatePostList"></post-panel-edit>
+      <base-light-box :showLightBox.sync="showEditor">
+        <post-panel :action="action" :isCompleted="isCompleted" :post.sync="post" :showLightBox="showEditor" @closeLightBox="$_guestEditor_editorHandler(false)" @showAlert="$_guestEditor_alertHandler" @updatePostList="$_guestEditor_updatePostList"></post-panel>
+      </base-light-box>
+      <base-light-box :isAlert="true" :showLightBox.sync="showAlert">
+        <alert-panel :action="action" :active="changePostActiveTo" :isCompleted="isCompleted" :post="post" :showLightBox="showAlert" @closeAlert="$_guestEditor_alertHandler" @closeEditor="$_guestEditor_editorHandler(false)" @deletePost="$_guestEditor_deletePost"></alert-panel>
       </base-light-box>
     </main>
   </div>
@@ -18,10 +21,11 @@
 <script>
   import _ from 'lodash'
   import About from '../components/About.vue'
+  import AlertPanel from '../components/AlertPanel.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
   import AppHeader from '../components/AppHeader.vue'
   import PostList from '../components/PostList.vue'
-  import PostPanelEdit from '../components/PostPanelEdit.vue'
+  import PostPanel from '../components/PostPanel.vue'
   import TheBaseControlBar from '../components/TheBaseControlBar.vue'
 
   const SECTIONS_DEFAULT = {
@@ -49,18 +53,23 @@
   export default {
     name: 'GuestEditor',
     components: {
+      'alert-panel': AlertPanel,
       'app-about': About,
       'app-header': AppHeader,
       'base-control-bar': TheBaseControlBar,
       'base-light-box': BaseLightBox,
       'post-list': PostList,
-      'post-panel-edit': PostPanelEdit
+      'post-panel': PostPanel
     },
     data () {
       return {
+        action: undefined,
+        changePostActiveTo: undefined,
+        isCompleted: false,
         post: {},
-        showLightBox: false,
-        status: ''
+        showAlert: false,
+        showEditor: false,
+        
       }
     },
     computed: {
@@ -77,21 +86,39 @@
     mounted () {
     },
     methods: {
-      $_guestEditor_deletePost (id) {
+      $_guestEditor_alertHandler (showAlert, changePostActiveTo, isCompleted) {
+        this.changePostActiveTo = changePostActiveTo
+        this.isCompleted = isCompleted
+        this.showAlert = showAlert
+      },
+      $_guestEditor_deletePost () {
+        const id = _.get(this.post, [ 'id' ])
         deletePost(this.$store, id)
           .then(() => {
             this.$_guestEditor_updatePostList()
+            this.isCompleted = true
           })
       },
-      $_guestEditor_editPost (id) {
-        this.status = 'edit'
-        this.showLightBox = true
-        this.post = _.find(this.posts, { 'id': id })
+      $_guestEditor_editorHandler (showEditor, action, id) {
+        this.isCompleted = false
+        this.post = _.find(this.posts, { 'id': id }) || {}
+        if (action === 'add') {
+          this.post.author = _.get(this.$store.state, [ 'profile' ])
+        }
+        this.action = action
+        this.showEditor = showEditor
+        if (!this.showEditor) {
+          this.action = undefined
+          this.isCompleted = true
+          this.post = {}
+          this.$_guestEditor_updatePostList()
+        }
       },
-      $_guestEditor_lightBoxHandler (value, status) {
-        this.post = {}
-        this.showLightBox = value
-        this.status = status
+      $_guestEditor_showAlert (id) {
+        this.post = _.find(this.posts, { 'id': id })
+        this.changePostActiveTo = 0
+        this.isCompleted = false
+        this.showAlert = true
       },
       $_guestEditor_updatePostList () {
         fetchPosts(this.$store, _.get(this.profile, [ 'id' ]))
