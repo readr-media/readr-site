@@ -1,7 +1,7 @@
 import About from 'src/components/About.vue'
 import Admin from 'src/views/Admin.vue'
 import BaseLightBox from 'src/components/BaseLightBox.vue'
-import Header from 'src/components/Header.vue'
+import AppHeader from 'src/components/AppHeader.vue'
 import MembersPanel from 'src/components/admin/MembersPanel.vue'
 import MemberAccountEditor from 'src/components/admin/MemberAccountEditor.vue'
 import TheBaseControlBar from 'src/components/TheBaseControlBar.vue'
@@ -11,7 +11,7 @@ import { mount } from 'avoriaz'
 
 describe('Admin.vue', () => {
   sinon.stub(Admin, 'beforeMount')
-  sinon.stub(Header, 'beforeMount')
+  sinon.stub(AppHeader, 'beforeMount')
   // mock $can
   Vue.use((Vue) => {
     Vue.prototype.$can = () => (true)
@@ -21,7 +21,7 @@ describe('Admin.vue', () => {
     expect(viewAdminComponent.hasClass('admin')).to.equal(true)
   })
   it('view admin should contain component Header', () => {
-    expect(viewAdminComponent.contains(Header)).to.equal(true)
+    expect(viewAdminComponent.contains(AppHeader)).to.equal(true)
   })
   it('view admin should contain component about', () => {
     expect(viewAdminComponent.contains(About)).to.equal(true)

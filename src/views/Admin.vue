@@ -24,7 +24,7 @@
 
   const MAXRESULT = 20
   const DEFAULT_PAGE = 1
-  const DEFAULT_SORT = 'updated_at'
+  const DEFAULT_SORT = '-updated_at'
 
   const getMembers = (store, { page, sort }) => {
     return store.dispatch('GET_MEMBERS', {
@@ -56,7 +56,7 @@
     data () {
       return {
         currPage: 1,
-        currSort: 'updated_at',
+        currSort: '-updated_at',
         showLightBox: false,
         wording: {
           WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER
@@ -73,7 +73,7 @@
         this.currSort = filter.sort || this.currSort
         getMembers(this.$store, {
           page: this.currPage,
-          sort: this.currPage
+          sort: this.currSort
         })
       },
       manageMember () {

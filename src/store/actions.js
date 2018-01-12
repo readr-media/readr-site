@@ -3,6 +3,7 @@ import {
   addPost,
   checkLoginStatus,
   deleteMember,
+  deleteMembers,
   deletePost,
   getDisposableToken,
   getProfile,
@@ -35,6 +36,9 @@ export default {
   },
   DELETE_MEMBER: ({ commit, dispatch, state }, { params }) => {
     return deleteMember({ params })
+  },
+  DELETE_MEMBERS: ({ commit, dispatch, state }, { params }) => {
+    return deleteMembers({ params })
   },
   DELETE_POST: ({ commit, dispatch, state }, { id }) => {
     return deletePost(id)
