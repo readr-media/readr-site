@@ -10,16 +10,16 @@ const supertest = require('supertest')
 
 const faker = require('faker')
 const random = Math.round(Math.random() * 10000)
-const id = `test${random}`
+const id = faker.internet.email() // `test${random}`
 const updatedData = {
   'id': id,
   'name': `UPDATED NAME ${random}`,
   'nickname': `UPDATED TITLE ${random}`,
   'birthday': faker.date.past(),
   'gender': 'M',
-  'work': faker.name.jobTitle(),
-  'mail': faker.internet.email(),
-  'register_mode': null,
+  // 'work': faker.name.jobTitle(),
+  'mail': id,
+  'register_mode': 'ordinary',
   'social_id': null,
   'updated_by': null,
   'description': null,
@@ -72,7 +72,7 @@ describe('/POST/token', () => {
     })
   })
 })
-
+let activeToken = ''
 describe('/POST/register', () => {
   // it('should register by google account sucessfully', (done) => {
   //   supertest(app).post('/api/register')
@@ -125,7 +125,7 @@ describe('/POST/register', () => {
       done()
     })
   }).timeout(50000)
-  it('should register sucessfully', (done) => {
+  it('should register [ ' + id + ' ] sucessfully', (done) => {
     supertest(app).post('/api/register')
     .set('Authorization', `Bearer ${disposableToken}`)
     .send({
@@ -134,9 +134,9 @@ describe('/POST/register', () => {
       'nickname': faker.name.title(),
       'birthday': faker.date.past(),
       'gender': 'M',
-      'work': faker.name.jobTitle(),
-      'email': faker.internet.email(),
-      'register_mode': null,
+      // 'work': faker.name.jobTitle(),
+      'email': id,
+      'register_mode': 'ordinary',
       'social_id': null,
       'updated_by': null,
       'description': null,
@@ -151,8 +151,17 @@ describe('/POST/register', () => {
     })
     .end(function (err, res) {
       if (err) return console.log(err)
+      activeToken = res.body.token
       res.status.should.equal(200)
+      activeToken.should.be.not.undefined
       done()
+    })
+  })
+  it('should activate the new account \'' + id + '\'', () => {
+    supertest(app).get('/api/activate/' + activeToken)
+    .end(function (err, res) {
+      if (err) return console.log(err)
+      res.status.should.equal(200)
     })
   })
 })
@@ -183,33 +192,32 @@ describe('/GET/member/:id', () => {
       .set('Authorization', `Bearer ${token}`)
       .end(function (err, res) {
         if (err) return console.log(err)
-        res.body.should.be.an('object').and.have.property('id').to.be.equal(updatedData.id)
-        res.body.should.have.property('name')
-        res.body.should.have.property('nickname')
-        res.body.should.have.property('birthday')
-        res.body.should.have.property('gender')
-        res.body.should.have.property('occupation')
-        res.body.should.have.property('mail')
-        res.body.should.have.property('register_mode')
-        res.body.should.have.property('social_id')
-        res.body.should.have.property('created_at')
-        res.body.should.have.property('updated_at')
-        res.body.should.have.property('updated_by')
-        res.body.should.have.property('description')
-        res.body.should.have.property('profile_image')
-        res.body.should.have.property('identity')
-        res.body.should.have.property('custom_editor')
-        res.body.should.have.property('hide_profile')
-        res.body.should.have.property('profile_push')
-        res.body.should.have.property('post_push')
-        res.body.should.have.property('comment_push')
-        res.body.should.have.property('active')
+        res.body._items[ 0 ].should.be.an('object').and.have.property('id').to.be.equal(updatedData.id)
+        res.body._items[ 0 ].should.have.property('name')
+        res.body._items[ 0 ].should.have.property('nickname')
+        res.body._items[ 0 ].should.have.property('birthday')
+        res.body._items[ 0 ].should.have.property('gender')
+        // res.body._items[ 0 ].should.have.property('work')
+        res.body._items[ 0 ].should.have.property('mail')
+        res.body._items[ 0 ].should.have.property('register_mode')
+        res.body._items[ 0 ].should.have.property('social_id')
+        res.body._items[ 0 ].should.have.property('created_at')
+        res.body._items[ 0 ].should.have.property('updated_at')
+        res.body._items[ 0 ].should.have.property('updated_by')
+        res.body._items[ 0 ].should.have.property('description')
+        res.body._items[ 0 ].should.have.property('profile_image')
+        res.body._items[ 0 ].should.have.property('identity')
+        res.body._items[ 0 ].should.have.property('custom_editor')
+        res.body._items[ 0 ].should.have.property('hide_profile')
+        res.body._items[ 0 ].should.have.property('profile_push')
+        res.body._items[ 0 ].should.have.property('post_push')
+        res.body._items[ 0 ].should.have.property('comment_push')
+        res.body._items[ 0 ].should.have.property('active')
         done()
       })
     }, 1000)
   })
 })
-
 describe('/PUT/member', () => {
   it(`should update member[${updatedData.id}] data sucessfully`, (done) => {
     supertest(app).put('/api/member')
@@ -229,25 +237,25 @@ describe('/GET/member/:id', () => {
       .set('Authorization', `Bearer ${token}`)
       .end(function (err, res) {
         if (err) return console.log(err)
-        res.body.should.be.an('object').and.have.property('id').to.be.equal(updatedData.id)
-        res.body.should.have.property('name').and.to.equal(updatedData.name)
-        res.body.should.have.property('nickname').and.to.equal(updatedData.nickname)
-        res.body.should.have.property('mail').and.to.equal(updatedData.mail)
+        res.body._items[ 0 ].should.be.an('object').and.have.property('id').to.be.equal(updatedData.id)
+        res.body._items[ 0 ].should.have.property('name').and.to.equal(updatedData.name)
+        res.body._items[ 0 ].should.have.property('nickname').and.to.equal(updatedData.nickname)
+        res.body._items[ 0 ].should.have.property('mail').and.to.equal(updatedData.mail)
         done()
       })      
     }, 1000)
   })
 })
 describe('/DELETE/member/:id', () => {
-  it(`would delete member data in fail with member id dosent exist in db`, (done) => {
-    supertest(app).delete('/api/member/nowxistid')
-    .set('Authorization', `Bearer ${token}`) 
-    .end(function (err, res) {
-      if (err) return console.log(err)
-      res.status.should.equal(200)
-      done()
-    })
-  })
+  // it(`would delete member data in fail with member id dosent exist in db`, (done) => {
+  //   supertest(app).delete('/api/member/nowxistid')
+  //   .set('Authorization', `Bearer ${token}`) 
+  //   .end(function (err, res) {
+  //     if (err) return console.log(err)
+  //     res.status.should.equal(500)
+  //     done()
+  //   })
+  // })
   it(`should delete member[${updatedData.id}] data through api`, (done) => {
     supertest(app).delete('/api/member/' + updatedData.id)
     .set('Authorization', `Bearer ${token}`) 
@@ -256,5 +264,20 @@ describe('/DELETE/member/:id', () => {
       res.status.should.equal(200)
       done()
     })
+  })
+  it(`should get inactive member[${updatedData.id}] data through api`, (done) => {
+    setTimeout(() => {
+      supertest(app).get('/api/member/' + updatedData.id)
+      .set('Authorization', `Bearer ${token}`)
+      .end(function (err, res) {
+        if (err) return console.log(err)
+        res.body._items[ 0 ].should.be.an('object').and.have.property('id').to.be.equal(updatedData.id)
+        res.body._items[ 0 ].should.have.property('name').and.to.equal(updatedData.name)
+        res.body._items[ 0 ].should.have.property('nickname').and.to.equal(updatedData.nickname)
+        res.body._items[ 0 ].should.have.property('mail').and.to.equal(updatedData.mail)
+        res.body._items[ 0 ].should.have.property('active').and.to.equal(-1)
+        done()
+      })      
+    }, 1000)
   })
 })
