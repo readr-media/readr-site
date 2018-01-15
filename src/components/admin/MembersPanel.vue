@@ -1,7 +1,7 @@
 <template>
   <div class="member-panel">
     <div class="member-panel__pagination">
-      <PaginationNav :totalPages="10" @pageChanged="pageChanged"></PaginationNav>
+      <PaginationNav :totalPages="1" @pageChanged="pageChanged"></PaginationNav>
     </div>
     <div class="member-panel__items">
       <div class="member-panel__items__item">
