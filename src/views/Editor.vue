@@ -3,36 +3,82 @@
     <app-header :sections="sections"></app-header>
     <main class="main-container">
       <app-about :profile="profile"></app-about>
-      <base-control-bar v-on:addPost="$_editor_lightBoxHandler(true, 'add')"></base-control-bar>
+      <base-control-bar @addPost="$_editor_textEditorHandler(true, 'add')"></base-control-bar>
       <section class="main-panel">
-        
+        <template>
+          <post-list
+            :posts="posts"
+            @deletePost="$_editor_showAlert"
+            @editPost="$_editor_textEditorHandler">
+          </post-list>
+        </template>
       </section>
-      <base-light-box :showLightBox.sync="showLightBox">
-        <post-panel :post="post" :showLightBox="showLightBox" :status="status" v-on:closeLightBox="$_editor_lightBoxHandler(false)"></post-panel>
+      <base-light-box :showLightBox.sync="showEditor">
+        <post-panel
+          :action="action"
+          :isCompleted="isCompleted"
+          :post.sync="post"
+          :showLightBox="showEditor"
+          @closeLightBox="$_editor_textEditorHandler(false)"
+          @showAlert="$_editor_alertHandler"
+          @updatePostList="$_editor_updatePostList">
+        </post-panel>
+      </base-light-box>
+      <base-light-box
+        :isAlert="true"
+        :showLightBox.sync="showAlert">
+        <alert-panel
+          :action="action"
+          :active="postActive"
+          :isCompleted="isCompleted"
+          :post="post"
+          :showLightBox="showAlert"
+          @closeAlert="$_editor_alertHandler"
+          @closeEditor="$_editor_textEditorHandler(false)"
+          @deletePost="$_editor_deletePost"
+          @publishPost="$_editor_publishPost">
+        </alert-panel>
       </base-light-box>
     </main>
   </div>
 </template>
 <script>
+  import { SECTIONS_DEFAULT } from '../constants'
   import _ from 'lodash'
   import About from '../components/About.vue'
+  import AlertPanel from '../components/AlertPanel.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
   import AppHeader from '../components/AppHeader.vue'
   import PostList from '../components/PostList.vue'
   import PostPanel from '../components/PostPanel.vue'
   import TheBaseControlBar from '../components/TheBaseControlBar.vue'
 
-  const SECTIONS_DEFAULT = {
-    'chief-editor-talk': '總編評論',
-    'celebrity-talk': '名人聊新聞',
-    'hot-talk': '熱門評論',
-    'chief-editor-list': '總編列表',
-    'projects': '新聞專題'
+  const addPost = (store, params) => {
+    return store.dispatch('ADD_POST', { params })
+  }
+
+  const fetchPosts = (store, id) => {
+    return store.dispatch('GET_POSTS', {
+      params: {
+        where: {
+          author: id
+        }
+      }
+    })
+  }
+
+  const deletePost = (store, id) => {
+    return store.dispatch('DELETE_POST', { id: id })
+  }
+
+  const updatePost = (store, params) => {
+    return store.dispatch('UPDATE_POST', { params })
   }
 
   export default {
     name: 'AppEditor',
     components: {
+      'alert-panel': AlertPanel,
       'app-about': About,
       'app-header': AppHeader,
       'base-control-bar': TheBaseControlBar,
@@ -42,9 +88,12 @@
     },
     data () {
       return {
+        action: undefined,
+        isCompleted: false,
         post: {},
-        showLightBox: false,
-        status: ''
+        postActive: undefined,
+        showAlert: false,
+        showEditor: false
       }
     },
     computed: {
@@ -58,16 +107,82 @@
         return SECTIONS_DEFAULT
       }
     },
+    watch: {
+      profile () {
+        fetchPosts(this.$store, _.get(this.profile, [ 'id' ]))
+      }
+    },
     mounted () {
     },
     methods: {
-      $_editor_lightBoxHandler (value, status) {
-        this.post = {}
-        this.showLightBox = value
-        this.status = status
+      $_editor_alertHandler (showAlert, active, isCompleted) {
+        this.postActive = active
+        this.isCompleted = isCompleted
+        this.showAlert = showAlert
+      },
+      $_editor_deletePost () {
+        const id = _.get(this.post, [ 'id' ])
+        deletePost(this.$store, id)
+          .then(() => {
+            this.$_editor_updatePostList()
+            this.isCompleted = true
+          })
+      },
+      $_editor_publishPost () {
+        const params = {}
+        params.active = 1
+        params.content = _.get(this.post, [ 'content' ])
+        params.link = _.get(this.post, [ 'link' ])
+        params.og_description = _.get(this.post, [ 'ogDescription' ])
+        params.og_image = _.get(this.post, [ 'ogImage' ])
+        params.og_title = _.get(this.post, [ 'ogTitle' ]) || _.get(this.post, [ 'title' ])
+        params.title = _.get(this.post, [ 'title' ])
+        params.updated_by = _.get(this.$store.state, [ 'profile', 'id' ])
+
+        if (Date.parse(_.get(this.post, [ 'date' ]))) {
+          params.published_at = _.get(this.post, [ 'date' ])
+        }
+        if (this.action === 'add') {
+          params.author = _.get(this.$store.state, [ 'profile', 'id' ])
+          addPost(this.$store, params)
+            .then(() => {
+              this.isCompleted = true
+            })
+        }
+
+        if (this.action === 'edit') {
+          params.id = _.get(this.post, [ 'id' ])
+          updatePost(this.$store, params)
+            .then(() => {
+              this.isCompleted = true
+            })
+        }
+
+      },
+      $_editor_textEditorHandler (showEditor, action, id) {
+        this.isCompleted = false
+        this.post = _.find(this.posts, { 'id': id }) || {}
+        if (action === 'add') {
+          this.post.author = _.get(this.$store.state, [ 'profile' ])
+        }
+        this.action = action
+        this.showEditor = showEditor
+        if (!this.showEditor) {
+          this.action = undefined
+          this.isCompleted = true
+          this.post = {}
+          this.$_editor_updatePostList()
+        }
+      },
+      $_editor_showAlert (id) {
+        this.post = _.find(this.posts, { 'id': id })
+        this.postActive = 0
+        this.isCompleted = false
+        this.showAlert = true
+      },
+      $_editor_updatePostList () {
+        fetchPosts(this.$store, _.get(this.profile, [ 'id' ]))
       }
-    },
-    watch: {
     }
   }
 </script>

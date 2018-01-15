@@ -2,7 +2,11 @@
   <section v-show="showLightBox" class="baseLightBox">
     <div class="baseLightBox__container" :class="containerClass">
       <slot></slot>
-      <button class="baseLightBox__btn--close" :class="closeButtonClass" @click="$_baseLightBox_close"></button>
+      <button
+        class="baseLightBox__btn--close"
+        :class="closeButtonClass"
+        @click="$_baseLightBox_close">
+      </button>
     </div>
     <div class="baseLightBox__curtain" @click="$_baseLightBox_close"></div>
   </section>
