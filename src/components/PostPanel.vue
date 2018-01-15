@@ -1,7 +1,11 @@
 <template>
   <section class="postPanelEdit">
     <input v-model="post.title" type="text" class="postPanelEdit__title" placeholder="輸入標題">
-    <text-editor :contentEdit="post.content" :needReset="resetToggle" v-on:updateContent="$_postPanelEdit_updateContent"></text-editor>
+    <text-editor
+      :contentEdit="post.content"
+      :needReset="resetToggle"
+      @updateContent="$_postPanelEdit_updateContent">
+    </text-editor>
     <div class="postPanelEdit__input postPanelEdit__link">
       <label for="">新聞連結：</label>
       <input v-model="post.link" type="url">
@@ -9,7 +13,12 @@
     <div v-if="$can('editPostOg')" class="postPanelEdit__input postPanelEdit--publishDate">
       <label for="">發布日期：</label>
       <no-ssr>
-        <datepicker v-model="post.date" :format="dateFormat" :input-class="'datepicker__input'" :language="'zh'"></datepicker>
+        <datepicker
+          v-model="post.date"
+          :format="dateFormat"
+          :input-class="'datepicker__input'"
+          :language="'zh'">
+        </datepicker>
       </no-ssr>
     </div>
     <div v-if="$can('editPostOg')" class="postPanelEdit__input">
@@ -23,16 +32,33 @@
     <div v-if="$can('editPostOg')" class="postPanelEdit__input">
       <label for="">分享縮圖：</label>
       <input v-model="post.ogImage" type="text" readonly>
-      <button class="postPanelEdit__btn--img" @click="$_postPanelEdit_uploadImage"><img src="/public/icons/upload.png" alt="上傳"></button>
-      <button class="postPanelEdit__btn--img" @click="$_postPanelEdit_cleanOgImage"><img src="/public/icons/delete.png" alt="刪除"></button>
+      <button class="postPanelEdit__btn--img" @click="$_postPanelEdit_uploadImage">
+        <img src="/public/icons/upload.png" alt="上傳">
+      </button>
+      <button class="postPanelEdit__btn--img" @click="$_postPanelEdit_cleanOgImage">
+        <img src="/public/icons/delete.png" alt="刪除">
+      </button>
     </div>
     <div v-show="post.ogImage && $can('editPostOg')" class="postPanelEdit__ogImg">
       <img :src="post.ogImage" :alt="post.ogTitle">
     </div>
     <div :class="{ advanced: $can('publishPost') }" class="postPanelEdit__submit">
-      <button :disabled="(action === 'add') && isEmpty" class="postPanelEdit__btn draft" @click="$_postPanelEdit_submit(3)">存成草稿</button>
-      <button :disabled="(action === 'add') && isEmpty" class="postPanelEdit__btn submit" @click="$_postPanelEdit_submit(2)">提交</button>
-      <button v-if="$can('publishPost')" :disabled="(action === 'add') && isEmpty" class="postPanelEdit__btn" @click="$_postPanelEdit_submit(1)">發布</button>
+      <button
+        class="postPanelEdit__btn draft"
+        :disabled="(action === 'add') && isEmpty"
+        @click="$_postPanelEdit_submit(3)">存成草稿
+      </button>
+      <button
+        class="postPanelEdit__btn submit"
+        :disabled="(action === 'add') && isEmpty"
+        @click="$_postPanelEdit_submit(2)">提交
+      </button>
+      <button
+        v-if="$can('publishPost')"
+        class="postPanelEdit__btn"
+        :disabled="(action === 'add') && isEmpty"
+        @click="$_postPanelEdit_submit(1)">發布
+      </button>
     </div>
   </section>
 </template>
@@ -123,13 +149,13 @@
       $_postPanelEdit_submit (active = 3) {
         const params = {}
         params.active = active
-        params.author = _.get(this.$store.state, [ 'profile', 'id' ])
-        params.content = _.get(this.post, [ 'content' ])
-        params.link = _.get(this.post, [ 'link' ])
-        params.og_description = _.get(this.post, [ 'ogDescription' ])
-        params.og_image = _.get(this.post, [ 'ogImage' ])
-        params.og_title = _.get(this.post, [ 'ogTitle' ]) || _.get(this.post, [ 'title' ])
-        params.title = _.get(this.post, [ 'title' ])
+        
+        params.content = _.get(this.post, [ 'content' ]) || ''
+        params.link = _.get(this.post, [ 'link' ]) || ''
+        params.og_description = _.get(this.post, [ 'ogDescription' ]) || ''
+        params.og_image = _.get(this.post, [ 'ogImage' ]) || ''
+        params.og_title = _.get(this.post, [ 'ogTitle' ]) || _.get(this.post, [ 'title' ]) || ''
+        params.title = _.get(this.post, [ 'title' ]) || ''
         params.updated_by = _.get(this.$store.state, [ 'profile', 'id' ])
         
         this.active = active
@@ -139,15 +165,22 @@
         }
 
         if (this.action === 'add') {
-          addPost(this.$store, params)
-            .then(() => {
-              this.$emit('showAlert', true, active, true)
-            })
+          params.author = _.get(this.$store.state, [ 'profile', 'id' ])
+          if (this.active === 1) {
+            this.$emit('showAlert', true, active, false)
+          } else {
+            addPost(this.$store, params)
+              .then(() => {
+                this.$emit('showAlert', true, active, true)
+              })
+          }
         }
+
         if (this.action === 'edit') {
           params.id = _.get(this.post, [ 'id' ])
-          
-
+          if (this.active === 1) {
+            this.$emit('showAlert', true, active, false)
+          }
           if (this.active === 2 || this.active === 3) {
             updatePost(this.$store, params)
               .then(() => {

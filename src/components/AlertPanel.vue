@@ -1,8 +1,9 @@
 <template>
   <section class="alert" :class="{ isCompleted: isCompleted }">
     <template v-if="post">
-      <p v-if="active === 1 && !isCompleted" class="alert__title"><strong>你確定要發佈嗎</strong></p>
-      <p v-if="active === 0 && !isCompleted" class="alert__title"><strong>你確定要刪除嗎</strong></p>
+      <p v-if="(active === 1 || active === 0) && !isCompleted" class="alert__title">
+        <strong v-text="alertTitle"></strong>
+      </p>
       <p><strong>作者：</strong><span v-text="postAuthor"></span></p>
       <p><strong>標題：</strong><span v-text="postTitle"></span></p>
       <div v-if="(active === 1 || active === 0) && !isCompleted" class="alert__control">
@@ -41,6 +42,9 @@
           if (this.active === 0) {
             return `文章已刪除！`
           }
+          if (this.active === 1) {
+            return `文章已發布！`
+          }
           if (this.action === 'add') {
             return `文章已儲存！`
           }
@@ -50,11 +54,22 @@
           if (this.action === 'edit' && this.active === 2) {
             return `文章狀態已更新！`
           }
-        } else {
-          return ''
         }
+        return ''
+      },
+      alertTitle () {
+        if (this.active === 0) {
+          return `你確定要刪除嗎`
+        }
+        if (this.active === 1) {
+          return `你確定要發布嗎`
+        }
+        return ''
       },
       postAuthor () {
+        if (this.action === 'add') {
+          return _.get(this.$store.state, [ 'profile', 'nickname' ])
+        }
         return _.get(this.post, [ 'author', 'nickname' ])
       },
       postTitle () {
@@ -75,6 +90,9 @@
       $_alertPanel_confirm () {
         if (this.active === 0) {
           this.$emit('deletePost')
+        }
+        if (this.active === 1) {
+          this.$emit('publishPost')
         }
       }
     }
