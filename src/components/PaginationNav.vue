@@ -106,4 +106,8 @@
       &.active
         font-weight 600
         font-size 1rem
+  .main-panel
+    .pagination-nav
+      margin-bottom 25px
+      text-align right
 </style>

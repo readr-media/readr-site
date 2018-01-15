@@ -31,7 +31,7 @@ button
 
 .main-panel
   width 100%
-  padding 22px 84px 33px
+  padding 35px 80px 40px
   border 2px solid #d8ca21
 
 .datepicker__input

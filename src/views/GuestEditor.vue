@@ -6,10 +6,12 @@
       <base-control-bar @addPost="$_guestEditor_editorHandler(true, 'add')"></base-control-bar>
       <section class="main-panel">
         <template>
+          <pagination-nav :totalPages="10" @pageChanged="$_guestEditor_pageChanged"></pagination-nav>
           <post-list
             :posts="posts"
             @deletePost="$_guestEditor_showAlert"
-            @editPost="$_guestEditor_editorHandler">
+            @editPost="$_guestEditor_editorHandler"
+            @filterChanged="$_guestEditor_updatePostList">
           </post-list>
         </template>
       </section>
@@ -46,13 +48,21 @@
   import AlertPanel from '../components/AlertPanel.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
   import AppHeader from '../components/AppHeader.vue'
+  import PaginationNav from '../components/PaginationNav.vue'
   import PostList from '../components/PostList.vue'
   import PostPanel from '../components/PostPanel.vue'
   import TheBaseControlBar from '../components/TheBaseControlBar.vue'
 
-  const fetchPosts = (store, id) => {
+  const MAXRESULT = 20
+  const DEFAULT_PAGE = 1
+  const DEFAULT_SORT = '-updated_at'
+
+  const fetchPosts = (store, { id, page, sort }) => {
     return store.dispatch('GET_POSTS', {
       params: {
+        max_result: MAXRESULT,
+        page: page || DEFAULT_PAGE,
+        sort: sort || DEFAULT_SORT,
         where: {
           author: id
         }
@@ -72,6 +82,7 @@
       'app-header': AppHeader,
       'base-control-bar': TheBaseControlBar,
       'base-light-box': BaseLightBox,
+      'pagination-nav': PaginationNav,
       'post-list': PostList,
       'post-panel': PostPanel
     },
@@ -79,10 +90,12 @@
       return {
         action: undefined,
         isCompleted: false,
+        page: DEFAULT_PAGE,
         post: {},
         postActive: undefined,
         showAlert: false,
         showEditor: false,
+        sort: DEFAULT_SORT
       }
     },
     computed: {
@@ -98,7 +111,7 @@
     },
     watch: {
       profile () {
-        fetchPosts(this.$store, _.get(this.profile, [ 'id' ]))
+        fetchPosts(this.$store, { id: _.get(this.profile, [ 'id' ]) })
       }
     },
     mounted () {
@@ -129,14 +142,23 @@
           this.$_guestEditor_updatePostList()
         }
       },
+      $_guestEditor_pageChanged (index) {
+        this.$_guestEditor_updatePostList({ page: index })
+      },
       $_guestEditor_showAlert (id) {
         this.post = _.find(this.posts, { 'id': id })
         this.postActive = 0
         this.isCompleted = false
         this.showAlert = true
       },
-      $_guestEditor_updatePostList () {
-        fetchPosts(this.$store, _.get(this.profile, [ 'id' ]))
+      $_guestEditor_updatePostList (params = {}) {
+        this.page = params.page
+        this.sort = params.sort
+        fetchPosts(this.$store, {
+          id: _.get(this.profile, [ 'id' ]),
+          page: this.page,
+          sort: this.sort
+        })
       }
     }
   }
