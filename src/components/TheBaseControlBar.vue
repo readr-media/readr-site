@@ -5,10 +5,10 @@
       <button class="controlBar--subBtn first" @click="$_baseControlBar_addPost">直接新增</button>
       <button class="controlBar--subBtn second">編輯草稿</button>
     </div>
-    <button class="controlBar--btn">文章管理</button>
+    <button class="controlBar--btn" @click="$_baseControlBar_openPanel('posts')">文章管理</button>
     <button class="controlBar--btn">記錄管理</button>
     <button class="controlBar--btn" @click="$_baseControlBar_addAccount" v-if="$can('addAccount')">新增帳號</button>
-    <button class="controlBar--btn" @click="$_baseControlBar_manageAccount" v-if="$can('memberManage')">帳號管理</button>
+    <button class="controlBar--btn" @click="$_baseControlBar_openPanel('accounts')" v-if="$can('memberManage')">帳號管理</button>
   </section>
 </template>
 <script>
@@ -26,11 +26,11 @@
       $_baseControlBar_addAccount () {
         this.$emit('addAccount')
       },
-      $_baseControlBar_manageAccount () {
-        this.$emit('manageAccount')
-      },
       $_baseControlBar_btnBoxToggle () {
         this.openBtnBox = !this.openBtnBox
+      },
+      $_baseControlBar_openPanel (panel) {
+        this.$emit('openPanel', panel)
       }
     }
   }

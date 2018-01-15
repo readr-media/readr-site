@@ -159,7 +159,7 @@
   .member-panel
     width 100%
     margin 30px auto
-    border solid 2.5px #d8ca21
+    border solid 5px #d8ca21
     padding 23.5px 75px 45px
     &__pagination
       height 20px
