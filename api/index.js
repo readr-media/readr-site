@@ -252,13 +252,14 @@ router.use('/activate', function(req, res) {
   const tokenForActivation = req.url.split('/')[1]
   jwtService.verifyToken(tokenForActivation, currSecret, (error, decoded) => {
     const url = `${apiHost}/member`
-     superagent
-    .put(url)
-    .send({
+    const payload = {
       id: decoded.id,
       role: decoded.role || 1,
       active: 1
-    })
+    }
+    superagent
+    .put(url)
+    .send(payload)
     .end((err, response) => {
       if (!err && response) {
         const redirect_path = decoded.way !== 'admin' ? '/login' : '/change-password'
@@ -406,7 +407,7 @@ const sendActivationMail = ({ id, role, way }, cb) => {
       `
     }
   }, {}, (err, res) => {
-    cb && cb(err, res)
+    cb && cb(err, res, tokenForActivation)
   })
 }
 router.post('/register', auth, (req, res) => {
@@ -432,9 +433,9 @@ router.post('/register', auth, (req, res) => {
     const url = `${apiHost}/register`
     basicPostRequst(url, req, res, (err, resp) => {
       if (!err && resp) {
-        sendActivationMail({ id: req.body.id, way: 'member' }, (e, response) => {
+        sendActivationMail({ id: req.body.id, way: 'member' }, (e, response, tokenForActivation) => {
           if (!e && response) {
-            res.status(200).end()
+            res.status(200).send({ token: tokenForActivation })
           } else {
             res.status(response.status).json(e)
             console.error(`error during register: ${url}`)
