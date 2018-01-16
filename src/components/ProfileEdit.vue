@@ -4,20 +4,23 @@
       <div class="input-container">
         <div class="input-container__input">
           <span class="name">{{ wording.WORDING_PROFILEEDIT_NICKNAME }}：</span>
-          <input type="text" name="nickname" v-model="computedNickname">
+          <!-- <input type="text" name="nickname" v-model="computedNickname"> -->
+          <input type="text" name="nickname" v-model="inputNickname">
         </div>
         <div class="input-container__input">
           <span class="name">{{ wording.WORDING_PROFILEEDIT_EMAIL }}：</span>
-          <input type="text" name="email" v-model="computedMail">
+          <!-- <input type="text" name="email" v-model="computedMail"> -->
+          <input type="text" name="email" v-model="inputMail">
         </div>
         <div class="input-container__input">
           <span class="name name--description">{{ wording.WORDING_PROFILEEDIT_DESCRIPTION }}：</span>
-          <textarea name="description" v-model="computedDescription"></textarea>
+          <!-- <textarea name="description" v-model="computedDescription"></textarea> -->
+          <textarea name="description" v-model="inputDescription"></textarea>
         </div>
-        <!-- <div class="input-container__input">
+        <div class="input-container__input">
           <span class="name">{{ wording.WORDING_PROFILEEDIT_OLDPASSWORD }}：</span>
           <input type="password" name="old_password" v-model="inputOldPassword">
-        </div> -->
+        </div>
         <div class="input-container__input">
           <span class="name">{{ wording.WORDING_PROFILEEDIT_NEWPASSWORD }}：</span>
           <input type="password" name="new_password" v-model="inputNewPassword">
@@ -50,19 +53,32 @@ import {
   WORDING_PROFILEEDIT_NICKNAME,
   WORDING_PROFILEEDIT_EMAIL,
   WORDING_PROFILEEDIT_DESCRIPTION,
-  // WORDING_PROFILEEDIT_OLDPASSWORD,
+  WORDING_PROFILEEDIT_OLDPASSWORD,
   WORDING_PROFILEEDIT_NEWPASSWORD,
   WORDING_PROFILEEDIT_CONFIRMPASSWORD,
   WORDING_PROFILEEDIT_PERSONAL_OPTIONS,
   WORDING_PROFILEEDIT_SAVE
 } from '../constants'
+import { removeToken } from '../util/services'
 import validator from 'validator'
 import _ from 'lodash'
 
-const updateMember = (store, profile, action) => {
+const updateInfo = (store, profile, action) => {
   return store.dispatch(action, {
     params: profile
   })
+}
+const checkPassword = (store, profile) => {
+  return store.dispatch('CHECK_PASSWORD', {
+    params: {
+      email: profile.email,
+      password: profile.password
+      // keepAlive: profile.keepAlive
+    }
+  })
+}
+const logout = (store) => {
+  return store.dispatch('LOGOUT', {})
 }
 const uploadImage = (store, file) => {
   return store.dispatch('UPLOAD_IMAGE', { file })
@@ -80,17 +96,20 @@ export default {
   data () {
     return {
       staticNickname : _.get(this.profile, [ 'nickname' ], ''),
-      inputNickname: '',
-      inputMail: '',
-      inputDescription: '',
-      // inputOldPassword: '',
+      // inputNickname: '',
+      // inputMail: '',
+      // inputDescription: '',
+      inputNickname: _.get(this.profile, [ 'nickname' ], ''),
+      inputMail: _.get(this.profile, [ 'mail' ], ''),
+      inputDescription: _.get(this.profile, [ 'description' ], ''),
+      inputOldPassword: '',
       inputNewPassword: '',
       inputConfirmPassword: '',
       wording: {
         WORDING_PROFILEEDIT_NICKNAME,
         WORDING_PROFILEEDIT_EMAIL,
         WORDING_PROFILEEDIT_DESCRIPTION,
-        // WORDING_PROFILEEDIT_OLDPASSWORD,
+        WORDING_PROFILEEDIT_OLDPASSWORD,
         WORDING_PROFILEEDIT_NEWPASSWORD,
         WORDING_PROFILEEDIT_CONFIRMPASSWORD,
         WORDING_PROFILEEDIT_PERSONAL_OPTIONS,
@@ -99,35 +118,50 @@ export default {
     }
   },
   computed: {
-    computedNickname: {
-      get () {
-        return _.get(this.profile, [ 'nickname' ], '')
-      },
-      set (newValue) {
-        this.inputNickname = newValue
-      }
-    },
-    computedMail: {
-      get () {
-        return _.get(this.profile, [ 'mail' ], '')
-      },
-      set (newValue) {
-        this.inputMail = newValue
-      }
-    },
-    computedDescription: {
-      get () {
-        return _.get(this.profile, [ 'description' ], '')
-      },
-      set (newValue) {
-        this.inputDescription = newValue
-      }
+    // computedNickname: {
+    //   get () {
+    //     return _.get(this.profile, [ 'nickname' ], '')
+    //   },
+    //   set (newValue) {
+    //     this.inputNickname = newValue
+    //   }
+    // },
+    // computedMail: {
+    //   get () {
+    //     return _.get(this.profile, [ 'mail' ], '')
+    //   },
+    //   set (newValue) {
+    //     this.inputMail = newValue
+    //   }
+    // },
+    // computedDescription: {
+    //   get () {
+    //     return _.get(this.profile, [ 'description' ], '')
+    //   },
+    //   set (newValue) {
+    //     this.inputDescription = newValue
+    //   }
+    // },
+    showLightBox () {
+      return this.$parent.showLightBox
     },
     thumbnail () {
       return _.get(this.profile, [ 'profileImage' ]) || '/public/icons/exclamation.png'
     },
     thumbnailFilePath () {
       return this.thumbnail.substr(this.thumbnail.lastIndexOf('/') + 1)
+    }
+  },
+  watch: {
+    showLightBox () {
+      if (!this.showLightBox) {
+        this.inputNickname = _.get(this.profile, [ 'nickname' ], '')
+        this.inputMail = _.get(this.profile, [ 'mail' ], '')
+        this.inputDescription = _.get(this.profile, [ 'description' ], '')
+        this.inputOldPassword = ''
+        this.inputNewPassword = ''
+        this.inputConfirmPassword = ''
+      }
     }
   },
   methods: {
@@ -140,11 +174,11 @@ export default {
 
         uploadImage(this.$store, fd)
           .then((res) => {
-            updateMember(this.$store, {
+            updateInfo(this.$store, {
               id: this.profile.id,
               edit_mode: 'edit_profile',
               profile_image: res.body.url
-            }, 'UPDATE_MEMBER')
+            }, 'UPDATE_PROFILE')
             // .then(callback)
           })
           .catch((err) => {
@@ -167,7 +201,8 @@ export default {
     profileEditorSave () {
       // Check basic infos has been modified or not, if modified, update the infos
       const inputNotChange = (field) => {
-        return validator.isEmpty(this[`input${field}`]) || this[`computed${field}`] === this[`input${field}`]
+        // return validator.isEmpty(this[`input${field}`]) || this[`computed${field}`] === this[`input${field}`]
+        return this[`input${field}`] === this.profile[field.toLowerCase()]
       }
       const updateBasicInfo = () => {
         let params = { id: this.profile.id, edit_mode: 'edit_profile' }
@@ -181,11 +216,14 @@ export default {
           params.description = this.inputDescription
         }
 
-        updateMember(this.$store, params, 'UPDATE_MEMBER')
+        updateInfo(this.$store, params, 'UPDATE_PROFILE')
         // .then(callback)
       }
 
       // Check password which user inputs, and confirm the new password, if two values are equal, update the password
+      const isOldPasswordEmpty = () => {
+        return validator.isEmpty(this.inputOldPassword)
+      }
       const isConfirmNewPassword = () => {
         if (!validator.isEmpty(this.inputNewPassword) && !validator.isEmpty(this.inputConfirmPassword)) {
           return this.inputNewPassword === this.inputConfirmPassword
@@ -194,20 +232,47 @@ export default {
         }
       }
       const updatePassword = () => {
-        updateMember(this.$store, {
-          id: this.profile.id,
-          password: this.inputNewPassword
-        }, 'UPDATE_PASSWORD')
-        // .then(callback)
-
-        this.inputNewPassword = ''
-        this.inputConfirmPassword = ''
+        checkPassword(this.$store, {
+          email: this.profile.id,
+          password: this.inputOldPassword
+          // keepAlive: this.$refs[ 'keep-alive' ].checked
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            // console.log('login success')
+            // return true
+            updateInfo(this.$store, {
+              id: this.profile.id,
+              edit_mode: 'edit_profile',
+              password: this.inputNewPassword
+            }, 'UPDATE_PASSWORD')
+            .then((res) => {
+              this.inputOldPassword = ''
+              this.inputNewPassword = ''
+              this.inputConfirmPassword = ''
+  
+              logout(this.$store).then(() => {
+                return removeToken().then(() => {
+                  location && location.replace('/')
+                })
+              })
+            })
+          } else {
+            console.log('login fail')
+          }
+        })
+        .catch((err) => {
+          if (err.status === 401) {
+            console.log('login 401')
+            // return false
+          }
+        })
       }
 
       if (!(inputNotChange('Nickname') && inputNotChange('Mail') && inputNotChange('Description'))) {
         updateBasicInfo()
       }
-      if (isConfirmNewPassword()) {
+      if (!isOldPasswordEmpty() && isConfirmNewPassword()) {
         updatePassword()
       }
     }
@@ -221,7 +286,7 @@ bg-color = #d8d8d8
 
 .profile-edit
   width 920px
-  height 646px
+  height 688px
   background-color bg-color
   display flex
   &__main
@@ -271,8 +336,8 @@ bg-color = #d8d8d8
 
   &__aside
     width 216px
-    height 646px
-    padding 30px 50px 30px 41px
+    height 688px
+    padding 30px 50px 22px 41px
     display flex
     flex-direction column
     justify-content space-between

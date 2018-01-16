@@ -177,6 +177,25 @@ export function checkLoginStatus ({ params = {}}) {
   return _doFetchStrict(url, { cookie: params.cookie })
 }
 
+export function checkPassword (params) {
+  const url = `${host}/api/login`
+  return new Promise((resolve, reject) => {
+    superagent
+      .post(url)
+      .set('Authorization', `Bearer ${getToken()}`)
+      .send(
+        params
+      ).end(function (err, res) {
+        if (err) {
+          reject(err)
+        } else {
+          saveToken(res.body.token)
+          resolve({ status: res.status, profile: res.body.profile })
+        }
+      })
+  })
+}
+
 export function login (params, token) {
   const url = `${host}/api/login`
   return new Promise((resolve, reject) => {
