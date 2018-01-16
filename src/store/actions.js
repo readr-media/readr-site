@@ -12,6 +12,7 @@ import {
   getMeta,
   login,
   register,
+  setupBasicProfile,
   updateMember,
   updatePassword,
   updatePost,
@@ -86,6 +87,9 @@ export default {
   },
   REGISTER: ({ commit, dispatch, state }, { params, token }) => {
     return register(params, token)
+  },
+  SETUP_BASIC_PROFILE: ({ commit, dispatch, state }, { params }) => {
+    return setupBasicProfile({ params })
   },
   UPDATE_MEMBER: ({ commit, dispatch, state }, { params }) => {
     commit('SET_PROFILE', { profile: params })

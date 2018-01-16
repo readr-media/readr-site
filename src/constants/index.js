@@ -47,6 +47,8 @@ export const WORDING_FACEBOOK_LOGIN = '使用 Facebook 帳號登入'
 export const WORDING_FACEBOOK_REGISTER = '使用 Facebook 帳號註冊'
 export const WORDING_GOOGLE_LOGIN = '使用 Google 帳號登入'
 export const WORDING_GOOGLE_REGISTER = '使用 Google 帳號註冊'
+export const WORDING_BTN_SAVE = '儲存'
+export const WORDING_CREATE_PWD = '新增密碼'
 // Header Use
 export const WORDING_HEADER_LOGIN = '登入'
 export const WORDING_HEADER_LOGOUT = '登出'

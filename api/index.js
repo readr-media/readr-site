@@ -256,27 +256,86 @@ router.use('/status', auth, function(req, res) {
 router.use('/activate', function(req, res) {
   const tokenForActivation = req.url.split('/')[1]
   jwtService.verifyToken(tokenForActivation, currSecret, (error, decoded) => {
-    const url = `${apiHost}/member`
-    const payload = {
-      id: decoded.id,
-      role: decoded.role || 1,
-      active: 1
+    if (error || !decoded.way) {
+      res.status(403).send(`Invalid activation token.`)
+    } else {
+      basicGetRequest(`${apiHost}/member/${decoded.id}`, { url: `/member/${decoded.id}` }, (err, data) => {
+        if (err) {
+          console.log(data.status)
+          console.log(err)
+          res.status(data.status).json(err)
+        } else {
+          if (_.get(data, [ 'body', '_items', 0, 'active' ]) === 0) {
+            if (decoded.way !== 'admin') {
+              const url = `${apiHost}/member`
+              const payload = {
+                id: decoded.id,
+                role: decoded.role || 1,
+                active: 1
+              }
+              superagent
+              .put(url)
+              .send(payload)
+              .end((e, response) => {
+                if (!e && response) {
+                  res.status(200).send(`
+                    <script>location.replace('/login')</script>
+                  `)
+                } else {
+                  console.log(response.status)
+                  console.log(e)
+                  res.status(response.status).json(e)
+                }
+              })
+            } else {
+              const tokenForActivation = jwtService.generateActivateAccountJwt({
+                id: decoded.id, role: decoded.role || 1, way: 'initmember', secret: currSecret
+              })
+              const cookies = new Cookies( req, res, {} )
+              cookies.set('initmember', tokenForActivation, { httpOnly: false, expires: new Date(Date.now() + 24 * 60 * 60 * 1000) })      
+              res.status(200)
+                .send(`
+                  <script>location.replace('/initmember')</script>
+                `)
+            }
+          } else {
+            res.status(200).send(`<script>location.replace('/')</script>`)
+          }
+        }
+      })
     }
-    superagent
-    .put(url)
-    .send(payload)
-    .end((err, response) => {
-      if (!err && response) {
-        const redirect_path = decoded.way !== 'admin' ? '/login' : '/change-password'
-        res.status(200).send(`
-          <script>location.replace('${redirect_path}')</script>
-        `)
-      } else {
-        console.log(response.status)
-        console.log(err)
-        res.status(response.status).json(err)
-      }
-    })
+  })
+})
+
+router.use('/initmember', auth, function(req, res) {
+  const id = jwtService.getId(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
+  const role = jwtService.getRole(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
+  superagent
+  .put(`${apiHost}/member/password`)
+  .send({
+    id,
+    password: req.body.password
+  })
+  .end((err, response) => {
+    if (!err && response) {
+      superagent
+      .put(`${apiHost}/member`)
+      .send({
+        id,
+        nickname: req.body.nickname,
+        role,
+        active: 1
+      })
+      .end((e, response) => {
+        if (!e && response) {
+          res.status(200).end()
+        } else {
+          res.status(500).json(e)
+        }
+      })
+    } else {
+      res.status(500).json(err)
+    }
   })
 })
 

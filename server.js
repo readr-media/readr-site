@@ -129,6 +129,7 @@ function render (req, res, next) {
     title: 'Readr',
     url: req.url,
     cookie: cookies.get('csrf'),
+    initmember: cookies.get('initmember'),
     GOOGLE_CLIENT_ID: GOOGLE_CLIENT_ID
   }
   renderer.renderToString(context, (err, html) => {
