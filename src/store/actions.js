@@ -12,8 +12,10 @@ import {
   login,
   register,
   updateMember,
+  updatePassword,
   updatePost,
   uploadImage,
+  deleteImage,
   verifyRecaptchaToken
 } from '../api'
 
@@ -82,13 +84,20 @@ export default {
     return register(params, token)
   },
   UPDATE_MEMBER: ({ commit, dispatch, state }, { params }) => {
+    commit('SET_PROFILE', { profile: params })
     return updateMember({ params })
+  },
+  UPDATE_PASSWORD: ({ commit, dispatch, state }, { params }) => {
+    return updatePassword({ params })
   },
   UPDATE_POST: ({ commit, dispatch, state }, { params }) => {
     return updatePost({ params })
   },
   UPLOAD_IMAGE: ({ commit, dispatch }, { file }) => {
     return uploadImage(file)
+  },
+  DELETE_IMAGE: ({ commit, dispatch }, { file }) => {
+    return deleteImage(file)
   },
   VERIFY_RECAPTCHA_TOKEN: ({ commit, dispatch, state }, { token }) => {
     return verifyRecaptchaToken(token)

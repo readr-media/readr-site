@@ -38,8 +38,20 @@ const uploadFileToBucket = (bucket, filePath, options) => {
 	})
 }
 
+const deleteFileFromBucket = (bucket, options) => {
+  return new Promise((resolve, reject) => {
+    const opts = options || {}
+		const bucketFile = bucket.file(opts.destination)
+		
+		bucketFile.delete()
+		.then(() => { resolve(bucketFile) })
+		.catch(err => { reject(err) })
+	})
+}
+
 module.exports = {
 	initBucket,
 	makeFilePublic,
-  uploadFileToBucket
+  uploadFileToBucket,
+  deleteFileFromBucket
 }
