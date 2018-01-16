@@ -18,6 +18,9 @@ export const SECTIONS_DEFAULT = {
   'projects': '新聞專題'
 }
 
+// Image upload max size 30 MB
+export const IMAGE_UPLOAD_MAX_SIZE = 31457280
+
 // Login and Rigester Page Use
 export const WORDING_EMAIL = '信箱'
 export const WORDING_FORGET_PASSWORD = '忘記密碼？'
@@ -67,6 +70,32 @@ export const WORDING_ADMIN_SUCCESS = '成功'
 export const WORDING_ADMIN_INFAIL = '發生錯誤'
 export const WORDING_ADMIN_YES = '確定'
 export const WORDING_ADMIN_CANCEL = '取消'
+// Post
+export const WORDING_POSTLIST_NICKNAME = '暱稱'
+export const WORDING_POSTLIST_TITLE = '標題'
+export const WORDING_POSTLIST_ACTIVE = '狀態'
+export const WORDING_POSTLIST_PUBLISH = '發布'
+export const WORDING_POSTLIST_DELETE = '刪除'
+export const WORDING_POSTLIST_UPDATE_AT = '更新時間'
+export const WORDING_POSTLIST_PUBLISH_AT = '發布時間'
+export const WORDING_POSTLIST_UPDATE = '修改'
+export const WORDING_POSTLIST_ACTIVE_PUBLISH = '已發布'
+export const WORDING_POSTLIST_ACTIVE_PENDING = '待審核'
+export const WORDING_POSTLIST_ACTIVE_UNPUBLISH = '已下架'
+export const WORDING_POSTLIST_ACTIVE_DRAFT = '草稿'
+// Post editor
+export const WORDING_POSTEDITOR_EDITOR = '編輯器'
+export const WORDING_POSTEDITOR_INPUT_TITLE = '輸入標題'
+export const WORDING_POSTEDITOR_LINK = '新聞連結'
+export const WORDING_POSTEDITOR_PUBLISH_DATE = '發布日期'
+export const WORDING_POSTEDITOR_OG_TITLE = '分享標題'
+export const WORDING_POSTEDITOR_OG_DESCRIPTION = '分享說明'
+export const WORDING_POSTEDITOR_OG_IMAGE = '分享縮圖'
+export const WORDING_POSTEDITOR_UPLOAD = '上傳'
+export const WORDING_POSTEDITOR_DELETE = '刪除'
+export const WORDING_POSTEDITOR_SAVE_DRAFT = '存成草稿'
+export const WORDING_POSTEDITOR_SAVE_PENDING = '提交'
+export const WORDING_POSTEDITOR_PUBLISH = '發布'
 // Profile editor use
 export const WORDING_PROFILEEDIT_NICKNAME = '暱稱'
 export const WORDING_PROFILEEDIT_EMAIL = 'Email'
@@ -76,6 +105,20 @@ export const WORDING_PROFILEEDIT_NEWPASSWORD = '新密碼'
 export const WORDING_PROFILEEDIT_CONFIRMPASSWORD = '密碼確認'
 export const WORDING_PROFILEEDIT_PERSONAL_OPTIONS = '個人設定'
 export const WORDING_PROFILEEDIT_SAVE = 'SAVE'
+// Alert Paenl
+export const WORDING_ALERTPANEL_AUTHOR = '作者'
+export const WORDING_ALERTPANEL_TITLE = '標題'
+export const WORDING_ALERTPANEL_CONFIRM = '確定'
+export const WORDING_ALERTPANEL_CANCEL = '取消'
+export const WORDING_ALERTPANEL_POST = '文章'
+export const WORDING_ALERTPANEL_DRAFT = '草稿'
+export const WORDING_ALERTPANEL_STATUS = '狀態'
+export const WORDING_ALERTPANEL_DELETE_SUCCESSFUL = '已刪除'
+export const WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL = '已發布'
+export const WORDING_ALERTPANEL_SAVE_SUCCESSFUL = '已儲存'
+export const WORDING_ALERTPANEL_UPDATE_SUCCESSFUL = '已更新'
+export const WORDING_ALERTPANEL_DELETE_CONFIRMATION = '你確定要刪除嗎'
+export const WORDING_ALERTPANEL_PUBLISH_CONFIRMATION = '你確定要發布嗎'
 // Agreement Use
 export const WORDING_AGREEMENT_TERMS_AND_SERVICE = '會員服務條款'
 export const WORDING_AGREEMENT_IPR = '著作權、智慧財產權政策'

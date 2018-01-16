@@ -4,17 +4,32 @@
       <p v-if="(active === 1 || active === 0) && !isCompleted" class="alert__title">
         <strong v-text="alertTitle"></strong>
       </p>
-      <p><strong>作者：</strong><span v-text="postAuthor"></span></p>
-      <p><strong>標題：</strong><span v-text="postTitle"></span></p>
+      <p><strong v-text="`${wording.WORDING_ALERTPANEL_AUTHOR}：`"></strong><span v-text="postAuthor"></span></p>
+      <p><strong v-text="`${wording.WORDING_ALERTPANEL_TITLE}：`"></strong><span v-text="postTitle"></span></p>
       <div v-if="(active === 1 || active === 0) && !isCompleted" class="alert__control">
-        <button class="alert__btn" @click="$_alertPanel_confirm">確定</button>
-        <button class="alert__btn" @click="$_alertPanel_cancel">取消</button>
+        <button class="alert__btn" @click="$_alertPanel_confirm" v-text="wording.WORDING_ALERTPANEL_CONFIRM"></button>
+        <button class="alert__btn" @click="$_alertPanel_cancel" v-text="wording.WORDING_ALERTPANEL_CANCEL"></button>
       </div>
       <p v-if="isCompleted" class="alert--message"><strong v-text="alertMessage"></strong></p>
     </template>
   </section>
 </template>
 <script>
+  import {
+    WORDING_ALERTPANEL_AUTHOR,
+    WORDING_ALERTPANEL_CANCEL,
+    WORDING_ALERTPANEL_CONFIRM,
+    WORDING_ALERTPANEL_DELETE_CONFIRMATION,
+    WORDING_ALERTPANEL_DELETE_SUCCESSFUL,
+    WORDING_ALERTPANEL_DRAFT,
+    WORDING_ALERTPANEL_POST,
+    WORDING_ALERTPANEL_PUBLISH_CONFIRMATION,
+    WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL,
+    WORDING_ALERTPANEL_SAVE_SUCCESSFUL,
+    WORDING_ALERTPANEL_STATUS,
+    WORDING_ALERTPANEL_TITLE,
+    WORDING_ALERTPANEL_UPDATE_SUCCESSFUL
+  } from '../constants'
   import _ from 'lodash'
   export default {
     name: 'AlertPanel',
@@ -36,33 +51,52 @@
         default: false
       }
     },
+    data () {
+      return {
+        wording: {
+          WORDING_ALERTPANEL_AUTHOR,
+          WORDING_ALERTPANEL_CANCEL,
+          WORDING_ALERTPANEL_CONFIRM,
+          WORDING_ALERTPANEL_DELETE_CONFIRMATION,
+          WORDING_ALERTPANEL_DELETE_SUCCESSFUL,
+          WORDING_ALERTPANEL_DRAFT,
+          WORDING_ALERTPANEL_POST,
+          WORDING_ALERTPANEL_PUBLISH_CONFIRMATION,
+          WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL,
+          WORDING_ALERTPANEL_SAVE_SUCCESSFUL,
+          WORDING_ALERTPANEL_STATUS,
+          WORDING_ALERTPANEL_TITLE,
+          WORDING_ALERTPANEL_UPDATE_SUCCESSFUL
+        }
+      }
+    },
     computed: {
       alertMessage () {
         if (this.isCompleted) {
           if (this.active === 0) {
-            return `文章已刪除！`
+            return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_DELETE_SUCCESSFUL}！`
           }
           if (this.active === 1) {
-            return `文章已發布！`
+            return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL}！`
           }
           if (this.action === 'add') {
-            return `文章已儲存！`
+            return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_SAVE_SUCCESSFUL}！`
           }
           if (this.action === 'edit' && this.active === 3) {
-            return `文章草稿已更新！`
+            return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_DRAFT}${this.wording.WORDING_ALERTPANEL_UPDATE_SUCCESSFUL}！`
           }
           if (this.action === 'edit' && this.active === 2) {
-            return `文章狀態已更新！`
+            return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_STATUS}${this.wording.WORDING_ALERTPANEL_UPDATE_SUCCESSFUL}！`
           }
         }
         return ''
       },
       alertTitle () {
         if (this.active === 0) {
-          return `你確定要刪除嗎`
+          return this.wording.WORDING_ALERTPANEL_DELETE_CONFIRMATION
         }
         if (this.active === 1) {
-          return `你確定要發布嗎`
+          return this.wording.WORDING_ALERTPANEL_PUBLISH_CONFIRMATION
         }
         return ''
       },
@@ -77,6 +111,13 @@
       }
     },
     watch: {
+      isCompleted (val) {
+        if (val && this.showLightBox) {
+          setTimeout(() => {
+            this.$emit('closeAlert', false)
+          }, 5000)
+        }
+      },
       showLightBox (val) {
         if (!val) {
           this.$emit('closeEditor')
