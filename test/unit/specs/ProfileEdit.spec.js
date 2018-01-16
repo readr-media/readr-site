@@ -11,7 +11,8 @@ describe('ProfileEdit.vue', () => {
   let store
   beforeEach(() => {
     actions = {
-      UPDATE_MEMBER: sinon.stub(),
+      UPDATE_PROFILE: sinon.stub(),
+      CHECK_PASSWORD: sinon.stub(),
       UPDATE_PASSWORD: sinon.stub()
     }
     store = new Vuex.Store({
@@ -58,7 +59,7 @@ describe('ProfileEdit.vue', () => {
 
     ProfileEditComponent.vm.inputNickname = 'Justin BB Modified'
     save.trigger('click')
-    expect(actions.UPDATE_MEMBER.calledOnce).to.equal(true)
+    expect(actions.UPDATE_PROFILE.calledOnce).to.equal(true)
   })
 
   it('should not dispatch action when save button has been clicked but user\'s nickname, email, description is remaining the same as initial', () => {
@@ -78,34 +79,47 @@ describe('ProfileEdit.vue', () => {
     ProfileEditComponent.vm.inputMail = profile.mail
     ProfileEditComponent.vm.inputDescription = profile.description
     save.trigger('click')
-    expect(actions.UPDATE_MEMBER.calledOnce).to.equal(false)
+    expect(actions.UPDATE_PROFILE.calledOnce).to.equal(false)
   })
 
-  it('should not update user\'s password if password inputs both are empty', () => {
+  it('should not update user\'s password if old password input is empty, but new/confirm password input is not', () => {
     const ProfileEditComponent = mount(ProfileEdit, { store })
     const save = ProfileEditComponent.find('.save-button')[0]
 
+    ProfileEditComponent.vm.inputOldPassword = ''
+    ProfileEditComponent.vm.inputNewPassword = 'this_is_a_test_password123456'
+    ProfileEditComponent.vm.inputConfirmPassword = 'this_is_a_test_password123456'
+    save.trigger('click')
+    expect(actions.UPDATE_PASSWORD.calledOnce).to.equal(false)
+  })
+
+  it('should not update user\'s password if new/confirm password inputs both are empty, but old password input is not', () => {
+    const ProfileEditComponent = mount(ProfileEdit, { store })
+    const save = ProfileEditComponent.find('.save-button')[0]
+
+    ProfileEditComponent.vm.inputOldPassword = 'this_is_a_old_password123456'
     ProfileEditComponent.vm.inputNewPassword = ''
     ProfileEditComponent.vm.inputConfirmPassword = ''
     save.trigger('click')
     expect(actions.UPDATE_PASSWORD.calledOnce).to.equal(false)
   })
 
-  it('should update user\'s password if password inputs both are not empty, and equal to each other, moreover, clear the password inputs value after password has been updated', () => {
-    const ProfileEditComponent = mount(ProfileEdit, { store })
-    const profile = {
-      id: 'justinbb@justinbb.com'
-    }
-    ProfileEditComponent.setProps({
-      profile
-    })
-    const save = ProfileEditComponent.find('.save-button')[0]
+  // it('should update user\'s password if password inputs both are not empty, and equal to each other, moreover, clear the password inputs value after password has been updated', () => {
+  //   const ProfileEditComponent = mount(ProfileEdit, { store })
+  //   const profile = {
+  //     id: 'wonderwomen@wonderwomen.com'
+  //   }
+  //   ProfileEditComponent.setProps({
+  //     profile
+  //   })
+  //   const save = ProfileEditComponent.find('.save-button')[0]
 
-    ProfileEditComponent.vm.inputNewPassword = 'this_is_a_test_password123456'
-    ProfileEditComponent.vm.inputConfirmPassword = 'this_is_a_test_password123456'
-    save.trigger('click')
-    expect(actions.UPDATE_PASSWORD.calledOnce).to.equal(true)
-    expect(ProfileEditComponent.vm.inputNewPassword).to.be.empty
-    expect(ProfileEditComponent.vm.inputConfirmPassword).to.be.empty
-  })
+  //   ProfileEditComponent.vm.inputOldPassword = 'wonderwomen@wonderwomen.com'
+  //   ProfileEditComponent.vm.inputNewPassword = 'this_is_a_test_password123456'
+  //   ProfileEditComponent.vm.inputConfirmPassword = 'this_is_a_test_password123456'
+  //   save.trigger('click')
+  //   expect(actions.UPDATE_PASSWORD.calledOnce).to.equal(true)
+  //   expect(ProfileEditComponent.vm.inputNewPassword).to.be.empty
+  //   expect(ProfileEditComponent.vm.inputConfirmPassword).to.be.empty
+  // })
 })

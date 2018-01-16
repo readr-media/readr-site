@@ -2,6 +2,7 @@ import {
   addMember,
   addPost,
   checkLoginStatus,
+  checkPassword,
   deleteMember,
   deleteMembers,
   deletePost,
@@ -33,10 +34,18 @@ export default {
       commit('SET_LOGGEIN_STATUS', { status, body })
     })
   },
+  CHECK_PASSWORD: ({ commit, dispatch, state }, { params }) => {
+    return checkPassword(params).then(({ status, profile }) => {
+      return { status }
+    })
+  },
   DISPOSABLE_TOKEN: ({ commit, dispatch, state }, { type }) => {
     return getDisposableToken(type).then((token) => {
       commit('SET_TOKEN', { token, type })
     })
+  },
+  DELETE_IMAGE: ({ commit, dispatch }, { file }) => {
+    return deleteImage(file)
   },
   DELETE_MEMBER: ({ commit, dispatch, state }, { params }) => {
     return deleteMember({ params })
@@ -92,7 +101,10 @@ export default {
     return setupBasicProfile({ params })
   },
   UPDATE_MEMBER: ({ commit, dispatch, state }, { params }) => {
-    commit('SET_PROFILE', { profile: params })
+    return updateMember({ params })
+  },
+  UPDATE_PROFILE: ({ commit, dispatch, state }, { params }) => {
+    commit('UPDATED_PROFILE', { profile: params })
     return updateMember({ params })
   },
   UPDATE_PASSWORD: ({ commit, dispatch, state }, { params }) => {
@@ -103,9 +115,6 @@ export default {
   },
   UPLOAD_IMAGE: ({ commit, dispatch }, { file }) => {
     return uploadImage(file)
-  },
-  DELETE_IMAGE: ({ commit, dispatch }, { file }) => {
-    return deleteImage(file)
   },
   VERIFY_RECAPTCHA_TOKEN: ({ commit, dispatch, state }, { token }) => {
     return verifyRecaptchaToken(token)
