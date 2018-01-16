@@ -8,7 +8,7 @@
     </text-editor>
     <div class="postPanelEdit__input postPanelEdit__link">
       <label for="">新聞連結：</label>
-      <input v-model="post.link" type="url">
+      <input v-model="post.link" type="url" @change="$_postPanelEdit_getMeta">
     </div>
     <div v-if="$can('editPostOg')" class="postPanelEdit__input postPanelEdit--publishDate">
       <label for="">發布日期：</label>
@@ -45,18 +45,18 @@
     <div :class="{ advanced: $can('publishPost') }" class="postPanelEdit__submit">
       <button
         class="postPanelEdit__btn draft"
-        :disabled="(action === 'add') && isEmpty"
+        :disabled="(action === 'add') && isEmpty && !fetchingMeta"
         @click="$_postPanelEdit_submit(3)">存成草稿
       </button>
       <button
         class="postPanelEdit__btn submit"
-        :disabled="(action === 'add') && isEmpty"
+        :disabled="(action === 'add') && isEmpty && !fetchingMeta"
         @click="$_postPanelEdit_submit(2)">提交
       </button>
       <button
         v-if="$can('publishPost')"
         class="postPanelEdit__btn"
-        :disabled="(action === 'add') && isEmpty"
+        :disabled="(action === 'add') && isEmpty && !fetchingMeta"
         @click="$_postPanelEdit_submit(1)">發布
       </button>
     </div>
@@ -69,9 +69,14 @@
   import Datepicker from 'vuejs-datepicker'
   import TextEditor from './TextEditor.vue'
   import NoSSR from 'vue-no-ssr'
+  import validator from 'validator'
   
   const addPost = (store, params) => {
     return store.dispatch('ADD_POST', { params })
+  }
+
+  const getMeta = (store, url) => {
+    return store.dispatch('GET_META', { url })
   }
 
   const updatePost = (store, params) => {
@@ -110,6 +115,7 @@
       return {
         active: undefined,
         dateFormat: 'yyyy/MM/d',
+        fetchingMeta: false,
         resetToggle: true,
         showAlert: false,
       }
@@ -143,6 +149,23 @@
       $_postPanelEdit_cleanOgImage () {
         this.post.ogImage = ''
       },
+      $_postPanelEdit_getMeta () {
+        const link = _.get(this.post, [ 'link' ])
+        if (validator.isURL(link, { protocols: [ 'http','https' ] })) {
+          this.fetchingMeta = true
+          getMeta(this.$store, link)
+            .then((res) => {
+              this.post.linkTitle = _.get(res, [ 'body', 'openGraph', 'title' ])
+              this.post.linkDescription = _.get(res, [ 'body', 'openGraph', 'description' ])
+              this.post.linkImage = _.get(res, [ 'body', 'openGraph', 'image', 'url' ])
+              this.fetchingMeta = false
+            })
+        } else {
+          this.post.linkTitle = ''
+          this.post.linkDescription = ''
+          this.post.linkImage = ''
+        }
+      },
       $_postPanelEdit_resetContent () {
         this.resetToggle = !this.resetToggle
       },
@@ -152,6 +175,9 @@
         
         params.content = _.get(this.post, [ 'content' ]) || ''
         params.link = _.get(this.post, [ 'link' ]) || ''
+        params.link_title = _.get(this.post, [ 'linkTitle' ]) || ''
+        params.link_description = _.get(this.post, [ 'linkDescription' ]) || ''
+        params.link_image = _.get(this.post, [ 'linkImage' ]) || ''
         params.og_description = _.get(this.post, [ 'ogDescription' ]) || ''
         params.og_image = _.get(this.post, [ 'ogImage' ]) || ''
         params.og_title = _.get(this.post, [ 'ogTitle' ]) || _.get(this.post, [ 'title' ]) || ''

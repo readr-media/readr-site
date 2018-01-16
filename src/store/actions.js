@@ -9,6 +9,7 @@ import {
   getProfile,
   getPosts,
   getMembers,
+  getMeta,
   login,
   register,
   updateMember,
@@ -51,6 +52,9 @@ export default {
         commit('SET_MEMBERS', { members: body })
       }
     })
+  },
+  GET_META: ({ commit, dispatch, state }, { url }) => {
+    return getMeta(url)
   },
   GET_POSTS: ({ commit, dispatch, state }, { params }) => {
     return getPosts({ params }).then(({ status, body }) => {

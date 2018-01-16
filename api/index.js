@@ -18,6 +18,7 @@ const isTest = process.env.NODE_ENV === 'test'
 const jwtExpress = require('express-jwt')
 const jwtService = require('./service.js')
 const multer  = require('multer')
+const scrape = require('html-metadata')
 const upload = multer({ dest: 'tmp/' })
 
 const router = express.Router()
@@ -502,7 +503,7 @@ router.post('/post', auth, (req, res) => {
   })
 })
 
-router.post('/uploadImg', upload.single('image'), (req, res) => {
+router.post('/uploadImg', auth, upload.single('image'), (req, res) => {
   const url = `${apiHost}${req.url}`
   const bucket = initBucket(GCP_FILE_BUCKET)
   const file = req.file
@@ -540,6 +541,16 @@ router.post('/deleteImg', (req, res) => {
   })
   .catch((err) => {
     res.status(400).send('Delete Fail').end()
+  })
+})
+
+router.post('/meta', auth, (req, res) => {
+  if (!req.body.url) {
+    res.status(400).end()
+  }
+  const url = req.body.url
+  scrape(url).then((metadata) => {
+    res.status(200).send(metadata).end()
   })
 })
 

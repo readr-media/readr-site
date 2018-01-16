@@ -150,6 +150,13 @@ export function getMembers ({ params }) {
   return _doFetchStrict(url, {})
 }
 
+export function getMeta (targetUrl) {
+  let url = `${host}/api/meta`
+  return _doPost(url, { url: targetUrl })
+    .then(res => ({ status: res.status, body: camelizeKeys(res.body) }))
+    .catch(err => err)
+}
+
 export function getPosts ({ params }) {
   let url = `${host}/api/posts`
   const query = _buildQuery(params)
