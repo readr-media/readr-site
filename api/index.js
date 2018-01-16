@@ -5,7 +5,7 @@ const { REDIS_AUTH, REDIS_MAX_CLIENT, REDIS_READ_HOST, REDIS_READ_PORT, REDIS_WR
 const { SCOPES } = require('./config')
 const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT } = require('./config')
 const { camelizeKeys } = require('humps')
-const { initBucket, makeFilePublic, uploadFileToBucket } = require('./gcs.js')
+const { initBucket, makeFilePublic, uploadFileToBucket, deleteFileFromBucket } = require('./gcs.js')
 const Cookies = require('cookies')
 const GoogleAuth = require('google-auth-library')
 const RedisConnectionPool = require('redis-connection-pool')
@@ -212,7 +212,8 @@ router.use('/profile', auth, function(req, res, next) {
       description: profile.description,
       id: profile.id,
       role: profile.role,
-      scopes
+      scopes,
+      profileImage: profile.profileImage
     })
   }).catch((err) => {
     res.status(500).send(err)
@@ -222,11 +223,14 @@ router.use('/profile', auth, function(req, res, next) {
 })
 router.use('/member', auth, function(req, res, next) {
   const role = jwtService.getRole(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
-  if (role === 9) {
+  if (req.body.edit_mode === 'edit_profile' || role === 9) {
     next()
   } else {
     res.status(403).send('Forbidden. No right to access.').end()
   }
+})
+router.use('/member/password', auth, function(req, res, next) {
+  next()
 })
 router.use('/members', auth, function(req, res, next) {
   const role = jwtService.getRole(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
@@ -522,6 +526,20 @@ router.post('/uploadImg', upload.single('image'), (req, res) => {
   })
   .catch((err) => {
     res.status(400).send('Upload Fail').end()
+  })
+})
+
+router.post('/deleteImg', (req, res) => {
+  const url = `${apiHost}${req.url}`
+  const bucket = initBucket(GCP_FILE_BUCKET)
+  const filePath = req.body.filePath
+  deleteFileFromBucket(bucket, {
+    destination: `/assets/images/${filePath}`
+  }).then((bucketFile) => {
+    res.status(200).send(`file ${filePath} completely delete from bucket `)
+  })
+  .catch((err) => {
+    res.status(400).send('Delete Fail').end()
   })
 })
 

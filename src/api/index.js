@@ -233,6 +233,13 @@ export function updateMember ({ params }) {
     .catch(err => err)
 }
 
+export function updatePassword ({ params }) {
+  const url = `${host}/api/member/password`
+  return _doPut(url, params)
+    .then(res => ({ status: res.status }))
+    .catch(err => err)
+}
+
 export function updatePost ({ params }) {
   const url = `${host}/api/post`
   return _doPut(url, params)
@@ -247,6 +254,24 @@ export function uploadImage (file) {
       .post(url)
       .set('Authorization', `Bearer ${getToken()}`)
       .send(file)
+      .end((err, res) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(res)
+        }
+      })
+  })
+}
+
+export function deleteImage (file) {
+  const url = `${host}/api/deleteImg`
+  const param = { 'filePath': file }
+  return new Promise((resolve, reject) => {
+    superagent
+      .post(url)
+      .set('Authorization', `Bearer ${getToken()}`)
+      .send(param)
       .end((err, res) => {
         if (err) {
           reject(err)

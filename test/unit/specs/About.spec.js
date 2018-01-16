@@ -1,5 +1,7 @@
 import _ from 'lodash'
 import About from 'src/components/About.vue'
+import BaseLightBox from 'src/components/BaseLightBox.vue'
+import ProfileEdit from 'src/components/ProfileEdit.vue'
 import { ROLE_MAP } from 'src/constants'
 import { mount } from 'avoriaz'
 
@@ -18,11 +20,9 @@ describe('About.vue', () => {
   })
   it('block name should render correct name and introduction', () => {
     const profile = {
-      name: 'Justin BB',
+      nickname: 'Justin BB',
       description: '先速不生間發，處水是車內可紅，這在心相日價得推會當術重而而地後，把人司小一活整資為，家身無就好空人算請著營種的變車商突：臉我安以可吃結出而技冷水新戰口都紀！通快低死事媽兩建子那與的畫語了係來站車外。',
-      image: {
-        url: '/public/icons/exclamation.png'
-      },
+      profileImage: 'https://dev.readr.tw/assets/images/justinbb.png',
       role: 1
     }
     const AboutWithProfile = mount(About)
@@ -33,9 +33,34 @@ describe('About.vue', () => {
     const roleWithProfile = AboutWithProfile.find('.about__name > .role')[0]
     const introductionWithProfile = AboutWithProfile.find('.about__introduction')[0]
     const imageWithProfile = AboutWithProfile.find('.about__thumbnail > img')[0]
-    expect(nameWithProfile.text()).to.be.string(profile.name)
+    expect(nameWithProfile.text()).to.be.string(profile.nickname)
     expect(roleWithProfile.text()).to.be.string(_.get(_.filter(ROLE_MAP, { key: profile.role }), [ 0, 'value' ]))
     expect(introductionWithProfile.text()).to.be.string(profile.description)
-    expect(imageWithProfile.getAttribute('src')).to.be.string(profile.image.url)
+    expect(imageWithProfile.getAttribute('src')).to.be.string(profile.profileImage)
+  })
+  it('should provide default profile image url, if user don\'t have their own profile image', () => {
+    const profile = {
+      nickname: 'Mr. NoProfileImage',
+      description: '沒有大頭貼先生',
+      profileImage: undefined,
+      role: 1
+    }
+    const AboutWithProfile = mount(About)
+    AboutWithProfile.setProps({
+      profile
+    })
+    const imageWithProfile = AboutWithProfile.find('.about__thumbnail > img')[0]
+    expect(imageWithProfile.getAttribute('src')).to.be.string('/public/icons/exclamation.png')
+  })
+  it('should set the showLightBox to true while the (edit) button has been clicked', () => {
+    const editButton = AboutComponent.find('.about__edit__btn')[0]
+    editButton.trigger('click')
+    expect(AboutComponent.vm.showLightBox).to.equal(true)
+  })
+  it('lightbox should contain component profile editor', () => {
+    const lightBoxes = AboutComponent.find(BaseLightBox)
+    for (let i = 0; i < lightBoxes.length; i += 1) {
+      expect(lightBoxes[ i ].contains(ProfileEdit)).to.equal(true)
+    }
   })
 })

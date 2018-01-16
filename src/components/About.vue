@@ -9,32 +9,42 @@
     </div>
     <div class="about__introduction" v-text="introduction"></div>
     <div class="about__edit">
-      <span class="about__edit__btn" v-text="editText"></span>
+      <span class="about__edit__btn" v-text="editText" @click="showLightBox = true"></span>
     </div>
+    <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder" :isConversation="true">
+      <ProfileEdit :profile="profile"/>
+    </BaseLightBox>
   </div>
 </template>
 <script>
   import _ from 'lodash'
   import { ROLE_MAP } from '../constants'
+  import BaseLightBox from './BaseLightBox.vue'
+  import ProfileEdit from './ProfileEdit.vue'
 
   export default {
+    components: {
+      BaseLightBox,
+      ProfileEdit
+    },
     computed: {
       introduction () {
         return _.get(this.profile, [ 'description' ], '')
       },
       name () {
-        return _.get(this.profile, [ 'name' ]) || _.get(this.profile, [ 'nickname' ]) || _.get(this.profile, [ 'mail' ])
+        return _.get(this.profile, [ 'nickname' ])
       },
       role () {
         return _.get(_.filter(ROLE_MAP, { key: _.get(this.profile, [ 'role' ]) }), [ 0, 'value' ])
       },
       thumbnail () {
-        return _.get(this.profile, [ 'image', 'url' ], '/public/icons/exclamation.png')
+        return _.get(this.profile, [ 'profileImage' ]) || '/public/icons/exclamation.png'
       }
     },
     data () {
       return {
-        editText: '(edit)'
+        editText: '(edit)',
+        showLightBox: false
       }
     },
     name: 'about',
