@@ -6,10 +6,12 @@
       <base-control-bar @addPost="$_editor_textEditorHandler(true, 'add')"></base-control-bar>
       <section class="main-panel">
         <template>
+          <pagination-nav :totalPages="10" @pageChanged="$_editor_pageChanged"></pagination-nav>
           <post-list
             :posts="posts"
             @deletePost="$_editor_showAlert"
-            @editPost="$_editor_textEditorHandler">
+            @editPost="$_editor_textEditorHandler"
+            @filterChanged="$_editor_updatePostList">
           </post-list>
         </template>
       </section>
@@ -53,6 +55,10 @@
   import PostPanel from '../components/PostPanel.vue'
   import TheBaseControlBar from '../components/TheBaseControlBar.vue'
 
+  const MAXRESULT = 20
+  const DEFAULT_PAGE = 1
+  const DEFAULT_SORT = '-updated_at'
+
   const addPost = (store, params) => {
     return store.dispatch('ADD_POST', { params })
   }
@@ -60,6 +66,9 @@
   const fetchPosts = (store, id) => {
     return store.dispatch('GET_POSTS', {
       params: {
+        max_result: MAXRESULT,
+        page: page || DEFAULT_PAGE,
+        sort: sort || DEFAULT_SORT,
         where: {
           author: id
         }
@@ -90,10 +99,12 @@
       return {
         action: undefined,
         isCompleted: false,
+        page: DEFAULT_PAGE,
         post: {},
         postActive: undefined,
         showAlert: false,
-        showEditor: false
+        showEditor: false,
+        sort: DEFAULT_SORT
       }
     },
     computed: {
@@ -107,12 +118,8 @@
         return SECTIONS_DEFAULT
       }
     },
-    watch: {
-      profile () {
-        fetchPosts(this.$store, _.get(this.profile, [ 'id' ]))
-      }
-    },
     mounted () {
+      fetchPosts(this.$store, _.get(this.profile, [ 'id' ]))
     },
     methods: {
       $_editor_alertHandler (showAlert, active, isCompleted) {
@@ -127,6 +134,9 @@
             this.$_editor_updatePostList()
             this.isCompleted = true
           })
+      },
+      $_editor_pageChanged (index) {
+        this.$_editor_updatePostList({ page: index })
       },
       $_editor_publishPost () {
         const params = {}
@@ -180,8 +190,14 @@
         this.isCompleted = false
         this.showAlert = true
       },
-      $_editor_updatePostList () {
-        fetchPosts(this.$store, _.get(this.profile, [ 'id' ]))
+      $_editor_updatePostList (params = {}) {
+        this.page = params.page
+        this.sort = params.sort
+        fetchPosts(this.$store, {
+          id: _.get(this.profile, [ 'id' ]),
+          page: this.page,
+          sort: this.sort
+        })
       }
     }
   }

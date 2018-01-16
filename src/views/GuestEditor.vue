@@ -109,12 +109,8 @@
         return SECTIONS_DEFAULT
       }
     },
-    watch: {
-      profile () {
-        fetchPosts(this.$store, { id: _.get(this.profile, [ 'id' ]) })
-      }
-    },
     mounted () {
+      fetchPosts(this.$store, { id: _.get(this.profile, [ 'id' ]) })
     },
     methods: {
       $_guestEditor_alertHandler (showAlert, active, isCompleted) {

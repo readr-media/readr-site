@@ -1,17 +1,17 @@
 <template>
   <section class="postPanelEdit">
-    <input v-model="post.title" type="text" class="postPanelEdit__title" placeholder="輸入標題">
+    <input v-model="post.title" type="text" class="postPanelEdit__title" :placeholder="wording.WORDING_POSTEDITOR_INPUT_TITLE">
     <text-editor
       :contentEdit="post.content"
       :needReset="resetToggle"
       @updateContent="$_postPanelEdit_updateContent">
     </text-editor>
     <div class="postPanelEdit__input postPanelEdit__link">
-      <label for="">新聞連結：</label>
+      <label for="" v-text="`${wording.WORDING_POSTEDITOR_LINK}：`"></label>
       <input v-model="post.link" type="url" @change="$_postPanelEdit_getMeta">
     </div>
     <div v-if="$can('editPostOg')" class="postPanelEdit__input postPanelEdit--publishDate">
-      <label for="">發布日期：</label>
+      <label for="" v-text="`${wording.WORDING_POSTEDITOR_PUBLISH_DATE}：`"></label>
       <no-ssr>
         <datepicker
           v-model="post.date"
@@ -22,15 +22,15 @@
       </no-ssr>
     </div>
     <div v-if="$can('editPostOg')" class="postPanelEdit__input">
-      <label for="">分享標題：</label>
+      <label for="" v-text="`${wording.WORDING_POSTEDITOR_OG_TITLE}：`"></label>
       <input v-model="post.ogTitle" type="text">
     </div>
     <div v-if="$can('editPostOg')" class="postPanelEdit__input">
-      <label for="">分享說明：</label>
+      <label for="" v-text="`${wording.WORDING_POSTEDITOR_OG_DESCRIPTION}：`"></label>
       <input v-model="post.ogDescription" type="text">
     </div>
     <div v-if="$can('editPostOg')" class="postPanelEdit__input">
-      <label for="">分享縮圖：</label>
+      <label for="" v-text="`${wording.WORDING_POSTEDITOR_OG_IMAGE}：`"></label>
       <input v-model="post.ogImage" type="text" readonly>
       <button class="postPanelEdit__btn--img" @click="$_postPanelEdit_uploadImage">
         <img src="/public/icons/upload.png" alt="上傳">
@@ -46,23 +46,37 @@
       <button
         class="postPanelEdit__btn draft"
         :disabled="(action === 'add') && isEmpty && !fetchingMeta"
-        @click="$_postPanelEdit_submit(3)">存成草稿
+        @click="$_postPanelEdit_submit(3)" v-text="wording.WORDING_POSTEDITOR_SAVE_DRAFT">
       </button>
       <button
         class="postPanelEdit__btn submit"
         :disabled="(action === 'add') && isEmpty && !fetchingMeta"
-        @click="$_postPanelEdit_submit(2)">提交
+        @click="$_postPanelEdit_submit(2)" v-text="wording.WORDING_POSTEDITOR_SAVE_PENDING">
       </button>
       <button
         v-if="$can('publishPost')"
         class="postPanelEdit__btn"
         :disabled="(action === 'add') && isEmpty && !fetchingMeta"
-        @click="$_postPanelEdit_submit(1)">發布
+        @click="$_postPanelEdit_submit(1)" v-text="wording.WORDING_POSTEDITOR_PUBLISH">
       </button>
     </div>
   </section>
 </template>
 <script>
+  import { 
+    IMAGE_UPLOAD_MAX_SIZE,
+    WORDING_POSTEDITOR_DELETE,
+    WORDING_POSTEDITOR_INPUT_TITLE,
+    WORDING_POSTEDITOR_LINK,
+    WORDING_POSTEDITOR_OG_DESCRIPTION,
+    WORDING_POSTEDITOR_OG_IMAGE,
+    WORDING_POSTEDITOR_OG_TITLE,
+    WORDING_POSTEDITOR_PUBLISH,
+    WORDING_POSTEDITOR_PUBLISH_DATE,
+    WORDING_POSTEDITOR_SAVE_DRAFT,
+    WORDING_POSTEDITOR_SAVE_PENDING,
+    WORDING_POSTEDITOR_UPLOAD
+  } from '../constants'
   import _ from 'lodash'
   import AlertPanel from './AlertPanel.vue'
   import BaseLightBox from './BaseLightBox.vue'
@@ -118,6 +132,19 @@
         fetchingMeta: false,
         resetToggle: true,
         showAlert: false,
+        wording: {
+          WORDING_POSTEDITOR_DELETE,
+          WORDING_POSTEDITOR_INPUT_TITLE,
+          WORDING_POSTEDITOR_LINK,
+          WORDING_POSTEDITOR_OG_DESCRIPTION,
+          WORDING_POSTEDITOR_OG_IMAGE,
+          WORDING_POSTEDITOR_OG_TITLE,
+          WORDING_POSTEDITOR_PUBLISH,
+          WORDING_POSTEDITOR_PUBLISH_DATE,
+          WORDING_POSTEDITOR_SAVE_DRAFT,
+          WORDING_POSTEDITOR_SAVE_PENDING,
+          WORDING_POSTEDITOR_UPLOAD
+        }
       }
     },
     computed: {
@@ -225,7 +252,7 @@
         input.click()
         input.onchange = () => {
           const file = input.files[0]
-          if (/^image\//.test(file.type)) {
+          if (/^image\//.test(file.type) && file.size <= IMAGE_UPLOAD_MAX_SIZE) {
             const fd = new FormData()
             fd.append('image', file)
             uploadImage(this.$store, fd)

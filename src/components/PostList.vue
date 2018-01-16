@@ -3,15 +3,15 @@
     <thead>
       <tr>
         <th><input type="checkbox" ref="checkboxSelectAll" @click="$_postList_toggleSelectAll"></th>
-        <th><span @click="$_postList_orderBy('author.nickname')">暱稱</span></th>
-        <th><span @click="$_postList_orderBy('title')">標題</span></th>
-        <th><span @click="$_postList_orderBy('active')">狀態</span></th>
-        <th><button class="postList__btn postList__btn--multiple">發布</button></th>
-        <th><button class="postList__btn postList__btn--multiple">刪除</button></th>
+        <th><span @click="$_postList_orderBy('author.nickname')" v-text="wording.WORDING_POSTLIST_NICKNAME"></span></th>
+        <th><span @click="$_postList_orderBy('title')" v-text="wording.WORDING_POSTLIST_TITLE"></span></th>
+        <th><span @click="$_postList_orderBy('active')" v-text="wording.WORDING_POSTLIST_ACTIVE"></span></th>
+        <th><button class="postList__btn postList__btn--multiple" v-text="wording.WORDING_POSTLIST_PUBLISH"></button></th>
+        <th><button class="postList__btn postList__btn--multiple" v-text="wording.WORDING_POSTLIST_DELETE"></button></th>
         <th>
           <select name="" id="">
-            <option value="-updated_at">更新時間</option>
-            <option value="-created_at">發布時間</option>
+            <option value="-updated_at" v-text="wording.WORDING_POSTLIST_UPDATE_AT"></option>
+            <option value="-created_at" v-text="wording.WORDING_POSTLIST_PUBLISH_AT"></option>
           </select>
         </th>
       </tr>
@@ -22,14 +22,28 @@
         <td class="postList__nickname" v-text="$_postList_getAuthorId(p)"></td>
         <td class="postList__title" v-text="p.title"></td>
         <td class="postList__status postList--center" v-text="$_postList_getStatus(p)"></td>
-        <td class="postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_editPost(p.id)">修改</button></td>
-        <td class="postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_deletePost(p.id)">刪除</button></td>
+        <td class="postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_editPost(p.id)" v-text="wording.WORDING_POSTLIST_UPDATE"></button></td>
+        <td class="postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_deletePost(p.id)" v-text="wording.WORDING_POSTLIST_DELETE"></button></td>
         <td></td>
       </tr>
     </tbody>
   </table>
 </template>
 <script>
+  import {
+    WORDING_POSTLIST_ACTIVE,
+    WORDING_POSTLIST_ACTIVE_DRAFT,
+    WORDING_POSTLIST_ACTIVE_PENDING,
+    WORDING_POSTLIST_ACTIVE_PUBLISH,
+    WORDING_POSTLIST_ACTIVE_UNPUBLISH,
+    WORDING_POSTLIST_DELETE,
+    WORDING_POSTLIST_NICKNAME,
+    WORDING_POSTLIST_PUBLISH,
+    WORDING_POSTLIST_PUBLISH_AT,
+    WORDING_POSTLIST_TITLE,
+    WORDING_POSTLIST_UPDATE,
+    WORDING_POSTLIST_UPDATE_AT
+  } from '../constants'
   import _ from 'lodash'
 
   export default {
@@ -44,7 +58,21 @@
     },
     data () {
       return {
-        order: ''
+        order: '',
+        wording: {
+          WORDING_POSTLIST_ACTIVE,
+          WORDING_POSTLIST_ACTIVE_DRAFT,
+          WORDING_POSTLIST_ACTIVE_PENDING,
+          WORDING_POSTLIST_ACTIVE_PUBLISH,
+          WORDING_POSTLIST_ACTIVE_UNPUBLISH,
+          WORDING_POSTLIST_DELETE,
+          WORDING_POSTLIST_NICKNAME,
+          WORDING_POSTLIST_PUBLISH,
+          WORDING_POSTLIST_PUBLISH_AT,
+          WORDING_POSTLIST_TITLE,
+          WORDING_POSTLIST_UPDATE,
+          WORDING_POSTLIST_UPDATE_AT
+        }
       }
     },
     mounted () {},
@@ -61,18 +89,16 @@
       $_postList_getStatus (post) {
         const status = _.get(post, [ 'active' ])
         switch (status) {
-          case 0:
-            return 'deactive'
           case 1:
-            return '已發佈'
+            return this.wording.WORDING_POSTLIST_ACTIVE_PUBLISH
           case 2:
-            return '待審核'
+            return this.wording.WORDING_POSTLIST_ACTIVE_PENDING
           case 3:
-            return '草稿'
+            return this.wording.WORDING_POSTLIST_ACTIVE_DRAFT
           case 4:
-            return '已下架'
+            return this.wording.WORDING_POSTLIST_ACTIVE_UNPUBLISH
           default:
-            return '草稿'
+            return this.wording.WORDING_POSTLIST_ACTIVE_DRAFT
         }
       },
       $_postList_orderBy (field) {
@@ -102,8 +128,11 @@
     font-size 18px
     text-align left
     th
+      padding-right 10px
       padding-bottom 10px
       border-bottom 2px solid #000
+    
+      
     select
       height 25px
       line-height 25px
@@ -123,16 +152,10 @@
         background-image url(/public/icons/double-triangle.png)
   tbody
     font-size 15px
-    // tr:first-of-type
-    //   td
-    //     padding-top 10px
     td
-      // padding-top 2px
-      // padding-bottom 2px
-      padding 10px 10px 10px 0
+      padding 10px 0 10px 0
       border-bottom 1px solid #d3d3d3
-    // td:first-of-type
-    //   padding-left 0
+   
     
   input[type="checkbox"]
     width 15px
@@ -143,7 +166,7 @@
     white-space nowrap
     overflow hidden
   &__title
-    // max-width 330px
+    max-width 330px
     text-overflow ellipsis
     white-space nowrap
     overflow hidden

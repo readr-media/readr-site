@@ -1,7 +1,7 @@
 <template>
   <section class="editor">
     <div class="editor__heading">
-      <div class="editor__heading--text">編輯器</div>
+      <div class="editor__heading--text" v-text="wording.WORDING_POSTEDITOR_EDITOR"></div>
       <div class="editor__heading--switch" :class="{ active: showHtml }" @click="$_editor_toggleHtml">&lt; / &gt;</div>
     </div>
     <div class="editor__main">
@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import { WORDING_POSTEDITOR_EDITOR } from '../constants'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
@@ -35,7 +36,10 @@ export default {
           }
         }
       },
-      showHtml: false
+      showHtml: false,
+      wording: {
+        WORDING_POSTEDITOR_EDITOR
+      }
     }
   },
   props: {
