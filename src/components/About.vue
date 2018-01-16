@@ -11,7 +11,7 @@
     <div class="about__edit">
       <span class="about__edit__btn" v-text="editText" @click="showLightBox = true"></span>
     </div>
-    <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder" :isConversation="true">
+    <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder">
       <ProfileEdit :profile="profile"/>
     </BaseLightBox>
   </div>
