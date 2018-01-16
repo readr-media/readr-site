@@ -30,7 +30,7 @@ const router = new Router({
     { path: '/editor', component: Editor, meta: { permission: 'editor' }},
     { path: '/guesteditor', component: GuestEditor, meta: { permission: 'guesteditor' }},
     { path: '/login', component: Login },
-    { path: '/setpwd', component: SetPassword }
+    { path: '/initmember', component: SetPassword }
   ]
 })
 

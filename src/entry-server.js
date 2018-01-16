@@ -14,7 +14,7 @@ export default context => {
     const s = isDev && Date.now()
     const { app, router, store } = createApp()
 
-    const { url, cookie } = context
+    const { url, cookie, initmember } = context
     const { route } = router.resolve(url)
     const { fullPath } = route
 
@@ -30,8 +30,9 @@ export default context => {
     Promise.all(preRouteInit).then(() => {
       const role = _.get(_.filter(ROLE_MAP, { key: _.get(store, [ 'state', 'profile', 'role' ]) }), [ 0, 'route' ], 'visitor')
       const permission = _.get(route, [ 'meta', 'permission' ])
+      const isInitMember = _.get(route, [ 'path' ]) === '/initmember'
 
-      if (permission && permission !== role) {
+      if ((permission && permission !== role) || (isInitMember && !initmember)) {
         store.state.unauthorized = true
         router.push('/')
       } else {

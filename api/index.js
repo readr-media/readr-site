@@ -289,22 +289,52 @@ router.use('/activate', function(req, res) {
               })
             } else {
               const tokenForActivation = jwtService.generateActivateAccountJwt({
-                id: decoded.id, role: decoded.role || 1, way: 'setPwd', secret: currSecret
+                id: decoded.id, role: decoded.role || 1, way: 'initmember', secret: currSecret
               })
               const cookies = new Cookies( req, res, {} )
-              cookies.set('setpwd', tokenForActivation, { httpOnly: false, expires: new Date(Date.now() + 24 * 60 * 60 * 1000) })      
+              cookies.set('initmember', tokenForActivation, { httpOnly: false, expires: new Date(Date.now() + 24 * 60 * 60 * 1000) })      
               res.status(200)
                 .send(`
-                  <script>location.replace('/setpwd')</script>
+                  <script>location.replace('/initmember')</script>
                 `)
             }
           } else {
-            res.status(200).send(`
-              <script>location.replace('/')</script>
-            `)
+            res.status(200).send(`<script>location.replace('/')</script>`)
           }
         }
       })
+    }
+  })
+})
+
+router.use('/initmember', auth, function(req, res) {
+  const id = jwtService.getId(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
+  const role = jwtService.getRole(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
+  superagent
+  .put(`${apiHost}/member/password`)
+  .send({
+    id,
+    password: req.body.password
+  })
+  .end((err, response) => {
+    if (!err && response) {
+      superagent
+      .put(`${apiHost}/member`)
+      .send({
+        id,
+        nickname: req.body.nickname,
+        role,
+        active: 1
+      })
+      .end((e, response) => {
+        if (!e && response) {
+          res.status(200).end()
+        } else {
+          res.status(500).json(e)
+        }
+      })
+    } else {
+      res.status(500).json(err)
     }
   })
 })

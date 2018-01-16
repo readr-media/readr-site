@@ -13,6 +13,20 @@ export function getToken () {
     return undefined
   }
 }
+export function getInitMemToken () {
+  if (process.browser && window) {
+    const token = Cookie.get('initmember')
+    return token
+  } else {
+    return undefined
+  }
+}
+export function delInitMemToken () {
+  if (process.browser && window) {
+    const token = Cookie.delete('initmember')
+    return token
+  }
+}
 export class ReadrPerm {
   init (store) {
     this.store = store

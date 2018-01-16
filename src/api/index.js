@@ -1,6 +1,6 @@
 import { camelizeKeys } from 'humps'
 import { getHost } from '../util/comm'
-import { getToken, saveToken } from '../util/services'
+import { delInitMemToken, getToken, getInitMemToken, saveToken } from '../util/services'
 import qs from 'qs'
 
 const superagent = require('superagent')
@@ -231,6 +231,30 @@ export function addMember (params, token) {
   return _doPost(url, params)
     .then(res => ({ status: res.status }))
     .catch(err => err)
+}
+
+export function setupBasicProfile ({ params }) {
+  return new Promise((resolve) => {
+    const token = getInitMemToken()
+    if (!token) {
+      return resolve({ status: 403 })
+    }
+    const url = `${host}/api/initmember`
+    superagent
+      .post(url)
+      .set('Authorization', `Bearer ${token}`)
+      .send(params)
+      .end(function (err, res) {
+        if (err) {
+          reject({ status: res.status, err: res.body.Error })
+        } else {
+          if (res.status === 200) {
+            delInitMemToken()
+          }
+          resolve({ status: res.status })
+        }
+      })
+  })
 }
 
 export function updateMember ({ params }) {
