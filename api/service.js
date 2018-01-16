@@ -23,7 +23,7 @@ const generateDisposableJwt = ({ host, secret }) => {
 }
 
 const generateActivateAccountJwt = ({ id, role, way, secret }) => {
-  const expiry = new Date(Date.now() + 1 * 60 * 1000)
+  const expiry = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
   return jwt.sign({
     id,
     role,

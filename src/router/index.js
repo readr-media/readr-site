@@ -17,6 +17,7 @@ const Editor = () => import('../views/Editor.vue')
 const GuestEditor = () => import('../views/GuestEditor.vue')
 const Home = () => import('../views/Home.vue')
 const Login = () => import('../views/Login.vue')
+const SetPassword = () => import('../views/SetPassword.vue')
 
 const router = new Router({
   mode: 'history',
@@ -28,7 +29,8 @@ const router = new Router({
     { path: '/agreement', component: Agreement },
     { path: '/editor', component: Editor, meta: { permission: 'editor' }},
     { path: '/guesteditor', component: GuestEditor, meta: { permission: 'guesteditor' }},
-    { path: '/login', component: Login }
+    { path: '/login', component: Login },
+    { path: '/setpwd', component: SetPassword }
   ]
 })
 

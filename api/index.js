@@ -256,27 +256,56 @@ router.use('/status', auth, function(req, res) {
 router.use('/activate', function(req, res) {
   const tokenForActivation = req.url.split('/')[1]
   jwtService.verifyToken(tokenForActivation, currSecret, (error, decoded) => {
-    const url = `${apiHost}/member`
-    const payload = {
-      id: decoded.id,
-      role: decoded.role || 1,
-      active: 1
+    if (error || !decoded.way) {
+      res.status(403).send(`Invalid activation token.`)
+    } else {
+      basicGetRequest(`${apiHost}/member/${decoded.id}`, { url: `/member/${decoded.id}` }, (err, data) => {
+        if (err) {
+          console.log(data.status)
+          console.log(err)
+          res.status(data.status).json(err)
+        } else {
+          if (_.get(data, [ 'body', '_items', 0, 'active' ]) === 0) {
+            if (decoded.way !== 'admin') {
+              const url = `${apiHost}/member`
+              const payload = {
+                id: decoded.id,
+                role: decoded.role || 1,
+                active: 1
+              }
+              superagent
+              .put(url)
+              .send(payload)
+              .end((e, response) => {
+                if (!e && response) {
+                  res.status(200).send(`
+                    <script>location.replace('/login')</script>
+                  `)
+                } else {
+                  console.log(response.status)
+                  console.log(e)
+                  res.status(response.status).json(e)
+                }
+              })
+            } else {
+              const tokenForActivation = jwtService.generateActivateAccountJwt({
+                id: decoded.id, role: decoded.role || 1, way: 'setPwd', secret: currSecret
+              })
+              const cookies = new Cookies( req, res, {} )
+              cookies.set('setpwd', tokenForActivation, { httpOnly: false, expires: new Date(Date.now() + 24 * 60 * 60 * 1000) })      
+              res.status(200)
+                .send(`
+                  <script>location.replace('/setpwd')</script>
+                `)
+            }
+          } else {
+            res.status(200).send(`
+              <script>location.replace('/')</script>
+            `)
+          }
+        }
+      })
     }
-    superagent
-    .put(url)
-    .send(payload)
-    .end((err, response) => {
-      if (!err && response) {
-        const redirect_path = decoded.way !== 'admin' ? '/login' : '/change-password'
-        res.status(200).send(`
-          <script>location.replace('${redirect_path}')</script>
-        `)
-      } else {
-        console.log(response.status)
-        console.log(err)
-        res.status(response.status).json(err)
-      }
-    })
   })
 })
 
