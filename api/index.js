@@ -2,7 +2,7 @@ const _ = require('lodash')
 const { API_DEADLINE, API_HOST, API_PORT, API_PROTOCOL, API_TIMEOUT } = require('./config')
 const { GCP_FILE_BUCKET, GOOGLE_CLIENT_ID, GOOGLE_RECAPTCHA_SECRET, DISPOSABLE_TOKEN_WHITE_LIST, SECRET_KEY } = require('./config')
 const { REDIS_AUTH, REDIS_MAX_CLIENT, REDIS_READ_HOST, REDIS_READ_PORT, REDIS_WRITE_HOST, REDIS_WRITE_PORT, REDIS_TIMEOUT } = require('./config')
-const { SCOPES } = require('./config')
+const { ENDPOINT_SECURE, SCOPES } = require('./config')
 const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT } = require('./config')
 const { camelizeKeys } = require('humps')
 const { initBucket, makeFilePublic, uploadFileToBucket, deleteFileFromBucket } = require('./gcs.js')
@@ -37,7 +37,7 @@ const consoleLogOnDev = ({ msg, showSplitLine }) => {
 const SECRET_LENGTH = 10
 const currSecret = SECRET_KEY || '_csrf_token_key'
 // const currSecret = crypto.pseudoRandomBytes(SECRET_LENGTH).toString('base64')
-const auth = jwtExpress({ secret: currSecret })
+const authVerify = jwtExpress({ secret: currSecret })
 
 const fetchStaticJson = (req, res, next, jsonFileName) => {
   const url = `${SERVER_PROTOCOL}${SERVER_PORT ? ':' + SERVER_PORT : ''}://${SERVER_HOST}/json/${jsonFileName}.json`
@@ -53,11 +53,6 @@ const fetchStaticJson = (req, res, next, jsonFileName) => {
     }
   })
 }
-
-router.all('/', function(req, res, next) {
-  next()
-})
-
 router.use('/grouped', function(req, res, next) {
   fetchStaticJson(req, res, next, 'grouped')
 })
@@ -138,64 +133,47 @@ const constructScope = (perms, role) => (
         : true)
   )), (p) => (p.comp)) 
 )
-
-router.use('/profile', [ auth ], (req, res, next) => {
-  const targetProfile = req.user.id
-  const url = `/member/${targetProfile}`
-  Promise.all([
-    fetchProfile(url, req),
-    fetchPermissions()
-  ]).then((response) => {
-    const profile = response[ 0 ][ 'items' ][ 0 ]
-    const perms = response[ 1 ]
-    const scopes = constructScope(perms, profile.role)
-    res.json({
-      name: profile.name,
-      nickname: profile.nickname,
-      mail: profile.mail,
-      description: profile.description,
-      id: profile.id,
-      role: profile.role,
-      scopes,
-      profileImage: profile.profileImage
-    })
-  }).catch((err) => {
-    res.status(500).send(err)
-    console.error(`error during fetch data from : ${url}`)
-    console.error(err)
+const authorize = (req, res, next) => {
+  const whitelist = _.get(ENDPOINT_SECURE, [ req.url.replace(/\?[A-Za-z0-9.*+?^=!:${}()#%~&_@\-`|\[\]\/\\]*$/, '') ])
+  console.log('whitelist', _.get(req.url.split('/'), [ 1 ]))
+  console.log('whitelist', req.url.replace(/\?[A-Za-z0-9.*+?^=!:${}()#%~&_@\-`|\[\]\/\\]*$/, ''))
+  console.log('whitelist', whitelist)
+  if (whitelist) {
+    const isAuthorized = _.find(whitelist, (r) => (r === req.user.role))
+    console.log('isAuthorized', isAuthorized)
+    if (isAuthorized) {
+      next()
+    } else {
+      res.status(403).send('Forbidden. No right to access.').end()
+    }
+  } else {
+    next()
+  }
+}
+const sendActivationMail = ({ id, role, way }, cb) => {
+  const tokenForActivation = jwtService.generateActivateAccountJwt({
+    id, role, way, secret: currSecret
   })
-})
-router.use('/member', auth, function(req, res, next) {
-  const role = jwtService.getRole(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
-  if (req.body.edit_mode === 'edit_profile' || role === 9) {
-    next()
-  } else {
-    res.status(403).send('Forbidden. No right to access.').end()
-  }
-})
-router.use('/member/password', auth, function(req, res, next) {
-  next()
-})
-router.use('/members', auth, function(req, res, next) {
-  const role = jwtService.getRole(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
-  if (role === 9) {
-    next()
-  } else {
-    res.status(403).send('Forbidden. Invalid token detected.').end()
-  }
-})
-router.use('/post', auth, function(req, res, next) {
-  next()
-})
+  basicPostRequst(`${apiHost}/mail`, { 
+    body: {
+      receiver: ['keithchiang@mirrormedia.mg','mushin@mirrormedia.mg'],
+      subject: 'Active',
+      content: `
+        hit the following url: <br>
+        <a href="${SERVER_PROTOCOL}://${SERVER_HOST}${SERVER_PORT ? ':' + SERVER_PORT : ''}/api/activate/${tokenForActivation}">click me</a>
+      `
+    }
+  }, {}, (err, res) => {
+    cb && cb(err, res, tokenForActivation)
+  })
+}
 
-router.use('/posts', auth, function(req, res, next) {
-  next()
-})
 
-router.use('/status', auth, function(req, res) {
-  res.status(200).send(true)
-})
-
+/**
+ * 
+ * special request handler
+ * 
+ */
 const activationKeyVerify = function (req, res, next) {
   const key = req.url.split('/')[1]
   jwtService.verifyToken(key, currSecret, (error, decoded) => {
@@ -207,7 +185,6 @@ const activationKeyVerify = function (req, res, next) {
     }
   })
 }
-
 router.use('/activate', activationKeyVerify, function(req, res) {
   const decoded = req.decoded
   superagent
@@ -257,8 +234,7 @@ router.use('/activate', activationKeyVerify, function(req, res) {
     }
   })
 })
-
-router.use('/initmember', auth, function(req, res) {
+router.use('/initmember', authVerify, function(req, res) {
   const id = jwtService.getId(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
   const role = jwtService.getRole(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
   superagent
@@ -290,6 +266,70 @@ router.use('/initmember', auth, function(req, res) {
   })
 })
 
+
+/**
+ * 
+ * METHOD ALL
+ * 
+ */
+router.all('/member', [ authVerify, authorize ], function(req, res, next) {
+  next()
+})
+router.all('/member/password', authVerify, function(req, res, next) {
+  next()
+})
+router.all('/members', [ authVerify, authorize ], function(req, res, next) {
+  next()
+})
+router.all('/post', [ authVerify, authorize ], function(req, res, next) {
+  next()
+})
+router.all('/posts', [ authVerify, authorize ], function(req, res, next) {
+  next()
+})
+
+
+/**
+ * 
+ * METHOD GET
+ * 
+ */
+router.get('/profile', [ authVerify ], (req, res) => {
+  const targetProfile = req.user.id
+  const url = `/member/${targetProfile}`
+  Promise.all([
+    fetchProfile(url, req),
+    fetchPermissions()
+  ]).then((response) => {
+    const profile = response[ 0 ][ 'items' ][ 0 ]
+    const perms = response[ 1 ]
+    const scopes = constructScope(perms, profile.role)
+    res.json({
+      name: profile.name,
+      nickname: profile.nickname,
+      mail: profile.mail,
+      description: profile.description,
+      id: profile.id,
+      role: profile.role,
+      scopes,
+      profileImage: profile.profileImage
+    })
+  }).catch((err) => {
+    res.status(500).send(err)
+    console.error(`error during fetch data from : ${url}`)
+    console.error(err)
+  })
+})
+
+router.get('/status', authVerify, function(req, res) {
+  res.status(200).send(true)
+})
+
+/**
+ * 
+ * METHOD POST
+ * 
+ */
 router.post('/verify-recaptcha-token', (req, res) => {
   let url = 'https://www.google.com/recaptcha/api/siteverify'
   superagent
@@ -317,7 +357,8 @@ router.post('/token', (req, res) => {
     res.status(403).send('Forbidden.')
   }
 })
-router.post('/login', auth, (req, res) => {
+
+router.post('/login', authVerify, (req, res) => {
   consoleLogOnDev({
     msg: `Got a new reuqest of login:
           mail -> ${req.body.email}
@@ -391,24 +432,7 @@ router.post('/login', auth, (req, res) => {
   }  
 })
 
-const sendActivationMail = ({ id, role, way }, cb) => {
-  const tokenForActivation = jwtService.generateActivateAccountJwt({
-    id, role, way, secret: currSecret
-  })
-  basicPostRequst(`${apiHost}/mail`, { 
-    body: {
-      receiver: ['keithchiang@mirrormedia.mg','mushin@mirrormedia.mg'],
-      subject: 'Active',
-      content: `
-        hit the following url: <br>
-        <a href="${SERVER_PROTOCOL}://${SERVER_HOST}${SERVER_PORT ? ':' + SERVER_PORT : ''}/api/activate/${tokenForActivation}">click me</a>
-      `
-    }
-  }, {}, (err, res) => {
-    cb && cb(err, res, tokenForActivation)
-  })
-}
-router.post('/register', auth, (req, res) => {
+router.post('/register', authVerify, (req, res) => {
   consoleLogOnDev({
     msg: `Got a new reuqest of register:
           nickname -> ${req.body.nickname}
@@ -485,7 +509,7 @@ router.post('/register', auth, (req, res) => {
   }
 })
 
-router.post('/post', auth, (req, res) => {
+router.post('/post', authVerify, (req, res) => {
   const url = `${apiHost}${req.url}`
   basicPostRequst(url, req, res, (err, resp) => {
     if (!err && resp) {
@@ -496,7 +520,7 @@ router.post('/post', auth, (req, res) => {
   })
 })
 
-router.post('/uploadImg', auth, upload.single('image'), (req, res) => {
+router.post('/uploadImg', authVerify, upload.single('image'), (req, res) => {
   const url = `${apiHost}${req.url}`
   const bucket = initBucket(GCP_FILE_BUCKET)
   const file = req.file
@@ -537,7 +561,7 @@ router.post('/deleteImg', (req, res) => {
   })
 })
 
-router.post('/meta', auth, (req, res) => {
+router.post('/meta', authVerify, (req, res) => {
   if (!req.body.url) {
     res.status(400).end()
   }
@@ -546,6 +570,14 @@ router.post('/meta', auth, (req, res) => {
     res.status(200).send(metadata).end()
   })
 })
+
+
+/**
+ * 
+ * ERROR HANDLER
+ * 
+ */
+
 
 router.route('*')
   .get(fetchFromRedis, function (req, res, next) {
@@ -570,8 +602,11 @@ router.route('*')
               res.dataString = r.text
               /**
                * if data not empty, go next to save data to redis
+               * if endpoint is not /members, go next to save data to redis
                */
-              next()
+              if (req.url.indexOf('/members') === -1) {
+                next()
+              }
             }
             const resData = JSON.parse(r.text)
             res.json(resData)
@@ -583,7 +618,7 @@ router.route('*')
         })
       }
   }, insertIntoRedis)
-  .post(auth, (req, res) => {
+  .post(authVerify, (req, res) => {
     console.log('??')
     const url = `${apiHost}${req.url}`
      superagent
@@ -611,7 +646,7 @@ router.route('*')
       }
     })
   })
-  .put(auth, function (req, res) {
+  .put(authVerify, function (req, res) {
     const url = `${apiHost}${req.url}`
     superagent
     .put(url)
@@ -624,7 +659,7 @@ router.route('*')
       }
     })
   })
-  .delete(auth, function (req, res) {
+  .delete(authVerify, function (req, res) {
     const url = `${apiHost}${req.url}`
     const params = req.body || {}
     superagent
