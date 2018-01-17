@@ -8,7 +8,6 @@ const { camelizeKeys } = require('humps')
 const { initBucket, makeFilePublic, uploadFileToBucket, deleteFileFromBucket } = require('./gcs.js')
 const Cookies = require('cookies')
 const GoogleAuth = require('google-auth-library')
-const RedisConnectionPool = require('redis-connection-pool')
 const crypto = require('crypto')
 const bodyParser = require('body-parser')
 const express = require('express')
@@ -20,6 +19,8 @@ const jwtService = require('./service.js')
 const multer  = require('multer')
 const scrape = require('html-metadata')
 const upload = multer({ dest: 'tmp/' })
+
+const { fetchFromRedis, insertIntoRedis, redisFetching, redisWriting } = require('./middle/redisHandler')
 
 const router = express.Router()
 const superagent = require('superagent')
@@ -53,60 +54,6 @@ const fetchStaticJson = (req, res, next, jsonFileName) => {
   })
 }
 
-const redisPoolRead = RedisConnectionPool('myRedisPoolRead', {
-  host: REDIS_READ_HOST,
-  port: REDIS_READ_PORT,
-  max_clients: REDIS_MAX_CLIENT ? REDIS_MAX_CLIENT : 50,
-  perform_checks: false,
-  database: 0,
-  options: {
-    auth_pass: REDIS_AUTH
-  }
-})
-const redisPoolWrite = isProd ? RedisConnectionPool('myRedisPoolWrite', {
-  host: REDIS_WRITE_HOST,
-  port: REDIS_WRITE_PORT,
-  max_clients: REDIS_MAX_CLIENT ? REDIS_MAX_CLIENT : 50,
-  perform_checks: false,
-  database: 0,
-  options: {
-    auth_pass: REDIS_AUTH
-  }
-}) : redisPoolRead
-const redisFetching = (url, callback) => {
-  redisPoolRead.get(decodeURIComponent(url), function (err, data) {
-    redisPoolRead.ttl(decodeURIComponent(url), (_err, _data) => {
-      if (!_err && _data) {
-        if (_data === -1) {
-          redisPoolWrite.del(decodeURIComponent(url), (_e, _d) => {
-            if (_e) {
-              console.log('deleting key ', decodeURIComponent(url), 'from redis in fail ', _e)
-            }
-          })
-        }
-      } else {
-        console.log('fetching ttl in fail ', _err)
-      }
-    })
-    callback && callback({ err, data })
-  })
-}
-const redisWriting = (url, data, callback) => {
-  redisPoolWrite.set(decodeURIComponent(url), data, function (err) {
-    if(err) {
-      console.log('redis writing in fail. ', decodeURIComponent(url), err)
-    } else {
-      redisPoolWrite.expire(decodeURIComponent(url), REDIS_TIMEOUT, function(error, d) {
-        if(error) {
-          console.log('failed to set redis expire time. ', decodeURIComponent(url), err)
-        } else {
-          callback && callback()
-        }
-      })
-    }
-  })
-}
-
 router.all('/', function(req, res, next) {
   next()
 })
@@ -129,55 +76,51 @@ const basicPostRequst = (url, req, res, cb) => {
   })
 }
 
-const basicGetRequest = (url, req, cb) => {
-  try {
-    redisFetching(req.url, ({ err, data }) => {
-      if (!err && data) {
-        cb && cb( err, data )
-      } else {
-        superagent
-        .get(url)
-        .timeout(
-          {
-            response: API_TIMEOUT,  // Wait 5 seconds for the server to start sending,
-            deadline: API_DEADLINE ? API_DEADLINE : 60000, // but allow 1 minute for the file to finish loading.
-          }
-        )
-        .end((e, r) => {
-          const dt = JSON.parse(r.text)
-          if (Object.keys(dt).length !== 0 && dt.constructor === Object) {
-            // redisWriting(req.url, r.text)
-          }
-          cb && cb(e, r)
-        })
-      }
-    })
-  } catch (e) {
-    cb && cb( e, null )
-  }
-}
-
 const fetchPermissions = () => {
   return new Promise((resolve, reject) => {
-    const url = `${apiHost}/permission/all`
-    basicGetRequest(url, { url }, (err, res) => {
-      if (!err && res) {
-        resolve(res.body)
+    const url = `/permission/all`
+    redisFetching(url, ({ error, data }) => {
+      if (!error && data) {
+        resolve(JSON.parse(data))
       } else {
-        reject(err)
+        superagent
+        .get(`${apiHost}${url}`)
+        .end((err, res) => {
+          if (!err && res) {
+            const dt = JSON.parse(res.text)
+            if (Object.keys(dt).length !== 0) {
+              redisWriting(url, res.text)
+            }
+            resolve(res.body)
+          } else {
+            reject(err)
+          }
+        })
       }
     })
   })
 }
 const fetchProfile = (url, req) => {
   return new Promise((resolve, reject) => {
-    basicGetRequest(url, req, (err, response) => {
-      if (!err && response) {
-        resolve(camelizeKeys(JSON.parse(response.text)))
+    redisFetching(url, ({ error, data }) => {
+      if (!error && data) {
+        resolve(camelizeKeys(JSON.parse(data)))
       } else {
-        reject(err)
-        console.error(`error during fetch data from : ${url}`)
-        console.error(err)  
+        superagent
+        .get(`${apiHost}${url}`)
+        .end((err, res) => {
+          if (!err && res) {
+            const dt = JSON.parse(res.text)
+            if (Object.keys(dt).length !== 0 && dt.constructor === Object) {
+              redisWriting(url, res.text)
+            }
+            resolve(camelizeKeys(res.body))
+          } else {
+            reject(err)
+            console.error(`error during fetch data from : ${url}`)
+            console.error(err) 
+          }
+        })
       }
     })
   })
@@ -196,9 +139,9 @@ const constructScope = (perms, role) => (
   )), (p) => (p.comp)) 
 )
 
-router.use('/profile', auth, function(req, res, next) {
-  const targetProfile = jwtService.getId(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
-  const url = `${apiHost}/member/${targetProfile}`
+router.use('/profile', [ auth ], (req, res, next) => {
+  const targetProfile = req.user.id
+  const url = `/member/${targetProfile}`
   Promise.all([
     fetchProfile(url, req),
     fetchPermissions()
@@ -253,56 +196,64 @@ router.use('/status', auth, function(req, res) {
   res.status(200).send(true)
 })
 
-router.use('/activate', function(req, res) {
-  const tokenForActivation = req.url.split('/')[1]
-  jwtService.verifyToken(tokenForActivation, currSecret, (error, decoded) => {
+const activationKeyVerify = function (req, res, next) {
+  const key = req.url.split('/')[1]
+  jwtService.verifyToken(key, currSecret, (error, decoded) => {
     if (error || !decoded.way) {
       res.status(403).send(`Invalid activation token.`)
     } else {
-      basicGetRequest(`${apiHost}/member/${decoded.id}`, { url: `/member/${decoded.id}` }, (err, data) => {
-        if (err) {
-          console.log(data.status)
-          console.log(err)
-          res.status(data.status).json(err)
-        } else {
-          if (_.get(data, [ 'body', '_items', 0, 'active' ]) === 0) {
-            if (decoded.way !== 'admin') {
-              const url = `${apiHost}/member`
-              const payload = {
-                id: decoded.id,
-                role: decoded.role || 1,
-                active: 1
-              }
-              superagent
-              .put(url)
-              .send(payload)
-              .end((e, response) => {
-                if (!e && response) {
-                  res.status(200).send(`
-                    <script>location.replace('/login')</script>
-                  `)
-                } else {
-                  console.log(response.status)
-                  console.log(e)
-                  res.status(response.status).json(e)
-                }
-              })
-            } else {
-              const tokenForActivation = jwtService.generateActivateAccountJwt({
-                id: decoded.id, role: decoded.role || 1, way: 'initmember', secret: currSecret
-              })
-              const cookies = new Cookies( req, res, {} )
-              cookies.set('initmember', tokenForActivation, { httpOnly: false, expires: new Date(Date.now() + 24 * 60 * 60 * 1000) })      
-              res.status(200)
-                .send(`
-                  <script>location.replace('/initmember')</script>
-                `)
-            }
-          } else {
-            res.status(200).send(`<script>location.replace('/')</script>`)
+      req.decoded = decoded
+      next()
+    }
+  })
+}
+
+router.use('/activate', activationKeyVerify, function(req, res) {
+  const decoded = req.decoded
+  superagent
+  .get(`${apiHost}/member/${decoded.id}`)
+  .end((err, data) => {
+    if (err) {
+      console.log(data.status)
+      console.log(err)
+      res.status(data.status).json(err)
+    } else {
+      if (_.get(data, [ 'body', '_items', 0, 'active' ]) === 0) {
+        if (decoded.way !== 'admin') {
+          const url = `${apiHost}/member`
+          const payload = {
+            id: decoded.id,
+            role: decoded.role || 1,
+            active: 1
           }
+          superagent
+          .put(url)
+          .send(payload)
+          .end((e, response) => {
+            if (!e && response) {
+              res.status(200).send(`
+                <script>location.replace('/login')</script>
+              `)
+            } else {
+              console.log(response.status)
+              console.log(e)
+              res.status(response.status).json(e)
+            }
+          })
+        } else {
+          const tokenForActivation = jwtService.generateActivateAccountJwt({
+            id: decoded.id, role: decoded.role || 1, way: 'initmember', secret: currSecret
+          })
+          const cookies = new Cookies( req, res, {} )
+          cookies.set('initmember', tokenForActivation, { httpOnly: false, expires: new Date(Date.now() + 24 * 60 * 60 * 1000) })      
+          res.status(200)
+            .send(`
+              <script>location.replace('/initmember')</script>
+            `)
         }
-      })
+      } else {
+        res.status(200).send(`<script>location.replace('/')</script>`)
+      }
     }
   })
 })
@@ -339,22 +290,6 @@ router.use('/initmember', auth, function(req, res) {
   })
 })
 
-router.get('*', function(req, res) {
-  !isTest && console.log(apiHost)  
-  !isTest && console.log(decodeURIComponent(req.url))
-  const url = `${apiHost}${req.url}`
-  basicGetRequest(url, req, (err, response) => {
-    if (!err && response) {
-      const resData = JSON.parse(response.text)
-      res.json(resData)
-    } else {
-      res.json(err)
-      console.error(`error during fetch data from : ${url}`)
-      console.error(err)  
-    }
-  })
-})
-
 router.post('/verify-recaptcha-token', (req, res) => {
   let url = 'https://www.google.com/recaptcha/api/siteverify'
   superagent
@@ -382,7 +317,6 @@ router.post('/token', (req, res) => {
     res.status(403).send('Forbidden.')
   }
 })
-
 router.post('/login', auth, (req, res) => {
   consoleLogOnDev({
     msg: `Got a new reuqest of login:
@@ -613,62 +547,97 @@ router.post('/meta', auth, (req, res) => {
   })
 })
 
-router.post('*', auth, (req, res) => {
-  const url = `${apiHost}${req.url}`
-   superagent
-  .post(url)
-  .send(req.body)
-  .end((err, response) => {
-    if (!err && response) {
-      if (req.url.indexOf('member') === -1) {
-        res.status(200).end()
-      } else {
-        sendActivationMail({ id: req.body.id, role: req.body.role, way: 'admin' }, (e, response) => {
-          if (!e && response) {
-            res.status(200).end()
+router.route('*')
+  .get(fetchFromRedis, function (req, res, next) {
+    const url = `${apiHost}${req.url}`
+    if (res.redis) {
+      console.log('fetch data from Redis.', req.url)
+      const resData = JSON.parse(res.redis)
+      res.json(resData)
+    } else {
+      superagent
+        .get(url)
+        .timeout(
+          {
+            response: API_TIMEOUT,  // Wait 5 seconds for the server to start sending,
+            deadline: API_DEADLINE ? API_DEADLINE : 60000, // but allow 1 minute for the file to finish loading.
+          }
+        )
+        .end((e, r) => {
+          if (!e && r) {
+            const dt = JSON.parse(r.text)
+            if (Object.keys(dt).length !== 0 && dt.constructor === Object) {
+              res.dataString = r.text
+              /**
+               * if data not empty, go next to save data to redis
+               */
+              next()
+            }
+            const resData = JSON.parse(r.text)
+            res.json(resData)
           } else {
-            res.status(response.status).json(e)
-            console.error(`error during register: ${url}`)
-            console.error(e)
+            res.json(e)
+            console.error(`error during fetch data from : ${url}`)
+            console.error(e)  
           }
         })
       }
-    } else {
-      console.log('error occurred when handling a req: ', req.url)
-      console.log(err)
-      res.status(500).json(err)
-    }
+  }, insertIntoRedis)
+  .post(auth, (req, res) => {
+    console.log('??')
+    const url = `${apiHost}${req.url}`
+     superagent
+    .post(url)
+    .send(req.body)
+    .end((err, response) => {
+      if (!err && response) {
+        if (req.url.indexOf('member') === -1) {
+          res.status(200).end()
+        } else {
+          sendActivationMail({ id: req.body.id, role: req.body.role, way: 'admin' }, (e, response) => {
+            if (!e && response) {
+              res.status(200).end()
+            } else {
+              res.status(response.status).json(e)
+              console.error(`error during register: ${url}`)
+              console.error(e)
+            }
+          })
+        }
+      } else {
+        console.log('error occurred when handling a req: ', req.url)
+        console.log(err)
+        res.status(500).json(err)
+      }
+    })
   })
-})
-
-router.put('*', auth, function (req, res) {
-  const url = `${apiHost}${req.url}`
-  superagent
-  .put(url)
-  .send(req.body)
-  .end((err, response) => {
-    if (!err && response) {
-      res.status(200).end()
-    } else {
-      res.status(500).json(err)
-    }
+  .put(auth, function (req, res) {
+    const url = `${apiHost}${req.url}`
+    superagent
+    .put(url)
+    .send(req.body)
+    .end((err, response) => {
+      if (!err && response) {
+        res.status(200).end()
+      } else {
+        res.status(500).json(err)
+      }
+    })
   })
-})
-
-router.delete('*', auth, function (req, res) {
-  const url = `${apiHost}${req.url}`
-  const params = req.body || {}
-  superagent
-  .delete(url)
-  .end((err, response) => {
-    if (!err && response) {
-      res.status(200).end()
-    } else {
-      console.log('Error occurred when deleting stuff', err)
-      res.status(500).json(err)
-    }
+  .delete(auth, function (req, res) {
+    const url = `${apiHost}${req.url}`
+    const params = req.body || {}
+    superagent
+    .delete(url)
+    .end((err, response) => {
+      if (!err && response) {
+        res.status(200).end()
+      } else {
+        console.log('Error occurred when deleting stuff', err)
+        res.status(500).json(err)
+      }
+    })
   })
-})
 
 router.use(function (err, req, res, next) {
   if (err.name === 'UnauthorizedError' && req.url.indexOf('/status') === -1) {
