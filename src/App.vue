@@ -24,14 +24,14 @@ button
   position relative
 
 .main-container
-  width 950px
-  max-width 950px
-  margin 22px auto 0
+  width 90%
+  max-width 90%
+  margin 35px auto 0
   overflow hidden
 
 .main-panel
   width 100%
-  padding 35px 80px 40px
+  padding 20px 5%
   border 2px solid #d8ca21
 
 .datepicker__input
@@ -46,4 +46,11 @@ button
 .fade-enter, .fade-leave-active
   opacity 0
 
+@media (min-width 950px)
+  .main-container
+    width 950px
+    max-width 950px
+    margin 22px auto 0
+  .main-panel
+    padding 35px calc((100% - 800px) / 2) 40px
 </style>
