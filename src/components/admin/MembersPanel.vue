@@ -14,7 +14,7 @@
         <div class="actions title">
           <div class="actions__update" v-if="$can('updateAccount')" v-text="wording.WORDING_ADMIN_UPDATE"></div>
           <div class="actions__delete" v-if="$can('deleteAccount')" v-text="wording.WORDING_ADMIN_DELETE" @click="delMultiple"></div>
-          <div class="actions__guesteditor" v-text="wording.WORDING_ADMIN_GUESTEDITOR"></div>
+          <div class="actions__guesteditor" v-text="wording.WORDING_ADMIN_GUESTEDITOR" @click="setCustomEditorMultiple"></div>
         </div>
         <div class="filter title">
           <select @change="filterChanged">
@@ -32,7 +32,8 @@
         <div class="actions">
           <div class="actions__update" v-if="$can('updateAccount')" v-text="wording.WORDING_ADMIN_UPDATE" @click="update(k)"></div>
           <div class="actions__delete" v-if="$can('deleteAccount')" v-text="wording.WORDING_ADMIN_DELETE" @click="del(k)"></div>
-        </div>      
+          <div class="actions__guesteditor" v-if="m.customEditor" v-text="wording.WORDING_ADMIN_GUESTEDITOR" @click="cancelCustomEditor(k)"></div>
+        </div>
       </div>
       <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder" :isConversation="true">
         <MemberAccountEditor @updated="updated" @closeLightBox="closeLightBox" :title="editorTitle" :members="targMember" :action="action"></MemberAccountEditor>
@@ -44,6 +45,7 @@
   import _ from 'lodash'
   import { WORDING_ADMIN_ACCOUNT, WORDING_ADMIN_EMAIL, WORDING_ADMIN_ROLE, WORDING_ADMIN_UPDATE, WORDING_ADMIN_DELETE } from '../../constants'
   import { WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER, WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION, WORDING_ADMIN_NICKNAME, WORDING_ADMIN_GUESTEDITOR } from '../../constants'
+  import { WORDING_ADMIN_MEMBER_EDITOR_SET_CONFIRMATION_CUSTOMEDITOR, WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION_CUSTOMEDITOR } from '../../constants'
   import { FILTER } from '../../constants/admin'
   import { ROLE_MAP } from '../../constants'
   import { getValue } from '../../util/comm'
@@ -89,6 +91,8 @@
           WORDING_ADMIN_DELETE,
           WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER,
           WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION,
+          WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION_CUSTOMEDITOR,
+          WORDING_ADMIN_MEMBER_EDITOR_SET_CONFIRMATION_CUSTOMEDITOR,
           WORDING_ADMIN_NICKNAME,
           WORDING_ADMIN_GUESTEDITOR
         }
@@ -98,6 +102,12 @@
     methods: {
       closeLightBox () {
         this.showLightBox = false
+      },
+      cancelCustomEditor (index) {
+        this.action = 'customEditor_cancel'
+        this.showLightBox = true
+        this.targMember = [ this.members[ index ] ]
+        this.editorTitle = this.wording.WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION_CUSTOMEDITOR
       },
       del (index) {
         this.action = 'delete'
@@ -121,6 +131,27 @@
         this.$refs[ 'selectAll' ].checked = false
         this.toggoleSelectAll()
         this.$emit('filterChanged', { page: index })
+      },
+      setCustomEditorMultiple () {
+        this.targMember = _.map(_.filter(this.$refs[ 'checkboxItems' ], (checkbox) => (checkbox.checked)), (checkbox) => (this.members[ checkbox.value ]))
+        const exceedMaxCustomEditor = () => {
+          return this.targMember.length > 3
+        }
+        const canSetCustomEditor = () => {
+          return this.targMember.length !== 0 && !_.some(this.targMember, (member) => { return member.role === 1 || member.role === 0 }) && _.every(this.targMember, (member) => { return !member.customEditor })
+        }
+
+        if (exceedMaxCustomEditor()) {
+          this.action = 'customEditor_exceedError'
+          this.showLightBox = true
+        } else if (!canSetCustomEditor()) {
+          this.action = 'customEditor_setError'
+          this.showLightBox = true
+        } else if (!exceedMaxCustomEditor() && canSetCustomEditor()) {
+          this.action = 'customEditor_set'
+          this.showLightBox = true
+          this.editorTitle = this.wording.WORDING_ADMIN_MEMBER_EDITOR_SET_CONFIRMATION_CUSTOMEDITOR
+        }
       },
       toggleCheckboxItem (e) {
         if (!e.target.checked) {
@@ -241,6 +272,7 @@
                 width 60px
               &.actions__guesteditor
                 width 100px
+                margin-right 0
           &.filter
             width 105px
             position relative
