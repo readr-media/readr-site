@@ -1,6 +1,22 @@
 <template>
-  <div class="member-editor" :class="{ result: message, confirm: action === 'delete' }">
-    <div class="member-editor__form" v-if="action !== 'delete'">
+  <div class="member-editor" :class="{ result: message, confirm: action === 'delete' || action === 'customEditor_cancel' || action === 'customEditor_set' }">
+    <div class="member-editor__form" v-if="action === 'customEditor_exceedError'">
+      <div class="error">
+        <div class="error__container">
+          <img src="/public/icons/exclamation.png" alt="error">
+          <p v-text="wording.WORDING_ADMIN_EXCEED_ERROR_CUSTOMEDITOR"></p>
+        </div>
+      </div>
+    </div>
+    <div class="member-editor__form" v-else-if="action === 'customEditor_setError'">
+      <div class="error">
+        <div class="error__container">
+          <img src="/public/icons/exclamation.png" alt="error">
+          <p v-text="wording.WORDING_ADMIN_SET_ERROR_CUSTOMEDITOR"></p>
+        </div>
+      </div>
+    </div>
+    <div class="member-editor__form" v-else-if="action !== 'delete' && action !== 'customEditor_cancel' && action !== 'customEditor_set'">
       <div class="title" v-text="title" v-if="!message"></div>
       <div class="email">
         <span class="label" v-text="wording.WORDING_ADMIN_MEMBER_EDITOR_EMAIL + '：'"></span>
@@ -39,6 +55,8 @@
   import _ from 'lodash'
   import { WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER, WORDING_ADMIN_MEMBER_EDITOR_EMAIL, WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER, WORDING_ADMIN_MEMBER_EDITOR_SAVE, WORDING_ADMIN_ROLE } from '../../constants'
   import { WORDING_ADMIN_SUCCESS, WORDING_ADMIN_INFAIL, WORDING_ADMIN_MEMBER_EDITOR_NICKNAME, WORDING_ADMIN_CANCEL, WORDING_ADMIN_YES, WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL } from '../../constants'
+  import { WORDING_ADMIN_MEMBER_EDITOR_SET_SUCCESSFUL_CUSTOMEDITOR, WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL_CUSTOMEDITOR } from '../../constants'
+  import { WORDING_ADMIN_EXCEED_ERROR_CUSTOMEDITOR, WORDING_ADMIN_SET_ERROR_CUSTOMEDITOR } from '../../constants'
   import { WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL } from '../../constants'
   import { ROLE_MAP } from '../../constants'
   import { consoleLogOnDev, getValue } from '../../util/comm'
@@ -115,7 +133,11 @@
           WORDING_ADMIN_CANCEL,
           WORDING_ADMIN_YES,
           WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL,
-          WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL
+          WORDING_ADMIN_MEMBER_EDITOR_SET_SUCCESSFUL_CUSTOMEDITOR,
+          WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL_CUSTOMEDITOR,
+          WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL,
+          WORDING_ADMIN_EXCEED_ERROR_CUSTOMEDITOR,
+          WORDING_ADMIN_SET_ERROR_CUSTOMEDITOR
         }
       }
     },
@@ -146,14 +168,18 @@
         this.$forceUpdate()
       },
       save () {
-        if (this.validate() || this.action === 'delete') {
+        if (this.validate() || this.action === 'delete' || this.action === 'customEditor_cancel' || this.action === 'customEditor_set') {
           const callback = ({ status }) => {
             this.isEdible = false
             if (status === 200) {
-              if (this.action !== 'delete') {
-                this.message = this.title + this.wording.WORDING_ADMIN_SUCCESS + '！'
-              } else {
+              if (this.action === 'delete') {
                 this.message = this.wording.WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL + '！'
+              } else if (this.action === 'customEditor_set') {
+                this.message = this.wording.WORDING_ADMIN_MEMBER_EDITOR_SET_SUCCESSFUL_CUSTOMEDITOR + '！'
+              } else if (this.action === 'customEditor_cancel') {
+                this.message = this.wording.WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL_CUSTOMEDITOR + '！'
+              } else {
+                this.message = this.title + this.wording.WORDING_ADMIN_SUCCESS + '！'
               }
               this.$emit('updated')
             } else {
@@ -165,6 +191,19 @@
               id: this.id,
               mail: this.typedEmail,
               role: this.selectedRole
+            }).then(callback)
+          } else if (this.action === 'customEditor_set') {
+            const ids = _.map(this.members, (m) => (m.id))
+            ids.forEach((id) => {
+              updateMember(this.$store, {
+                id: id,
+                custom_editor: true
+              }).then(callback)
+            })
+          } else if (this.action === 'customEditor_cancel') {
+            updateMember(this.$store, {
+              id: this.id,
+              custom_editor: false
             }).then(callback)
           } else if (this.action === 'add') {
             register(this.$store, {
@@ -264,6 +303,25 @@
           width calc(100% - 50px)
           display flex
           justify-content center
+        &.error
+          width 325px
+          height 174px
+          display flex
+          justify-content center
+          align-items center
+          .error__container
+            display flex
+            flex-direction column
+            justify-content center
+            align-items center
+            img[alt=error]
+              width 50px
+              height 50px
+            p
+              font-size 15px
+              font-weight 600
+              color #4280a2
+              margin-top 19px
         &.nickname
           position relative
           &.multiple
