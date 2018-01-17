@@ -271,8 +271,12 @@
 <style lang="stylus" scoped>
 
 .postPanelEdit
-  width 900px
-  padding 30px 100px
+  display flex
+  flex-direction column
+  width 90%
+  height 100%
+  margin 0 auto
+  padding 55px 0 35px
   > input 
     width 100%
     height 25px
@@ -317,13 +321,13 @@
     margin-top 20px
     &.advanced
       .postPanelEdit__btn
-        width 210px
+        width calc((100% - 20px) / 3)
   &__btn
     display inline-flex
     justify-content center
     align-items center
-    width 340px
-    height 30px
+    width calc((100% - 20px) / 2)
+    height 25px
     margin 0
     font-size 14px
     font-weight 300
@@ -369,4 +373,15 @@
     &:first-of-type
       border-right none
 
+@media (min-width 950px)
+  .postPanelEdit
+    width 900px
+    padding 30px 100px
+    &__submit
+      &.advanced
+        .postPanelEdit__btn
+          width 210px
+    &__btn
+      width 340px
+      height 30px
 </style>

@@ -51,6 +51,7 @@
   import AlertPanel from '../components/AlertPanel.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
   import AppHeader from '../components/AppHeader.vue'
+  import PaginationNav from '../components/PaginationNav.vue'
   import PostList from '../components/PostList.vue'
   import PostPanel from '../components/PostPanel.vue'
   import TheBaseControlBar from '../components/TheBaseControlBar.vue'
@@ -63,7 +64,7 @@
     return store.dispatch('ADD_POST', { params })
   }
 
-  const fetchPosts = (store, id) => {
+  const fetchPosts = (store, { id, page, sort }) => {
     return store.dispatch('GET_POSTS', {
       params: {
         max_result: MAXRESULT,
@@ -92,6 +93,7 @@
       'app-header': AppHeader,
       'base-control-bar': TheBaseControlBar,
       'base-light-box': BaseLightBox,
+      'pagination-nav': PaginationNav,
       'post-list': PostList,
       'post-panel': PostPanel
     },

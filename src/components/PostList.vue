@@ -2,13 +2,13 @@
   <table class="postList">
     <thead>
       <tr>
-        <th><input type="checkbox" ref="checkboxSelectAll" @click="$_postList_toggleSelectAll"></th>
-        <th><span @click="$_postList_orderBy('author.nickname')" v-text="wording.WORDING_POSTLIST_NICKNAME"></span></th>
-        <th><span @click="$_postList_orderBy('title')" v-text="wording.WORDING_POSTLIST_TITLE"></span></th>
-        <th><span @click="$_postList_orderBy('active')" v-text="wording.WORDING_POSTLIST_ACTIVE"></span></th>
-        <th><button class="postList__btn postList__btn--multiple" v-text="wording.WORDING_POSTLIST_PUBLISH"></button></th>
-        <th><button class="postList__btn postList__btn--multiple" v-text="wording.WORDING_POSTLIST_DELETE"></button></th>
-        <th>
+        <th class="postList__checkbox"><input type="checkbox" ref="checkboxSelectAll" @click="$_postList_toggleSelectAll"></th>
+        <th class="postList__nickname"><span @click="$_postList_orderBy('author.nickname')" v-text="wording.WORDING_POSTLIST_NICKNAME"></span></th>
+        <th class="postList__title"><span @click="$_postList_orderBy('title')" v-text="wording.WORDING_POSTLIST_TITLE"></span></th>
+        <th class="postList__status postList--center"><span @click="$_postList_orderBy('active')" v-text="wording.WORDING_POSTLIST_ACTIVE"></span></th>
+        <th class="postList__update postList--center"><button class="postList__btn postList__btn--multiple" v-text="wording.WORDING_POSTLIST_PUBLISH"></button></th>
+        <th class="postList__delete postList--center"><button class="postList__btn postList__btn--multiple" v-text="wording.WORDING_POSTLIST_DELETE"></button></th>
+        <th class="postList__sort postList--center">
           <select name="" id="">
             <option value="-updated_at" v-text="wording.WORDING_POSTLIST_UPDATE_AT"></option>
             <option value="-created_at" v-text="wording.WORDING_POSTLIST_PUBLISH_AT"></option>
@@ -18,13 +18,13 @@
     </thead>
     <tbody>
       <tr v-for="p in posts" :key="p.id">
-        <td><input type="checkbox" ref="checkboxItems"></td>
+        <td class="postList__checkbox"><input type="checkbox" ref="checkboxItems"></td>
         <td class="postList__nickname" v-text="$_postList_getAuthorId(p)"></td>
         <td class="postList__title" v-text="p.title"></td>
         <td class="postList__status postList--center" v-text="$_postList_getStatus(p)"></td>
-        <td class="postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_editPost(p.id)" v-text="wording.WORDING_POSTLIST_UPDATE"></button></td>
-        <td class="postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_deletePost(p.id)" v-text="wording.WORDING_POSTLIST_DELETE"></button></td>
-        <td></td>
+        <td class="postList__update postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_editPost(p.id)" v-text="wording.WORDING_POSTLIST_UPDATE"></button></td>
+        <td class="postList__delete postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_deletePost(p.id)" v-text="wording.WORDING_POSTLIST_DELETE"></button></td>
+        <td class="postList__sort"></td>
       </tr>
     </tbody>
   </table>
@@ -123,19 +123,15 @@
 .postList
   width 100%
   color #808080
+  text-align left
   border-collapse collapse
   thead
-    font-size 18px
-    text-align left
-    th
-      padding-right 10px
-      padding-bottom 10px
-      border-bottom 2px solid #000
-    
-      
-    select
-      height 25px
-      line-height 25px
+    font-size 15px
+  tbody
+    font-size 12px
+  th
+    padding-bottom 5px
+    border-bottom 2px solid #000
     span
       position relative
       cursor pointer
@@ -150,32 +146,36 @@
         background-repeat no-repeat
         background-size 7px auto
         background-image url(/public/icons/double-triangle.png)
-  tbody
-    font-size 15px
-    td
-      padding 10px 0 10px 0
-      border-bottom 1px solid #d3d3d3
-   
-    
+  tr
+    &:first-of-type
+      td
+        padding-top 10px
+    &:last-of-type
+      td
+        border-bottom none
+  td
+    max-width 0
+    padding-top 5px
+    padding-bottom 5px
+    text-overflow ellipsis
+    white-space nowrap
+    border-bottom 1px solid #d3d3d3
+    overflow hidden
+  
   input[type="checkbox"]
-    width 15px
-    height 15px
+    width 12px
+    height 12px
+  &__checkbox
+    width 20px
   &__nickname
-    max-width 120px
-    text-overflow ellipsis
-    white-space nowrap
-    overflow hidden
+    width 20%
+    padding-right 10px
   &__title
-    max-width 330px
-    text-overflow ellipsis
-    white-space nowrap
-    overflow hidden
-  &__status
-    min-width 60px
+    padding-right 10px
+  &__status, &__update, &__delete, &__sort
+    display none
   &--center
     text-align center
-    padding-left 10px
-    padding-right 10px
   &__btn
     background-color transparent
     border none
@@ -191,5 +191,31 @@
       background-color #808080
       border-radius 4px
 
-
+@media (min-width 950px)
+  .postList
+    thead
+      font-size 18px
+    tbody
+      font-size 15px
+    th
+      padding-bottom 10px
+    input[type="checkbox"]
+      width 15px
+      height 15px
+    &__checkbox
+      padding-right 10px
+    &__nickname
+      width 85px
+    &__title
+      width 360px
+      padding-right 60px
+    &__status, &__update, &__delete, &__sort
+      display table-cell
+    &__status
+      width 60px
+      padding-right 10px
+    &__sort
+      select
+        height 25px
+        line-height 25px
 </style>

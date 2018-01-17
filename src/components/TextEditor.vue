@@ -110,14 +110,14 @@ export default {
 <style lang="stylus" scoped>
 
 .editor
+  flex 1
   position relative
   width 100%
-  height 400px
   margin-top 15px
   border-bottom 1px solid #d3d3d3
   .quill-editor
     width 100%
-    height 338px
+    height 100%
     &.half
       width 50%
   .medium-editor-element
@@ -154,7 +154,7 @@ export default {
     position relative
     display flex
     flex-direction column
-    height 380px
+    height calc(100% - 20px)
     
     &--html
       position absolute
@@ -177,6 +177,12 @@ export default {
   //   padding 20px
   //   background-color #fff
   //   border 1px solid #000
-
+@media (min-width 950px)
+  .editor
+    height 400px
+    .quill-editor
+      height 338px
+    &__main
+      height 380px
 
 </style>

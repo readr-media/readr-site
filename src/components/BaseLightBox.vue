@@ -77,9 +77,9 @@
       cursor pointer
       position absolute
       top -5px
-      right -55px
-      width 50px
-      height 50px
+      right -5px
+      width 45px
+      height 45px
       background-position center center
       background-repeat no-repeat
       background-size cover
@@ -96,6 +96,8 @@
     justify-content center
     align-items center
     position relative
+    width 100%
+    height 100%
     background-color #fff
     border 5px solid #d8ca21
     &.non-border
@@ -120,5 +122,17 @@
     right 0
     bottom 0
     z-index 1
+
+@media (min-width 950px)
+  .baseLightBox
+    &__container
+      width auto
+      height auto
+    &__btn
+      &--close
+        top -5px
+        right -55px
+        width 50px
+        height 50px
 
 </style>
