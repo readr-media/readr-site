@@ -81,7 +81,7 @@ const logout = (store) => {
   return store.dispatch('LOGOUT', {})
 }
 const uploadImage = (store, file) => {
-  return store.dispatch('UPLOAD_IMAGE', { file })
+  return store.dispatch('UPLOAD_IMAGE', { file, type: 'member' })
 }
 const deleteImage = (store, file) => {
   return store.dispatch('DELETE_IMAGE', { file })

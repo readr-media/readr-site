@@ -18,7 +18,7 @@ import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 
 const uploadImage = (store, file) => {
-  return store.dispatch('UPLOAD_IMAGE', { file })
+  return store.dispatch('UPLOAD_IMAGE', { file, type: 'post' })
 }
 
 export default {

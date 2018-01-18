@@ -1,11 +1,12 @@
 const _ = require('lodash')
 const { API_DEADLINE, API_HOST, API_PORT, API_PROTOCOL, API_TIMEOUT } = require('./config')
-const { GCP_FILE_BUCKET, GOOGLE_CLIENT_ID, GOOGLE_RECAPTCHA_SECRET, DISPOSABLE_TOKEN_WHITE_LIST, SECRET_KEY } = require('./config')
+const { GCP_FILE_BUCKET, GOOGLE_CLIENT_ID, GOOGLE_RECAPTCHA_SECRET, GCS_IMG_MEMBER_PATH, GCS_IMG_POST_PATH, DISPOSABLE_TOKEN_WHITE_LIST, SECRET_KEY } = require('./config')
 const { REDIS_AUTH, REDIS_MAX_CLIENT, REDIS_READ_HOST, REDIS_READ_PORT, REDIS_WRITE_HOST, REDIS_WRITE_PORT, REDIS_TIMEOUT } = require('./config')
 const { ENDPOINT_SECURE, SCOPES } = require('./config')
 const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT } = require('./config')
 const { camelizeKeys } = require('humps')
 const { initBucket, makeFilePublic, uploadFileToBucket, deleteFileFromBucket } = require('./gcs.js')
+const { processImage } = require('./sharp.js')
 const Cookies = require('cookies')
 const GoogleAuth = require('google-auth-library')
 const crypto = require('crypto')
@@ -17,6 +18,7 @@ const isTest = process.env.NODE_ENV === 'test'
 const jwtExpress = require('express-jwt')
 const jwtService = require('./service.js')
 const multer  = require('multer')
+const sharp = require('sharp')
 const scrape = require('html-metadata')
 const upload = multer({ dest: 'tmp/' })
 
@@ -520,13 +522,13 @@ router.post('/post', authVerify, (req, res) => {
   })
 })
 
-router.post('/uploadImg', authVerify, upload.single('image'), (req, res) => {
+router.post('/uploadMemberImg', authVerify, upload.single('image'), (req, res) => {
   const url = `${apiHost}${req.url}`
   const bucket = initBucket(GCP_FILE_BUCKET)
   const file = req.file
   
   uploadFileToBucket(bucket, file.path, {
-    destination: `/assets/images/${file.originalname}`,
+    destination: `${GCS_IMG_MEMBER_PATH}/${file.originalname}`,
     metadata: {
       contentType: file.mimetype
     }
@@ -545,6 +547,41 @@ router.post('/uploadImg', authVerify, upload.single('image'), (req, res) => {
   .catch((err) => {
     res.status(400).send('Upload Fail').end()
   })
+})
+
+router.post('/uploadPostImg', authVerify, upload.single('image'), (req, res) => {
+  const url = `${apiHost}${req.url}`
+  const bucket = initBucket(GCP_FILE_BUCKET)
+  const file = req.file
+  
+  processImage(file)
+    .then((images) => {
+      const origImg = _.trim(images[0], 'tmp/')
+      Promise.all(images.map((path) => {
+        const fileName = _.trim(path, 'tmp/')
+        return uploadFileToBucket(bucket, path, {
+          destination: `${GCS_IMG_POST_PATH}/${fileName}`,
+          metadata: {
+            contentType: file.mimetype
+          }
+        }).then((bucketFile) => {
+          console.info(`file ${fileName}(${path}) completed uploading to bucket `)
+          fs.unlink(path, (err) => {
+            if (err) {
+              console.error(`Error: delete ${path} fail`)
+            }
+            console.info(`successfully deleted ${path}`)
+          })
+          makeFilePublic(bucketFile)
+        })
+      }))
+      .then(() => {
+        res.status(200).send({url: `http://dev.readr.tw${GCS_IMG_POST_PATH}/${origImg}`})
+      })
+    })
+    .catch((err) => {
+      res.status(400).send('Upload Fail').end()
+    })
 })
 
 router.post('/deleteImg', (req, res) => {
