@@ -297,15 +297,16 @@ export function updatePost ({ params }) {
     .catch(err => err)
 }
 
-export function uploadImage (file, type = 'post') {
+export function uploadImage (file, type) {
   let url
-  if (type === 'post') {
-    url = `${host}/api/uploadPostImg`
-  }
-  if (type === 'member') {
-    url = `${host}/api/uploadMemberImg`
-  }
   return new Promise((resolve, reject) => {
+    if (type === 'member') {
+      url = `${host}/api/uploadMemberImg`
+    } else if (type === 'post') {
+      url = `${host}/api/uploadPostImg`
+    } else {
+      reject()
+    }
     superagent
       .post(url)
       .set('Authorization', `Bearer ${getToken()}`)
