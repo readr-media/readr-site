@@ -113,8 +113,8 @@ export default {
   UPDATE_POST: ({ commit, dispatch, state }, { params }) => {
     return updatePost({ params })
   },
-  UPLOAD_IMAGE: ({ commit, dispatch }, { file }) => {
-    return uploadImage(file)
+  UPLOAD_IMAGE: ({ commit, dispatch }, { file, type }) => {
+    return uploadImage(file, type)
   },
   VERIFY_RECAPTCHA_TOKEN: ({ commit, dispatch, state }, { token }) => {
     return verifyRecaptchaToken(token)

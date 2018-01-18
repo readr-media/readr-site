@@ -297,8 +297,14 @@ export function updatePost ({ params }) {
     .catch(err => err)
 }
 
-export function uploadImage (file) {
-  const url = `${host}/api/uploadImg`
+export function uploadImage (file, type = 'post') {
+  let url
+  if (type === 'post') {
+    url = `${host}/api/uploadPostImg`
+  }
+  if (type === 'member') {
+    url = `${host}/api/uploadMemberImg`
+  }
   return new Promise((resolve, reject) => {
     superagent
       .post(url)

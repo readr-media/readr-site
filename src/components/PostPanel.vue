@@ -98,7 +98,7 @@
   }
 
   const uploadImage = (store, file) => {
-    return store.dispatch('UPLOAD_IMAGE', { file })
+    return store.dispatch('UPLOAD_IMAGE', { file, type: 'post' })
   }
 
   export default {
