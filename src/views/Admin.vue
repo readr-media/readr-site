@@ -3,18 +3,47 @@
     <app-header :sections="sections"></app-header>
     <About :profile="profile"></About>
     <div class="control-bar">
-      <TheBaseControlBar @openPanel="openPanel" @addAccount="addMember"></TheBaseControlBar>
+      <TheBaseControlBar @openPanel="openPanel" @addAccount="addMember" @addPost="$_guestEditor_editorHandler(true, 'add')"></TheBaseControlBar>
     </div>
     <template v-if="activePanel === 'accounts'">
       <MembersPanel v-if="$can('memberManage')" @filterChanged="filterChanged"></MembersPanel>
     </template>
     <template v-else-if="activePanel === 'posts'">
       <section class="panel">
-        <post-list :posts="posts"></post-list>
+        <post-list
+          :posts="posts"
+          @deletePost="$_guestEditor_showAlert"
+          @editPost="$_guestEditor_editorHandler"
+          @filterChanged="$_guestEditor_updatePostList"
+        ></post-list>
       </section>
     </template>
     <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder" :isConversation="true">
       <MemberAccountEditor @updated="filterChanged" :shouldShow="showLightBox" :title="wording.WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER" action="add"></MemberAccountEditor>
+    </BaseLightBox>
+    <BaseLightBox :showLightBox.sync="showEditor">
+      <PostPanel
+        :action="action"
+        :isCompleted="isCompleted"
+        :post.sync="post"
+        :showLightBox="showEditor"
+        @closeLightBox="$_guestEditor_editorHandler(false)"
+        @showAlert="$_guestEditor_alertHandler"
+        @updatePostList="$_guestEditor_updatePostList">
+      </PostPanel>
+    </BaseLightBox>
+    <BaseLightBox :isAlert="true" :showLightBox.sync="showAlert">
+      <AlertPanel
+        :action="action"
+        :active="postActive"
+        :isCompleted="isCompleted"
+        :post="post"
+        :showLightBox="showAlert"
+        @closeAlert="$_guestEditor_alertHandler"
+        @closeEditor="$_guestEditor_editorHandler(false)"
+        @deletePost="$_guestEditor_deletePost"
+        @publishPost="$_editor_publishPost">
+      </AlertPanel>
     </BaseLightBox>
   </div>
 </template>
@@ -29,10 +58,16 @@
   import MemberAccountEditor from '../components/admin/MemberAccountEditor.vue'
   import PostList from '../components/PostList.vue'
   import TheBaseControlBar from '../components/TheBaseControlBar.vue'
+  import PostPanel from '../components/PostPanel.vue'
+  import AlertPanel from '../components/AlertPanel.vue'
 
   const MAXRESULT = 20
   const DEFAULT_PAGE = 1
   const DEFAULT_SORT = '-updated_at'
+
+  const addPost = (store, params) => {
+    return store.dispatch('ADD_POST', { params })
+  }
 
   const fetchPosts = (store, id) => {
     return store.dispatch('GET_POSTS', {
@@ -42,6 +77,14 @@
         }
       }
     })
+  }
+
+  const deletePost = (store, id) => {
+    return store.dispatch('DELETE_POST', { id: id })
+  }
+
+  const updatePost = (store, params) => {
+    return store.dispatch('UPDATE_POST', { params })
   }
 
   const getMembers = (store, { page, sort }) => {
@@ -62,7 +105,9 @@
       BaseLightBox,
       MembersPanel,
       MemberAccountEditor,
-      TheBaseControlBar
+      TheBaseControlBar,
+      PostPanel,
+      AlertPanel
     },
     computed: {
       posts () {
@@ -81,6 +126,12 @@
         currPage: 1,
         currSort: '-updated_at',
         showLightBox: false,
+        isCompleted: false,
+        post: {},
+        showEditor: false,
+        action: undefined,
+        showAlert: false,
+        postActive: undefined,
         wording: {
           WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER
         }
@@ -88,6 +139,77 @@
     },
     name: 'admin-page',
     methods: {
+      $_editor_publishPost () {
+        const params = {}
+        params.active = 1
+        params.content = _.get(this.post, [ 'content' ])
+        params.link = _.get(this.post, [ 'link' ])
+        params.og_description = _.get(this.post, [ 'ogDescription' ])
+        params.og_image = _.get(this.post, [ 'ogImage' ])
+        params.og_title = _.get(this.post, [ 'ogTitle' ]) || _.get(this.post, [ 'title' ])
+        params.title = _.get(this.post, [ 'title' ])
+        params.updated_by = _.get(this.$store.state, [ 'profile', 'id' ])
+
+        if (Date.parse(_.get(this.post, [ 'date' ]))) {
+          params.published_at = _.get(this.post, [ 'date' ])
+        }
+        if (this.action === 'add') {
+          params.author = _.get(this.$store.state, [ 'profile', 'id' ])
+          addPost(this.$store, params)
+            .then(() => {
+              this.isCompleted = true
+            })
+        }
+
+        if (this.action === 'edit') {
+          params.id = _.get(this.post, [ 'id' ])
+          updatePost(this.$store, params)
+            .then(() => {
+              this.isCompleted = true
+            })
+        }
+
+      },
+      $_guestEditor_showAlert (id) {
+        this.post = _.find(this.posts, { 'id': id })
+        this.postActive = 0
+        this.isCompleted = false
+        this.showAlert = true
+      },
+      $_guestEditor_deletePost () {
+        const id = _.get(this.post, [ 'id' ])
+        deletePost(this.$store, id)
+          .then(() => {
+            this.$_guestEditor_updatePostList()
+            this.isCompleted = true
+          })
+      },
+      $_guestEditor_updatePostList (params = {}) {
+        this.page = params.page
+        this.sort = params.sort
+        fetchPosts(this.$store, {
+          id: _.get(this.profile, [ 'id' ]),
+          page: this.page,
+          sort: this.sort
+        })
+      },
+      $_guestEditor_alertHandler (showAlert, active, isCompleted) {
+        this.postActive = active
+        this.isCompleted = isCompleted
+        this.showAlert = showAlert
+      },
+      $_guestEditor_editorHandler (showEditor, action, id) {
+        this.isCompleted = false
+        this.post = _.find(this.posts, { 'id': id }) || {}
+        this.action = action
+        this.showEditor = showEditor
+        if (!this.showEditor) {
+          this.action = undefined
+          this.isCompleted = true
+          this.post = {}
+          this.$_guestEditor_updatePostList()
+        }
+      },
       addMember () {
         this.showLightBox = true
       },
