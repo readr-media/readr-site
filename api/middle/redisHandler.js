@@ -37,11 +37,13 @@ const redisFetching = (url, callback) => {
   redisPoolRead.get(decodeURIComponent(url), (error, data) => {
     redisPoolRead.ttl(decodeURIComponent(url), (err, dt) => {
       if (!err && dt) {
-        redisPoolWrite.del(decodeURIComponent(url), (e, d) => {
-          if (e) {
-            console.log('deleting key ', decodeURIComponent(url), 'from redis in fail ', e)
-          }
-        })
+        if (dt <= -1) {
+          redisPoolWrite.del(decodeURIComponent(url), (e, d) => {
+            if (e) {
+              console.log('deleting key ', decodeURIComponent(url), 'from redis in fail ', e)
+            }
+          })
+        }
       } else {
         console.log('fetching ttl in fail ', err)
       }

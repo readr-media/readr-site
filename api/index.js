@@ -88,6 +88,7 @@ const fetchPermissions = () => {
             }
             resolve(res.body)
           } else {
+            console.log('Fetch permissions in false...', err)
             reject(err)
           }
         })
@@ -97,25 +98,15 @@ const fetchPermissions = () => {
 }
 const fetchProfile = (url, req) => {
   return new Promise((resolve, reject) => {
-    redisFetching(url, ({ error, data }) => {
-      if (!error && data) {
-        resolve(camelizeKeys(JSON.parse(data)))
+    superagent
+    .get(`${apiHost}${url}`)
+    .end((err, res) => {
+      if (!err && res) {
+        resolve(camelizeKeys(res.body))
       } else {
-        superagent
-        .get(`${apiHost}${url}`)
-        .end((err, res) => {
-          if (!err && res) {
-            const dt = JSON.parse(res.text)
-            if (Object.keys(dt).length !== 0 && dt.constructor === Object) {
-              redisWriting(url, res.text)
-            }
-            resolve(camelizeKeys(res.body))
-          } else {
-            reject(err)
-            console.error(`error during fetch data from : ${url}`)
-            console.error(err) 
-          }
-        })
+        reject(err)
+        console.error(`error during fetch data from : ${url}`)
+        console.error(err) 
       }
     })
   })
@@ -134,18 +125,23 @@ const constructScope = (perms, role) => (
   )), (p) => (p.comp)) 
 )
 const authorize = (req, res, next) => {
-  const whitelist = _.get(ENDPOINT_SECURE, [ req.url.replace(/\?[A-Za-z0-9.*+?^=!:${}()#%~&_@\-`|\[\]\/\\]*$/, '') ])
-  console.log('whitelist', _.get(req.url.split('/'), [ 1 ]))
-  console.log('whitelist', req.url.replace(/\?[A-Za-z0-9.*+?^=!:${}()#%~&_@\-`|\[\]\/\\]*$/, ''))
-  console.log('whitelist', whitelist)
+  const whitelist = _.get(ENDPOINT_SECURE, [ `${req.method}${req.url.replace(/\?[A-Za-z0-9.*+?^=!:${}()#%~&_@\-`|\[\]\/\\]*$/, '')}` ])
   if (whitelist) {
-    const isAuthorized = _.find(whitelist, (r) => (r === req.user.role))
-    console.log('isAuthorized', isAuthorized)
-    if (isAuthorized) {
-      next()
-    } else {
-      res.status(403).send('Forbidden. No right to access.').end()
-    }
+    fetchPermissions().then((perms) => {
+      Promise.all([
+        new Promise((resolve) => (resolve(_.get(whitelist, [ 'role' ]) ? _.find(_.get(whitelist, [ 'role' ]), (r) => (r === req.user.role)) : true))),
+        new Promise((resolve) => (resolve(_.get(whitelist, [ 'perm' ]) ? _.get(whitelist, [ 'perm' ]).length === _.filter(_.get(whitelist, [ 'perm' ]), (p) => (_.find(_.filter(perms, { role: req.user.role }), { object: p }))).length : true)))
+      ]).then((isAuthorized) => {
+        const isRoleAuthorized = isAuthorized[ 0 ]
+        const isPermsAuthorized = isAuthorized[ 1 ]
+        if (isRoleAuthorized && isPermsAuthorized) {
+          next()
+        } else {
+          res.status(403).send('Forbidden. No right to access.').end()
+        }
+      })
+    })
+
   } else {
     next()
   }
@@ -174,6 +170,7 @@ const sendActivationMail = ({ id, role, way }, cb) => {
  * special request handler
  * 
  */
+
 const activationKeyVerify = function (req, res, next) {
   const key = req.url.split('/')[1]
   jwtService.verifyToken(key, currSecret, (error, decoded) => {
@@ -272,6 +269,7 @@ router.use('/initmember', authVerify, function(req, res) {
  * METHOD ALL
  * 
  */
+
 router.all('/member', [ authVerify, authorize ], function(req, res, next) {
   next()
 })
@@ -294,6 +292,7 @@ router.all('/posts', [ authVerify, authorize ], function(req, res, next) {
  * METHOD GET
  * 
  */
+
 router.get('/profile', [ authVerify ], (req, res) => {
   const targetProfile = req.user.id
   const url = `/member/${targetProfile}`
@@ -330,6 +329,7 @@ router.get('/status', authVerify, function(req, res) {
  * METHOD POST
  * 
  */
+
 router.post('/verify-recaptcha-token', (req, res) => {
   let url = 'https://www.google.com/recaptcha/api/siteverify'
   superagent
