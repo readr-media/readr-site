@@ -30,7 +30,7 @@ pipeline:
     commands:
     - apk update
     - apk add vips-dev fftw-dev --update-cache --repository https://dl-3.alpinelinux.org/alpine/edge/testing/
-    - apk add --no-cache python
+    - apk add --no-cache python g++ make
     - yarn install
     - yarn run build
     when:
