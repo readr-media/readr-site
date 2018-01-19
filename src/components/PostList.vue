@@ -20,13 +20,16 @@
       <tr v-for="p in posts" :key="p.id">
         <td class="postList__checkbox"><input type="checkbox" ref="checkboxItems"></td>
         <td class="postList__nickname" v-text="$_postList_getAuthorId(p)"></td>
-        <td class="postList__title" v-text="p.title"></td>
+        <td class="postList__title" v-text="p.title" @click="$_showPost(p)"></td>
         <td class="postList__status postList--center" v-text="$_postList_getStatus(p)"></td>
         <td class="postList__update postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_editPost(p.id)" v-text="wording.WORDING_POSTLIST_UPDATE"></button></td>
         <td class="postList__delete postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_deletePost(p.id)" v-text="wording.WORDING_POSTLIST_DELETE"></button></td>
         <td class="postList__sort"></td>
       </tr>
     </tbody>
+    <BaseLightBox :showLightBox.sync="showLightBox">
+      <BaseLightBoxPost :showLightBox="showLightBox" :post="post" @closeEditor="post = {}"/>
+    </BaseLightBox>
   </table>
 </template>
 <script>
@@ -45,10 +48,14 @@
     WORDING_POSTLIST_UPDATE_AT
   } from '../constants'
   import _ from 'lodash'
+  import BaseLightBox from './BaseLightBox.vue'
+  import BaseLightBoxPost from './BaseLightBoxPost.vue'
 
   export default {
     name: 'PostList',
     components: {
+      BaseLightBox,
+      BaseLightBoxPost
     },
     props: {
       posts: {
@@ -72,7 +79,9 @@
           WORDING_POSTLIST_TITLE,
           WORDING_POSTLIST_UPDATE,
           WORDING_POSTLIST_UPDATE_AT
-        }
+        },
+        showLightBox: false,
+        post: {}
       }
     },
     mounted () {},
@@ -114,6 +123,10 @@
         _.map(this.$refs.checkboxItems, (item) => {
           item.checked = this.$refs.checkboxSelectAll.checked
         })
+      },
+      $_showPost (post) {
+        this.showLightBox = true
+        this.post = post
       }
     }
   }
@@ -172,6 +185,7 @@
     padding-right 10px
   &__title
     padding-right 10px
+    cursor pointer
   &__status, &__update, &__delete, &__sort
     display none
   &--center

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import About from 'src/components/About.vue'
 import BaseLightBox from 'src/components/BaseLightBox.vue'
-import ProfileEdit from 'src/components/ProfileEdit.vue'
+import BaseLightBoxProfileEdit from 'src/components/BaseLightBoxProfileEdit.vue'
 import { ROLE_MAP } from 'src/constants'
 import { mount } from 'avoriaz'
 
@@ -60,7 +60,7 @@ describe('About.vue', () => {
   it('lightbox should contain component profile editor', () => {
     const lightBoxes = AboutComponent.find(BaseLightBox)
     for (let i = 0; i < lightBoxes.length; i += 1) {
-      expect(lightBoxes[ i ].contains(ProfileEdit)).to.equal(true)
+      expect(lightBoxes[ i ].contains(BaseLightBoxProfileEdit)).to.equal(true)
     }
   })
 })

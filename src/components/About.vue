@@ -12,7 +12,7 @@
       <span class="about__edit__btn" v-text="editText" @click="showLightBox = true"></span>
     </div>
     <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder">
-      <ProfileEdit :profile="profile"/>
+      <BaseLightBoxProfileEdit :profile="profile"/>
     </BaseLightBox>
   </div>
 </template>
@@ -20,12 +20,12 @@
   import _ from 'lodash'
   import { ROLE_MAP } from '../constants'
   import BaseLightBox from './BaseLightBox.vue'
-  import ProfileEdit from './ProfileEdit.vue'
+  import BaseLightBoxProfileEdit from './BaseLightBoxProfileEdit.vue'
 
   export default {
     components: {
       BaseLightBox,
-      ProfileEdit
+      BaseLightBoxProfileEdit
     },
     computed: {
       introduction () {
