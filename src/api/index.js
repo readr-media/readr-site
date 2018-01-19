@@ -321,10 +321,15 @@ export function uploadImage (file, type) {
   })
 }
 
-export function deleteImage (file) {
-  const url = `${host}/api/deleteImg`
+export function deleteImage (file, type) {
+  let url
   const param = { 'filePath': file }
   return new Promise((resolve, reject) => {
+    if (type === 'member') {
+      url = `${host}/api/deleteMemberImg`
+    } else {
+      reject()
+    }
     superagent
       .post(url)
       .set('Authorization', `Bearer ${getToken()}`)
