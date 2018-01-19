@@ -3,7 +3,7 @@
     <app-header :sections="sections"></app-header>
     <About :profile="profile"></About>
     <div class="control-bar">
-      <TheBaseControlBar @openPanel="openPanel" @addAccount="addMember" @addPost="$_guestEditor_editorHandler(true, 'add')"></TheBaseControlBar>
+      <TheBaseControlBar @openPanel="openPanel" @addAccount="addMember" @addPost="$_admin_editorHandler(true, 'add')"></TheBaseControlBar>
     </div>
     <template v-if="activePanel === 'accounts'">
       <MembersPanel v-if="$can('memberManage')" @filterChanged="filterChanged"></MembersPanel>
@@ -12,9 +12,9 @@
       <section class="panel">
         <post-list
           :posts="posts"
-          @deletePost="$_guestEditor_showAlert"
-          @editPost="$_guestEditor_editorHandler"
-          @filterChanged="$_guestEditor_updatePostList"
+          @deletePost="$_admin_showAlert"
+          @editPost="$_admin_editorHandler"
+          @filterChanged="$_admin_updatePostList"
         ></post-list>
       </section>
     </template>
@@ -27,9 +27,9 @@
         :isCompleted="isCompleted"
         :post.sync="post"
         :showLightBox="showEditor"
-        @closeLightBox="$_guestEditor_editorHandler(false)"
-        @showAlert="$_guestEditor_alertHandler"
-        @updatePostList="$_guestEditor_updatePostList">
+        @closeLightBox="$_admin_editorHandler(false)"
+        @showAlert="$_admin_alertHandler"
+        @updatePostList="$_admin_updatePostList">
       </PostPanel>
     </BaseLightBox>
     <BaseLightBox :isAlert="true" :showLightBox.sync="showAlert">
@@ -39,10 +39,10 @@
         :isCompleted="isCompleted"
         :post="post"
         :showLightBox="showAlert"
-        @closeAlert="$_guestEditor_alertHandler"
-        @closeEditor="$_guestEditor_editorHandler(false)"
-        @deletePost="$_guestEditor_deletePost"
-        @publishPost="$_editor_publishPost">
+        @closeAlert="$_admin_alertHandler"
+        @closeEditor="$_admin_editorHandler(false)"
+        @deletePost="$_admin_deletePost"
+        @publishPost="$_admin_publishPost">
       </AlertPanel>
     </BaseLightBox>
   </div>
@@ -139,7 +139,7 @@
     },
     name: 'admin-page',
     methods: {
-      $_editor_publishPost () {
+      $_admin_publishPost () {
         const params = {}
         params.active = 1
         params.content = _.get(this.post, [ 'content' ])
@@ -170,21 +170,21 @@
         }
 
       },
-      $_guestEditor_showAlert (id) {
+      $_admin_showAlert (id) {
         this.post = _.find(this.posts, { 'id': id })
         this.postActive = 0
         this.isCompleted = false
         this.showAlert = true
       },
-      $_guestEditor_deletePost () {
+      $_admin_deletePost () {
         const id = _.get(this.post, [ 'id' ])
         deletePost(this.$store, id)
           .then(() => {
-            this.$_guestEditor_updatePostList()
+            this.$_admin_updatePostList()
             this.isCompleted = true
           })
       },
-      $_guestEditor_updatePostList (params = {}) {
+      $_admin_updatePostList (params = {}) {
         this.page = params.page
         this.sort = params.sort
         fetchPosts(this.$store, {
@@ -193,12 +193,12 @@
           sort: this.sort
         })
       },
-      $_guestEditor_alertHandler (showAlert, active, isCompleted) {
+      $_admin_alertHandler (showAlert, active, isCompleted) {
         this.postActive = active
         this.isCompleted = isCompleted
         this.showAlert = showAlert
       },
-      $_guestEditor_editorHandler (showEditor, action, id) {
+      $_admin_editorHandler (showEditor, action, id) {
         this.isCompleted = false
         this.post = _.find(this.posts, { 'id': id }) || {}
         this.action = action
@@ -207,7 +207,7 @@
           this.action = undefined
           this.isCompleted = true
           this.post = {}
-          this.$_guestEditor_updatePostList()
+          this.$_admin_updatePostList()
         }
       },
       addMember () {

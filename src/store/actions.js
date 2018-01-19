@@ -44,8 +44,8 @@ export default {
       commit('SET_TOKEN', { token, type })
     })
   },
-  DELETE_IMAGE: ({ commit, dispatch }, { file }) => {
-    return deleteImage(file)
+  DELETE_IMAGE: ({ commit, dispatch }, { file, type }) => {
+    return deleteImage(file, type)
   },
   DELETE_MEMBER: ({ commit, dispatch, state }, { params }) => {
     return deleteMember({ params })

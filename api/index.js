@@ -585,13 +585,25 @@ router.post('/uploadPostImg', authVerify, upload.single('image'), (req, res) => 
 })
 
 router.post('/deleteImg', (req, res) => {
-  const url = `${apiHost}${req.url}`
   const bucket = initBucket(GCP_FILE_BUCKET)
   const filePath = req.body.filePath
   deleteFileFromBucket(bucket, {
     destination: `/assets/images/${filePath}`
   }).then((bucketFile) => {
     res.status(200).send(`file ${filePath} completely delete from bucket `)
+  })
+  .catch((err) => {
+    res.status(400).send('Delete Fail').end()
+  })
+})
+
+router.post('/deleteMemberImg', (req, res) => {
+  const bucket = initBucket(GCP_FILE_BUCKET)
+  const filePath = req.body.filePath
+  deleteFileFromBucket(bucket, {
+    destination: `${GCS_IMG_MEMBER_PATH}/${filePath}`
+  }).then((bucketFile) => {
+    res.status(200).send(`file ${filePath} completely delete from /assets/images/members/ in bucket`)
   })
   .catch((err) => {
     res.status(400).send('Delete Fail').end()

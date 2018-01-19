@@ -84,13 +84,17 @@ const uploadImage = (store, file) => {
   return store.dispatch('UPLOAD_IMAGE', { file, type: 'member' })
 }
 const deleteImage = (store, file) => {
-  return store.dispatch('DELETE_IMAGE', { file })
+  return store.dispatch('DELETE_IMAGE', { file, type: 'member' })
 }
 
 export default {
   props: {
     profile: {
       type: Object
+    },
+    showLightBox: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -142,9 +146,6 @@ export default {
     //     this.inputDescription = newValue
     //   }
     // },
-    showLightBox () {
-      return this.$parent.showLightBox
-    },
     thumbnail () {
       return _.get(this.profile, [ 'profileImage' ]) || '/public/icons/exclamation.png'
     },
@@ -153,8 +154,8 @@ export default {
     }
   },
   watch: {
-    showLightBox () {
-      if (!this.showLightBox) {
+    showLightBox (value) {
+      if (!value) {
         this.inputNickname = _.get(this.profile, [ 'nickname' ], '')
         this.inputMail = _.get(this.profile, [ 'mail' ], '')
         this.inputDescription = _.get(this.profile, [ 'description' ], '')

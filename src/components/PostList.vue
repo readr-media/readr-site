@@ -1,36 +1,38 @@
 <template>
-  <table class="postList">
-    <thead>
-      <tr>
-        <th class="postList__checkbox"><input type="checkbox" ref="checkboxSelectAll" @click="$_postList_toggleSelectAll"></th>
-        <th class="postList__nickname"><span @click="$_postList_orderBy('author.nickname')" v-text="wording.WORDING_POSTLIST_NICKNAME"></span></th>
-        <th class="postList__title"><span @click="$_postList_orderBy('title')" v-text="wording.WORDING_POSTLIST_TITLE"></span></th>
-        <th class="postList__status postList--center"><span @click="$_postList_orderBy('active')" v-text="wording.WORDING_POSTLIST_ACTIVE"></span></th>
-        <th class="postList__update postList--center"><button class="postList__btn postList__btn--multiple" v-text="wording.WORDING_POSTLIST_PUBLISH"></button></th>
-        <th class="postList__delete postList--center"><button class="postList__btn postList__btn--multiple" v-text="wording.WORDING_POSTLIST_DELETE"></button></th>
-        <th class="postList__sort postList--center">
-          <select name="" id="">
-            <option value="-updated_at" v-text="wording.WORDING_POSTLIST_UPDATE_AT"></option>
-            <option value="-created_at" v-text="wording.WORDING_POSTLIST_PUBLISH_AT"></option>
-          </select>
-        </th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="p in posts" :key="p.id">
-        <td class="postList__checkbox"><input type="checkbox" ref="checkboxItems"></td>
-        <td class="postList__nickname" v-text="$_postList_getAuthorId(p)"></td>
-        <td class="postList__title" v-text="p.title" @click="$_showPost(p)"></td>
-        <td class="postList__status postList--center" v-text="$_postList_getStatus(p)"></td>
-        <td class="postList__update postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_editPost(p.id)" v-text="wording.WORDING_POSTLIST_UPDATE"></button></td>
-        <td class="postList__delete postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_deletePost(p.id)" v-text="wording.WORDING_POSTLIST_DELETE"></button></td>
-        <td class="postList__sort"></td>
-      </tr>
-    </tbody>
+  <div class="postList-container">
+    <table class="postList">
+      <thead>
+        <tr>
+          <th class="postList__checkbox"><input type="checkbox" ref="checkboxSelectAll" @click="$_postList_toggleSelectAll"></th>
+          <th class="postList__nickname"><span @click="$_postList_orderBy('author.nickname')" v-text="wording.WORDING_POSTLIST_NICKNAME"></span></th>
+          <th class="postList__title"><span @click="$_postList_orderBy('title')" v-text="wording.WORDING_POSTLIST_TITLE"></span></th>
+          <th class="postList__status postList--center"><span @click="$_postList_orderBy('active')" v-text="wording.WORDING_POSTLIST_ACTIVE"></span></th>
+          <th class="postList__update postList--center"><button class="postList__btn postList__btn--multiple" v-text="wording.WORDING_POSTLIST_PUBLISH"></button></th>
+          <th class="postList__delete postList--center"><button class="postList__btn postList__btn--multiple" v-text="wording.WORDING_POSTLIST_DELETE"></button></th>
+          <th class="postList__sort postList--center">
+            <select name="" id="">
+              <option value="-updated_at" v-text="wording.WORDING_POSTLIST_UPDATE_AT"></option>
+              <option value="-created_at" v-text="wording.WORDING_POSTLIST_PUBLISH_AT"></option>
+            </select>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="p in posts" :key="p.id">
+          <td class="postList__checkbox"><input type="checkbox" ref="checkboxItems"></td>
+          <td class="postList__nickname" v-text="$_postList_getAuthorId(p)"></td>
+          <td class="postList__title" v-text="p.title" @click="$_showPost(p)"></td>
+          <td class="postList__status postList--center" v-text="$_postList_getStatus(p)"></td>
+          <td class="postList__update postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_editPost(p.id)" v-text="wording.WORDING_POSTLIST_UPDATE"></button></td>
+          <td class="postList__delete postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_deletePost(p.id)" v-text="wording.WORDING_POSTLIST_DELETE"></button></td>
+          <td class="postList__sort"></td>
+        </tr>
+      </tbody>
+    </table>
     <BaseLightBox :showLightBox.sync="showLightBox">
       <BaseLightBoxPost :showLightBox="showLightBox" :post="post" @closeEditor="post = {}"/>
     </BaseLightBox>
-  </table>
+  </div>
 </template>
 <script>
   import {
