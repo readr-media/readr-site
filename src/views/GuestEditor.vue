@@ -5,15 +5,6 @@
       <app-about :profile="profile"></app-about>
       <base-control-bar @addPost="$_guestEditor_editorHandler(true, 'add')"></base-control-bar>
       <section class="main-panel">
-        <template>
-          <pagination-nav :totalPages="10" @pageChanged="$_guestEditor_pageChanged"></pagination-nav>
-          <post-list
-            :posts="posts"
-            @deletePost="$_guestEditor_showAlert"
-            @editPost="$_guestEditor_editorHandler"
-            @filterChanged="$_guestEditor_updatePostList">
-          </post-list>
-        </template>
       </section>
       <base-light-box :showLightBox.sync="showEditor">
         <post-panel

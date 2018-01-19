@@ -10,6 +10,13 @@ export const ROLE_MAP = [
   { key: 1, value: '會員', route: 'member' }
 ]
 
+export const POST_ACTIVE = {
+  active: 1,
+  pending: 2,
+  draft: 3,
+  unpubilsh: 4
+}
+
 export const SECTIONS_DEFAULT = {
   'chief-editor-talk': '總編評論',
   'celebrities-talk': '名人聊新聞',
@@ -114,6 +121,15 @@ export const WORDING_PROFILEEDIT_NEWPASSWORD = '新密碼'
 export const WORDING_PROFILEEDIT_CONFIRMPASSWORD = '密碼確認'
 export const WORDING_PROFILEEDIT_PERSONAL_OPTIONS = '個人設定'
 export const WORDING_PROFILEEDIT_SAVE = 'SAVE'
+// Control bar
+export const WORDING_CONTROLBAR_ADD_POST = '新增評論'
+export const WORDING_CONTROLBAR_ADD_POST_DIRECTLY = '直接新增'
+export const WORDING_CONTROLBAR_EDIT_DRAFT = '編輯草稿'
+export const WORDING_CONTROLBAR_POST_MANAGE = '文章管理'
+export const WORDING_CONTROLBAR_VIDEO_MANAGE = '影片管理'
+export const WORDING_CONTROLBAR_RECORD_MANAGE = '記錄管理'
+export const WORDING_CONTROLBAR_ADD_ACCOUNT = '新增帳號'
+export const WORDING_CONTROLBAR_ACCOUNT_MANAGE = '帳號管理'
 // Alert Paenl
 export const WORDING_ALERTPANEL_AUTHOR = '作者'
 export const WORDING_ALERTPANEL_TITLE = '標題'

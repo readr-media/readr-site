@@ -4,7 +4,7 @@
   "author": "MirrorMedia <master@mirrormedia.mg>",
   "private": true,
   "scripts": {
-    "api": "nyc --reporter=lcov --reporter=text-lcov mocha --timeout 10000 --reporter list test/api/specs/meta.spec.js --exit",
+    "api": "nyc --reporter=lcov --reporter=text-lcov mocha --timeout 10000 --reporter list test/api/specs/posts.spec.js --exit",
     "dev": "forever -e err.log serverCluster.js",
     "start": "cross-env NODE_ENV=production PORT=80 forever -e err.log serverCluster.js",
     "build": "rimraf dist && yarn run build:client && yarn run build:server",
