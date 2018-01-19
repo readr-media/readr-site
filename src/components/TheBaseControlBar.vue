@@ -1,22 +1,43 @@
 <template>
   <section class="controlBar">
-    <div class="controlBar__btnBox" :class="{ open: openBtnBox }">
-      <button class="controlBar--btn" @click="$_baseControlBar_btnBoxToggle">新增評論</button>
-      <button class="controlBar--subBtn first" @click="$_baseControlBar_addPost">直接新增</button>
-      <button class="controlBar--subBtn second">編輯草稿</button>
+    <div class="controlBar__btnBox">
+      <button class="controlBar--btn" v-text="wording.WORDING_CONTROLBAR_ADD_POST"></button>
+      <button class="controlBar--subBtn first" @click="$_baseControlBar_addPost" v-text="wording.WORDING_CONTROLBAR_ADD_POST_DIRECTLY"></button>
+      <button class="controlBar--subBtn second" v-text="wording.WORDING_CONTROLBAR_EDIT_DRAFT"></button>
     </div>
-    <button class="controlBar--btn" @click="$_baseControlBar_openPanel('posts')">文章管理</button>
-    <button class="controlBar--btn">記錄管理</button>
-    <button class="controlBar--btn" @click="$_baseControlBar_addAccount" v-if="$can('addAccount')">新增帳號</button>
-    <button class="controlBar--btn" @click="$_baseControlBar_openPanel('accounts')" v-if="$can('memberManage')">帳號管理</button>
+    <button v-if="$can('editOtherPost')" class="controlBar--btn" @click="$_baseControlBar_openPanel('posts')" v-text="wording.WORDING_CONTROLBAR_POST_MANAGE"></button>
+    <button v-if="$can('editVideo')" class="controlBar--btn" @click="$_baseControlBar_openPanel('video')" v-text="wording.WORDING_CONTROLBAR_VIDEO_MANAGE"></button>
+    <button class="controlBar--btn" v-text="wording.WORDING_CONTROLBAR_RECORD_MANAGE"></button>
+    <button class="controlBar--btn" @click="$_baseControlBar_addAccount" v-if="$can('addAccount')" v-text="wording.WORDING_CONTROLBAR_ADD_ACCOUNT"></button>
+    <button class="controlBar--btn" @click="$_baseControlBar_openPanel('accounts')" v-if="$can('memberManage')" v-text="wording.WORDING_CONTROLBAR_ACCOUNT_MANAGE"></button>
   </section>
 </template>
 <script>
+  import {
+    WORDING_CONTROLBAR_ACCOUNT_MANAGE,
+    WORDING_CONTROLBAR_ADD_ACCOUNT,
+    WORDING_CONTROLBAR_ADD_POST,
+    WORDING_CONTROLBAR_ADD_POST_DIRECTLY,
+    WORDING_CONTROLBAR_EDIT_DRAFT,
+    WORDING_CONTROLBAR_POST_MANAGE,
+    WORDING_CONTROLBAR_RECORD_MANAGE,
+    WORDING_CONTROLBAR_VIDEO_MANAGE,
+  } from '../constants'
+
   export default {
     name: 'TheBaseControlBar',
     data () {
       return {
-        openBtnBox: false
+        wording: {
+          WORDING_CONTROLBAR_ACCOUNT_MANAGE,
+          WORDING_CONTROLBAR_ADD_ACCOUNT,
+          WORDING_CONTROLBAR_ADD_POST,
+          WORDING_CONTROLBAR_ADD_POST_DIRECTLY,
+          WORDING_CONTROLBAR_EDIT_DRAFT,
+          WORDING_CONTROLBAR_POST_MANAGE,
+          WORDING_CONTROLBAR_RECORD_MANAGE,
+          WORDING_CONTROLBAR_VIDEO_MANAGE
+        }
       }
     },
     methods: {
@@ -25,9 +46,6 @@
       },
       $_baseControlBar_addAccount () {
         this.$emit('addAccount')
-      },
-      $_baseControlBar_btnBoxToggle () {
-        this.openBtnBox = !this.openBtnBox
       },
       $_baseControlBar_openPanel (panel) {
         this.$emit('openPanel', panel)
@@ -50,8 +68,7 @@
     margin-right 10px
     cursor pointer
     transition width .5s ease-in-out
-    &.open
-      width 300px
+    &:hover
       .controlBar--btn
         color #fff
         background-color #808080
@@ -59,14 +76,13 @@
         z-index auto
         transition-timing-function ease-in-out
         &.first
-          transition-duration .7s
-          transform translate3d(100px, 0, 0)
+          transition-duration .3s
+          transform translate3d(0, 30px, 0)
         &.second
-          transition-duration .7s
-          transform translate3d(200px, 0, 0)
+          transition-duration .3s
+          transform translate3d(0, 60px, 0)
     .controlBar--btn
       margin 0
-    
 
   &--btn
     width 100px
@@ -81,6 +97,7 @@
       margin-left 0
     &:last-of-type
       margin-right 0
+  
   &--subBtn
     position absolute
     top 0
@@ -93,9 +110,9 @@
     border 1px solid #d3d3d3
     cursor pointer
     &:nth-of-type(2)
-      border-left none
+      border-top none
     &:last-of-type
-      border-left none
+      border-top none
     
       
 </style>
