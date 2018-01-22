@@ -12,6 +12,7 @@ export function createStore () {
       'isLoggedIn': false,
       'register-token': '',
       'posts': [],
+      'posts-user': [],
       'profile': {},
       'members': []
     },

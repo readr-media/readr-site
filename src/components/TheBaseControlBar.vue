@@ -3,7 +3,7 @@
     <div class="controlBar__btnBox">
       <button class="controlBar--btn" v-text="wording.WORDING_CONTROLBAR_ADD_POST"></button>
       <button class="controlBar--subBtn first" @click="$_baseControlBar_addPost" v-text="wording.WORDING_CONTROLBAR_ADD_POST_DIRECTLY"></button>
-      <button class="controlBar--subBtn second" v-text="wording.WORDING_CONTROLBAR_EDIT_DRAFT"></button>
+      <button class="controlBar--subBtn second" @click="$_baseControlBar_editDraft" v-text="wording.WORDING_CONTROLBAR_EDIT_DRAFT"></button>
     </div>
     <button v-if="$can('editOtherPost')" class="controlBar--btn" @click="$_baseControlBar_openPanel('posts')" v-text="wording.WORDING_CONTROLBAR_POST_MANAGE"></button>
     <button v-if="$can('editVideo')" class="controlBar--btn" @click="$_baseControlBar_openPanel('video')" v-text="wording.WORDING_CONTROLBAR_VIDEO_MANAGE"></button>
@@ -46,6 +46,9 @@
       },
       $_baseControlBar_addAccount () {
         this.$emit('addAccount')
+      },
+      $_baseControlBar_editDraft () {
+        this.$emit('editDraft')
       },
       $_baseControlBar_openPanel (panel) {
         this.$emit('openPanel', panel)

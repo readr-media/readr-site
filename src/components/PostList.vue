@@ -7,8 +7,8 @@
           <th class="postList__nickname"><span @click="$_postList_orderBy('author.nickname')" v-text="wording.WORDING_POSTLIST_NICKNAME"></span></th>
           <th class="postList__title"><span @click="$_postList_orderBy('title')" v-text="wording.WORDING_POSTLIST_TITLE"></span></th>
           <th class="postList__status postList--center"><span @click="$_postList_orderBy('active')" v-text="wording.WORDING_POSTLIST_ACTIVE"></span></th>
-          <th class="postList__update postList--center"><button class="postList__btn postList__btn--multiple" v-text="wording.WORDING_POSTLIST_PUBLISH"></button></th>
-          <th class="postList__delete postList--center"><button class="postList__btn postList__btn--multiple" v-text="wording.WORDING_POSTLIST_DELETE"></button></th>
+          <th class="postList__update postList--center"><button class="postList__btn postList__btn--multiple" v-text="wording.WORDING_POSTLIST_PUBLISH" @click="$_postList_publishMultiple"></button></th>
+          <th class="postList__delete postList--center"><button class="postList__btn postList__btn--multiple" v-text="wording.WORDING_POSTLIST_DELETE" @click="$_postList_deleteMultiple"></button></th>
           <th class="postList__sort postList--center">
             <select name="" id="">
               <option value="-updated_at" v-text="wording.WORDING_POSTLIST_UPDATE_AT"></option>
@@ -19,7 +19,7 @@
       </thead>
       <tbody>
         <tr v-for="p in posts" :key="p.id">
-          <td class="postList__checkbox"><input type="checkbox" ref="checkboxItems"></td>
+          <td class="postList__checkbox"><input type="checkbox" ref="checkboxItems" @change="$_postList_toggleHandler(p.id)"></td>
           <td class="postList__nickname" v-text="$_postList_getAuthorId(p)"></td>
           <td class="postList__title" v-text="p.title" @click="$_showPost(p)"></td>
           <td class="postList__status postList--center" v-text="$_postList_getStatus(p)"></td>
@@ -36,6 +36,7 @@
 </template>
 <script>
   import {
+    POST_ACTIVE,
     WORDING_POSTLIST_ACTIVE,
     WORDING_POSTLIST_ACTIVE_DRAFT,
     WORDING_POSTLIST_ACTIVE_PENDING,
@@ -67,6 +68,7 @@
     },
     data () {
       return {
+        checkedPost: [],
         order: '',
         wording: {
           WORDING_POSTLIST_ACTIVE,
@@ -88,6 +90,12 @@
     },
     mounted () {},
     methods: {
+      $_postList_deleteMultiple () {
+        const items = _.filter(this.checkedPost, (item) => {
+          const post = _.find(this.posts, { id: item })
+          return _.get(post, [ 'active' ]) !== POST_ACTIVE.active
+        })
+      },
       $_postList_deletePost (id) {
         this.$emit('deletePost', id)
       },
@@ -121,9 +129,35 @@
           this.$emit('filterChanged', { sort: this.order })
         }
       },
+      $_postList_publishMultiple () {
+        const items = _.filter(this.checkedPost, (item) => {
+          const post = _.find(this.posts, { id: item })
+          return _.get(post, [ 'active' ]) !== POST_ACTIVE.active
+        })
+      },
+      $_postList_toggleHandler (id) {
+        if (event.target.checked) {
+          this.checkedPost.push(id)
+          this.checkedPost.sort()
+        } else {
+          const index = this.checkedPost.indexOf(id)
+          if (index > -1) {
+            this.checkedPost.splice(index, 1)
+          }
+        }
+      },
       $_postList_toggleSelectAll () {
         _.map(this.$refs.checkboxItems, (item) => {
           item.checked = this.$refs.checkboxSelectAll.checked
+        })
+        _.map(this.posts, (item) => {
+          if (this.$refs.checkboxSelectAll.checked) {
+            this.checkedPost.push(item.id)
+            this.checkedPost.sort((a, b) => (a - b))
+            this.checkedPost = _.uniq(this.checkedPost)
+          } else {
+            this.checkedPost = []
+          }
         })
       },
       $_showPost (post) {

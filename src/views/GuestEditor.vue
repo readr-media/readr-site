@@ -3,7 +3,7 @@
     <app-header :sections="sections"></app-header>
     <main class="main-container">
       <app-about :profile="profile"></app-about>
-      <base-control-bar @addPost="$_guestEditor_editorHandler(true, 'add')"></base-control-bar>
+      <base-control-bar @addPost="$_guestEditor_editorHandler(true, 'add')" @editDraft="$_editor_editDraft"></base-control-bar>
       <section class="main-panel">
       </section>
       <base-light-box :showLightBox.sync="showEditor">
@@ -48,8 +48,8 @@
   const DEFAULT_PAGE = 1
   const DEFAULT_SORT = '-updated_at'
 
-  const fetchPosts = (store, { id, page, sort }) => {
-    return store.dispatch('GET_POSTS', {
+  const fetchUserPosts = (store, id, page, sort) => {
+    return store.dispatch('GET_USER_POSTS', {
       params: {
         max_result: MAXRESULT,
         page: page || DEFAULT_PAGE,
@@ -101,7 +101,6 @@
       }
     },
     mounted () {
-      fetchPosts(this.$store, { id: _.get(this.profile, [ 'id' ]) })
     },
     methods: {
       $_guestEditor_alertHandler (showAlert, active, isCompleted) {
@@ -116,6 +115,9 @@
             this.$_guestEditor_updatePostList()
             this.isCompleted = true
           })
+      },
+      $_editor_editDraft () {
+        fetchUserPosts(this.$store, _.get(this.profile, [ 'id' ]))
       },
       $_guestEditor_editorHandler (showEditor, action, id) {
         this.isCompleted = false
@@ -141,11 +143,6 @@
       $_guestEditor_updatePostList (params = {}) {
         this.page = params.page
         this.sort = params.sort
-        fetchPosts(this.$store, {
-          id: _.get(this.profile, [ 'id' ]),
-          page: this.page,
-          sort: this.sort
-        })
       }
     }
   }

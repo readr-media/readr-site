@@ -80,6 +80,13 @@ export default {
       }
     })
   },
+  GET_USER_POSTS: ({ commit, dispatch, state }, { params }) => {
+    return getPosts({ params }).then(({ status, body }) => {
+      if (status === 200) {
+        commit('SET_USER_POSTS', { posts: body })
+      }
+    })
+  },
   LOGIN: ({ commit, dispatch, state }, { params, token }) => {
     return login(params, token).then(({ status, profile }) => {
       commit('SET_LOGGEIN_STATUS', { body: true })

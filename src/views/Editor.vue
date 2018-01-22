@@ -3,7 +3,7 @@
     <app-header :sections="sections"></app-header>
     <main class="main-container">
       <app-about :profile="profile"></app-about>
-      <base-control-bar @addPost="$_editor_textEditorHandler(true, 'add')"></base-control-bar>
+      <base-control-bar @addPost="$_editor_textEditorHandler(true, 'add')" @editDraft="$_editor_editDraft"></base-control-bar>
       <section class="main-panel">
         <template>
           <pagination-nav :totalPages="10" @pageChanged="$_editor_pageChanged"></pagination-nav>
@@ -64,8 +64,18 @@
     return store.dispatch('ADD_POST', { params })
   }
 
-  const fetchPosts = (store, { id, page, sort }) => {
+  const fetchPosts = (store, page, sort) => {
     return store.dispatch('GET_POSTS', {
+      params: {
+        max_result: MAXRESULT,
+        page: page || DEFAULT_PAGE,
+        sort: sort || DEFAULT_SORT
+      }
+    })
+  }
+
+  const fetchUserPosts = (store, id, page, sort) => {
+    return store.dispatch('GET_USER_POSTS', {
       params: {
         max_result: MAXRESULT,
         page: page || DEFAULT_PAGE,
@@ -121,7 +131,7 @@
       }
     },
     mounted () {
-      fetchPosts(this.$store, _.get(this.profile, [ 'id' ]))
+      fetchPosts(this.$store)
     },
     methods: {
       $_editor_alertHandler (showAlert, active, isCompleted) {
@@ -136,6 +146,9 @@
             this.$_editor_updatePostList()
             this.isCompleted = true
           })
+      },
+      $_editor_editDraft () {
+        fetchUserPosts(this.$store, _.get(this.profile, [ 'id' ]))
       },
       $_editor_pageChanged (index) {
         this.$_editor_updatePostList({ page: index })

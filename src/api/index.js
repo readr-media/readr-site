@@ -1,6 +1,7 @@
 import { camelizeKeys } from 'humps'
 import { getHost } from '../util/comm'
 import { delInitMemToken, getToken, getInitMemToken, saveToken } from '../util/services'
+import _ from 'lodash'
 import qs from 'qs'
 
 const superagent = require('superagent')
@@ -11,7 +12,15 @@ function _buildQuery (params = {}) {
   const whitelist = [ 'where', 'max_result', 'page', 'sort', 'ids' ]
   whitelist.forEach((ele) => {
     if (params.hasOwnProperty(ele)) {
-      if (ele === 'where' || ele === 'ids') {
+      if (ele === 'where') {
+        const where = _.mapValues(params[ele], (value) => {
+          value = Array.isArray(value) ? value : [ value ]
+          return { '$in': value }
+        })
+        Object.keys(where).forEach((key) => {
+          query[key] = JSON.stringify(where[key])
+        })
+      } else if (ele === 'ids') {
         query[ele] = JSON.stringify(params[ele])
       } else {
         query[ele] = params[ele]

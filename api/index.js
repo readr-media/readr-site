@@ -512,6 +512,15 @@ router.post('/register', authVerify, (req, res) => {
 })
 
 router.post('/post', authVerify, (req, res) => {
+  if (req.body.active === 1 && req.user.role === 2) {
+    res.status(403).send('Forbidden. No right to access.').end()
+  }
+  if ((req.body.og_description || req.body.og_image || req.body.og_title || req.body.published_at) && req.user.role === 2) {
+    res.status(403).send('Forbidden. No right to access.').end()
+  }
+  if (req.body.author !== req.user.id) {
+    req.body.author = req.user.id
+  }
   const url = `${apiHost}${req.url}`
   basicPostRequst(url, req, res, (err, resp) => {
     if (!err && resp) {
@@ -580,7 +589,9 @@ router.post('/uploadPostImg', authVerify, upload.single('image'), (req, res) => 
       })
     })
     .catch((err) => {
-      res.status(400).send('Upload Fail').end()
+      res.status(500).send(err)
+      console.error(`error during fetch data from : ${url}`)
+      console.error(err)
     })
 })
 
@@ -617,6 +628,11 @@ router.post('/meta', authVerify, (req, res) => {
   const url = req.body.url
   scrape(url).then((metadata) => {
     res.status(200).send(metadata).end()
+  })
+  .catch((err) => {
+    res.status(500).send(err)
+    console.error(`error during fetch data from : ${url}`)
+    console.error(err)
   })
 })
 
