@@ -8,7 +8,7 @@
     </text-editor>
     <div class="postPanelEdit__input postPanelEdit__link">
       <label for="" v-text="`${wording.WORDING_POSTEDITOR_LINK}：`"></label>
-      <input v-model="post.link" type="url" @change="$_postPanelEdit_getMeta">
+      <input v-model="post.link" type="url" @change="$_postPanelEdit_toggleMeta">
     </div>
     <div v-if="$can('editPostOg')" class="postPanelEdit__input postPanelEdit--publishDate">
       <label for="" v-text="`${wording.WORDING_POSTEDITOR_PUBLISH_DATE}：`"></label>
@@ -33,10 +33,10 @@
       <label for="" v-text="`${wording.WORDING_POSTEDITOR_OG_IMAGE}：`"></label>
       <input v-model="post.ogImage" type="text" readonly>
       <button class="postPanelEdit__btn--img" @click="$_postPanelEdit_uploadImage">
-        <img src="/public/icons/upload.png" alt="上傳">
+        <img src="/public/icons/upload.png" :alt="wording.WORDING_POSTEDITOR_UPLOAD">
       </button>
       <button class="postPanelEdit__btn--img" @click="$_postPanelEdit_cleanOgImage">
-        <img src="/public/icons/delete.png" alt="刪除">
+        <img src="/public/icons/delete.png" :alt="wording.WORDING_POSTEDITOR_DELETE">
       </button>
     </div>
     <div v-show="post.ogImage && $can('editPostOg')" class="postPanelEdit__ogImg">
@@ -45,18 +45,18 @@
     <div :class="{ advanced: $can('publishPost') }" class="postPanelEdit__submit">
       <button
         class="postPanelEdit__btn draft"
-        :disabled="(action === 'add') && isEmpty && !fetchingMeta"
+        :disabled="(action === 'add') && isEmpty"
         @click="$_postPanelEdit_submit(3)" v-text="wording.WORDING_POSTEDITOR_SAVE_DRAFT">
       </button>
       <button
         class="postPanelEdit__btn submit"
-        :disabled="(action === 'add') && isEmpty && !fetchingMeta"
+        :disabled="(action === 'add') && isEmpty"
         @click="$_postPanelEdit_submit(2)" v-text="wording.WORDING_POSTEDITOR_SAVE_PENDING">
       </button>
       <button
         v-if="$can('publishPost')"
         class="postPanelEdit__btn"
-        :disabled="(action === 'add') && isEmpty && !fetchingMeta"
+        :disabled="(action === 'add') && isEmpty"
         @click="$_postPanelEdit_submit(1)" v-text="wording.WORDING_POSTEDITOR_PUBLISH">
       </button>
     </div>
@@ -129,7 +129,7 @@
       return {
         active: undefined,
         dateFormat: 'yyyy/MM/d',
-        fetchingMeta: false,
+        needFetchMeta: false,
         resetToggle: true,
         showAlert: false,
         wording: {
@@ -176,35 +176,18 @@
       $_postPanelEdit_cleanOgImage () {
         this.post.ogImage = ''
       },
-      $_postPanelEdit_getMeta () {
-        const link = _.get(this.post, [ 'link' ])
-        if (validator.isURL(link, { protocols: [ 'http','https' ] })) {
-          this.fetchingMeta = true
-          getMeta(this.$store, link)
-            .then((res) => {
-              this.post.linkTitle = _.get(res, [ 'body', 'openGraph', 'title' ])
-              this.post.linkDescription = _.get(res, [ 'body', 'openGraph', 'description' ])
-              this.post.linkImage = _.get(res, [ 'body', 'openGraph', 'image', 'url' ])
-              this.fetchingMeta = false
-            })
-        } else {
-          this.post.linkTitle = ''
-          this.post.linkDescription = ''
-          this.post.linkImage = ''
-        }
-      },
       $_postPanelEdit_resetContent () {
         this.resetToggle = !this.resetToggle
       },
       $_postPanelEdit_submit (active = 3) {
         const params = {}
         params.active = active
-        
+        params.link_title = ''
+        params.link_description = ''
+        params.link_image = ''
         params.content = _.get(this.post, [ 'content' ]) || ''
         params.link = _.get(this.post, [ 'link' ]) || ''
-        params.link_title = _.get(this.post, [ 'linkTitle' ]) || ''
-        params.link_description = _.get(this.post, [ 'linkDescription' ]) || ''
-        params.link_image = _.get(this.post, [ 'linkImage' ]) || ''
+        
         params.og_description = _.get(this.post, [ 'ogDescription' ]) || ''
         params.og_image = _.get(this.post, [ 'ogImage' ]) || ''
         params.og_title = _.get(this.post, [ 'ogTitle' ]) || _.get(this.post, [ 'title' ]) || ''
@@ -217,31 +200,75 @@
           params.published_at = _.get(this.post, [ 'date' ])
         }
 
-        if (this.action === 'add') {
-          params.author = _.get(this.$store.state, [ 'profile', 'id' ])
-          if (this.active === 1) {
-            this.$emit('showAlert', true, active, false)
-          } else {
-            addPost(this.$store, params)
-              .then(() => {
-                this.$emit('showAlert', true, active, true)
+        if (this.needFetchMeta) {
+          const link = _.get(this.post, [ 'link' ])
+          if (validator.isURL(link, { protocols: [ 'http','https' ] })) {
+            getMeta(this.$store, link)
+              .then((res) => {
+                params.link_title = _.get(res, [ 'body', 'openGraph', 'title' ])
+                params.link_description = _.get(res, [ 'body', 'openGraph', 'description' ])
+                params.link_image = _.get(res, [ 'body', 'openGraph', 'image', 'url' ])
               })
+              .then(() => {
+                if (this.action === 'add') {
+                  params.author = _.get(this.$store.state, [ 'profile', 'id' ])
+                  if (this.active === 1) {
+                    this.$emit('showAlert', true, active, false)
+                  } else {
+                    addPost(this.$store, params)
+                      .then(() => {
+                        this.$emit('showAlert', true, active, true)
+                      })
+                      .catch((err) => console.log(err))
+                  }
+                } else if (this.action === 'edit') {
+                  params.id = _.get(this.post, [ 'id' ])
+                  params.author = _.get(this.post, [ 'author', 'id' ])
+                  if (this.active === 1) {
+                    this.$emit('showAlert', true, active, false)
+                  }
+                  if (this.active === 2 || this.active === 3) {
+                    updatePost(this.$store, params)
+                      .then(() => {
+                        this.$emit('showAlert', true, active, true)
+                      })
+                      .catch((err) => console.log(err))
+                  }
+                }
+              })
+              .catch(err => console.log('err', err))
+          }
+          this.needFetchMeta = false
+        } else {
+          if (this.action === 'add') {
+            params.author = _.get(this.$store.state, [ 'profile', 'id' ])
+            if (this.active === 1) {
+              this.$emit('showAlert', true, active, false)
+            } else {
+              addPost(this.$store, params)
+                .then(() => {
+                  this.$emit('showAlert', true, active, true)
+                })
+                .catch((err) => console.log(err))
+            }
+          } else if (this.action === 'edit') {
+            params.id = _.get(this.post, [ 'id' ])
+            params.author = _.get(this.post, [ 'author', 'id' ])
+            if (this.active === 1) {
+              this.$emit('showAlert', true, active, false)
+            }
+            if (this.active === 2 || this.active === 3) {
+              updatePost(this.$store, params)
+                .then(() => {
+                  this.$emit('showAlert', true, active, true)
+                })
+                .catch((err) => console.log(err))
+            }
           }
         }
-
-        if (this.action === 'edit') {
-          params.id = _.get(this.post, [ 'id' ])
-          params.author = _.get(this.post, [ 'author', 'id' ])
-          if (this.active === 1) {
-            this.$emit('showAlert', true, active, false)
-          }
-          if (this.active === 2 || this.active === 3) {
-            updatePost(this.$store, params)
-              .then(() => {
-                this.$emit('showAlert', true, active, true)
-              })
-          }
-        }
+      },
+      $_postPanelEdit_toggleMeta () {
+        this.needFetchMeta = true
       },
       $_postPanelEdit_updateContent (content) {
         this.post.content = content

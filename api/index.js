@@ -531,10 +531,10 @@ router.post('/register', authVerify, (req, res) => {
 
 router.post('/post', authVerify, (req, res) => {
   if (req.body.active === 1 && req.user.role === 2) {
-    res.status(403).send('Forbidden. No right to access.').end()
+    return res.status(403).send('Forbidden. No right to access.').end()
   }
   if ((req.body.og_description || req.body.og_image || req.body.og_title || req.body.published_at) && req.user.role === 2) {
-    res.status(403).send('Forbidden. No right to access.').end()
+    return res.status(403).send('Forbidden. No right to access.').end()
   }
   if (req.body.author !== req.user.id) {
     req.body.author = req.user.id
@@ -542,9 +542,9 @@ router.post('/post', authVerify, (req, res) => {
   const url = `${apiHost}${req.url}`
   basicPostRequst(url, req, res, (err, resp) => {
     if (!err && resp) {
-      res.status(200).end()
+      return res.status(200).end()
     } else {
-      res.status(400).json(_.get(err, [ 'response', 'body' ], { Error: 'Error occured.' }))
+      return res.status(400).json(_.get(err, [ 'response', 'body' ], { Error: 'Error occured.' }))
     }
   })
 })
@@ -662,17 +662,17 @@ router.post('/meta', authVerify, (req, res) => {
 
 router.put('/post', authVerify, (req, res) => {
   if (!req.body.author) {
-    res.status(403).send('Forbidden. No right to access.').end()
+    return res.status(403).send('Forbidden. No right to access.').end()
   }
-  if (req.body.author !== req.user.id && (req.user.role !== 9 || req.user.role !== 3)) {
-    res.status(403).send('Forbidden. No right to access.').end()
+  if (req.body.author !== req.user.id && (req.user.role !== 9 && req.user.role !== 3)) {
+    return res.status(403).send('Forbidden. No right to access.').end()
   }
   const url = `${apiHost}${req.url}`
   basicPutRequst(url, req, res, (err, resp) => {
     if (!err && resp) {
-      res.status(200).end()
+      return res.status(200).end()
     } else {
-      res.status(500).json(err)
+      return res.status(500).json(err)
     }
   })
 })
@@ -687,9 +687,9 @@ router.delete('/post-self/:id', authVerify, (req, res) => {
   const url = `${apiHost}/post/${req.params.id}`
   basicDeleteRequst(url, req, res, (err, resp) => {
     if (!err && resp) {
-      res.status(200).end()
+      return res.status(200).end()
     } else {
-      res.status(500).json(err)
+      return res.status(500).json(err)
     }
   })
 })
