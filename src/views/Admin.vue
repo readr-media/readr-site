@@ -45,6 +45,7 @@
         @publishPost="$_admin_publishPost">
       </AlertPanel>
     </BaseLightBox>
+    <div id="coral_talk_stream"></div>
   </div>
 </template>
 <script>
@@ -233,7 +234,12 @@
         }
       }
     },
-    mounted () {},
+    mounted () {
+      Coral && Coral.Talk.render(document.getElementById('coral_talk_stream'), {
+        talk: 'http://127.0.0.1:3000/',
+        asset_url: location.href
+      })
+    },
     beforeMount () {
       this.$can('memberManage') && Promise.all([
         getMembers(this.$store, {})
