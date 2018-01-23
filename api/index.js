@@ -24,7 +24,6 @@ const scrape = require('html-metadata')
 const upload = multer({ dest: 'tmp/' })
 
 const { fetchFromRedis, insertIntoRedis, redisFetching, redisWriting } = require('./middle/redisHandler')
-const member = require('./middle/member')
 
 const router = express.Router()
 const superagent = require('superagent')
@@ -197,7 +196,7 @@ const activationKeyVerify = function (req, res, next) {
     }
   })
 }
-router.use('/activate', activationKeyVerify, member)
+router.use('/activate', activationKeyVerify, require('./middle/member/activation'))
 router.use('/initmember', authVerify, function(req, res) {
   const id = jwtService.getId(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
   const role = jwtService.getRole(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)

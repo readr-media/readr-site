@@ -52,6 +52,7 @@ const buildUserForTalk = (member) => new Promise((resolve) => {
 })
 
 const activate = (req, res) => {
+  debug('req.url', req.url)
   const decoded = req.decoded
   fetchMem(decoded).then(({ err, res: data }) => {
     debug('Fecth member data sucessfully.')
