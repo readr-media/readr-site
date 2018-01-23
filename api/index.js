@@ -24,6 +24,7 @@ const scrape = require('html-metadata')
 const upload = multer({ dest: 'tmp/' })
 
 const { fetchFromRedis, insertIntoRedis, redisFetching, redisWriting } = require('./middle/redisHandler')
+const member = require('./middle/member')
 
 const router = express.Router()
 const superagent = require('superagent')
