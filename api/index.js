@@ -9,8 +9,9 @@ const { initBucket, makeFilePublic, uploadFileToBucket, deleteFileFromBucket } =
 const { processImage } = require('./sharp.js')
 const Cookies = require('cookies')
 const GoogleAuth = require('google-auth-library')
-const crypto = require('crypto')
 const bodyParser = require('body-parser')
+const crypto = require('crypto')
+const debug = require('debug')('READR:api')
 const express = require('express')
 const fs = require('fs')
 const isProd = process.env.NODE_ENV === 'production'
@@ -23,18 +24,12 @@ const scrape = require('html-metadata')
 const upload = multer({ dest: 'tmp/' })
 
 const { fetchFromRedis, insertIntoRedis, redisFetching, redisWriting } = require('./middle/redisHandler')
+const member = require('./middle/member')
 
 const router = express.Router()
 const superagent = require('superagent')
 
 const apiHost = API_PROTOCOL + '://' + API_HOST + ':' + API_PORT
-const consoleLogOnDev = ({ msg, showSplitLine }) => {
-  if (!isProd && !isTest) {
-    showSplitLine && console.log('####################')
-    console.log(msg)
-    showSplitLine && console.log('####################')
-  }
-}
 
 const SECRET_LENGTH = 10
 const currSecret = SECRET_KEY || '_csrf_token_key'
@@ -202,55 +197,7 @@ const activationKeyVerify = function (req, res, next) {
     }
   })
 }
-router.use('/activate', activationKeyVerify, function(req, res) {
-  const decoded = req.decoded
-  superagent
-  .get(`${apiHost}/member/${decoded.id}`)
-  .end((err, data) => {
-    if (err) {
-      console.log(data.status)
-      console.log(err)
-      res.status(data.status).json(err)
-    } else {
-      if (_.get(data, [ 'body', '_items', 0, 'active' ]) === 0) {
-        if (decoded.way !== 'admin') {
-          const url = `${apiHost}/member`
-          const payload = {
-            id: decoded.id,
-            role: decoded.role || 1,
-            active: 1
-          }
-          superagent
-          .put(url)
-          .send(payload)
-          .end((e, response) => {
-            if (!e && response) {
-              res.status(200).send(`
-                <script>location.replace('/login')</script>
-              `)
-            } else {
-              console.log(response.status)
-              console.log(e)
-              res.status(response.status).json(e)
-            }
-          })
-        } else {
-          const tokenForActivation = jwtService.generateActivateAccountJwt({
-            id: decoded.id, role: decoded.role || 1, way: 'initmember', secret: currSecret
-          })
-          const cookies = new Cookies( req, res, {} )
-          cookies.set('initmember', tokenForActivation, { httpOnly: false, expires: new Date(Date.now() + 24 * 60 * 60 * 1000) })      
-          res.status(200)
-            .send(`
-              <script>location.replace('/initmember')</script>
-            `)
-        }
-      } else {
-        res.status(200).send(`<script>location.replace('/')</script>`)
-      }
-    }
-  })
-})
+router.use('/activate', activationKeyVerify, member)
 router.use('/initmember', authVerify, function(req, res) {
   const id = jwtService.getId(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
   const role = jwtService.getRole(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
@@ -291,12 +238,14 @@ router.use('/initmember', authVerify, function(req, res) {
  */
 
 router.all('/member', [ authVerify, authorize ], function(req, res, next) {
+  debug('Got a /member request.')
   next()
 })
 router.all('/member/password', authVerify, function(req, res, next) {
   next()
 })
 router.all('/members', [ authVerify, authorize ], function(req, res, next) {
+  debug('Got a /members request.')
   next()
 })
 router.all('/post', [ authVerify, authorize ], function(req, res, next) {
@@ -379,11 +328,9 @@ router.post('/token', (req, res) => {
 })
 
 router.post('/login', authVerify, (req, res) => {
-  consoleLogOnDev({
-    msg: `Got a new reuqest of login:
-          mail -> ${req.body.email}
-          At ${(new Date).toString()}`
-  })
+  debug(`Got a new reuqest of login:
+    mail -> ${req.body.email}
+    At ${(new Date).toString()}`)
 
   const sendRequest = () => {
     if ((!req.body.email || !req.body.password) && (req.body.login_mode === 'google' && req.body.login_mode === 'facebook')) {
@@ -453,15 +400,13 @@ router.post('/login', authVerify, (req, res) => {
 })
 
 router.post('/register', authVerify, (req, res) => {
-  consoleLogOnDev({
-    msg: `Got a new reuqest of register:
-          nickname -> ${req.body.nickname}
-          mail -> ${req.body.email}
-          gender -> ${req.body.gender}
-          social_id -> ${req.body.social_id}
-          register_mode -> ${req.body.register_mode}
-          At ${(new Date).toString()}`
-  })
+  debug(`Got a new reuqest of register:
+    nickname -> ${req.body.nickname}
+    mail -> ${req.body.email}
+    gender -> ${req.body.gender}
+    social_id -> ${req.body.social_id}
+    register_mode -> ${req.body.register_mode}
+    At ${(new Date).toString()}`)
 
   const sendRequest = () => {
     if (!req.body.email || !(req.body.password || req.body.social_id)) {
