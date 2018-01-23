@@ -125,6 +125,21 @@ const fetchProfile = (url, req) => {
     })
   })
 }
+const fetchPublicPost = (url, req) => {
+  return new Promise((resolve, reject) => {
+    superagent
+    .get(`${apiHost}${url}`)
+    .end((err, res) => {
+      if (!err && res) {
+        resolve(camelizeKeys(res.body))
+      } else {
+        reject(err)
+        console.error(`error during fetch data from : ${url}`)
+        console.error(err) 
+      }
+    })
+  })
+}
 const constructScope = (perms, role) => (
   _.map(_.filter(SCOPES, (comp) => (
     _.get(comp, [ 'perm', 'length' ], 0) === _.filter(comp.perm, (perm) => (
@@ -290,6 +305,20 @@ router.get('/profile', [ authVerify ], (req, res) => {
 
 router.get('/status', authVerify, function(req, res) {
   res.status(200).send(true)
+})
+
+router.get('/public-posts', (req, res) => {
+  const url = '/posts'
+  fetchPublicPost(url, req)
+  .then((response) => {
+    // next()
+    res.status(200).send(response)
+  })
+  .catch((err) => {
+    res.status(500).send(err)
+    console.error(`error during fetch data from : ${url}`)
+    console.error(err)
+  })
 })
 
 /**

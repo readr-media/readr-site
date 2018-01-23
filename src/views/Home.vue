@@ -1,7 +1,7 @@
 <template>
   <div class="homepage">
     <app-header :sections="sections"></app-header>
-    <div class="celebrities-talk block">
+    <!-- <div class="celebrities-talk block">
       <div class="block__title"><h2 v-text="sections[ 'celebrities-talk' ]"></h2></div>
       <div class="block__content">
         <div :style="{ width: '100%', height: '213px', backgroundColor: 'black' }"></div>
@@ -24,6 +24,10 @@
           </div>
         </div>
       </div>
+    </div> -->
+    <div class="homepage__container">
+      <HomeCustomEditorList/>
+      <!-- and many stuff here -->
     </div>
   </div> 
   
@@ -32,10 +36,12 @@
   import { SECTIONS_DEFAULT } from '../constants'
   import { removeToken } from '../util/services'
   import AppHeader from '../components/AppHeader.vue'
+  import HomeCustomEditorList from '../components/home/HomeCustomEditorList.vue'
 
   export default {
     components: {
-      'app-header': AppHeader
+      'app-header': AppHeader,
+      HomeCustomEditorList
     },
     computed: {
       sections () {
@@ -56,6 +62,10 @@
 </script>
 <style lang="stylus" scoped>
   .homepage
+    background-color #e6e6e6
+    &__container
+      max-width 1040px
+      margin 25px auto
     .block
       padding 0 17px
       margin 20px auto
