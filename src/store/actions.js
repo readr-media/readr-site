@@ -6,6 +6,7 @@ import {
   deleteMember,
   deleteMembers,
   deletePost,
+  deletePostSelf,
   getDisposableToken,
   getProfile,
   getPosts,
@@ -55,6 +56,9 @@ export default {
   },
   DELETE_POST: ({ commit, dispatch, state }, { id }) => {
     return deletePost(id)
+  },
+  DELETE_POST_SELF: ({ commit, dispatch, state }, { id }) => {
+    return deletePostSelf(id)
   },
   GET_MEMBERS: ({ commit, dispatch, state }, { params }) => {
     return getMembers({ params }).then(({ status, body }) => {

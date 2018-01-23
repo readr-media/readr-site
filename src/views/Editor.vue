@@ -64,7 +64,7 @@
     return store.dispatch('ADD_POST', { params })
   }
 
-  const fetchPosts = (store, page, sort) => {
+  const fetchPosts = (store, { page, sort }) => {
     return store.dispatch('GET_POSTS', {
       params: {
         max_result: MAXRESULT,
@@ -87,8 +87,8 @@
     })
   }
 
-  const deletePost = (store, id) => {
-    return store.dispatch('DELETE_POST', { id: id })
+  const deletePostSelf = (store, id) => {
+    return store.dispatch('DELETE_POST_SELF', { id: id })
   }
 
   const updatePost = (store, params) => {
@@ -131,7 +131,7 @@
       }
     },
     mounted () {
-      fetchPosts(this.$store)
+      fetchPosts(this.$store, {})
     },
     methods: {
       $_editor_alertHandler (showAlert, active, isCompleted) {
@@ -141,7 +141,7 @@
       },
       $_editor_deletePost () {
         const id = _.get(this.post, [ 'id' ])
-        deletePost(this.$store, id)
+        deletePostSelf(this.$store, id)
           .then(() => {
             this.$_editor_updatePostList()
             this.isCompleted = true

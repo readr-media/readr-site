@@ -134,6 +134,11 @@ export function deletePost (id) {
   return _doDelete(url)
 }
 
+export function deletePostSelf (id) {
+  const url = `${host}/api/post-self/${id}`
+  return _doDelete(url)
+}
+
 export function getDisposableToken (type) {
   const url = `${host}/api/token`
   return new Promise((resolve, reject) => {
@@ -310,9 +315,9 @@ export function uploadImage (file, type) {
   let url
   return new Promise((resolve, reject) => {
     if (type === 'member') {
-      url = `${host}/api/uploadMemberImg`
+      url = `${host}/api/image-member`
     } else if (type === 'post') {
-      url = `${host}/api/uploadPostImg`
+      url = `${host}/api/image-post`
     } else {
       reject()
     }
