@@ -31,19 +31,20 @@ function _buildQuery (params = {}) {
   return query
 }
 
-// function _doFetch (url) {
-//   return new Promise((resolve, reject) => {
-//     superagent
-//     .get(url)
-//     .end(function (err, res) {
-//       if (err) {
-//         reject(err)
-//       } else {
-//         // resolve(camelizeKeys(res.body))
-//       }
-//     })
-//   })
-// }
+function _doFetch (url) {
+  return new Promise((resolve, reject) => {
+    superagent
+    .get(url)
+    .end(function (err, res) {
+      if (err) {
+        reject(err)
+      } else {
+        // resolve(camelizeKeys(res.body))
+        resolve({ status: res.status, body: camelizeKeys(res.body) })
+      }
+    })
+  })
+}
 
 function _doFetchStrict (url, { cookie }) {
   return new Promise((resolve, reject) => {
@@ -178,6 +179,15 @@ export function getPosts ({ params }) {
     url = url + `?${query}`
   }
   return _doFetchStrict(url, {})
+}
+
+export function getPublicPosts ({ params }) {
+  let url = `${host}/api/public-posts`
+  const query = _buildQuery(params)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }
+  return _doFetch(url)
 }
 
 export function getProfile ({ params = {}}) {

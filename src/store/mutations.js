@@ -18,6 +18,9 @@ export default {
   SET_POSTS: (state, { posts }) => {
     state['posts'] = posts
   },
+  SET_PUBLIC_POSTS: (state, { posts }) => {
+    state['publicPosts'] = posts
+  },
   SET_PROFILE: (state, { profile }) => {
     state['profile'] = profile
   },

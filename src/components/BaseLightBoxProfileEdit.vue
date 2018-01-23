@@ -1,49 +1,49 @@
 <template>
   <div class="profile-edit">
     <div class="profile-edit__main">
-      <div class="input-container">
-        <div class="input-container__input">
-          <span class="name">{{ wording.WORDING_PROFILEEDIT_NICKNAME }}：</span>
+      <div class="form">
+        <div class="form__item">
+          <span class="form__name">{{ wording.WORDING_PROFILEEDIT_NICKNAME }}：</span>
           <!-- <input type="text" name="nickname" v-model="computedNickname"> -->
-          <input type="text" name="nickname" v-model="inputNickname">
+          <input class="form__input" type="text" name="nickname" v-model="inputNickname">
         </div>
-        <div class="input-container__input">
-          <span class="name">{{ wording.WORDING_PROFILEEDIT_EMAIL }}：</span>
+        <div class="form__item">
+          <span class="form__name">{{ wording.WORDING_PROFILEEDIT_EMAIL }}：</span>
           <!-- <input type="text" name="email" v-model="computedMail"> -->
-          <input type="text" name="email" v-model="inputMail">
+          <input class="form__input" type="text" name="email" v-model="inputMail">
         </div>
-        <div class="input-container__input">
-          <span class="name name--description">{{ wording.WORDING_PROFILEEDIT_DESCRIPTION }}：</span>
+        <div class="form__item">
+          <span class="form__name--align-start">{{ wording.WORDING_PROFILEEDIT_DESCRIPTION }}：</span>
           <!-- <textarea name="description" v-model="computedDescription"></textarea> -->
-          <textarea name="description" v-model="inputDescription"></textarea>
+          <textarea class="form__description" name="description" v-model="inputDescription"></textarea>
         </div>
-        <div class="input-container__input">
-          <span class="name">{{ wording.WORDING_PROFILEEDIT_OLDPASSWORD }}：</span>
-          <input type="password" name="old_password" v-model="inputOldPassword">
+        <div class="form__item">
+          <span class="form__name">{{ wording.WORDING_PROFILEEDIT_OLDPASSWORD }}：</span>
+          <input class="form__input" type="password" name="old_password" v-model="inputOldPassword">
         </div>
-        <div class="input-container__input">
-          <span class="name">{{ wording.WORDING_PROFILEEDIT_NEWPASSWORD }}：</span>
-          <input type="password" name="new_password" v-model="inputNewPassword">
+        <div class="form__item">
+          <span class="form__name">{{ wording.WORDING_PROFILEEDIT_NEWPASSWORD }}：</span>
+          <input class="form__input" type="password" name="new_password" v-model="inputNewPassword">
         </div>
-        <div class="input-container__input">
-          <span class="name">{{ wording.WORDING_PROFILEEDIT_CONFIRMPASSWORD }}：</span>
-          <input type="password" name="confirm_password" v-model="inputConfirmPassword">
+        <div class="form__item">
+          <span class="form__name">{{ wording.WORDING_PROFILEEDIT_CONFIRMPASSWORD }}：</span>
+          <input class="form__input" type="password" name="confirm_password" v-model="inputConfirmPassword">
         </div>
-        <div class="input-container__input">
-          <span class="name">{{ wording.WORDING_PROFILEEDIT_PERSONAL_OPTIONS }}：</span>
-          <div class="personal-options"></div>
+        <div class="form__item">
+          <span class="form__name">{{ wording.WORDING_PROFILEEDIT_PERSONAL_OPTIONS }}：</span>
+          <div class="form__personal-options"></div>
         </div>
       </div>
     </div>
     <div class="profile-edit__aside">
       <div class="portrait">
-        <div class="portrait__thumbnail" @click="profileEditorUploadThumbnail">
-          <img :src="thumbnail" alt="thumbnail">
-          <div class="circle"></div>
+        <div class="portrait__container" @click="profileEditorUploadThumbnail">
+          <img class="portrait__thumbnail" :src="thumbnail" alt="thumbnail">
+          <div class="portrait__upload"></div>
         </div>
         <div class="portrait__name">{{ staticNickname }}</div>
       </div>
-      <button class="save-button" @click="profileEditorSave">{{ wording.WORDING_PROFILEEDIT_SAVE }}</button>
+      <button class="profile-edit__save-button" @click="profileEditorSave">{{ wording.WORDING_PROFILEEDIT_SAVE }}</button>
     </div>
   </div>
 </template>
@@ -283,58 +283,14 @@ export default {
 
 
 <style lang="stylus" scoped>
-bg-color = #d8d8d8
-
 .profile-edit
   width 920px
   height 688px
-  background-color bg-color
+  background-color #d8d8d8
   display flex
   &__main
     width 704px
-    height 646px
     padding 30px 0 30px 50px
-    .input-container
-      display flex
-      flex-direction column
-      align-items flex-end
-      &__input
-        display flex
-        align-items center
-        & + .input-container__input
-          margin 15px 0 0 0
-        .name
-          width 90px
-          height 25px
-          line-height 25px
-          font-size 18px
-          color #808080
-          margin 0 4px 0 0 
-          text-align justify
-          // pseudo class for performing a line break, intend for applying text-align justify on single line text element
-          &:after
-            content ''
-            width 100%
-            display inline-block
-          &--description
-            align-self flex-start
-        input
-          width 560px
-          height 35px
-          border 1px solid white
-          padding 0 15px
-        textarea
-          width 560px
-          height 121px
-          border 1px solid white
-          resize none
-          padding 9px 15px
-        .personal-options
-          width 560px
-          height 250px
-          // height 200px
-          background-color white
-
   &__aside
     width 216px
     height 688px
@@ -342,67 +298,110 @@ bg-color = #d8d8d8
     display flex
     flex-direction column
     justify-content space-between
-    .portrait
-      &__thumbnail
-        width 125px
-        height 125px
-        position relative
-        cursor pointer
-        img
-          width 125px
-          height 125px
-          border-radius 50%
-          overflow hidden
-        .circle
-          position absolute
-          bottom 0
-          right 0
-          width 38px
-          height 38px
-          background-color #808080
-          border-radius 38px
-          box-shadow 0 1px 2px 0 rgba(0, 0, 0, 0.5)
-          // CSS based plus sign
-          &::before
-            content ''
-            width 24px
-            height 4px
-            background-color white
-            position absolute
-            top 0
-            bottom 0
-            left 0
-            right 0
-            margin auto
-          &::after
-            content ''
-            width 4px
-            height 24px
-            background-color white
-            position absolute
-            top 0
-            bottom 0
-            left 0
-            right 0
-            margin auto
-      &__name
-        font-size 15px
-        font-weight 300
-        text-align center
-        margin 5px 0
-        word-break break-all
-    .save-button
+  &__save-button
+    width 100%
+    height 35px
+    border-radius 2.5px
+    border none
+    background-color #4280a2
+    font-size 15px
+    font-weight 600
+    color #ffffff
+    cursor pointer
+    outline none
+    &:hover
+      filter brightness(80%)
+
+$form__name
+  width 90px
+  height 25px
+  line-height 25px
+  font-size 18px
+  color #808080
+  margin 0 4px 0 0 
+  text-align justify
+.form
+  display flex
+  flex-direction column
+  align-items flex-end
+  &__item
+    display flex
+    align-items center
+    & + .form__item
+      margin 15px 0 0 0
+  &__name
+    @extends $form__name
+    // pseudo class for performing a line break, intend for applying text-align justify on single line text element
+    &:after
+      content ''
       width 100%
-      height 35px
-      border-radius 2.5px
-      border none
-      background-color #4280a2
-      font-size 15px
-      font-weight 600
-      color #ffffff
-      cursor pointer
-      outline none
-      &:active
-        filter brightness(80%)
+      display inline-block
+    &--align-start
+      @extends $form__name
+      align-self flex-start
+  form-width = 560px
+  &__input
+    width form-width
+    height 35px
+    border 1px solid white
+    padding 0 15px
+  &__description
+    width form-width
+    height 121px
+    border 1px solid white
+    resize none
+    padding 9px 15px
+  &__personal-options
+    width form-width
+    height 250px
+    // height 200px
+    background-color white
+
+$portrait-container-size
+  width 125px
+  height 125px
+$plus-sign
+  content ''
+  background-color white
+  position absolute
+  top 0
+  bottom 0
+  left 0
+  right 0
+  margin auto
+.portrait
+  &__container
+    @extends $portrait-container-size
+    position relative
+    cursor pointer
+  &__thumbnail
+    @extends $portrait-container-size
+    border-radius 50%
+    overflow hidden
+  &__upload
+    r = 38px
+    position absolute
+    bottom 0
+    right 0
+    width r
+    height r
+    background-color #808080
+    border-radius r
+    box-shadow 0 1px 2px 0 rgba(0, 0, 0, 0.5)
+    // CSS based plus sign
+    &:before
+      @extends $plus-sign
+      width 24px
+      height 4px
+    &:after
+      @extends $plus-sign
+      width 4px
+      height 24px
+  &__name
+    font-size 15px
+    font-weight 300
+    text-align center
+    margin 5px 0
+    word-break break-all
 </style>
 

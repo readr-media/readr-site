@@ -10,6 +10,7 @@ import {
   getDisposableToken,
   getProfile,
   getPosts,
+  getPublicPosts,
   getMembers,
   getMeta,
   login,
@@ -74,6 +75,16 @@ export default {
     return getPosts({ params }).then(({ status, body }) => {
       if (status === 200) {
         commit('SET_POSTS', { posts: body })
+      }
+    })
+  },
+  GET_PUBLIC_POSTS: ({ commit, dispatch, state }, { params }) => {
+    console.log('fuckewr')
+    return getPublicPosts({ params }).then(({ status, body }) => {
+      console.log('fuck')
+      if (status === 200) {
+        console.log('yes')
+        commit('SET_PUBLIC_POSTS', { posts: body })
       }
     })
   },
