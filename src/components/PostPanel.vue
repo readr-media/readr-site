@@ -231,6 +231,7 @@
 
         if (this.action === 'edit') {
           params.id = _.get(this.post, [ 'id' ])
+          params.author = _.get(this.post, [ 'author', 'id' ])
           if (this.active === 1) {
             this.$emit('showAlert', true, active, false)
           }

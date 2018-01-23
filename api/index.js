@@ -73,6 +73,24 @@ const basicPostRequst = (url, req, res, cb) => {
   })
 }
 
+const basicPutRequst = (url, req, res, cb) => {
+  superagent
+  .put(url)
+  .send(req.body)
+  .end((err, response) => {
+    cb && cb(err, response)
+  })
+}
+
+const basicDeleteRequst = (url, req, res, cb) => {
+  superagent
+  .delete(url)
+  .send(req.body)
+  .end((err, response) => {
+    cb && cb(err, response)
+  })
+}
+
 const fetchPermissions = () => {
   return new Promise((resolve, reject) => {
     const url = `/permission/all`
@@ -531,7 +549,7 @@ router.post('/post', authVerify, (req, res) => {
   })
 })
 
-router.post('/uploadMemberImg', authVerify, upload.single('image'), (req, res) => {
+router.post('/image-member', authVerify, upload.single('image'), (req, res) => {
   const url = `${apiHost}${req.url}`
   const bucket = initBucket(GCP_FILE_BUCKET)
   const file = req.file
@@ -558,7 +576,7 @@ router.post('/uploadMemberImg', authVerify, upload.single('image'), (req, res) =
   })
 })
 
-router.post('/uploadPostImg', authVerify, upload.single('image'), (req, res) => {
+router.post('/image-post', authVerify, upload.single('image'), (req, res) => {
   const url = `${apiHost}${req.url}`
   const bucket = initBucket(GCP_FILE_BUCKET)
   const file = req.file
@@ -636,6 +654,45 @@ router.post('/meta', authVerify, (req, res) => {
   })
 })
 
+/**
+ * 
+ * METHOD PUT
+ * 
+ */
+
+router.put('/post', authVerify, (req, res) => {
+  if (!req.body.author) {
+    res.status(403).send('Forbidden. No right to access.').end()
+  }
+  if (req.body.author !== req.user.id && (req.user.role !== 9 || req.user.role !== 3)) {
+    res.status(403).send('Forbidden. No right to access.').end()
+  }
+  const url = `${apiHost}${req.url}`
+  basicPutRequst(url, req, res, (err, resp) => {
+    if (!err && resp) {
+      res.status(200).end()
+    } else {
+      res.status(500).json(err)
+    }
+  })
+})
+
+/**
+ * 
+ * METHOD DELETE
+ * 
+ */
+
+router.delete('/post-self/:id', authVerify, (req, res) => {
+  const url = `${apiHost}/post/${req.params.id}`
+  basicDeleteRequst(url, req, res, (err, resp) => {
+    if (!err && resp) {
+      res.status(200).end()
+    } else {
+      res.status(500).json(err)
+    }
+  })
+})
 
 /**
  * 
@@ -669,7 +726,7 @@ router.route('*')
                * if data not empty, go next to save data to redis
                * if endpoint is not /members, go next to save data to redis
                */
-              if (req.url.indexOf('/members') === -1) {
+              if (req.url.indexOf('/members') === -1 && req.url.indexOf('/post') === -1 && req.url.indexOf('/posts') === -1) {
                 next()
               }
             }
