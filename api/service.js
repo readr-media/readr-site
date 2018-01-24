@@ -32,14 +32,6 @@ const generateActivateAccountJwt = ({ id, role, way, secret }) => {
   }, secret)
 }
 
-const getId = (token, secret) => {
-  const decoded = jwt.verify(token, secret)
-  return decoded.id
-}
-const getRole = (token, secret) => {
-  const decoded = jwt.verify(token, secret)
-  return decoded.role
-}
 const verifyToken = (token, secret, cb) => {
   jwt.verify(token, secret, cb)
 }
@@ -48,7 +40,5 @@ module.exports = {
   generateJwt,
   generateDisposableJwt,
   generateActivateAccountJwt,
-  getId,
-  getRole,
   verifyToken
 }

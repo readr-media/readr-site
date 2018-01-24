@@ -11,6 +11,7 @@ const Cookies = require('cookies')
 const GoogleAuth = require('google-auth-library')
 const bodyParser = require('body-parser')
 const crypto = require('crypto')
+const config = require('./config')
 const debug = require('debug')('READR:api')
 const express = require('express')
 const fs = require('fs')
@@ -31,7 +32,7 @@ const superagent = require('superagent')
 const apiHost = API_PROTOCOL + '://' + API_HOST + ':' + API_PORT
 
 const SECRET_LENGTH = 10
-const currSecret = SECRET_KEY || '_csrf_token_key'
+const currSecret = config.JWT_SECRET || '_csrf_token_key'
 // const currSecret = crypto.pseudoRandomBytes(SECRET_LENGTH).toString('base64')
 const authVerify = jwtExpress({ secret: currSecret })
 
@@ -222,8 +223,8 @@ const activationKeyVerify = function (req, res, next) {
 }
 router.use('/activate', activationKeyVerify, require('./middle/member/activation'))
 router.use('/initmember', authVerify, function(req, res) {
-  const id = jwtService.getId(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
-  const role = jwtService.getRole(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
+  const id = req.user.id
+  const role = req.user.role
   superagent
   .put(`${apiHost}/member/password`)
   .send({
@@ -413,7 +414,10 @@ router.post('/login', authVerify, (req, res) => {
           secret: currSecret
         })
         const cookies = new Cookies( req, res, {} )
-        cookies.set('csrf', token, { httpOnly: false, expires: new Date(Date.now() + (req.body.keepAlive ? 30 : 1) * 24 * 60 * 60 * 1000) })
+        cookies.set(config.JWT_COOKIE_NAME, token, {
+          httpOnly: false,
+          expires: new Date(Date.now() + (req.body.keepAlive ? 30 : 1) * 24 * 60 * 60 * 1000)
+        })
         res.status(200).send({ token, profile: {
           name: _.get(mem, [ 'name' ]),
           nickname: _.get(mem, [ 'nickname' ]),
