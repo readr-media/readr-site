@@ -22,6 +22,7 @@
           :post.sync="post"
           :showLightBox="showEditor"
           @closeLightBox="$_editor_textEditorHandler(false)"
+          @deletePost="$_editor_showAlert"
           @showAlert="$_editor_alertHandler"
           @updatePostList="$_editor_updatePostList">
         </post-panel>
@@ -177,6 +178,7 @@
 
         if (this.action === 'edit') {
           params.id = _.get(this.post, [ 'id' ])
+          params.author = _.get(this.post, [ 'author', 'id' ])
           updatePost(this.$store, params)
             .then(() => {
               this.isCompleted = true
