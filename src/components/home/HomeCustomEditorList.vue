@@ -1,6 +1,6 @@
 <template>
   <section class="custom-editor-list">
-    <HomeCustomEditorArticle v-for="post in posts" :articleData="post"/>
+    <HomeCustomEditorArticle v-for="post in posts" :articleData="post" :key="post.id"/>
   </section>
 </template>
 

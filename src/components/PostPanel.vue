@@ -42,22 +42,33 @@
     <div v-show="post.ogImage && $can('editPostOg')" class="postPanelEdit__ogImg">
       <img :src="post.ogImage" :alt="post.ogTitle">
     </div>
-    <div :class="{ advanced: $can('publishPost') }" class="postPanelEdit__submit">
+    <div :class="[ (action === 'edit') ? 'advanced' : '' ]" class="postPanelEdit__submit">
       <button
-        class="postPanelEdit__btn draft"
+        v-if="$can('deletePost') && (action === 'edit')"
+        class="postPanelEdit__btn"
         :disabled="(action === 'add') && isEmpty"
-        @click="$_postPanelEdit_submit(3)" v-text="wording.WORDING_POSTEDITOR_SAVE_DRAFT">
+        @click="$_postPanelEdit_delete"
+        v-text="wording.WORDING_POSTEDITOR_DELETE">
       </button>
       <button
-        class="postPanelEdit__btn submit"
+        class="postPanelEdit__btn"
         :disabled="(action === 'add') && isEmpty"
-        @click="$_postPanelEdit_submit(2)" v-text="wording.WORDING_POSTEDITOR_SAVE_PENDING">
+        @click="$_postPanelEdit_submit(postConfig.draft)"
+        v-text="wording.WORDING_POSTEDITOR_SAVE_DRAFT">
+      </button>
+      <button
+        v-if="!$can('publishPost')"
+        class="postPanelEdit__btn dark"
+        :disabled="(action === 'add') && isEmpty"
+        @click="$_postPanelEdit_submit(postConfig.pending)"
+        v-text="wording.WORDING_POSTEDITOR_SAVE_PENDING">
       </button>
       <button
         v-if="$can('publishPost')"
-        class="postPanelEdit__btn"
+        class="postPanelEdit__btn dark"
         :disabled="(action === 'add') && isEmpty"
-        @click="$_postPanelEdit_submit(1)" v-text="wording.WORDING_POSTEDITOR_PUBLISH">
+        @click="$_postPanelEdit_submit(postConfig.active)"
+        v-text="wording.WORDING_POSTEDITOR_PUBLISH">
       </button>
     </div>
   </section>
@@ -65,6 +76,7 @@
 <script>
   import { 
     IMAGE_UPLOAD_MAX_SIZE,
+    POST_ACTIVE,
     WORDING_POSTEDITOR_DELETE,
     WORDING_POSTEDITOR_INPUT_TITLE,
     WORDING_POSTEDITOR_LINK,
@@ -130,6 +142,7 @@
         active: undefined,
         dateFormat: 'yyyy/MM/d',
         needFetchMeta: false,
+        postConfig: POST_ACTIVE,
         resetToggle: true,
         showAlert: false,
         wording: {
@@ -155,7 +168,10 @@
       },
       postActive () {
         return _.get(this.post, [ 'active' ])
-      }
+      },
+      postId () {
+        return _.get(this.post, [ 'id' ])
+      },
     },
     watch: {
       showAlert (val) {
@@ -176,10 +192,13 @@
       $_postPanelEdit_cleanOgImage () {
         this.post.ogImage = ''
       },
+      $_postPanelEdit_delete () {
+        this.$emit('deletePost', this.postId)
+      },
       $_postPanelEdit_resetContent () {
         this.resetToggle = !this.resetToggle
       },
-      $_postPanelEdit_submit (active = 3) {
+      $_postPanelEdit_submit (active = POST_ACTIVE.draft) {
         const params = {}
         params.active = active
         params.link_title = ''
@@ -212,7 +231,7 @@
               .then(() => {
                 if (this.action === 'add') {
                   params.author = _.get(this.$store.state, [ 'profile', 'id' ])
-                  if (this.active === 1) {
+                  if (this.active === POST_ACTIVE.active) {
                     this.$emit('showAlert', true, active, false)
                   } else {
                     addPost(this.$store, params)
@@ -224,10 +243,10 @@
                 } else if (this.action === 'edit') {
                   params.id = _.get(this.post, [ 'id' ])
                   params.author = _.get(this.post, [ 'author', 'id' ])
-                  if (this.active === 1) {
+                  if (this.active === POST_ACTIVE.active) {
                     this.$emit('showAlert', true, active, false)
                   }
-                  if (this.active === 2 || this.active === 3) {
+                  if (this.active === POST_ACTIVE.pending || this.active === POST_ACTIVE.draft) {
                     updatePost(this.$store, params)
                       .then(() => {
                         this.$emit('showAlert', true, active, true)
@@ -242,7 +261,7 @@
         } else {
           if (this.action === 'add') {
             params.author = _.get(this.$store.state, [ 'profile', 'id' ])
-            if (this.active === 1) {
+            if (this.active === POST_ACTIVE.active) {
               this.$emit('showAlert', true, active, false)
             } else {
               addPost(this.$store, params)
@@ -254,10 +273,10 @@
           } else if (this.action === 'edit') {
             params.id = _.get(this.post, [ 'id' ])
             params.author = _.get(this.post, [ 'author', 'id' ])
-            if (this.active === 1) {
+            if (this.active === POST_ACTIVE.active) {
               this.$emit('showAlert', true, active, false)
             }
-            if (this.active === 2 || this.active === 3) {
+            if (this.active === POST_ACTIVE.pending || this.active === POST_ACTIVE.draft) {
               updatePost(this.$store, params)
                 .then(() => {
                   this.$emit('showAlert', true, active, true)
@@ -361,7 +380,7 @@
     font-weight 300
     border 1px solid #d3d3d3
     user-select none
-    &.submit
+    &.dark
       color #fff
       background-color #808080
     &--img
