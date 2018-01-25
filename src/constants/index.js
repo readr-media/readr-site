@@ -91,7 +91,7 @@ export const WORDING_ADMIN_CANCEL = '取消'
 export const WORDING_ADMIN_EXCEED_ERROR_CUSTOMEDITOR = '超過可設定人數，請重新選擇。'
 export const WORDING_ADMIN_SET_ERROR_CUSTOMEDITOR = '無法設定，請重新選擇。'
 
-// Post
+// Post list
 export const WORDING_POSTLIST_NICKNAME = '暱稱'
 export const WORDING_POSTLIST_TITLE = '標題'
 export const WORDING_POSTLIST_ACTIVE = '狀態'
@@ -104,6 +104,12 @@ export const WORDING_POSTLIST_ACTIVE_PUBLISH = '已發布'
 export const WORDING_POSTLIST_ACTIVE_PENDING = '待審核'
 export const WORDING_POSTLIST_ACTIVE_UNPUBLISH = '已下架'
 export const WORDING_POSTLIST_ACTIVE_DRAFT = '草稿'
+
+// Post list detailed
+
+export const WORDING_POSTLISTDETAILED_DELETE = '刪除'
+export const WORDING_POSTLISTDETAILED_EDIT = '編輯'
+
 // Post editor
 export const WORDING_POSTEDITOR_EDITOR = '編輯器'
 export const WORDING_POSTEDITOR_INPUT_TITLE = '輸入標題'
