@@ -1,6 +1,6 @@
 <template>
   <div class="header">
-    <div class="header__top">
+    <!-- <div class="header__top">
       <div class="header__top__wrapper">
         <div class="logo">
           <div class="logo__container"></div>
@@ -13,11 +13,14 @@
           <i class="sharebar__about"></i>
         </div>
       </div>
-    </div>
+    </div> -->
     <div class="header__bottom">
       <div class="header__bottom__wrapper">
-        <div class="nav">
+        <!-- <div class="nav">
           <a v-for="(section, name) in sections" class="nav__item" :class="name" v-text="section" href="/"></a>
+        </div> -->
+        <div class="search-form">
+          <input class="search-form__input" type="text" placeholder="搜尋">
         </div>
         <div class="login-status" v-if="isClientSide">
           <div class="login-status__nickname login-status__item" v-text="userNickname" v-if="isLoggedIn" @click="goMemberCenter"></div>
@@ -99,6 +102,11 @@
 </script>
 <style lang="stylus" scoped>
   .header
+    position fixed
+    left 0
+    top 0
+    width 100%
+    z-index 2
     > div
       width 100%
       > div
@@ -151,13 +159,14 @@
 
     &__bottom
       height 35px
-      background-color #000
+      background-color #444746
       color #fff
       &__wrapper
         height 100%
         display flex
         align-items center
-        justify-content space-between
+        // justify-content space-between
+        justify-content flex-end
         .nav
           display flex
           align-items center
@@ -193,7 +202,11 @@
               height 14px
               background-color #fff
               display block
+        .search-form
+          &__input
+            padding-left 9px
         .login-status
+          // margin-left auto
           min-width 74px
           padding 0 7.5px 0 13px
           // border-right 1px solid #fff

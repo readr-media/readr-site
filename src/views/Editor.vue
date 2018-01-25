@@ -1,6 +1,6 @@
 <template>
   <div class="editor">
-    <app-header :sections="sections"></app-header>
+    <!-- <app-header :sections="sections"></app-header> -->
     <main class="main-container">
       <app-about :profile="profile"></app-about>
       <base-control-bar @addPost="$_editor_textEditorHandler(true, 'add')" @editDraft="$_editor_editDraft"></base-control-bar>

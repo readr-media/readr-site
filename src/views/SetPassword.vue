@@ -1,6 +1,6 @@
 <template>
   <div class="pwd-set">
-    <app-header></app-header>
+    <!-- <app-header></app-header> -->
     <InitBasicProfile></InitBasicProfile>
   </div>
 </template>
