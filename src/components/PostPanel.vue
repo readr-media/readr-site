@@ -224,6 +224,7 @@
           if (validator.isURL(link, { protocols: [ 'http','https' ] })) {
             getMeta(this.$store, link)
               .then((res) => {
+                params.link_name = _.truncate(_.get(res, [ 'body', 'openGraph', 'siteName' ]), { 'length': 80 })
                 params.link_title = _.get(res, [ 'body', 'openGraph', 'title' ])
                 params.link_description = _.get(res, [ 'body', 'openGraph', 'description' ])
                 params.link_image = _.get(res, [ 'body', 'openGraph', 'image', 'url' ])
@@ -238,7 +239,7 @@
                       .then(() => {
                         this.$emit('showAlert', true, active, true)
                       })
-                      .catch((err) => console.log(err))
+                      .catch((err) => console.error(err))
                   }
                 } else if (this.action === 'edit') {
                   params.id = _.get(this.post, [ 'id' ])
@@ -251,11 +252,11 @@
                       .then(() => {
                         this.$emit('showAlert', true, active, true)
                       })
-                      .catch((err) => console.log(err))
+                      .catch((err) => console.error(err))
                   }
                 }
               })
-              .catch(err => console.log('err', err))
+              .catch(err => console.error('err', err))
           }
           this.needFetchMeta = false
         } else {
@@ -268,7 +269,7 @@
                 .then(() => {
                   this.$emit('showAlert', true, active, true)
                 })
-                .catch((err) => console.log(err))
+                .catch((err) => console.error(err))
             }
           } else if (this.action === 'edit') {
             params.id = _.get(this.post, [ 'id' ])
@@ -281,7 +282,7 @@
                 .then(() => {
                   this.$emit('showAlert', true, active, true)
                 })
-                .catch((err) => console.log(err))
+                .catch((err) => console.error(err))
             }
           }
         }
@@ -307,7 +308,7 @@
                 this.ogImage = res.body.url
               })
               .catch((err) => {
-                console.log(err)
+                console.error(err)
               })
           }
         }

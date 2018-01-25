@@ -15,6 +15,13 @@
           </post-list>
         </template>
       </section>
+      <base-light-box :showLightBox.sync="showDraftList">
+        <post-list-detailed
+          :posts="postsUser"
+          @editPost="$_editor_textEditorHandler"
+          @deletePost="$_editor_showAlert">
+        </post-list-detailed>
+      </base-light-box>
       <base-light-box :showLightBox.sync="showEditor">
         <post-panel
           :action="action"
@@ -54,6 +61,7 @@
   import AppHeader from '../components/AppHeader.vue'
   import PaginationNav from '../components/PaginationNav.vue'
   import PostList from '../components/PostList.vue'
+  import PostListDetailed from '../components/PostListDetailed.vue'
   import PostPanel from '../components/PostPanel.vue'
   import TheBaseControlBar from '../components/TheBaseControlBar.vue'
 
@@ -106,6 +114,7 @@
       'base-light-box': BaseLightBox,
       'pagination-nav': PaginationNav,
       'post-list': PostList,
+      'post-list-detailed': PostListDetailed,
       'post-panel': PostPanel
     },
     data () {
@@ -116,6 +125,7 @@
         post: {},
         postActive: undefined,
         showAlert: false,
+        showDraftList: false,
         showEditor: false,
         sort: DEFAULT_SORT
       }
@@ -123,6 +133,9 @@
     computed: {
       posts () {
         return _.get(this.$store, [ 'state', 'posts', 'items' ], [])
+      },
+      postsUser () {
+        return _.get(this.$store, [ 'state', 'posts-user', 'items' ], [])
       },
       profile () {
         return _.get(this.$store, [ 'state', 'profile' ], {})
@@ -132,7 +145,10 @@
       }
     },
     mounted () {
-      fetchPosts(this.$store, {})
+      Promise.all([
+        fetchPosts(this.$store, {}),
+        fetchUserPosts(this.$store, _.get(this.profile, [ 'id' ]))
+      ])
     },
     methods: {
       $_editor_alertHandler (showAlert, active, isCompleted) {
@@ -144,12 +160,15 @@
         const id = _.get(this.post, [ 'id' ])
         deletePostSelf(this.$store, id)
           .then(() => {
+            if (this.showDraftList) {
+              this.showDraftList = false
+            }
             this.$_editor_updatePostList()
             this.isCompleted = true
           })
       },
       $_editor_editDraft () {
-        fetchUserPosts(this.$store, _.get(this.profile, [ 'id' ]))
+        this.showDraftList = true
       },
       $_editor_pageChanged (index) {
         this.$_editor_updatePostList({ page: index })
@@ -195,6 +214,9 @@
         this.action = action
         this.showEditor = showEditor
         if (!this.showEditor) {
+          if (this.showDraftList) {
+            this.showDraftList = false
+          }
           this.action = undefined
           this.isCompleted = true
           this.post = {}
@@ -210,11 +232,15 @@
       $_editor_updatePostList (params = {}) {
         this.page = params.page
         this.sort = params.sort
-        fetchPosts(this.$store, {
-          id: _.get(this.profile, [ 'id' ]),
-          page: this.page,
-          sort: this.sort
-        })
+        Promise.all([
+          fetchPosts(this.$store, {
+            id: _.get(this.profile, [ 'id' ]),
+            page: this.page,
+            sort: this.sort
+          }),
+          fetchUserPosts(this.$store, _.get(this.profile, [ 'id' ]))
+        ])
+        
       }
     }
   }

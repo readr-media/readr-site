@@ -58,6 +58,15 @@ router.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 router.use(bodyParser.json())
 
+const basicGetRequst = (url, req, res, cb) => {
+  superagent
+  .get(url)
+  .send(req.body)
+  .end((err, response) => {
+    cb && cb(err, response)
+  })
+}
+
 const basicPostRequst = (url, req, res, cb) => {
   superagent
   .post(url)
@@ -275,6 +284,30 @@ router.all('/posts', [ authVerify, authorize ], function(req, res, next) {
  * METHOD GET
  * 
  */
+
+router.get('/posts', authVerify, (req, res) => {
+  if (req.user.role !== 9 && req.user.role !== 3) {
+    if (!req.query.author) {
+      return res.status(403).send('Forbidden. No right to access.').end()
+    } else {
+      const author = _.get(JSON.parse(req.query.author), [ '$in', 0 ])
+      if (author !== req.user.id) {
+        return res.status(403).send('Forbidden. No right to access.').end()
+      }
+    }
+  }
+  const url = `${apiHost}${req.url}`
+  basicGetRequst(url, req, res, (err, resp) => {
+    if (!err && resp) {
+      const resData = JSON.parse(resp.text)
+      return res.json(resData)
+    } else {
+      res.json(err)
+      console.error(`error during fetch data from : ${url}`)
+      console.error(err)  
+    }
+  })
+})
 
 router.get('/profile', [ authVerify ], (req, res) => {
   const targetProfile = req.user.id

@@ -3,9 +3,16 @@
     <!-- <app-header :sections="sections"></app-header> -->
     <main class="main-container">
       <app-about :profile="profile"></app-about>
-      <base-control-bar @addPost="$_guestEditor_editorHandler(true, 'add')" @editDraft="$_editor_editDraft"></base-control-bar>
+      <base-control-bar @addPost="$_guestEditor_editorHandler(true, 'add')" @editDraft="$_guestEditor_editDraft"></base-control-bar>
       <section class="main-panel">
       </section>
+      <base-light-box :showLightBox.sync="showDraftList">
+        <post-list-detailed
+          :posts="postsUser"
+          @editPost="$_guestEditor_textEditorHandler"
+          @deletePost="$_guestEditor_showAlert">
+        </post-list-detailed>
+      </base-light-box>
       <base-light-box :showLightBox.sync="showEditor">
         <post-panel
           :action="action"
@@ -41,6 +48,7 @@
   import AppHeader from '../components/AppHeader.vue'
   import PaginationNav from '../components/PaginationNav.vue'
   import PostList from '../components/PostList.vue'
+  import PostListDetailed from '../components/PostListDetailed.vue'
   import PostPanel from '../components/PostPanel.vue'
   import TheBaseControlBar from '../components/TheBaseControlBar.vue'
 
@@ -75,6 +83,7 @@
       'base-light-box': BaseLightBox,
       'pagination-nav': PaginationNav,
       'post-list': PostList,
+      'post-list-detailed': PostListDetailed,
       'post-panel': PostPanel
     },
     data () {
@@ -85,6 +94,7 @@
         post: {},
         postActive: undefined,
         showAlert: false,
+        showDraftList: false,
         showEditor: false,
         sort: DEFAULT_SORT
       }
@@ -92,6 +102,9 @@
     computed: {
       posts () {
         return _.get(this.$store, [ 'state', 'posts', 'items' ], [])
+      },
+      postsUser () {
+        return _.get(this.$store, [ 'state', 'posts-user', 'items' ], [])
       },
       profile () {
         return _.get(this.$store, [ 'state', 'profile' ], {})
@@ -101,6 +114,7 @@
       }
     },
     mounted () {
+      fetchUserPosts(this.$store, _.get(this.profile, [ 'id' ]))
     },
     methods: {
       $_guestEditor_alertHandler (showAlert, active, isCompleted) {
@@ -112,12 +126,15 @@
         const id = _.get(this.post, [ 'id' ])
         deletePost(this.$store, id)
           .then(() => {
+            if (this.showDraftList) {
+              this.showDraftList = false
+            }
             this.$_guestEditor_updatePostList()
             this.isCompleted = true
           })
       },
-      $_editor_editDraft () {
-        fetchUserPosts(this.$store, _.get(this.profile, [ 'id' ]))
+      $_guestEditor_editDraft () {
+        this.showDraftList = true
       },
       $_guestEditor_editorHandler (showEditor, action, id) {
         this.isCompleted = false
@@ -140,9 +157,28 @@
         this.isCompleted = false
         this.showAlert = true
       },
+      $_guestEditor_textEditorHandler (showEditor, action, id) {
+        this.isCompleted = false
+        this.post = _.find(this.posts, { 'id': id }) || {}
+        if (action === 'add') {
+          this.post.author = _.get(this.$store.state, [ 'profile' ])
+        }
+        this.action = action
+        this.showEditor = showEditor
+        if (!this.showEditor) {
+          if (this.showDraftList) {
+            this.showDraftList = false
+          }
+          this.action = undefined
+          this.isCompleted = true
+          this.post = {}
+          this.$_guestEditor_updatePostList()
+        }
+      },
       $_guestEditor_updatePostList (params = {}) {
         this.page = params.page
         this.sort = params.sort
+        fetchUserPosts(this.$store, _.get(this.profile, [ 'id' ]))
       }
     }
   }
