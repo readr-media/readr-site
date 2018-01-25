@@ -1,51 +1,58 @@
 <template>
   <div class="admin">
-    <!-- <app-header :sections="sections"></app-header> -->
-    <About :profile="profile"></About>
-    <div class="control-bar">
-      <TheBaseControlBar @openPanel="openPanel" @addAccount="addMember" @addPost="$_admin_editorHandler(true, 'add')"></TheBaseControlBar>
+    <div class="admin__container">
+      <aside class="admin__aside">
+        <AppAsideNav/>
+      </aside>
+      <main class="admin__main">
+        <!-- <app-header :sections="sections"></app-header> -->
+        <About :profile="profile"></About>
+        <div class="control-bar">
+          <TheBaseControlBar @openPanel="openPanel" @addAccount="addMember" @addPost="$_admin_editorHandler(true, 'add')"></TheBaseControlBar>
+        </div>
+        <template v-if="activePanel === 'accounts'">
+          <MembersPanel v-if="$can('memberManage')" @filterChanged="filterChanged"></MembersPanel>
+        </template>
+        <template v-else-if="activePanel === 'posts'">
+          <section class="panel">
+            <post-list
+              :posts="posts"
+              @deletePost="$_admin_showAlert"
+              @editPost="$_admin_editorHandler"
+              @filterChanged="$_admin_updatePostList"
+            ></post-list>
+          </section>
+        </template>
+        <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder" :isConversation="true">
+          <MemberAccountEditor @updated="filterChanged" :shouldShow="showLightBox" :title="wording.WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER" action="add"></MemberAccountEditor>
+        </BaseLightBox>
+        <BaseLightBox :showLightBox.sync="showEditor">
+          <PostPanel
+            :action="action"
+            :isCompleted="isCompleted"
+            :post.sync="post"
+            :showLightBox="showEditor"
+            @closeLightBox="$_admin_editorHandler(false)"
+            @showAlert="$_admin_alertHandler"
+            @updatePostList="$_admin_updatePostList">
+          </PostPanel>
+        </BaseLightBox>
+        <BaseLightBox :isAlert="true" :showLightBox.sync="showAlert">
+          <AlertPanel
+            :action="action"
+            :active="postActive"
+            :isCompleted="isCompleted"
+            :post="post"
+            :showLightBox="showAlert"
+            @closeAlert="$_admin_alertHandler"
+            @closeEditor="$_admin_editorHandler(false)"
+            @deletePost="$_admin_deletePost"
+            @publishPost="$_admin_publishPost">
+          </AlertPanel>
+        </BaseLightBox>
+        <div id="coral_talk_stream"></div>
+      </main>
     </div>
-    <template v-if="activePanel === 'accounts'">
-      <MembersPanel v-if="$can('memberManage')" @filterChanged="filterChanged"></MembersPanel>
-    </template>
-    <template v-else-if="activePanel === 'posts'">
-      <section class="panel">
-        <post-list
-          :posts="posts"
-          @deletePost="$_admin_showAlert"
-          @editPost="$_admin_editorHandler"
-          @filterChanged="$_admin_updatePostList"
-        ></post-list>
-      </section>
-    </template>
-    <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder" :isConversation="true">
-      <MemberAccountEditor @updated="filterChanged" :shouldShow="showLightBox" :title="wording.WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER" action="add"></MemberAccountEditor>
-    </BaseLightBox>
-    <BaseLightBox :showLightBox.sync="showEditor">
-      <PostPanel
-        :action="action"
-        :isCompleted="isCompleted"
-        :post.sync="post"
-        :showLightBox="showEditor"
-        @closeLightBox="$_admin_editorHandler(false)"
-        @showAlert="$_admin_alertHandler"
-        @updatePostList="$_admin_updatePostList">
-      </PostPanel>
-    </BaseLightBox>
-    <BaseLightBox :isAlert="true" :showLightBox.sync="showAlert">
-      <AlertPanel
-        :action="action"
-        :active="postActive"
-        :isCompleted="isCompleted"
-        :post="post"
-        :showLightBox="showAlert"
-        @closeAlert="$_admin_alertHandler"
-        @closeEditor="$_admin_editorHandler(false)"
-        @deletePost="$_admin_deletePost"
-        @publishPost="$_admin_publishPost">
-      </AlertPanel>
-    </BaseLightBox>
-    <div id="coral_talk_stream"></div>
   </div>
 </template>
 <script>
@@ -61,6 +68,7 @@
   import TheBaseControlBar from '../components/TheBaseControlBar.vue'
   import PostPanel from '../components/PostPanel.vue'
   import AlertPanel from '../components/AlertPanel.vue'
+  import AppAsideNav from '../components/AppAsideNav.vue'
 
   const MAXRESULT = 20
   const DEFAULT_PAGE = 1
@@ -108,7 +116,8 @@
       MemberAccountEditor,
       TheBaseControlBar,
       PostPanel,
-      AlertPanel
+      AlertPanel,
+      AppAsideNav
     },
     computed: {
       posts () {
@@ -249,7 +258,22 @@
 </script>
 <style lang="stylus" scoped>
   .admin
+    background-color #e6e6e6
     width 100%
+    min-height 100vh
+    &__container
+      max-width 1085px
+      margin auto
+      padding 60px 0
+      display flex
+    &__aside
+      width 75px
+      height 100%
+      position sticky
+      // position fixed
+      top 60px
+    &__main
+      margin-left 30px
     .control-bar
       width 100%
       margin 0 auto
@@ -258,6 +282,7 @@
       padding 22px 84px 33px
       border 5px solid #d8ca21
       margin 0 auto
+      background-color white
   @media (min-width 950px)
     .admin
       .control-bar

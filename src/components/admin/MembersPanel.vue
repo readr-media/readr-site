@@ -192,6 +192,7 @@
     margin 30px auto
     border solid 5px #d8ca21
     padding 23.5px 75px 45px
+    background-color white
     &__pagination
       height 20px
       top 36px
