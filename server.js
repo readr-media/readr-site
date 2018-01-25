@@ -13,6 +13,7 @@ const uuidv4 = require('uuid/v4')
 const { PAGE_CACHE_EXCLUDING, GOOGLE_CLIENT_ID } = require('./api/config')
 const { createBundleRenderer } = require('vue-server-renderer')
 
+const debug = require('debug')('READR:server')
 const isProd = process.env.NODE_ENV === 'production'
 const useMicroCache = process.env.MICRO_CACHE !== 'false'
 const serverInfo =
@@ -20,6 +21,7 @@ const serverInfo =
   `vue-server-renderer/${require('vue-server-renderer/package.json').version}`
 
 const app = express()
+const superagent = require('superagent')
 
 function createRenderer (bundle, options) {
   // https://github.com/vuejs/vue/blob/dev/packages/vue-server-renderer/README.md#why-use-bundlerenderer
@@ -78,6 +80,16 @@ app.use('/distribution', serve('./distribution', true))
 app.use('/public', serve('./public', true))
 app.use('/manifest.json', serve('./manifest.json', true))
 app.use('/service-worker.js', serve('./distribution/service-worker.js'))
+
+app.use('/talk', (req, res) => {
+  debug('req', req.url)
+  superagent
+    .get('http://localhost:3000' + req.url)
+    .end((err, response) => {
+      console.log('response', response.text)
+      res.send(response)
+    })
+})
 
 // since this app has no user-specific content, every page is micro-cacheable.
 // if your app involves user-specific content, you need to implement custom

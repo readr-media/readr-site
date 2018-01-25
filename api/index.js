@@ -5,12 +5,14 @@ const { REDIS_AUTH, REDIS_MAX_CLIENT, REDIS_READ_HOST, REDIS_READ_PORT, REDIS_WR
 const { ENDPOINT_SECURE, SCOPES } = require('./config')
 const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT } = require('./config')
 const { camelizeKeys } = require('humps')
+const { constructScope } = require('./services/perm')
 const { initBucket, makeFilePublic, uploadFileToBucket, deleteFileFromBucket } = require('./gcs.js')
 const { processImage } = require('./sharp.js')
 const Cookies = require('cookies')
 const GoogleAuth = require('google-auth-library')
 const bodyParser = require('body-parser')
 const crypto = require('crypto')
+const config = require('./config')
 const debug = require('debug')('READR:api')
 const express = require('express')
 const fs = require('fs')
@@ -31,7 +33,7 @@ const superagent = require('superagent')
 const apiHost = API_PROTOCOL + '://' + API_HOST + ':' + API_PORT
 
 const SECRET_LENGTH = 10
-const currSecret = SECRET_KEY || '_csrf_token_key'
+const currSecret = config.JWT_SECRET || '_csrf_token_key'
 // const currSecret = crypto.pseudoRandomBytes(SECRET_LENGTH).toString('base64')
 const authVerify = jwtExpress({ secret: currSecret })
 
@@ -149,19 +151,7 @@ const fetchPublicPost = (url, req) => {
     })
   })
 }
-const constructScope = (perms, role) => (
-  _.map(_.filter(SCOPES, (comp) => (
-    _.get(comp, [ 'perm', 'length' ], 0) === _.filter(comp.perm, (perm) => (
-      _.find(perms, (p) => (
-        perm === p.object && p.role === role
-      ))
-    )).length && (comp.role 
-      && typeof(comp.role) === 'object' 
-      && comp.role.length > 0
-        ? _.find(comp.role, (r) => (r === role))
-        : true)
-  )), (p) => (p.comp)) 
-)
+
 const authorize = (req, res, next) => {
   const whitelist = _.get(ENDPOINT_SECURE, [ `${req.method}${req.url.replace(/\?[A-Za-z0-9.*+?^=!:${}()#%~&_@\-`|\[\]\/\\]*$/, '')}` ])
   if (whitelist) {
@@ -222,8 +212,8 @@ const activationKeyVerify = function (req, res, next) {
 }
 router.use('/activate', activationKeyVerify, require('./middle/member/activation'))
 router.use('/initmember', authVerify, function(req, res) {
-  const id = jwtService.getId(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
-  const role = jwtService.getRole(_.get(_.get(req, [ 'headers', 'authorization' ], '').split(' '), [ 1 ], ''), currSecret)
+  const id = req.user.id
+  const role = req.user.role
   superagent
   .put(`${apiHost}/member/password`)
   .send({
@@ -269,6 +259,7 @@ router.all('/member/password', authVerify, function(req, res, next) {
 })
 router.all('/members', [ authVerify, authorize ], function(req, res, next) {
   debug('Got a /members request.')
+  debug('User payload:', req.user)
   next()
 })
 router.all('/post', [ authVerify, authorize ], function(req, res, next) {
@@ -388,77 +379,7 @@ router.post('/token', (req, res) => {
   }
 })
 
-router.post('/login', authVerify, (req, res) => {
-  debug(`Got a new reuqest of login:
-    mail -> ${req.body.email}
-    At ${(new Date).toString()}`)
-
-  const sendRequest = () => {
-    if ((!req.body.email || !req.body.password) && (req.body.login_mode === 'google' && req.body.login_mode === 'facebook')) {
-      res.status(400).send({ message: 'Please offer id/password.' })
-      return
-    }
-    const url = `${apiHost}/login`
-    basicPostRequst(url, req, res, (err, response) => {
-      if (!err && response) {
-        const mem = _.get(response, [ 'body', 'member' ], {})
-        const scopes = constructScope(_.get(response, [ 'body', 'permissions' ]), _.get(mem, [ 'role' ], 1))
-        const token = jwtService.generateJwt({
-          id: _.get(mem, [ 'id' ], req.body.id),
-          email: _.get(mem, [ 'mail' ], req.body.email),
-          name: _.get(mem, [ 'name' ]),
-          role: _.get(mem, [ 'role' ], 1),
-          keepAlive: req.body.keepAlive,
-          scopes,
-          secret: currSecret
-        })
-        const cookies = new Cookies( req, res, {} )
-        cookies.set('csrf', token, { httpOnly: false, expires: new Date(Date.now() + (req.body.keepAlive ? 30 : 1) * 24 * 60 * 60 * 1000) })
-        res.status(200).send({ token, profile: {
-          name: _.get(mem, [ 'name' ]),
-          nickname: _.get(mem, [ 'nickname' ]),
-          description: _.get(mem, [ 'description' ]),
-          id: _.get(mem, [ 'id' ]),
-          mail: _.get(mem, [ 'mail' ], req.body.email),
-          role: _.get(mem, [ 'role' ], req.body.email),
-          scopes
-        }})    
-      } else {
-        res.status(401).send('Validated in fail. Please offer correct credentials.')
-      }
-    })
-    
-  }
-
-  if (req.body.login_mode === 'google') {
-    const auth = new GoogleAuth
-    const client = new auth.OAuth2(GOOGLE_CLIENT_ID, '', '');
-    client.verifyIdToken(
-      req.body.idToken,
-      GOOGLE_CLIENT_ID,
-      (e, login) => {
-        const payload = login.getPayload()
-        if (payload[ 'aud' ] !== GOOGLE_CLIENT_ID) {
-          res.status(403).send('Forbidden. Invalid token detected.').end()
-          return
-        }
-        req.body.id = payload[ 'sub' ]
-        req.body.mail = payload[ 'email' ]
-        req.body.email = payload[ 'email' ]
-        req.body.register_mode = 'oauth-goo'
-        sendRequest()
-      })
-  } else if (req.body.login_mode === 'facebook') {
-    // req.body.mail = payload[ 'email' ]
-    // req.body.email = payload[ 'email' ]
-    req.body.register_mode = 'oauth-fb'    
-    sendRequest()
-  } else {
-    req.body.id = req.body.email
-    req.body.register_mode = 'ordinary'    
-    sendRequest()
-  }  
-})
+router.post('/login', authVerify, require('./middle/member/login'))
 
 router.post('/register', authVerify, (req, res) => {
   debug(`Got a new reuqest of register:
@@ -499,7 +420,7 @@ router.post('/register', authVerify, (req, res) => {
   }
 
   if (req.body.register_mode === 'oauth-goo') {
-    const auth = new GoogleAuth
+    const auth = new GoogleAuth()
     const client = new auth.OAuth2(GOOGLE_CLIENT_ID, '', '')
     client.verifyIdToken(
       req.body.idToken,
