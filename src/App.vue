@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <app-header :sections="sections"></app-header>
     <transition name="fade" mode="out-in">
       <router-view class="view"></router-view>
     </transition>
@@ -7,7 +8,18 @@
 </template>
 
 <script>
-  export default {}
+  import { SECTIONS_DEFAULT } from './constants'
+  import AppHeader from './components/AppHeader.vue'
+  export default {
+    components: {
+      'app-header': AppHeader
+    },
+    computed: {
+      sections () {
+        return SECTIONS_DEFAULT
+      }
+    }
+  }
 </script>
 
 <style lang="stylus">

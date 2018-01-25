@@ -1,6 +1,6 @@
 <template>
   <div class="admin">
-    <app-header :sections="sections"></app-header>
+    <!-- <app-header :sections="sections"></app-header> -->
     <About :profile="profile"></About>
     <div class="control-bar">
       <TheBaseControlBar @openPanel="openPanel" @addAccount="addMember" @addPost="$_admin_editorHandler(true, 'add')"></TheBaseControlBar>

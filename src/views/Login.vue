@@ -1,6 +1,6 @@
 <template>
   <div class="login-page">
-    <app-header :sections="sections"></app-header>
+    <!-- <app-header :sections="sections"></app-header> -->
     <LoginPanel v-if="isClientSide && !isLoggedIn"></LoginPanel>
   </div>
 </template>

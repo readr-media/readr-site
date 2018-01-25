@@ -79,11 +79,8 @@ export default {
     })
   },
   GET_PUBLIC_POSTS: ({ commit, dispatch, state }, { params }) => {
-    console.log('fuckewr')
     return getPublicPosts({ params }).then(({ status, body }) => {
-      console.log('fuck')
       if (status === 200) {
-        console.log('yes')
         commit('SET_PUBLIC_POSTS', { posts: body })
       }
     })
