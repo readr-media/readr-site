@@ -69,6 +69,7 @@
 <style lang="stylus" scoped>
   .homepage
     background-color #e6e6e6
+    min-height 100vh
     &__container
       max-width 1085px
       margin auto

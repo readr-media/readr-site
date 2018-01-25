@@ -1,55 +1,62 @@
 <template>
   <div class="editor">
     <!-- <app-header :sections="sections"></app-header> -->
-    <main class="main-container">
-      <app-about :profile="profile"></app-about>
-      <base-control-bar @addPost="$_editor_textEditorHandler(true, 'add')" @editDraft="$_editor_editDraft"></base-control-bar>
-      <section class="main-panel">
-        <template>
-          <pagination-nav :totalPages="10" @pageChanged="$_editor_pageChanged"></pagination-nav>
-          <post-list
-            :posts="posts"
-            @deletePost="$_editor_showAlert"
-            @editPost="$_editor_textEditorHandler"
-            @filterChanged="$_editor_updatePostList">
-          </post-list>
-        </template>
-      </section>
-      <base-light-box :showLightBox.sync="showDraftList">
-        <post-list-detailed
-          :posts="postsUser"
-          @editPost="$_editor_textEditorHandler"
-          @deletePost="$_editor_showAlert">
-        </post-list-detailed>
-      </base-light-box>
-      <base-light-box :showLightBox.sync="showEditor">
-        <post-panel
-          :action="action"
-          :isCompleted="isCompleted"
-          :post.sync="post"
-          :showLightBox="showEditor"
-          @closeLightBox="$_editor_textEditorHandler(false)"
-          @deletePost="$_editor_showAlert"
-          @showAlert="$_editor_alertHandler"
-          @updatePostList="$_editor_updatePostList">
-        </post-panel>
-      </base-light-box>
-      <base-light-box
-        :isAlert="true"
-        :showLightBox.sync="showAlert">
-        <alert-panel
-          :action="action"
-          :active="postActive"
-          :isCompleted="isCompleted"
-          :post="post"
-          :showLightBox="showAlert"
-          @closeAlert="$_editor_alertHandler"
-          @closeEditor="$_editor_textEditorHandler(false)"
-          @deletePost="$_editor_deletePost"
-          @publishPost="$_editor_publishPost">
-        </alert-panel>
-      </base-light-box>
-    </main>
+    <div class="editor__container">
+      <aside class="editor__aside">
+        <AppAsideNav/>
+      </aside>
+      <main class="editor__main">
+        <main class="main-container">
+          <app-about :profile="profile"></app-about>
+          <base-control-bar @addPost="$_editor_textEditorHandler(true, 'add')" @editDraft="$_editor_editDraft"></base-control-bar>
+          <section class="main-panel">
+            <template>
+              <pagination-nav :totalPages="10" @pageChanged="$_editor_pageChanged"></pagination-nav>
+              <post-list
+                :posts="posts"
+                @deletePost="$_editor_showAlert"
+                @editPost="$_editor_textEditorHandler"
+                @filterChanged="$_editor_updatePostList">
+              </post-list>
+            </template>
+          </section>
+          <base-light-box :showLightBox.sync="showDraftList">
+            <post-list-detailed
+              :posts="postsUser"
+              @editPost="$_editor_textEditorHandler"
+              @deletePost="$_editor_showAlert">
+            </post-list-detailed>
+          </base-light-box>
+          <base-light-box :showLightBox.sync="showEditor">
+            <post-panel
+              :action="action"
+              :isCompleted="isCompleted"
+              :post.sync="post"
+              :showLightBox="showEditor"
+              @closeLightBox="$_editor_textEditorHandler(false)"
+              @deletePost="$_editor_showAlert"
+              @showAlert="$_editor_alertHandler"
+              @updatePostList="$_editor_updatePostList">
+            </post-panel>
+          </base-light-box>
+          <base-light-box
+            :isAlert="true"
+            :showLightBox.sync="showAlert">
+            <alert-panel
+              :action="action"
+              :active="postActive"
+              :isCompleted="isCompleted"
+              :post="post"
+              :showLightBox="showAlert"
+              @closeAlert="$_editor_alertHandler"
+              @closeEditor="$_editor_textEditorHandler(false)"
+              @deletePost="$_editor_deletePost"
+              @publishPost="$_editor_publishPost">
+            </alert-panel>
+          </base-light-box>
+        </main>
+      </main>
+    </div>
   </div>
 </template>
 <script>
@@ -64,6 +71,7 @@
   import PostListDetailed from '../components/PostListDetailed.vue'
   import PostPanel from '../components/PostPanel.vue'
   import TheBaseControlBar from '../components/TheBaseControlBar.vue'
+  import AppAsideNav from '../components/AppAsideNav.vue'
 
   const MAXRESULT = 20
   const DEFAULT_PAGE = 1
@@ -115,7 +123,8 @@
       'pagination-nav': PaginationNav,
       'post-list': PostList,
       'post-list-detailed': PostListDetailed,
-      'post-panel': PostPanel
+      'post-panel': PostPanel,
+      AppAsideNav
     },
     data () {
       return {
@@ -246,4 +255,23 @@
   }
 </script>
 <style lang="stylus" scoped>
+  .editor
+    background-color #e6e6e6
+    width 100%
+    min-height 100vh
+    &__container
+      max-width 1085px
+      margin auto
+      padding 60px 0
+      display flex
+    &__aside
+      width 75px
+      height 100%
+      position sticky
+      // position fixed
+      top 60px
+    &__main
+      margin-left 30px
+  .main-panel
+    background-color white
 </style>
