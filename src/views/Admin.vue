@@ -286,7 +286,7 @@
     },
     mounted () {
       Coral && Coral.Talk.render(document.getElementById('coral_talk_stream'), {
-        talk: 'http://127.0.0.1:3000/',
+        talk: 'http://localhost:3000/',
         asset_url: location.href
       })
     },
