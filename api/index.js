@@ -225,7 +225,8 @@ router.use('/member', [ authVerify, authorize ], require('./middle/member'))
 
 router.all('/members', [ authVerify, authorize ], function(req, res, next) {
   debug('Got a /members request.')
-  debug('User payload:', req.user)
+  debug('User payload:')
+  debug(req.user)
   next()
 })
 router.all('/post', [ authVerify, authorize ], function(req, res, next) {

@@ -28,14 +28,41 @@ const checkoutUserPerms = (role, email) => new Promise((resolve) => {
 })
 
 const updateUserRoleForTalk = (role, email) => new Promise((resolve) => {
-  const dbName = 'talk'
   MongoClient.connect(mongourl, function(err, client) {
     debug("Connected successfully to server")
-    const db = client.db(dbName)
+    const db = client.db('talk')
     const collection = db.collection('users')
     collection.updateOne({ "profiles.id": { $in: [ email ] } }
       , { $set: { role : role } }, function(err, result) {
-      debug("Updated the document with the field a equal to 2");
+      debug('Updating ', email, '\'s role to', role, 'to talk')
+      client.close()
+      resolve()
+    })
+  })
+})
+
+const updateUserNameForTalk = (email, username) => new Promise((resolve) => {
+  MongoClient.connect(mongourl, function(err, client) {
+    debug("Connected successfully to server")
+    const db = client.db('talk')
+    const collection = db.collection('users')
+    collection.updateOne({ "profiles.id": { $in: [ email ] } }
+      , { $set: { username: username, lowercaseUsername: username.toLowerCase() } }, function(err, result) {
+      debug('Updating ', email, '\'s username to', username, 'to talk')
+      client.close()
+      resolve()
+    })
+  })
+})
+
+const banUserForTalk = (email) => new Promise((resolve) => {
+  MongoClient.connect(mongourl, function(err, client) {
+    debug("Connected successfully to server")
+    const db = client.db('talk')
+    const collection = db.collection('users')
+    collection.updateOne({ "profiles.id": { $in: [ email ] } }
+      , { $set: { status: { banned: { status: true }}}}, function(err, result) {
+      debug('Ban ', email)
       client.close()
       resolve()
     })
@@ -56,6 +83,21 @@ router.put('/role', (req, res) => {
     } else {
       res.status(500).json(err)
     }
+  })
+})
+
+router.put('/', (req, res, next) => {
+  req.body.nickname && updateUserNameForTalk(req.user.email, req.body.nickname)
+  next()
+})
+
+router.delete('*', (req, res, next) => {
+  debug('going to del member')
+  debug(req.body)
+  debug(req.url)
+  const userid = req.url.split('/')[ 1 ]
+  userid && banUserForTalk(userid).then(() => {
+    next()
   })
 })
 
