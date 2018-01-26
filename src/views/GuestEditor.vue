@@ -198,7 +198,7 @@
     width 100%
     min-height 100vh
     &__container
-      max-width 1085px
+      max-width 1200px
       margin auto
       padding 60px 0
       display flex
@@ -209,5 +209,5 @@
       // position fixed
       top 60px
     &__main
-      margin-left 30px
+      margin-left 93.5px
 </style>

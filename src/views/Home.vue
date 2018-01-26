@@ -30,7 +30,8 @@
         <AppAsideNav/>
       </aside>
       <main class="homepage__main">
-        <HomeCustomEditorList/>
+        <HomeListMain/>
+        <HomeListAside/>
       </main>
     </div>
   </div> 
@@ -41,13 +42,15 @@
   import { removeToken } from '../util/services'
   // import AppHeader from '../components/AppHeader.vue'
   import AppAsideNav from '../components/AppAsideNav.vue'
-  import HomeCustomEditorList from '../components/home/HomeCustomEditorList.vue'
+  import HomeListMain from '../components/home/HomeListMain.vue'
+  import HomeListAside from '../components/home/HomeListAside.vue'
 
   export default {
     components: {
       // 'app-header': AppHeader,
       AppAsideNav,
-      HomeCustomEditorList
+      HomeListMain,
+      HomeListAside
     },
     computed: {
       // sections () {
@@ -71,7 +74,7 @@
     background-color #e6e6e6
     min-height 100vh
     &__container
-      max-width 1085px
+      max-width 1200px
       margin auto
       padding 60px 0
       display flex
@@ -83,6 +86,9 @@
       top 60px
     &__main
       margin-left 30px
+      display flex
+      justify-content flex-start
+      align-items flex-start
     .block
       padding 0 17px
       margin 20px auto

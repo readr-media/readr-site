@@ -1,11 +1,11 @@
 <template>
-  <section class="custom-editor-list">
-    <HomeCustomEditorArticle v-for="post in posts" :articleData="post" :key="post.id"/>
+  <section class="home-list-main">
+    <HomeArticleMain v-for="post in posts" :articleData="post" :key="post.id"/>
   </section>
 </template>
 
 <script>
-import HomeCustomEditorArticle from './HomeCustomEditorArticle.vue'
+import HomeArticleMain from './HomeArticleMain.vue'
 
 const fetchPosts = (store, id) => {
   return store.dispatch('GET_PUBLIC_POSTS', {
@@ -19,7 +19,7 @@ const fetchPosts = (store, id) => {
 
 export default {
   components: {
-    HomeCustomEditorArticle
+    HomeArticleMain
   },
   computed: {
     posts () {
@@ -33,6 +33,6 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.custom-editor-list
+.home-list-main
   max-width 650px
 </style>

@@ -1,13 +1,13 @@
 <template>
-  <article class="custom-editor-article">
-    <div class="custom-editor-article__author">
+  <article class="home-article-main">
+    <div class="home-article-main__author">
       <figure class="author-info">
         <img class="author-info__thumbnail" :src="articleData.author.profileImage" alt="">
         <figcaption class="author-info__nickname" v-text="articleData.author.nickname"></figcaption>
       </figure>
     </div>
-    <div class="custom-editor-article__content">
-      <h1 class="custom-editor-article__title" v-text="articleData.title"></h1>
+    <div class="home-article-main__content">
+      <h1 class="home-article-main__title" v-text="articleData.title"></h1>
       <div class="editor-writing">
         <div class="editor-writing__container">
           <template v-for="(p, i) in articleContent">
@@ -31,7 +31,7 @@
       <a class="editor-writing-source" v-if="hasSource" :href="articleData.link" target="_blank">
         <div class="editor-writing-source__content">
           <h1 class="editor-writing-source__title" v-text="linkTitleTrim"></h1>
-          <div class="editor-writing-source__descrifirstParagraphion">
+          <div class="editor-writing-source__description">
             <p v-text="linkDescriptionTrim"></p>
             <p class="editor-writing-source__cite">出處：鏡週刊</p>
           </div>
@@ -101,7 +101,10 @@ export default {
 </script>
 
 <style lang="stylus">
-.custom-editor-article
+$icon-size
+  width 25px
+  height 25px
+.home-article-main
   display flex
   // height 325px
   &__author
@@ -118,115 +121,111 @@ export default {
     font-size 18px
     font-weight 600
     margin 0
-.custom-editor-article + .custom-editor-article
-  margin-top 10px
+  & + .home-article-main
+    margin-top 10px
 
-.author-info
-  margin 0
-  display flex
-  flex-direction column
-  justify-content center
-  align-items center
-  &__thumbnail
-    width 60px
-    height 60px
-  &__nickname
-    letter-spacing 2px
-    font-size 18px
-    font-weight 300
-    color #ffffff
-    margin-top 8px
-    writing-mode tb-rl
-    white-space nowrap
-    display block
-    bottom 0
-    width 20px
-    height 20px
-
-.editor-writing
-  margin 5px 0 15.5px 0
-  &__container 
-    min-height 105px
-    // overflow hidden
-    // text-overflow: ellipsis;
-    & > p
-      font-size 15px
-      font-weight 300
-      text-align justify
-      line-height 1.4
-      margin 0
-      // text-overflow: ellipsis;
-    p > br
-      display none
-    p > img
-      width 100%
-    p + p
-      margin-top 6px
-  &__more
-    font-weight 500
-    color #4280a2
-    cursor pointer
-    &:hover
-      border-bottom 1px solid currentColor
-  &__paragraph
-    &--visible
-      display block
-    &--invisible
-      display none
-
-.article-nav
-  margin-top 6.5px
-  height 25px
-
-$icon-size
-  width 25px
-  height 25px
-.comment-icon
-  &__thumbnail
-    @extends $icon-size
-  &__count
-    position relative
-    right 5px
-    font-size 14px
-    color #a9a9a9
-.follow-icon
-  @extends $icon-size
-  margin-left 4.5px
-
-.editor-writing-source
-  height 102px
-  border solid 0.5px #d3d3d3
-  padding 8px 15px 5px 19.5px
-  display flex
-  &__content
-    width 350.5px
-    position relative
-  &__title
-    font-size 14px
-    font-weight 500
-    color #808080
+  .author-info
     margin 0
-  &__descrifirstParagraphion
-    & > p
+    display flex
+    flex-direction column
+    justify-content center
+    align-items center
+    &__thumbnail
+      width 60px
+      height 60px
+    &__nickname
+      letter-spacing 2px
+      font-size 18px
+      font-weight 300
+      color #ffffff
+      margin-top 8px
+      writing-mode tb-rl
+      white-space nowrap
+      display block
+      bottom 0
+      width 20px
+      height 20px
+
+  .editor-writing
+    margin 5px 0 15.5px 0
+    &__container 
+      min-height 105px
+      // overflow hidden
+      // text-overflow: ellipsis;
+      & > p
+        font-size 15px
+        font-weight 300
+        text-align justify
+        line-height 1.4
+        margin 0
+        // text-overflow: ellipsis;
+      p > br
+        display none
+      p > img
+        width 100%
+      p + p
+        margin-top 6px
+    &__more
+      font-weight 500
+      color #4280a2
+      cursor pointer
+      &:hover
+        border-bottom 1px solid currentColor
+    &__paragraph
+      &--visible
+        display block
+      &--invisible
+        display none
+
+  .article-nav
+    margin-top 6.5px
+    height 25px
+
+  .comment-icon
+    &__thumbnail
+      @extends $icon-size
+    &__count
+      position relative
+      right 5px
+      font-size 14px
+      color #a9a9a9
+  .follow-icon
+    @extends $icon-size
+    margin-left 4.5px
+
+  .editor-writing-source
+    height 102px
+    border solid 0.5px #d3d3d3
+    padding 8px 15px 5px 19.5px
+    display flex
+    &__content
+      width 350.5px
+      position relative
+    &__title
+      font-size 14px
+      font-weight 500
+      color #808080
+      margin 0
+    &__description
+      & > p
+        font-size 14px
+        font-weight 300
+        color #808080
+        line-height 1.4
+        margin 5px 0 0 0
+        text-align justify
+    &__figure
+      margin 0 0 0 15px
+      display flex
+      align-items center
+      img[alt=source-fig]
+        width 150px
+        height 78.5px
+    &__cite
       font-size 14px
       font-weight 300
       color #808080
-      line-height 1.4
-      margin 5px 0 0 0
-      text-align justify
-  &__figure
-    margin 0 0 0 15px
-    display flex
-    align-items center
-    img[alt=source-fig]
-      width 150px
-      height 78.5px
-  &__cite
-    font-size 14px
-    font-weight 300
-    color #808080
-    align-self flex-end
-    position absolute
-    bottom 0
+      align-self flex-end
+      position absolute
+      bottom 0
 </style>
-
