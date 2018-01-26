@@ -53,7 +53,7 @@
         <div id="coral_talk_stream"></div>
       </main>
     </div>
-    <!-- <template v-if="activePanel === 'accounts'">
+    <template v-if="activePanel === 'accounts'">
       <MembersPanel v-if="$can('memberManage')" @filterChanged="filterChanged"></MembersPanel>
     </template>
     <template v-else-if="activePanel === 'posts'">
@@ -93,7 +93,7 @@
         @publishPost="$_admin_publishPost">
       </AlertPanel>
     </BaseLightBox>
-    <div id="coral_talk_stream"></div> -->
+    <div id="coral_talk_stream"></div>
   </div>
 </template>
 <script>

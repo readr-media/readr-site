@@ -21,7 +21,7 @@ describe('ProfileEdit.vue', () => {
     })
   })
 
-  it('nickname, email, description and protrait thumbnail should equal to value in props', () => {
+  it('nickname, description and protrait thumbnail should equal to value in props', () => {
     const ProfileEditComponent = mount(ProfileEdit)
     const profile = {
       nickname: 'Justin BB',
@@ -33,17 +33,15 @@ describe('ProfileEdit.vue', () => {
       profile
     })
     const inputNickname = ProfileEditComponent.find('input[name=nickname]')[0]
-    const inputMail = ProfileEditComponent.find('input[name=email]')[0]
     const inputDescription = ProfileEditComponent.find('textarea[name=description]')[0]
     const thumbnail = ProfileEditComponent.find('img[alt=thumbnail]')[0]
 
     expect(inputNickname.value()).to.equal(profile.nickname)
-    expect(inputMail.value()).to.equal(profile.mail)
     expect(inputDescription.value()).to.equal(profile.description)
     expect(thumbnail.getAttribute('src')).to.equal(profile.profileImage)
   })
 
-  it('should dispatch action when user is update their nickname, email, description', () => {
+  it('should dispatch action when user is update their nickname, description', () => {
     const ProfileEditComponent = mount(ProfileEdit, { store })
     const profile = {
       nickname: 'Justin BB',
@@ -62,7 +60,7 @@ describe('ProfileEdit.vue', () => {
     expect(actions.UPDATE_PROFILE.calledOnce).to.equal(true)
   })
 
-  it('should not dispatch action when save button has been clicked but user\'s nickname, email, description is remaining the same as initial', () => {
+  it('should not dispatch action when save button has been clicked but user\'s nickname, description is remaining the same as initial', () => {
     const ProfileEditComponent = mount(ProfileEdit, { store })
     const profile = {
       nickname: 'Justin BB',
@@ -76,7 +74,6 @@ describe('ProfileEdit.vue', () => {
     const save = ProfileEditComponent.find('.save-button')[0]
 
     ProfileEditComponent.vm.inputNickname = profile.nickname
-    ProfileEditComponent.vm.inputMail = profile.mail
     ProfileEditComponent.vm.inputDescription = profile.description
     save.trigger('click')
     expect(actions.UPDATE_PROFILE.calledOnce).to.equal(false)
