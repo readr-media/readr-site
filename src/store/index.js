@@ -14,6 +14,7 @@ export function createStore () {
       'posts': [],
       'publicPosts': [],
       'posts-user': [],
+      'posts-user-draft': [],
       'profile': {},
       'members': []
     },

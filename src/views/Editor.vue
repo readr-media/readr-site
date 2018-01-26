@@ -8,9 +8,20 @@
       <main class="editor__main">
         <main class="main-container">
           <app-about :profile="profile"></app-about>
-          <base-control-bar @addPost="$_editor_textEditorHandler(true, 'add')" @editDraft="$_editor_editDraft"></base-control-bar>
-          <section class="main-panel">
-            <template>
+          <base-control-bar
+            @addPost="$_editor_textEditorHandler(true, 'add')"
+            @editDraft="$_editor_editDraft"
+            @openPanel="$_editor_openPanel">
+          </base-control-bar>
+          <template v-if="activePanel === 'record'">
+            <section class="editor__record">
+              <app-tab :tabs="tabs">
+                <post-list-tab slot="0" :posts="postsUser"></post-list-tab>
+              </app-tab>
+            </section>
+          </template>
+          <template v-else-if="activePanel === 'posts'">
+            <section class="main-panel">
               <pagination-nav :totalPages="10" @pageChanged="$_editor_pageChanged"></pagination-nav>
               <post-list
                 :posts="posts"
@@ -18,11 +29,11 @@
                 @editPost="$_editor_textEditorHandler"
                 @filterChanged="$_editor_updatePostList">
               </post-list>
-            </template>
-          </section>
+            </section>
+          </template>
           <base-light-box :showLightBox.sync="showDraftList">
             <post-list-detailed
-              :posts="postsUser"
+              :posts="postsUserDraft"
               @editPost="$_editor_textEditorHandler"
               @deletePost="$_editor_showAlert">
             </post-list-detailed>
@@ -60,18 +71,26 @@
   </div>
 </template>
 <script>
-  import { SECTIONS_DEFAULT } from '../constants'
+  import {
+    POST_ACTIVE,
+    SECTIONS_DEFAULT,
+    WORDING_TAB_COMMENT_RECORD,
+    WORDING_TAB_FOLLOW_RECORD,
+    WORDING_TAB_POST_RECORD
+  } from '../constants'
   import _ from 'lodash'
   import About from '../components/About.vue'
   import AlertPanel from '../components/AlertPanel.vue'
-  import BaseLightBox from '../components/BaseLightBox.vue'
+  import AppAsideNav from '../components/AppAsideNav.vue'
   import AppHeader from '../components/AppHeader.vue'
+  import BaseLightBox from '../components/BaseLightBox.vue'
   import PaginationNav from '../components/PaginationNav.vue'
   import PostList from '../components/PostList.vue'
   import PostListDetailed from '../components/PostListDetailed.vue'
+  import PostListInTab from '../components/PostListInTab.vue'
   import PostPanel from '../components/PostPanel.vue'
+  import Tab from '../components/Tab.vue'
   import TheBaseControlBar from '../components/TheBaseControlBar.vue'
-  import AppAsideNav from '../components/AppAsideNav.vue'
 
   const MAXRESULT = 20
   const DEFAULT_PAGE = 1
@@ -91,15 +110,18 @@
     })
   }
 
-  const fetchUserPosts = (store, id, page, sort) => {
+  const fetchUserPosts = (store, {
+    maxResult = MAXRESULT,
+    page = DEFAULT_PAGE,
+    sort = DEFAULT_SORT,
+    where = {}
+  }) => {
     return store.dispatch('GET_USER_POSTS', {
       params: {
-        max_result: MAXRESULT,
-        page: page || DEFAULT_PAGE,
-        sort: sort || DEFAULT_SORT,
-        where: {
-          author: id
-        }
+        max_result: maxResult,
+        page: page,
+        sort: sort,
+        where: where
       }
     })
   }
@@ -118,17 +140,20 @@
       'alert-panel': AlertPanel,
       'app-about': About,
       'app-header': AppHeader,
+      'app-tab': Tab,
       'base-control-bar': TheBaseControlBar,
       'base-light-box': BaseLightBox,
       'pagination-nav': PaginationNav,
       'post-list': PostList,
       'post-list-detailed': PostListDetailed,
+      'post-list-tab': PostListInTab,
       'post-panel': PostPanel,
       AppAsideNav
     },
     data () {
       return {
         action: undefined,
+        activePanel: 'record',
         isCompleted: false,
         page: DEFAULT_PAGE,
         post: {},
@@ -136,7 +161,12 @@
         showAlert: false,
         showDraftList: false,
         showEditor: false,
-        sort: DEFAULT_SORT
+        sort: DEFAULT_SORT,
+        tabs: [
+          WORDING_TAB_POST_RECORD,
+          WORDING_TAB_FOLLOW_RECORD,
+          WORDING_TAB_COMMENT_RECORD
+        ]
       }
     },
     computed: {
@@ -145,6 +175,9 @@
       },
       postsUser () {
         return _.get(this.$store, [ 'state', 'posts-user', 'items' ], [])
+      },
+      postsUserDraft () {
+        return _.get(this.$store, [ 'state', 'posts-user-draft', 'items' ], [])
       },
       profile () {
         return _.get(this.$store, [ 'state', 'profile' ], {})
@@ -156,7 +189,13 @@
     mounted () {
       Promise.all([
         fetchPosts(this.$store, {}),
-        fetchUserPosts(this.$store, _.get(this.profile, [ 'id' ]))
+        fetchUserPosts(this.$store, { where: { author: _.get(this.profile, [ 'id' ])}}),
+        fetchUserPosts(this.$store, {
+          where: {
+            author: _.get(this.profile, [ 'id' ]),
+            active: POST_ACTIVE.draft
+          }
+        })
       ])
     },
     methods: {
@@ -179,6 +218,9 @@
       $_editor_editDraft () {
         this.showDraftList = true
       },
+      $_editor_openPanel (panel) {
+        this.activePanel = panel
+      },
       $_editor_pageChanged (index) {
         this.$_editor_updatePostList({ page: index })
       },
@@ -196,15 +238,14 @@
         if (Date.parse(_.get(this.post, [ 'date' ]))) {
           params.published_at = _.get(this.post, [ 'date' ])
         }
+
         if (this.action === 'add') {
           params.author = _.get(this.$store.state, [ 'profile', 'id' ])
           addPost(this.$store, params)
             .then(() => {
               this.isCompleted = true
             })
-        }
-
-        if (this.action === 'edit') {
+        } else if (this.action === 'edit') {
           params.id = _.get(this.post, [ 'id' ])
           params.author = _.get(this.post, [ 'author', 'id' ])
           updatePost(this.$store, params)
@@ -212,7 +253,6 @@
               this.isCompleted = true
             })
         }
-
       },
       $_editor_textEditorHandler (showEditor, action, id) {
         this.isCompleted = false
@@ -247,7 +287,11 @@
             page: this.page,
             sort: this.sort
           }),
-          fetchUserPosts(this.$store, _.get(this.profile, [ 'id' ]))
+          fetchUserPosts(this.$store, {
+            page: this.page,
+            sort: this.sort,
+            where: { author: _.get(this.profile, [ 'id' ])}
+          })
         ])
         
       }
@@ -272,6 +316,8 @@
       top 60px
     &__main
       margin-left 93.5px
+    &__record
+      background-color #fff
   .main-panel
     background-color white
 </style>
