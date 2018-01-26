@@ -8,12 +8,21 @@
       <main class="guestEditor__main">
         <main class="main-container">
           <app-about :profile="profile"></app-about>
-          <base-control-bar @addPost="$_guestEditor_editorHandler(true, 'add')" @editDraft="$_guestEditor_editDraft"></base-control-bar>
-          <section class="main-panel">
-          </section>
+          <base-control-bar
+            @addPost="$_guestEditor_editorHandler(true, 'add')"
+            @editDraft="$_guestEditor_editDraft"
+            @openPanel="$_guestEditor_openPanel">
+          </base-control-bar>
+          <template v-if="activePanel === 'record'">
+            <section class="guestEditor__record">
+              <app-tab :tabs="tabs">
+                <post-list-tab slot="0" :posts="postsUser"></post-list-tab>
+              </app-tab>
+            </section>
+          </template>
           <base-light-box :showLightBox.sync="showDraftList">
             <post-list-detailed
-              :posts="postsUser"
+              :posts="postsUserDraft"
               @editPost="$_guestEditor_textEditorHandler"
               @deletePost="$_guestEditor_showAlert">
             </post-list-detailed>
@@ -47,32 +56,43 @@
   </div>
 </template>
 <script>
-  import { SECTIONS_DEFAULT } from '../constants'
+  import {
+    POST_ACTIVE,
+    SECTIONS_DEFAULT,
+    WORDING_TAB_COMMENT_RECORD,
+    WORDING_TAB_FOLLOW_RECORD,
+    WORDING_TAB_POST_RECORD
+  } from '../constants'
   import _ from 'lodash'
   import About from '../components/About.vue'
   import AlertPanel from '../components/AlertPanel.vue'
-  import BaseLightBox from '../components/BaseLightBox.vue'
+  import AppAsideNav from '../components/AppAsideNav.vue'
   import AppHeader from '../components/AppHeader.vue'
+  import BaseLightBox from '../components/BaseLightBox.vue'
   import PaginationNav from '../components/PaginationNav.vue'
   import PostList from '../components/PostList.vue'
   import PostListDetailed from '../components/PostListDetailed.vue'
+  import PostListInTab from '../components/PostListInTab.vue'
   import PostPanel from '../components/PostPanel.vue'
+  import Tab from '../components/Tab.vue'
   import TheBaseControlBar from '../components/TheBaseControlBar.vue'
-  import AppAsideNav from '../components/AppAsideNav.vue'
 
   const MAXRESULT = 20
   const DEFAULT_PAGE = 1
   const DEFAULT_SORT = '-updated_at'
 
-  const fetchUserPosts = (store, id, page, sort) => {
+  const fetchUserPosts = (store, {
+    maxResult = MAXRESULT,
+    page = DEFAULT_PAGE,
+    sort = DEFAULT_SORT,
+    where = {}
+  }) => {
     return store.dispatch('GET_USER_POSTS', {
       params: {
-        max_result: MAXRESULT,
-        page: page || DEFAULT_PAGE,
-        sort: sort || DEFAULT_SORT,
-        where: {
-          author: id
-        }
+        max_result: maxResult,
+        page: page,
+        sort: sort,
+        where: where
       }
     })
   }
@@ -87,17 +107,20 @@
       'alert-panel': AlertPanel,
       'app-about': About,
       'app-header': AppHeader,
+      'app-tab': Tab,
       'base-control-bar': TheBaseControlBar,
       'base-light-box': BaseLightBox,
       'pagination-nav': PaginationNav,
       'post-list': PostList,
       'post-list-detailed': PostListDetailed,
+      'post-list-tab': PostListInTab,
       'post-panel': PostPanel,
       AppAsideNav
     },
     data () {
       return {
         action: undefined,
+        activePanel: 'record',
         isCompleted: false,
         page: DEFAULT_PAGE,
         post: {},
@@ -105,7 +128,12 @@
         showAlert: false,
         showDraftList: false,
         showEditor: false,
-        sort: DEFAULT_SORT
+        sort: DEFAULT_SORT,
+        tabs: [
+          WORDING_TAB_POST_RECORD,
+          WORDING_TAB_FOLLOW_RECORD,
+          WORDING_TAB_COMMENT_RECORD
+        ]
       }
     },
     computed: {
@@ -115,6 +143,9 @@
       postsUser () {
         return _.get(this.$store, [ 'state', 'posts-user', 'items' ], [])
       },
+      postsUserDraft () {
+        return _.get(this.$store, [ 'state', 'posts-user-draft', 'items' ], [])
+      },
       profile () {
         return _.get(this.$store, [ 'state', 'profile' ], {})
       },
@@ -123,7 +154,16 @@
       }
     },
     mounted () {
-      fetchUserPosts(this.$store, _.get(this.profile, [ 'id' ]))
+      Promise.all([
+        fetchUserPosts(this.$store, { where: { author: _.get(this.profile, [ 'id' ])}}),
+        fetchUserPosts(this.$store, {
+          where: {
+            author: _.get(this.profile, [ 'id' ]),
+            active: POST_ACTIVE.draft
+          }
+        })
+      ])
+      
     },
     methods: {
       $_guestEditor_alertHandler (showAlert, active, isCompleted) {
@@ -157,6 +197,9 @@
           this.$_guestEditor_updatePostList()
         }
       },
+      $_guestEditor_openPanel (panel) {
+        this.activePanel = panel
+      },
       $_guestEditor_pageChanged (index) {
         this.$_guestEditor_updatePostList({ page: index })
       },
@@ -187,7 +230,11 @@
       $_guestEditor_updatePostList (params = {}) {
         this.page = params.page
         this.sort = params.sort
-        fetchUserPosts(this.$store, _.get(this.profile, [ 'id' ]))
+        fetchUserPosts(this.$store, {
+          page: this.page,
+          sort: this.sort,
+          where: { author: _.get(this.profile, [ 'id' ])}
+        })
       }
     }
   }
@@ -210,4 +257,6 @@
       top 60px
     &__main
       margin-left 93.5px
+    &__record
+      background-color #fff
 </style>

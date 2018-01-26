@@ -27,6 +27,9 @@ export default {
   SET_USER_POSTS: (state, { posts }) => {
     state['posts-user'] = posts
   },
+  SET_USER_POSTS_DRAFT: (state, { posts }) => {
+    state['posts-user-draft'] = posts
+  },
   UPDATED_PROFILE: (state, { profile }) => {
     // Update the entry when user saving the profile value which has been edited
     Object.entries(profile).forEach((entry) => {

@@ -94,8 +94,13 @@ export default {
   },
   GET_USER_POSTS: ({ commit, dispatch, state }, { params }) => {
     return getPosts({ params }).then(({ status, body }) => {
+      console.info('params', params)
       if (status === 200) {
-        commit('SET_USER_POSTS', { posts: body })
+        if (params.where.active) {
+          commit('SET_USER_POSTS_DRAFT', { posts: body })
+        } else {
+          commit('SET_USER_POSTS', { posts: body })
+        }
       }
     })
   },

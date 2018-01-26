@@ -7,9 +7,9 @@
     </div>
     <button v-if="$can('editOtherPost')" class="controlBar--btn" @click="$_baseControlBar_openPanel('posts')" v-text="wording.WORDING_CONTROLBAR_POST_MANAGE"></button>
     <button v-if="$can('editVideo')" class="controlBar--btn" @click="$_baseControlBar_openPanel('video')" v-text="wording.WORDING_CONTROLBAR_VIDEO_MANAGE"></button>
-    <button class="controlBar--btn" v-text="wording.WORDING_CONTROLBAR_RECORD_MANAGE"></button>
-    <button class="controlBar--btn" @click="$_baseControlBar_addAccount" v-if="$can('addAccount')" v-text="wording.WORDING_CONTROLBAR_ADD_ACCOUNT"></button>
-    <button class="controlBar--btn" @click="$_baseControlBar_openPanel('accounts')" v-if="$can('memberManage')" v-text="wording.WORDING_CONTROLBAR_ACCOUNT_MANAGE"></button>
+    <button class="controlBar--btn" @click="$_baseControlBar_openPanel('record')" v-text="wording.WORDING_CONTROLBAR_RECORD_MANAGE"></button>
+    <button v-if="$can('addAccount')" class="controlBar--btn" @click="$_baseControlBar_addAccount" v-text="wording.WORDING_CONTROLBAR_ADD_ACCOUNT"></button>
+    <button v-if="$can('memberManage')" class="controlBar--btn" @click="$_baseControlBar_openPanel('accounts')" v-text="wording.WORDING_CONTROLBAR_ACCOUNT_MANAGE"></button>
   </section>
 </template>
 <script>
