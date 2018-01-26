@@ -5,7 +5,7 @@ const { REDIS_AUTH, REDIS_MAX_CLIENT, REDIS_READ_HOST, REDIS_READ_PORT, REDIS_WR
 const { ENDPOINT_SECURE, SCOPES } = require('./config')
 const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT } = require('./config')
 const { camelizeKeys } = require('humps')
-const { constructScope } = require('./services/perm')
+const { constructScope, fetchPermissions } = require('./services/perm')
 const { initBucket, makeFilePublic, uploadFileToBucket, deleteFileFromBucket } = require('./gcs.js')
 const { processImage } = require('./sharp.js')
 const Cookies = require('cookies')
@@ -33,9 +33,7 @@ const superagent = require('superagent')
 const apiHost = API_PROTOCOL + '://' + API_HOST + ':' + API_PORT
 
 const SECRET_LENGTH = 10
-const currSecret = config.JWT_SECRET || '_csrf_token_key'
-// const currSecret = crypto.pseudoRandomBytes(SECRET_LENGTH).toString('base64')
-const authVerify = jwtExpress({ secret: currSecret })
+const authVerify = jwtExpress({ secret: config.JWT_SECRET })
 
 const fetchStaticJson = (req, res, next, jsonFileName) => {
   const url = `${SERVER_PROTOCOL}${SERVER_PORT ? ':' + SERVER_PORT : ''}://${SERVER_HOST}/json/${jsonFileName}.json`
@@ -95,31 +93,6 @@ const basicDeleteRequst = (url, req, res, cb) => {
   })
 }
 
-const fetchPermissions = () => {
-  return new Promise((resolve, reject) => {
-    const url = `/permission/all`
-    redisFetching(url, ({ error, data }) => {
-      if (!error && data) {
-        resolve(JSON.parse(data))
-      } else {
-        superagent
-        .get(`${apiHost}${url}`)
-        .end((err, res) => {
-          if (!err && res) {
-            const dt = JSON.parse(res.text)
-            if (Object.keys(dt).length !== 0) {
-              redisWriting(url, res.text)
-            }
-            resolve(res.body)
-          } else {
-            console.log('Fetch permissions in false...', err)
-            reject(err)
-          }
-        })
-      }
-    })
-  })
-}
 const fetchProfile = (url, req) => {
   return new Promise((resolve, reject) => {
     superagent
@@ -175,7 +148,7 @@ const authorize = (req, res, next) => {
 }
 const sendActivationMail = ({ id, role, way }, cb) => {
   const tokenForActivation = jwtService.generateActivateAccountJwt({
-    id, role, way, secret: currSecret
+    id, role, way
   })
   basicPostRequst(`${apiHost}/mail`, { 
     body: {
@@ -200,7 +173,7 @@ const sendActivationMail = ({ id, role, way }, cb) => {
 
 const activationKeyVerify = function (req, res, next) {
   const key = req.url.split('/')[1]
-  jwtService.verifyToken(key, currSecret, (error, decoded) => {
+  jwtService.verifyToken(key, (error, decoded) => {
     if (error || !decoded.way) {
       res.status(403).send(`Invalid activation token.`)
     } else {
@@ -241,6 +214,7 @@ router.use('/initmember', authVerify, function(req, res) {
     }
   })
 })
+router.use('/member', [ authVerify, authorize ], require('./middle/member'))
 
 
 /**
@@ -249,13 +223,6 @@ router.use('/initmember', authVerify, function(req, res) {
  * 
  */
 
-router.all('/member', [ authVerify, authorize ], function(req, res, next) {
-  debug('Got a /member request.')
-  next()
-})
-router.all('/member/password', authVerify, function(req, res, next) {
-  next()
-})
 router.all('/members', [ authVerify, authorize ], function(req, res, next) {
   debug('Got a /members request.')
   debug('User payload:', req.user)
@@ -408,7 +375,7 @@ router.post('/verify-recaptcha-token', (req, res) => {
 router.post('/token', (req, res) => {
   const type = _.get(req, [ 'body', 'type' ])
   if (_.findIndex(DISPOSABLE_TOKEN_WHITE_LIST, (o) => (o === type)) > -1) {
-    const token = jwtService.generateDisposableJwt({ host: SERVER_HOST, secret: currSecret })
+    const token = jwtService.generateDisposableJwt({ host: SERVER_HOST })
     res.status(200).send({ token })
   } else {
     res.status(403).send('Forbidden.')
@@ -704,7 +671,6 @@ router.route('*')
       }
   }, insertIntoRedis)
   .post(authVerify, (req, res) => {
-    console.log('??')
     const url = `${apiHost}${req.url}`
      superagent
     .post(url)
@@ -733,6 +699,7 @@ router.route('*')
   })
   .put(authVerify, function (req, res) {
     const url = `${apiHost}${req.url}`
+    debug('Got a put req', req.url)
     superagent
     .put(url)
     .send(req.body)
