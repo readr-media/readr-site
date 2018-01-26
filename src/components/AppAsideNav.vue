@@ -106,7 +106,7 @@ $aside-navigation__list-item-drawer
         & > span
           color black
         & + .list-item
-          & > span
+          & > span:not(.option)
             border-top .5px solid #d3d3d3
   &__external
     &--gray
