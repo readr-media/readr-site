@@ -8,11 +8,6 @@
           <input class="form__input" type="text" name="nickname" v-model="inputNickname">
         </div>
         <div class="form__item">
-          <span class="form__name">{{ wording.WORDING_PROFILEEDIT_EMAIL }}：</span>
-          <!-- <input type="text" name="email" v-model="computedMail"> -->
-          <input class="form__input" type="text" name="email" v-model="inputMail">
-        </div>
-        <div class="form__item">
           <span class="form__name--align-start">{{ wording.WORDING_PROFILEEDIT_DESCRIPTION }}：</span>
           <!-- <textarea name="description" v-model="computedDescription"></textarea> -->
           <textarea class="form__description" name="description" v-model="inputDescription"></textarea>
@@ -101,10 +96,8 @@ export default {
     return {
       staticNickname : _.get(this.profile, [ 'nickname' ], ''),
       // inputNickname: '',
-      // inputMail: '',
       // inputDescription: '',
       inputNickname: _.get(this.profile, [ 'nickname' ], ''),
-      inputMail: _.get(this.profile, [ 'mail' ], ''),
       inputDescription: _.get(this.profile, [ 'description' ], ''),
       inputOldPassword: '',
       inputNewPassword: '',
@@ -130,14 +123,6 @@ export default {
     //     this.inputNickname = newValue
     //   }
     // },
-    // computedMail: {
-    //   get () {
-    //     return _.get(this.profile, [ 'mail' ], '')
-    //   },
-    //   set (newValue) {
-    //     this.inputMail = newValue
-    //   }
-    // },
     // computedDescription: {
     //   get () {
     //     return _.get(this.profile, [ 'description' ], '')
@@ -157,7 +142,6 @@ export default {
     showLightBox (value) {
       if (!value) {
         this.inputNickname = _.get(this.profile, [ 'nickname' ], '')
-        this.inputMail = _.get(this.profile, [ 'mail' ], '')
         this.inputDescription = _.get(this.profile, [ 'description' ], '')
         this.inputOldPassword = ''
         this.inputNewPassword = ''
@@ -209,9 +193,6 @@ export default {
         let params = { id: this.profile.id, edit_mode: 'edit_profile' }
         if (!inputNotChange('Nickname')) {
           params.nickname = this.inputNickname
-        }
-        if (!inputNotChange('Mail')) {
-          params.mail = this.inputMail
         }
         if (!inputNotChange('Description')) {
           params.description = this.inputDescription
@@ -270,7 +251,7 @@ export default {
         })
       }
 
-      if (!(inputNotChange('Nickname') && inputNotChange('Mail') && inputNotChange('Description'))) {
+      if (!(inputNotChange('Nickname') && inputNotChange('Description'))) {
         updateBasicInfo()
       }
       if (!isOldPasswordEmpty() && isConfirmNewPassword()) {
@@ -320,6 +301,11 @@ $form__name
   color #808080
   margin 0 4px 0 0 
   text-align justify
+  // pseudo class for performing a line break, intend for applying text-align justify on single line text element
+  &:after
+    content ''
+    width 100%
+    display inline-block
 .form
   display flex
   flex-direction column
@@ -331,11 +317,6 @@ $form__name
       margin 15px 0 0 0
   &__name
     @extends $form__name
-    // pseudo class for performing a line break, intend for applying text-align justify on single line text element
-    &:after
-      content ''
-      width 100%
-      display inline-block
     &--align-start
       @extends $form__name
       align-self flex-start
@@ -353,7 +334,7 @@ $form__name
     padding 9px 15px
   &__personal-options
     width form-width
-    height 250px
+    height 300px
     // height 200px
     background-color white
 
