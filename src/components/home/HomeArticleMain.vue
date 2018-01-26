@@ -33,7 +33,7 @@
           <h1 class="editor-writing-source__title" v-text="linkTitleTrim"></h1>
           <div class="editor-writing-source__description">
             <p v-text="linkDescriptionTrim"></p>
-            <p class="editor-writing-source__cite">出處：鏡週刊</p>
+            <p class="editor-writing-source__cite" v-if="articleData.linkName">出處：{{ articleData.linkName }}</p>
           </div>
         </div>
         <figure class="editor-writing-source__figure">
