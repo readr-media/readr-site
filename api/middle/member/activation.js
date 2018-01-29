@@ -1,13 +1,12 @@
 const _ = require('lodash')
-const { API_DEADLINE, API_HOST, API_PORT, API_PROTOCOL, API_TIMEOUT } = require('../../config')
-const { TALK_SERVER_PROTOCOL, TALK_SERVER_HOST, TALK_SERVER_PORT } = require('../../config')
 const Cookies = require('cookies')
+const config = require('../../config')
 const debug = require('debug')('READR:api:member:activation')
 const express = require('express')
 const router = express.Router()
 const superagent = require('superagent')
 
-const apiHost = API_PROTOCOL + '://' + API_HOST + ':' + API_PORT
+const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
 
 const activateMem = (member) => new Promise((resolve) => {
   const url = `${apiHost}/member`
@@ -34,10 +33,10 @@ const fetchMem = (member) => new Promise((resolve) => {
 })
 
 const buildUserForTalk = (member) => new Promise((resolve) => {
-  debug('Talk server host:', `${TALK_SERVER_PROTOCOL}://${TALK_SERVER_HOST}${TALK_SERVER_PROTOCOL ? ':' + TALK_SERVER_PORT : ''}/api/v1/users`)
+  debug('Talk server host:', `${config.TALK_SERVER_PROTOCOL}://${config.TALK_SERVER_HOST}${config.TALK_SERVER_PROTOCOL ? ':' + config.TALK_SERVER_PORT : ''}/api/v1/users`)
   const username = member.id.replace(/@[A-Za-z0-9.*+?^=!:${}()#%~&_@\-`|\[\]\/\\]*$/, '')
   superagent
-    .post(`${TALK_SERVER_PROTOCOL}://${TALK_SERVER_HOST}${TALK_SERVER_PROTOCOL ? ':' + TALK_SERVER_PORT : ''}/api/v1/users`)
+    .post(`${config.TALK_SERVER_PROTOCOL}://${config.TALK_SERVER_HOST}${config.TALK_SERVER_PROTOCOL ? ':' + config.TALK_SERVER_PORT : ''}/api/v1/users`)
     .send({ 
       email: member.mail, // should make sure that it is email
       username,
