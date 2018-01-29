@@ -16,7 +16,9 @@ const generateJwt = ({ id, email, name, nickname, role, keepAlive, scopes }) => 
     scopes,
     username: name,
   }
-  set(claims, config.JWT_USER_ID_CLAIM, 'b6d38ab7-ef3d-4c07-9a2d-18a3d6eee242')
+  
+  // set(claims, config.JWT_USER_ID_CLAIM, 'b6d38ab7-ef3d-4c07-9a2d-18a3d6eee242')
+  set(claims, config.JWT_USER_ID_CLAIM, '46fea2eb-be14-4adc-96db-e915b52d2a53')
   return jwt.sign(
     claims,
     config.JWT_SECRET,
