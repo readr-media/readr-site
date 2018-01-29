@@ -110,6 +110,7 @@
   import PostPanel from '../components/PostPanel.vue'
   import AlertPanel from '../components/AlertPanel.vue'
   import AppAsideNav from '../components/AppAsideNav.vue'
+  import { renderComment } from '../util/talk'
 
   const MAXRESULT = 20
   const DEFAULT_PAGE = 1
@@ -285,10 +286,7 @@
       }
     },
     mounted () {
-      Coral && Coral.Talk.render(document.getElementById('coral_talk_stream'), {
-        talk: 'http://localhost:3000/',
-        asset_url: location.href
-      })
+      renderComment('#coral_talk_stream', location.href)
     },
     beforeMount () {
       this.$can('memberManage') && Promise.all([

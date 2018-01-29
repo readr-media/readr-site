@@ -139,8 +139,8 @@ export default {
   SETUP_BASIC_PROFILE: ({ commit, dispatch, state }, { params }) => {
     return setupBasicProfile({ params })
   },
-  UPDATE_MEMBER: ({ commit, dispatch, state }, { params }) => {
-    return updateMember({ params })
+  UPDATE_MEMBER: ({ commit, dispatch, state }, { params, type }) => {
+    return updateMember({ params, type })
   },
   UPDATE_PROFILE: ({ commit, dispatch, state }, { params }) => {
     commit('UPDATED_PROFILE', { profile: params })

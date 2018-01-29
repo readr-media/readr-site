@@ -334,8 +334,8 @@ export function setupBasicProfile ({ params }) {
   })
 }
 
-export function updateMember ({ params }) {
-  const url = `${host}/api/member`
+export function updateMember ({ params, type }) {
+  const url = type !== 'role' ? `${host}/api/member` : `${host}/api/member/role`
   return _doPut(url, params)
     .then(res => ({ status: res.status }))
     .catch(err => err)

@@ -70,9 +70,10 @@
     })
   }
 
-  const updateMember = (store, profile) => {
+  const updateMember = (store, profile, type = '') => {
     return store.dispatch('UPDATE_MEMBER', {
-      params: profile
+      params: profile,
+      type
     })
   }
 
@@ -191,7 +192,7 @@
               id: this.id,
               mail: this.typedEmail,
               role: this.selectedRole
-            }).then(callback)
+            }, 'role').then(callback)
           } else if (this.action === 'customEditor_set') {
             const ids = _.map(this.members, (m) => (m.id))
             ids.forEach((id) => {
