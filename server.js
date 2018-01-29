@@ -10,7 +10,7 @@ const microcache = require('route-cache')
 const requestIp = require('request-ip')
 const resolve = file => path.resolve(__dirname, file)
 const uuidv4 = require('uuid/v4')
-const { PAGE_CACHE_EXCLUDING, GOOGLE_CLIENT_ID } = require('./api/config')
+const { PAGE_CACHE_EXCLUDING, GOOGLE_CLIENT_ID, TALK_SERVER } = require('./api/config')
 const { createBundleRenderer } = require('vue-server-renderer')
 
 const debug = require('debug')('READR:server')
@@ -142,7 +142,8 @@ function render (req, res, next) {
     url: req.url,
     cookie: cookies.get('csrf'),
     initmember: cookies.get('initmember'),
-    GOOGLE_CLIENT_ID: GOOGLE_CLIENT_ID
+    GOOGLE_CLIENT_ID: GOOGLE_CLIENT_ID,
+    TALK_SERVER
   }
   renderer.renderToString(context, (err, html) => {
     if (err) {
