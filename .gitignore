@@ -51,6 +51,7 @@ $RECYCLE.BIN/
 
 # Other
 dist/
+distribution/
 .idea
 *.iml
 
