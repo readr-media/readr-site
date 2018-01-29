@@ -1,5 +1,8 @@
 <template>
   <article class="home-article-main">
+    <div class="home-article-main__share">
+      <AppShareButton/>
+    </div>
     <div class="home-article-main__author">
       <figure class="author-info">
         <img class="author-info__thumbnail" :src="articleData.author.profileImage" alt="">
@@ -7,6 +10,7 @@
       </figure>
     </div>
     <div class="home-article-main__content">
+      <p class="home-article-main__date">{{ dateDiffFromNow }}</p>
       <h1 class="home-article-main__title" v-text="articleData.title"></h1>
       <div class="editor-writing">
         <div class="editor-writing__container">
@@ -14,19 +18,12 @@
             <p class="editor-writing__paragraph--visible" v-if="i === 0">
               <span v-html="firstParagraph"></span>
               <span v-if="(p.length > 150 || articleContent.length > 1) ? !isReadMore : false">
-                ......<span class="editor-writing__more" @click="readmore">更多</span>
+                ......<span class="editor-writing__more" @click="toogleReadmore">更多</span>
               </span>
             </p>
             <p :class="`editor-writing__paragraph--${isReadMore ? 'visible' : 'invisible'}`" v-else v-html="p"></p>
           </template>
         </div>
-        <nav class="article-nav">
-          <span class="comment-icon">
-            <img class="comment-icon__thumbnail" src="/public/icons/comment-grey.png" alt="comment">
-            <span class="comment-icon__count">123</span>
-          </span>
-          <img class="follow-icon" src="/public/icons/star-line.png" alt="follow">
-        </nav>
       </div>
       <a class="editor-writing-source" v-if="hasSource" :href="articleData.link" target="_blank">
         <div class="editor-writing-source__content">
@@ -40,11 +37,27 @@
           <img :src="articleData.linkImage" alt="source-fig">
         </figure>
       </a>
+      <nav class="article-nav">
+        <span class="comment-icon">
+          <img class="comment-icon__thumbnail" src="/public/icons/comment-grey.png" alt="comment">
+          <span class="comment-icon__count">123</span>
+        </span>
+        <img class="follow-icon" :src="isFollow ? '/public/icons/star.png' : '/public/icons/star-line.png'" alt="follow" @click="toogleFollow">
+      </nav>
     </div>
   </article>
 </template>
 
 <script>
+import AppShareButton from '../AppShareButton.vue'
+import _ from 'lodash'
+
+const publishAction = (store, data) => {
+  return store.dispatch('PUBLISH_ACTION', {
+    params: data
+  })
+}
+
 export default {
   props: {
     articleData: {
@@ -57,6 +70,9 @@ export default {
         content: ''
       }
     }
+  },
+  components: {
+    AppShareButton
   },
   data () {
     return {
@@ -75,6 +91,26 @@ export default {
         return node.innerHTML
       })
     },
+    dateDiffFromNow () {
+      const d1 = Math.floor(Date.parse(this.articleData.updatedAt) / 1000)
+      const d2 = Math.floor(Date.now() / 1000)
+      const diff = d2 - d1
+      const hour = Math.floor(diff / 3600)
+      const min = Math.floor((diff - hour * 3600) / 60)
+      const sec = diff - hour * 3600 - min * 60
+      const day = Math.floor(hour / 24)
+      if (day !== 0) {
+        return `${day} 天`
+      } else if (hour !== 0) {
+        return `${hour} 小時`
+      } else if (min !== 0) {
+        return `${min} 分鐘`
+      } else if (sec !== 0) {
+        return `${sec} 秒`
+      } else {
+        return `剛剛`
+      }
+    },
     firstParagraph () {
       const limit = 150
       if (!this.articleContent[0]) return ''
@@ -90,11 +126,53 @@ export default {
     linkDescriptionTrim () {
       const limit = 45
       return this.articleData.linkDescription.length > limit ? this.articleData.linkDescription.slice(0, limit) + ' ...' : this.articleData.linkDescription
+    },
+    isFollow () {
+      if (!this.$store.state.isLoggedIn) {
+        return false
+      } else {
+        if (_.find(this.$store.state.followingByUser, { id: this.articleData.id})) {
+          return true
+        } else {
+          return false
+        }
+      }
     }
   },
   methods: {
-    readmore () {
+    toogleReadmore () {
       this.isReadMore = true
+    },
+    toogleFollow () {
+      if (!this.$store.state.isLoggedIn) {
+        alert('please login first')
+      } else {
+        if (!this.isFollow) {
+          publishAction(this.$store, {
+            action: 'follow',
+            resource: 'post',
+            subject: this.$store.state.profile.id,
+            object: `${this.articleData.id}`
+          })
+          this.$store.dispatch('MODIFY_FOLLOWING_BY_USER', {
+            action: 'follow',
+            resource: 'post',
+            data: this.articleData
+          })
+        } else {
+          publishAction(this.$store, {
+            action: 'unfollow',
+            resource: 'post',
+            subject: this.$store.state.profile.id,
+            object: `${this.articleData.id}`
+          })
+          this.$store.dispatch('MODIFY_FOLLOWING_BY_USER', {
+            action: 'unfollow',
+            resource: 'post',
+            data: this.articleData
+          })
+        }
+      }
     }
   }
 }
@@ -106,6 +184,7 @@ $icon-size
   height 25px
 .home-article-main
   display flex
+  position relative
   // height 325px
   &__author
     width 60px
@@ -115,8 +194,13 @@ $icon-size
     width 590px
     height inherit
     border solid 2.5px #ddcf21
-    padding 15px 22.5px
+    padding 11.5px 22.5px 18px 22.5px
     background-color white
+  &__date
+    font-size 14px
+    font-weight 500
+    color #808080
+    margin 0 0 5px 0
   &__title
     font-size 18px
     font-weight 600
@@ -147,7 +231,7 @@ $icon-size
       height 20px
 
   .editor-writing
-    margin 5px 0 15.5px 0
+    margin 5px 0 10px 0
     &__container 
       min-height 105px
       // overflow hidden
@@ -178,7 +262,7 @@ $icon-size
         display none
 
   .article-nav
-    margin-top 6.5px
+    margin-top 10px
     height 25px
 
   .comment-icon
@@ -192,6 +276,7 @@ $icon-size
   .follow-icon
     @extends $icon-size
     margin-left 4.5px
+    cursor pointer
 
   .editor-writing-source
     height 102px

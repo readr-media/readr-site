@@ -1,7 +1,17 @@
-// import Vue from 'vue'
+import Vue from 'vue'
+import _ from 'lodash'
 const { camelize } = require('humps')
 
 export default {
+  ADD_ITEM_TO_FOLLOWING_BY_USER: (state, data) => {
+    state.followingByUser.push(data)
+  },
+  REMOVE_ITEM_FROM_FOLLOWING_BY_USER: (state, data) => {
+    const index = _.findIndex(state.followingByUser, (post) => {
+      return post.id === data.id
+    })
+    Vue.delete(state.followingByUser, index)
+  },
   SET_FOLLOWING_BY_RESOURCE: (state, { following }) => {
     state['followingByResource'] = following
   },

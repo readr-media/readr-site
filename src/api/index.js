@@ -417,3 +417,20 @@ export function verifyRecaptchaToken ({ token }) {
       })
   })
 }
+
+export function publishAction ({ params }) {
+  return new Promise((resolve, reject) => {
+    const url = `${host}/api/publish-action`
+    superagent
+    .post(url)
+    .set('Authorization', `Bearer ${getToken()}`)
+    .send(params)
+    .end(function (err, res) {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(res)
+      }
+    })
+  })
+}

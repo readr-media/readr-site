@@ -22,7 +22,7 @@
             <img class="comment-icon__thumbnail" src="/public/icons/comment-grey.png" alt="comment">
             <span class="comment-icon__count">123</span>
           </span>
-          <img class="follow-icon" src="/public/icons/star-line.png" alt="follow">
+          <img class="follow-icon" :src="isFollow ? '/public/icons/star.png' : '/public/icons/star-line.png'" alt="follow" @click="toogleFollow">
         </nav>
       </div>
     </div>
@@ -30,6 +30,12 @@
 </template>
 
 <script>
+const publishAction = (store, data) => {
+  return store.dispatch('PUBLISH_ACTION', {
+    params: data
+  })
+}
+
 export default {
   props: {
     articleData: {
@@ -69,6 +75,51 @@ export default {
       const limit = 35
       if (!this.articleContent[0]) return ''
       return this.articleContent[0].length > limit ? this.articleContent[0].slice(0, limit) + ' ......' : this.articleContent[0]
+    },
+    isFollow () {
+      if (!this.$store.state.isLoggedIn) {
+        return false
+      } else {
+        if (_.find(this.$store.state.followingByUser, { id: this.articleData.id})) {
+          return true
+        } else {
+          return false
+        }
+      }
+    }
+  },
+  methods: {
+    toogleFollow () {
+      if (!this.$store.state.isLoggedIn) {
+        alert('please login first')
+      } else {
+        // this.isFollow = !this.isFollow
+        if (!this.isFollow) {
+          publishAction(this.$store, {
+            action: 'follow',
+            resource: 'post',
+            subject: this.$store.state.profile.id,
+            object: `${this.articleData.id}`
+          })
+          this.$store.dispatch('MODIFY_FOLLOWING_BY_USER', {
+            action: 'follow',
+            resource: 'post',
+            data: this.articleData
+          })
+        } else {
+          publishAction(this.$store, {
+            action: 'unfollow',
+            resource: 'post',
+            subject: this.$store.state.profile.id,
+            object: `${this.articleData.id}`
+          })
+          this.$store.dispatch('MODIFY_FOLLOWING_BY_USER', {
+            action: 'unfollow',
+            resource: 'post',
+            data: this.articleData
+          })
+        }
+      }
     }
   }
 }
@@ -157,5 +208,6 @@ $icon-size
   .follow-icon
     @extends $icon-size
     margin-left 9px
+    cursor pointer
 </style>
 

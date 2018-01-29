@@ -16,6 +16,7 @@ import {
   getMembers,
   getMeta,
   login,
+  publishAction,
   register,
   setupBasicProfile,
   updateMember,
@@ -132,6 +133,16 @@ export default {
       commit('SET_PROFILE', { profile: {}})
       resolve()
     })
+  },
+  PUBLISH_ACTION: ({ commit, dispatch, state }, { params }) => {
+    return publishAction({ params })
+  },
+  MODIFY_FOLLOWING_BY_USER: ({ commit, dispatch, state }, { action, resource, data }) => {
+    if (action === 'follow' && resource === 'post') {
+      commit('ADD_ITEM_TO_FOLLOWING_BY_USER', data)
+    } else {
+      commit('REMOVE_ITEM_FROM_FOLLOWING_BY_USER', data)
+    }
   },
   REGISTER: ({ commit, dispatch, state }, { params, token }) => {
     return register(params, token)
