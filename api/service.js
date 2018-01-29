@@ -6,7 +6,7 @@ const uuid = require('uuid')
 const generateJwt = ({ id, email, name, nickname, role, keepAlive, scopes }) => {
   const expiry = new Date(Date.now() + (keepAlive ? 30 : 1) * 24 * 60 * 60 * 1000)
   if (!config.JWT_SECRET) {
-    throw new Error('no signing key on secret, cannot sign');
+    throw new Error('no signing key on secret, cannot sign')
   }
   const claims = {
     id: id,
