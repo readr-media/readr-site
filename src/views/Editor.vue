@@ -100,6 +100,20 @@
     return store.dispatch('ADD_POST', { params })
   }
 
+  const fetchFollowing = (store, params) => {
+    if (params.subject) {
+      return store.dispatch('GET_FOLLOWING_BY_USER', {
+        subject: params.subject,
+        resource: params.resource
+      })
+    } else {
+      return store.dispatch('GET_FOLLOWING_BY_RESOURCE', {
+        resource: params.resource,
+        ids: params.ids
+      })
+    }
+  }
+
   const fetchPosts = (store, { page, sort }) => {
     return store.dispatch('GET_POSTS', {
       params: {
@@ -195,7 +209,8 @@
             author: _.get(this.profile, [ 'id' ]),
             active: POST_ACTIVE.draft
           }
-        })
+        }),
+        fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'post' })
       ])
     },
     methods: {

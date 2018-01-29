@@ -105,6 +105,7 @@ export const WORDING_POSTLIST_ACTIVE_PUBLISH = '已發布'
 export const WORDING_POSTLIST_ACTIVE_PENDING = '待審核'
 export const WORDING_POSTLIST_ACTIVE_UNPUBLISH = '已下架'
 export const WORDING_POSTLIST_ACTIVE_DRAFT = '草稿'
+export const WORDING_POSTLIST_DRAFT_RECORD = '未提交評論記錄'
 
 // Post list detailed
 

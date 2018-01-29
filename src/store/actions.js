@@ -8,6 +8,8 @@ import {
   deletePost,
   deletePostSelf,
   getDisposableToken,
+  getFollowingByResource,
+  getFollowingByUser,
   getProfile,
   getPosts,
   getPublicPosts,
@@ -61,6 +63,20 @@ export default {
   DELETE_POST_SELF: ({ commit, dispatch, state }, { id }) => {
     return deletePostSelf(id)
   },
+  GET_FOLLOWING_BY_RESOURCE: ({ commit, dispatch, state }, { params }) => {
+    return getFollowingByResource({ params }).then(({ status, body }) => {
+      if (status === 200) {
+        commit('SET_FOLLOWING_BY_RESOURCE', { following: body })
+      }
+    })
+  },
+  GET_FOLLOWING_BY_USER: ({ commit, dispatch, state }, params) => {
+    return getFollowingByUser(params).then(({ status, body }) => {
+      if (status === 200) {
+        commit('SET_FOLLOWING_BY_USER', { following: body })
+      }
+    })
+  },
   GET_MEMBERS: ({ commit, dispatch, state }, { params }) => {
     return getMembers({ params }).then(({ status, body }) => {
       if (status === 200) {
@@ -94,7 +110,6 @@ export default {
   },
   GET_USER_POSTS: ({ commit, dispatch, state }, { params }) => {
     return getPosts({ params }).then(({ status, body }) => {
-      console.info('params', params)
       if (status === 200) {
         if (params.where.active) {
           commit('SET_USER_POSTS_DRAFT', { posts: body })

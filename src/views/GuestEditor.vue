@@ -101,6 +101,20 @@
     return store.dispatch('DELETE_POST', { id: id })
   }
 
+  const fetchFollowing = (store, params) => {
+    if (params.subject) {
+      return store.dispatch('GET_FOLLOWING_BY_USER', {
+        subject: params.subject,
+        resource: params.resource
+      })
+    } else {
+      return store.dispatch('GET_FOLLOWING_BY_RESOURCE', {
+        resource: params.resource,
+        ids: params.ids
+      })
+    }
+  }
+
   export default {
     name: 'GuestEditor',
     components: {
@@ -161,7 +175,8 @@
             author: _.get(this.profile, [ 'id' ]),
             active: POST_ACTIVE.draft
           }
-        })
+        }),
+        fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'post' })
       ])
       
     },
