@@ -7,7 +7,7 @@ const router = express.Router()
 const superagent = require('superagent')
 
 const MongoClient = require('mongodb').MongoClient
-const mongourl = 'mongodb://localhost:27017'
+const mongourl = config.TALK_DB
 
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
 
