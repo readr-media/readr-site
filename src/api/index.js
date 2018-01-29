@@ -140,6 +140,40 @@ export function deletePostSelf (id) {
   return _doDelete(url)
 }
 
+export function getFollowingByResource (params) {
+  let url = `${host}/api/following/byresource`
+  return new Promise((resolve, reject) => {
+    superagent
+      .get(url)
+      .send(params)
+      .set('Authorization', `Bearer ${getToken()}`)
+      .end(function (err, res) {
+        if (err) {
+          reject(err)
+        } else {
+          resolve({ status: res.status, body: camelizeKeys(res.body) })
+        }
+      })
+  })
+}
+
+export function getFollowingByUser (params) {
+  let url = `${host}/api/following/byuser`
+  return new Promise((resolve, reject) => {
+    superagent
+      .get(url)
+      .set('Authorization', `Bearer ${getToken()}`)
+      .query(params)
+      .end(function (err, res) {
+        if (err) {
+          reject(err)
+        } else {
+          resolve({ status: res.status, body: camelizeKeys(res.body) })
+        }
+      })
+  })
+}
+
 export function getDisposableToken (type) {
   const url = `${host}/api/token`
   return new Promise((resolve, reject) => {

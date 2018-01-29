@@ -1,7 +1,7 @@
 <template>
   <section class="postListDetailed">
     <div class="postListDetailed__heading">
-      <h1>未提交評論記錄</h1>
+      <h1 v-text="wording.WORDING_POSTLIST_DRAFT_RECORD"></h1>
     </div>
     <div v-for="p in posts" :key="p.id" class="postListDetailed__post">
       <div class="postListDetailed__post--titleBox">
@@ -20,7 +20,8 @@
   </section>
 </template>
 <script>
-  import { 
+  import {
+    WORDING_POSTLIST_DRAFT_RECORD,
     WORDING_POSTLISTDETAILED_DELETE,
     WORDING_POSTLISTDETAILED_EDIT
   } from '../constants'
@@ -37,6 +38,7 @@
     data () {
       return {
         wording: {
+          WORDING_POSTLIST_DRAFT_RECORD,
           WORDING_POSTLISTDETAILED_DELETE,
           WORDING_POSTLISTDETAILED_EDIT
         }

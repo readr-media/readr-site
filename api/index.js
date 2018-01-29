@@ -63,7 +63,6 @@ router.use(bodyParser.json())
 const basicGetRequst = (url, req, res, cb) => {
   superagent
   .get(url)
-  .send(req.body)
   .end((err, response) => {
     cb && cb(err, response)
   })
@@ -268,6 +267,9 @@ router.all('/post', [ authVerify, authorize ], function(req, res, next) {
 router.all('/posts', [ authVerify, authorize ], function(req, res, next) {
   next()
 })
+router.all('/following', [ authVerify, authorize ], function(req, res, next) {
+  next()
+})
 
 
 /**
@@ -342,6 +344,40 @@ router.get('/public-posts', (req, res) => {
     res.status(500).send(err)
     console.error(`error during fetch data from : ${url}`)
     console.error(err)
+  })
+})
+
+router.get('/following/byuser', authVerify, (req, res) => {
+  const url = `${apiHost}/following/byuser`
+  superagent
+  .get(url)
+  .send(req.query)
+  .end((err, response) => {
+    if (!err && response) {
+      const resData = JSON.parse(response.text)
+      return res.json(resData)
+    } else {
+      res.json(err)
+      console.error(`error during fetch data from : ${url}`)
+      console.error(err)  
+    }
+  })
+})
+
+router.get('/following/byresource', authVerify, (req, res) => {
+  const url = `${apiHost}/following/byresource`
+  superagent
+  .get(url)
+  .send(req.query)
+  .end((err, response) => {
+    if (!err && response) {
+      const resData = JSON.parse(response.text)
+      return res.json(resData)
+    } else {
+      res.json(err)
+      console.error(`error during fetch data from : ${url}`)
+      console.error(err)  
+    }
   })
 })
 
@@ -591,7 +627,7 @@ router.put('/post', authVerify, (req, res) => {
   if (!req.body.author) {
     return res.status(403).send('Forbidden. No right to access.').end()
   }
-  if (req.body.author !== req.user.id && (req.user.role !== 9 && req.user.role !== 3)) {
+  if (req.body.author !== req.user.id && req.user.role !== 9 && req.user.role !== 3) {
     return res.status(403).send('Forbidden. No right to access.').end()
   }
   const url = `${apiHost}${req.url}`

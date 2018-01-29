@@ -2,6 +2,12 @@
 const { camelize } = require('humps')
 
 export default {
+  SET_FOLLOWING_BY_RESOURCE: (state, { following }) => {
+    state['followingByResource'] = following
+  },
+  SET_FOLLOWING_BY_USER: (state, { following }) => {
+    state['followingByUser'] = following
+  },
   SET_LOGGEIN_STATUS: (state, { status, body }) => {
     state['isLoggedIn'] = body
   },
