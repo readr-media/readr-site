@@ -15,8 +15,9 @@
           </base-control-bar>
           <template v-if="activePanel === 'record'">
             <section class="editor__record">
-              <app-tab :tabs="tabs">
+              <app-tab :tabs="tabs" @changeTab="$_editor_tabHandler">
                 <post-list-tab slot="0" :posts="postsUser"></post-list-tab>
+                <following-list-tab slot="1" :followingByUser="followingByUser" @changeResource="$_editor_followingHandler"></following-list-tab>
               </app-tab>
             </section>
           </template>
@@ -84,6 +85,7 @@
   import AppAsideNav from '../components/AppAsideNav.vue'
   import AppHeader from '../components/AppHeader.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
+  import FollowingListInTab from '../components/FollowingListInTab.vue'
   import PaginationNav from '../components/PaginationNav.vue'
   import PostList from '../components/PostList.vue'
   import PostListDetailed from '../components/PostListDetailed.vue'
@@ -157,6 +159,7 @@
       'app-tab': Tab,
       'base-control-bar': TheBaseControlBar,
       'base-light-box': BaseLightBox,
+      'following-list-tab': FollowingListInTab,
       'pagination-nav': PaginationNav,
       'post-list': PostList,
       'post-list-detailed': PostListDetailed,
@@ -184,6 +187,9 @@
       }
     },
     computed: {
+      followingByUser () {
+        return _.get(this.$store, [ 'state', 'followingByUser' ], [])
+      },
       posts () {
         return _.get(this.$store, [ 'state', 'posts', 'items' ], [])
       },
@@ -210,7 +216,7 @@
             active: POST_ACTIVE.draft
           }
         }),
-        fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'post' })
+        fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'member' })
       ])
     },
     methods: {
@@ -232,6 +238,9 @@
       },
       $_editor_editDraft () {
         this.showDraftList = true
+      },
+      $_editor_followingHandler (resource) {
+        fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: resource })
       },
       $_editor_openPanel (panel) {
         this.activePanel = panel
@@ -269,6 +278,17 @@
             })
         }
       },
+      $_editor_showAlert (id) {
+        this.post = _.find(this.posts, { 'id': id })
+        this.postActive = 0
+        this.isCompleted = false
+        this.showAlert = true
+      },
+      $_editor_tabHandler (tab) {
+        if (tab === 1) {
+          fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'member' })
+        }
+      },
       $_editor_textEditorHandler (showEditor, action, id) {
         this.isCompleted = false
         this.post = _.find(this.posts, { 'id': id }) || {}
@@ -286,12 +306,6 @@
           this.post = {}
           this.$_editor_updatePostList()
         }
-      },
-      $_editor_showAlert (id) {
-        this.post = _.find(this.posts, { 'id': id })
-        this.postActive = 0
-        this.isCompleted = false
-        this.showAlert = true
       },
       $_editor_updatePostList (params = {}) {
         this.page = params.page

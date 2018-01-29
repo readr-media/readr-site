@@ -323,11 +323,15 @@ router.get('/following/byuser', authVerify, (req, res) => {
   .end((err, response) => {
     if (!err && response) {
       const resData = JSON.parse(response.text)
-      return res.json(resData)
+      res.json(resData)
     } else {
-      res.json(err)
-      console.error(`error during fetch data from : ${url}`)
-      console.error(err)  
+      if (err.status === 404) {
+        res.status(200).json([])
+      } else {
+        res.json(err)
+        console.error(`error during fetch data from : ${url}`)
+        console.error(err)  
+      }
     }
   })
 })
