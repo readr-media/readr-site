@@ -10,6 +10,13 @@
 </template>
 <script>
   export default {
+    name: 'AppTab',
+    props: [ 'tabs' ],
+    data () {
+      return {
+        activeItem: 0
+      }
+    },
     computed: {
       tabStyle () {
         return {
@@ -17,19 +24,17 @@
         }
       }
     },
-    data () {
-      return {
-        activeItem: 0
+    watch: {
+      activeItem (val) {
+        this.$emit('changeTab', val)
       }
     },
-    name: '',
+    mounted () {},
     methods: {
       navClickHandler (itemIndex) {
         this.activeItem = itemIndex
       }
-    },
-    mounted () {},
-    props: [ 'tabs' ]
+    }
   }
 </script>
 <style lang="stylus" scoped>
