@@ -45,6 +45,20 @@
   import HomeListMain from '../components/home/HomeListMain.vue'
   import HomeListAside from '../components/home/HomeListAside.vue'
 
+  const fetchFollowing = (store, params) => {
+    if (params.subject) {
+      return store.dispatch('GET_FOLLOWING_BY_USER', {
+        subject: params.subject,
+        resource: params.resource
+      })
+    } else {
+      return store.dispatch('GET_FOLLOWING_BY_RESOURCE', {
+        resource: params.resource,
+        ids: params.ids
+      })
+    }
+  }
+
   export default {
     components: {
       // 'app-header': AppHeader,
@@ -66,6 +80,9 @@
     mounted () {
       // console.log('currentUser', currentUser())
       // console.log('isLoggedIn', isLoggedIn())
+      if (this.$store.state.isLoggedIn) {
+        fetchFollowing(this.$store, { subject: _.get(this.$store.state.profile, [ 'id' ]), resource: 'post' })
+      }
     }
   }
 </script>
@@ -84,6 +101,7 @@
       position sticky
       // position fixed
       top 60px
+      z-index 999
     &__main
       margin-left 30px
       display flex

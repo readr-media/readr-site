@@ -19,6 +19,27 @@ export function currEnv () {
   }
 }
 
+export function dateDiffFromNow (date) {
+  const d1 = Math.floor(Date.parse(date) / 1000)
+  const d2 = Math.floor(Date.now() / 1000)
+  const diff = d2 - d1
+  const hour = Math.floor(diff / 3600)
+  const min = Math.floor((diff - hour * 3600) / 60)
+  const sec = diff - hour * 3600 - min * 60
+  const day = Math.floor(hour / 24)
+  if (day !== 0) {
+    return `${day} 天`
+  } else if (hour !== 0) {
+    return `${hour} 小時`
+  } else if (min !== 0) {
+    return `${min} 分鐘`
+  } else if (sec !== 0) {
+    return `${sec} 秒`
+  } else {
+    return `剛剛`
+  }
+}
+
 export function getHost () {
   const browser = typeof window !== 'undefined'
   if (browser) {

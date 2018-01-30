@@ -6,7 +6,7 @@ const { ENDPOINT_SECURE, SCOPES } = require('./config')
 const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT } = require('./config')
 const { camelizeKeys } = require('humps')
 const { constructScope, fetchPermissions } = require('./services/perm')
-const { initBucket, makeFilePublic, uploadFileToBucket, deleteFileFromBucket } = require('./gcs.js')
+const { initBucket, makeFilePublic, uploadFileToBucket, deleteFileFromBucket, publishAction } = require('./gcs.js')
 const { processImage } = require('./sharp.js')
 const Cookies = require('cookies')
 const GoogleAuth = require('google-auth-library')
@@ -317,6 +317,9 @@ router.get('/public-posts', (req, res) => {
 
 router.get('/following/byuser', authVerify, (req, res) => {
   const url = `${apiHost}/following/byuser`
+  // console.log('---------------------------------------------------------')
+  // console.log(req.query)
+  // console.log('---------------------------------------------------------')
   superagent
   .get(url)
   .send(req.query)
@@ -587,6 +590,10 @@ router.post('/meta', authVerify, (req, res) => {
     console.error(`error during fetch data from : ${url}`)
     console.error(err)
   })
+})
+
+router.post('/publish-action', (req, res) => {
+  publishAction(req.body)
 })
 
 /**
