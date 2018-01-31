@@ -11,12 +11,19 @@
 <script>
 import HomeArticleAside from './HomeArticleAside.vue'
 
-const fetchPosts = (store, id) => {
+const DEFAULT_MODE = 'set'
+const DEFAULT_CATEGORY = 'hot'
+const MAXRESULT = 10
+const DEFAULT_PAGE = 1
+const DEFAULT_SORT = '-updated_at'
+const fetchPosts = (store, { mode, category, max, page, sort }) => {
   return store.dispatch('GET_PUBLIC_POSTS', {
     params: {
-      where: {
-        author: id
-      }
+      mode: mode || DEFAULT_MODE,
+      category: category || DEFAULT_CATEGORY,
+      max_result: max || MAXRESULT,
+      page: page || DEFAULT_PAGE,
+      sort: sort || DEFAULT_SORT
     }
   })
 }
@@ -27,11 +34,11 @@ export default {
   },
   computed: {
     posts () {
-      return this.$store.state.publicPosts.items
+      return this.$store.state.publicPostsHot.items
     }
   },
   mounted () {
-    fetchPosts(this.$store, 'id')
+    fetchPosts(this.$store, {})
   }
 }
 </script>

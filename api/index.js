@@ -117,8 +117,6 @@ const fetchPublicPost = (url, req) => {
         resolve(camelizeKeys(res.body))
       } else {
         reject(err)
-        console.error(`error during fetch data from : ${url}`)
-        console.error(err) 
       }
     })
   })
@@ -302,24 +300,27 @@ router.get('/status', authVerify, function(req, res) {
 })
 
 router.get('/public-posts', (req, res) => {
-  const url = '/posts'
+  const url = req.url.replace('public-posts', 'posts')
   fetchPublicPost(url, req)
   .then((response) => {
     // next()
     res.status(200).send(response)
   })
   .catch((err) => {
-    res.status(500).send(err)
-    console.error(`error during fetch data from : ${url}`)
-    console.error(err)
+    if (err.status === 404) {
+      res.status(200).send('not found')
+      // console.error(`public post not found from : ${url}`)
+      // console.error(err)
+    } else {
+      res.status(500).send(err)
+      console.error(`error during fetch data from : ${url}`)
+      console.error(err)
+    }
   })
 })
 
 router.get('/following/byuser', authVerify, (req, res) => {
   const url = `${apiHost}/following/byuser`
-  // console.log('---------------------------------------------------------')
-  // console.log(req.query)
-  // console.log('---------------------------------------------------------')
   superagent
   .get(url)
   .send(req.query)

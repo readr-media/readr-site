@@ -15,10 +15,12 @@ export function createStore () {
       'register-token': '',
       'posts': [],
       'publicPosts': [],
+      'publicPostsHot': [],
       'posts-user': [],
       'posts-user-draft': [],
       'profile': {},
-      'members': []
+      'members': [],
+      'customEditors': []
     },
     actions,
     mutations,

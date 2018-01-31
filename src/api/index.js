@@ -9,7 +9,7 @@ const host = getHost()
 
 function _buildQuery (params = {}) {
   let query = {}
-  const whitelist = [ 'where', 'max_result', 'page', 'sort', 'ids' ]
+  const whitelist = [ 'where', 'max_result', 'page', 'sort', 'ids', 'custom_editor' ]
   whitelist.forEach((ele) => {
     if (params.hasOwnProperty(ele)) {
       if (ele === 'where') {
@@ -40,7 +40,11 @@ function _doFetch (url) {
         reject(err)
       } else {
         // resolve(camelizeKeys(res.body))
-        resolve({ status: res.status, body: camelizeKeys(res.body) })
+        if (res.text === 'not found') {
+          reject(res.text)
+        } else {
+          resolve({ status: res.status, body: camelizeKeys(res.body) })
+        }
       }
     })
   })

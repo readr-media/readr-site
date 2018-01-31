@@ -46,12 +46,21 @@
   import { WORDING_ADMIN_ACCOUNT, WORDING_ADMIN_EMAIL, WORDING_ADMIN_ROLE, WORDING_ADMIN_UPDATE, WORDING_ADMIN_DELETE } from '../../constants'
   import { WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER, WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION, WORDING_ADMIN_NICKNAME, WORDING_ADMIN_GUESTEDITOR } from '../../constants'
   import { WORDING_ADMIN_MEMBER_EDITOR_SET_CONFIRMATION_CUSTOMEDITOR, WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION_CUSTOMEDITOR } from '../../constants'
+  import { CUSTOM_EDITOR_LIMIT } from '../../constants'
   import { FILTER } from '../../constants/admin'
   import { ROLE_MAP } from '../../constants'
   import { getValue } from '../../util/comm'
   import BaseLightBox from '../BaseLightBox.vue'
   import MemberAccountEditor from './MemberAccountEditor.vue'
   import PaginationNav from '../PaginationNav.vue'
+
+  const getCustomEditors = (store, { page, sort }) => {
+    return store.dispatch('GET_MEMBERS', {
+      params: {
+        custom_editor: true
+      }
+    })
+  }
 
   export default {
     components: {
@@ -135,7 +144,7 @@
       setCustomEditorMultiple () {
         this.targMember = _.map(_.filter(this.$refs[ 'checkboxItems' ], (checkbox) => (checkbox.checked)), (checkbox) => (this.members[ checkbox.value ]))
         const exceedMaxCustomEditor = () => {
-          return this.targMember.length > 3
+          return this.targMember.length + (this.$store.state.customEditors.items ? this.$store.state.customEditors.items.length : 0) > CUSTOM_EDITOR_LIMIT
         }
         const canSetCustomEditor = () => {
           return this.targMember.length !== 0 && !_.some(this.targMember, (member) => { return member.role === 1 || member.role === 0 }) && _.every(this.targMember, (member) => { return !member.customEditor })
@@ -183,7 +192,9 @@
         this.$emit('filterChanged')
       }
     },
-    mounted () {}
+    mounted () {
+      getCustomEditors(this.$store, {})
+    }
   }
 </script>
 <style lang="stylus" scoped>

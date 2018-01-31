@@ -1,6 +1,6 @@
 <template>
   <nav class="app-aside-nav">
-    <a href="/"><img class="app-aside-nav__logo" src="/public/icons/readr-logo-dark.png" alt=""></a>
+    <a href="/"><img class="app-aside-nav__logo" src="/public/icons/readr-logo-dark.svg" alt=""></a>
     <ol class="aside-navigation">
       <div class="aside-navigation__section--white">
         <transition name="fade" mode="out-in">
