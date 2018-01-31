@@ -213,6 +213,7 @@ router.use('/initmember', authVerify, function(req, res) {
   })
 })
 router.use('/member', [ authVerify, authorize ], require('./middle/member'))
+router.use('/comment', require('./middle/comment'))
 
 
 /**
