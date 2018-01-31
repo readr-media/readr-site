@@ -40,7 +40,11 @@ function _doFetch (url) {
         reject(err)
       } else {
         // resolve(camelizeKeys(res.body))
-        resolve({ status: res.status, body: camelizeKeys(res.body) })
+        if (res.text === 'not found') {
+          reject(res.text)
+        } else {
+          resolve({ status: res.status, body: camelizeKeys(res.body) })
+        }
       }
     })
   })

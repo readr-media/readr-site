@@ -37,6 +37,9 @@ export default {
   SET_PUBLIC_POSTS: (state, { posts }) => {
     state['publicPosts'] = posts
   },
+  SET_PUBLIC_POSTS_HOT: (state, { posts }) => {
+    state['publicPostsHot'] = posts
+  },
   SET_PROFILE: (state, { profile }) => {
     state['profile'] = profile
   },
@@ -52,6 +55,11 @@ export default {
       const profileKey = camelize(entry[0])
       const profileValue = entry[1]
       state['profile'][profileKey] = profileValue
+    })
+  },
+  UPDATE_PUBLIC_POSTS: (state, { posts }) => {
+    posts['items'].forEach((post) => {
+      state['publicPosts']['items'].push(post)
     })
   }
 }

@@ -106,7 +106,7 @@
     left 0
     top 0
     width 100%
-    z-index 2
+    z-index 999
     > div
       width 100%
       > div

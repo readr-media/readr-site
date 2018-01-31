@@ -17,7 +17,7 @@ export default {
     },
     direction: { // options: up, down, left, right
       type: String,
-      default: 'right' 
+      default: 'down' 
     }
   },
   data () {
@@ -49,7 +49,7 @@ $app-share-button__item
   width 100%
   height 100%
   background-size 100% 100%
-  z-index 998
+  z-index 1
 .app-share-button
   @extends $app-share-button
   &__share-icon
@@ -63,7 +63,7 @@ $app-share-button__item
     background-size 100% 100%
     background-color white
     outline none
-    z-index 999
+    z-index 2
   &__item
     &--fb
       @extends $app-share-button__item
@@ -76,7 +76,7 @@ $app-share-button__item
       background-image url(/public/icons/share-link.png)
   &--toogle
     @extends $app-share-button
-    &.top
+    &.up
       .app-share-button__item--fb
         transform translate3d(0, -40px, 0)
       .app-share-button__item--line
@@ -90,7 +90,7 @@ $app-share-button__item
         transform translate3d(70px, 0, 0)
       .app-share-button__item--link
         transform translate3d(100px, 0, 0)
-    &.bottom
+    &.down
       .app-share-button__item--fb
         transform translate3d(0, 40px, 0)
       .app-share-button__item--line

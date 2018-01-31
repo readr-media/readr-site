@@ -190,7 +190,7 @@
       followingByUser () {
         return _.get(this.$store, [ 'state', 'followingByUser' ], [])
       },
-      posts () {
+      posts () { // kwh posts here
         return _.get(this.$store, [ 'state', 'posts', 'items' ], [])
       },
       postsUser () {

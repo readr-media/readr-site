@@ -89,18 +89,35 @@ export default {
     return getMeta(url)
   },
   GET_POSTS: ({ commit, dispatch, state }, { params }) => {
+    console.log(params)
     return getPosts({ params }).then(({ status, body }) => {
       if (status === 200) {
+        console.log(200)
         commit('SET_POSTS', { posts: body })
       }
     })
   },
   GET_PUBLIC_POSTS: ({ commit, dispatch, state }, { params }) => {
-    return getPublicPosts({ params }).then(({ status, body }) => {
-      if (status === 200) {
-        commit('SET_PUBLIC_POSTS', { posts: body })
-      }
-    })
+    return new Promise((resolve, reject) => {
+      getPublicPosts({ params })
+      .then(({ status, body }) => {
+        if (status === 200) {
+          if (params.mode === 'set') {
+            if (params.category === 'hot') {
+              commit('SET_PUBLIC_POSTS_HOT', { posts: body })
+            } else {
+              commit('SET_PUBLIC_POSTS', { posts: body })
+            }
+          } else if (params.mode === 'update') {
+            commit('UPDATE_PUBLIC_POSTS', { posts: body })
+          }
+        }
+        resolve(status)
+      })
+      .catch((res) => {
+        reject(res)
+      })
+    }) 
   },
   GET_PROFILE: ({ commit, dispatch, state }, { params }) => {
     return getProfile({ params }).then(({ status, body }) => {
