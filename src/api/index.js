@@ -9,7 +9,7 @@ const host = getHost()
 
 function _buildQuery (params = {}) {
   let query = {}
-  const whitelist = [ 'where', 'max_result', 'page', 'sort', 'ids' ]
+  const whitelist = [ 'where', 'max_result', 'page', 'sort', 'ids', 'custom_editor' ]
   whitelist.forEach((ele) => {
     if (params.hasOwnProperty(ele)) {
       if (ele === 'where') {

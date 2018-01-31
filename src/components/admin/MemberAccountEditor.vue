@@ -89,6 +89,13 @@
     })
   }
 
+  const getCustomEditors = (store, { page, sort }) => {
+    return store.dispatch('GET_MEMBERS', {
+      params: {
+        custom_editor: true
+      }
+    })
+  }
 
   export default {
     components: {
@@ -177,13 +184,16 @@
                 this.message = this.wording.WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL + '！'
               } else if (this.action === 'customEditor_set') {
                 this.message = this.wording.WORDING_ADMIN_MEMBER_EDITOR_SET_SUCCESSFUL_CUSTOMEDITOR + '！'
+                getCustomEditors(this.$store, {})
               } else if (this.action === 'customEditor_cancel') {
                 this.message = this.wording.WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL_CUSTOMEDITOR + '！'
+                getCustomEditors(this.$store, {})
               } else {
                 this.message = this.title + this.wording.WORDING_ADMIN_SUCCESS + '！'
               }
               this.$emit('updated')
             } else {
+              console.log(status)
               this.message = this.title + this.wording.WORDING_ADMIN_INFAIL
             }
           }
@@ -201,6 +211,11 @@
                 custom_editor: true
               }).then(callback)
             })
+            // Promise.all(ids.map(id => updateMember(this.$store, { id: id, custom_editor: true })))
+            // .then(rr => {
+            //   this.message = this.wording.WORDING_ADMIN_MEMBER_EDITOR_SET_SUCCESSFUL_CUSTOMEDITOR + '！'
+            //   getCustomEditors(this.$store, {})
+            // })
           } else if (this.action === 'customEditor_cancel') {
             updateMember(this.$store, {
               id: this.id,

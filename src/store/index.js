@@ -19,7 +19,8 @@ export function createStore () {
       'posts-user': [],
       'posts-user-draft': [],
       'profile': {},
-      'members': []
+      'members': [],
+      'customEditors': []
     },
     actions,
     mutations,

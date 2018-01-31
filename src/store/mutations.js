@@ -31,6 +31,9 @@ export default {
   SET_MEMBERS: (state, { members }) => {
     state['members'] = members
   },
+  SET_CUSTOM_EDITORS: (state, { members }) => {
+    state['customEditors'] = members
+  },
   SET_POSTS: (state, { posts }) => {
     state['posts'] = posts
   },

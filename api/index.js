@@ -321,9 +321,6 @@ router.get('/public-posts', (req, res) => {
 
 router.get('/following/byuser', authVerify, (req, res) => {
   const url = `${apiHost}/following/byuser`
-  // console.log('---------------------------------------------------------')
-  // console.log(req.query)
-  // console.log('---------------------------------------------------------')
   superagent
   .get(url)
   .send(req.query)

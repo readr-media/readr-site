@@ -33,6 +33,8 @@ export const SECTIONS_DEFAULT = {
 // Image upload max size 30 MB
 export const IMAGE_UPLOAD_MAX_SIZE = 31457280
 
+export const CUSTOM_EDITOR_LIMIT = 3
+
 // Login and Rigester Page Use
 export const WORDING_EMAIL = '信箱'
 export const WORDING_FORGET_PASSWORD = '忘記密碼？'
