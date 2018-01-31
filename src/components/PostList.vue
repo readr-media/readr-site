@@ -23,7 +23,7 @@
           <td class="postList__nickname" v-text="$_postList_getAuthorId(p)"></td>
           <td class="postList__title" v-text="p.title" @click="$_showPost(p)"></td>
           <td class="postList__status postList--center" v-text="$_postList_getStatus(p)"></td>
-          <td class="postList__update postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_editPost(p.id)" v-text="wording.WORDING_POSTLIST_UPDATE"></button></td>
+          <td class="postList__update postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_editPost(p.id, p.type)" v-text="wording.WORDING_POSTLIST_UPDATE"></button></td>
           <td class="postList__delete postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_deletePost(p.id)" v-text="wording.WORDING_POSTLIST_DELETE"></button></td>
           <td class="postList__sort"></td>
         </tr>
@@ -35,8 +35,8 @@
   </div>
 </template>
 <script>
+  import { POST_ACTIVE, POST_TYPE } from '../../api/config'
   import {
-    POST_ACTIVE,
     WORDING_POSTLIST_ACTIVE,
     WORDING_POSTLIST_ACTIVE_DRAFT,
     WORDING_POSTLIST_ACTIVE_PENDING,
@@ -99,8 +99,12 @@
       $_postList_deletePost (id) {
         this.$emit('deletePost', id)
       },
-      $_postList_editPost (id) {
-        this.$emit('editPost', true, 'edit', id)
+      $_postList_editPost (id, type) {
+        if (type === POST_TYPE.news) {
+          this.$emit('editPost', true, 'edit', POST_TYPE.news, id)
+        } else {
+          this.$emit('editPost', true, 'edit', POST_TYPE.review, id)
+        }
       },
       $_postList_getAuthorId (post) {
         return _.get(post, [ 'author', 'nickname' ])

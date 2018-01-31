@@ -109,11 +109,6 @@ export const WORDING_POSTLIST_ACTIVE_UNPUBLISH = '已下架'
 export const WORDING_POSTLIST_ACTIVE_DRAFT = '草稿'
 export const WORDING_POSTLIST_DRAFT_RECORD = '未提交評論記錄'
 
-// Post list detailed
-
-export const WORDING_POSTLISTDETAILED_DELETE = '刪除'
-export const WORDING_POSTLISTDETAILED_EDIT = '編輯'
-
 // Post editor
 export const WORDING_POSTEDITOR_EDITOR = '編輯器'
 export const WORDING_POSTEDITOR_INPUT_TITLE = '輸入標題'
@@ -137,18 +132,22 @@ export const WORDING_PROFILEEDIT_CONFIRMPASSWORD = '密碼確認'
 export const WORDING_PROFILEEDIT_PERSONAL_OPTIONS = '個人設定'
 export const WORDING_PROFILEEDIT_SAVE = 'SAVE'
 // Control bar
-export const WORDING_CONTROLBAR_ADD_POST = '新增評論'
-export const WORDING_CONTROLBAR_ADD_POST_DIRECTLY = '直接新增'
+export const WORDING_CONTROLBAR_ACCOUNT_MANAGE = '帳號管理'
+export const WORDING_CONTROLBAR_ADD_ACCOUNT = '新增帳號'
+export const WORDING_CONTROLBAR_ADD_DIRECTLY = '直接新增'
+export const WORDING_CONTROLBAR_ADD_NEWS = '新增新聞'
+export const WORDING_CONTROLBAR_ADD_REVIEW = '新增評論'
 export const WORDING_CONTROLBAR_EDIT_DRAFT = '編輯草稿'
 export const WORDING_CONTROLBAR_POST_MANAGE = '文章管理'
-export const WORDING_CONTROLBAR_VIDEO_MANAGE = '影片管理'
 export const WORDING_CONTROLBAR_RECORD_MANAGE = '記錄管理'
-export const WORDING_CONTROLBAR_ADD_ACCOUNT = '新增帳號'
-export const WORDING_CONTROLBAR_ACCOUNT_MANAGE = '帳號管理'
+export const WORDING_CONTROLBAR_VIDEO_MANAGE = '影片管理'
+
 // Tab
-export const WORDING_TAB_POST_RECORD = '評論記錄'
-export const WORDING_TAB_FOLLOW_RECORD = '追蹤記錄'
 export const WORDING_TAB_COMMENT_RECORD = '留言記錄'
+export const WORDING_TAB_FOLLOW_RECORD = '追蹤記錄'
+export const WORDING_TAB_REVIEW_RECORD = '評論記錄'
+export const WORDING_TAB_NEWS_RECORD = '新聞記錄'
+
 // Alert Paenl
 export const WORDING_ALERTPANEL_AUTHOR = '作者'
 export const WORDING_ALERTPANEL_TITLE = '標題'

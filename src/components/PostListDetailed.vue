@@ -7,23 +7,24 @@
       <div class="postListDetailed__post--titleBox">
         <h2 v-text="p.title"></h2>
         <div class="postListDetailed__control--desktop">
-          <button @click="$_postListDetailed_editPost(p.id)" v-text="wording.WORDING_POSTLISTDETAILED_EDIT"></button>
-          <button @click="$_postListDetailed_deletePost(p.id)" v-text="wording.WORDING_POSTLISTDETAILED_DELETE"></button>
+          <button @click="$_postListDetailed_editPost(p.id, p.type)" v-text="wording.WORDING_POSTLIST_EDIT"></button>
+          <button @click="$_postListDetailed_deletePost(p.id)" v-text="wording.WORDING_POSTLIST_DELETE"></button>
         </div>
       </div>
       <p class="postListDetailed__post--descr" v-text="$_postListDetailed_getDescr(p.content)"></p>
       <div class="postListDetailed__control--mobile">
-        <button @click="$_postListDetailed_editPost(p.id)" v-text="wording.WORDING_POSTLISTDETAILED_EDIT"></button>
-        <button @click="$_postListDetailed_deletePost(p.id)" v-text="wording.WORDING_POSTLISTDETAILED_DELETE"></button>
+        <button @click="$_postListDetailed_editPost(p.id, p.type)" v-text="wording.WORDING_POSTLIST_EDIT"></button>
+        <button @click="$_postListDetailed_deletePost(p.id)" v-text="wording.WORDING_POSTLIST_DELETE"></button>
       </div>
     </div>
   </section>
 </template>
 <script>
+  import { POST_TYPE } from '../../api/config'
   import {
+    WORDING_POSTLIST_DELETE,
     WORDING_POSTLIST_DRAFT_RECORD,
-    WORDING_POSTLISTDETAILED_DELETE,
-    WORDING_POSTLISTDETAILED_EDIT
+    WORDING_POSTLIST_EDIT
   } from '../constants'
   import _ from 'lodash'
 
@@ -38,9 +39,9 @@
     data () {
       return {
         wording: {
+          WORDING_POSTLIST_DELETE,
           WORDING_POSTLIST_DRAFT_RECORD,
-          WORDING_POSTLISTDETAILED_DELETE,
-          WORDING_POSTLISTDETAILED_EDIT
+          WORDING_POSTLIST_EDIT
         }
       }
     },
@@ -48,8 +49,12 @@
       $_postListDetailed_deletePost (id) {
         this.$emit('deletePost', id)
       },
-      $_postListDetailed_editPost (id) {
-        this.$emit('editPost', true, 'edit', id)
+      $_postListDetailed_editPost (id, type) {
+        if (type === POST_TYPE.news) {
+          this.$emit('editPost', true, 'edit', POST_TYPE.news, id)
+        } else if (type === POST_TYPE.review) {
+          this.$emit('editPost', true, 'edit', POST_TYPE.review, id)
+        }
       },
       $_postListDetailed_getDescr (content) {
         const parser = new DOMParser()

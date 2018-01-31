@@ -5,17 +5,36 @@
       <div class="editor__heading--switch" :class="{ active: showHtml }" @click="$_editor_toggleHtml">&lt; / &gt;</div>
     </div>
     <div class="editor__main">
-      <div ref="quillEditor" v-model="content" class="quill-editor" v-quill:quillEditor="editorOption"></div>
+      <div v-show="type === config.type.review">
+        <div
+          ref="quillReviewEditor"
+          :content="contentReview"
+          class="quill-editor review"
+          v-quill:quillReviewEditor="editorReviewOption"
+          @change="onEditorChange($event)">
+        </div>
+      </div>
+      <div v-show="type === config.type.news">
+        <div
+          ref="quillNewsEditor"
+          :content="contentNews"
+          class="quill-editor news"
+          v-quill:quillNewsEditor="editorNewsOption"
+          @change="onEditorChange($event)">
+        </div>
+      </div>
       <div v-show="showHtml" class="editor__main--html" v-text="content"></div>
     </div>
   </section>
 </template>
 
 <script>
-import { WORDING_POSTEDITOR_EDITOR } from '../constants'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
+
+import { POST_TYPE } from '../../api/config'
+import { WORDING_POSTEDITOR_EDITOR } from '../constants'
 
 const uploadImage = (store, file) => {
   return store.dispatch('UPLOAD_IMAGE', { file, type: 'post' })
@@ -23,16 +42,46 @@ const uploadImage = (store, file) => {
 
 export default {
   name: 'TextEditor',
+  props: {
+    contentEdit: {
+      default: ''
+    },
+    needReset: {
+      type: Boolean
+    },
+    type: {
+      type: Number,
+      required: true
+    }
+  },
   data () {
     return {
+      config: {
+        type: POST_TYPE
+      },
       content: '',
-      editorOption: {
+      contentNews: '',
+      contentReview: '',
+      editorNewsOption: {
+        formats: [ 'bold', 'italic', 'blockquote', 'code-block', 'link', 'image', 'video' ],
         modules: {
           toolbar: {
             container: [ [ 'bold', 'italic', 'blockquote', 'code-block' ], [ 'link', 'image', 'video' ] ],
             handlers: {
               'image': this.$_editor_imageHandler
             }
+          },
+          clipboard: {
+            matchVisual: false
+          }
+        }
+      },
+      editorReviewOption: {
+        formats: [],
+        modules: {
+          toolbar: false,
+          clipboard: {
+            matchVisual: false
           }
         }
       },
@@ -42,32 +91,39 @@ export default {
       }
     }
   },
-  props: {
-    contentEdit: {
-      default: ''
-    },
-    needReset: {
-      type: Boolean
-    }
-  },
   watch: {
     content () {
       this.$emit('updateContent', this.content)
     },
     contentEdit (val) {
       this.content = val
+      if (this.type === POST_TYPE.review) {
+        this.contentReview = val
+      } else if (this.type === POST_TYPE.news) {
+        this.contentNews = val
+      }
     },
     needReset () {
       this.content = ''
+      this.contentNews = ''
+      this.contentReview = ''
     }
   },
   methods: {
+    onEditorChange(event) {
+      if (this.type === POST_TYPE.review) {
+        this.contentReview = event.html
+      } else if (this.type === POST_TYPE.news) {
+        this.contentNews = event.html
+      }
+      this.content = event.html
+    },
     $_editor_imageHandler () {
       this.$_editor_selectImage()
     },
     $_editor_insertToEditor (url) {
-      const range = this.quillEditor.getSelection()
-      this.quillEditor.insertEmbed(range.index, 'image', url)
+      const range = this.quillNewsEditor.getSelection()
+      this.quillNewsEditor.insertEmbed(range.index, 'image', url)
     },
     $_editor_saveImage (file) {
       const fd = new FormData()
@@ -77,7 +133,7 @@ export default {
           this.$_editor_insertToEditor(res.body.url)
         })
         .catch((err) => {
-          console.log(err)
+          console.error(err)
         })
     },
     $_editor_selectImage () {
@@ -95,13 +151,10 @@ export default {
     $_editor_toggleHtml () {
       this.showHtml = !this.showHtml
       if (this.showHtml) {
-        this.$refs.quillEditor.classList.add('half')
+        this.$refs.quillNewsEditor.classList.add('half')
       } else {
-        this.$refs.quillEditor.classList.remove('half')
+        this.$refs.quillNewsEditor.classList.remove('half')
       }
-    },
-    applyTextEdit (e) {
-      this.content = e.event.target.innerHTML
     }
   }
 }
@@ -166,22 +219,13 @@ export default {
       border-right 1px solid #d3d3d3
       overflow-x hidden
 
-  // &__result
-  //   width 100%
-  //   min-height 125px
-  //   padding 20px
-  //   background-color #fff
-  // &__markdown
-  //   width 100%
-  //   min-height 125px
-  //   padding 20px
-  //   background-color #fff
-  //   border 1px solid #000
 @media (min-width 950px)
   .editor
     height 400px
-    .quill-editor
+    .quill-editor.news
       height 338px
+    .quill-editor.review
+      height 380px
     &__main
       height 380px
 

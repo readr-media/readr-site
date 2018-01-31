@@ -3,15 +3,15 @@
     <div v-for="p in posts" :key="p.id" class="postListInTab__post">
       <div
         class="postListInTab__active"
-        :class="[ p.active === postConfig.draft ? 'draft' : '' ]"
+        :class="[ p.active === config.active.draft ? 'draft' : '' ]"
         v-text="$_postListInTab_getActive(p)">
       </div>
       <div class="postListInTab__content">
         <div class="postListInTab__title">
           <h2 v-text="p.title"></h2>
-          <div v-if="!(!$can('editOtherPost') && p.active !== postConfig.draft)" class="postListInTab__control--desktop">
-            <button class="postListInTab__btn" v-text="wording.WORDING_POSTLIST_EDIT"></button>
-            <button class="postListInTab__btn" v-text="wording.WORDING_POSTLIST_DELETE"></button>
+          <div v-if="!(!$can('editOtherPost') && p.active !== config.active.draft)" class="postListInTab__control--desktop">
+            <button class="postListInTab__btn" @click="$_postListInTab_editPost(p.id, p.type)" v-text="wording.WORDING_POSTLIST_EDIT"></button>
+            <button class="postListInTab__btn" @click="$_postListInTab_deletePost(p.id)" v-text="wording.WORDING_POSTLIST_DELETE"></button>
           </div>
         </div>
         <p class="postListInTab__descr" v-text="$_postListInTab_getDescr(p.content)"></p>
@@ -20,8 +20,8 @@
   </section>
 </template>
 <script>
+  import { POST_ACTIVE, POST_TYPE } from '../../api/config'
   import {
-    POST_ACTIVE,
     WORDING_POSTLIST_DELETE,
     WORDING_POSTLIST_EDIT,
     WORDING_POSTLIST_ACTIVE_PUBLISH,
@@ -41,6 +41,9 @@
     },
     data () {
       return {
+        config: {
+          active: POST_ACTIVE,
+        },
         postConfig: POST_ACTIVE,
         wording: {
           WORDING_POSTLIST_DELETE,
@@ -53,6 +56,16 @@
       }
     },
     methods: {
+      $_postListInTab_deletePost (id) {
+        this.$emit('deletePost', id)
+      },
+      $_postListInTab_editPost (id, type) {
+        if (type === POST_TYPE.news) {
+          this.$emit('editPost', true, 'edit', POST_TYPE.news, id)
+        } else {
+          this.$emit('editPost', true, 'edit', POST_TYPE.review, id)
+        }
+      },
       $_postListInTab_getActive (post) {
         switch (post.active) {
           case POST_ACTIVE.active:

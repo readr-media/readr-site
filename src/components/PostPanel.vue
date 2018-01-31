@@ -4,6 +4,7 @@
     <text-editor
       :contentEdit="post.content"
       :needReset="resetToggle"
+      :type="type"
       @updateContent="$_postPanelEdit_updateContent">
     </text-editor>
     <div class="postPanelEdit__input postPanelEdit__link">
@@ -53,21 +54,21 @@
       <button
         class="postPanelEdit__btn"
         :disabled="(action === 'add') && isEmpty"
-        @click="$_postPanelEdit_submit(postConfig.draft)"
+        @click="$_postPanelEdit_submit(config.active.draft)"
         v-text="wording.WORDING_POSTEDITOR_SAVE_DRAFT">
       </button>
       <button
         v-if="!$can('publishPost')"
         class="postPanelEdit__btn dark"
         :disabled="(action === 'add') && isEmpty"
-        @click="$_postPanelEdit_submit(postConfig.pending)"
+        @click="$_postPanelEdit_submit(config.active.pending)"
         v-text="wording.WORDING_POSTEDITOR_SAVE_PENDING">
       </button>
       <button
         v-if="$can('publishPost')"
         class="postPanelEdit__btn dark"
         :disabled="(action === 'add') && isEmpty"
-        @click="$_postPanelEdit_submit(postConfig.active)"
+        @click="$_postPanelEdit_submit(config.active.active)"
         v-text="wording.WORDING_POSTEDITOR_PUBLISH">
       </button>
     </div>
@@ -76,7 +77,6 @@
 <script>
   import { 
     IMAGE_UPLOAD_MAX_SIZE,
-    POST_ACTIVE,
     WORDING_POSTEDITOR_DELETE,
     WORDING_POSTEDITOR_INPUT_TITLE,
     WORDING_POSTEDITOR_LINK,
@@ -89,6 +89,7 @@
     WORDING_POSTEDITOR_SAVE_PENDING,
     WORDING_POSTEDITOR_UPLOAD
   } from '../constants'
+  import { POST_ACTIVE } from '../../api/config'
   import _ from 'lodash'
   import AlertPanel from './AlertPanel.vue'
   import BaseLightBox from './BaseLightBox.vue'
@@ -135,14 +136,20 @@
       },
       showLightBox: {
         default: false
+      },
+      type: {
+        type: Number,
+        required: true
       }
     },
     data () {
       return {
         active: undefined,
+        config: {
+          active: POST_ACTIVE
+        },
         dateFormat: 'yyyy/MM/d',
         needFetchMeta: false,
-        postConfig: POST_ACTIVE,
         resetToggle: true,
         showAlert: false,
         wording: {
@@ -171,7 +178,7 @@
       },
       postId () {
         return _.get(this.post, [ 'id' ])
-      },
+      }
     },
     watch: {
       showAlert (val) {
@@ -232,6 +239,7 @@
               .then(() => {
                 if (this.action === 'add') {
                   params.author = _.get(this.$store.state, [ 'profile', 'id' ])
+                  params.type = this.type
                   if (this.active === POST_ACTIVE.active) {
                     this.$emit('showAlert', true, active, false)
                   } else {
@@ -262,6 +270,7 @@
         } else {
           if (this.action === 'add') {
             params.author = _.get(this.$store.state, [ 'profile', 'id' ])
+            params.type = this.type
             if (this.active === POST_ACTIVE.active) {
               this.$emit('showAlert', true, active, false)
             } else {
