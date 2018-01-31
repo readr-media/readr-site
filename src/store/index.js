@@ -9,18 +9,20 @@ Vue.use(Vuex)
 export function createStore () {
   return new Vuex.Store({
     state: {
+      'customEditors': [],
       'followingByResource': [],
       'followingByUser': [],
       'isLoggedIn': false,
-      'register-token': '',
+      'members': [],
+      'newsByUser': [],
+      'newsDraftByUser': [],
       'posts': [],
+      'profile': {},
       'publicPosts': [],
       'publicPostsHot': [],
-      'posts-user': [],
-      'posts-user-draft': [],
-      'profile': {},
-      'members': [],
-      'customEditors': []
+      'register-token': '',
+      'reviewsByUser': [],
+      'reviewsDraftByUser': []
     },
     actions,
     mutations,

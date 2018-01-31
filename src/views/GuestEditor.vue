@@ -9,21 +9,45 @@
         <main class="main-container">
           <app-about :profile="profile"></app-about>
           <base-control-bar
-            @addPost="$_guestEditor_editorHandler(true, 'add')"
-            @editDraft="$_guestEditor_editDraft"
+            @addNews="$_guestEditor_textEditorHandler(true, 'add', config.type.news)"
+            @addReview="$_guestEditor_textEditorHandler(true, 'add', config.type.review)"
+            @editNews="$_guestEditor_showDraftList(config.type.news)"
+            @editReview="$_guestEditor_showDraftList(config.type.review)"
             @openPanel="$_guestEditor_openPanel">
           </base-control-bar>
           <template v-if="activePanel === 'record'">
             <section class="guestEditor__record">
               <app-tab :tabs="tabs" @changeTab="$_guestEditor_tabHandler">
-                <post-list-tab slot="0" :posts="postsUser"></post-list-tab>
-                <following-list-tab slot="1" :followingByUser="followingByUser" @changeResource="$_guestEditor_followingHandler"></following-list-tab>
+                <post-list-tab
+                  slot="0"
+                  :posts="reviewsByUser"
+                  @deletePost="$_guestEditor_showAlert"
+                  @editPost="$_guestEditor_textEditorHandler">
+                </post-list-tab>
+                <post-list-tab
+                  slot="1"
+                  :posts="newsByUser"
+                  @deletePost="$_guestEditor_showAlert"
+                  @editPost="$_guestEditor_textEditorHandler">
+                </post-list-tab>
+                <following-list-tab
+                  slot="2"
+                  :followingByUser="followingByUser"
+                  @changeResource="$_guestEditor_followingHandler">
+                </following-list-tab>
               </app-tab>
             </section>
           </template>
-          <base-light-box :showLightBox.sync="showDraftList">
+          <base-light-box :showLightBox.sync="showReviewsDraftList">
             <post-list-detailed
-              :posts="postsUserDraft"
+              :posts="newsDraftByUser"
+              @editPost="$_guestEditor_textEditorHandler"
+              @deletePost="$_guestEditor_showAlert">
+            </post-list-detailed>
+          </base-light-box>
+          <base-light-box :showLightBox.sync="showNewsDraftList">
+            <post-list-detailed
+              :posts="reviewsDraftByUser"
               @editPost="$_guestEditor_textEditorHandler"
               @deletePost="$_guestEditor_showAlert">
             </post-list-detailed>
@@ -34,9 +58,9 @@
               :isCompleted="isCompleted"
               :post.sync="post"
               :showLightBox="showEditor"
-              @closeLightBox="$_guestEditor_editorHandler(false)"
-              @showAlert="$_guestEditor_alertHandler"
-              @updatePostList="$_guestEditor_updatePostList">
+              :type="postType"
+              @closeLightBox="$_guestEditor_textEditorHandler(false)"
+              @showAlert="$_guestEditor_alertHandler">
             </post-panel>
           </base-light-box>
           <base-light-box :isAlert="true" :showLightBox.sync="showAlert">
@@ -47,7 +71,7 @@
               :post="post"
               :showLightBox="showAlert"
               @closeAlert="$_guestEditor_alertHandler"
-              @closeEditor="$_guestEditor_editorHandler(false)"
+              @closeEditor="$_guestEditor_textEditorHandler(false)"
               @deletePost="$_guestEditor_deletePost">
             </alert-panel>
           </base-light-box>
@@ -57,12 +81,13 @@
   </div>
 </template>
 <script>
+  import { POST_ACTIVE, POST_TYPE } from '../../api/config'
   import {
-    POST_ACTIVE,
     SECTIONS_DEFAULT,
+    WORDING_TAB_REVIEW_RECORD,
+    WORDING_TAB_NEWS_RECORD,
     WORDING_TAB_COMMENT_RECORD,
-    WORDING_TAB_FOLLOW_RECORD,
-    WORDING_TAB_POST_RECORD
+    WORDING_TAB_FOLLOW_RECORD
   } from '../constants'
   import _ from 'lodash'
   import About from '../components/About.vue'
@@ -83,13 +108,13 @@
   const DEFAULT_PAGE = 1
   const DEFAULT_SORT = '-updated_at'
 
-  const fetchUserPosts = (store, {
+  const fetchPostsByUser = (store, {
     maxResult = MAXRESULT,
     page = DEFAULT_PAGE,
     sort = DEFAULT_SORT,
     where = {}
   }) => {
-    return store.dispatch('GET_USER_POSTS', {
+    return store.dispatch('GET_POSTS_BY_USER', {
       params: {
         max_result: maxResult,
         page: page,
@@ -138,16 +163,26 @@
       return {
         action: undefined,
         activePanel: 'record',
+        config: {
+          active: POST_ACTIVE,
+          type: POST_TYPE
+        },
         isCompleted: false,
-        page: DEFAULT_PAGE,
+        pageNews: DEFAULT_PAGE,
+        pageNewsDraft: DEFAULT_PAGE,
+        pageReviews: DEFAULT_PAGE,
+        pageReviewsDraft: DEFAULT_PAGE,
         post: {},
         postActive: undefined,
+        postType: POST_TYPE.review,
         showAlert: false,
-        showDraftList: false,
         showEditor: false,
+        showNewsDraftList: false,
+        showReviewsDraftList: false,
         sort: DEFAULT_SORT,
         tabs: [
-          WORDING_TAB_POST_RECORD,
+          WORDING_TAB_REVIEW_RECORD,
+          WORDING_TAB_NEWS_RECORD,
           WORDING_TAB_FOLLOW_RECORD,
           WORDING_TAB_COMMENT_RECORD
         ]
@@ -157,17 +192,23 @@
       followingByUser () {
         return _.get(this.$store, [ 'state', 'followingByUser' ], [])
       },
-      posts () {
-        return _.get(this.$store, [ 'state', 'posts', 'items' ], [])
+      newsByUser () {
+        return _.get(this.$store, [ 'state', 'newsByUser', 'items' ], [])
       },
-      postsUser () {
-        return _.get(this.$store, [ 'state', 'posts-user', 'items' ], [])
+      newsDraftByUser () {
+        return _.get(this.$store, [ 'state', 'newsDraftByUser', 'items' ], [])
       },
-      postsUserDraft () {
-        return _.get(this.$store, [ 'state', 'posts-user-draft', 'items' ], [])
+      postsUnion () {
+        return _.uniqBy(_.union(this.newsByUser, this.newsDraftByUser, this.reviewsByUser, this.reviewsDraftByUser), 'id')
       },
       profile () {
         return _.get(this.$store, [ 'state', 'profile' ], {})
+      },
+      reviewsByUser () {
+        return _.get(this.$store, [ 'state', 'reviewsByUser', 'items' ], [])
+      },
+      reviewsDraftByUser () {
+        return _.get(this.$store, [ 'state', 'reviewsDraftByUser', 'items' ], [])
       },
       sections () {
         return SECTIONS_DEFAULT
@@ -175,11 +216,30 @@
     },
     mounted () {
       Promise.all([
-        fetchUserPosts(this.$store, { where: { author: _.get(this.profile, [ 'id' ])}}),
-        fetchUserPosts(this.$store, {
+        fetchPostsByUser(this.$store, {
           where: {
             author: _.get(this.profile, [ 'id' ]),
-            active: POST_ACTIVE.draft
+            type: POST_TYPE.news
+          }
+        }),
+        fetchPostsByUser(this.$store, {
+          where: {
+            author: _.get(this.profile, [ 'id' ]),
+            active: POST_ACTIVE.draft,
+            type: POST_TYPE.news
+          }
+        }),
+        fetchPostsByUser(this.$store, {
+          where: {
+            author: _.get(this.profile, [ 'id' ]),
+            type: POST_TYPE.review
+          }
+        }),
+        fetchPostsByUser(this.$store, {
+          where: {
+            author: _.get(this.profile, [ 'id' ]),
+            active: POST_ACTIVE.draft,
+            type: POST_TYPE.review
           }
         }),
         fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'member' })
@@ -196,27 +256,13 @@
         const id = _.get(this.post, [ 'id' ])
         deletePost(this.$store, id)
           .then(() => {
-            if (this.showDraftList) {
-              this.showDraftList = false
+            if (this.showNewsDraftList || this.showReviewsDraftList) {
+              this.showNewsDraftList = false
+              this.showReviewsDraftList = false
             }
-            this.$_guestEditor_updatePostList()
+            this.$_guestEditor_updatePostList({ type: _.get(this.post, [ 'type' ])})
             this.isCompleted = true
           })
-      },
-      $_guestEditor_editDraft () {
-        this.showDraftList = true
-      },
-      $_guestEditor_editorHandler (showEditor, action, id) {
-        this.isCompleted = false
-        this.post = _.find(this.posts, { 'id': id }) || {}
-        this.action = action
-        this.showEditor = showEditor
-        if (!this.showEditor) {
-          this.action = undefined
-          this.isCompleted = true
-          this.post = {}
-          this.$_guestEditor_updatePostList()
-        }
       },
       $_guestEditor_followingHandler (resource) {
         fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: resource })
@@ -233,37 +279,77 @@
         this.isCompleted = false
         this.showAlert = true
       },
+      $_guestEditor_showDraftList (type) {
+        if (type === POST_TYPE.review) {
+          this.showReviewsDraftList = true
+        } else if (type === POST_TYPE.news) {
+          this.showNewsDraftList = true
+        }
+      },
       $_guestEditor_tabHandler (tab) {
         if (tab === 1) {
           fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'member' })
         }
       },
-      $_guestEditor_textEditorHandler (showEditor, action, id) {
-        this.isCompleted = false
-        this.post = _.find(this.posts, { 'id': id }) || {}
-        if (action === 'add') {
-          this.post.author = _.get(this.$store.state, [ 'profile' ])
-        }
-        this.action = action
+      $_guestEditor_textEditorHandler (showEditor, action, postType, id) {
         this.showEditor = showEditor
+        this.isCompleted = false
+        this.post = _.find(this.postsUnion, { 'id': id }) || {}
+
         if (!this.showEditor) {
-          if (this.showDraftList) {
-            this.showDraftList = false
+          if (this.showNewsDraftList || this.showReviewsDraftList) {
+            this.showNewsDraftList = false
+            this.showReviewsDraftList = false
           }
           this.action = undefined
           this.isCompleted = true
-          this.post = {}
-          this.$_guestEditor_updatePostList()
+          this.$_guestEditor_updatePostList({ type: this.postType })
+        } else {
+          this.action = action
+          this.postType = postType
+          if (action === 'add') {
+            this.post.author = _.get(this.$store.state, [ 'profile' ])
+          }
         }
       },
-      $_guestEditor_updatePostList (params = {}) {
-        this.page = params.page
-        this.sort = params.sort
-        fetchUserPosts(this.$store, {
-          page: this.page,
-          sort: this.sort,
-          where: { author: _.get(this.profile, [ 'id' ])}
-        })
+      $_guestEditor_updatePostList ({ type }) {
+        if (type === POST_TYPE.review) {
+          Promise.all([
+            fetchPostsByUser(this.$store, {
+              page: this.pageReviews,
+              where: {
+                author: _.get(this.profile, [ 'id' ]),
+                type: POST_TYPE.review
+              }
+            }),
+            fetchPostsByUser(this.$store, {
+              page: this.pageReviewsDraft,
+              where: {
+                author: _.get(this.profile, [ 'id' ]),
+                active: POST_ACTIVE.draft,
+                type: POST_TYPE.review
+              }
+            })
+          ])
+        } else if (type === POST_TYPE.news) {
+          Promise.all([
+            fetchPostsByUser(this.$store, {
+              page: this.pageNews,
+              where: {
+                author: _.get(this.profile, [ 'id' ]),
+                type: POST_TYPE.news
+              }
+            }),
+            fetchPostsByUser(this.$store, {
+              page: this.pageNewsDraft,
+              where: {
+                author: _.get(this.profile, [ 'id' ]),
+                active: POST_ACTIVE.draft,
+                type: POST_TYPE.news
+              }
+            })
+          ])
+        }
       }
     }
   }

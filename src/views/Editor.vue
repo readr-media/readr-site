@@ -9,15 +9,32 @@
         <main class="main-container">
           <app-about :profile="profile"></app-about>
           <base-control-bar
-            @addPost="$_editor_textEditorHandler(true, 'add')"
-            @editDraft="$_editor_editDraft"
+            @addNews="$_editor_textEditorHandler(true, 'add', config.type.news)"
+            @addReview="$_editor_textEditorHandler(true, 'add', config.type.review)"
+            @editNews="$_editor_showDraftList(config.type.news)"
+            @editReview="$_editor_showDraftList(config.type.review)"
             @openPanel="$_editor_openPanel">
           </base-control-bar>
           <template v-if="activePanel === 'record'">
             <section class="editor__record">
               <app-tab :tabs="tabs" @changeTab="$_editor_tabHandler">
-                <post-list-tab slot="0" :posts="postsUser"></post-list-tab>
-                <following-list-tab slot="1" :followingByUser="followingByUser" @changeResource="$_editor_followingHandler"></following-list-tab>
+                <post-list-tab
+                  slot="0"
+                  :posts="reviewsByUser"
+                  @deletePost="$_editor_showAlert"
+                  @editPost="$_editor_textEditorHandler">
+                </post-list-tab>
+                <post-list-tab
+                  slot="1"
+                  :posts="newsByUser"
+                  @deletePost="$_editor_showAlert"
+                  @editPost="$_editor_textEditorHandler">
+                </post-list-tab>
+                <following-list-tab
+                  slot="2"
+                  :followingByUser="followingByUser"
+                  @changeResource="$_editor_followingHandler">
+                </following-list-tab>
               </app-tab>
             </section>
           </template>
@@ -32,9 +49,16 @@
               </post-list>
             </section>
           </template>
-          <base-light-box :showLightBox.sync="showDraftList">
+          <base-light-box :showLightBox.sync="showReviewsDraftList">
             <post-list-detailed
-              :posts="postsUserDraft"
+              :posts="newsDraftByUser"
+              @editPost="$_editor_textEditorHandler"
+              @deletePost="$_editor_showAlert">
+            </post-list-detailed>
+          </base-light-box>
+          <base-light-box :showLightBox.sync="showNewsDraftList">
+            <post-list-detailed
+              :posts="reviewsDraftByUser"
               @editPost="$_editor_textEditorHandler"
               @deletePost="$_editor_showAlert">
             </post-list-detailed>
@@ -45,15 +69,13 @@
               :isCompleted="isCompleted"
               :post.sync="post"
               :showLightBox="showEditor"
+              :type="postType"
               @closeLightBox="$_editor_textEditorHandler(false)"
               @deletePost="$_editor_showAlert"
-              @showAlert="$_editor_alertHandler"
-              @updatePostList="$_editor_updatePostList">
+              @showAlert="$_editor_alertHandler">
             </post-panel>
           </base-light-box>
-          <base-light-box
-            :isAlert="true"
-            :showLightBox.sync="showAlert">
+          <base-light-box :isAlert="true" :showLightBox.sync="showAlert">
             <alert-panel
               :action="action"
               :active="postActive"
@@ -72,12 +94,13 @@
   </div>
 </template>
 <script>
+  import { POST_ACTIVE, POST_TYPE } from '../../api/config'
   import {
-    POST_ACTIVE,
     SECTIONS_DEFAULT,
+    WORDING_TAB_REVIEW_RECORD,
+    WORDING_TAB_NEWS_RECORD,
     WORDING_TAB_COMMENT_RECORD,
-    WORDING_TAB_FOLLOW_RECORD,
-    WORDING_TAB_POST_RECORD
+    WORDING_TAB_FOLLOW_RECORD
   } from '../constants'
   import _ from 'lodash'
   import About from '../components/About.vue'
@@ -126,13 +149,13 @@
     })
   }
 
-  const fetchUserPosts = (store, {
+  const fetchPostsByUser = (store, {
     maxResult = MAXRESULT,
     page = DEFAULT_PAGE,
     sort = DEFAULT_SORT,
     where = {}
   }) => {
-    return store.dispatch('GET_USER_POSTS', {
+    return store.dispatch('GET_POSTS_BY_USER', {
       params: {
         max_result: maxResult,
         page: page,
@@ -171,16 +194,27 @@
       return {
         action: undefined,
         activePanel: 'record',
+        config: {
+          active: POST_ACTIVE,
+          type: POST_TYPE
+        },
         isCompleted: false,
-        page: DEFAULT_PAGE,
+        pageNews: DEFAULT_PAGE,
+        pageNewsDraft: DEFAULT_PAGE,
+        pagePost: DEFAULT_PAGE,
+        pageReviews: DEFAULT_PAGE,
+        pageReviewsDraft: DEFAULT_PAGE,
         post: {},
         postActive: undefined,
+        postType: POST_TYPE.review,
         showAlert: false,
-        showDraftList: false,
         showEditor: false,
+        showNewsDraftList: false,
+        showReviewsDraftList: false,
         sort: DEFAULT_SORT,
         tabs: [
-          WORDING_TAB_POST_RECORD,
+          WORDING_TAB_REVIEW_RECORD,
+          WORDING_TAB_NEWS_RECORD,
           WORDING_TAB_FOLLOW_RECORD,
           WORDING_TAB_COMMENT_RECORD
         ]
@@ -190,17 +224,26 @@
       followingByUser () {
         return _.get(this.$store, [ 'state', 'followingByUser' ], [])
       },
+      newsByUser () {
+        return _.get(this.$store, [ 'state', 'newsByUser', 'items' ], [])
+      },
+      newsDraftByUser () {
+        return _.get(this.$store, [ 'state', 'newsDraftByUser', 'items' ], [])
+      },
       posts () {
         return _.get(this.$store, [ 'state', 'posts', 'items' ], [])
       },
-      postsUser () {
-        return _.get(this.$store, [ 'state', 'posts-user', 'items' ], [])
-      },
-      postsUserDraft () {
-        return _.get(this.$store, [ 'state', 'posts-user-draft', 'items' ], [])
+      postsUnion () {
+        return _.uniqBy(_.union(this.newsByUser, this.newsDraftByUser, this.posts, this.reviewsByUser, this.reviewsDraftByUser), 'id')
       },
       profile () {
         return _.get(this.$store, [ 'state', 'profile' ], {})
+      },
+      reviewsByUser () {
+        return _.get(this.$store, [ 'state', 'reviewsByUser', 'items' ], [])
+      },
+      reviewsDraftByUser () {
+        return _.get(this.$store, [ 'state', 'reviewsDraftByUser', 'items' ], [])
       },
       sections () {
         return SECTIONS_DEFAULT
@@ -209,11 +252,30 @@
     mounted () {
       Promise.all([
         fetchPosts(this.$store, {}),
-        fetchUserPosts(this.$store, { where: { author: _.get(this.profile, [ 'id' ])}}),
-        fetchUserPosts(this.$store, {
+        fetchPostsByUser(this.$store, {
           where: {
             author: _.get(this.profile, [ 'id' ]),
-            active: POST_ACTIVE.draft
+            type: POST_TYPE.news
+          }
+        }),
+        fetchPostsByUser(this.$store, {
+          where: {
+            author: _.get(this.profile, [ 'id' ]),
+            active: POST_ACTIVE.draft,
+            type: POST_TYPE.news
+          }
+        }),
+        fetchPostsByUser(this.$store, {
+          where: {
+            author: _.get(this.profile, [ 'id' ]),
+            type: POST_TYPE.review
+          }
+        }),
+        fetchPostsByUser(this.$store, {
+          where: {
+            author: _.get(this.profile, [ 'id' ]),
+            active: POST_ACTIVE.draft,
+            type: POST_TYPE.review
           }
         }),
         fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'member' })
@@ -229,15 +291,13 @@
         const id = _.get(this.post, [ 'id' ])
         deletePostSelf(this.$store, id)
           .then(() => {
-            if (this.showDraftList) {
-              this.showDraftList = false
+            if (this.showNewsDraftList || this.showReviewsDraftList) {
+              this.showNewsDraftList = false
+              this.showReviewsDraftList = false
             }
-            this.$_editor_updatePostList()
+            this.$_editor_updatePostList({ type: _.get(this.post, [ 'type' ])})
             this.isCompleted = true
           })
-      },
-      $_editor_editDraft () {
-        this.showDraftList = true
       },
       $_editor_followingHandler (resource) {
         fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: resource })
@@ -246,7 +306,7 @@
         this.activePanel = panel
       },
       $_editor_pageChanged (index) {
-        this.$_editor_updatePostList({ page: index })
+        // this.$_editor_updatePostList({ page: index })
       },
       $_editor_publishPost () {
         const params = {}
@@ -284,45 +344,82 @@
         this.isCompleted = false
         this.showAlert = true
       },
+      $_editor_showDraftList (type) {
+        if (type === POST_TYPE.review) {
+          this.showReviewsDraftList = true
+        } else if (type === POST_TYPE.news) {
+          this.showNewsDraftList = true
+        }
+      },
       $_editor_tabHandler (tab) {
         if (tab === 1) {
           fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'member' })
         }
       },
-      $_editor_textEditorHandler (showEditor, action, id) {
-        this.isCompleted = false
-        this.post = _.find(this.posts, { 'id': id }) || {}
-        if (action === 'add') {
-          this.post.author = _.get(this.$store.state, [ 'profile' ])
-        }
-        this.action = action
+      $_editor_textEditorHandler (showEditor, action, postType, id) {
         this.showEditor = showEditor
+        this.isCompleted = false
+        this.post = _.find(this.postsUnion, { 'id': id }) || {}
         if (!this.showEditor) {
-          if (this.showDraftList) {
-            this.showDraftList = false
+          if (this.showNewsDraftList || this.showReviewsDraftList) {
+            this.showNewsDraftList = false
+            this.showReviewsDraftList = false
           }
           this.action = undefined
           this.isCompleted = true
-          this.post = {}
-          this.$_editor_updatePostList()
+          this.$_editor_updatePostList({ type: this.postType })
+        } else {
+          this.action = action
+          this.postType = postType
+          if (this.action === 'add') {
+            this.post.author = _.get(this.$store.state, [ 'profile' ])
+          }
         }
       },
-      $_editor_updatePostList (params = {}) {
-        this.page = params.page
-        this.sort = params.sort
-        Promise.all([
-          fetchPosts(this.$store, {
-            id: _.get(this.profile, [ 'id' ]),
-            page: this.page,
-            sort: this.sort
-          }),
-          fetchUserPosts(this.$store, {
-            page: this.page,
-            sort: this.sort,
-            where: { author: _.get(this.profile, [ 'id' ])}
-          })
-        ])
-        
+      $_editor_updatePostList ({ sort, type }) {
+        this.sort = sort || this.sort
+        fetchPosts(this.$store, {
+          page: this.pagePost,
+          sort: this.sort
+        })
+
+        if (type === POST_TYPE.review) {
+          Promise.all([
+            fetchPostsByUser(this.$store, {
+              page: this.pageReviews,
+              where: {
+                author: _.get(this.profile, [ 'id' ]),
+                type: POST_TYPE.review
+              }
+            }),
+            fetchPostsByUser(this.$store, {
+              page: this.pageReviewsDraft,
+              where: {
+                author: _.get(this.profile, [ 'id' ]),
+                active: POST_ACTIVE.draft,
+                type: POST_TYPE.review
+              }
+            })
+          ])
+        } else if (type === POST_TYPE.news) {
+          Promise.all([
+            fetchPostsByUser(this.$store, {
+              page: this.pageNews,
+              where: {
+                author: _.get(this.profile, [ 'id' ]),
+                type: POST_TYPE.news
+              }
+            }),
+            fetchPostsByUser(this.$store, {
+              page: this.pageNewsDraft,
+              where: {
+                author: _.get(this.profile, [ 'id' ]),
+                active: POST_ACTIVE.draft,
+                type: POST_TYPE.news
+              }
+            })
+          ])
+        }
       }
     }
   }

@@ -1,3 +1,4 @@
+import { POST_ACTIVE, POST_TYPE } from '../../api/config'
 import {
   addMember,
   addPost,
@@ -93,11 +94,28 @@ export default {
     return getMeta(url)
   },
   GET_POSTS: ({ commit, dispatch, state }, { params }) => {
-    console.log(params)
     return getPosts({ params }).then(({ status, body }) => {
       if (status === 200) {
-        console.log(200)
         commit('SET_POSTS', { posts: body })
+      }
+    })
+  },
+  GET_POSTS_BY_USER: ({ commit, dispatch, state }, { params }) => {
+    return getPosts({ params }).then(({ status, body }) => {
+      if (status === 200) {
+        if (params.where.type === POST_TYPE.news) {
+          if (params.where.active === POST_ACTIVE.draft) {
+            commit('SET_NEWS_DRAFT_BY_USER', { posts: body })
+          } else {
+            commit('SET_NEWS_BY_USER', { posts: body })
+          }
+        } else if (params.where.type === POST_TYPE.review) {
+          if (params.where.active === POST_ACTIVE.draft) {
+            commit('SET_REVIEWS_DRAFT_BY_USER', { posts: body })
+          } else {
+            commit('SET_REVIEWS_BY_USER', { posts: body })
+          }
+        }
       }
     })
   },
@@ -127,17 +145,6 @@ export default {
     return getProfile({ params }).then(({ status, body }) => {
       if (status === 200) {
         commit('SET_PROFILE', { profile: body })
-      }
-    })
-  },
-  GET_USER_POSTS: ({ commit, dispatch, state }, { params }) => {
-    return getPosts({ params }).then(({ status, body }) => {
-      if (status === 200) {
-        if (params.where.active) {
-          commit('SET_USER_POSTS_DRAFT', { posts: body })
-        } else {
-          commit('SET_USER_POSTS', { posts: body })
-        }
       }
     })
   },

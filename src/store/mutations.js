@@ -12,6 +12,9 @@ export default {
     })
     Vue.delete(state.followingByUser, index)
   },
+  SET_CUSTOM_EDITORS: (state, { members }) => {
+    state['customEditors'] = members
+  },
   SET_FOLLOWING_BY_RESOURCE: (state, { following }) => {
     state['followingByResource'] = following
   },
@@ -31,8 +34,11 @@ export default {
   SET_MEMBERS: (state, { members }) => {
     state['members'] = members
   },
-  SET_CUSTOM_EDITORS: (state, { members }) => {
-    state['customEditors'] = members
+  SET_NEWS_BY_USER: (state, { posts }) => {
+    state['newsByUser'] = posts
+  },
+  SET_NEWS_DRAFT_BY_USER: (state, { posts }) => {
+    state['newsDraftByUser'] = posts
   },
   SET_POSTS: (state, { posts }) => {
     state['posts'] = posts
@@ -46,11 +52,11 @@ export default {
   SET_PROFILE: (state, { profile }) => {
     state['profile'] = profile
   },
-  SET_USER_POSTS: (state, { posts }) => {
-    state['posts-user'] = posts
+  SET_REVIEWS_BY_USER: (state, { posts }) => {
+    state['reviewsByUser'] = posts
   },
-  SET_USER_POSTS_DRAFT: (state, { posts }) => {
-    state['posts-user-draft'] = posts
+  SET_REVIEWS_DRAFT_BY_USER: (state, { posts }) => {
+    state['reviewsDraftByUser'] = posts
   },
   UPDATED_PROFILE: (state, { profile }) => {
     // Update the entry when user saving the profile value which has been edited

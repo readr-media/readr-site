@@ -1,12 +1,12 @@
 <template>
   <section class="alert" :class="{ isCompleted: isCompleted }">
     <template v-if="post">
-      <p v-if="(active === 1 || active === 0) && !isCompleted" class="alert__title">
+      <p v-if="(active === config.active.active || active === config.active.deactive) && !isCompleted" class="alert__title">
         <strong v-text="alertTitle"></strong>
       </p>
       <p><strong v-text="`${wording.WORDING_ALERTPANEL_AUTHOR}：`"></strong><span v-text="postAuthor"></span></p>
       <p><strong v-text="`${wording.WORDING_ALERTPANEL_TITLE}：`"></strong><span v-text="postTitle"></span></p>
-      <div v-if="(active === 1 || active === 0) && !isCompleted" class="alert__control">
+      <div v-if="(active === config.active.active || active === config.active.deactive) && !isCompleted" class="alert__control">
         <button class="alert__btn" @click="$_alertPanel_confirm" v-text="wording.WORDING_ALERTPANEL_CONFIRM"></button>
         <button class="alert__btn" @click="$_alertPanel_cancel" v-text="wording.WORDING_ALERTPANEL_CANCEL"></button>
       </div>
@@ -15,6 +15,7 @@
   </section>
 </template>
 <script>
+  import { POST_ACTIVE } from '../../api/config'
   import {
     WORDING_ALERTPANEL_AUTHOR,
     WORDING_ALERTPANEL_CANCEL,
@@ -53,6 +54,9 @@
     },
     data () {
       return {
+        config: {
+          active: POST_ACTIVE,
+        },
         wording: {
           WORDING_ALERTPANEL_AUTHOR,
           WORDING_ALERTPANEL_CANCEL,
@@ -73,29 +77,29 @@
     computed: {
       alertMessage () {
         if (this.isCompleted) {
-          if (this.active === 0) {
+          if (this.active === POST_ACTIVE.deactive) {
             return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_DELETE_SUCCESSFUL}！`
           }
-          if (this.active === 1) {
+          if (this.active === POST_ACTIVE.active) {
             return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL}！`
           }
           if (this.action === 'add') {
             return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_SAVE_SUCCESSFUL}！`
           }
-          if (this.action === 'edit' && this.active === 3) {
+          if (this.action === 'edit' && this.active === POST_ACTIVE.draft) {
             return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_DRAFT}${this.wording.WORDING_ALERTPANEL_UPDATE_SUCCESSFUL}！`
           }
-          if (this.action === 'edit' && this.active === 2) {
+          if (this.action === 'edit' && this.active === POST_ACTIVE.pending) {
             return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_STATUS}${this.wording.WORDING_ALERTPANEL_UPDATE_SUCCESSFUL}！`
           }
         }
         return ''
       },
       alertTitle () {
-        if (this.active === 0) {
+        if (this.active === POST_ACTIVE.deactive) {
           return this.wording.WORDING_ALERTPANEL_DELETE_CONFIRMATION
         }
-        if (this.active === 1) {
+        if (this.active === POST_ACTIVE.active) {
           return this.wording.WORDING_ALERTPANEL_PUBLISH_CONFIRMATION
         }
         return ''
@@ -129,10 +133,10 @@
         this.$emit('closeAlert', false)
       },
       $_alertPanel_confirm () {
-        if (this.active === 0) {
+        if (this.active === POST_ACTIVE.deactive) {
           this.$emit('deletePost')
         }
-        if (this.active === 1) {
+        if (this.active === POST_ACTIVE.active) {
           this.$emit('publishPost')
         }
       }

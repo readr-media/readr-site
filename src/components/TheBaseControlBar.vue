@@ -1,14 +1,19 @@
 <template>
   <section class="controlBar">
-    <div class="controlBar__btnBox">
-      <button class="controlBar--btn" v-text="wording.WORDING_CONTROLBAR_ADD_POST"></button>
-      <button class="controlBar--subBtn first" @click="$_baseControlBar_addPost" v-text="wording.WORDING_CONTROLBAR_ADD_POST_DIRECTLY"></button>
-      <button class="controlBar--subBtn second" @click="$_baseControlBar_editDraft" v-text="wording.WORDING_CONTROLBAR_EDIT_DRAFT"></button>
+    <div v-if="$can('addPost')" class="controlBar__btnBox">
+      <button class="controlBar--btn" v-text="wording.WORDING_CONTROLBAR_ADD_REVIEW"></button>
+      <button class="controlBar--subBtn first" @click="$_baseControlBar_clickHandler('addReview')" v-text="wording.WORDING_CONTROLBAR_ADD_DIRECTLY"></button>
+      <button class="controlBar--subBtn second" @click="$_baseControlBar_clickHandler('editReview')" v-text="wording.WORDING_CONTROLBAR_EDIT_DRAFT"></button>
+    </div>
+    <div v-if="$can('addPost')" class="controlBar__btnBox">
+      <button class="controlBar--btn" v-text="wording.WORDING_CONTROLBAR_ADD_NEWS"></button>
+      <button class="controlBar--subBtn first" @click="$_baseControlBar_clickHandler('addNews')" v-text="wording.WORDING_CONTROLBAR_ADD_DIRECTLY"></button>
+      <button class="controlBar--subBtn second" @click="$_baseControlBar_clickHandler('editNews')" v-text="wording.WORDING_CONTROLBAR_EDIT_DRAFT"></button>
     </div>
     <button v-if="$can('editOtherPost')" class="controlBar--btn" @click="$_baseControlBar_openPanel('posts')" v-text="wording.WORDING_CONTROLBAR_POST_MANAGE"></button>
     <button v-if="$can('editVideo')" class="controlBar--btn" @click="$_baseControlBar_openPanel('video')" v-text="wording.WORDING_CONTROLBAR_VIDEO_MANAGE"></button>
     <button class="controlBar--btn" @click="$_baseControlBar_openPanel('record')" v-text="wording.WORDING_CONTROLBAR_RECORD_MANAGE"></button>
-    <button v-if="$can('addAccount')" class="controlBar--btn" @click="$_baseControlBar_addAccount" v-text="wording.WORDING_CONTROLBAR_ADD_ACCOUNT"></button>
+    <button v-if="$can('addAccount')" class="controlBar--btn" @click="$_baseControlBar_clickHandler('addAccount')" v-text="wording.WORDING_CONTROLBAR_ADD_ACCOUNT"></button>
     <button v-if="$can('memberManage')" class="controlBar--btn" @click="$_baseControlBar_openPanel('accounts')" v-text="wording.WORDING_CONTROLBAR_ACCOUNT_MANAGE"></button>
   </section>
 </template>
@@ -16,12 +21,13 @@
   import {
     WORDING_CONTROLBAR_ACCOUNT_MANAGE,
     WORDING_CONTROLBAR_ADD_ACCOUNT,
-    WORDING_CONTROLBAR_ADD_POST,
-    WORDING_CONTROLBAR_ADD_POST_DIRECTLY,
+    WORDING_CONTROLBAR_ADD_DIRECTLY,
+    WORDING_CONTROLBAR_ADD_NEWS,
+    WORDING_CONTROLBAR_ADD_REVIEW,
     WORDING_CONTROLBAR_EDIT_DRAFT,
     WORDING_CONTROLBAR_POST_MANAGE,
     WORDING_CONTROLBAR_RECORD_MANAGE,
-    WORDING_CONTROLBAR_VIDEO_MANAGE,
+    WORDING_CONTROLBAR_VIDEO_MANAGE
   } from '../constants'
 
   export default {
@@ -31,8 +37,9 @@
         wording: {
           WORDING_CONTROLBAR_ACCOUNT_MANAGE,
           WORDING_CONTROLBAR_ADD_ACCOUNT,
-          WORDING_CONTROLBAR_ADD_POST,
-          WORDING_CONTROLBAR_ADD_POST_DIRECTLY,
+          WORDING_CONTROLBAR_ADD_DIRECTLY,
+          WORDING_CONTROLBAR_ADD_NEWS,
+          WORDING_CONTROLBAR_ADD_REVIEW,
           WORDING_CONTROLBAR_EDIT_DRAFT,
           WORDING_CONTROLBAR_POST_MANAGE,
           WORDING_CONTROLBAR_RECORD_MANAGE,
@@ -41,14 +48,8 @@
       }
     },
     methods: {
-      $_baseControlBar_addPost () {
-        this.$emit('addPost')
-      },
-      $_baseControlBar_addAccount () {
-        this.$emit('addAccount')
-      },
-      $_baseControlBar_editDraft () {
-        this.$emit('editDraft')
+      $_baseControlBar_clickHandler (eventName) {
+        this.$emit(eventName)
       },
       $_baseControlBar_openPanel (panel) {
         this.$emit('openPanel', panel)
