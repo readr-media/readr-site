@@ -50,7 +50,6 @@
             @publishPost="$_admin_publishPost">
           </AlertPanel>
         </BaseLightBox>
-        <div id="coral_talk_stream"></div>
       </main>
     </div>
   </div>
@@ -69,7 +68,6 @@
   import PostPanel from '../components/PostPanel.vue'
   import AlertPanel from '../components/AlertPanel.vue'
   import AppAsideNav from '../components/AppAsideNav.vue'
-  import { renderComment } from '../util/talk'
 
   const MAXRESULT = 20
   const DEFAULT_PAGE = 1
@@ -244,9 +242,7 @@
         }
       }
     },
-    mounted () {
-      renderComment('#coral_talk_stream', location.href)
-    },
+    mounted () {},
     beforeMount () {
       this.$can('memberManage') && Promise.all([
         getMembers(this.$store, {})
