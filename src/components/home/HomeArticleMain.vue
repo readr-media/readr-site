@@ -54,7 +54,7 @@
 <script>
 import AppShareButton from '../AppShareButton.vue'
 import _ from 'lodash'
-import { SITE_DOMAIN_DEV } from '../../constants'
+import { SITE_DOMAIN_DEV } from 'src/constants'
 import { dateDiffFromNow } from 'src/util/comm'
 import { renderComment } from 'src/util/talk'
 
@@ -146,7 +146,7 @@ export default {
   methods: {
     get,
     renderComment (ref) {
-      renderComment(`${ref}`, `${location.host}/post-${get(this.articleData, [ 'id' ])}`)
+      renderComment(`${ref}`, this.shareUrl)
     },
     toogleReadmore () {
       this.isReadMore = true
@@ -185,7 +185,7 @@ export default {
   },
   mounted () {
     getCommentCount(this.$store, {
-      assetUrl: `${location.host}/post-${get(this.articleData, [ 'id' ])}`,
+      assetUrl: this.shareUrl,
       postId: get(this.articleData, [ 'id' ])
     })
   }
