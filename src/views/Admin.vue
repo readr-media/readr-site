@@ -53,47 +53,6 @@
         <div id="coral_talk_stream"></div>
       </main>
     </div>
-    <template v-if="activePanel === 'accounts'">
-      <MembersPanel v-if="$can('memberManage')" @filterChanged="filterChanged"></MembersPanel>
-    </template>
-    <template v-else-if="activePanel === 'posts'">
-      <section class="panel">
-        <post-list
-          :posts="posts"
-          @deletePost="$_admin_showAlert"
-          @editPost="$_admin_editorHandler"
-          @filterChanged="$_admin_updatePostList"
-        ></post-list>
-      </section>
-    </template>
-    <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder" :isConversation="true">
-      <MemberAccountEditor @updated="filterChanged" :shouldShow="showLightBox" :title="wording.WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER" action="add"></MemberAccountEditor>
-    </BaseLightBox>
-    <BaseLightBox :showLightBox.sync="showEditor">
-      <PostPanel
-        :action="action"
-        :isCompleted="isCompleted"
-        :post.sync="post"
-        :showLightBox="showEditor"
-        @closeLightBox="$_admin_editorHandler(false)"
-        @showAlert="$_admin_alertHandler"
-        @updatePostList="$_admin_updatePostList">
-      </PostPanel>
-    </BaseLightBox>
-    <BaseLightBox :isAlert="true" :showLightBox.sync="showAlert">
-      <AlertPanel
-        :action="action"
-        :active="postActive"
-        :isCompleted="isCompleted"
-        :post="post"
-        :showLightBox="showAlert"
-        @closeAlert="$_admin_alertHandler"
-        @closeEditor="$_admin_editorHandler(false)"
-        @deletePost="$_admin_deletePost"
-        @publishPost="$_admin_publishPost">
-      </AlertPanel>
-    </BaseLightBox>
-    <div id="coral_talk_stream"></div>
   </div>
 </template>
 <script>
