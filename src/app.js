@@ -3,11 +3,11 @@ import App from './App.vue'
 import { createStore } from './store'
 import { createRouter } from './router'
 import { sync } from 'vuex-router-sync'
-import titleMixin from './util/title'
+import titleMetaMixin from './util/titleMeta'
 import * as filters from './util/filters'
 
 // mixin for handling title
-Vue.mixin(titleMixin)
+Vue.mixin(titleMetaMixin)
 
 // register global utility filters.
 Object.keys(filters).forEach(key => {

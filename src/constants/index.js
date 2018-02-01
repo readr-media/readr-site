@@ -2,6 +2,7 @@ import projectList from './projectList'
 export const PROJECTS = projectList
 
 export const SITE_DOMAIN = 'readr.com'
+export const SITE_DOMAIN_DEV = 'dev.readr.tw'
 
 export const ROLE_MAP = [
   { key: 9, value: '管理員', route: 'admin' },
