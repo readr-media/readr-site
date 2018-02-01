@@ -7,8 +7,21 @@
           <th class="postList__nickname"><span @click="$_postList_orderBy('author.nickname')" v-text="wording.WORDING_POSTLIST_NICKNAME"></span></th>
           <th class="postList__title"><span @click="$_postList_orderBy('title')" v-text="wording.WORDING_POSTLIST_TITLE"></span></th>
           <th class="postList__status postList--center"><span @click="$_postList_orderBy('active')" v-text="wording.WORDING_POSTLIST_ACTIVE"></span></th>
-          <th class="postList__update postList--center"><button class="postList__btn postList__btn--multiple" v-text="wording.WORDING_POSTLIST_PUBLISH" @click="$_postList_publishMultiple"></button></th>
-          <th class="postList__delete postList--center"><button class="postList__btn postList__btn--multiple" v-text="wording.WORDING_POSTLIST_DELETE" @click="$_postList_deleteMultiple"></button></th>
+          <th class="postList__update postList--center">
+            <button
+              disabled
+              class="postList__btn postList__btn--multiple"
+              v-text="wording.WORDING_POSTLIST_PUBLISH"
+              @click="$_postList_publishMultiple">
+            </button>
+          </th>
+          <th class="postList__delete postList--center">
+            <button
+              class="postList__btn postList__btn--multiple"
+              v-text="wording.WORDING_POSTLIST_DELETE"
+              @click="$_postList_deleteMultiple">
+            </button>
+          </th>
           <th class="postList__sort postList--center">
             <select name="" id="">
               <option value="-updated_at" v-text="wording.WORDING_POSTLIST_UPDATE_AT"></option>
