@@ -38,12 +38,15 @@
         </figure>
       </a>
       <nav class="article-nav">
-        <span class="comment-icon">
+        <span class="comment-icon" @click="renderComment(`.comment.comment-${get(articleData, [ 'id' ])}`)">
           <img class="comment-icon__thumbnail" src="/public/icons/comment-grey.png" alt="comment">
           <span class="comment-icon__count">123</span>
         </span>
         <img class="follow-icon" :src="isFollow ? '/public/icons/star.png' : '/public/icons/star-line.png'" alt="follow" @click="toogleFollow">
       </nav>
+      <div class="home-article-main__comment">
+        <div :class="`comment comment-${get(articleData, [ 'id' ])}`"></div>
+      </div>
     </div>
   </article>
 </template>
@@ -51,8 +54,10 @@
 <script>
 import AppShareButton from '../AppShareButton.vue'
 import _ from 'lodash'
-import { dateDiffFromNow } from '../../util/comm'
+import { dateDiffFromNow } from 'src/util/comm'
+import { renderComment } from 'src/util/talk'
 
+const { get } = _
 const publishAction = (store, data) => {
   return store.dispatch('PUBLISH_ACTION', {
     params: data
@@ -124,6 +129,10 @@ export default {
     }
   },
   methods: {
+    get,
+    renderComment (ref) {
+      renderComment(`${ref}`, location.href)
+    },
     toogleReadmore () {
       this.isReadMore = true
     },
@@ -180,6 +189,12 @@ $icon-size
     border solid 2.5px #ddcf21
     padding 11.5px 22.5px 18px 22.5px
     background-color white
+  &__comment
+    margin-top 20px
+    // min-height 20px
+    // height 500px
+    // .comment
+    //   height 100%
   &__date
     font-size 14px
     font-weight 500
@@ -250,6 +265,7 @@ $icon-size
     height 25px
 
   .comment-icon
+    cursor pointer
     &__thumbnail
       @extends $icon-size
     &__count
