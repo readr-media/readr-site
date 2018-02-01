@@ -146,7 +146,7 @@ export default {
   methods: {
     get,
     renderComment (ref) {
-      renderComment(`${ref}`, this.shareUrl)
+      renderComment(`${ref}`, `${location.protocol}//${this.shareUrl}`)
     },
     toogleReadmore () {
       this.isReadMore = true
@@ -185,7 +185,7 @@ export default {
   },
   mounted () {
     getCommentCount(this.$store, {
-      assetUrl: this.shareUrl,
+      assetUrl: `${location.protocol}//${this.shareUrl}`,
       postId: get(this.articleData, [ 'id' ])
     })
   }
