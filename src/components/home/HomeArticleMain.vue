@@ -1,7 +1,7 @@
 <template>
   <article class="home-article-main">
     <div class="home-article-main__share">
-      <AppShareButton/>
+      <AppShareButton :shareUrl="shareUrl" :direction="'down'"/>
     </div>
     <div class="home-article-main__author">
       <figure class="author-info">
@@ -54,6 +54,7 @@
 <script>
 import AppShareButton from '../AppShareButton.vue'
 import _ from 'lodash'
+import { SITE_DOMAIN_DEV } from '../../constants'
 import { dateDiffFromNow } from 'src/util/comm'
 import { renderComment } from 'src/util/talk'
 
@@ -137,6 +138,9 @@ export default {
           return false
         }
       }
+    },
+    shareUrl () {
+      return `${SITE_DOMAIN_DEV}/post/${this.articleData.id}`
     }
   },
   methods: {

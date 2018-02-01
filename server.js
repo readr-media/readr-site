@@ -139,6 +139,9 @@ function render (req, res, next) {
 
   const context = {
     title: 'Readr',
+    description: 'Readr',
+    metaUrl: 'dev.readr.tw',
+    metaImage: '/public/og.png',
     url: req.url,
     cookie: cookies.get('csrf'),
     initmember: cookies.get('initmember'),
