@@ -8,23 +8,45 @@
         <!-- <app-header :sections="sections"></app-header> -->
         <About :profile="profile"></About>
         <div class="control-bar">
-          <TheBaseControlBar @openPanel="openPanel" @addAccount="addMember" @addPost="$_admin_editorHandler(true, 'add')"></TheBaseControlBar>
+          <TheBaseControlBar
+            @addNews="$_admin_textEditorHandler(true, 'add', config.type.news)"
+            @addReview="$_admin_textEditorHandler(true, 'add', config.type.review)"
+            @editNews="$_admin_showDraftList(config.type.news)"
+            @editReview="$_admin_showDraftList(config.type.review)"
+            @openPanel="openPanel">
+          </TheBaseControlBar>
         </div>
         <template v-if="activePanel === 'accounts'">
           <MembersPanel v-if="$can('memberManage')" @filterChanged="filterChanged"></MembersPanel>
         </template>
+        <template v-if="activePanel === 'record'">
+        </template>
         <template v-else-if="activePanel === 'posts'">
           <section class="panel">
-            <post-list
+            <PostList
               :posts="posts"
               @deletePost="$_admin_showAlert"
-              @editPost="$_admin_editorHandler"
-              @filterChanged="$_admin_updatePostList"
-            ></post-list>
+              @editPost="$_admin_textEditorHandler"
+              @filterChanged="$_admin_updatePostList">
+            </PostList>
           </section>
         </template>
         <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder" :isConversation="true">
           <MemberAccountEditor @updated="filterChanged" :shouldShow="showLightBox" :title="wording.WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER" action="add"></MemberAccountEditor>
+        </BaseLightBox>
+        <BaseLightBox :showLightBox.sync="showReviewsDraftList">
+          <PostListDetailed
+            :posts="newsDraftByUser"
+            @editPost="$_admin_textEditorHandler"
+            @deletePost="$_admin_showAlert">
+          </PostListDetailed>
+        </BaseLightBox>
+        <BaseLightBox :showLightBox.sync="showNewsDraftList">
+          <PostListDetailed
+            :posts="reviewsDraftByUser"
+            @editPost="$_admin_textEditorHandler"
+            @deletePost="$_admin_showAlert">
+          </PostListDetailed>
         </BaseLightBox>
         <BaseLightBox :showLightBox.sync="showEditor">
           <PostPanel
@@ -32,9 +54,10 @@
             :isCompleted="isCompleted"
             :post.sync="post"
             :showLightBox="showEditor"
-            @closeLightBox="$_admin_editorHandler(false)"
-            @showAlert="$_admin_alertHandler"
-            @updatePostList="$_admin_updatePostList">
+            :type="postType"
+            @closeLightBox="$_admin_textEditorHandler(false)"
+            @deletePost="$_admin_showAlert"
+            @showAlert="$_admin_alertHandler">
           </PostPanel>
         </BaseLightBox>
         <BaseLightBox :isAlert="true" :showLightBox.sync="showAlert">
@@ -45,7 +68,7 @@
             :post="post"
             :showLightBox="showAlert"
             @closeAlert="$_admin_alertHandler"
-            @closeEditor="$_admin_editorHandler(false)"
+            @closeEditor="$_admin_textEditorHandler(false)"
             @deletePost="$_admin_deletePost"
             @publishPost="$_admin_publishPost">
           </AlertPanel>
@@ -55,19 +78,23 @@
   </div>
 </template>
 <script>
-  import _ from 'lodash'
-  import { WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER } from '../constants'
+  import { POST_ACTIVE, POST_TYPE } from '../../api/config'
   import { SECTIONS_DEFAULT } from '../constants'
+  import { WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER } from '../constants'
+  import _ from 'lodash'
   import About from '../components/About.vue'
-  import BaseLightBox from '../components/BaseLightBox.vue'
+  import AlertPanel from '../components/AlertPanel.vue'
+  import AppAsideNav from '../components/AppAsideNav.vue'
   import AppHeader from '../components/AppHeader.vue'
+  import BaseLightBox from '../components/BaseLightBox.vue'
+  import FollowingListInTab from '../components/FollowingListInTab.vue'
   import MembersPanel from '../components/admin/MembersPanel.vue'
   import MemberAccountEditor from '../components/admin/MemberAccountEditor.vue'
   import PostList from '../components/PostList.vue'
-  import TheBaseControlBar from '../components/TheBaseControlBar.vue'
+  import PostListDetailed from '../components/PostListDetailed.vue'
+  import PostListInTab from '../components/PostListInTab.vue'
   import PostPanel from '../components/PostPanel.vue'
-  import AlertPanel from '../components/AlertPanel.vue'
-  import AppAsideNav from '../components/AppAsideNav.vue'
+  import TheBaseControlBar from '../components/TheBaseControlBar.vue'
 
   const MAXRESULT = 20
   const DEFAULT_PAGE = 1
@@ -77,18 +104,29 @@
     return store.dispatch('ADD_POST', { params })
   }
 
-  const fetchPosts = (store, id) => {
+  const fetchPosts = (store, { page, sort }) => {
     return store.dispatch('GET_POSTS', {
       params: {
-        where: {
-          author: id
-        }
+        max_result: MAXRESULT,
+        page: page || DEFAULT_PAGE,
+        sort: sort || DEFAULT_SORT
       }
     })
   }
 
-  const deletePost = (store, id) => {
-    return store.dispatch('DELETE_POST', { id: id })
+  const fetchPostsByUser = (store, { maxResult, page, sort, where }) => {
+    return store.dispatch('GET_POSTS_BY_USER', {
+      params: {
+        max_result: maxResult || MAXRESULT,
+        page: page || DEFAULT_PAGE,
+        sort: sort || DEFAULT_SORT,
+        where: where || {}
+      }
+    })
+  }
+
+  const deletePostSelf = (store, id) => {
+    return store.dispatch('DELETE_POST_SELF', { id: id })
   }
 
   const updatePost = (store, params) => {
@@ -108,22 +146,39 @@
   export default {
     components: {
       'app-header': AppHeader,
-      'post-list': PostList,
       About,
+      AlertPanel,
+      AppAsideNav,
       BaseLightBox,
       MembersPanel,
       MemberAccountEditor,
-      TheBaseControlBar,
+      PostList,
+      PostListDetailed,
+      PostListInTab,
       PostPanel,
-      AlertPanel,
-      AppAsideNav
+      TheBaseControlBar
     },
     computed: {
+      newsByUser () {
+        return _.get(this.$store, [ 'state', 'newsByUser', 'items' ], [])
+      },
+      newsDraftByUser () {
+        return _.get(this.$store, [ 'state', 'newsDraftByUser', 'items' ], [])
+      },
       posts () {
         return _.get(this.$store, [ 'state', 'posts', 'items' ], [])
       },
+      postsUnion () {
+        return _.uniqBy(_.union(this.newsByUser, this.newsDraftByUser, this.posts, this.reviewsByUser, this.reviewsDraftByUser), 'id')
+      },
       profile () {
         return _.get(this.$store, [ 'state', 'profile' ], {})
+      },
+      reviewsByUser () {
+        return _.get(this.$store, [ 'state', 'reviewsByUser', 'items' ], [])
+      },
+      reviewsDraftByUser () {
+        return _.get(this.$store, [ 'state', 'reviewsDraftByUser', 'items' ], [])
       },
       sections () {
         return SECTIONS_DEFAULT
@@ -131,16 +186,28 @@
     },
     data () {
       return {
+        action: undefined,
         activePanel: 'accounts',
+        config: {
+          active: POST_ACTIVE,
+          type: POST_TYPE
+        },
         currPage: 1,
         currSort: '-updated_at',
-        showLightBox: false,
         isCompleted: false,
+        pageNews: DEFAULT_PAGE,
+        pageNewsDraft: DEFAULT_PAGE,
+        pagePost: DEFAULT_PAGE,
+        pageReviews: DEFAULT_PAGE,
+        pageReviewsDraft: DEFAULT_PAGE,
         post: {},
-        showEditor: false,
-        action: undefined,
-        showAlert: false,
         postActive: undefined,
+        postType: POST_TYPE.review,
+        showAlert: false,
+        showEditor: false,
+        showLightBox: false,
+        showNewsDraftList: false,
+        showReviewsDraftList: false,
         wording: {
           WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER
         }
@@ -148,6 +215,23 @@
     },
     name: 'admin-page',
     methods: {
+      $_admin_alertHandler (showAlert, active, isCompleted) {
+        this.postActive = active
+        this.isCompleted = isCompleted
+        this.showAlert = showAlert
+      },
+      $_admin_deletePost () {
+        const id = _.get(this.post, [ 'id' ])
+        deletePostSelf(this.$store, id)
+          .then(() => {
+            if (this.showNewsDraftList || this.showReviewsDraftList) {
+              this.showNewsDraftList = false
+              this.showReviewsDraftList = false
+            }
+            this.$_admin_updatePostList({ type: _.get(this.post, [ 'type' ])})
+            this.isCompleted = true
+          })
+      },
       $_admin_publishPost () {
         const params = {}
         params.active = 1
@@ -162,22 +246,21 @@
         if (Date.parse(_.get(this.post, [ 'date' ]))) {
           params.published_at = _.get(this.post, [ 'date' ])
         }
+
         if (this.action === 'add') {
           params.author = _.get(this.$store.state, [ 'profile', 'id' ])
           addPost(this.$store, params)
             .then(() => {
               this.isCompleted = true
             })
-        }
-
-        if (this.action === 'edit') {
+        } else if (this.action === 'edit') {
           params.id = _.get(this.post, [ 'id' ])
+          params.author = _.get(this.post, [ 'author', 'id' ])
           updatePost(this.$store, params)
             .then(() => {
               this.isCompleted = true
             })
         }
-
       },
       $_admin_showAlert (id) {
         this.post = _.find(this.posts, { 'id': id })
@@ -185,38 +268,77 @@
         this.isCompleted = false
         this.showAlert = true
       },
-      $_admin_deletePost () {
-        const id = _.get(this.post, [ 'id' ])
-        deletePost(this.$store, id)
-          .then(() => {
-            this.$_admin_updatePostList()
-            this.isCompleted = true
-          })
+      $_admin_showDraftList (type) {
+        if (type === POST_TYPE.review) {
+          this.showReviewsDraftList = true
+        } else if (type === POST_TYPE.news) {
+          this.showNewsDraftList = true
+        }
       },
-      $_admin_updatePostList (params = {}) {
-        this.page = params.page
-        this.sort = params.sort
-        fetchPosts(this.$store, {
-          id: _.get(this.profile, [ 'id' ]),
-          page: this.page,
-          sort: this.sort
-        })
-      },
-      $_admin_alertHandler (showAlert, active, isCompleted) {
-        this.postActive = active
-        this.isCompleted = isCompleted
-        this.showAlert = showAlert
-      },
-      $_admin_editorHandler (showEditor, action, id) {
+      $_admin_textEditorHandler (showEditor, action, postType, id) {
+        this.showEditor = showEditor
         this.isCompleted = false
         this.post = _.find(this.posts, { 'id': id }) || {}
-        this.action = action
-        this.showEditor = showEditor
+
         if (!this.showEditor) {
+          if (this.showNewsDraftList || this.showReviewsDraftList) {
+            this.showNewsDraftList = false
+            this.showReviewsDraftList = false
+          }
           this.action = undefined
           this.isCompleted = true
-          this.post = {}
-          this.$_admin_updatePostList()
+          this.$_admin_updatePostList({ type: this.postType })
+        } else {
+          this.action = action
+          this.postType = postType
+          if (this.action === 'add') {
+            this.post.author = _.get(this.$store.state, [ 'profile' ])
+          }
+        }
+      },
+      $_admin_updatePostList ({ sort, type }) {
+        this.currSort = sort
+        fetchPosts(this.$store, {
+          page: this.pagePost,
+          sort: this.currSort
+        })
+
+        if (type === POST_TYPE.review) {
+          Promise.all([
+            fetchPostsByUser(this.$store, {
+              page: this.pageReviews,
+              where: {
+                author: _.get(this.profile, [ 'id' ]),
+                type: POST_TYPE.review
+              }
+            }),
+            fetchPostsByUser(this.$store, {
+              page: this.pageReviewsDraft,
+              where: {
+                author: _.get(this.profile, [ 'id' ]),
+                active: POST_ACTIVE.draft,
+                type: POST_TYPE.review
+              }
+            })
+          ])
+        } else if (type === POST_TYPE.news) {
+          Promise.all([
+            fetchPostsByUser(this.$store, {
+              page: this.pageNews,
+              where: {
+                author: _.get(this.profile, [ 'id' ]),
+                type: POST_TYPE.news
+              }
+            }),
+            fetchPostsByUser(this.$store, {
+              page: this.pageNewsDraft,
+              where: {
+                author: _.get(this.profile, [ 'id' ]),
+                active: POST_ACTIVE.draft,
+                type: POST_TYPE.news
+              }
+            })
+          ])
         }
       },
       addMember () {
@@ -231,22 +353,42 @@
         })
       },
       openPanel (panel) {
-        switch (panel) {
-          case 'accounts':
-            this.activePanel = 'accounts'
-            break
-          case 'posts':
-            this.activePanel = 'posts'
-            fetchPosts(this.$store, _.get(this.profile, [ 'id' ]))
-            break
-        }
+        this.activePanel = panel
       }
     },
-    mounted () {},
+    mounted () {
+      fetchPostsByUser(this.$store, {
+        where: {
+          author: _.get(this.profile, [ 'id' ]),
+          type: POST_TYPE.news
+        }
+      }),
+      fetchPostsByUser(this.$store, {
+        where: {
+          author: _.get(this.profile, [ 'id' ]),
+          active: POST_ACTIVE.draft,
+          type: POST_TYPE.news
+        }
+      }),
+      fetchPostsByUser(this.$store, {
+        where: {
+          author: _.get(this.profile, [ 'id' ]),
+          type: POST_TYPE.review
+        }
+      }),
+      fetchPostsByUser(this.$store, {
+        where: {
+          author: _.get(this.profile, [ 'id' ]),
+          active: POST_ACTIVE.draft,
+          type: POST_TYPE.review
+        }
+      })
+    },
     beforeMount () {
       this.$can('memberManage') && Promise.all([
-        getMembers(this.$store, {})
+        getMembers(this.$store, {}),
       ])
+      fetchPosts(this.$store, {})
     }
   }
 </script>
