@@ -15,6 +15,7 @@ router.get('/count', (req, res) => {
   debug('paramsStr', paramsStr)
   debug('params', params)
   debug('asset_url', asset_url)
+  debug('url', `${config.TALK_SERVER}/api/v1/graph/ql/graphql?query={commentCount(query:{asset_url:"${asset_url}"})}`)
   superagent
   .get(`${config.TALK_SERVER}/api/v1/graph/ql/graphql?query={commentCount(query:{asset_url:"${asset_url}"})}`)
   .end((e, r) => {

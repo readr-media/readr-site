@@ -8,6 +8,7 @@ import {
   deleteMembers,
   deletePost,
   deletePostSelf,
+  fetchCommentCount,
   getDisposableToken,
   getFollowingByResource,
   getFollowingByUser,
@@ -64,6 +65,11 @@ export default {
   },
   DELETE_POST_SELF: ({ commit, dispatch, state }, { id }) => {
     return deletePostSelf(id)
+  },
+  FETCH_COMMENT_COUNT: ({ commit, dispatch, state }, { params }) => {
+    return fetchCommentCount({ params }).then((count) => {
+      commit('SET_COMMENT_COUNT', { count, postId: params.postId })
+    })
   },
   GET_FOLLOWING_BY_RESOURCE: ({ commit, dispatch, state }, { params }) => {
     return getFollowingByResource({ params }).then(({ status, body }) => {
