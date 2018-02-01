@@ -40,7 +40,7 @@
       <nav class="article-nav">
         <span class="comment-icon" @click="renderComment(`.comment.comment-${get(articleData, [ 'id' ])}`)">
           <img class="comment-icon__thumbnail" src="/public/icons/comment-grey.png" alt="comment">
-          <span class="comment-icon__count">123</span>
+          <span class="comment-icon__count" v-text="commentCount"></span>
         </span>
         <img class="follow-icon" :src="isFollow ? '/public/icons/star.png' : '/public/icons/star-line.png'" alt="follow" @click="toogleFollow">
       </nav>
@@ -58,6 +58,14 @@ import { dateDiffFromNow } from 'src/util/comm'
 import { renderComment } from 'src/util/talk'
 
 const { get } = _
+const getCommentCount = (store, { assetUrl, postId }) => {
+  return store.dispatch('FETCH_COMMENT_COUNT', {
+    params: {
+      assetUrl,
+      postId
+    }
+  })
+}
 const publishAction = (store, data) => {
   return store.dispatch('PUBLISH_ACTION', {
     params: data
@@ -97,6 +105,9 @@ export default {
         return node.innerHTML
       })
     },
+    commentCount () {
+      return this.articleData.commentAmount || 0
+    },
     dateDiffFromNow () {
       return dateDiffFromNow(this.articleData.updatedAt)
     },
@@ -131,7 +142,7 @@ export default {
   methods: {
     get,
     renderComment (ref) {
-      renderComment(`${ref}`, location.href)
+      renderComment(`${ref}`, `${location.host}/post-${get(this.articleData, [ 'id' ])}`)
     },
     toogleReadmore () {
       this.isReadMore = true
@@ -167,6 +178,12 @@ export default {
         }
       }
     }
+  },
+  mounted () {
+    getCommentCount(this.$store, {
+      assetUrl: `${location.host}/post-${get(this.articleData, [ 'id' ])}`,
+      postId: get(this.articleData, [ 'id' ])
+    })
   }
 }
 </script>

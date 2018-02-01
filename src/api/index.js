@@ -144,6 +144,17 @@ export function deletePostSelf (id) {
   return _doDelete(url)
 }
 
+export function fetchCommentCount ({ params }) {
+  return new Promise((resolve) => {
+    const url = `${host}/api/comment/count?asset_url=${params.assetUrl}`
+    _doFetch(url).then(({ body }) => {
+      console.log('params.assetUrl', params.assetUrl)
+      console.log('body', body)
+      resolve(body.count)
+    })
+  })
+}
+
 export function getFollowingByResource (params) {
   let url = `${host}/api/following/byresource`
   return new Promise((resolve, reject) => {
