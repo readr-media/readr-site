@@ -148,8 +148,6 @@ export function fetchCommentCount ({ params }) {
   return new Promise((resolve) => {
     const url = `${host}/api/comment/count?asset_url=${params.assetUrl}`
     _doFetch(url).then(({ body }) => {
-      console.log('params.assetUrl', params.assetUrl)
-      console.log('body', body)
       resolve(body.count)
     })
   })
