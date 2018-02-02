@@ -40,7 +40,7 @@
       <nav class="article-nav">
         <span class="comment-icon" @click="renderComment(`.comment.comment-${get(articleData, [ 'id' ])}`)">
           <img class="comment-icon__thumbnail" src="/public/icons/comment-grey.png" alt="comment">
-          <span class="comment-icon__count" v-text="commentCount"></span>
+          <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="get(this.articleData, [ 'id' ])"></CommentCount>
         </span>
         <img class="follow-icon" :src="isFollow ? '/public/icons/star.png' : '/public/icons/star-line.png'" alt="follow" @click="toogleFollow">
       </nav>
@@ -52,21 +52,15 @@
 </template>
 
 <script>
-import AppShareButton from '../AppShareButton.vue'
+import AppShareButton from 'src/components/AppShareButton.vue'
+import CommentCount from 'src/components/comment/CommentCount.vue'
 import _ from 'lodash'
 import { SITE_DOMAIN_DEV } from 'src/constants'
 import { dateDiffFromNow } from 'src/util/comm'
 import { renderComment } from 'src/util/talk'
 
 const { get } = _
-const getCommentCount = (store, { assetUrl, postId }) => {
-  return store.dispatch('FETCH_COMMENT_COUNT', {
-    params: {
-      assetUrl,
-      postId
-    }
-  })
-}
+const debug = require('debug')('CLIENT:HomeArticleMain')
 const publishAction = (store, data) => {
   return store.dispatch('PUBLISH_ACTION', {
     params: data
@@ -87,7 +81,8 @@ export default {
     }
   },
   components: {
-    AppShareButton
+    AppShareButton,
+    CommentCount
   },
   data () {
     return {
@@ -183,11 +178,10 @@ export default {
       }
     }
   },
-  mounted () {
-    getCommentCount(this.$store, {
-      assetUrl: `${location.protocol}//${this.shareUrl}`,
-      postId: get(this.articleData, [ 'id' ])
-    })
+  watch: {
+    commentCount: function () {
+      debug('Comment count changed.', this.commentCount)
+    }
   }
 }
 </script>
