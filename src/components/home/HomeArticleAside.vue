@@ -18,18 +18,26 @@
           </p>
         </div>
         <nav class="article-nav">
-          <span class="comment-icon">
+          <span class="comment-icon" @click="renderComment(`.home-article-aside__comment > .comment.comment-${get(articleData, [ 'id' ])}`)">
             <img class="comment-icon__thumbnail" src="/public/icons/comment-grey.png" alt="comment">
-            <span class="comment-icon__count">123</span>
+            <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="get(this.articleData, [ 'id' ])"></CommentCount>
           </span>
           <img class="follow-icon" :src="isFollow ? '/public/icons/star.png' : '/public/icons/star-line.png'" alt="follow" @click="toogleFollow">
         </nav>
+        <div class="home-article-aside__comment">
+          <div :class="`comment comment-${get(articleData, [ 'id' ])}`"></div>
+        </div>
       </div>
     </div>
   </article>
 </template>
 
 <script>
+import CommentCount from 'src/components/comment/CommentCount.vue'
+import { SITE_DOMAIN_DEV } from 'src/constants'
+import { renderComment } from 'src/util/talk'
+import { get } from 'lodash'
+
 const publishAction = (store, data) => {
   return store.dispatch('PUBLISH_ACTION', {
     params: data
@@ -37,17 +45,8 @@ const publishAction = (store, data) => {
 }
 
 export default {
-  props: {
-    articleData: {
-      type: Object,
-      default: {
-        author: {
-          nickname: ''
-        },
-        title: '',
-        content: ''
-      }
-    }
+  components: {
+    CommentCount
   },
   computed: {
     articleContent () {
@@ -60,6 +59,9 @@ export default {
       .map((node) => {
         return node.innerHTML
       })
+    },
+    commentCount () {
+      return this.articleData.commentAmount || 0
     },
     titleTrim () {
       const limit = 18
@@ -89,6 +91,10 @@ export default {
     }
   },
   methods: {
+    get,
+    renderComment (ref) {
+      renderComment(`${ref}`, `${location.protocol}//${SITE_DOMAIN_DEV}/post/${this.articleData.id}`)
+    },
     toogleFollow () {
       if (!this.$store.state.isLoggedIn) {
         alert('please login first')
@@ -121,6 +127,18 @@ export default {
         }
       }
     }
+  },
+  props: {
+    articleData: {
+      type: Object,
+      default: {
+        author: {
+          nickname: ''
+        },
+        title: '',
+        content: ''
+      }
+    }
   }
 }
 </script>
@@ -131,7 +149,7 @@ $icon-size
   height 25px
 .home-article-aside
   width 100%
-  height 204px
+  // height 204px
   background-color white
   padding 15px 0 12.5px 0
   border-bottom .5px solid #979797
@@ -141,7 +159,8 @@ $icon-size
     font-size 15px
     font-weight 500
     text-align justify
-
+  &__comment
+    margin-top 20px
   .author-info
     display flex
     align-items center
@@ -198,6 +217,7 @@ $icon-size
     height 25px
 
   .comment-icon
+    cursor pointer
     &__thumbnail
       @extends $icon-size
     &__count
