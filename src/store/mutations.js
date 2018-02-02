@@ -12,8 +12,8 @@ export default {
     })
     Vue.delete(state.followingByUser, index)
   },
-  SET_COMMENT_COUNT: (state, { count, postId }) => {
-    const post = _.get(_.filter(_.get(state, [ 'publicPosts', 'items' ]), { id: postId }), [ 0 ])
+  SET_COMMENT_COUNT: (state, { count, postId, type }) => {
+    const post = _.get(_.filter(_.get(state, [ type, 'items' ]), { id: postId }), [ 0 ])
     post && (post.commentAmount = count)
   },
   SET_CUSTOM_EDITORS: (state, { members }) => {

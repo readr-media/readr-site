@@ -20,7 +20,7 @@
         <nav class="article-nav">
           <span class="comment-icon" @click="renderComment(`.home-article-aside__comment > .comment.comment-${get(articleData, [ 'id' ])}`)">
             <img class="comment-icon__thumbnail" src="/public/icons/comment-grey.png" alt="comment">
-            <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="get(this.articleData, [ 'id' ])"></CommentCount>
+            <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="get(this.articleData, [ 'id' ])" :type="'publicPostsHot'"></CommentCount>
           </span>
           <img class="follow-icon" :src="isFollow ? '/public/icons/star.png' : '/public/icons/star-line.png'" alt="follow" @click="toogleFollow">
         </nav>

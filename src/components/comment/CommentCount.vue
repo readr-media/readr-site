@@ -5,12 +5,13 @@
   import { SITE_DOMAIN_DEV } from 'src/constants'
   
   const debug = require('debug')('CLIENT:commentCount')
-  const getCommentCount = (store, { assetUrl, postId }) => {
+  const getCommentCount = (store, { assetUrl, postId, type }) => {
     return store.dispatch('FETCH_COMMENT_COUNT', {
       params: {
         assetUrl,
         postId
-      }
+      },
+      type
     })
   }
   export default {
@@ -22,7 +23,8 @@
           setInterval(() => {
             getCommentCount(this.$store, {
               assetUrl: `${location.protocol}//${SITE_DOMAIN_DEV}/post/${this.postId}`,
-              postId: this.postId
+              postId: this.postId,
+              type: this.type
             })
           }, 6000)
           resolve()
@@ -32,7 +34,8 @@
     mounted () {
       getCommentCount(this.$store, {
         assetUrl: `${location.protocol}//${SITE_DOMAIN_DEV}/post/${this.postId}`,
-        postId: this.postId
+        postId: this.postId,
+        type: this.type
       })
       this.seUpfetchCommentCountInterval()
     },
@@ -42,7 +45,10 @@
       },
       postId: {
          default: () => ''
-      }   
+      },
+      type: {
+        default: () => 'publicPosts'
+      }
     },
     watch: {
       commentAmount: function () {

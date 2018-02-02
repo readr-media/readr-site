@@ -66,9 +66,9 @@ export default {
   DELETE_POST_SELF: ({ commit, dispatch, state }, { id }) => {
     return deletePostSelf(id)
   },
-  FETCH_COMMENT_COUNT: ({ commit, dispatch, state }, { params }) => {
+  FETCH_COMMENT_COUNT: ({ commit, dispatch, state }, { params, type }) => {
     return fetchCommentCount({ params }).then((count) => {
-      commit('SET_COMMENT_COUNT', { count, postId: params.postId })
+      commit('SET_COMMENT_COUNT', { count, postId: params.postId, type })
     })
   },
   GET_FOLLOWING_BY_RESOURCE: ({ commit, dispatch, state }, { params }) => {
