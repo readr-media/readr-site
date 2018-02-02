@@ -38,7 +38,7 @@
         </figure>
       </a>
       <nav class="article-nav">
-        <span class="comment-icon" @click="renderComment(`.comment.comment-${get(articleData, [ 'id' ])}`)">
+        <span class="comment-icon" @click="renderComment(`.home-article-main__comment > .comment.comment-${get(articleData, [ 'id' ])}`)">
           <img class="comment-icon__thumbnail" src="/public/icons/comment-grey.png" alt="comment">
           <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="get(this.articleData, [ 'id' ])"></CommentCount>
         </span>
@@ -206,10 +206,6 @@ $icon-size
     background-color white
   &__comment
     margin-top 20px
-    // min-height 20px
-    // height 500px
-    // .comment
-    //   height 100%
   &__date
     font-size 14px
     font-weight 500
