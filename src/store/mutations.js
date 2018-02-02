@@ -12,6 +12,22 @@ export default {
     })
     Vue.delete(state.followingByUser, index)
   },
+  ADD_USER_TO_FOLLOWING_BY_RESOURCE: (state, params) => {
+    const resourceIndex = _.findIndex(state.followingByResource, { resourceid: `${params.resourceId}` })
+    if (resourceIndex === -1) {
+      state.followingByResource.push({
+        resourceid: `${params.resourceId}`,
+        follower: [ params.userId ]
+      })
+    } else {
+      state.followingByResource[resourceIndex].follower.push(params.userId)
+    }
+  },
+  REMOVE_USER_FROM_FOLLOWING_BY_RESOURCE: (state, params) => {
+    const resourceIndex = _.findIndex(state.followingByResource, { resourceid: `${params.resourceId}` })
+    const userIndex = state.followingByResource[resourceIndex].follower.indexOf(params.userId)
+    Vue.delete(state.followingByResource[resourceIndex].follower, userIndex)
+  },
   SET_COMMENT_COUNT: (state, { count, postId, type }) => {
     const post = _.get(_.filter(_.get(state, [ type, 'items' ]), { id: postId }), [ 0 ])
     post && (post.commentAmount = count)
@@ -21,6 +37,11 @@ export default {
   },
   SET_FOLLOWING_BY_RESOURCE: (state, { following }) => {
     state['followingByResource'] = following
+  },
+  UPDATE_FOLLOWING_BY_RESOURCE: (state, { following }) => {
+    following.forEach(follow => {
+      state['followingByResource'].push(follow)
+    })
   },
   SET_FOLLOWING_BY_USER: (state, { following }) => {
     state['followingByUser'] = following

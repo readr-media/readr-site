@@ -158,8 +158,9 @@ export function getFollowingByResource (params) {
   return new Promise((resolve, reject) => {
     superagent
       .get(url)
-      .send(params)
+      // .send(params)
       .set('Authorization', `Bearer ${getToken()}`)
+      .query(params)
       .end(function (err, res) {
         if (err) {
           reject(err)
