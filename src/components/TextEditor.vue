@@ -5,7 +5,7 @@
       <div class="editor__heading--switch" :class="{ active: showHtml }" @click="$_editor_toggleHtml">&lt; / &gt;</div>
     </div>
     <div class="editor__main">
-      <div v-show="type === config.type.review">
+      <div v-show="type === config.type.REVIEW">
         <div
           ref="quillReviewEditor"
           :content="contentReview"
@@ -14,7 +14,7 @@
           @change="onEditorChange($event)">
         </div>
       </div>
-      <div v-show="type === config.type.news">
+      <div v-show="type === config.type.NEWS">
         <div
           ref="quillNewsEditor"
           :content="contentNews"

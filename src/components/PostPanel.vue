@@ -54,21 +54,21 @@
       <button
         class="postPanelEdit__btn"
         :disabled="(action === 'add') && isEmpty"
-        @click="$_postPanelEdit_submit(config.active.draft)"
+        @click="$_postPanelEdit_submit(config.active.DRAFT)"
         v-text="wording.WORDING_POSTEDITOR_SAVE_DRAFT">
       </button>
       <button
         v-if="!$can('publishPost')"
         class="postPanelEdit__btn dark"
         :disabled="(action === 'add') && isEmpty"
-        @click="$_postPanelEdit_submit(config.active.pending)"
+        @click="$_postPanelEdit_submit(config.active.PENDING)"
         v-text="wording.WORDING_POSTEDITOR_SAVE_PENDING">
       </button>
       <button
         v-if="$can('publishPost')"
         class="postPanelEdit__btn dark"
         :disabled="(action === 'add') && isEmpty"
-        @click="$_postPanelEdit_submit(config.active.active)"
+        @click="$_postPanelEdit_submit(config.active.ACTIVE)"
         v-text="wording.WORDING_POSTEDITOR_PUBLISH">
       </button>
     </div>

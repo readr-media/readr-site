@@ -9,10 +9,10 @@
         <About :profile="profile"></About>
         <div class="control-bar">
           <TheBaseControlBar
-            @addNews="$_admin_textEditorHandler(true, 'add', config.type.news)"
-            @addReview="$_admin_textEditorHandler(true, 'add', config.type.review)"
-            @editNews="$_admin_showDraftList(config.type.news)"
-            @editReview="$_admin_showDraftList(config.type.review)"
+            @addNews="$_admin_textEditorHandler(true, 'add', config.type.NEWS)"
+            @addReview="$_admin_textEditorHandler(true, 'add', config.type.REVIEW)"
+            @editNews="$_admin_showDraftList(config.type.NEWS)"
+            @editReview="$_admin_showDraftList(config.type.REVIEW)"
             @openPanel="openPanel">
           </TheBaseControlBar>
         </div>
