@@ -5,7 +5,6 @@ const config = require('../../config')
 const debug = require('debug')('READR:api:comment')
 const express = require('express')
 const router = express.Router()
-const superagent = require('superagent')
 
 const jwtExpress = require('express-jwt')
 const authVerify = jwtExpress({ secret: config.JWT_SECRET })
@@ -20,19 +19,15 @@ router.get('/count', (req, res) => {
   debug('params', params)
   debug('asset_url', asset_url)
   debug('url', `${config.TALK_SERVER}/api/v1/graph/ql/graphql?query={commentCount(query:{asset_url:"${asset_url}"})}`)
-  superagent
-  .get(`${config.TALK_SERVER}/api/v1/graph/ql/graphql?query={commentCount(query:{asset_url:"${asset_url}"})}`)
-  .end((e, r) => {
-    if (!e && r) {
-      debug('res.body:')
-      debug(r.body)
-      res.send({
-        count: r.body.data.commentCount
-      })
-    } else {
-      debug('err', e)
-      res.status(500).json(e)
-    }
+
+  const client = new GraphQLClient(`${config.TALK_SERVER}/api/v1/graph/ql`, { headers: {} })
+  const query = `query { count: commentCount(query:{ asset_url:"${asset_url}" })}`
+  client.request(query).then(data => {
+    debug(data)
+    res.send(data)
+  }).catch(err => {
+    debug('err', err)
+    res.status(err.response.status).json(err.response.errors)
   })
 })
 router.get('/me', authVerify, (req, res) => {
@@ -76,11 +71,9 @@ router.get('/me', authVerify, (req, res) => {
     }
   `
   client.request(query).then(data => {
-      debug('HIHI')
-      debug(data)
-      res.send({
-        me: data.me
-      })
+    res.send({
+      me: data.me
+    })
   }).catch(err => {
     debug('err', err)
     res.status(err.response.status).json(err.response.errors)
