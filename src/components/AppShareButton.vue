@@ -59,7 +59,7 @@ $app-share-button__item
     border none
     width 101%
     height 101%
-    background-image url(/public/icons/share.png)
+    background-image url(/public/icons/share-blue.png)
     background-size 100% 100%
     background-color white
     outline none

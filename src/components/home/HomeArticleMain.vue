@@ -39,10 +39,10 @@
       </a>
       <nav class="article-nav">
         <span class="comment-icon" @click="renderComment(`.home-article-main__comment > .comment.comment-${get(articleData, [ 'id' ])}`)">
-          <img class="comment-icon__thumbnail" src="/public/icons/comment-grey.png" alt="comment">
+          <img class="comment-icon__thumbnail" src="/public/icons/comment-blue.png" alt="comment">
           <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="get(this.articleData, [ 'id' ])" :type="'publicPosts'"></CommentCount>
         </span>
-        <img class="follow-icon" :src="isFollow ? '/public/icons/star.png' : '/public/icons/star-line.png'" alt="follow" @click="toogleFollow">
+        <img class="follow-icon" :src="isFollow ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="follow" @click="toogleFollow">
       </nav>
       <div class="home-article-main__comment">
         <div :class="`comment comment-${get(articleData, [ 'id' ])}`"></div>
@@ -276,7 +276,7 @@ $icon-size
         margin-top 6px
     &__more
       font-weight 500
-      color #4280a2
+      color #a7a7a7
       cursor pointer
       &:hover
         border-bottom 1px solid currentColor
@@ -298,7 +298,7 @@ $icon-size
       position relative
       right 5px
       font-size 14px
-      color #a9a9a9
+      color #11b8c9
   .follow-icon
     @extends $icon-size
     margin-left 4.5px

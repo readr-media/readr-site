@@ -29,6 +29,7 @@
         <a class="list-item aside-navigation__list-item" href="/"><span><img src="/public/icons/fb.png" alt="fb"></span></a>
         <a class="list-item aside-navigation__list-item" href="/"><span><img src="/public/icons/github.png" alt="github"></span></a>
         <a class="list-item aside-navigation__list-item" href="/"><span><img src="/public/icons/info.png" alt="info"></span></a>
+        <a class="list-item aside-navigation__list-item" href="/"><span><img src="/public/icons/mirrormedia.png" alt="info"></span></a>
       </div>
     </ol>
   </nav>
@@ -62,7 +63,7 @@ $aside-navigation__section
   display flex
   flex-direction column
 $aside-navigation__external
-  flex 3 3 auto
+  flex 4 4 auto
   display flex
   flex-direction column
 $aside-navigation__list-item
@@ -92,7 +93,6 @@ $aside-navigation__list-item-drawer
 .aside-navigation
   margin-top 9.5px
   width 50px
-  height 350px
   display flex
   flex-direction column
   padding 0
@@ -101,6 +101,7 @@ $aside-navigation__list-item-drawer
     &--white
       @extends $aside-navigation__section
       background-color white
+      border .5px solid #d3d3d3
       // Set different font color based on background-color
       & > .list-item
         & > span
