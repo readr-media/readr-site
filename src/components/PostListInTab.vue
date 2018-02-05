@@ -60,21 +60,21 @@
         this.$emit('deletePost', id)
       },
       $_postListInTab_editPost (id, type) {
-        if (type === POST_TYPE.news) {
-          this.$emit('editPost', true, 'edit', POST_TYPE.news, id)
+        if (type === POST_TYPE.NEWS) {
+          this.$emit('editPost', true, 'edit', POST_TYPE.NEWS, id)
         } else {
-          this.$emit('editPost', true, 'edit', POST_TYPE.review, id)
+          this.$emit('editPost', true, 'edit', POST_TYPE.REVIEW, id)
         }
       },
       $_postListInTab_getActive (post) {
         switch (post.active) {
-          case POST_ACTIVE.active:
+          case POST_ACTIVE.ACTIVE:
             return WORDING_POSTLIST_ACTIVE_PUBLISH
-          case POST_ACTIVE.draft:
+          case POST_ACTIVE.DRAFT:
             return WORDING_POSTLIST_ACTIVE_DRAFT
-          case POST_ACTIVE.pending:
+          case POST_ACTIVE.PENDING:
             return WORDING_POSTLIST_ACTIVE_PENDING
-          case POST_ACTIVE.unpubilsh:
+          case POST_ACTIVE.UNPUBLISH:
             return WORDING_POSTLIST_ACTIVE_UNPUBLISH
           default:
             return WORDING_POSTLIST_ACTIVE_DRAFT

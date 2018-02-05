@@ -205,7 +205,7 @@
       $_postPanelEdit_resetContent () {
         this.resetToggle = !this.resetToggle
       },
-      $_postPanelEdit_submit (active = POST_ACTIVE.draft) {
+      $_postPanelEdit_submit (active = POST_ACTIVE.DRAFT) {
         const params = {}
         params.active = active
         params.link_title = ''
@@ -240,7 +240,7 @@
                 if (this.action === 'add') {
                   params.author = _.get(this.$store.state, [ 'profile', 'id' ])
                   params.type = this.type
-                  if (this.active === POST_ACTIVE.active) {
+                  if (this.active === POST_ACTIVE.ACTIVE) {
                     this.$emit('showAlert', true, active, false)
                   } else {
                     addPost(this.$store, params)
@@ -252,10 +252,10 @@
                 } else if (this.action === 'edit') {
                   params.id = _.get(this.post, [ 'id' ])
                   params.author = _.get(this.post, [ 'author', 'id' ])
-                  if (this.active === POST_ACTIVE.active) {
+                  if (this.active === POST_ACTIVE.ACTIVE) {
                     this.$emit('showAlert', true, active, false)
                   }
-                  if (this.active === POST_ACTIVE.pending || this.active === POST_ACTIVE.draft) {
+                  if (this.active === POST_ACTIVE.PENDING || this.active === POST_ACTIVE.DRAFT) {
                     updatePost(this.$store, params)
                       .then(() => {
                         this.$emit('showAlert', true, active, true)
@@ -271,7 +271,7 @@
           if (this.action === 'add') {
             params.author = _.get(this.$store.state, [ 'profile', 'id' ])
             params.type = this.type
-            if (this.active === POST_ACTIVE.active) {
+            if (this.active === POST_ACTIVE.ACTIVE) {
               this.$emit('showAlert', true, active, false)
             } else {
               addPost(this.$store, params)
@@ -283,10 +283,10 @@
           } else if (this.action === 'edit') {
             params.id = _.get(this.post, [ 'id' ])
             params.author = _.get(this.post, [ 'author', 'id' ])
-            if (this.active === POST_ACTIVE.active) {
+            if (this.active === POST_ACTIVE.ACTIVE) {
               this.$emit('showAlert', true, active, false)
             }
-            if (this.active === POST_ACTIVE.pending || this.active === POST_ACTIVE.draft) {
+            if (this.active === POST_ACTIVE.PENDING || this.active === POST_ACTIVE.DRAFT) {
               updatePost(this.$store, params)
                 .then(() => {
                   this.$emit('showAlert', true, active, true)

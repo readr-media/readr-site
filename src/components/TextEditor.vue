@@ -97,9 +97,9 @@ export default {
     },
     contentEdit (val) {
       this.content = val
-      if (this.type === POST_TYPE.review) {
+      if (this.type === POST_TYPE.REVIEW) {
         this.contentReview = val
-      } else if (this.type === POST_TYPE.news) {
+      } else if (this.type === POST_TYPE.NEWS) {
         this.contentNews = val
       }
     },
@@ -111,9 +111,9 @@ export default {
   },
   methods: {
     onEditorChange(event) {
-      if (this.type === POST_TYPE.review) {
+      if (this.type === POST_TYPE.REVIEW) {
         this.contentReview = event.html
-      } else if (this.type === POST_TYPE.news) {
+      } else if (this.type === POST_TYPE.NEWS) {
         this.contentNews = event.html
       }
       this.content = event.html

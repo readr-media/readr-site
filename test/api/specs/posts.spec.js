@@ -10,7 +10,12 @@ const should = chai.should()
 const supertest = require('supertest')
 
 const updatedData = {
-  ids: [ 13, 69 ],
+  ids: [ 12, 97 ],
+  updated_by: 'wonderwomen@wonderwomen.com'
+}
+
+const deletedData = {
+  ids: [ 72, 68 ],
   updated_by: 'wonderwomen@wonderwomen.com'
 }
 
@@ -52,15 +57,27 @@ describe('/POST/login', () => {
   })
 })
 
-describe('/PUT/posts', () => {
-  it(`should update article[${updatedData.ids[0]}, ${updatedData.ids[1]}] active to published`, (done) => {
-    supertest(app).put('/api/posts')
-    .set('Authorization', `Bearer ${token}`)    
-    .send(updatedData)
+// describe('/PUT/posts', () => {
+//   it(`should update article[${updatedData.ids[0]}, ${updatedData.ids[1]}] active to published`, (done) => {
+//     supertest(app).put('/api/posts')
+//     .set('Authorization', `Bearer ${token}`)    
+//     .send(updatedData)
+//     .end((err, res) => {
+//       if (err) return console.log(err)
+//       res.status.should.equal(200)
+//       done()
+//     })
+//   }).timeout(400)
+// })
+
+describe('/DELETE/posts', () => {
+  it(`should delete article data through api`, (done) => {
+    supertest(app).delete('/api/posts?ids= [ 72, 68 ]&updated_by=wonderwomen@wonderwomen.com')
+    .set('Authorization', `Bearer ${token}`) 
     .end((err, res) => {
       if (err) return console.log(err)
       res.status.should.equal(200)
       done()
     })
-  }).timeout(100)
+  }).timeout(400)
 })

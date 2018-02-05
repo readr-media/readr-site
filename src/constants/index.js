@@ -11,13 +11,6 @@ export const ROLE_MAP = [
   { key: 1, value: '會員', route: 'member' }
 ]
 
-export const POST_ACTIVE = {
-  active: 1,
-  pending: 2,
-  draft: 3,
-  unpubilsh: 4
-}
-
 export const SECTIONS_DEFAULT = {
   // 'chief-editor-talk': '總編評論',
   // 'celebrities-talk': '名人聊新聞',

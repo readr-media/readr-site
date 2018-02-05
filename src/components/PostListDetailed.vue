@@ -50,10 +50,10 @@
         this.$emit('deletePost', id)
       },
       $_postListDetailed_editPost (id, type) {
-        if (type === POST_TYPE.news) {
-          this.$emit('editPost', true, 'edit', POST_TYPE.news, id)
-        } else if (type === POST_TYPE.review) {
-          this.$emit('editPost', true, 'edit', POST_TYPE.review, id)
+        if (type === POST_TYPE.NEWS) {
+          this.$emit('editPost', true, 'edit', POST_TYPE.NEWS, id)
+        } else if (type === POST_TYPE.REVIEW) {
+          this.$emit('editPost', true, 'edit', POST_TYPE.REVIEW, id)
         }
       },
       $_postListDetailed_getDescr (content) {

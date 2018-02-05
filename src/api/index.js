@@ -9,7 +9,7 @@ const host = getHost()
 
 function _buildQuery (params = {}) {
   let query = {}
-  const whitelist = [ 'where', 'max_result', 'page', 'sort', 'ids', 'custom_editor' ]
+  const whitelist = [ 'where', 'max_result', 'page', 'sort', 'ids', 'custom_editor', 'updated_by' ]
   whitelist.forEach((ele) => {
     if (params.hasOwnProperty(ele)) {
       if (ele === 'where') {
@@ -136,6 +136,15 @@ export function addPost (params) {
 
 export function deletePost (id) {
   const url = `${host}/api/post/${id}`
+  return _doDelete(url)
+}
+
+export function deletePosts ({ params }) {
+  let url = `${host}/api/posts`
+  const query = _buildQuery(params)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }
   return _doDelete(url)
 }
 
@@ -447,4 +456,11 @@ export function publishAction ({ params }) {
       }
     })
   })
+}
+
+export function publishPosts ({ params }) {
+  const url = `${host}/api/posts`
+  return _doPut(url, params)
+    .then(res => ({ status: res.status }))
+    .catch(err => err)
 }

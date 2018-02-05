@@ -9,7 +9,6 @@
           <th class="postList__status postList--center"><span @click="$_postList_orderBy('active')" v-text="wording.WORDING_POSTLIST_ACTIVE"></span></th>
           <th class="postList__update postList--center">
             <button
-              disabled
               class="postList__btn postList__btn--multiple"
               v-text="wording.WORDING_POSTLIST_PUBLISH"
               @click="$_postList_publishMultiple">
@@ -104,19 +103,16 @@
     mounted () {},
     methods: {
       $_postList_deleteMultiple () {
-        const items = _.filter(this.checkedPost, (item) => {
-          const post = _.find(this.posts, { id: item })
-          return _.get(post, [ 'active' ]) !== POST_ACTIVE.active
-        })
+        this.$emit('deleteMultiple', this.checkedPost)
       },
       $_postList_deletePost (id) {
         this.$emit('deletePost', id)
       },
       $_postList_editPost (id, type) {
-        if (type === POST_TYPE.news) {
-          this.$emit('editPost', true, 'edit', POST_TYPE.news, id)
+        if (type === POST_TYPE.NEWS) {
+          this.$emit('editPost', true, 'edit', POST_TYPE.NEWS, id)
         } else {
-          this.$emit('editPost', true, 'edit', POST_TYPE.review, id)
+          this.$emit('editPost', true, 'edit', POST_TYPE.REVIEW, id)
         }
       },
       $_postList_getAuthorId (post) {
@@ -149,8 +145,9 @@
       $_postList_publishMultiple () {
         const items = _.filter(this.checkedPost, (item) => {
           const post = _.find(this.posts, { id: item })
-          return _.get(post, [ 'active' ]) !== POST_ACTIVE.active
+          return _.get(post, [ 'active' ]) !== POST_ACTIVE.ACTIVE
         })
+        this.$emit('publishMultiple', items)
       },
       $_postList_toggleHandler (id) {
         if (event.target.checked) {

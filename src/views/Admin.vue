@@ -202,7 +202,7 @@
         pageReviewsDraft: DEFAULT_PAGE,
         post: {},
         postActive: undefined,
-        postType: POST_TYPE.review,
+        postType: POST_TYPE.REVIEW,
         showAlert: false,
         showEditor: false,
         showLightBox: false,
@@ -269,9 +269,9 @@
         this.showAlert = true
       },
       $_admin_showDraftList (type) {
-        if (type === POST_TYPE.review) {
+        if (type === POST_TYPE.REVIEW) {
           this.showReviewsDraftList = true
-        } else if (type === POST_TYPE.news) {
+        } else if (type === POST_TYPE.NEWS) {
           this.showNewsDraftList = true
         }
       },
@@ -303,39 +303,39 @@
           sort: this.currSort
         })
 
-        if (type === POST_TYPE.review) {
+        if (type === POST_TYPE.REVIEW) {
           Promise.all([
             fetchPostsByUser(this.$store, {
               page: this.pageReviews,
               where: {
                 author: _.get(this.profile, [ 'id' ]),
-                type: POST_TYPE.review
+                type: POST_TYPE.REVIEW
               }
             }),
             fetchPostsByUser(this.$store, {
               page: this.pageReviewsDraft,
               where: {
                 author: _.get(this.profile, [ 'id' ]),
-                active: POST_ACTIVE.draft,
-                type: POST_TYPE.review
+                active: POST_ACTIVE.DRAFT,
+                type: POST_TYPE.REVIEW
               }
             })
           ])
-        } else if (type === POST_TYPE.news) {
+        } else if (type === POST_TYPE.NEWS) {
           Promise.all([
             fetchPostsByUser(this.$store, {
               page: this.pageNews,
               where: {
                 author: _.get(this.profile, [ 'id' ]),
-                type: POST_TYPE.news
+                type: POST_TYPE.NEWS
               }
             }),
             fetchPostsByUser(this.$store, {
               page: this.pageNewsDraft,
               where: {
                 author: _.get(this.profile, [ 'id' ]),
-                active: POST_ACTIVE.draft,
-                type: POST_TYPE.news
+                active: POST_ACTIVE.DRAFT,
+                type: POST_TYPE.NEWS
               }
             })
           ])
@@ -360,27 +360,27 @@
       fetchPostsByUser(this.$store, {
         where: {
           author: _.get(this.profile, [ 'id' ]),
-          type: POST_TYPE.news
+          type: POST_TYPE.NEWS
         }
       }),
       fetchPostsByUser(this.$store, {
         where: {
           author: _.get(this.profile, [ 'id' ]),
-          active: POST_ACTIVE.draft,
-          type: POST_TYPE.news
+          active: POST_ACTIVE.DRAFT,
+          type: POST_TYPE.NEWS
         }
       }),
       fetchPostsByUser(this.$store, {
         where: {
           author: _.get(this.profile, [ 'id' ]),
-          type: POST_TYPE.review
+          type: POST_TYPE.REVIEW
         }
       }),
       fetchPostsByUser(this.$store, {
         where: {
           author: _.get(this.profile, [ 'id' ]),
-          active: POST_ACTIVE.draft,
-          type: POST_TYPE.review
+          active: POST_ACTIVE.DRAFT,
+          type: POST_TYPE.REVIEW
         }
       })
     },
