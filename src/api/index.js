@@ -162,6 +162,15 @@ export function fetchCommentCount ({ params }) {
   })
 }
 
+export function fetchMeComments () {
+  return new Promise((resolve) => {
+    const url = `${host}/api/comment/me`
+    _doFetchStrict(url, {}).then(({ body }) => {
+      resolve(body)
+    })
+  })
+}
+
 export function getFollowingByResource (params) {
   let url = `${host}/api/following/byresource`
   return new Promise((resolve, reject) => {

@@ -10,6 +10,7 @@ import {
   deletePosts,
   deletePostSelf,
   fetchCommentCount,
+  fetchMeComments,
   getDisposableToken,
   getFollowingByResource,
   getFollowingByUser,
@@ -74,6 +75,11 @@ export default {
   FETCH_COMMENT_COUNT: ({ commit, dispatch, state }, { params, type }) => {
     return fetchCommentCount({ params }).then((count) => {
       commit('SET_COMMENT_COUNT', { count, postId: params.postId, type })
+    })
+  },
+  FETCH_COMMENTS_ME: ({ commit, dispatch, state }) => {
+    return fetchMeComments().then((comments) => {
+      commit('SET_COMMENTS_ME', { comments })
     })
   },
   GET_FOLLOWING_BY_RESOURCE: ({ commit, dispatch, state }, params) => {

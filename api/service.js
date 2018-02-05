@@ -18,7 +18,8 @@ const generateJwt = ({ id, email, name, nickname, role, keepAlive, scopes }) => 
   }
   
   set(claims, config.JWT_USER_ID_CLAIM, '46fea2eb-be14-4adc-96db-e915b52d2a53')
-  // set(claims, config.JWT_USER_ID_CLAIM, '54b92f76-9b96-4ec1-80f1-e24f46e921b7')
+  // set(claims, config.JWT_USER_ID_CLAIM, '78c7e8ae-8a6a-4b5a-b58b-f4d4de5e9013')
+  // set(claims, config.JWT_USER_ID_CLAIM, '94b9a187-7045-4f51-bf13-dda1fdbc110d')
   return jwt.sign(
     claims,
     config.JWT_SECRET,

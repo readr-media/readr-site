@@ -15,7 +15,7 @@
     })
   }
   export default {
-    name: '',
+    name: 'CommentCount',
     computed: {},
     methods: {
       seUpfetchCommentCountInterval () {
@@ -26,7 +26,7 @@
               postId: this.postId,
               type: this.type
             })
-          }, 6000)
+          }, 60000 * 2)
           resolve()
         })
       }

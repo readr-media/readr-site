@@ -36,6 +36,7 @@
                   @changeResource="$_editor_followingHandler"
                   @unfollow="$_editor_unfollowingHandler">
                 </following-list-tab>
+                <CommentManagement slot="3"></CommentManagement>
               </app-tab>
             </section>
           </template>
@@ -113,6 +114,7 @@
   import AppAsideNav from '../components/AppAsideNav.vue'
   import AppHeader from '../components/AppHeader.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
+  import CommentManagement from '../components/Comment/CommentManagement.vue'
   import FollowingListInTab from '../components/FollowingListInTab.vue'
   import PaginationNav from '../components/PaginationNav.vue'
   import PostList from '../components/PostList.vue'
@@ -214,7 +216,8 @@
       'post-list-detailed': PostListDetailed,
       'post-list-tab': PostListInTab,
       'post-panel': PostPanel,
-      AppAsideNav
+      AppAsideNav,
+      CommentManagement
     },
     data () {
       return {
