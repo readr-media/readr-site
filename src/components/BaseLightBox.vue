@@ -49,6 +49,15 @@
         default: false
       }
     },
+    watch: {
+      showLightBox (val) {
+        if (val) {
+          document.querySelector('.view').classList.add('locked')
+        } else {
+          document.querySelector('.view').classList.remove('locked')
+        }
+      }
+    },
     mounted () {},
     methods: {
       $_baseLightBox_close () {
@@ -65,7 +74,7 @@
   left 0
   right 0
   bottom 0
-  z-index 100
+  z-index 999
   display flex
   justify-content center
   align-items center

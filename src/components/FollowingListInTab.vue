@@ -9,7 +9,7 @@
       <div v-for="follow in followingByUser" :key="follow.id" class="followingListInTab__item">
         <div class="followingListInTab__img">
           <div v-if="currentResource === 'member'"></div>
-          <button><img src="/public/icons/star.png"></button>
+          <button @click="$_followingListInTab_unfollow(follow.id)"><img src="/public/icons/star.png"></button>
         </div>
         <div class="followingListInTab__content">
           <h2 v-text="follow.title"></h2>
@@ -21,8 +21,6 @@
   </section>
 </template>
 <script>
-  
-
   export default {
     name: 'FollowingListInTab',
     props: {
@@ -60,6 +58,9 @@
       $_followingListInTab_resourceHandler (resource) {
         this.currentResource = resource
         this.$emit('changeResource', resource)
+      },
+      $_followingListInTab_unfollow (id) {
+        this.$emit('unfollow', this.currentResource, id)
       }
     }
   }
@@ -113,6 +114,7 @@
         text-align center
         background transparent
         border none
+        outline none
         img 
           width 100%
   &__content

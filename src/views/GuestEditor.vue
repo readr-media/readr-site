@@ -33,7 +33,8 @@
                 <following-list-tab
                   slot="2"
                   :followingByUser="followingByUser"
-                  @changeResource="$_guestEditor_followingHandler">
+                  @changeResource="$_guestEditor_followingHandler"
+                  @unfollow="$_guestEditor_unfollowingHandler">
                 </following-list-tab>
               </app-tab>
             </section>
@@ -140,6 +141,17 @@
         ids: params.ids
       })
     }
+  }
+
+  const unfollow = (store, resource, subject, object) => {
+    return store.dispatch('PUBLISH_ACTION', {
+      params: {
+        action: 'unfollow',
+        resource: resource,
+        subject: subject,
+        object: object
+      }
+    })
   }
 
   export default {
@@ -311,6 +323,14 @@
             this.post.author = _.get(this.$store.state, [ 'profile' ])
           }
         }
+      },
+      $_guestEditor_unfollowingHandler (resource, object) {
+        const subject = _.get(this.profile, [ 'id' ])
+        const objectID = object.toString()
+        unfollow(this.$store, resource, subject, objectID)
+        .then(() => {
+          fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: resource })
+        })
       },
       $_guestEditor_updatePostList ({ type }) {
         if (type === POST_TYPE.REVIEW) {
