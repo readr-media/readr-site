@@ -3,13 +3,13 @@
     <div v-for="p in posts" :key="p.id" class="postListInTab__post">
       <div
         class="postListInTab__active"
-        :class="[ p.active === config.active.draft ? 'draft' : '' ]"
+        :class="[ p.active === config.active.DRAFT ? 'draft' : '' ]"
         v-text="$_postListInTab_getActive(p)">
       </div>
       <div class="postListInTab__content">
         <div class="postListInTab__title">
           <h2 v-text="p.title"></h2>
-          <div v-if="!(!$can('editOtherPost') && p.active !== config.active.draft)" class="postListInTab__control--desktop">
+          <div v-if="!(!$can('editOtherPost') && p.active !== config.active.DRAFT)" class="postListInTab__control--desktop">
             <button class="postListInTab__btn" @click="$_postListInTab_editPost(p.id, p.type)" v-text="wording.WORDING_POSTLIST_EDIT"></button>
             <button class="postListInTab__btn" @click="$_postListInTab_deletePost(p.id)" v-text="wording.WORDING_POSTLIST_DELETE"></button>
           </div>

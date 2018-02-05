@@ -1,7 +1,7 @@
 <template>
   <section class="alert" :class="{ isCompleted: isCompleted }">
     <template v-if="post">
-      <p v-if="(active === config.active.active || active === config.active.deactive) && !isCompleted" class="alert__title">
+      <p v-if="(active === config.active.ACTIVE || active === config.active.DEACTIVE) && !isCompleted" class="alert__title">
         <strong v-text="alertTitle"></strong>
       </p>
       <div v-if="!isMultiple" class="alert__post">
@@ -14,7 +14,7 @@
           <p><strong v-text="`${wording.WORDING_ALERTPANEL_TITLE}：`"></strong><span v-text="p.title"></span></p>
         </div>
       </div>
-      <div v-if="(active === config.active.active || active === config.active.deactive) && !isCompleted" class="alert__control">
+      <div v-if="(active === config.active.ACTIVE || active === config.active.DEACTIVE) && !isCompleted" class="alert__control">
         <button class="alert__btn" @click="$_alertPanel_confirm" v-text="wording.WORDING_ALERTPANEL_CONFIRM"></button>
         <button class="alert__btn" @click="$_alertPanel_cancel" v-text="wording.WORDING_ALERTPANEL_CANCEL"></button>
       </div>

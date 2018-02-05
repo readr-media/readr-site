@@ -9,10 +9,10 @@
         <main class="main-container">
           <app-about :profile="profile"></app-about>
           <base-control-bar
-            @addNews="$_editor_textEditorHandler(true, 'add', config.type.news)"
-            @addReview="$_editor_textEditorHandler(true, 'add', config.type.review)"
-            @editNews="$_editor_showDraftList(config.type.news)"
-            @editReview="$_editor_showDraftList(config.type.review)"
+            @addNews="$_editor_textEditorHandler(true, 'add', config.type.NEWS)"
+            @addReview="$_editor_textEditorHandler(true, 'add', config.type.REVIEW)"
+            @editNews="$_editor_showDraftList(config.type.NEWS)"
+            @editReview="$_editor_showDraftList(config.type.REVIEW)"
             @openPanel="$_editor_openPanel">
           </base-control-bar>
           <template v-if="activePanel === 'record'">
