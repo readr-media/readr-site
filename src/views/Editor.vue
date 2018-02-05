@@ -33,7 +33,8 @@
                 <following-list-tab
                   slot="2"
                   :followingByUser="followingByUser"
-                  @changeResource="$_editor_followingHandler">
+                  @changeResource="$_editor_followingHandler"
+                  @unfollow="$_editor_unfollowingHandler">
                 </following-list-tab>
               </app-tab>
             </section>
@@ -165,6 +166,17 @@
         page: page,
         sort: sort,
         where: where
+      }
+    })
+  }
+
+  const unfollow = (store, resource, subject, object) => {
+    return store.dispatch('PUBLISH_ACTION', {
+      params: {
+        action: 'unfollow',
+        resource: resource,
+        subject: subject,
+        object: object
       }
     })
   }
@@ -435,6 +447,14 @@
             this.post.author = _.get(this.$store.state, [ 'profile' ])
           }
         }
+      },
+      $_editor_unfollowingHandler (resource, object) {
+        const subject = _.get(this.profile, [ 'id' ])
+        const objectID = object.toString()
+        unfollow(this.$store, resource, subject, objectID)
+        .then(() => {
+          fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: resource })
+        })
       },
       $_editor_updatePostList ({ sort, type }) {
         this.sort = sort || this.sort

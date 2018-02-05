@@ -262,9 +262,13 @@ router.get('/posts', authVerify, (req, res) => {
       const resData = JSON.parse(resp.text)
       return res.json(resData)
     } else {
-      res.json(err)
-      console.error(`error during fetch data from : ${url}`)
-      console.error(err)  
+      if (err.status === 404) {
+        res.status(200).json([])
+      } else {
+        res.json(err)
+        console.error(`error during fetch data from : ${url}`)
+        console.error(err) 
+      }
     }
   })
 })
