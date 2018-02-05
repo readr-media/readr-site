@@ -71,10 +71,14 @@ export default {
       commit('SET_COMMENT_COUNT', { count, postId: params.postId, type })
     })
   },
-  GET_FOLLOWING_BY_RESOURCE: ({ commit, dispatch, state }, { params }) => {
-    return getFollowingByResource({ params }).then(({ status, body }) => {
+  GET_FOLLOWING_BY_RESOURCE: ({ commit, dispatch, state }, params) => {
+    return getFollowingByResource(params).then(({ status, body }) => {
       if (status === 200) {
-        commit('SET_FOLLOWING_BY_RESOURCE', { following: body })
+        if (params.mode === 'update') {
+          commit('UPDATE_FOLLOWING_BY_RESOURCE', { following: body })
+        } else {
+          commit('SET_FOLLOWING_BY_RESOURCE', { following: body })
+        }
       }
     })
   },
@@ -131,16 +135,16 @@ export default {
       .then(({ status, body }) => {
         if (status === 200) {
           if (params.mode === 'set') {
-            if (params.category === 'hot') {
-              commit('SET_PUBLIC_POSTS_HOT', { posts: body })
-            } else {
+            if (params.category === 'latest') {
               commit('SET_PUBLIC_POSTS', { posts: body })
+            } else if (params.category === 'hot') {
+              commit('SET_PUBLIC_POSTS_HOT', { posts: body })
             }
           } else if (params.mode === 'update') {
             commit('UPDATE_PUBLIC_POSTS', { posts: body })
           }
         }
-        resolve(status)
+        resolve(body)
       })
       .catch((res) => {
         reject(res)
@@ -171,11 +175,18 @@ export default {
   PUBLISH_ACTION: ({ commit, dispatch, state }, { params }) => {
     return publishAction({ params })
   },
-  MODIFY_FOLLOWING_BY_USER: ({ commit, dispatch, state }, { action, resource, data }) => {
-    if (action === 'follow' && resource === 'post') {
-      commit('ADD_ITEM_TO_FOLLOWING_BY_USER', data)
+  UPDATE_FOLLOWING_BY_USER: ({ commit, dispatch, state }, { params }) => {
+    if (params.action === 'follow' && params.resource === 'post') {
+      commit('ADD_ITEM_TO_FOLLOWING_BY_USER', params.data)
     } else {
-      commit('REMOVE_ITEM_FROM_FOLLOWING_BY_USER', data)
+      commit('REMOVE_ITEM_FROM_FOLLOWING_BY_USER', params.data)
+    }
+  },
+  UPDATE_FOLLOWING_BY_RESOURCE: ({ commit, dispatch, state }, { params }) => {
+    if (params.action === 'follow' && params.resource === 'post') {
+      commit('ADD_USER_TO_FOLLOWING_BY_RESOURCE', params)
+    } else {
+      commit('REMOVE_USER_FROM_FOLLOWING_BY_RESOURCE', params)
     }
   },
   REGISTER: ({ commit, dispatch, state }, { params, token }) => {

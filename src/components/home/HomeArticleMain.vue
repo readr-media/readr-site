@@ -66,6 +66,16 @@ const publishAction = (store, data) => {
     params: data
   })
 }
+const updateStoreFollowingByResource = (store, { action, resource, resourceId, userId }) => {
+  store.dispatch('UPDATE_FOLLOWING_BY_RESOURCE', {
+    params: {
+      action: action,
+      resource: resource,
+      resourceId: resourceId,
+      userId: userId
+    }
+  })
+}
 
 export default {
   props: {
@@ -123,11 +133,19 @@ export default {
       const limit = 45
       return this.articleData.linkDescription.length > limit ? this.articleData.linkDescription.slice(0, limit) + ' ...' : this.articleData.linkDescription
     },
+    postFollowers () {
+      if (this.$store.state.isLoggedIn) {
+        const postFollowersData = _.find(this.$store.state.followingByResource, { resourceid: `${this.articleData.id}` })
+        return postFollowersData ? postFollowersData.follower : []
+      } else {
+        return []
+      }
+    },
     isFollow () {
       if (!this.$store.state.isLoggedIn) {
         return false
       } else {
-        if (_.find(this.$store.state.followingByUser, { id: this.articleData.id})) {
+        if (this.postFollowers.indexOf(this.$store.state.profile.id) !== -1) {
           return true
         } else {
           return false
@@ -157,10 +175,11 @@ export default {
             subject: this.$store.state.profile.id,
             object: `${this.articleData.id}`
           })
-          this.$store.dispatch('MODIFY_FOLLOWING_BY_USER', {
+          updateStoreFollowingByResource(this.$store, {
             action: 'follow',
             resource: 'post',
-            data: this.articleData
+            resourceId: this.articleData.id,
+            userId: this.$store.state.profile.id
           })
         } else {
           publishAction(this.$store, {
@@ -169,10 +188,11 @@ export default {
             subject: this.$store.state.profile.id,
             object: `${this.articleData.id}`
           })
-          this.$store.dispatch('MODIFY_FOLLOWING_BY_USER', {
+          updateStoreFollowingByResource(this.$store, {
             action: 'unfollow',
             resource: 'post',
-            data: this.articleData
+            resourceId: this.articleData.id,
+            userId: this.$store.state.profile.id
           })
         }
       }

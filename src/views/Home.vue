@@ -45,6 +45,17 @@
   import HomeListMain from '../components/home/HomeListMain.vue'
   import HomeListAside from '../components/home/HomeListAside.vue'
 
+  const fetchPosts = (store, { mode, category, max_result, page, sort }) => {
+    return store.dispatch('GET_PUBLIC_POSTS', {
+      params: {
+        mode: mode,
+        category: category,
+        max_result: max_result,
+        page: page,
+        sort: sort
+      }
+    })
+  }
   const fetchFollowing = (store, params) => {
     if (params.subject) {
       return store.dispatch('GET_FOLLOWING_BY_USER', {
@@ -80,9 +91,33 @@
     mounted () {
       // console.log('currentUser', currentUser())
       // console.log('isLoggedIn', isLoggedIn())
-      if (this.$store.state.isLoggedIn) {
-        fetchFollowing(this.$store, { subject: _.get(this.$store.state.profile, [ 'id' ]), resource: 'post' })
-      }
+      Promise.all([
+        fetchPosts(this.$store, {
+          mode: 'set',
+          category: 'latest',
+          max_result: 10,
+          page: 1,
+          sort: '-updated_at'
+        }),
+        fetchPosts(this.$store, {
+          mode: 'set',
+          category: 'hot',
+          max_result: 5,
+          page: 1,
+          sort: '-updated_at'
+        })
+      ])
+      .then(() => {
+        if (this.$store.state.isLoggedIn) {
+          const postIdsLatest = this.$store.state.publicPosts.items.map(post => post.id)
+          const postIdsHot = this.$store.state.publicPostsHot.items.map(post => post.id)
+          const ids = _.uniq(_.concat(postIdsLatest, postIdsHot))
+          fetchFollowing(this.$store, {
+            resource: 'post',
+            ids: ids
+          })
+        }
+      })
     }
   }
 </script>
