@@ -2,22 +2,22 @@
   <section class="home-list-aside">
     <div class="home-list-aside__title">
       <div class="plus"></div>
-      <h1>焦點</h1>
+      <h1 v-text="listTitle"></h1>
     </div>
-    <HomeArticleAside v-for="post in posts" :articleData="post" :key="post.id"/>
+    <div :class="`home-list-aside__article-container${paddingLeftRight ? '' : '--none-pr-pl'}`">
+      <slot></slot>
+    </div>
   </section>
 </template>
 
 <script>
-import HomeArticleAside from './HomeArticleAside.vue'
-
 export default {
-  components: {
-    HomeArticleAside
-  },
-  computed: {
-    posts () {
-      return this.$store.state.publicPostsHot.items
+  props: {
+    listTitle: {
+      type: String
+    },
+    paddingLeftRight: {
+      type: Boolean
     }
   }
 }
@@ -28,11 +28,13 @@ export default {
   width 355px
   margin-left 35px
   background-color white
-  padding 5px 15px 22.5px 15px
+  // padding 5px 15px 22.5px 15px
+  padding 6px 0px 12px 0px
   // height auto
   &__title
     display flex
     align-items center
+    padding 0 15px
     .plus
       length = 18px
       display inline-block
@@ -73,4 +75,8 @@ export default {
       //   font-weight bold
       //   color #ddcf21
       //   margin-right 7.5px
+  &__article-container
+    padding 0 15px
+    &--none-pr-pl
+      padding 0 0
 </style>
