@@ -1,7 +1,8 @@
 import _ from 'lodash'
 import { ROLE_MAP } from './constants'
-import { createApp } from './app'
+import { createApp } from './app' 
 
+const debug = require('debug')('READR:entry-server')
 const isDev = process.env.NODE_ENV !== 'production'
 
 // This exported function will be called by `bundleRenderer`.
@@ -25,12 +26,14 @@ export default context => {
     const preRouteInit = cookie ? [
       store.dispatch('CHECK_LOGIN_STATUS', { params: { cookie }}),
       store.dispatch('GET_PROFILE', { params: { cookie }})
-    ] : [ new Promise((rslv) => (rslv())) ]
+    ] : [ new Promise((rslv) => rslv()) ]
 
     Promise.all(preRouteInit).then(() => {
       const role = _.get(_.filter(ROLE_MAP, { key: _.get(store, [ 'state', 'profile', 'role' ]) }), [ 0, 'route' ], 'visitor')
       const permission = _.get(route, [ 'meta', 'permission' ])
       const isInitMember = _.get(route, [ 'path' ]) === '/initmember'
+      debug('role:', role)
+      debug('permission:', permission)
 
       if ((permission && permission !== role) || (isInitMember && !initmember)) {
         store.state.unauthorized = true

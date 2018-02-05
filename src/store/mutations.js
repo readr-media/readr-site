@@ -32,6 +32,10 @@ export default {
     const post = _.get(_.filter(_.get(state, [ type, 'items' ]), { id: postId }), [ 0 ])
     post && (post.commentAmount = count)
   },
+  SET_COMMENTS_ME: (state, { comments }) => {
+    const profile = state['profile']
+    profile && (profile.comments = comments)
+  },
   SET_CUSTOM_EDITORS: (state, { members }) => {
     state['customEditors'] = members
   },

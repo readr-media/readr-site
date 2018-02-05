@@ -15,7 +15,7 @@
     })
   }
   export default {
-    name: '',
+    name: 'CommentCount',
     computed: {},
     methods: {
       seUpfetchCommentCountInterval () {
