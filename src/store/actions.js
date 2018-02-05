@@ -7,6 +7,7 @@ import {
   deleteMember,
   deleteMembers,
   deletePost,
+  deletePosts,
   deletePostSelf,
   fetchCommentCount,
   getDisposableToken,
@@ -19,6 +20,7 @@ import {
   getMeta,
   login,
   publishAction,
+  publishPosts,
   register,
   setupBasicProfile,
   updateMember,
@@ -62,6 +64,9 @@ export default {
   },
   DELETE_POST: ({ commit, dispatch, state }, { id }) => {
     return deletePost(id)
+  },
+  DELETE_POSTS: ({ commit, dispatch, state }, { params }) => {
+    return deletePosts({params})
   },
   DELETE_POST_SELF: ({ commit, dispatch, state }, { id }) => {
     return deletePostSelf(id)
@@ -113,14 +118,14 @@ export default {
   GET_POSTS_BY_USER: ({ commit, dispatch, state }, { params }) => {
     return getPosts({ params }).then(({ status, body }) => {
       if (status === 200) {
-        if (params.where.type === POST_TYPE.news) {
-          if (params.where.active === POST_ACTIVE.draft) {
+        if (params.where.type === POST_TYPE.NEWS) {
+          if (params.where.active === POST_ACTIVE.DRAFT) {
             commit('SET_NEWS_DRAFT_BY_USER', { posts: body })
           } else {
             commit('SET_NEWS_BY_USER', { posts: body })
           }
-        } else if (params.where.type === POST_TYPE.review) {
-          if (params.where.active === POST_ACTIVE.draft) {
+        } else if (params.where.type === POST_TYPE.REVIEW) {
+          if (params.where.active === POST_ACTIVE.DRAFT) {
             commit('SET_REVIEWS_DRAFT_BY_USER', { posts: body })
           } else {
             commit('SET_REVIEWS_BY_USER', { posts: body })
@@ -174,6 +179,9 @@ export default {
   },
   PUBLISH_ACTION: ({ commit, dispatch, state }, { params }) => {
     return publishAction({ params })
+  },
+  PUBLISH_POSTS: ({ commit, dispatch, state }, { params }) => {
+    return publishPosts({ params })
   },
   UPDATE_FOLLOWING_BY_USER: ({ commit, dispatch, state }, { params }) => {
     if (params.action === 'follow' && params.resource === 'post') {

@@ -4,8 +4,16 @@
       <p v-if="(active === config.active.active || active === config.active.deactive) && !isCompleted" class="alert__title">
         <strong v-text="alertTitle"></strong>
       </p>
-      <p><strong v-text="`${wording.WORDING_ALERTPANEL_AUTHOR}：`"></strong><span v-text="postAuthor"></span></p>
-      <p><strong v-text="`${wording.WORDING_ALERTPANEL_TITLE}：`"></strong><span v-text="postTitle"></span></p>
+      <div v-if="!isMultiple" class="alert__post">
+        <p><strong v-text="`${wording.WORDING_ALERTPANEL_AUTHOR}：`"></strong><span v-text="postAuthor"></span></p>
+        <p><strong v-text="`${wording.WORDING_ALERTPANEL_TITLE}：`"></strong><span v-text="postTitle"></span></p>
+      </div>
+      <div v-if="isMultiple" class="alert__post multiple">
+        <div v-for="p in posts" :key="p.id" class="alert__postBlock">
+          <p><strong v-text="`${wording.WORDING_ALERTPANEL_AUTHOR}：`"></strong><span v-text="p.author.nickname"></span></p>
+          <p><strong v-text="`${wording.WORDING_ALERTPANEL_TITLE}：`"></strong><span v-text="p.title"></span></p>
+        </div>
+      </div>
       <div v-if="(active === config.active.active || active === config.active.deactive) && !isCompleted" class="alert__control">
         <button class="alert__btn" @click="$_alertPanel_confirm" v-text="wording.WORDING_ALERTPANEL_CONFIRM"></button>
         <button class="alert__btn" @click="$_alertPanel_cancel" v-text="wording.WORDING_ALERTPANEL_CANCEL"></button>
@@ -45,8 +53,15 @@
         type: Boolean,
         default: false
       },
+      isMultiple: {
+        type: Boolean,
+        default: false
+      },
       post: {
         type: Object
+      },
+      posts: {
+        type: Array
       },
       showLightBox: {
         default: false
@@ -77,29 +92,29 @@
     computed: {
       alertMessage () {
         if (this.isCompleted) {
-          if (this.active === POST_ACTIVE.deactive) {
+          if (this.active === POST_ACTIVE.DEACTIVE) {
             return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_DELETE_SUCCESSFUL}！`
           }
-          if (this.active === POST_ACTIVE.active) {
+          if (this.active === POST_ACTIVE.ACTIVE) {
             return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL}！`
           }
           if (this.action === 'add') {
             return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_SAVE_SUCCESSFUL}！`
           }
-          if (this.action === 'edit' && this.active === POST_ACTIVE.draft) {
+          if (this.action === 'edit' && this.active === POST_ACTIVE.DRAFT) {
             return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_DRAFT}${this.wording.WORDING_ALERTPANEL_UPDATE_SUCCESSFUL}！`
           }
-          if (this.action === 'edit' && this.active === POST_ACTIVE.pending) {
+          if (this.action === 'edit' && this.active === POST_ACTIVE.PENDING) {
             return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_STATUS}${this.wording.WORDING_ALERTPANEL_UPDATE_SUCCESSFUL}！`
           }
         }
         return ''
       },
       alertTitle () {
-        if (this.active === POST_ACTIVE.deactive) {
+        if (this.active === POST_ACTIVE.DEACTIVE) {
           return this.wording.WORDING_ALERTPANEL_DELETE_CONFIRMATION
         }
-        if (this.active === POST_ACTIVE.active) {
+        if (this.active === POST_ACTIVE.ACTIVE) {
           return this.wording.WORDING_ALERTPANEL_PUBLISH_CONFIRMATION
         }
         return ''
@@ -133,11 +148,11 @@
         this.$emit('closeAlert', false)
       },
       $_alertPanel_confirm () {
-        if (this.active === POST_ACTIVE.deactive) {
-          this.$emit('deletePost')
+        if (this.active === POST_ACTIVE.DEACTIVE) {
+          this.$emit('deletePost', this.isMultiple)
         }
-        if (this.active === POST_ACTIVE.active) {
-          this.$emit('publishPost')
+        if (this.active === POST_ACTIVE.ACTIVE) {
+          this.$emit('publishPost', this.isMultiple)
         }
       }
     }
@@ -161,6 +176,14 @@
     display block
     margin 15px 25px 0
     color #4280a2
+  &__post
+    margin 0 25px
+  &__postBlock
+    border-bottom 1px solid #d3d3d3
+    > p
+      margin .8em 0
+    &:last-of-type
+      border-bottom none
   &__btn
     flex 1
     height 30px
