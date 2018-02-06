@@ -114,7 +114,7 @@
   import AppAsideNav from '../components/AppAsideNav.vue'
   import AppHeader from '../components/AppHeader.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
-  import CommentManagement from '../components/Comment/CommentManagement.vue'
+  import CommentManagement from '../components/comment/CommentManagement.vue'
   import FollowingListInTab from '../components/FollowingListInTab.vue'
   import PaginationNav from '../components/PaginationNav.vue'
   import PostList from '../components/PostList.vue'
