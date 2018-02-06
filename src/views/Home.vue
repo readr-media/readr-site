@@ -30,8 +30,17 @@
         <AppAsideNav/>
       </aside>
       <main class="homepage__main">
-        <HomeListMain/>
-        <HomeListAside/>
+        <div class="homepage__list-main">
+          <HomeListMain/>
+        </div>
+        <div class="homepage__list-aside">
+          <HomeListAside :listTitle="'議題'" :paddingLeftRight="false">
+            <HomeProjectAside/>
+          </HomeListAside>
+          <HomeListAside :listTitle="'焦點'" :paddingLeftRight="true">
+            <HomeArticleAside v-for="post in posts" :articleData="post" :key="post.id"/> 
+          </HomeListAside>
+        </div>
       </main>
     </div>
   </div> 
@@ -44,6 +53,8 @@
   import AppAsideNav from '../components/AppAsideNav.vue'
   import HomeListMain from '../components/home/HomeListMain.vue'
   import HomeListAside from '../components/home/HomeListAside.vue'
+  import HomeProjectAside from '../components/home/HomeProjectAside.vue'
+  import HomeArticleAside from '../components/home/HomeArticleAside.vue'
 
   const fetchPosts = (store, { mode, category, max_result, page, sort }) => {
     return store.dispatch('GET_PUBLIC_POSTS', {
@@ -75,12 +86,17 @@
       // 'app-header': AppHeader,
       AppAsideNav,
       HomeListMain,
-      HomeListAside
+      HomeListAside,
+      HomeProjectAside,
+      HomeArticleAside
     },
     computed: {
       // sections () {
       //   return SECTIONS_DEFAULT
       // }
+      posts () {
+        return this.$store.state.publicPostsHot.items
+      }
     },
     name: 'Home',
     methods: {
@@ -142,6 +158,10 @@
       display flex
       justify-content flex-start
       align-items flex-start
+    &__list-aside
+      section
+        &:nth-child(2)
+          margin-top 10px
     .block
       padding 0 17px
       margin 20px auto

@@ -19,10 +19,10 @@
         </div>
         <nav class="article-nav">
           <span class="comment-icon" @click="renderComment(`.home-article-aside__comment > .comment.comment-${get(articleData, [ 'id' ])}`)">
-            <img class="comment-icon__thumbnail" src="/public/icons/comment-grey.png" alt="comment">
+            <img class="comment-icon__thumbnail" src="/public/icons/comment-blue.png" alt="comment">
             <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="get(this.articleData, [ 'id' ])" :type="'publicPostsHot'"></CommentCount>
           </span>
-          <img class="follow-icon" :src="isFollow ? '/public/icons/star.png' : '/public/icons/star-line.png'" alt="follow" @click="toogleFollow">
+          <img class="follow-icon" :src="isFollow ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="follow" @click="toogleFollow">
         </nav>
         <div class="home-article-aside__comment">
           <div :class="`comment comment-${get(articleData, [ 'id' ])}`"></div>
@@ -170,7 +170,7 @@ $icon-size
   width 100%
   // height 204px
   background-color white
-  padding 15px 0 12.5px 0
+  padding 15px 0px 12.5px 0px
   border-bottom .5px solid #979797
   // &__author
   //   display flex
@@ -243,7 +243,7 @@ $icon-size
       position relative
       right 5px
       font-size 14px
-      color #a9a9a9
+      color #11b8c9
   .follow-icon
     @extends $icon-size
     margin-left 9px

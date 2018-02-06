@@ -9,10 +9,12 @@
 import _ from 'lodash'
 
 const DEFAULT_MODE = 'set'
+const DEFAULT_CATEGORY = 'latest'
 const fetchPosts = (store, { mode, max, page, sort }) => {
   return store.dispatch('GET_PUBLIC_POSTS', {
     params: {
-      mode: mode || DEFAULT_MODE
+      mode: mode || DEFAULT_MODE,
+      category: DEFAULT_CATEGORY
     }
   })
 }

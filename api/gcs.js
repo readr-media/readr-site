@@ -60,14 +60,16 @@ const publishAction = (data) => {
   const topic = pubsubClient.topic(topicName)
   const publisher = topic.publisher()
   const dataBuffer = Buffer.from(JSON.stringify(data))
-  publisher.publish(dataBuffer)
-  .then((results) => {
-    const messageId = results
-    console.log(`Message ${messageId} published.`)
-    return messageId
-  })
-  .catch((error) => {
-    console.log(error)
+  return new Promise((resolve, reject) => {
+    publisher.publish(dataBuffer)
+    .then((results) => {
+      console.log(`Message ${results} published.`)
+      resolve(results)
+    })
+    .catch((error) => {
+      console.log(error)
+      reject(error)
+    })
   })
 }
 

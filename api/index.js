@@ -599,7 +599,11 @@ router.post('/meta', authVerify, (req, res) => {
 })
 
 router.post('/publish-action', (req, res) => {
-  publishAction(req.body)
+  publishAction(req.body).then((result) => {
+    res.status(200).send(result)
+  }).catch((error) => {
+    res.status(500).json(error)
+  })
 })
 
 /**
