@@ -17,6 +17,7 @@ export function createStore () {
       'newsByUser': [],
       'newsDraftByUser': [],
       'posts': [],
+      'postsCount': {},
       'profile': {},
       'publicPosts': [],
       'publicPostsHot': [],

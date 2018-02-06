@@ -16,6 +16,7 @@ import {
   getFollowingByUser,
   getProfile,
   getPosts,
+  getPostsCount,
   getPublicPosts,
   getMembers,
   getMeta,
@@ -118,6 +119,13 @@ export default {
     return getPosts({ params }).then(({ status, body }) => {
       if (status === 200) {
         commit('SET_POSTS', { posts: body })
+      }
+    })
+  },
+  GET_POSTS_COUNT: ({ commit, dispatch, state }, { params }) => {
+    return getPostsCount({ params }).then(({ status, body }) => {
+      if (status === 200) {
+        commit('SET_POSTS_COUNT', { params: params, meta: body.meta })
       }
     })
   },

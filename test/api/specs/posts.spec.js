@@ -70,13 +70,27 @@ describe('/POST/login', () => {
 //   }).timeout(400)
 // })
 
-describe('/DELETE/posts', () => {
-  it(`should delete article data through api`, (done) => {
-    supertest(app).delete('/api/posts?ids= [ 72, 68 ]&updated_by=wonderwomen@wonderwomen.com')
+// describe('/DELETE/posts', () => {
+//   it(`should delete article data through api`, (done) => {
+//     supertest(app).delete('/api/posts?ids= [ 72, 68 ]&updated_by=wonderwomen@wonderwomen.com')
+//     .set('Authorization', `Bearer ${token}`) 
+//     .end((err, res) => {
+//       if (err) return console.log(err)
+//       res.status.should.equal(200)
+//       done()
+//     })
+//   }).timeout(400)
+// })
+
+describe('/GET/posts/count', () => {
+  it(`should get post amount through api`, (done) => {
+    supertest(app).get('/api/posts/count')
     .set('Authorization', `Bearer ${token}`) 
     .end((err, res) => {
       if (err) return console.log(err)
       res.status.should.equal(200)
+      res.body.should.be.an('object')
+      res.body.should.have.property('_meta')
       done()
     })
   }).timeout(400)

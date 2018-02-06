@@ -5,78 +5,76 @@
       <aside class="guestEditor__aside">
         <AppAsideNav/>
       </aside>
-      <main class="guestEditor__main">
-        <main class="main-container">
-          <app-about :profile="profile"></app-about>
-          <base-control-bar
-            @addNews="$_guestEditor_textEditorHandler(true, 'add', config.type.NEWS)"
-            @addReview="$_guestEditor_textEditorHandler(true, 'add', config.type.REVIEW)"
-            @editNews="$_guestEditor_showDraftList(config.type.NEWS)"
-            @editReview="$_guestEditor_showDraftList(config.type.REVIEW)"
-            @openPanel="$_guestEditor_openPanel">
-          </base-control-bar>
-          <template v-if="activePanel === 'record'">
-            <section class="guestEditor__record">
-              <app-tab :tabs="tabs" @changeTab="$_guestEditor_tabHandler">
-                <post-list-tab
-                  slot="0"
-                  :posts="reviewsByUser"
-                  @deletePost="$_guestEditor_showAlert"
-                  @editPost="$_guestEditor_textEditorHandler">
-                </post-list-tab>
-                <post-list-tab
-                  slot="1"
-                  :posts="newsByUser"
-                  @deletePost="$_guestEditor_showAlert"
-                  @editPost="$_guestEditor_textEditorHandler">
-                </post-list-tab>
-                <following-list-tab
-                  slot="2"
-                  :followingByUser="followingByUser"
-                  @changeResource="$_guestEditor_followingHandler"
-                  @unfollow="$_guestEditor_unfollowingHandler">
-                </following-list-tab>
-              </app-tab>
-            </section>
-          </template>
-          <base-light-box :showLightBox.sync="showReviewsDraftList">
-            <post-list-detailed
-              :posts="newsDraftByUser"
-              @editPost="$_guestEditor_textEditorHandler"
-              @deletePost="$_guestEditor_showAlert">
-            </post-list-detailed>
-          </base-light-box>
-          <base-light-box :showLightBox.sync="showNewsDraftList">
-            <post-list-detailed
-              :posts="reviewsDraftByUser"
-              @editPost="$_guestEditor_textEditorHandler"
-              @deletePost="$_guestEditor_showAlert">
-            </post-list-detailed>
-          </base-light-box>
-          <base-light-box :showLightBox.sync="showEditor">
-            <post-panel
-              :action="action"
-              :isCompleted="isCompleted"
-              :post.sync="post"
-              :showLightBox="showEditor"
-              :type="postType"
-              @closeLightBox="$_guestEditor_textEditorHandler(false)"
-              @showAlert="$_guestEditor_alertHandler">
-            </post-panel>
-          </base-light-box>
-          <base-light-box :isAlert="true" :showLightBox.sync="showAlert">
-            <alert-panel
-              :action="action"
-              :active="postActive"
-              :isCompleted="isCompleted"
-              :post="post"
-              :showLightBox="showAlert"
-              @closeAlert="$_guestEditor_alertHandler"
-              @closeEditor="$_guestEditor_textEditorHandler(false)"
-              @deletePost="$_guestEditor_deletePost">
-            </alert-panel>
-          </base-light-box>
-        </main>
+      <main class="main-container">
+        <app-about :profile="profile"></app-about>
+        <base-control-bar
+          @addNews="$_guestEditor_textEditorHandler(true, 'add', config.type.NEWS)"
+          @addReview="$_guestEditor_textEditorHandler(true, 'add', config.type.REVIEW)"
+          @editNews="$_guestEditor_showDraftList(config.type.NEWS)"
+          @editReview="$_guestEditor_showDraftList(config.type.REVIEW)"
+          @openPanel="$_guestEditor_openPanel">
+        </base-control-bar>
+        <template v-if="activePanel === 'record'">
+          <section class="guestEditor__record">
+            <app-tab :tabs="tabs" @changeTab="$_guestEditor_tabHandler">
+              <post-list-tab
+                slot="0"
+                :posts="reviewsByUser"
+                @deletePost="$_guestEditor_showAlert"
+                @editPost="$_guestEditor_textEditorHandler">
+              </post-list-tab>
+              <post-list-tab
+                slot="1"
+                :posts="newsByUser"
+                @deletePost="$_guestEditor_showAlert"
+                @editPost="$_guestEditor_textEditorHandler">
+              </post-list-tab>
+              <following-list-tab
+                slot="2"
+                :followingByUser="followingByUser"
+                @changeResource="$_guestEditor_followingHandler"
+                @unfollow="$_guestEditor_unfollowingHandler">
+              </following-list-tab>
+            </app-tab>
+          </section>
+        </template>
+        <base-light-box :showLightBox.sync="showReviewsDraftList">
+          <post-list-detailed
+            :posts="newsDraftByUser"
+            @editPost="$_guestEditor_textEditorHandler"
+            @deletePost="$_guestEditor_showAlert">
+          </post-list-detailed>
+        </base-light-box>
+        <base-light-box :showLightBox.sync="showNewsDraftList">
+          <post-list-detailed
+            :posts="reviewsDraftByUser"
+            @editPost="$_guestEditor_textEditorHandler"
+            @deletePost="$_guestEditor_showAlert">
+          </post-list-detailed>
+        </base-light-box>
+        <base-light-box :showLightBox.sync="showEditor">
+          <post-panel
+            :action="action"
+            :isCompleted="isCompleted"
+            :post.sync="post"
+            :showLightBox="showEditor"
+            :type="postType"
+            @closeLightBox="$_guestEditor_textEditorHandler(false)"
+            @showAlert="$_guestEditor_alertHandler">
+          </post-panel>
+        </base-light-box>
+        <base-light-box :isAlert="true" :showLightBox.sync="showAlert">
+          <alert-panel
+            :action="action"
+            :active="postActive"
+            :isCompleted="isCompleted"
+            :post="post"
+            :showLightBox="showAlert"
+            @closeAlert="$_guestEditor_alertHandler"
+            @closeEditor="$_guestEditor_textEditorHandler(false)"
+            @deletePost="$_guestEditor_deletePost">
+          </alert-panel>
+        </base-light-box>
       </main>
     </div>
   </div>
@@ -390,8 +388,6 @@
       position sticky
       // position fixed
       top 60px
-    &__main
-      margin-left 93.5px
     &__record
       background-color #fff
 </style>

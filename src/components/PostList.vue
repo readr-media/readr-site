@@ -1,5 +1,6 @@
 <template>
   <div class="postList-container">
+    <PaginationNav :totalPages="10" @pageChanged="$_postList_pageChanged"></PaginationNav>
     <table class="postList">
       <thead>
         <tr>
@@ -65,12 +66,14 @@
   import _ from 'lodash'
   import BaseLightBox from './BaseLightBox.vue'
   import BaseLightBoxPost from './BaseLightBoxPost.vue'
+  import PaginationNav from './PaginationNav.vue'
 
   export default {
     name: 'PostList',
     components: {
       BaseLightBox,
-      BaseLightBoxPost
+      BaseLightBoxPost,
+      PaginationNav
     },
     props: {
       posts: {
@@ -141,6 +144,9 @@
           this.order = field
           this.$emit('filterChanged', { sort: this.order })
         }
+      },
+      $_postList_pageChanged (index) {
+        this.$emit('pageChanged', index)
       },
       $_postList_publishMultiple () {
         const items = _.filter(this.checkedPost, (item) => {
