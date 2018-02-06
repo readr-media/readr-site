@@ -12,7 +12,7 @@
     name: 'CommentManagement',
     methods: {},
     mounted () {
-      debug('mounted')
+      debug('CommentManagement mounted')
       getmeComments(this.$store)
     },
   }
