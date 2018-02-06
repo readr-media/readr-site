@@ -41,7 +41,7 @@
         </template>
         <template v-else-if="activePanel === 'posts'">
           <section class="main-panel">
-            <pagination-nav :totalPages="10" @pageChanged="$_editor_pageChanged"></pagination-nav>
+            <!-- <pagination-nav :totalPages="10" @pageChanged="$_editor_pageChanged"></pagination-nav> -->
             <post-list
               :posts="posts"
               @deleteMultiple="$_editor_deleteMultiple"
@@ -151,6 +151,12 @@
         page: page || DEFAULT_PAGE,
         sort: sort || DEFAULT_SORT
       }
+    })
+  }
+
+  const fetchPostsCount = (store, params = {}) => {
+    return store.dispatch('GET_POSTS_COUNT', {
+      params: params
     })
   }
 
@@ -281,7 +287,14 @@
     mounted () {
       Promise.all([
         fetchPosts(this.$store, {}),
+        fetchPostsCount(this.$store, {}),
         fetchPostsByUser(this.$store, {
+          where: {
+            author: _.get(this.profile, [ 'id' ]),
+            type: POST_TYPE.NEWS
+          }
+        }),
+        fetchPostsCount(this.$store, {
           where: {
             author: _.get(this.profile, [ 'id' ]),
             type: POST_TYPE.NEWS
@@ -521,12 +534,8 @@
       position sticky
       // position fixed
       top 60px
-    &__main
-      margin-left 93.5px
     &__record
       background-color #fff
-  .main-panel
-    background-color white
 
   @media (min-width 950px)
     .editor

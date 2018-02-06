@@ -50,6 +50,7 @@ button
   width 100%
   padding 20px 5%
   border 2px solid #d8ca21
+  background #fff
 
 .datepicker__input
   padding-left 10px

@@ -247,6 +247,15 @@ export function getPosts ({ params }) {
   return _doFetchStrict(url, {})
 }
 
+export function getPostsCount ({ params }) {
+  let url = `${host}/api/posts/count`
+  const query = _buildQuery(params)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }
+  return _doFetchStrict(url, {})
+}
+
 export function getPublicPosts ({ params }) {
   let url = `${host}/api/public-posts`
   const query = _buildQuery(params)

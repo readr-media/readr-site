@@ -1,5 +1,5 @@
-import Vue from 'vue'
 import _ from 'lodash'
+import Vue from 'vue'
 const { camelize } = require('humps')
 
 export default {
@@ -71,6 +71,13 @@ export default {
   },
   SET_POSTS: (state, { posts }) => {
     state['posts'] = posts
+  },
+  SET_POSTS_COUNT: (state, { params, meta }) => {
+    if (params.where) {
+      state['postsCount']['where'] = meta.total
+    } else {
+      state['postsCount']['all'] = meta.total
+    }
   },
   SET_PUBLIC_POSTS: (state, { posts }) => {
     state['publicPosts'] = posts
