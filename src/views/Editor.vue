@@ -5,96 +5,94 @@
       <aside class="editor__aside">
         <AppAsideNav/>
       </aside>
-      <main class="editor__main">
-        <main class="main-container">
-          <app-about :profile="profile"></app-about>
-          <base-control-bar
-            @addNews="$_editor_textEditorHandler(true, 'add', config.type.NEWS)"
-            @addReview="$_editor_textEditorHandler(true, 'add', config.type.REVIEW)"
-            @editNews="$_editor_showDraftList(config.type.NEWS)"
-            @editReview="$_editor_showDraftList(config.type.REVIEW)"
-            @openPanel="$_editor_openPanel">
-          </base-control-bar>
-          <template v-if="activePanel === 'record'">
-            <section class="editor__record">
-              <app-tab :tabs="tabs" @changeTab="$_editor_tabHandler">
-                <post-list-tab
-                  slot="0"
-                  :posts="reviewsByUser"
-                  @deletePost="$_editor_showAlert"
-                  @editPost="$_editor_textEditorHandler">
-                </post-list-tab>
-                <post-list-tab
-                  slot="1"
-                  :posts="newsByUser"
-                  @deletePost="$_editor_showAlert"
-                  @editPost="$_editor_textEditorHandler">
-                </post-list-tab>
-                <following-list-tab
-                  slot="2"
-                  :followingByUser="followingByUser"
-                  @changeResource="$_editor_followingHandler"
-                  @unfollow="$_editor_unfollowingHandler">
-                </following-list-tab>
-                <CommentManagement slot="3"></CommentManagement>
-              </app-tab>
-            </section>
-          </template>
-          <template v-else-if="activePanel === 'posts'">
-            <section class="main-panel">
-              <pagination-nav :totalPages="10" @pageChanged="$_editor_pageChanged"></pagination-nav>
-              <post-list
-                :posts="posts"
-                @deleteMultiple="$_editor_deleteMultiple"
+      <main class="main-container">
+        <app-about :profile="profile"></app-about>
+        <base-control-bar
+          @addNews="$_editor_textEditorHandler(true, 'add', config.type.NEWS)"
+          @addReview="$_editor_textEditorHandler(true, 'add', config.type.REVIEW)"
+          @editNews="$_editor_showDraftList(config.type.NEWS)"
+          @editReview="$_editor_showDraftList(config.type.REVIEW)"
+          @openPanel="$_editor_openPanel">
+        </base-control-bar>
+        <template v-if="activePanel === 'record'">
+          <section class="editor__record">
+            <app-tab :tabs="tabs" @changeTab="$_editor_tabHandler">
+              <post-list-tab
+                slot="0"
+                :posts="reviewsByUser"
                 @deletePost="$_editor_showAlert"
-                @editPost="$_editor_textEditorHandler"
-                @filterChanged="$_editor_updatePostList"
-                @publishMultiple="$_editor_publishMultiple">
-              </post-list>
-            </section>
-          </template>
-          <base-light-box :showLightBox.sync="showReviewsDraftList">
-            <post-list-detailed
-              :posts="newsDraftByUser"
-              @editPost="$_editor_textEditorHandler"
-              @deletePost="$_editor_showAlert">
-            </post-list-detailed>
-          </base-light-box>
-          <base-light-box :showLightBox.sync="showNewsDraftList">
-            <post-list-detailed
-              :posts="reviewsDraftByUser"
-              @editPost="$_editor_textEditorHandler"
-              @deletePost="$_editor_showAlert">
-            </post-list-detailed>
-          </base-light-box>
-          <base-light-box :showLightBox.sync="showEditor">
-            <post-panel
-              :action="action"
-              :isCompleted="isCompleted"
-              :post.sync="post"
-              :showLightBox="showEditor"
-              :type="postType"
-              @closeLightBox="$_editor_textEditorHandler(false)"
+                @editPost="$_editor_textEditorHandler">
+              </post-list-tab>
+              <post-list-tab
+                slot="1"
+                :posts="newsByUser"
+                @deletePost="$_editor_showAlert"
+                @editPost="$_editor_textEditorHandler">
+              </post-list-tab>
+              <following-list-tab
+                slot="2"
+                :followingByUser="followingByUser"
+                @changeResource="$_editor_followingHandler"
+                @unfollow="$_editor_unfollowingHandler">
+              </following-list-tab>
+              <CommentManagement slot="3"></CommentManagement>
+            </app-tab>
+          </section>
+        </template>
+        <template v-else-if="activePanel === 'posts'">
+          <section class="main-panel">
+            <pagination-nav :totalPages="10" @pageChanged="$_editor_pageChanged"></pagination-nav>
+            <post-list
+              :posts="posts"
+              @deleteMultiple="$_editor_deleteMultiple"
               @deletePost="$_editor_showAlert"
-              @showAlert="$_editor_alertHandler">
-            </post-panel>
-          </base-light-box>
-          <base-light-box :isAlert="true" :showLightBox.sync="showAlert">
-            <alert-panel
-              :action="action"
-              :active="postActive"
-              :isCompleted="isCompleted"
-              :isMultiple="isAlertMultiple"
-              :post="post"
-              :posts="postsSelected"
-              :showLightBox="showAlert"
-              @closeAlert="$_editor_alertHandler"
-              @closeEditor="$_editor_textEditorHandler(false)"
-              @deletePost="$_editor_deletePost"
-              @publishPost="$_editor_publishPost">
-            </alert-panel>
-          </base-light-box>
-        </main>
+              @editPost="$_editor_textEditorHandler"
+              @filterChanged="$_editor_updatePostList"
+              @publishMultiple="$_editor_publishMultiple">
+            </post-list>
+          </section>
+        </template>
+        <base-light-box :showLightBox.sync="showReviewsDraftList">
+          <post-list-detailed
+            :posts="newsDraftByUser"
+            @editPost="$_editor_textEditorHandler"
+            @deletePost="$_editor_showAlert">
+          </post-list-detailed>
+        </base-light-box>
+        <base-light-box :showLightBox.sync="showNewsDraftList">
+          <post-list-detailed
+            :posts="reviewsDraftByUser"
+            @editPost="$_editor_textEditorHandler"
+            @deletePost="$_editor_showAlert">
+          </post-list-detailed>
+        </base-light-box>
+        <base-light-box :showLightBox.sync="showEditor">
+          <post-panel
+            :action="action"
+            :isCompleted="isCompleted"
+            :post.sync="post"
+            :showLightBox="showEditor"
+            :type="postType"
+            @closeLightBox="$_editor_textEditorHandler(false)"
+            @deletePost="$_editor_showAlert"
+            @showAlert="$_editor_alertHandler">
+          </post-panel>
+        </base-light-box>
+        <base-light-box :isAlert="true" :showLightBox.sync="showAlert">
+          <alert-panel
+            :action="action"
+            :active="postActive"
+            :isCompleted="isCompleted"
+            :isMultiple="isAlertMultiple"
+            :post="post"
+            :posts="postsSelected"
+            :showLightBox="showAlert"
+            @closeAlert="$_editor_alertHandler"
+            @closeEditor="$_editor_textEditorHandler(false)"
+            @deletePost="$_editor_deletePost"
+            @publishPost="$_editor_publishPost">
+          </alert-panel>
+        </base-light-box>
       </main>
     </div>
   </div>
@@ -509,7 +507,6 @@
 </script>
 <style lang="stylus" scoped>
   .editor
-    background-color #e6e6e6
     width 100%
     min-height 100vh
     &__container
@@ -518,6 +515,7 @@
       padding 60px 0
       display flex
     &__aside
+      display none
       width 75px
       height 100%
       position sticky
@@ -529,4 +527,9 @@
       background-color #fff
   .main-panel
     background-color white
+
+  @media (min-width 950px)
+    .editor
+      &__aside
+        display block
 </style>
