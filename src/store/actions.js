@@ -184,7 +184,15 @@ export default {
     })
   },
   PUBLISH_ACTION: ({ commit, dispatch, state }, { params }) => {
-    return publishAction({ params })
+    return new Promise((resolve, reject) => {
+      publishAction({ params }).then(({ status }) => {
+        if (status === 200) {
+          resolve()
+        }
+      }).catch((err) => {
+        reject()
+      })
+    })
   },
   PUBLISH_POSTS: ({ commit, dispatch, state }, { params }) => {
     return publishPosts({ params })

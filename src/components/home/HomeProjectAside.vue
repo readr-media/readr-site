@@ -7,7 +7,7 @@
       <nav class="article-nav">
         <span class="comment-icon" @click="renderComment(`.home-article-main__comment > .comment.comment-${get(articleData, [ 'id' ])}`)">
           <img class="comment-icon__thumbnail" src="/public/icons/comment-blue.png" alt="comment">
-          <CommentCount class="comment-icon__count" :commentAmount="123" :postId="get(this.articleData, [ 'id' ])" :type="'publicPosts'"></CommentCount>
+          <!-- <CommentCount class="comment-icon__count" :commentAmount="123" :postId="get(this.articleData, [ 'id' ])" :type="'publicPosts'"></CommentCount> -->
         </span>
         <img class="follow-icon" :src="isFollow ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="follow" @click="toogleFollow">
       </nav>
@@ -23,6 +23,11 @@ const { get } = _
 export default {
   components: {
     CommentCount
+  },
+  computed: {
+    isFollow () {
+      return false
+    }
   },
   methods: {
     get
