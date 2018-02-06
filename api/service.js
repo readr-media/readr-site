@@ -3,7 +3,7 @@ const config = require('./config')
 const jwt = require('jsonwebtoken')
 const uuid = require('uuid')
 
-const generateJwt = ({ id, email, name, nickname, role, keepAlive, scopes }) => {
+const generateJwt = ({ id, email, name, nickname, role, keepAlive, scopes, talk_id }) => {
   const expiry = new Date(Date.now() + (keepAlive ? 30 : 1) * 24 * 60 * 60 * 1000)
   if (!config.JWT_SECRET) {
     throw new Error('no signing key on secret, cannot sign')
@@ -17,7 +17,7 @@ const generateJwt = ({ id, email, name, nickname, role, keepAlive, scopes }) => 
     username: name,
   }
   
-  set(claims, config.JWT_USER_ID_CLAIM, '46fea2eb-be14-4adc-96db-e915b52d2a53')
+  set(claims, config.JWT_USER_ID_CLAIM, talk_id)
   // set(claims, config.JWT_USER_ID_CLAIM, '78c7e8ae-8a6a-4b5a-b58b-f4d4de5e9013')
   // set(claims, config.JWT_USER_ID_CLAIM, '94b9a187-7045-4f51-bf13-dda1fdbc110d')
   return jwt.sign(

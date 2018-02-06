@@ -144,13 +144,13 @@ const authorize = (req, res, next) => {
     next()
   }
 }
-const sendActivationMail = ({ id, role, way }, cb) => {
+const sendActivationMail = ({ id, email, role, way }, cb) => {
   const tokenForActivation = jwtService.generateActivateAccountJwt({
     id, role, way
   })
   basicPostRequst(`${apiHost}/mail`, { 
     body: {
-      receiver: ['keithchiang@mirrormedia.mg','mushin@mirrormedia.mg'],
+      receiver: [email,'keithchiang@mirrormedia.mg','mushin@mirrormedia.mg'],
       subject: 'Active',
       content: `
         hit the following url: <br>
@@ -181,37 +181,7 @@ const activationKeyVerify = function (req, res, next) {
   })
 }
 router.use('/activate', activationKeyVerify, require('./middle/member/activation'))
-router.use('/initmember', authVerify, function(req, res) {
-  const id = req.user.id
-  const role = req.user.role
-  superagent
-  .put(`${apiHost}/member/password`)
-  .send({
-    id,
-    password: req.body.password
-  })
-  .end((err, response) => {
-    if (!err && response) {
-      superagent
-      .put(`${apiHost}/member`)
-      .send({
-        id,
-        nickname: req.body.nickname,
-        role,
-        active: 1
-      })
-      .end((e, response) => {
-        if (!e && response) {
-          res.status(200).end()
-        } else {
-          res.status(500).json(e)
-        }
-      })
-    } else {
-      res.status(500).json(err)
-    }
-  })
-})
+router.use('/initmember', authVerify, require('./middle/member/initMember'))
 router.use('/member', [ authVerify, authorize ], require('./middle/member'))
 router.use('/comment', require('./middle/comment'))
 
@@ -274,6 +244,8 @@ router.get('/posts', authVerify, (req, res) => {
 })
 
 router.get('/profile', [ authVerify ], (req, res) => {
+  debug('req.user')
+  debug(req.user)
   const targetProfile = req.user.id
   const url = `/member/${targetProfile}`
   Promise.all([
@@ -419,7 +391,7 @@ router.post('/register', authVerify, (req, res) => {
     const url = `${apiHost}/register`
     basicPostRequst(url, req, res, (err, resp) => {
       if (!err && resp) {
-        sendActivationMail({ id: req.body.id, way: 'member' }, (e, response, tokenForActivation) => {
+        sendActivationMail({ id: req.body.id, email: req.body.mail, way: 'member' }, (e, response, tokenForActivation) => {
           if (!e && response) {
             res.status(200).send({ token: tokenForActivation })
           } else {
@@ -702,7 +674,7 @@ router.route('*')
         if (req.url.indexOf('member') === -1) {
           res.status(200).end()
         } else {
-          sendActivationMail({ id: req.body.id, role: req.body.role, way: 'admin' }, (e, response) => {
+          sendActivationMail({ id: req.body.id, email: req.body.mail, role: req.body.role, way: 'admin' }, (e, response) => {
             if (!e && response) {
               res.status(200).end()
             } else {

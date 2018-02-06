@@ -32,6 +32,7 @@ const login = (req, res) => {
           email: get(mem, [ 'mail' ], req.body.email),
           name: get(mem, [ 'name' ]),
           role: get(mem, [ 'role' ], 1),
+          talk_id: get(mem, [ 'talk_id' ], ''),
           keepAlive: req.body.keepAlive,
           scopes
         })
