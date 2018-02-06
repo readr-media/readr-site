@@ -1,3 +1,4 @@
+const { buildUserForTalk } = require('../talk')
 const _ = require('lodash')
 const Cookies = require('cookies')
 const config = require('../../config')
@@ -30,24 +31,6 @@ const fetchMem = (member) => new Promise((resolve) => {
   .end((err, res) => {
     resolve({ err, res })
   })
-})
-
-const buildUserForTalk = (member) => new Promise((resolve) => {
-  debug('Talk server host:', `${config.TALK_SERVER_PROTOCOL}://${config.TALK_SERVER_HOST}${config.TALK_SERVER_PROTOCOL ? ':' + config.TALK_SERVER_PORT : ''}/api/v1/users`)
-  const username = member.id.replace(/@[A-Za-z0-9.*+?^=!:${}()#%~&_@\-`|\[\]\/\\]*$/, '')
-  superagent
-    .post(`${config.TALK_SERVER_PROTOCOL}://${config.TALK_SERVER_HOST}${config.TALK_SERVER_PROTOCOL ? ':' + config.TALK_SERVER_PORT : ''}/api/v1/users`)
-    .send({ 
-      email: member.mail, // should make sure that it is email
-      username,
-      password: member.id,
-      confirmPassword: member.id
-    })
-    .end((err, res) => {
-      debug('Finished insert member to Talk')
-      debug('err', err)
-      resolve({ err, res })
-    })
 })
 
 const activate = (req, res) => {
