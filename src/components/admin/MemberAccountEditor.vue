@@ -176,18 +176,12 @@
         this.$forceUpdate()
       },
       save () {
-        if (this.validate() || this.action === 'delete' || this.action === 'customEditor_cancel' || this.action === 'customEditor_set') {
+        if (this.validate() || this.action === 'delete') {
           const callback = ({ status }) => {
             this.isEdible = false
             if (status === 200) {
               if (this.action === 'delete') {
                 this.message = this.wording.WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL + '！'
-              } else if (this.action === 'customEditor_set') {
-                this.message = this.wording.WORDING_ADMIN_MEMBER_EDITOR_SET_SUCCESSFUL_CUSTOMEDITOR + '！'
-                getCustomEditors(this.$store, {})
-              } else if (this.action === 'customEditor_cancel') {
-                this.message = this.wording.WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL_CUSTOMEDITOR + '！'
-                getCustomEditors(this.$store, {})
               } else {
                 this.message = this.title + this.wording.WORDING_ADMIN_SUCCESS + '！'
               }
@@ -203,24 +197,6 @@
               mail: this.typedEmail,
               role: this.selectedRole
             }, 'role').then(callback)
-          } else if (this.action === 'customEditor_set') {
-            const ids = _.map(this.members, (m) => (m.id))
-            ids.forEach((id) => {
-              updateMember(this.$store, {
-                id: id,
-                custom_editor: true
-              }).then(callback)
-            })
-            // Promise.all(ids.map(id => updateMember(this.$store, { id: id, custom_editor: true })))
-            // .then(rr => {
-            //   this.message = this.wording.WORDING_ADMIN_MEMBER_EDITOR_SET_SUCCESSFUL_CUSTOMEDITOR + '！'
-            //   getCustomEditors(this.$store, {})
-            // })
-          } else if (this.action === 'customEditor_cancel') {
-            updateMember(this.$store, {
-              id: this.id,
-              custom_editor: false
-            }).then(callback)
           } else if (this.action === 'add') {
             register(this.$store, {
               email: this.typedEmail,

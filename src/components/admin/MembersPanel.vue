@@ -11,10 +11,12 @@
         <div class="nickname title"><span v-text="wording.WORDING_ADMIN_NICKNAME" @click="orderBy('nickname')"></span></div>
         <div class="email title"><span v-text="wording.WORDING_ADMIN_EMAIL" @click="orderBy('mail')"></span></div>
         <div class="role title"><span v-text="wording.WORDING_ADMIN_ROLE" @click="orderBy('role')"></span></div>
+        <!-- <div class="guesteditor title"><span v-text="wording.WORDING_ADMIN_GUESTEDITOR" @click="orderBy('role')"></span></div> -->
         <div class="actions title">
+          <!-- <div class="actions__guesteditor" v-text="wording.WORDING_ADMIN_GUESTEDITOR"></div> -->
+          <div class="actions__guesteditor"><span v-text="wording.WORDING_ADMIN_GUESTEDITOR" @click="orderBy('custom_editor')"></span></div>
           <div class="actions__update" v-if="$can('updateAccount')" v-text="wording.WORDING_ADMIN_UPDATE"></div>
           <div class="actions__delete" v-if="$can('deleteAccount')" v-text="wording.WORDING_ADMIN_DELETE" @click="delMultiple"></div>
-          <div class="actions__guesteditor" v-text="wording.WORDING_ADMIN_GUESTEDITOR" @click="setCustomEditorMultiple"></div>
         </div>
         <div class="filter title">
           <select @change="filterChanged">
@@ -30,9 +32,16 @@
         <div class="email" v-text="getValue(m, [ 'mail' ])"></div>
         <div class="role" v-text="getValue(roles, [ getValue(m, [ 'role' ], 1) ], '-')"></div>
         <div class="actions">
+          <!-- <div class="actions__guesteditor" v-if="m.customEditor" v-text="wording.WORDING_ADMIN_GUESTEDITOR" @click="cancelCustomEditor(k)"></div> -->
+          <!-- <div class="actions__guesteditor" v-else="!m.customEditor" v-text="wording.WORDING_ADMIN_GUESTEDITOR" @click="cancelCustomEditor(k)"></div> -->
+          <div class="actions__guesteditor">
+            <div class="ios-style-switch" v-if="canBeCustomEditor(m)">
+              <input type='checkbox' class='ios-style-switch__checkbox' :id='`checkbox-${m.id}`' :checked="m.customEditor"  @click="toogleCustomEditor(k, $event)">
+              <label :for="`checkbox-${m.id}`" class='ios-style-switch__label'></label>
+            </div>
+          </div>
           <div class="actions__update" v-if="$can('updateAccount')" v-text="wording.WORDING_ADMIN_UPDATE" @click="update(k)"></div>
           <div class="actions__delete" v-if="$can('deleteAccount')" v-text="wording.WORDING_ADMIN_DELETE" @click="del(k)"></div>
-          <div class="actions__guesteditor" v-if="m.customEditor" v-text="wording.WORDING_ADMIN_GUESTEDITOR" @click="cancelCustomEditor(k)"></div>
         </div>
       </div>
       <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder" :isConversation="true">
@@ -59,6 +68,12 @@
       params: {
         custom_editor: true
       }
+    })
+  }
+  const updateMember = (store, profile, type = '') => {
+    return store.dispatch('UPDATE_MEMBER', {
+      params: profile,
+      type
     })
   }
 
@@ -112,11 +127,8 @@
       closeLightBox () {
         this.showLightBox = false
       },
-      cancelCustomEditor (index) {
-        this.action = 'customEditor_cancel'
-        this.showLightBox = true
-        this.targMember = [ this.members[ index ] ]
-        this.editorTitle = this.wording.WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION_CUSTOMEDITOR
+      canBeCustomEditor (m) {
+        return this.getValue(this.roles, [ this.getValue(m, [ 'role' ], 1) ], '-') !== '會員' && this.getValue(this.roles, [ this.getValue(m, [ 'role' ], 1) ], '-') !== '-'
       },
       del (index) {
         this.action = 'delete'
@@ -141,25 +153,33 @@
         this.toggoleSelectAll()
         this.$emit('filterChanged', { page: index })
       },
-      setCustomEditorMultiple () {
-        this.targMember = _.map(_.filter(this.$refs[ 'checkboxItems' ], (checkbox) => (checkbox.checked)), (checkbox) => (this.members[ checkbox.value ]))
+      toogleCustomEditor (index, event) {
         const exceedMaxCustomEditor = () => {
-          return this.targMember.length + (this.$store.state.customEditors.items ? this.$store.state.customEditors.items.length : 0) > CUSTOM_EDITOR_LIMIT
+          return (this.$store.state.customEditors.items ? this.$store.state.customEditors.items.length : 0) + 1 > CUSTOM_EDITOR_LIMIT
         }
-        const canSetCustomEditor = () => {
-          return this.targMember.length !== 0 && !_.some(this.targMember, (member) => { return member.role === 1 || member.role === 0 }) && _.every(this.targMember, (member) => { return !member.customEditor })
-        }
-
-        if (exceedMaxCustomEditor()) {
+        if (!event.target.checked) {
+          this.targMember = this.members[ index ]
+          updateMember(this.$store, {
+            id: this.targMember.id,
+            custom_editor: false
+          }).then(() => {
+            event.target.checked = false
+            this.updated()
+            getCustomEditors(this.$store, {})
+          })
+        } else if (exceedMaxCustomEditor()) {
           this.action = 'customEditor_exceedError'
           this.showLightBox = true
-        } else if (!canSetCustomEditor()) {
-          this.action = 'customEditor_setError'
-          this.showLightBox = true
-        } else if (!exceedMaxCustomEditor() && canSetCustomEditor()) {
-          this.action = 'customEditor_set'
-          this.showLightBox = true
-          this.editorTitle = this.wording.WORDING_ADMIN_MEMBER_EDITOR_SET_CONFIRMATION_CUSTOMEDITOR
+        } else if (event.target.checked) {
+          this.targMember = this.members[ index ]
+          updateMember(this.$store, {
+            id: this.targMember.id,
+            custom_editor: true
+          }).then(() => {
+            event.target.checked = true
+            this.updated()
+            getCustomEditors(this.$store, {})
+          })
         }
       },
       toggleCheckboxItem (e) {
@@ -268,6 +288,8 @@
             width 275px
           &.role
             width 63px
+          // &.guesteditor
+          //   width 100px
           &.actions
             width 240px
             > div
@@ -283,8 +305,26 @@
               &.actions__delete
                 width 60px
               &.actions__guesteditor
+                cursor initial
+                position relative
                 width 100px
                 margin-right 0
+                background-color transparent
+                color #808080
+                cursor pointer
+                > span
+                  position relative
+                  &::before
+                    content ''
+                    position absolute
+                    top 0
+                    left 100%
+                    width 15px
+                    height 100%
+                    background-position center center
+                    background-repeat no-repeat
+                    background-size 7px auto
+                    background-image url(/public/icons/double-triangle.png)
           &.filter
             width 105px
             position relative
@@ -332,6 +372,45 @@
               position relative
               z-index 2
 
+  .ios-style-switch
+    width 28px
+    height 15px
+    &__checkbox
+      position absolute
+      opacity 0
+      &:checked
+        & + .ios-style-switch__label:after
+          margin-left 14px
+        & + .ios-style-switch__label:before
+          background #808080
+    &__label
+      cursor pointer
+      &:before
+        content ""
+        position absolute
+        display block
+        top 0
+        width 28px
+        height 15px
+        border-radius 16px
+        background #fff
+        border 1px solid #d9d9d9
+        -webkit-transition all 0.3s
+        transition all 0.3s
+      &:after
+        content ""
+        position absolute
+        display block
+        top 0px
+        width 15px
+        height 15px
+        border-radius 16px
+        background #fff
+        border 1px solid #d9d9d9
+        -webkit-transition all 0.3s
+        transition all 0.3s
+      &:hover:after
+        box-shadow 0 0 5px rgba(0, 0, 0, 0.3)
 
   @media (min-width 800px)
     .member-panel
