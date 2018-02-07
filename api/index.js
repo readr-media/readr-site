@@ -144,24 +144,6 @@ const authorize = (req, res, next) => {
     next()
   }
 }
-const sendActivationMail = ({ id, email, role, way }, cb) => {
-  const tokenForActivation = jwtService.generateActivateAccountJwt({
-    id, role, way
-  })
-  basicPostRequst(`${apiHost}/mail`, { 
-    body: {
-      receiver: [email,'keithchiang@mirrormedia.mg','mushin@mirrormedia.mg'],
-      subject: 'Active',
-      content: `
-        hit the following url: <br>
-        <a href="${SERVER_PROTOCOL}://${SERVER_HOST}${SERVER_PORT ? ':' + SERVER_PORT : ''}/api/activate/${tokenForActivation}">click me</a>
-      `
-    }
-  }, {}, (err, res) => {
-    cb && cb(err, res, tokenForActivation)
-  })
-}
-
 
 /**
  * 
@@ -184,6 +166,7 @@ router.use('/activate', activationKeyVerify, require('./middle/member/activation
 router.use('/initmember', authVerify, require('./middle/member/initMember'))
 router.use('/member', [ authVerify, authorize ], require('./middle/member'))
 router.use('/comment', require('./middle/comment'))
+router.use('/register', authVerify, require('./middle/member/register'))
 
 
 /**
@@ -369,81 +352,6 @@ router.post('/token', (req, res) => {
 })
 
 router.post('/login', authVerify, require('./middle/member/login'))
-
-router.post('/register', authVerify, (req, res) => {
-  debug(`Got a new reuqest of register:
-    nickname -> ${req.body.nickname}
-    mail -> ${req.body.email}
-    gender -> ${req.body.gender}
-    social_id -> ${req.body.social_id}
-    register_mode -> ${req.body.register_mode}
-    At ${(new Date).toString()}`)
-
-  const sendRequest = () => {
-    if (!req.body.email || !(req.body.password || req.body.social_id)) {
-      res.status(400).send({ message: 'Please offer all requirements.' })
-      return
-    }
-
-    delete req.body.idToken
-    delete req.body.email
-
-    const url = `${apiHost}/register`
-    basicPostRequst(url, req, res, (err, resp) => {
-      if (!err && resp) {
-        sendActivationMail({ id: req.body.id, email: req.body.mail, way: 'member' }, (e, response, tokenForActivation) => {
-          if (!e && response) {
-            res.status(200).send({ token: tokenForActivation })
-          } else {
-            res.status(response.status).json(e)
-            console.error(`error during register: ${url}`)
-            console.error(e)
-          }
-        })
-      } else {
-        res.status(500).json(_.get(err, [ 'response', 'body' ], { Error: 'Error occured.' }))
-        console.error(`error during register: ${url}`)
-        console.error(err)
-      }
-    })
-  }
-
-  if (req.body.register_mode === 'oauth-goo') {
-    const auth = new GoogleAuth()
-    const client = new auth.OAuth2(GOOGLE_CLIENT_ID, '', '')
-    client.verifyIdToken(
-      req.body.idToken,
-      GOOGLE_CLIENT_ID,
-      (e, login) => {
-        if (e) {
-          res.status(403).send(e.message).end()
-          return
-        }
-        const payload = login.getPayload()
-        if (payload[ 'aud' ] !== GOOGLE_CLIENT_ID) {
-          res.status(403).send('Forbidden. Invalid token detected.').end()
-          return
-        }
-        req.body.id = payload[ 'sub' ]
-        req.body.mail = payload[ 'email' ]
-        req.body.email = payload[ 'email' ]
-        req.body.social_id = payload[ 'sub' ]
-        sendRequest()
-      })
-  } else if (req.body.register_mode === 'oauth-fb') {
-    req.body.mail = req.body.email
-    req.body.id = req.body.social_id
-    sendRequest()
-  } else {
-    req.body.mail = req.body.email
-    req.body.id = req.body.email
-    req.body.register_mode = 'ordinary'
-    if (req.body.role !== null && req.body.role !== undefined && !req.body.password) {
-      req.body.password = 'none'
-    }
-    sendRequest()
-  }
-})
 
 router.post('/post', authVerify, (req, res) => {
   if (req.body.active === 1 && req.user.role === 2) {
@@ -671,19 +579,7 @@ router.route('*')
     .send(req.body)
     .end((err, response) => {
       if (!err && response) {
-        if (req.url.indexOf('member') === -1) {
-          res.status(200).end()
-        } else {
-          sendActivationMail({ id: req.body.id, email: req.body.mail, role: req.body.role, way: 'admin' }, (e, response) => {
-            if (!e && response) {
-              res.status(200).end()
-            } else {
-              res.status(response.status).json(e)
-              console.error(`error during register: ${url}`)
-              console.error(e)
-            }
-          })
-        }
+        res.status(200).end()
       } else {
         console.log('error occurred when handling a req: ', req.url)
         console.log(err)

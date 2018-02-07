@@ -9,6 +9,7 @@
         <About :profile="profile"></About>
         <div class="control-bar">
           <TheBaseControlBar
+            @addAccount="addMember"
             @addNews="$_admin_textEditorHandler(true, 'add', config.type.NEWS)"
             @addReview="$_admin_textEditorHandler(true, 'add', config.type.REVIEW)"
             @editNews="$_admin_showDraftList(config.type.NEWS)"

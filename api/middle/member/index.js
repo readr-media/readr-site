@@ -91,6 +91,8 @@ router.put('/', (req, res, next) => {
   next()
 })
 
+router.post('*', (req, res) => {})
+
 router.delete('*', (req, res, next) => {
   debug('going to del member')
   debug(req.body)

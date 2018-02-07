@@ -341,7 +341,7 @@ export function register (params, token) {
 }
 
 export function addMember (params, token) {
-  const url = `${host}/api/member`
+  const url = `${host}/api/register/admin`
   params.register_mode = 'ordinary'
   params.id = params.email
   params.mail = params.email
