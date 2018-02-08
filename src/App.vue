@@ -43,7 +43,7 @@ button
 .main-container
   width 90%
   max-width 90%
-  margin 35px auto 0
+  margin 0 auto
   overflow hidden
 
 .main-panel

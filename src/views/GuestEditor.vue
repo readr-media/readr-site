@@ -7,25 +7,25 @@
       </aside>
       <main class="main-container">
         <app-about :profile="profile"></app-about>
-        <base-control-bar
+        <control-bar
           @addNews="$_guestEditor_textEditorHandler(true, 'add', config.type.NEWS)"
           @addReview="$_guestEditor_textEditorHandler(true, 'add', config.type.REVIEW)"
           @editNews="$_guestEditor_showDraftList(config.type.NEWS)"
           @editReview="$_guestEditor_showDraftList(config.type.REVIEW)"
           @openPanel="$_guestEditor_openPanel">
-        </base-control-bar>
-        <template v-if="activePanel === 'record'">
+        </control-bar>
+        <template v-if="activePanel === 'records'">
           <section class="guestEditor__record">
             <app-tab :tabs="tabs" @changeTab="$_guestEditor_tabHandler">
               <post-list-tab
                 slot="0"
-                :posts="reviewsByUser"
+                :posts="posts"
                 @deletePost="$_guestEditor_showAlert"
                 @editPost="$_guestEditor_textEditorHandler">
               </post-list-tab>
               <post-list-tab
                 slot="1"
-                :posts="newsByUser"
+                :posts="posts"
                 @deletePost="$_guestEditor_showAlert"
                 @editPost="$_guestEditor_textEditorHandler">
               </post-list-tab>
@@ -40,14 +40,14 @@
         </template>
         <base-light-box :showLightBox.sync="showReviewsDraftList">
           <post-list-detailed
-            :posts="newsDraftByUser"
+            :posts="postsDraft"
             @editPost="$_guestEditor_textEditorHandler"
             @deletePost="$_guestEditor_showAlert">
           </post-list-detailed>
         </base-light-box>
         <base-light-box :showLightBox.sync="showNewsDraftList">
           <post-list-detailed
-            :posts="reviewsDraftByUser"
+            :posts="postsDraft"
             @editPost="$_guestEditor_textEditorHandler"
             @deletePost="$_guestEditor_showAlert">
           </post-list-detailed>
@@ -101,7 +101,7 @@
   import PostListInTab from '../components/PostListInTab.vue'
   import PostPanel from '../components/PostPanel.vue'
   import Tab from '../components/Tab.vue'
-  import TheBaseControlBar from '../components/TheBaseControlBar.vue'
+  import TheControlBar from '../components/TheControlBar.vue'
 
   const MAXRESULT = 20
   const DEFAULT_PAGE = 1
@@ -159,7 +159,7 @@
       'app-about': About,
       'app-header': AppHeader,
       'app-tab': Tab,
-      'base-control-bar': TheBaseControlBar,
+      'control-bar': TheControlBar,
       'base-light-box': BaseLightBox,
       'following-list-tab': FollowingListInTab,
       'pagination-nav': PaginationNav,
@@ -172,16 +172,15 @@
     data () {
       return {
         action: undefined,
-        activePanel: 'record',
+        activePanel: 'records',
         config: {
           active: POST_ACTIVE,
           type: POST_TYPE
         },
         isCompleted: false,
-        pageNews: DEFAULT_PAGE,
-        pageNewsDraft: DEFAULT_PAGE,
-        pageReviews: DEFAULT_PAGE,
-        pageReviewsDraft: DEFAULT_PAGE,
+        loading: false,
+        page: DEFAULT_PAGE,
+        pagePostsDraft: DEFAULT_PAGE,
         post: {},
         postActive: undefined,
         postType: POST_TYPE.REVIEW,
@@ -202,11 +201,11 @@
       followingByUser () {
         return _.get(this.$store, [ 'state', 'followingByUser' ], [])
       },
-      newsByUser () {
-        return _.get(this.$store, [ 'state', 'newsByUser', 'items' ], [])
+      posts () {
+        return _.get(this.$store, [ 'state', 'posts' ], [])
       },
-      newsDraftByUser () {
-        return _.get(this.$store, [ 'state', 'newsDraftByUser', 'items' ], [])
+      postsDraft () {
+        return _.get(this.$store, [ 'state', 'postsDraft' ], [])
       },
       postsUnion () {
         return _.uniqBy(_.union(this.newsByUser, this.newsDraftByUser, this.reviewsByUser, this.reviewsDraftByUser), 'id')
@@ -214,47 +213,28 @@
       profile () {
         return _.get(this.$store, [ 'state', 'profile' ], {})
       },
-      reviewsByUser () {
-        return _.get(this.$store, [ 'state', 'reviewsByUser', 'items' ], [])
-      },
-      reviewsDraftByUser () {
-        return _.get(this.$store, [ 'state', 'reviewsDraftByUser', 'items' ], [])
-      },
       sections () {
         return SECTIONS_DEFAULT
       }
     },
     mounted () {
+      this.loading = true
       Promise.all([
         fetchPostsByUser(this.$store, {
           where: {
             author: _.get(this.profile, [ 'id' ]),
-            type: POST_TYPE.NEWS
+            type: POST_TYPE.REVIEW
           }
         }),
-        fetchPostsByUser(this.$store, {
-          where: {
-            author: _.get(this.profile, [ 'id' ]),
-            active: POST_ACTIVE.DRAFT,
-            type: POST_TYPE.NEWS
-          }
-        }),
-        fetchPostsByUser(this.$store, {
+        fetchPostsCount(this.$store, {
           where: {
             author: _.get(this.profile, [ 'id' ]),
             type: POST_TYPE.REVIEW
           }
-        }),
-        fetchPostsByUser(this.$store, {
-          where: {
-            author: _.get(this.profile, [ 'id' ]),
-            active: POST_ACTIVE.DRAFT,
-            type: POST_TYPE.REVIEW
-          }
-        }),
-        fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'member' })
+        })
       ])
-      
+      .then(() => this.loading = false)
+      .catch(() => this.loading = false)
     },
     methods: {
       $_guestEditor_alertHandler (showAlert, active, isCompleted) {
@@ -278,7 +258,33 @@
         fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: resource })
       },
       $_guestEditor_openPanel (panel) {
+        this.loading = true
         this.activePanel = panel
+        switch (panel) {
+          case 'records':
+            Promise.all([
+              fetchPostsByUser(this.$store, {
+                where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
+              }),
+              fetchPostsCount(this.$store, {
+                where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
+              })
+            ])
+            .then(() => this.loading = false)
+            .catch(() => this.loading = false)
+            break
+          default:
+            Promise.all([
+              fetchPostsByUser(this.$store, {
+                where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
+              }),
+              fetchPostsCount(this.$store, {
+                where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
+              })
+            ])
+            .then(() => this.loading = false)
+            .catch(() => this.loading = false)
+        }
       },
       $_guestEditor_pageChanged (index) {
         this.$_guestEditor_updatePostList({ page: index })
@@ -290,15 +296,92 @@
         this.showAlert = true
       },
       $_guestEditor_showDraftList (type) {
+        this.loading = true
         if (type === POST_TYPE.REVIEW) {
           this.showReviewsDraftList = true
+          Promise.all([
+            fetchPostsByUser(this.$store, {
+              where: {
+                author: _.get(this.profile, [ 'id' ]),
+                active: POST_ACTIVE.DRAFT,
+                type: POST_TYPE.REVIEW
+              }
+            }),
+            fetchPostsCount(this.$store, {
+              where: {
+                author: _.get(this.profile, [ 'id' ]),
+                active: POST_ACTIVE.DRAFT,
+                type: POST_TYPE.REVIEW
+              }
+            })
+          ])
+          .then(() => this.loading = false)
+          .catch(() => this.loading = false)
         } else if (type === POST_TYPE.NEWS) {
           this.showNewsDraftList = true
+          Promise.all([
+            fetchPostsByUser(this.$store, {
+              where: {
+                author: _.get(this.profile, [ 'id' ]),
+                active: POST_ACTIVE.DRAFT,
+                type: POST_TYPE.NEWS
+              }
+            }),
+            fetchPostsCount(this.$store, {
+              where: {
+                author: _.get(this.profile, [ 'id' ]),
+                active: POST_ACTIVE.DRAFT,
+                type: POST_TYPE.NEWS
+              }
+            })
+          ])
+          .then(() => this.loading = false)
+          .catch(() => this.loading = false)
         }
       },
       $_guestEditor_tabHandler (tab) {
-        if (tab === 1) {
-          fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'member' })
+        this.loading = true
+        switch (tab) {
+          case 0:
+            Promise.all([
+              fetchPostsByUser(this.$store, {
+                where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
+              }),
+              fetchPostsCount(this.$store, {
+                where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
+              })
+            ])
+            .then(() => this.loading = false)
+            .catch(() => this.loading = false)
+            break
+          case 1:
+            Promise.all([
+              fetchPostsByUser(this.$store, {
+                where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.NEWS }
+              }),
+              fetchPostsCount(this.$store, {
+                where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.NEWS }
+              })
+            ])
+            .then(() => this.loading = false)
+            .catch(() => this.loading = false)
+            break
+          case 2:
+            fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'member' })
+            .then(() => this.loading = false)
+            .catch(() => this.loading = false)
+            break
+          default:
+            Promise.all([
+              fetchPostsByUser(this.$store, {
+                where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
+              }),
+              fetchPostsCount(this.$store, {
+                where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
+              })
+            ])
+            .then(() => this.loading = false)
+            .catch(() => this.loading = false)
         }
       },
       $_guestEditor_textEditorHandler (showEditor, action, postType, id) {

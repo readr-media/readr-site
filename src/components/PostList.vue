@@ -1,11 +1,12 @@
 <template>
   <div class="postList-container">
-    <PaginationNav :totalPages="10" @pageChanged="$_postList_pageChanged"></PaginationNav>
+    <PaginationNav :totalPages="totalPages" @pageChanged="$_postList_pageChanged"></PaginationNav>
     <table class="postList">
       <thead>
         <tr>
           <th class="postList__checkbox"><input type="checkbox" ref="checkboxSelectAll" @click="$_postList_toggleSelectAll"></th>
           <th class="postList__nickname"><span @click="$_postList_orderBy('author.nickname')" v-text="wording.WORDING_POSTLIST_NICKNAME"></span></th>
+          <th class="postList__type"></th>
           <th class="postList__title"><span @click="$_postList_orderBy('title')" v-text="wording.WORDING_POSTLIST_TITLE"></span></th>
           <th class="postList__status postList--center"><span @click="$_postList_orderBy('active')" v-text="wording.WORDING_POSTLIST_ACTIVE"></span></th>
           <th class="postList__update postList--center">
@@ -34,6 +35,7 @@
         <tr v-for="p in posts" :key="p.id">
           <td class="postList__checkbox"><input type="checkbox" ref="checkboxItems" @change="$_postList_toggleHandler(p.id)"></td>
           <td class="postList__nickname" v-text="$_postList_getAuthorId(p)"></td>
+          <td class="postList__type"></td>
           <td class="postList__title" v-text="p.title" @click="$_showPost(p)"></td>
           <td class="postList__status postList--center" v-text="$_postList_getStatus(p)"></td>
           <td class="postList__update postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_editPost(p.id, p.type)" v-text="wording.WORDING_POSTLIST_UPDATE"></button></td>
@@ -68,6 +70,8 @@
   import BaseLightBoxPost from './BaseLightBoxPost.vue'
   import PaginationNav from './PaginationNav.vue'
 
+  const MAXRESULT = 20
+
   export default {
     name: 'PostList',
     components: {
@@ -101,6 +105,11 @@
         },
         showLightBox: false,
         post: {}
+      }
+    },
+    computed: {
+      totalPages () {
+        return Math.ceil(_.get(this.$store, [ 'state', 'postsCount' ], 0) / MAXRESULT)
       }
     },
     mounted () {},

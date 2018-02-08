@@ -1,10 +1,12 @@
 <template>
-  <div class="pagination-nav" ref="pagination" v-if="totalPages > 0">
-    <div class="pagination-nav__prev" @click="clickPrev">&lt;</div>
-    <div class="pagination-nav__rest" @click="clickPrev" v-if="showLeftRest">...</div>
-    <div class="pagination-nav__page" :class="{ active: i === currPage }" v-for="i in activePages" v-text="i" @click="clickHandler(i)"></div>
-    <div class="pagination-nav__rest" @click="clickNext" v-if="showRightRest">...</div>
-    <div class="pagination-nav__next" @click="clickNext">&gt;</div>
+  <div class="pagination-nav" ref="pagination">
+    <template v-if="totalPages > 0">
+      <div class="pagination-nav__prev" @click="clickPrev">&lt;</div>
+      <div class="pagination-nav__rest" @click="clickPrev" v-if="showLeftRest">...</div>
+      <div class="pagination-nav__page" :class="{ active: i === currPage }" v-for="i in activePages" v-text="i" @click="clickHandler(i)"></div>
+      <div class="pagination-nav__rest" @click="clickNext" v-if="showRightRest">...</div>
+      <div class="pagination-nav__next" @click="clickNext">&gt;</div>
+    </template>
   </div>
 </template>
 <script>

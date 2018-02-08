@@ -8,19 +8,19 @@
         <!-- <app-header :sections="sections"></app-header> -->
         <About :profile="profile"></About>
         <div class="control-bar">
-          <TheBaseControlBar
+          <TheControlBar
             @addAccount="addMember"
             @addNews="$_admin_textEditorHandler(true, 'add', config.type.NEWS)"
             @addReview="$_admin_textEditorHandler(true, 'add', config.type.REVIEW)"
             @editNews="$_admin_showDraftList(config.type.NEWS)"
             @editReview="$_admin_showDraftList(config.type.REVIEW)"
             @openPanel="openPanel">
-          </TheBaseControlBar>
+          </TheControlBar>
         </div>
         <template v-if="activePanel === 'accounts'">
           <MembersPanel v-if="$can('memberManage')" @filterChanged="filterChanged"></MembersPanel>
         </template>
-        <template v-if="activePanel === 'record'">
+        <template v-if="activePanel === 'records'">
         </template>
         <template v-else-if="activePanel === 'posts'">
           <section class="panel">
@@ -37,14 +37,14 @@
         </BaseLightBox>
         <BaseLightBox :showLightBox.sync="showReviewsDraftList">
           <PostListDetailed
-            :posts="newsDraftByUser"
+            :posts="postsDraft"
             @editPost="$_admin_textEditorHandler"
             @deletePost="$_admin_showAlert">
           </PostListDetailed>
         </BaseLightBox>
         <BaseLightBox :showLightBox.sync="showNewsDraftList">
           <PostListDetailed
-            :posts="reviewsDraftByUser"
+            :posts="postsDraft"
             @editPost="$_admin_textEditorHandler"
             @deletePost="$_admin_showAlert">
           </PostListDetailed>
@@ -95,7 +95,7 @@
   import PostListDetailed from '../components/PostListDetailed.vue'
   import PostListInTab from '../components/PostListInTab.vue'
   import PostPanel from '../components/PostPanel.vue'
-  import TheBaseControlBar from '../components/TheBaseControlBar.vue'
+  import TheControlBar from '../components/TheControlBar.vue'
 
   const MAXRESULT = 20
   const DEFAULT_PAGE = 1
@@ -157,29 +157,20 @@
       PostListDetailed,
       PostListInTab,
       PostPanel,
-      TheBaseControlBar
+      TheControlBar
     },
     computed: {
-      newsByUser () {
-        return _.get(this.$store, [ 'state', 'newsByUser', 'items' ], [])
-      },
-      newsDraftByUser () {
-        return _.get(this.$store, [ 'state', 'newsDraftByUser', 'items' ], [])
-      },
       posts () {
         return _.get(this.$store, [ 'state', 'posts', 'items' ], [])
+      },
+      postsDraft () {
+        return _.get(this.$store, [ 'state', 'postsDraft' ], [])
       },
       postsUnion () {
         return _.uniqBy(_.union(this.newsByUser, this.newsDraftByUser, this.posts, this.reviewsByUser, this.reviewsDraftByUser), 'id')
       },
       profile () {
         return _.get(this.$store, [ 'state', 'profile' ], {})
-      },
-      reviewsByUser () {
-        return _.get(this.$store, [ 'state', 'reviewsByUser', 'items' ], [])
-      },
-      reviewsDraftByUser () {
-        return _.get(this.$store, [ 'state', 'reviewsDraftByUser', 'items' ], [])
       },
       sections () {
         return SECTIONS_DEFAULT

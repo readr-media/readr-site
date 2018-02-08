@@ -125,24 +125,28 @@ export default {
   GET_POSTS_COUNT: ({ commit, dispatch, state }, { params }) => {
     return getPostsCount({ params }).then(({ status, body }) => {
       if (status === 200) {
-        commit('SET_POSTS_COUNT', { params: params, meta: body.meta })
+        if (params.where && params.where.active === POST_ACTIVE.DRAFT) {
+          commit('SET_POSTS_DRAFT_COUNT', { meta: body.meta })
+        } else {
+          commit('SET_POSTS_COUNT', { meta: body.meta })
+        }
       }
     })
   },
   GET_POSTS_BY_USER: ({ commit, dispatch, state }, { params }) => {
     return getPosts({ params }).then(({ status, body }) => {
       if (status === 200) {
-        if (params.where.type === POST_TYPE.NEWS) {
-          if (params.where.active === POST_ACTIVE.DRAFT) {
-            commit('SET_NEWS_DRAFT_BY_USER', { posts: body })
+        if (params.where && params.where.type === POST_TYPE.NEWS) {
+          if (params.where.active && params.where.active === POST_ACTIVE.DRAFT) {
+            commit('SET_POSTS_DRAFT', { posts: body })
           } else {
-            commit('SET_NEWS_BY_USER', { posts: body })
+            commit('SET_POSTS', { posts: body })
           }
-        } else if (params.where.type === POST_TYPE.REVIEW) {
-          if (params.where.active === POST_ACTIVE.DRAFT) {
-            commit('SET_REVIEWS_DRAFT_BY_USER', { posts: body })
+        } else if (params.where && params.where.type === POST_TYPE.REVIEW) {
+          if (params.where.active && params.where.active === POST_ACTIVE.DRAFT) {
+            commit('SET_POSTS_DRAFT', { posts: body })
           } else {
-            commit('SET_REVIEWS_BY_USER', { posts: body })
+            commit('SET_POSTS', { posts: body })
           }
         }
       }
