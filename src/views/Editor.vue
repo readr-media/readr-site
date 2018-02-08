@@ -129,6 +129,16 @@
     return store.dispatch('ADD_POST', { params })
   }
 
+  const deletePostSelf = (store, id) => {
+    return store.dispatch('DELETE_POST_SELF', { id: id })
+  }
+
+  const deletePosts = (store, { params }) => {
+    return store.dispatch('DELETE_POSTS', {
+      params: params
+    })
+  }
+
   const fetchFollowing = (store, params) => {
     if (params.subject) {
       return store.dispatch('GET_FOLLOWING_BY_USER', {
@@ -153,12 +163,6 @@
     })
   }
 
-  const fetchPostsCount = (store, params = {}) => {
-    return store.dispatch('GET_POSTS_COUNT', {
-      params: params
-    })
-  }
-
   const fetchPostsByUser = (store, {
     maxResult = MAXRESULT,
     page = DEFAULT_PAGE,
@@ -175,6 +179,16 @@
     })
   }
 
+  const fetchPostsCount = (store, params = {}) => {
+    return store.dispatch('GET_POSTS_COUNT', {
+      params: params
+    })
+  }
+
+  const publishPosts = (store, params) => {
+    return store.dispatch('PUBLISH_POSTS', { params })
+  }
+
   const unfollow = (store, resource, subject, object) => {
     return store.dispatch('PUBLISH_ACTION', {
       params: {
@@ -184,20 +198,6 @@
         object: object
       }
     })
-  }
-
-  const deletePostSelf = (store, id) => {
-    return store.dispatch('DELETE_POST_SELF', { id: id })
-  }
-
-  const deletePosts = (store, { params }) => {
-    return store.dispatch('DELETE_POSTS', {
-      params: params
-    })
-  }
-
-  const publishPosts = (store, params) => {
-    return store.dispatch('PUBLISH_POSTS', { params })
   }
 
   const updatePost = (store, params) => {
@@ -226,6 +226,7 @@
       return {
         action: undefined,
         activePanel: 'records',
+        activeTab: 'reviews',
         config: {
           active: POST_ACTIVE,
           type: POST_TYPE
@@ -263,7 +264,7 @@
         return _.get(this.$store, [ 'state', 'postsDraft' ], [])
       },
       postsUnion () {
-        return _.uniqBy(_.union(this.newsByUser, this.newsDraftByUser, this.posts, this.reviewsByUser, this.reviewsDraftByUser), 'id')
+        return _.uniqBy(this.posts, 'id')
       },
       profile () {
         return _.get(this.$store, [ 'state', 'profile' ], {})
@@ -339,7 +340,7 @@
       $_editor_openPanel (panel) {
         this.loading = true
         this.activePanel = panel
-        switch (panel) {
+        switch (this.activePanel) {
           case 'records':
             Promise.all([
               fetchPostsByUser(this.$store, {
@@ -480,6 +481,7 @@
         this.loading = true
         switch (tab) {
           case 0:
+            this.activeTab = 'reviews'
             Promise.all([
               fetchPostsByUser(this.$store, {
                 where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
@@ -492,6 +494,7 @@
             .catch(() => this.loading = false)
             break
           case 1:
+            this.activeTab = 'news'
             Promise.all([
               fetchPostsByUser(this.$store, {
                 where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.NEWS }
@@ -504,11 +507,13 @@
             .catch(() => this.loading = false)
             break
           case 2:
+            this.activeTab = 'followings'
             fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'member' })
             .then(() => this.loading = false)
             .catch(() => this.loading = false)
             break
           default:
+            this.activeTab = 'reviews'
             Promise.all([
               fetchPostsByUser(this.$store, {
                 where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
@@ -551,6 +556,46 @@
       },
       $_editor_updatePostList ({ sort, type }) {
         this.sort = sort || this.sort
+        switch (this.activePanel) {
+          case 'records':
+            switch (this.activeTab) {
+              case 'reviews':
+                fetchPostsByUser(this.$store, {
+                  page: this.page,
+                  where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
+                })
+                break
+              case 'news':
+                fetchPostsByUser(this.$store, {
+                  page: this.page,
+                  where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.NEWS }
+                })
+                break
+              case 'followings':
+                fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'member' })
+              default:
+                fetchPostsByUser(this.$store, {
+                  page: this.page,
+                  where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
+                })
+            }
+            break
+          case 'posts':
+            fetchPosts(this.$store, {
+              page: this.page,
+              sort: this.sort
+            })
+            .then(() => this.loading = false)
+            .catch(() => this.loading = false)
+            break
+          default:
+            fetchPosts(this.$store, {
+              page: this.page,
+              sort: this.sort
+            })
+            .then(() => this.loading = false)
+            .catch(() => this.loading = false)
+        }
       }
     }
   }
