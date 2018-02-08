@@ -166,4 +166,6 @@
       justify-content center
       align-items center
       cursor pointer
+      &:hover
+        background-color #737373
 </style>

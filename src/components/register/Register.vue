@@ -12,8 +12,9 @@
       <div class="g-recaptcha" :class="{ warn: (!isRecaptchaPassed && isRegisterClicked) }">
         <div id="g-recaptcha"></div>
       </div>
-      <div class="register-container__btn" @click="register">
-        <span v-text="wording.WORDING_REGISTER"></span>
+      <div class="register-container__btn" :class="{ disabled: shouldShowSpinner }" @click="register">
+        <span v-text="wording.WORDING_REGISTER" v-if="!shouldShowSpinner"></span>
+        <Spinner :show="shouldShowSpinner"></Spinner>
       </div>    
     </div>
     <div class="register-container" v-else>
@@ -24,13 +25,14 @@
 </template>
 <script>
   import _ from 'lodash'
-  import { WORDING_EMAIL, WORDING_MEMBER_AGREEMENT, WORDING_NICKNAME, WORDING_PASSWORD, WORDING_PASSWORD_CHECK, WORDING_REGISTER, WORDING_REGISTER_NOTICE, WORDING_REGISTER_SUCESSFUL, WORDING_REGISTER_INFAIL, WORDING_REGISTER_INFAIL_DUPLICATED } from '../../constants'
-  import { WORDING_REGISTER_NICKNAME_EMPTY, WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL, WORDING_REGISTER_PWD_EMPTY, WORDING_REGISTER_PWD_CHECK_EMPTY, WORDING_REGISTER_PWD_CHECK_INFAIL } from '../../constants'
-  import { GOOGLE_RECAPTCHA_SITE_KEY } from '../../../api/config'
-  import { consoleLogOnDev } from '../../util/comm'
-  import InputItem from '../form/InputItem.vue'
+  import * as CONSTANTS from 'src/constants'
+  import InputItem from 'src/components/form/InputItem.vue'
+  import Spinner from 'src/components/Spinner.vue'
   import validator from 'validator'
+  import config from 'api/config'
+  import { consoleLogOnDev } from 'src/util/comm'
 
+  const debug = require('debug')('CLIENT:Register')
   const register = (store, profile, token) => {
     return store.dispatch('REGISTER', {
       params: profile,
@@ -46,7 +48,8 @@
 
   export default {
     components: {
-      InputItem
+      InputItem,
+      Spinner
     },
     data () {
       return {
@@ -61,25 +64,26 @@
         recaptcha: {},
         recaptchaToken: '',
         wording: {
-          WORDING_EMAIL,
-          WORDING_MEMBER_AGREEMENT,
-          WORDING_NICKNAME,
-          WORDING_REGISTER,
-          WORDING_REGISTER_NICKNAME_EMPTY,
-          WORDING_REGISTER_NOTICE,
-          WORDING_PASSWORD,
-          WORDING_PASSWORD_CHECK,
-          WORDING_REGISTER_SUCESSFUL,
-          WORDING_REGISTER_INFAIL,
-          WORDING_REGISTER_INFAIL_DUPLICATED,
-          WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL,
-          WORDING_REGISTER_PWD_EMPTY,
-          WORDING_REGISTER_PWD_CHECK_EMPTY,
-          WORDING_REGISTER_PWD_CHECK_INFAIL
-        }
+          WORDING_EMAIL: CONSTANTS.WORDING_EMAIL,
+          WORDING_MEMBER_AGREEMENT: CONSTANTS.WORDING_MEMBER_AGREEMENT,
+          WORDING_NICKNAME: CONSTANTS.WORDING_NICKNAME,
+          WORDING_REGISTER: CONSTANTS.WORDING_REGISTER,
+          WORDING_REGISTER_NICKNAME_EMPTY: CONSTANTS.WORDING_REGISTER_NICKNAME_EMPTY,
+          WORDING_REGISTER_NOTICE: CONSTANTS.WORDING_REGISTER_NOTICE,
+          WORDING_PASSWORD: CONSTANTS.WORDING_PASSWORD,
+          WORDING_PASSWORD_CHECK: CONSTANTS.WORDING_PASSWORD_CHECK,
+          WORDING_REGISTER_SUCESSFUL: CONSTANTS.WORDING_REGISTER_SUCESSFUL,
+          WORDING_REGISTER_INFAIL: CONSTANTS.WORDING_REGISTER_INFAIL,
+          WORDING_REGISTER_INFAIL_DUPLICATED: CONSTANTS.WORDING_REGISTER_INFAIL_DUPLICATED,
+          WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL: CONSTANTS.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL,
+          WORDING_REGISTER_PWD_EMPTY: CONSTANTS.WORDING_REGISTER_PWD_EMPTY,
+          WORDING_REGISTER_PWD_CHECK_EMPTY: CONSTANTS.WORDING_REGISTER_PWD_CHECK_EMPTY,
+          WORDING_REGISTER_PWD_CHECK_INFAIL: CONSTANTS.WORDING_REGISTER_PWD_CHECK_INFAIL
+        },
+        shouldShowSpinner: false
       }
     },
-    name: 'register',
+    name: 'Register',
     methods: {
       setInputValue (key, value) {
         switch (key) {
@@ -98,15 +102,18 @@
         }
       },
       register () {
+        if (this.shouldShowSpinner) { return }
         this.verifyRecaptchaToken().then((response) => {
-          // console.log(this.isRecaptchaPassed)
           if (this.isRecaptchaPassed && this.validatInput()) {
+            this.shouldShowSpinner = true
+            debug('Abt to send req of register.')
             register(this.$store, {
               nickname: this.formData.nickname,
               email: this.formData.mail,
               password: this.formData.pwd
             }, _.get(this.$store, [ 'state', 'register-token' ])).then(({ status, err }) => {
               this.isRegistered = true
+              this.shouldShowSpinner = false
               if (status === 200) {
                 this.resMsg = this.wording.WORDING_REGISTER_SUCESSFUL
               } else {
@@ -114,6 +121,7 @@
                 window.grecaptcha.reset(this.recaptcha)
               }
             }).catch(({ status, err }) => {
+              this.shouldShowSpinner = false
               if (err === 'User Already Existed') {
                 this.alertFlags.mail = true
                 this.alertMsgs.mail = this.wording.WORDING_REGISTER_INFAIL_DUPLICATED
@@ -182,9 +190,7 @@
         return pass
       },
       verifyRecaptchaToken () {
-        // console.log('this.recaptchaToken', this.recaptchaToken)
         return verifyRecaptchaToken(this.$store, { token: this.recaptchaToken }).then((response) => {
-          // console.log('response', response)
           this.isRecaptchaPassed = _.get(response, [ 'success' ], false)
         })
       }
@@ -192,11 +198,9 @@
     mounted () {
       if (window.grecaptcha) {
         this.recaptcha = window.grecaptcha.render('g-recaptcha', {
-          'sitekey': GOOGLE_RECAPTCHA_SITE_KEY,
+          'sitekey': config.GOOGLE_RECAPTCHA_SITE_KEY,
           'callback': (res) => {
             this.recaptchaToken = res
-            // console.log('this.recaptchaToken', this.recaptchaToken)
-            // this.verifyRecaptchaToken()
           }
         })
       }
@@ -232,6 +236,11 @@
         justify-content center
         align-items center
         cursor pointer
+        &.disabled
+          background-color #c5c5c5
+          color #a5a5a5
+        &:hover
+          background-color #737373
 
       .g-recaptcha
         margin 15px 0
