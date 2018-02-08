@@ -329,7 +329,7 @@
                 this.showNewsDraftList = false
                 this.showReviewsDraftList = false
               }
-              this.$_editor_updatePostList({ type: _.get(this.post, [ 'type' ])})
+              this.$_editor_updatePostList({ type: _.get(this.post, [ 'type' ]), needFetchCount: true })
               this.isCompleted = true
             })
         }
@@ -535,9 +535,13 @@
             this.showNewsDraftList = false
             this.showReviewsDraftList = false
           }
+          if (this.action === 'add') {
+            this.$_editor_updatePostList({ type: this.postType, needFetchCount: true })
+          } else {
+            this.$_editor_updatePostList({ type: this.postType })
+          }
           this.action = undefined
           this.isCompleted = true
-          this.$_editor_updatePostList({ type: this.postType })
         } else {
           this.action = action
           this.postType = postType
@@ -554,18 +558,28 @@
           fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: resource })
         })
       },
-      $_editor_updatePostList ({ sort, type }) {
+      $_editor_updatePostList ({ sort, type, needFetchCount = false }) {
         this.sort = sort || this.sort
         switch (this.activePanel) {
           case 'records':
             switch (this.activeTab) {
               case 'reviews':
+                if (needFetchCount) {
+                  fetchPostsCount(this.$store, {
+                    where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
+                  })
+                }
                 fetchPostsByUser(this.$store, {
                   page: this.page,
                   where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
                 })
                 break
               case 'news':
+                if (needFetchCount) {
+                  fetchPostsCount(this.$store, {
+                    where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.NEWS }
+                  })
+                }
                 fetchPostsByUser(this.$store, {
                   page: this.page,
                   where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.NEWS }
@@ -574,13 +588,21 @@
               case 'followings':
                 fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'member' })
               default:
-                fetchPostsByUser(this.$store, {
-                  page: this.page,
-                  where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
-                })
+                Promise.all([
+                  fetchPostsCount(this.$store, {
+                    where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
+                  }),
+                  fetchPostsByUser(this.$store, {
+                    page: this.page,
+                    where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
+                  })
+                ])
             }
             break
           case 'posts':
+            if (needFetchCount) {
+              fetchPostsCount(this.$store, {})
+            }
             fetchPosts(this.$store, {
               page: this.page,
               sort: this.sort
@@ -589,10 +611,13 @@
             .catch(() => this.loading = false)
             break
           default:
-            fetchPosts(this.$store, {
-              page: this.page,
-              sort: this.sort
-            })
+            Promise.all([
+              fetchPosts(this.$store, {
+                page: this.page,
+                sort: this.sort
+              }),
+              fetchPostsCount(this.$store, {})
+            ])
             .then(() => this.loading = false)
             .catch(() => this.loading = false)
         }
