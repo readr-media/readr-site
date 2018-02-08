@@ -28,7 +28,10 @@
           <Radio class="admin" :label="role.value" v-for="role in roles" :key="role.key" :value="role.key" v-if="role.key > 1" name="role" @selected="selectedHandler" :disabled="!isEdible" :initValue="roleValue"></Radio>
         </div>
       </div>
-      <div class="btn--save" v-text="wording.WORDING_ADMIN_MEMBER_EDITOR_SAVE" @click="save" v-if="!message"></div>
+      <div class="btn--save" @click="save" v-if="!message">
+        <span v-text="wording.WORDING_ADMIN_MEMBER_EDITOR_SAVE" v-if="!shouldShowSpinner"></span>
+        <Spinner :show="shouldShowSpinner"></Spinner>
+      </div>
       <div class="message" v-else v-text="message"></div>      
     </div>
     <div class="member-editor__form" v-else>
@@ -53,17 +56,14 @@
 </template>
 <script>
   import _ from 'lodash'
-  import { WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER, WORDING_ADMIN_MEMBER_EDITOR_EMAIL, WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER, WORDING_ADMIN_MEMBER_EDITOR_SAVE, WORDING_ADMIN_ROLE } from '../../constants'
-  import { WORDING_ADMIN_SUCCESS, WORDING_ADMIN_INFAIL, WORDING_ADMIN_MEMBER_EDITOR_NICKNAME, WORDING_ADMIN_CANCEL, WORDING_ADMIN_YES, WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL } from '../../constants'
-  import { WORDING_ADMIN_MEMBER_EDITOR_SET_SUCCESSFUL_CUSTOMEDITOR, WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL_CUSTOMEDITOR } from '../../constants'
-  import { WORDING_ADMIN_EXCEED_ERROR_CUSTOMEDITOR, WORDING_ADMIN_SET_ERROR_CUSTOMEDITOR } from '../../constants'
-  import { WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL } from '../../constants'
-  import { ROLE_MAP } from '../../constants'
-  import { consoleLogOnDev, getValue } from '../../util/comm'
-  import InputItem from '../form/InputItem.vue'
-  import Radio from '../form/Radio.vue'
+  import * as CONSTANTS from 'src/constants'
+  import InputItem from 'src/components/form/InputItem.vue'
+  import Radio from 'src/components/form/Radio.vue'
+  import Spinner from 'src/components/Spinner.vue'
   import validator from 'validator'
+  import { getValue } from 'src/util/comm'
 
+  const debug = require('debug')('CLIENT:MemberAccountEditor')
   const register = (store, profile) => {
     return store.dispatch('ADD_MEMBER', {
       params: profile
@@ -100,7 +100,8 @@
   export default {
     components: {
       InputItem,
-      Radio
+      Radio,
+      Spinner
     },
     computed: {
       emailVal () {
@@ -116,7 +117,7 @@
         return this.selectedRole || _.get(this.members, [ 0, 'role' ])
       },
       roles () {
-        return ROLE_MAP
+        return CONSTANTS.ROLE_MAP
       }
     },
     data () {
@@ -130,26 +131,27 @@
         selectedRole: _.get(this.members, [ 0, 'role' ], null),
         shouldShowBtnSet: false,
         wording: {
-          WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER,
-          WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER,
-          WORDING_ADMIN_MEMBER_EDITOR_EMAIL,
-          WORDING_ADMIN_MEMBER_EDITOR_SAVE,
-          WORDING_ADMIN_ROLE,
-          WORDING_ADMIN_SUCCESS,
-          WORDING_ADMIN_INFAIL,
-          WORDING_ADMIN_MEMBER_EDITOR_NICKNAME,
-          WORDING_ADMIN_CANCEL,
-          WORDING_ADMIN_YES,
-          WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL,
-          WORDING_ADMIN_MEMBER_EDITOR_SET_SUCCESSFUL_CUSTOMEDITOR,
-          WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL_CUSTOMEDITOR,
-          WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL,
-          WORDING_ADMIN_EXCEED_ERROR_CUSTOMEDITOR,
-          WORDING_ADMIN_SET_ERROR_CUSTOMEDITOR
-        }
+          WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER: CONSTANTS.WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER,
+          WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER: CONSTANTS.WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER,
+          WORDING_ADMIN_MEMBER_EDITOR_EMAIL: CONSTANTS.WORDING_ADMIN_MEMBER_EDITOR_EMAIL,
+          WORDING_ADMIN_MEMBER_EDITOR_SAVE: CONSTANTS.WORDING_ADMIN_MEMBER_EDITOR_SAVE,
+          WORDING_ADMIN_ROLE: CONSTANTS.WORDING_ADMIN_ROLE,
+          WORDING_ADMIN_SUCCESS: CONSTANTS.WORDING_ADMIN_SUCCESS,
+          WORDING_ADMIN_INFAIL: CONSTANTS.WORDING_ADMIN_INFAIL,
+          WORDING_ADMIN_MEMBER_EDITOR_NICKNAME: CONSTANTS.WORDING_ADMIN_MEMBER_EDITOR_NICKNAME,
+          WORDING_ADMIN_CANCEL: CONSTANTS.WORDING_ADMIN_CANCEL,
+          WORDING_ADMIN_YES: CONSTANTS.WORDING_ADMIN_YES,
+          WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL: CONSTANTS.WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL,
+          WORDING_ADMIN_MEMBER_EDITOR_SET_SUCCESSFUL_CUSTOMEDITOR: CONSTANTS.WORDING_ADMIN_MEMBER_EDITOR_SET_SUCCESSFUL_CUSTOMEDITOR,
+          WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL_CUSTOMEDITOR: CONSTANTS.WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL_CUSTOMEDITOR,
+          WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL: CONSTANTS.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL,
+          WORDING_ADMIN_EXCEED_ERROR_CUSTOMEDITOR: CONSTANTS.WORDING_ADMIN_EXCEED_ERROR_CUSTOMEDITOR,
+          WORDING_ADMIN_SET_ERROR_CUSTOMEDITOR: CONSTANTS.WORDING_ADMIN_SET_ERROR_CUSTOMEDITOR
+        },
+        shouldShowSpinner: false
       }
     },
-    name: 'mamber-editor',
+    name: 'MemberAccountEditor',
     methods: {
       closeEditor () {
         this.$emit('closeLightBox')
@@ -176,9 +178,12 @@
         this.$forceUpdate()
       },
       save () {
+        if (this.shouldShowSpinner) { return }
         if (this.validate() || this.action === 'delete') {
+          this.shouldShowSpinner = true
           const callback = ({ status }) => {
             this.isEdible = false
+            this.shouldShowSpinner = false
             if (status === 200) {
               if (this.action === 'delete') {
                 this.message = this.wording.WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL + '！'
@@ -187,7 +192,7 @@
               }
               this.$emit('updated')
             } else {
-              console.log(status)
+              debug('status', status)
               this.message = this.title + this.wording.WORDING_ADMIN_INFAIL
             }
           }
@@ -228,11 +233,9 @@
           pass = false
           this.alertFlags.mail = true
           this.alertMsgs.mail = this.wording.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL
-          consoleLogOnDev({ msg: 'mail wrong, ' + this.typedEmail })
+          debug('Mail format invalid:', this.typedEmail)
         }
         if (this.selectedRole === null || this.selectedRole === undefined || !validator.isInt(this.selectedRole.toString())) {
-          // pass = false
-          // consoleLogOnDev({ msg: 'role wrong, ' + this.selectedRole })
           this.selectedRole = 1
         }
         this.$forceUpdate()
