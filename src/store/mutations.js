@@ -63,21 +63,17 @@ export default {
   SET_MEMBERS: (state, { members }) => {
     state['members'] = members
   },
-  SET_NEWS_BY_USER: (state, { posts }) => {
-    state['newsByUser'] = posts
-  },
-  SET_NEWS_DRAFT_BY_USER: (state, { posts }) => {
-    state['newsDraftByUser'] = posts
-  },
   SET_POSTS: (state, { posts }) => {
-    state['posts'] = posts
+    state['posts'] = posts.items
   },
-  SET_POSTS_COUNT: (state, { params, meta }) => {
-    if (params.where) {
-      state['postsCount']['where'] = meta.total
-    } else {
-      state['postsCount']['all'] = meta.total
-    }
+  SET_POSTS_COUNT: (state, { meta }) => {
+    state['postsCount'] = meta.total
+  },
+  SET_POSTS_DRAFT: (state, { posts }) => {
+    state['postsDraft'] = posts.items
+  },
+  SET_POSTS_DRAFT_COUNT: (state, { meta }) => {
+    state['postsDraftCount'] = meta.total
   },
   SET_PUBLIC_POSTS: (state, { posts }) => {
     state['publicPosts'] = posts
@@ -87,12 +83,6 @@ export default {
   },
   SET_PROFILE: (state, { profile }) => {
     state['profile'] = profile
-  },
-  SET_REVIEWS_BY_USER: (state, { posts }) => {
-    state['reviewsByUser'] = posts
-  },
-  SET_REVIEWS_DRAFT_BY_USER: (state, { posts }) => {
-    state['reviewsDraftByUser'] = posts
   },
   UPDATED_PROFILE: (state, { profile }) => {
     // Update the entry when user saving the profile value which has been edited

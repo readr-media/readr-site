@@ -54,8 +54,12 @@
           color #fff
     &__content
       border 5px solid #d8ca21
-      padding 37.5px 27.5px
+      padding 20px
       font-size 0.625rem
       line-height 1rem
       color #000
+  @media (min-width 950px)
+    .tab
+      &__content
+        padding 37.5px 27.5px
 </style>
