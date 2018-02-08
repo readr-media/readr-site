@@ -257,7 +257,7 @@
               this.showNewsDraftList = false
               this.showReviewsDraftList = false
             }
-            this.$_guestEditor_updatePostList({ type: _.get(this.post, [ 'type' ])})
+            this.$_guestEditor_updatePostList({ type: _.get(this.post, [ 'type' ]), needFetchCount: true })
             this.isCompleted = true
           })
       },
@@ -424,17 +424,27 @@
           fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: resource })
         })
       },
-      $_guestEditor_updatePostList ({ type }) {
+      $_guestEditor_updatePostList ({ type, needFetchCount = false }) {
         switch (this.activePanel) {
           default:
             switch (this.activeTab) {
               case 'reviews':
+                if (needFetchCount) {
+                  fetchPostsCount(this.$store, {
+                    where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
+                  })
+                }
                 fetchPostsByUser(this.$store, {
                   page: this.page,
                   where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
                 })
                 break
               case 'news':
+                if (needFetchCount) {
+                  fetchPostsCount(this.$store, {
+                    where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.NEWS }
+                  })
+                }
                 fetchPostsByUser(this.$store, {
                   page: this.page,
                   where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.NEWS }
@@ -443,10 +453,15 @@
               case 'followings':
                 fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'member' })
               default:
-                fetchPostsByUser(this.$store, {
-                  page: this.page,
-                  where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
-                })
+                Promise.all([
+                  fetchPostsCount(this.$store, {
+                    where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
+                  }),
+                  fetchPostsByUser(this.$store, {
+                    page: this.page,
+                    where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
+                  })
+                ])
             }
         }
       }
