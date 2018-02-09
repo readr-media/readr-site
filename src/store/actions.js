@@ -2,8 +2,10 @@ import { POST_ACTIVE, POST_TYPE } from '../../api/config'
 import {
   addMember,
   addPost,
+  addTags,
   checkLoginStatus,
   checkPassword,
+  deleteImage,
   deleteMember,
   deleteMembers,
   deletePost,
@@ -14,12 +16,13 @@ import {
   getDisposableToken,
   getFollowingByResource,
   getFollowingByUser,
-  getProfile,
-  getPosts,
-  getPostsCount,
-  getPublicPosts,
   getMembers,
   getMeta,
+  getPosts,
+  getPostsCount,
+  getProfile,
+  getPublicPosts,
+  getTags,
   login,
   publishAction,
   publishPosts,
@@ -28,8 +31,8 @@ import {
   updateMember,
   updatePassword,
   updatePost,
+  updateTags,
   uploadImage,
-  deleteImage,
   verifyRecaptchaToken
 } from '../api'
 
@@ -178,6 +181,13 @@ export default {
     return getProfile({ params }).then(({ status, body }) => {
       if (status === 200) {
         commit('SET_PROFILE', { profile: body })
+      }
+    })
+  },
+  GET_TAGS: ({ commit, dispatch, state }, { params }) => {
+    return getTags({ params }).then(({ status, body }) => {
+      if (status === 200) {
+        commit('SET_TAGS', { tags: body })
       }
     })
   },

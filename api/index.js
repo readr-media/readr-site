@@ -190,7 +190,9 @@ router.all('/posts', [ authVerify, authorize ], function(req, res, next) {
 router.all('/following', [ authVerify, authorize ], function(req, res, next) {
   next()
 })
-
+router.all('/tags', [ authVerify, authorize ], function(req, res, next) {
+  next()
+})
 
 /**
  * 

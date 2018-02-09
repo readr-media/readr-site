@@ -21,7 +21,8 @@ export function createStore () {
       'profile': {},
       'publicPosts': [],
       'publicPostsHot': [],
-      'register-token': ''
+      'register-token': '',
+      'tags': []
     },
     actions,
     mutations,

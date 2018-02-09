@@ -53,6 +53,9 @@ export default {
   SET_LOGGEIN_STATUS: (state, { status, body }) => {
     state['isLoggedIn'] = body
   },
+  SET_TAGS: (state, { tags }) => {
+    state['tags'] = tags
+  },
   SET_TOKEN: (state, { token, type }) => {
     switch (type) {
       case 'register':

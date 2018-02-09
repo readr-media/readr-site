@@ -9,7 +9,7 @@ const host = getHost()
 
 function _buildQuery (params = {}) {
   let query = {}
-  const whitelist = [ 'where', 'max_result', 'page', 'sort', 'ids', 'custom_editor', 'updated_by' ]
+  const whitelist = [ 'where', 'max_result', 'page', 'sort', 'sorting', 'ids', 'custom_editor', 'updated_by', 'keyword', 'stats' ]
   whitelist.forEach((ele) => {
     if (params.hasOwnProperty(ele)) {
       if (ele === 'where') {
@@ -129,6 +129,13 @@ export function deleteMembers ({ params }) {
 
 export function addPost (params) {
   const url = `${host}/api/post`
+  return _doPost(url, params)
+    .then(res => res.status)
+    .catch(err => err)
+}
+
+export function addTags (params) {
+  const url = `${host}/api/tags`
   return _doPost(url, params)
     .then(res => res.status)
     .catch(err => err)
@@ -270,6 +277,16 @@ export function getProfile ({ params = {}}) {
   return _doFetchStrict(url, { cookie: params.cookie })
 }
 
+export function getTags ({ params = {}}) {
+  let url = `${host}/api/tags`
+  const query = _buildQuery(params)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }
+  console.log('url', url)
+  // return _doFetch(url)
+}
+
 export function checkLoginStatus ({ params = {}}) {
   const url = `${host}/api/status`
 
@@ -391,6 +408,13 @@ export function updatePassword ({ params }) {
 
 export function updatePost ({ params }) {
   const url = `${host}/api/post`
+  return _doPut(url, params)
+    .then(res => ({ status: res.status }))
+    .catch(err => err)
+}
+
+export function updateTags ({ params }) {
+  const url = `${host}/api/tags`
   return _doPut(url, params)
     .then(res => ({ status: res.status }))
     .catch(err => err)
