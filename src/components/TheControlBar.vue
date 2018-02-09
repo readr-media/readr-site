@@ -43,34 +43,46 @@
       <button slot="2" class="controlBar--subBtn" v-text="wording.WORDING_CONTROLBAR_ACCOUNT_LIST" @click="$_baseControlBar_openPanel($event, 'accounts')"></button>
     </control-bar-button-box>
     <control-bar-button
+      v-if="viewport > 767"
+      class="controlBar--btn"
+      @changeBtnAmount="$_baseControlBar_btnAmountHandler"
+      @click="$_baseControlBar_openPanel($event, 'records')"
+      :text="`${wording.WORDING_CONTROLBAR_RECORD}${wording.WORDING_CONTROLBAR_MANAGE}`">
+    </control-bar-button>
+    <control-bar-button
       v-if="$can('editOtherPost') && viewport > 767"
+      class="controlBar--btn"
       @changeBtnAmount="$_baseControlBar_btnAmountHandler"
       @click="$_baseControlBar_openPanel($event, 'posts')"
-      :text="wording.WORDING_CONTROLBAR_POST_MANAGE">
+      :text="`${wording.WORDING_CONTROLBAR_POST}${wording.WORDING_CONTROLBAR_MANAGE}`">
+    </control-bar-button>
+    <control-bar-button
+      v-if="$can('editTag') && viewport > 767"
+      class="controlBar--btn"
+      @changeBtnAmount="$_baseControlBar_btnAmountHandler"
+      @click="$_baseControlBar_openPanel($event, 'tags')"
+      :text="`${wording.WORDING_CONTROLBAR_TAG}${wording.WORDING_CONTROLBAR_MANAGE}`">
     </control-bar-button>
     <control-bar-button
       v-if="$can('editVideo') && viewport > 767"
+      class="controlBar--btn"
       @changeBtnAmount="$_baseControlBar_btnAmountHandler"
       @click="$_baseControlBar_openPanel($event, 'videos')"
-      :text="wording.WORDING_CONTROLBAR_VIDEO_MANAGE">
-    </control-bar-button>
-    <control-bar-button
-      v-if="viewport > 767"
-      @changeBtnAmount="$_baseControlBar_btnAmountHandler"
-      @click="$_baseControlBar_openPanel($event, 'records')"
-      :text="wording.WORDING_CONTROLBAR_RECORD_MANAGE">
+      :text="`${wording.WORDING_CONTROLBAR_VIDEO}${wording.WORDING_CONTROLBAR_MANAGE}`">
     </control-bar-button>
     <control-bar-button
       v-if="$can('addAccount') && viewport > 767"
+      class="controlBar--btn"
       @changeBtnAmount="$_baseControlBar_btnAmountHandler"
       @click="$_baseControlBar_clickHandler('addAccount')"
       :text="wording.WORDING_CONTROLBAR_ADD_ACCOUNT">
     </control-bar-button>
     <control-bar-button
       v-if="$can('memberManage') && viewport > 767"
+      class="controlBar--btn"
       @changeBtnAmount="$_baseControlBar_btnAmountHandler"
       @click="$_baseControlBar_openPanel($event, 'accounts')"
-      :text="wording.WORDING_CONTROLBAR_ACCOUNT_MANAGE">
+      :text="`${wording.WORDING_CONTROLBAR_ACCOUNT}${wording.WORDING_CONTROLBAR_MANAGE}`">
     </control-bar-button>
   </section>
 </template>
@@ -78,7 +90,6 @@
   import {
     WORDING_CONTROLBAR_ACCOUNT,
     WORDING_CONTROLBAR_ACCOUNT_LIST,
-    WORDING_CONTROLBAR_ACCOUNT_MANAGE,
     WORDING_CONTROLBAR_ADD_ACCOUNT,
     WORDING_CONTROLBAR_ADD_DIRECTLY,
     WORDING_CONTROLBAR_ADD_NEWS,
@@ -87,13 +98,10 @@
     WORDING_CONTROLBAR_MANAGE,
     WORDING_CONTROLBAR_NEWS,
     WORDING_CONTROLBAR_POST,
-    WORDING_CONTROLBAR_POST_MANAGE,
     WORDING_CONTROLBAR_RECORD,
-    WORDING_CONTROLBAR_RECORD_MANAGE,
     WORDING_CONTROLBAR_REVIEW,
     WORDING_CONTROLBAR_TAG,
-    WORDING_CONTROLBAR_VIDEO,
-    WORDING_CONTROLBAR_VIDEO_MANAGE
+    WORDING_CONTROLBAR_VIDEO
   } from '../constants'
   import ControlBarButton from './ControlBarButton.vue'
   import ControlBarButtonBox from './ControlBarButtonBox.vue'
@@ -112,7 +120,6 @@
         wording: {
           WORDING_CONTROLBAR_ACCOUNT,
           WORDING_CONTROLBAR_ACCOUNT_LIST,
-          WORDING_CONTROLBAR_ACCOUNT_MANAGE,
           WORDING_CONTROLBAR_ADD_ACCOUNT,
           WORDING_CONTROLBAR_ADD_DIRECTLY,
           WORDING_CONTROLBAR_ADD_NEWS,
@@ -121,13 +128,10 @@
           WORDING_CONTROLBAR_MANAGE,
           WORDING_CONTROLBAR_NEWS,
           WORDING_CONTROLBAR_POST,
-          WORDING_CONTROLBAR_POST_MANAGE,
           WORDING_CONTROLBAR_RECORD,
-          WORDING_CONTROLBAR_RECORD_MANAGE,
           WORDING_CONTROLBAR_REVIEW,
           WORDING_CONTROLBAR_TAG,
           WORDING_CONTROLBAR_VIDEO,
-          WORDING_CONTROLBAR_VIDEO_MANAGE
         }
       }
     },
@@ -203,7 +207,9 @@
   &--btn
     width 90px
     height 30px
+    padding 0
     margin 0 2.5px
+    color #808080
     font-size 15px
     background-color #fff
     border 1px solid #d3d3d3
