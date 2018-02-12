@@ -13,20 +13,20 @@ export default {
     Vue.delete(state.followingByUser, index)
   },
   ADD_USER_TO_FOLLOWING_BY_RESOURCE: (state, params) => {
-    const resourceIndex = _.findIndex(state.followingByResource, { resourceid: `${params.resourceId}` })
+    const resourceIndex = _.findIndex(state.followingByResource[params.resource], { resourceid: `${params.resourceId}` })
     if (resourceIndex === -1) {
-      state.followingByResource.push({
+      state.followingByResource[params.resource].push({
         resourceid: `${params.resourceId}`,
         follower: [ params.userId ]
       })
     } else {
-      state.followingByResource[resourceIndex].follower.push(params.userId)
+      state.followingByResource[params.resource][resourceIndex].follower.push(params.userId)
     }
   },
   REMOVE_USER_FROM_FOLLOWING_BY_RESOURCE: (state, params) => {
-    const resourceIndex = _.findIndex(state.followingByResource, { resourceid: `${params.resourceId}` })
-    const userIndex = state.followingByResource[resourceIndex].follower.indexOf(params.userId)
-    Vue.delete(state.followingByResource[resourceIndex].follower, userIndex)
+    const resourceIndex = _.findIndex(state.followingByResource[params.resource], { resourceid: `${params.resourceId}` })
+    const userIndex = state.followingByResource[params.resource][resourceIndex].follower.indexOf(params.userId)
+    Vue.delete(state.followingByResource[params.resource][resourceIndex].follower, userIndex)
   },
   SET_COMMENT_COUNT: (state, { count, postId, type }) => {
     const post = _.get(_.filter(_.get(state, [ type, 'items' ]), { id: postId }), [ 0 ])
@@ -39,12 +39,12 @@ export default {
   SET_CUSTOM_EDITORS: (state, { members }) => {
     state['customEditors'] = members
   },
-  SET_FOLLOWING_BY_RESOURCE: (state, { following }) => {
-    state['followingByResource'] = following
+  SET_FOLLOWING_BY_RESOURCE: (state, { resourceType, following }) => {
+    state['followingByResource'][resourceType] = following
   },
-  UPDATE_FOLLOWING_BY_RESOURCE: (state, { following }) => {
+  UPDATE_FOLLOWING_BY_RESOURCE: (state, { resourceType, following }) => {
     following.forEach(follow => {
-      state['followingByResource'].push(follow)
+      state['followingByResource'][resourceType].push(follow)
     })
   },
   SET_FOLLOWING_BY_USER: (state, { following }) => {
@@ -80,6 +80,9 @@ export default {
   },
   SET_PUBLIC_POSTS: (state, { posts }) => {
     state['publicPosts'] = posts
+  },
+  SET_PROJECTS_LIST: (state, { projectsList }) => {
+    state['projectsList'] = projectsList
   },
   SET_PUBLIC_POSTS_HOT: (state, { posts }) => {
     state['publicPostsHot'] = posts

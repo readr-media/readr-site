@@ -1,6 +1,6 @@
 <template>
   <nav class="app-aside-nav">
-    <a href="/"><img class="app-aside-nav__logo" src="/public/icons/readr-logo-dark.svg" alt=""></a>
+    <router-link to="/"><img class="app-aside-nav__logo" src="/public/icons/readr-logo-dark.svg" alt=""></router-link>
     <ol class="aside-navigation">
       <div class="aside-navigation__section--white">
         <transition name="fade" mode="out-in">
@@ -13,17 +13,17 @@
             <span v-text="wording['hot-talk']"></span>
           </a>
         </transition>
-        <a class="list-item aside-navigation__list-item--highlight" href="/" @mouseover="isHoverFirstListItem = true" @mouseout="isHoverFirstListItem = false">
+        <router-link :class="`list-item aside-navigation__list-item${$route.path === '/' ? '--highlight' : ''}`" to="/" @mouseover="isHoverFirstListItem = true" @mouseout="isHoverFirstListItem = false">
           <span v-text="wording['chief-editor-talk']"></span>
           <span class="option">
             <span class="option__dot"></span>
             <span class="option__dot"></span>
             <span class="option__dot"></span>
           </span>
-        </a>
-        <a class="list-item aside-navigation__list-item" href="/"><span v-text="wording['celebrities-talk']"></span></a>
-        <a class="list-item aside-navigation__list-item" href="/"><span v-text="wording['chief-editor-list']"></span></a>
-        <a class="list-item aside-navigation__list-item" href="/"><span v-text="wording['projects']"></span></a>
+        </router-link>
+        <a :class="`list-item aside-navigation__list-item${$route.path === '/nothing' ? '--highlight' : ''}`" href="/"><span v-text="wording['celebrities-talk']"></span></a>
+        <a :class="`list-item aside-navigation__list-item${$route.path === '/nothing' ? '--highlight' : ''}`" href="/"><span v-text="wording['chief-editor-list']"></span></a>
+        <router-link :class="`list-item aside-navigation__list-item${$route.path === '/projects' ? '--highlight' : ''}`" to="/projects"><span v-text="wording['projects']"></span></router-link>
       </div>
       <div class="aside-navigation__external--gray">
         <a class="list-item aside-navigation__list-item" href="/"><span><img src="/public/icons/fb.png" alt="fb"></span></a>

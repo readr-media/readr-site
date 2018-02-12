@@ -22,7 +22,7 @@ import {
   getPostsCount,
   getProfile,
   getPublicPosts,
-  getTags,
+  getPublicProjectsList,
   login,
   publishAction,
   publishPosts,
@@ -90,9 +90,11 @@ export default {
     return getFollowingByResource(params).then(({ status, body }) => {
       if (status === 200) {
         if (params.mode === 'update') {
-          commit('UPDATE_FOLLOWING_BY_RESOURCE', { following: body })
+          commit('UPDATE_FOLLOWING_BY_RESOURCE', { resourceType: params.resource, following: body })
         } else {
-          commit('SET_FOLLOWING_BY_RESOURCE', { following: body })
+          if (body.status !== 400) {
+            commit('SET_FOLLOWING_BY_RESOURCE', { resourceType: params.resource, following: body })
+          }
         }
       }
     })
@@ -177,6 +179,20 @@ export default {
       })
     }) 
   },
+  GET_PROJECTS_LIST: ({ commit, dispatch, state }, { params }) => {
+    return new Promise((resolve, reject) => {
+      getPublicProjectsList({ params })
+      .then(({ status, body }) => {
+        if (status === 200) {
+          commit('SET_PROJECTS_LIST', { projectsList: body })
+        }
+        resolve(body)
+      })
+      .catch((res) => {
+        reject(res)
+      })
+    }) 
+  },
   GET_PROFILE: ({ commit, dispatch, state }, { params }) => {
     return getProfile({ params }).then(({ status, body }) => {
       if (status === 200) {
@@ -227,9 +243,9 @@ export default {
     }
   },
   UPDATE_FOLLOWING_BY_RESOURCE: ({ commit, dispatch, state }, { params }) => {
-    if (params.action === 'follow' && params.resource === 'post') {
+    if (params.action === 'follow') {
       commit('ADD_USER_TO_FOLLOWING_BY_RESOURCE', params)
-    } else {
+    } else if (params.action === 'unfollow') {
       commit('REMOVE_USER_FROM_FOLLOWING_BY_RESOURCE', params)
     }
   },

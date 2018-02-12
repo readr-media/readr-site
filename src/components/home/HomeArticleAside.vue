@@ -5,7 +5,7 @@
         <img class="author-info__thumbnail" :src="articleData.author.profileImage" alt="">
         <div class="author-info__meta-container">
           <p class="author-info__nickname" v-text="articleData.author.nickname"></p>
-          <p class="author-info__date" v-text="updatedAtYYYYMMDD"></p>
+          <p class="author-info__date" v-text="updatedAtYYYYMMDD(articleData)"></p>
         </div>
       </div>
     </div>
@@ -17,13 +17,7 @@
             <span v-html="firstParagraph"></span>
           </p>
         </div>
-        <nav class="article-nav">
-          <span class="comment-icon" @click="renderComment(`.home-article-aside__comment > .comment.comment-${get(articleData, [ 'id' ])}`)">
-            <img class="comment-icon__thumbnail" src="/public/icons/comment-blue.png" alt="comment">
-            <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="get(this.articleData, [ 'id' ])" :type="'publicPostsHot'"></CommentCount>
-          </span>
-          <img class="follow-icon" :src="isFollow ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="follow" @click="toogleFollow">
-        </nav>
+        <AppArticleNav :commentContainerSelector="'.home-article-aside__comment'" :postId="this.articleData.id" :commentCount="commentCount"/>
         <div class="home-article-aside__comment">
           <div :class="`comment comment-${get(articleData, [ 'id' ])}`"></div>
         </div>
@@ -33,30 +27,15 @@
 </template>
 
 <script>
-import CommentCount from 'src/components/comment/CommentCount.vue'
+import AppArticleNav from 'src/components/AppArticleNav.vue'
+import { updatedAtYYYYMMDD } from '../../util/comm'
 import { SITE_DOMAIN_DEV } from 'src/constants'
 import { renderComment } from 'src/util/talk'
 import { get } from 'lodash'
 
-const publishAction = (store, data) => {
-  return store.dispatch('PUBLISH_ACTION', {
-    params: data
-  })
-}
-const updateStoreFollowingByResource = (store, { action, resource, resourceId, userId }) => {
-  store.dispatch('UPDATE_FOLLOWING_BY_RESOURCE', {
-    params: {
-      action: action,
-      resource: resource,
-      resourceId: resourceId,
-      userId: userId
-    }
-  })
-}
-
 export default {
   components: {
-    CommentCount
+    AppArticleNav
   },
   computed: {
     articleContent () {
@@ -78,74 +57,15 @@ export default {
       if (!this.articleData) return ''
       return this.articleData.title.length > limit ? this.articleData.title.slice(0, limit) + ' ......' : this.articleData.title
     },
-    updatedAtYYYYMMDD () {
-      const iso = this.articleData.updatedAt
-      const date = iso.split('T')[0]
-      return date.replace(/-/g, '/')
-    },
     firstParagraph () {
       const limit = 35
       if (!this.articleContent[0]) return ''
       return this.articleContent[0].length > limit ? this.articleContent[0].slice(0, limit) + ' ......' : this.articleContent[0]
-    },
-    postFollowers () {
-      if (this.$store.state.isLoggedIn) {
-        const postFollowersData = _.find(this.$store.state.followingByResource, { resourceid: `${this.articleData.id}` })
-        return postFollowersData ? postFollowersData.follower : []
-      } else {
-        return []
-      }
-    },
-    isFollow () {
-      if (!this.$store.state.isLoggedIn) {
-        return false
-      } else {
-        if (this.postFollowers.indexOf(this.$store.state.profile.id) !== -1) {
-          return true
-        } else {
-          return false
-        }
-      }
     }
   },
   methods: {
     get,
-    renderComment (ref) {
-      renderComment(`${ref}`, `${location.protocol}//${SITE_DOMAIN_DEV}/post/${this.articleData.id}`)
-    },
-    toogleFollow () {
-      if (!this.$store.state.isLoggedIn) {
-        alert('please login first')
-      } else {
-        if (!this.isFollow) {
-          publishAction(this.$store, {
-            action: 'follow',
-            resource: 'post',
-            subject: this.$store.state.profile.id,
-            object: `${this.articleData.id}`
-          })
-          updateStoreFollowingByResource(this.$store, {
-            action: 'follow',
-            resource: 'post',
-            resourceId: this.articleData.id,
-            userId: this.$store.state.profile.id
-          })
-        } else {
-          publishAction(this.$store, {
-            action: 'unfollow',
-            resource: 'post',
-            subject: this.$store.state.profile.id,
-            object: `${this.articleData.id}`
-          })
-          updateStoreFollowingByResource(this.$store, {
-            action: 'unfollow',
-            resource: 'post',
-            resourceId: this.articleData.id,
-            userId: this.$store.state.profile.id
-          })
-        }
-      }
-    }
+    updatedAtYYYYMMDD
   },
   props: {
     articleData: {
@@ -163,9 +83,6 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-$icon-size
-  width 25px
-  height 25px
 .home-article-aside
   width 100%
   // height 204px
@@ -178,6 +95,9 @@ $icon-size
     font-size 15px
     font-weight 500
     text-align justify
+  &__content
+    display flex
+    flex-direction column
   &__comment
     margin-top 20px
   .author-info
@@ -230,23 +150,5 @@ $icon-size
         display block
       &--invisible
         display none
-
-  .article-nav
-    margin-top 6.5px
-    height 25px
-
-  .comment-icon
-    cursor pointer
-    &__thumbnail
-      @extends $icon-size
-    &__count
-      position relative
-      right 5px
-      font-size 14px
-      color #11b8c9
-  .follow-icon
-    @extends $icon-size
-    margin-left 9px
-    cursor pointer
 </style>
 

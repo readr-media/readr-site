@@ -35,9 +35,9 @@ export default {
 
 <style lang="stylus" scoped>
 $app-share-button  
-  position absolute
-  top 15.5px
-  right 22.5px
+  // position absolute
+  // top 15.5px
+  // right 22.5px
   width 25px
   height 25px
 $app-share-button__item
