@@ -272,6 +272,15 @@ export function getPublicPosts ({ params }) {
   return _doFetch(url)
 }
 
+export function getPublicProjectsList ({ params }) {
+  let url = `${host}/api/project/list`
+  const query = _buildQuery(params)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }
+  return _doFetch(url)
+}
+
 export function getProfile ({ params = {}}) {
   const url = `${host}/api/profile`
   return _doFetchStrict(url, { cookie: params.cookie })

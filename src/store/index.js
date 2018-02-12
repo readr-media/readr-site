@@ -10,7 +10,10 @@ export function createStore () {
   return new Vuex.Store({
     state: {
       'customEditors': [],
-      'followingByResource': [],
+      'followingByResource': {
+        'post': [],
+        'project': []
+      },
       'followingByUser': [],
       'isLoggedIn': false,
       'members': [],
@@ -22,7 +25,9 @@ export function createStore () {
       'publicPosts': [],
       'publicPostsHot': [],
       'register-token': '',
-      'tags': []
+      'tags': [],
+      'projectsList': [],
+      'register-token': ''
     },
     actions,
     mutations,

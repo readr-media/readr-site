@@ -1,36 +1,28 @@
 <template>
   <section class="home-project-aside">
-    <!-- <img class="home-project-aside__project-image" src="https://www.mirrormedia.mg/projects/20170801aboriginal/ogimage.jpg" alt=""> -->
-    <div class="home-project-aside__project-image"></div>
+    <div class="home-project-aside__project-image" :style="{ backgroundImage: `url(${featuredProject.heroImage}` }"></div>
     <div class="home-project-aside__content">
-      <h1 class="home-project-aside__project-title">一起回家：原住民傳統領域吵什麼？</h1>
-      <nav class="article-nav">
-        <span class="comment-icon" @click="renderComment(`.home-article-main__comment > .comment.comment-${get(articleData, [ 'id' ])}`)">
-          <img class="comment-icon__thumbnail" src="/public/icons/comment-blue.png" alt="comment">
-          <!-- <CommentCount class="comment-icon__count" :commentAmount="123" :postId="get(this.articleData, [ 'id' ])" :type="'publicPosts'"></CommentCount> -->
-        </span>
-        <img class="follow-icon" :src="isFollow ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="follow" @click="toogleFollow">
-      </nav>
+      <h1 class="home-project-aside__project-title" v-text="featuredProject.title"></h1>
+      <AppArticleNav :commentContainerSelector="'.home-project-aside__comment'" :articleType="'project'" :postId="featuredProject.id" :commentCount="featuredProject.commentAmount || 0"/>
+      <div class="home-project-aside__comment">
+        <div :class="`comment comment-${featuredProject.id}`"></div>
+      </div>
     </div>
   </section>
 </template>
 
 <script>
-import CommentCount from 'src/components/comment/CommentCount.vue'
+import AppArticleNav from 'src/components/AppArticleNav.vue'
 import _ from 'lodash'
-const { get } = _
 
 export default {
   components: {
-    CommentCount
+    AppArticleNav
   },
   computed: {
-    isFollow () {
-      return false
+    featuredProject () {
+      return _.get(this.$store, 'state.projectsList.items[0]', {})
     }
-  },
-  methods: {
-    get
   }
 }
 </script>
@@ -42,7 +34,6 @@ export default {
     width 100%
     height 236.4px
     margin-top 5px
-    background-image url(https://www.mirrormedia.mg/projects/20170801aboriginal/ogimage.jpg)
     background-repeat no-repeat
     background-size cover
     background-position center center
@@ -52,6 +43,8 @@ export default {
     font-size 15px
     text-align justify
     margin 8.1px 0 6px 0
+  &__comment
+    margin-top 20px
 
 $icon-size
   width 25px

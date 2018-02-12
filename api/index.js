@@ -121,6 +121,19 @@ const fetchPublicPost = (url, req) => {
     })
   })
 }
+const fetchPublicProjectsList = (url, req) => {
+  return new Promise((resolve, reject) => {
+    superagent
+    .get(`${apiHost}${url}`)
+    .end((err, res) => {
+      if (!err && res) {
+        resolve(camelizeKeys(res.body))
+      } else {
+        reject(err)
+      }
+    })
+  })
+}
 
 const authorize = (req, res, next) => {
   const whitelist = _.get(ENDPOINT_SECURE, [ `${req.method}${req.url.replace(/\?[A-Za-z0-9.*+?^=!:${}()#%~&_@\-`|\[\]\/\\]*$/, '')}` ])
@@ -265,7 +278,6 @@ router.get('/public-posts', (req, res) => {
   const url = req.url.replace('public-posts', 'posts')
   fetchPublicPost(url, req)
   .then((response) => {
-    // next()
     res.status(200).send(response)
   })
   .catch((err) => {
@@ -274,6 +286,24 @@ router.get('/public-posts', (req, res) => {
       // console.error(`public post not found from : ${url}`)
       // console.error(err)
     } else {
+      res.status(500).send(err)
+      console.error(`error during fetch data from : ${url}`)
+      console.error(err)
+    }
+  })
+})
+
+router.get('/project/list', (req, res) => {
+  fetchPublicProjectsList(req.url, req)
+  .then((response) => {
+    res.status(200).send(response)
+  })
+  .catch((err) => {
+    if (err.status === 404) {
+      res.status(404).send(err)
+      console.error(`public project list not found from : ${url}`)
+      console.error(err)
+    } else if (err.status === 500) {
       res.status(500).send(err)
       console.error(`error during fetch data from : ${url}`)
       console.error(err)

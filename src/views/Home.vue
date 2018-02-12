@@ -67,6 +67,13 @@
       }
     })
   }
+  const fetchProjectsList = (store, { max_result }) => {
+    return store.dispatch('GET_PROJECTS_LIST', {
+      params: {
+        max_result: max_result
+      }
+    })
+  }
   const fetchFollowing = (store, params) => {
     if (params.subject) {
       return store.dispatch('GET_FOLLOWING_BY_USER', {
@@ -104,7 +111,7 @@
         removeToken()
       }
     },
-    mounted () {
+    beforeMount () {
       // console.log('currentUser', currentUser())
       // console.log('isLoggedIn', isLoggedIn())
       Promise.all([
@@ -121,16 +128,23 @@
           max_result: 5,
           page: 1,
           sort: '-updated_at'
+        }),
+        fetchProjectsList(this.$store, {
+          max_result: 1
         })
-      ])
-      .then(() => {
+      ]).then(() => {
         if (this.$store.state.isLoggedIn) {
           const postIdsLatest = this.$store.state.publicPosts.items.map(post => post.id)
           const postIdsHot = this.$store.state.publicPostsHot.items.map(post => post.id)
+          const postIdFeaturedProject = this.$store.state.projectsList.items.map(project => project.id)
           const ids = _.uniq(_.concat(postIdsLatest, postIdsHot))
           fetchFollowing(this.$store, {
             resource: 'post',
             ids: ids
+          })
+          fetchFollowing(this.$store, {
+            resource: 'project',
+            ids: postIdFeaturedProject
           })
         }
       })

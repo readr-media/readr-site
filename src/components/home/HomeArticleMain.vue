@@ -37,13 +37,7 @@
           <img :src="articleData.linkImage" alt="source-fig">
         </figure>
       </a>
-      <nav class="article-nav">
-        <span class="comment-icon" @click="renderComment(`.home-article-main__comment > .comment.comment-${get(articleData, [ 'id' ])}`)">
-          <img class="comment-icon__thumbnail" src="/public/icons/comment-blue.png" alt="comment">
-          <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="get(this.articleData, [ 'id' ])" :type="'publicPosts'"></CommentCount>
-        </span>
-        <img class="follow-icon" :src="isFollow ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="follow" @click="toogleFollow">
-      </nav>
+      <AppArticleNav :commentContainerSelector="'.home-article-main__comment'" :postId="this.articleData.id" :commentCount="commentCount"/>
       <div class="home-article-main__comment">
         <div :class="`comment comment-${get(articleData, [ 'id' ])}`"></div>
       </div>
@@ -53,29 +47,13 @@
 
 <script>
 import AppShareButton from 'src/components/AppShareButton.vue'
-import CommentCount from 'src/components/comment/CommentCount.vue'
+import AppArticleNav from 'src/components/AppArticleNav.vue'
 import _ from 'lodash'
 import { SITE_DOMAIN_DEV } from 'src/constants'
 import { dateDiffFromNow } from 'src/util/comm'
 import { renderComment } from 'src/util/talk'
 
 const { get } = _
-
-const publishAction = (store, data) => {
-  return store.dispatch('PUBLISH_ACTION', {
-    params: data
-  })
-}
-const updateStoreFollowingByResource = (store, { action, resource, resourceId, userId }) => {
-  store.dispatch('UPDATE_FOLLOWING_BY_RESOURCE', {
-    params: {
-      action: action,
-      resource: resource,
-      resourceId: resourceId,
-      userId: userId
-    }
-  })
-}
 
 export default {
   props: {
@@ -92,7 +70,7 @@ export default {
   },
   components: {
     AppShareButton,
-    CommentCount
+    AppArticleNav
   },
   data () {
     return {
@@ -133,82 +111,30 @@ export default {
       const limit = 45
       return this.articleData.linkDescription.length > limit ? this.articleData.linkDescription.slice(0, limit) + ' ...' : this.articleData.linkDescription
     },
-    postFollowers () {
-      if (this.$store.state.isLoggedIn) {
-        const postFollowersData = _.find(this.$store.state.followingByResource, { resourceid: `${this.articleData.id}` })
-        return postFollowersData ? postFollowersData.follower : []
-      } else {
-        return []
-      }
-    },
-    isFollow () {
-      if (!this.$store.state.isLoggedIn) {
-        return false
-      } else {
-        if (this.postFollowers.indexOf(this.$store.state.profile.id) !== -1) {
-          return true
-        } else {
-          return false
-        }
-      }
-    },
     shareUrl () {
       return `${SITE_DOMAIN_DEV}/post/${this.articleData.id}`
     }
   },
   methods: {
     get,
-    renderComment (ref) {
-      renderComment(`${ref}`, `${location.protocol}//${this.shareUrl}`)
-    },
     toogleReadmore () {
       this.isReadMore = true
-    },
-    toogleFollow () {
-      if (!this.$store.state.isLoggedIn) {
-        alert('please login first')
-      } else {
-        if (!this.isFollow) {
-          publishAction(this.$store, {
-            action: 'follow',
-            resource: 'post',
-            subject: this.$store.state.profile.id,
-            object: `${this.articleData.id}`
-          })
-          updateStoreFollowingByResource(this.$store, {
-            action: 'follow',
-            resource: 'post',
-            resourceId: this.articleData.id,
-            userId: this.$store.state.profile.id
-          })
-        } else {
-          publishAction(this.$store, {
-            action: 'unfollow',
-            resource: 'post',
-            subject: this.$store.state.profile.id,
-            object: `${this.articleData.id}`
-          })
-          updateStoreFollowingByResource(this.$store, {
-            action: 'unfollow',
-            resource: 'post',
-            resourceId: this.articleData.id,
-            userId: this.$store.state.profile.id
-          })
-        }
-      }
     }
   }
 }
 </script>
 
 <style lang="stylus">
-$icon-size
-  width 25px
-  height 25px
 .home-article-main
   display flex
   position relative
   // height 325px
+  &__share
+    width 25px
+    height 25px
+    position absolute
+    top 15px
+    right 25px
   &__author
     width 60px
     height inherit
@@ -219,6 +145,8 @@ $icon-size
     border solid 2.5px #ddcf21
     padding 11.5px 22.5px 18px 22.5px
     background-color white
+    display flex
+    flex-direction column
   &__comment
     margin-top 20px
   &__date
@@ -285,24 +213,6 @@ $icon-size
         display block
       &--invisible
         display none
-
-  .article-nav
-    margin-top 10px
-    height 25px
-
-  .comment-icon
-    cursor pointer
-    &__thumbnail
-      @extends $icon-size
-    &__count
-      position relative
-      right 5px
-      font-size 14px
-      color #11b8c9
-  .follow-icon
-    @extends $icon-size
-    margin-left 4.5px
-    cursor pointer
 
   .editor-writing-source
     height 102px

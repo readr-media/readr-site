@@ -91,3 +91,9 @@ export function setReadrCookie () {
 export function getValue (o = {}, p = [], d = '') {
   return _.get(o, p, d)
 }
+
+export function updatedAtYYYYMMDD (post) {
+  const iso = post.updatedAt
+  const date = iso.split('T')[0]
+  return date.replace(/-/g, '/')
+}

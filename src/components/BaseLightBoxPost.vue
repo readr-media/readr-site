@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import { updatedAtYYYYMMDD } from '../util/comm'
 import _ from 'lodash'
 
 export default {
@@ -45,11 +46,7 @@ export default {
     }
   },
   methods: {
-    updatedAtYYYYMMDD (post) {
-      const iso = post.updatedAt
-      const date = iso.split('T')[0]
-      return date.replace(/-/g, '/')
-    },
+    updatedAtYYYYMMDD,
     profileImage (post) {
       return post.author.profileImage || '/public/icons/exclamation.png'
     }
