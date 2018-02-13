@@ -160,18 +160,23 @@ export const WORDING_TAGLIST_UPDATE_AT = '更新時間'
 
 // Alert Paenl
 export const WORDING_ALERTPANEL_AUTHOR = '作者'
-export const WORDING_ALERTPANEL_TITLE = '標題'
-export const WORDING_ALERTPANEL_CONFIRM = '確定'
 export const WORDING_ALERTPANEL_CANCEL = '取消'
-export const WORDING_ALERTPANEL_POST = '文章'
-export const WORDING_ALERTPANEL_DRAFT = '草稿'
-export const WORDING_ALERTPANEL_STATUS = '狀態'
+export const WORDING_ALERTPANEL_CONFIRM = '確定'
+export const WORDING_ALERTPANEL_DELETE_CONFIRMATION = '你確定要刪除嗎'
 export const WORDING_ALERTPANEL_DELETE_SUCCESSFUL = '已刪除'
+export const WORDING_ALERTPANEL_DRAFT = '草稿'
+export const WORDING_ALERTPANEL_POST = '文章'
+export const WORDING_ALERTPANEL_PUBLISH_CONFIRMATION = '你確定要發布嗎'
 export const WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL = '已發布'
 export const WORDING_ALERTPANEL_SAVE_SUCCESSFUL = '已儲存'
+export const WORDING_ALERTPANEL_STATUS = '狀態'
+export const WORDING_ALERTPANEL_TAG = '標籤'
+export const WORDING_ALERTPANEL_TITLE = '標題'
 export const WORDING_ALERTPANEL_UPDATE_SUCCESSFUL = '已更新'
-export const WORDING_ALERTPANEL_DELETE_CONFIRMATION = '你確定要刪除嗎'
-export const WORDING_ALERTPANEL_PUBLISH_CONFIRMATION = '你確定要發布嗎'
+
+
+
+
 // Agreement Use
 export const WORDING_AGREEMENT_TERMS_AND_SERVICE = '會員服務條款'
 export const WORDING_AGREEMENT_IPR = '著作權、智慧財產權政策'

@@ -94,7 +94,7 @@
             :post="post"
             :posts="postsSelected"
             :showLightBox="showAlert"
-            :type="type"
+            :type="alertType"
             @closeAlert="$_editor_alertHandler"
             @closeEditor="$_editor_textEditorHandler(false)"
             @deletePost="$_editor_deletePost"
@@ -264,6 +264,7 @@
         action: undefined,
         activePanel: 'records',
         activeTab: 'reviews',
+        alertType: 'post',
         config: {
           active: POST_ACTIVE,
           type: POST_TYPE
@@ -288,7 +289,6 @@
           WORDING_TAB_FOLLOW_RECORD,
           WORDING_TAB_COMMENT_RECORD
         ],
-        type: 'review'
       }
     },
     computed: {
@@ -346,6 +346,7 @@
           return _.includes(items, o.id)
         })
         this.isAlertMultiple = true
+        this.alertType = 'post'
         this.showAlert = true
       },
       $_editor_deletePost (isMultiple) {
@@ -433,6 +434,7 @@
           return _.includes(items, o.id)
         })
         this.isAlertMultiple = true
+        this.alertType = 'post'
         this.showAlert = true
       },
       $_editor_publishPost (isMultiple) {
@@ -480,6 +482,7 @@
         this.post = _.find(this.posts, { 'id': id })
         this.postActive = POST_ACTIVE.DEACTIVE
         this.isCompleted = false
+        this.alertType = 'post'
         this.showAlert = true
       },
       $_editor_showDraftList (type) {
@@ -580,7 +583,10 @@
           this.action = action
           addTags(this.$store, tagName)
           .then(() => {
+            this.$_editor_updateTagList({ needFetchCount: true })
+            this.alertType = 'tag'
             this.showAlert = true
+            this.isCompleted = true
           })
           .catch(() => this.loading = false)
         }
@@ -669,18 +675,6 @@
             .then(() => this.loading = false)
             .catch(() => this.loading = false)
             break
-          case 'tags':
-            if (needFetchCount) {
-              fetchTagsCount(this.$store)
-            }
-            fetchTags(this.$store, {
-              page: this.page,
-              sort: this.sort,
-              stats: true
-            })
-            .then(() => this.loading = false)
-            .catch(() => this.loading = false)
-            break
           default:
             Promise.all([
               fetchPosts(this.$store, {
@@ -692,6 +686,18 @@
             .then(() => this.loading = false)
             .catch(() => this.loading = false)
         }
+      },
+      $_editor_updateTagList ({ sort, type, needFetchCount = false }) {
+        if (needFetchCount) {
+          fetchTagsCount(this.$store)
+        }
+        fetchTags(this.$store, {
+          page: this.page,
+          sort: this.sort,
+          stats: true
+        })
+        .then(() => this.loading = false)
+        .catch(() => this.loading = false)
       }
     }
   }
