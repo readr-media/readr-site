@@ -4,11 +4,11 @@
       <p v-if="(active === config.active.ACTIVE || active === config.active.DEACTIVE) && !isCompleted" class="alert__title">
         <strong v-text="alertTitle"></strong>
       </p>
-      <div v-if="!isMultiple" class="alert__post">
+      <div v-if="post && !isMultiple" class="alert__post">
         <p><strong v-text="`${wording.WORDING_ALERTPANEL_AUTHOR}：`"></strong><span v-text="postAuthor"></span></p>
         <p><strong v-text="`${wording.WORDING_ALERTPANEL_TITLE}：`"></strong><span v-text="postTitle"></span></p>
       </div>
-      <div v-if="isMultiple" class="alert__post multiple">
+      <div v-if="posts && isMultiple" class="alert__post multiple">
         <div v-for="p in posts" :key="p.id" class="alert__postBlock">
           <p><strong v-text="`${wording.WORDING_ALERTPANEL_AUTHOR}：`"></strong><span v-text="p.author.nickname"></span></p>
           <p><strong v-text="`${wording.WORDING_ALERTPANEL_TITLE}：`"></strong><span v-text="p.title"></span></p>
@@ -65,6 +65,16 @@
       },
       showLightBox: {
         default: false
+      },
+      type: {
+        type: String,
+        required: true 
+      },
+      tag: {
+        type: Object
+      },
+      tags: {
+        type: Array
       }
     },
     data () {

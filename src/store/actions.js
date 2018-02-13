@@ -23,6 +23,8 @@ import {
   getProfile,
   getPublicPosts,
   getPublicProjectsList,
+  getTags,
+  getTagsCount,
   login,
   publishAction,
   publishPosts,
@@ -42,6 +44,9 @@ export default {
   },
   ADD_POST: ({ commit, dispatch, state }, { params }) => {
     return addPost(params)
+  },
+  ADD_TAGS: ({ commit, dispatch, state }, { name }) => {
+    return addTags({ name })
   },
   CHECK_LOGIN_STATUS: ({ commit, dispatch, state }, { params }) => {
     return checkLoginStatus({ params }).then(({ status, body }) => {
@@ -204,6 +209,13 @@ export default {
     return getTags({ params }).then(({ status, body }) => {
       if (status === 200) {
         commit('SET_TAGS', { tags: body })
+      }
+    })
+  },
+  GET_TAGS_COUNT: ({ commit, dispatch, state }) => {
+    return getTagsCount().then(({ status, body }) => {
+      if (status === 200) {
+        commit('SET_TAGS_COUNT', { meta: body.meta })
       }
     })
   },

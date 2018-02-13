@@ -292,8 +292,12 @@ export function getTags ({ params = {}}) {
   if (query && (query.length > 0)) {
     url = url + `?${query}`
   }
-  console.log('url', url)
-  // return _doFetch(url)
+  return _doFetchStrict(url, {})
+}
+
+export function getTagsCount () {
+  let url = `${host}/api/tags/count`
+  return _doFetchStrict(url, {})
 }
 
 export function checkLoginStatus ({ params = {}}) {

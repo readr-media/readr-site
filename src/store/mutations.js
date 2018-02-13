@@ -54,7 +54,10 @@ export default {
     state['isLoggedIn'] = body
   },
   SET_TAGS: (state, { tags }) => {
-    state['tags'] = tags
+    state['tags'] = tags.items
+  },
+  SET_TAGS_COUNT: (state, { meta }) => {
+    state['tagsCount'] = meta.total
   },
   SET_TOKEN: (state, { token, type }) => {
     switch (type) {

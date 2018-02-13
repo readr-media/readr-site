@@ -147,6 +147,17 @@ export const WORDING_TAB_FOLLOW_RECORD = '追蹤記錄'
 export const WORDING_TAB_REVIEW_RECORD = '評論記錄'
 export const WORDING_TAB_NEWS_RECORD = '新聞記錄'
 
+// Tag List
+export const WORDING_TAGLIST_ADD = '新增'
+export const WORDING_TAGLIST_ADD_PLACEHOLDER = '輸入欲新增之關鍵字詞'
+export const WORDING_TAGLIST_DELETE = '刪除'
+export const WORDING_TAGLIST_EDIT = '修改'
+export const WORDING_TAGLIST_NEWS_COUNT = '相關新聞數'
+export const WORDING_TAGLIST_PUBLISH_AT = '發布時間'
+export const WORDING_TAGLIST_REVIEW_COUNT = '相關評論數'
+export const WORDING_TAGLIST_TAG = '關鍵字詞'
+export const WORDING_TAGLIST_UPDATE_AT = '更新時間'
+
 // Alert Paenl
 export const WORDING_ALERTPANEL_AUTHOR = '作者'
 export const WORDING_ALERTPANEL_TITLE = '標題'
