@@ -51,6 +51,14 @@
             </post-list>
           </section>
         </template>
+        <template v-else-if="activePanel === 'tags'">
+          <section class="main-panel">
+            <tag-list
+              :tags="tags"
+              @addTag="$_editor_tagsHandler">
+            </tag-list>
+          </section>
+        </template>
         <base-light-box :showLightBox.sync="showReviewsDraftList">
           <post-list-detailed
             :posts="postsDraft"
@@ -86,6 +94,7 @@
             :post="post"
             :posts="postsSelected"
             :showLightBox="showAlert"
+            :type="type"
             @closeAlert="$_editor_alertHandler"
             @closeEditor="$_editor_textEditorHandler(false)"
             @deletePost="$_editor_deletePost"
@@ -119,6 +128,7 @@
   import PostListInTab from '../components/PostListInTab.vue'
   import PostPanel from '../components/PostPanel.vue'
   import Tab from '../components/Tab.vue'
+  import TagList from '../components/TagList.vue'
   import TheControlBar from '../components/TheControlBar.vue'
 
   const MAXRESULT = 20
@@ -127,6 +137,10 @@
 
   const addPost = (store, params) => {
     return store.dispatch('ADD_POST', { params })
+  }
+
+  const addTags = (store, name = '') => {
+    return store.dispatch('ADD_TAGS', { name: name })
   }
 
   const deletePostSelf = (store, id) => {
@@ -185,6 +199,28 @@
     })
   }
 
+  const fetchTags = (store, {
+    max_result = MAXRESULT,
+    page = DEFAULT_PAGE,
+    sorting = DEFAULT_SORT,
+    keyword = '',
+    stats = false
+  }) => {
+    return store.dispatch('GET_TAGS', {
+      params: {
+        max_result: max_result,
+        page: page,
+        sorting: sorting,
+        keyword: keyword,
+        stats: stats
+      }
+    })
+  }
+
+  const fetchTagsCount = (store) => {
+    return store.dispatch('GET_TAGS_COUNT')
+  }
+
   const publishPosts = (store, params) => {
     return store.dispatch('PUBLISH_POSTS', { params })
   }
@@ -219,6 +255,7 @@
       'post-list-detailed': PostListDetailed,
       'post-list-tab': PostListInTab,
       'post-panel': PostPanel,
+      'tag-list': TagList,
       AppAsideNav,
       CommentManagement
     },
@@ -250,7 +287,8 @@
           WORDING_TAB_NEWS_RECORD,
           WORDING_TAB_FOLLOW_RECORD,
           WORDING_TAB_COMMENT_RECORD
-        ]
+        ],
+        type: 'review'
       }
     },
     computed: {
@@ -271,6 +309,9 @@
       },
       sections () {
         return SECTIONS_DEFAULT
+      },
+      tags () {
+        return _.get(this.$store, [ 'state', 'tags' ], [])
       }
     },
     mounted () {
@@ -357,6 +398,14 @@
             Promise.all([
               fetchPosts(this.$store, {}),
               fetchPostsCount(this.$store, {})
+            ])
+            .then(() => this.loading = false)
+            .catch(() => this.loading = false)
+            break
+          case 'tags':
+            Promise.all([
+              fetchTags(this.$store, { stats: true }),
+              fetchTagsCount(this.$store)
             ])
             .then(() => this.loading = false)
             .catch(() => this.loading = false)
@@ -526,6 +575,16 @@
             .catch(() => this.loading = false)
         }
       },
+      $_editor_tagsHandler (action, tagName) {
+        if (action === 'add') {
+          this.action = action
+          addTags(this.$store, tagName)
+          .then(() => {
+            this.showAlert = true
+          })
+          .catch(() => this.loading = false)
+        }
+      },
       $_editor_textEditorHandler (showEditor, action, postType, id) {
         this.showEditor = showEditor
         this.isCompleted = false
@@ -606,6 +665,18 @@
             fetchPosts(this.$store, {
               page: this.page,
               sort: this.sort
+            })
+            .then(() => this.loading = false)
+            .catch(() => this.loading = false)
+            break
+          case 'tags':
+            if (needFetchCount) {
+              fetchTagsCount(this.$store)
+            }
+            fetchTags(this.$store, {
+              page: this.page,
+              sort: this.sort,
+              stats: true
             })
             .then(() => this.loading = false)
             .catch(() => this.loading = false)

@@ -79,17 +79,17 @@ describe('/POST/login', () => {
 //   }).timeout(100)
 // })
 
-describe('/DELETE/tags', () => {
-  it(`should delete tags data through api`, (done) => {
-    supertest(app).delete(`/api/tags?ids=[ 6 ]`)
-    .set('Authorization', `Bearer ${token}`)
-    .end((err, res) => {
-      if (err) return console.log(err)
-      res.status.should.equal(200)
-      done()
-    })
-  }).timeout(300)
-})
+// describe('/DELETE/tags', () => {
+//   it(`should delete tags data through api`, (done) => {
+//     supertest(app).delete(`/api/tags?ids=[ 6 ]`)
+//     .set('Authorization', `Bearer ${token}`)
+//     .end((err, res) => {
+//       if (err) return console.log(err)
+//       res.status.should.equal(200)
+//       done()
+//     })
+//   }).timeout(300)
+// })
 
 describe('/GET/tags', () => {
   it(`should get tags data through api`, (done) => {
@@ -100,6 +100,20 @@ describe('/GET/tags', () => {
       res.status.should.equal(200)
       res.body.should.be.an('object').and.have.property('_items')
       res.body._items.should.be.an('array')
+      done()
+    })
+  }).timeout(100)
+})
+
+describe('/GET/tags/count', () => {
+  it(`should get tags count through api`, (done) => {
+    supertest(app).get(`/api/tags/count`)
+    .set('Authorization', `Bearer ${token}`)
+    .end((err, res) => {
+      if (err) return console.log(err)
+      res.status.should.equal(200)
+      res.body.should.be.an('object').and.have.property('_meta')
+      res.body._meta.should.be.an('object').and.have.property('total')
       done()
     })
   }).timeout(100)
