@@ -30,8 +30,8 @@
         <tr v-for="t in tags" :key="t.id">
           <td><input type="checkbox" ref="checkboxItems"></td>
           <td v-text="t.text"></td>
-          <td>0</td>
-          <td>0</td>
+          <td v-text="t.relatedReviews"></td>
+          <td v-text="t.relatedNews"></td>
           <td><button class="tagList__btn tagList__btn--single" v-text="wording.WORDING_TAGLIST_EDIT"></button></td>
           <td><button class="tagList__btn tagList__btn--single" v-text="wording.WORDING_TAGLIST_DELETE"></button></td>
           <td></td>
