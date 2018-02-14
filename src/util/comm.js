@@ -28,7 +28,7 @@ export function dateDiffFromNow (date) {
   const sec = diff - hour * 3600 - min * 60
   const day = Math.floor(hour / 24)
   if (day !== 0) {
-    return `${day} 天`
+    return updatedAtYYYYMMDD(date)
   } else if (hour !== 0) {
     return `${hour} 小時`
   } else if (min !== 0) {
@@ -92,8 +92,7 @@ export function getValue (o = {}, p = [], d = '') {
   return _.get(o, p, d)
 }
 
-export function updatedAtYYYYMMDD (post) {
-  const iso = post.updatedAt
-  const date = iso.split('T')[0]
+export function updatedAtYYYYMMDD (isoDate) {
+  const date = isoDate.split('T')[0]
   return date.replace(/-/g, '/')
 }

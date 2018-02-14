@@ -5,7 +5,7 @@
         <img class="author-info__thumbnail" :src="articleData.author.profileImage" alt="">
         <div class="author-info__meta-container">
           <p class="author-info__nickname" v-text="articleData.author.nickname"></p>
-          <p class="author-info__date" v-text="updatedAtYYYYMMDD(articleData)"></p>
+          <p class="author-info__date" v-text="updatedAtYYYYMMDD(articleData.updatedAt)"></p>
         </div>
       </div>
     </div>
