@@ -3,10 +3,7 @@
     <div class="home-project-aside__project-image" :style="{ backgroundImage: `url(${featuredProject.heroImage}` }"></div>
     <div class="home-project-aside__content">
       <h1 class="home-project-aside__project-title" v-text="featuredProject.title"></h1>
-      <AppArticleNav :commentContainerSelector="'.home-project-aside__comment'" :articleType="'project'" :postId="featuredProject.id" :commentCount="featuredProject.commentAmount || 0"/>
-      <div class="home-project-aside__comment">
-        <div :class="`comment comment-${featuredProject.id}`"></div>
-      </div>
+      <AppArticleNav :articleType="'project'" :postId="featuredProject.id" :commentCount="featuredProject.commentAmount || 0"/>
     </div>
   </section>
 </template>

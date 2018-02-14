@@ -5,7 +5,7 @@
         <img class="author-info__thumbnail" :src="articleData.author.profileImage" alt="">
         <div class="author-info__meta-container">
           <p class="author-info__nickname" v-text="articleData.author.nickname"></p>
-          <p class="author-info__date" v-text="updatedAtYYYYMMDD(articleData)"></p>
+          <p class="author-info__date" v-text="updatedAtYYYYMMDD(articleData.updatedAt)"></p>
         </div>
       </div>
     </div>
@@ -17,10 +17,7 @@
             <span v-html="firstParagraph"></span>
           </p>
         </div>
-        <AppArticleNav :commentContainerSelector="'.home-article-aside__comment'" :postId="this.articleData.id" :commentCount="commentCount"/>
-        <div class="home-article-aside__comment">
-          <div :class="`comment comment-${get(articleData, [ 'id' ])}`"></div>
-        </div>
+        <AppArticleNav :postId="this.articleData.id" :commentCount="commentCount"/>
       </div>
     </div>
   </article>
@@ -31,7 +28,6 @@ import AppArticleNav from 'src/components/AppArticleNav.vue'
 import { updatedAtYYYYMMDD } from '../../util/comm'
 import { SITE_DOMAIN_DEV } from 'src/constants'
 import { renderComment } from 'src/util/talk'
-import { get } from 'lodash'
 
 export default {
   components: {
@@ -64,7 +60,6 @@ export default {
     }
   },
   methods: {
-    get,
     updatedAtYYYYMMDD
   },
   props: {

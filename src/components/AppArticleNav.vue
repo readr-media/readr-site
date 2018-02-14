@@ -1,11 +1,16 @@
 <template>
-  <nav class="article-nav">
-    <span class="comment-icon" @click="renderComment(`${commentContainerSelector} > .comment.comment-${postId}`)">
-      <img class="comment-icon__thumbnail" src="/public/icons/comment-blue.png" alt="comment">
-      <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="postId" :type="'publicPostsHot'"></CommentCount>
-    </span>
-    <img class="follow-icon" :src="isFollow ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="follow" @click="toogleFollow">
-  </nav>
+  <div class="article-nav">
+    <nav class="article-nav__nav-btns">
+      <span class="comment-icon" @click="renderComment(`.article-nav__comment > .comment.comment-${postId}`)">
+        <img class="comment-icon__thumbnail" src="/public/icons/comment-blue.png" alt="comment">
+        <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="postId" :type="'publicPostsHot'"></CommentCount>
+      </span>
+      <img class="follow-icon" :src="isFollow ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="follow" @click="toogleFollow">
+    </nav>
+    <div :class="`article-nav__comment`">
+      <div :class="`comment comment-${postId}`"></div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -13,7 +18,6 @@ import { SITE_DOMAIN_DEV } from 'src/constants'
 import { renderComment } from 'src/util/talk'
 import _ from 'lodash'
 import CommentCount from 'src/components/comment/CommentCount.vue'
-const { get } = _
 
 const publishAction = (store, data) => {
   return store.dispatch('PUBLISH_ACTION', {
@@ -33,10 +37,6 @@ const updateStoreFollowingByResource = (store, { action, resource, resourceId, u
 
 export default {
   props: {
-    commentContainerSelector: {
-      type: String,
-      required: true
-    },
     articleType: {
       type: String,
       default: 'post'
@@ -75,9 +75,8 @@ export default {
     }
   },
   methods: {
-    get,
     renderComment (ref) {
-      renderComment(`${ref}`, `${location.protocol}//${SITE_DOMAIN_DEV}/post/${this.postId}`)
+      renderComment(this.$el, `${ref}`, `${location.protocol}//${SITE_DOMAIN_DEV}/post/${this.postId}`)
     },
     toogleFollow () {
       if (!this.$store.state.isLoggedIn) {
@@ -118,12 +117,16 @@ export default {
 
 
 <style lang="stylus" scoped>
+.article-nav
+  display flex
+  flex-direction column
+  &__nav-btns
+    height 25px
+    margin-top auto // for automatically placing nav to the botom of the container
+
 $icon-size
   width 25px
   height 25px
-.article-nav
-  height 25px
-  margin-top auto // for automatically placing nav to the botom of the container
 .comment-icon
   cursor pointer
   &__thumbnail
