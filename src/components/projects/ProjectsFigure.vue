@@ -8,10 +8,7 @@
       <p class="projects-figcaption__date" v-text="updatedAtYYYYMMDD(project.updatedAt)"></p>
       <h1 class="projects-figcaption__title" v-text="project.title"></h1>
       <p class="projects-figcaption__description" v-text="project.description"></p>
-      <AppArticleNav :commentContainerSelector="'.projects-figure__comment'" :articleType="'project'" :postId="project.id" :commentCount="project.commentAmount || 0"/>
-      <div class="projects-figure__comment">
-        <div :class="`comment comment-${project.id}`"></div>
-      </div>
+      <AppArticleNav :articleType="'project'" :postId="project.id" :commentCount="project.commentAmount || 0"/>
     </figcaption>
   </figure>
 </template>

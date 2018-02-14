@@ -1,7 +1,7 @@
 import { TALK_SERVER } from 'api/config.js'
 
-export function renderComment (taget_ele, url) {
-  Coral && Coral.Talk.render(document.querySelector(taget_ele), {
+export function renderComment (target_parent, taget_ele, url) {
+  Coral && Coral.Talk.render(target_parent.querySelector(taget_ele), {
     talk: TALK_SERVER,
     asset_url: url
   })

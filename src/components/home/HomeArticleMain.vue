@@ -39,10 +39,7 @@
           <img :src="articleData.linkImage" alt="source-fig">
         </figure>
       </a>
-      <AppArticleNav :commentContainerSelector="'.home-article-main__comment'" :postId="this.articleData.id" :commentCount="commentCount"/>
-      <div class="home-article-main__comment">
-        <div :class="`comment comment-${get(articleData, [ 'id' ])}`"></div>
-      </div>
+      <AppArticleNav :postId="this.articleData.id" :commentCount="commentCount"/>
     </div>
   </article>
 </template>
@@ -54,8 +51,6 @@ import _ from 'lodash'
 import { SITE_DOMAIN_DEV } from 'src/constants'
 import { dateDiffFromNow } from 'src/util/comm'
 import { renderComment } from 'src/util/talk'
-
-const { get } = _
 
 export default {
   props: {
@@ -118,7 +113,6 @@ export default {
     }
   },
   methods: {
-    get,
     toogleReadmore () {
       this.isReadMore = true
     }
@@ -153,8 +147,8 @@ export default {
     background-color white
     display flex
     flex-direction column
-  &__comment
-    margin-top 20px
+  // &__comment
+  //   margin-top 20px
   &__date
     font-size 14px
     font-weight 500
@@ -224,6 +218,7 @@ export default {
     border solid 0.5px #d3d3d3
     padding 8px 15px 5px 19.5px
     display flex
+    margin-bottom 7.5px
     &__content
       width 350.5px
       position relative
