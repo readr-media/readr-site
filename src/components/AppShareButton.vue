@@ -1,6 +1,6 @@
 <template>
   <div :class="`app-share-button${isToogle ? '--toogle' : ''} ${direction}`">
-    <button class="app-share-button__share-icon" @click="toogleShare"></button>
+    <button class="app-share-button__share-icon" :style="{ backgroundImage: `url(/public/icons/share-${iconColor}.png)`, backgroundColor: backgroundColor }"  @click="toogleShare"></button>
     <a class="app-share-button__item--fb" :href="`https://www.facebook.com/share.php?u=${shareUrl}`" target="_blank"></a>
     <a class="app-share-button__item--line" :href="`https://line.me/R/msg/text/?${shareUrl}`" target="_blank"></a>
     <a class="app-share-button__item--link" :href="`https://${shareUrl}`" target="_blank"></a>
@@ -18,6 +18,14 @@ export default {
     direction: { // options: up, down, left, right
       type: String,
       default: 'down' 
+    },
+    iconColor: {
+      type: String,
+      default: 'blue'
+    },
+    backgroundColor: {
+      type: String,
+      default: 'white'
     }
   },
   data () {
@@ -59,9 +67,9 @@ $app-share-button__item
     border none
     width 101%
     height 101%
-    background-image url(/public/icons/share-blue.png)
+    // background-image url(/public/icons/share-blue.png)
     background-size 100% 100%
-    background-color white
+    background-color transparent
     outline none
     z-index 2
   &__item

@@ -1,16 +1,18 @@
 <template>
   <article class="home-article-main">
     <div class="home-article-main__share">
-      <AppShareButton :shareUrl="shareUrl" :direction="'down'"/>
+      <AppShareButton :shareUrl="shareUrl" :direction="'down'" :iconColor="'white'" :backgroundColor="'#11b8c9'"/>
     </div>
     <div class="home-article-main__author">
       <figure class="author-info">
         <img class="author-info__thumbnail" :src="articleData.author.profileImage" alt="">
-        <figcaption class="author-info__nickname" v-text="articleData.author.nickname"></figcaption>
+        <figcaption class="author-info__meta">
+          <p class="author-info__date" v-text="dateDiffFromNow"></p>
+          <p class="author-info__nickname" v-text="articleData.author.nickname"></p>
+        </figcaption>
       </figure>
     </div>
     <div class="home-article-main__content">
-      <p class="home-article-main__date">{{ dateDiffFromNow }}</p>
       <h1 class="home-article-main__title" v-text="articleData.title"></h1>
       <div class="editor-writing">
         <div class="editor-writing__container">
@@ -127,23 +129,27 @@ export default {
 <style lang="stylus">
 .home-article-main
   display flex
+  flex-direction column
+  justify-content center
+  align-items center
+  width 650px
   position relative
-  // height 325px
   &__share
     width 25px
     height 25px
     position absolute
-    top 15px
-    right 25px
+    top 21px
+    right 36px
   &__author
-    width 60px
-    height inherit
-    background-color #444746
+    width 100%
+    height 60px
+    background-color #11b8c9
   &__content
-    width 590px
+    width calc(650px + 1px + 1px)
     height inherit
-    border solid 2.5px #ddcf21
-    padding 11.5px 22.5px 18px 22.5px
+    border solid 1.5px #d3d3d3
+    border-top none
+    padding 16px 32.5px
     background-color white
     display flex
     flex-direction column
@@ -164,27 +170,26 @@ export default {
   .author-info
     margin 0
     display flex
-    flex-direction column
-    justify-content center
+    flex-direction row
+    justify-content flex-start
     align-items center
     &__thumbnail
       width 60px
       height 60px
+    &__meta
+      margin-left 22.5px
+      > p
+        margin 5px 0
+    &__date
+      font-size 14px
+      font-weight 500
+      color white
     &__nickname
-      letter-spacing 2px
       font-size 18px
-      font-weight 300
-      color #ffffff
-      margin-top 8px
-      writing-mode tb-rl
-      white-space nowrap
-      display block
-      bottom 0
-      width 20px
-      height 20px
+      color white
 
   .editor-writing
-    margin 5px 0 10px 0
+    margin 10px 0
     &__container 
       min-height 105px
       // overflow hidden
