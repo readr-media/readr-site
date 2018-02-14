@@ -10,13 +10,13 @@
     <table>
       <thead>
         <tr>
-          <th class="tagList__checkbox"><input type="checkbox" ref="checkboxSelectAll"></th>
+          <th class="tagList__checkbox"><input type="checkbox" ref="checkboxSelectAll"  @click="$_tagList_toggleSelectAll"></th>
           <th class="tagList__text"><span v-text="wording.WORDING_TAGLIST_TAG"></span></th>
           <th><span v-text="wording.WORDING_TAGLIST_REVIEW_COUNT"></span></th>
           <th><span v-text="wording.WORDING_TAGLIST_NEWS_COUNT"></span></th>
           <th class="tagList__edit"></th>
           <th class="tagList__delete">
-            <button class="tagList__btn tagList__btn--multiple" v-text="wording.WORDING_TAGLIST_DELETE"></button>
+            <button class="tagList__btn tagList__btn--multiple" v-text="wording.WORDING_TAGLIST_DELETE" @click="$_postList_deleteTags"></button>
           </th>
           <th class="tagList__sort">
             <select name="" id="">
@@ -27,13 +27,18 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="t in tags" :key="t.id">
-          <td><input type="checkbox" ref="checkboxItems"></td>
-          <td v-text="t.text"></td>
+        <tr v-for="(t, index) in tags" :key="t.id">
+          <td><input type="checkbox" ref="checkboxItems" @change="$_tagList_toggleHandler($event, t.id)"></td>
+          <td ref="tagTextBlock" class="tagList__text">
+            <span ref="originTagText" @click="$_tagList_editTag(index)" v-text="t.text"></span>
+            <input ref="inputTagText" type="text" :value="t.text">
+            <button @click="$_tagList_confirmEdit($event, index, t.id)" v-text="wording.WORDING_TAGLIST_CONFIRM"></button>
+            <button @click="$_tagList_cancel" v-text="wording.WORDING_TAGLIST_CANCEL"></button>
+          </td>
           <td v-text="t.relatedReviews"></td>
           <td v-text="t.relatedNews"></td>
-          <td><button class="tagList__btn tagList__btn--single" v-text="wording.WORDING_TAGLIST_EDIT"></button></td>
-          <td><button class="tagList__btn tagList__btn--single" v-text="wording.WORDING_TAGLIST_DELETE"></button></td>
+          <td class="tagList__edit"><button class="tagList__btn tagList__btn--single" @click="$_tagList_editTag(index)" v-text="wording.WORDING_TAGLIST_EDIT"></button></td>
+          <td class="tagList__delete"><button class="tagList__btn tagList__btn--single" @click="$_tagList_deleteTag(t.id)" v-text="wording.WORDING_TAGLIST_DELETE"></button></td>
           <td></td>
         </tr>
       </tbody>
@@ -44,6 +49,8 @@
   import {
     WORDING_TAGLIST_ADD,
     WORDING_TAGLIST_ADD_PLACEHOLDER,
+    WORDING_TAGLIST_CANCEL,
+    WORDING_TAGLIST_CONFIRM,
     WORDING_TAGLIST_DELETE,
     WORDING_TAGLIST_EDIT,
     WORDING_TAGLIST_NEWS_COUNT,
@@ -55,7 +62,14 @@
   import _ from 'lodash'
   import PaginationNav from './PaginationNav.vue'
 
-  const MAXRESULT = 20
+  const updateTags = (store, id, text) => {
+    return store.dispatch('UPDATE_TAGS', {
+      params: {
+        id: id,
+        text: text
+      }
+    })
+  }
 
   export default {
     name: 'TagList',
@@ -63,6 +77,10 @@
       'pagination-nav': PaginationNav
     },
     props: {
+      maxResult: {
+        type: Number,
+        required: true
+      },
       tags: {
         type: Array,
         required: true
@@ -71,9 +89,12 @@
     data () {
       return {
         addTag: '',
+        checkedIems: [],
         wording: {
           WORDING_TAGLIST_ADD,
           WORDING_TAGLIST_ADD_PLACEHOLDER,
+          WORDING_TAGLIST_CANCEL,
+          WORDING_TAGLIST_CONFIRM,
           WORDING_TAGLIST_DELETE,
           WORDING_TAGLIST_EDIT,
           WORDING_TAGLIST_NEWS_COUNT,
@@ -86,16 +107,64 @@
     },
     computed: {
       tagNameValidated () {
-        return this.addTag.trim()
+        return this.addTag.replace(/\s/g,'')
       },
       totalPages () {
-        return Math.ceil(_.get(this.$store, [ 'state', 'tagsCount' ], 0) / MAXRESULT)
+        return Math.ceil(_.get(this.$store, [ 'state', 'tagsCount' ], 0) / this.maxResult)
       }
     },
     methods: {
       $_tagList_addTag () {
-        this.$emit('addTag', 'add', this.addTag.trim())
+        if (this.tagNameValidated) {
+          this.$emit('addTag', this.addTag.replace(/\s/g,''))
+        }
       },
+      $_tagList_cancel (event) {
+        event.target.parentNode.classList.toggle('modify')
+      },
+      $_tagList_confirmEdit (event, index, id) {
+        const newText = this.$refs.inputTagText[index].value.replace(/\s/g,'')
+        if (newText === this.$refs.originTagText[index].innerText) {
+          event.target.parentNode.classList.toggle('modify')
+        } else {
+          updateTags(this.$store, id, newText)
+          .then(() => {
+            event.target.parentNode.classList.toggle('modify')
+            this.$emit('updateTagList')
+          })
+        }
+      },
+      $_tagList_deleteTag (id) {
+        this.$emit('deleteTags', [ id ])
+      },
+      $_postList_deleteTags () {
+        this.$emit('deleteTags', this.checkedIems)
+      },
+      $_tagList_editTag (index) {
+        this.$refs.tagTextBlock[index].classList.toggle('modify')
+      },
+      $_tagList_toggleHandler (event, id) {
+        if (event.target.checked) {
+          this.checkedIems.push(id)
+        } else {
+          const index = this.checkedIems.indexOf(id)
+          if (index > -1) {
+            this.checkedIems.splice(index, 1)
+          }
+        }
+      },
+      $_tagList_toggleSelectAll () {
+        this.checkedIems = []
+        _.map(this.$refs.checkboxItems, (item) => {
+          item.checked = this.$refs.checkboxSelectAll.checked
+        })
+        if (this.$refs.checkboxSelectAll.checked) {
+          _.map(this.tags, (item) => {
+            this.checkedIems.push(item.id)
+          })
+          this.checkedIems = _.uniq(this.checkedIems)
+        }
+      }
     }
   }
 </script>
@@ -164,17 +233,38 @@
     line-height 18px
     vertical-align baseline
   &__text
-    width 200px
+    position relative
+    width 250px
+    > span
+      cursor pointer
+    > input, > button
+      display none
+    &.modify
+      > span
+        display none
+      > input
+        display inline-block
+        width 120px
+        height 22px
+        padding-left 5px
+        margin-right 5px
+      > button
+        display inline-block
+        height 22px
+        margin 0 2px
+        background transparent
+        border-radius 4px
+        outline none
   &__edit, &__delete
     width 70px
     padding-right 10px
+    text-align center
   &__sort
     width 105px
     select
       height 25px
       line-height 25px
   &__btn
-    
     background-color transparent
     border none
     outline none

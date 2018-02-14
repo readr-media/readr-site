@@ -150,6 +150,8 @@ export const WORDING_TAB_NEWS_RECORD = '新聞記錄'
 // Tag List
 export const WORDING_TAGLIST_ADD = '新增'
 export const WORDING_TAGLIST_ADD_PLACEHOLDER = '輸入欲新增之關鍵字詞'
+export const WORDING_TAGLIST_CANCEL = '取消'
+export const WORDING_TAGLIST_CONFIRM = '確定'
 export const WORDING_TAGLIST_DELETE = '刪除'
 export const WORDING_TAGLIST_EDIT = '修改'
 export const WORDING_TAGLIST_NEWS_COUNT = '相關新聞數'
@@ -159,6 +161,7 @@ export const WORDING_TAGLIST_TAG = '關鍵字詞'
 export const WORDING_TAGLIST_UPDATE_AT = '更新時間'
 
 // Alert Paenl
+export const WORDING_ALERTPANEL_ADD_SUCCESSFUL = '已新增'
 export const WORDING_ALERTPANEL_AUTHOR = '作者'
 export const WORDING_ALERTPANEL_CANCEL = '取消'
 export const WORDING_ALERTPANEL_CONFIRM = '確定'
@@ -168,14 +171,10 @@ export const WORDING_ALERTPANEL_DRAFT = '草稿'
 export const WORDING_ALERTPANEL_POST = '文章'
 export const WORDING_ALERTPANEL_PUBLISH_CONFIRMATION = '你確定要發布嗎'
 export const WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL = '已發布'
-export const WORDING_ALERTPANEL_SAVE_SUCCESSFUL = '已儲存'
 export const WORDING_ALERTPANEL_STATUS = '狀態'
-export const WORDING_ALERTPANEL_TAG = '標籤'
+export const WORDING_ALERTPANEL_TAG = '關鍵字'
 export const WORDING_ALERTPANEL_TITLE = '標題'
 export const WORDING_ALERTPANEL_UPDATE_SUCCESSFUL = '已更新'
-
-
-
 
 // Agreement Use
 export const WORDING_AGREEMENT_TERMS_AND_SERVICE = '會員服務條款'

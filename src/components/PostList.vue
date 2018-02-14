@@ -12,15 +12,16 @@
           <th class="postList__update postList--center">
             <button
               class="postList__btn postList__btn--multiple"
+              :disabled="!canPublishPosts"
               v-text="wording.WORDING_POSTLIST_PUBLISH"
-              @click="$_postList_publishMultiple">
+              @click="$_postList_publishPosts">
             </button>
           </th>
           <th class="postList__delete postList--center">
             <button
               class="postList__btn postList__btn--multiple"
-              v-text="wording.WORDING_POSTLIST_DELETE"
-              @click="$_postList_deleteMultiple">
+              @click="$_postList_deletePosts"
+              v-text="wording.WORDING_POSTLIST_DELETE">
             </button>
           </th>
           <th class="postList__sort postList--center">
@@ -33,10 +34,10 @@
       </thead>
       <tbody>
         <tr v-for="p in posts" :key="p.id">
-          <td class="postList__checkbox"><input type="checkbox" ref="checkboxItems" @change="$_postList_toggleHandler(p.id)"></td>
+          <td class="postList__checkbox"><input type="checkbox" ref="checkboxItems" @change="$_postList_toggleHandler($event, p.id)"></td>
           <td class="postList__nickname" v-text="$_postList_getAuthorId(p)"></td>
-          <td class="postList__type"></td>
-          <td class="postList__title" v-text="p.title" @click="$_showPost(p)"></td>
+          <td class="postList__type"><div v-if="p.type === postType.NEWS" class="postList__type--news">N</div></td>
+          <td class="postList__title" @click="$_showPost(p)" v-text="p.title"></td>
           <td class="postList__status postList--center" v-text="$_postList_getStatus(p)"></td>
           <td class="postList__update postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_editPost(p.id, p.type)" v-text="wording.WORDING_POSTLIST_UPDATE"></button></td>
           <td class="postList__delete postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_deletePost(p.id)" v-text="wording.WORDING_POSTLIST_DELETE"></button></td>
@@ -70,8 +71,6 @@
   import BaseLightBoxPost from './BaseLightBoxPost.vue'
   import PaginationNav from './PaginationNav.vue'
 
-  const MAXRESULT = 20
-
   export default {
     name: 'PostList',
     components: {
@@ -80,6 +79,10 @@
       PaginationNav
     },
     props: {
+      maxResult: {
+        type: Number,
+        required: true
+      },
       posts: {
         type: Array,
         required: true
@@ -87,8 +90,11 @@
     },
     data () {
       return {
-        checkedPost: [],
+        checkedIems: [],
         order: '',
+        post: {},
+        postType: POST_TYPE,
+        showLightBox: false,
         wording: {
           WORDING_POSTLIST_ACTIVE,
           WORDING_POSTLIST_ACTIVE_DRAFT,
@@ -102,23 +108,28 @@
           WORDING_POSTLIST_TITLE,
           WORDING_POSTLIST_UPDATE,
           WORDING_POSTLIST_UPDATE_AT
-        },
-        showLightBox: false,
-        post: {}
+        }
       }
     },
     computed: {
+      canPublishPosts () {
+        const items = _.filter(this.checkedIems, (item) => {
+          const post = _.find(this.posts, { id: item })
+          return _.get(post, [ 'active' ]) !== POST_ACTIVE.ACTIVE
+        })
+        return items.length !== 0
+      },
       totalPages () {
-        return Math.ceil(_.get(this.$store, [ 'state', 'postsCount' ], 0) / MAXRESULT)
+        return Math.ceil(_.get(this.$store, [ 'state', 'postsCount' ], 0) / this.maxResult)
       }
     },
     mounted () {},
     methods: {
-      $_postList_deleteMultiple () {
-        this.$emit('deleteMultiple', this.checkedPost)
-      },
       $_postList_deletePost (id) {
-        this.$emit('deletePost', id)
+        this.$emit('deletePosts', [ id ], POST_ACTIVE.DEACTIVE)
+      },
+      $_postList_deletePosts () {
+        this.$emit('deletePosts', this.checkedIems, POST_ACTIVE.DEACTIVE)
       },
       $_postList_editPost (id, type) {
         if (type === POST_TYPE.NEWS) {
@@ -133,13 +144,13 @@
       $_postList_getStatus (post) {
         const status = _.get(post, [ 'active' ])
         switch (status) {
-          case 1:
+          case POST_ACTIVE.ACTIVE:
             return this.wording.WORDING_POSTLIST_ACTIVE_PUBLISH
-          case 2:
+          case POST_ACTIVE.PENDING:
             return this.wording.WORDING_POSTLIST_ACTIVE_PENDING
-          case 3:
+          case POST_ACTIVE.DRAFT:
             return this.wording.WORDING_POSTLIST_ACTIVE_DRAFT
-          case 4:
+          case POST_ACTIVE.UNPUBLISH:
             return this.wording.WORDING_POSTLIST_ACTIVE_UNPUBLISH
           default:
             return this.wording.WORDING_POSTLIST_ACTIVE_DRAFT
@@ -157,37 +168,34 @@
       $_postList_pageChanged (index) {
         this.$emit('pageChanged', index)
       },
-      $_postList_publishMultiple () {
-        const items = _.filter(this.checkedPost, (item) => {
+      $_postList_publishPosts () {
+        const items = _.filter(this.checkedIems, (item) => {
           const post = _.find(this.posts, { id: item })
           return _.get(post, [ 'active' ]) !== POST_ACTIVE.ACTIVE
         })
-        this.$emit('publishMultiple', items)
+        this.$emit('publishPosts', items, POST_ACTIVE.ACTIVE)
       },
-      $_postList_toggleHandler (id) {
+      $_postList_toggleHandler (event, id) {
         if (event.target.checked) {
-          this.checkedPost.push(id)
-          this.checkedPost.sort()
+          this.checkedIems.push(id)
         } else {
-          const index = this.checkedPost.indexOf(id)
+          const index = this.checkedIems.indexOf(id)
           if (index > -1) {
-            this.checkedPost.splice(index, 1)
+            this.checkedIems.splice(index, 1)
           }
         }
       },
       $_postList_toggleSelectAll () {
+        this.checkedIems = []
         _.map(this.$refs.checkboxItems, (item) => {
           item.checked = this.$refs.checkboxSelectAll.checked
         })
-        _.map(this.posts, (item) => {
-          if (this.$refs.checkboxSelectAll.checked) {
-            this.checkedPost.push(item.id)
-            this.checkedPost.sort((a, b) => (a - b))
-            this.checkedPost = _.uniq(this.checkedPost)
-          } else {
-            this.checkedPost = []
-          }
-        })
+        if (this.$refs.checkboxSelectAll.checked) {
+          _.map(this.posts, (item) => {
+            this.checkedIems.push(item.id)
+          })
+          this.checkedIems = _.uniq(this.checkedIems)
+        }
       },
       $_showPost (post) {
         this.showLightBox = true
@@ -243,11 +251,25 @@
   input[type="checkbox"]
     width 12px
     height 12px
+  button:disabled
+    background-color #ccc
   &__checkbox
     width 20px
   &__nickname
     width 20%
     padding-right 10px
+  &__type
+    width 25px
+    padding-right 5px
+    &--news
+      width 20px
+      height 20px
+      color #fff
+      font-size 13px
+      text-align center
+      line-height 20px
+      background-color blue
+      border-radius 50%
   &__title
     padding-right 10px
     cursor pointer
@@ -259,7 +281,6 @@
     background-color transparent
     border none
     outline none
-    cursor pointer
     &--single
       color #4280a2
     &--multiple
@@ -286,7 +307,7 @@
     &__nickname
       width 85px
     &__title
-      width 360px
+      width 330px
       padding-right 60px
     &__status, &__update, &__delete, &__sort
       display table-cell
