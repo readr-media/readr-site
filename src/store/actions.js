@@ -11,6 +11,7 @@ import {
   deletePost,
   deletePosts,
   deletePostSelf,
+  deleteTags,
   fetchCommentCount,
   fetchMeComments,
   getDisposableToken,
@@ -76,10 +77,13 @@ export default {
     return deletePost(id)
   },
   DELETE_POSTS: ({ commit, dispatch, state }, { params }) => {
-    return deletePosts({params})
+    return deletePosts({ params })
   },
   DELETE_POST_SELF: ({ commit, dispatch, state }, { id }) => {
     return deletePostSelf(id)
+  },
+  DELETE_TAGS: ({ commit, dispatch, state }, { params }) => {
+    return deleteTags({ params })
   },
   FETCH_COMMENT_COUNT: ({ commit, dispatch, state }, { params, type }) => {
     return fetchCommentCount({ params }).then((count) => {
@@ -279,6 +283,9 @@ export default {
   },
   UPDATE_POST: ({ commit, dispatch, state }, { params }) => {
     return updatePost({ params })
+  },
+  UPDATE_TAGS: ({ commit, dispatch, state }, { params }) => {
+    return updateTags({ params })
   },
   UPLOAD_IMAGE: ({ commit, dispatch }, { file, type }) => {
     return uploadImage(file, type)

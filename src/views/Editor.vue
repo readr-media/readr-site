@@ -8,7 +8,7 @@
       <main class="main-container">
         <app-about :profile="profile"></app-about>
         <control-bar
-          @addNews="$_editor_textEditorHandler(true, 'add', config.type.NEWS)"
+          @addNews="$_editor_textEditorHandler(true, 'add', config.type.NEWS)" 
           @addReview="$_editor_textEditorHandler(true, 'add', config.type.REVIEW)"
           @editNews="$_editor_showDraftList(config.type.NEWS)"
           @editReview="$_editor_showDraftList(config.type.REVIEW)"
@@ -42,20 +42,23 @@
         <template v-else-if="activePanel === 'posts'">
           <section class="main-panel">
             <post-list
+              :maxResult="20"
               :posts="posts"
-              @deleteMultiple="$_editor_deleteMultiple"
-              @deletePost="$_editor_showAlert"
+              @deletePosts="$_editor_showAlertB"
               @editPost="$_editor_textEditorHandler"
               @filterChanged="$_editor_updatePostList"
-              @publishMultiple="$_editor_publishMultiple">
+              @publishPosts="$_editor_showAlertB">
             </post-list>
           </section>
         </template>
         <template v-else-if="activePanel === 'tags'">
           <section class="main-panel">
             <tag-list
+              :maxResult="20"
               :tags="tags"
-              @addTag="$_editor_tagsHandler">
+              @addTag="$_editor_addTag"
+              @deleteTags="$_editor_showAlertB"
+              @updateTagList="$_editor_updateTagList({})">
             </tag-list>
           </section>
         </template>
@@ -80,8 +83,8 @@
             :post.sync="post"
             :showLightBox="showEditor"
             :type="postType"
-            @closeLightBox="$_editor_textEditorHandler(false)"
-            @deletePost="$_editor_showAlert"
+            @closeLightBox="$_editor_textEditorHandler(false)" 
+            @deletePost="$_editor_showAlert" 
             @showAlert="$_editor_alertHandler">
           </post-panel>
         </base-light-box>
@@ -101,12 +104,25 @@
             @publishPost="$_editor_publishPost">
           </alert-panel>
         </base-light-box>
+        <base-light-box :isAlert="true" :showLightBox.sync="showAlertB">
+          <alert-panel-b
+            :active="itemsActive"
+            :items="itemsSelected"
+            :needConfirm="needConfirm"
+            :showLightBox="showAlert"
+            :type="alertType"
+            @closeAlert="$_editor_alertHandlerB(false)"
+            @deletePosts="$_editor_deletePosts"
+            @deleteTags="$_editor_deleteTags"
+            @publishPosts="$_editor_publishPosts">
+          </alert-panel-b>
+        </base-light-box>
       </main>
     </div>
   </div>
 </template>
 <script>
-  import { POST_ACTIVE, POST_TYPE } from '../../api/config'
+  import { POST_ACTIVE, POST_TYPE, TAG_ACTIVE } from '../../api/config'
   import {
     SECTIONS_DEFAULT,
     WORDING_TAB_REVIEW_RECORD,
@@ -117,6 +133,7 @@
   import _ from 'lodash'
   import About from '../components/About.vue'
   import AlertPanel from '../components/AlertPanel.vue'
+  import AlertPanelB from '../components/AlertPanelB.vue'
   import AppAsideNav from '../components/AppAsideNav.vue'
   import AppHeader from '../components/AppHeader.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
@@ -127,6 +144,7 @@
   import PostListDetailed from '../components/PostListDetailed.vue'
   import PostListInTab from '../components/PostListInTab.vue'
   import PostPanel from '../components/PostPanel.vue'
+  import PostPanelB from '../components/PostPanelB.vue'
   import Tab from '../components/Tab.vue'
   import TagList from '../components/TagList.vue'
   import TheControlBar from '../components/TheControlBar.vue'
@@ -150,6 +168,14 @@
   const deletePosts = (store, { params }) => {
     return store.dispatch('DELETE_POSTS', {
       params: params
+    })
+  }
+
+  const deleteTags = (store, ids = []) => {
+    return store.dispatch('DELETE_TAGS', {
+      params: {
+        ids: ids
+      }
     })
   }
 
@@ -244,6 +270,7 @@
     name: 'AppEditor',
     components: {
       'alert-panel': AlertPanel,
+      'alert-panel-b': AlertPanelB,
       'app-about': About,
       'app-header': AppHeader,
       'app-tab': Tab,
@@ -271,7 +298,10 @@
         },
         isAlertMultiple: false,
         isCompleted: false,
+        itemsActive: undefined,
+        itemsSelected: [],
         loading: false,
+        needConfirm: false,
         page: DEFAULT_PAGE,
         pagePostsDraft: DEFAULT_PAGE,
         post: {},
@@ -279,6 +309,7 @@
         postType: POST_TYPE.REVIEW,
         postsSelected: [],
         showAlert: false,
+        showAlertB: false,
         showEditor: false,
         showNewsDraftList: false,
         showReviewsDraftList: false,
@@ -294,6 +325,13 @@
     computed: {
       followingByUser () {
         return _.get(this.$store, [ 'state', 'followingByUser' ], [])
+      },
+      itemsSelectedID () {
+        const items = []
+        _.forEach(this.itemsSelected, (item) => {
+          items.push(item.id)
+        })
+        return items
       },
       posts () {
         return _.get(this.$store, [ 'state', 'posts' ], [])
@@ -334,10 +372,24 @@
       .catch(() => this.loading = false)
     },
     methods: {
+      $_editor_addTag (tagName) {
+        this.itemsActive = TAG_ACTIVE.ACTIVE
+        this.needConfirm = false
+        this.loading = true
+        addTags(this.$store, tagName)
+        .then(() => {
+          this.$_editor_updateTagList({ needFetchCount: true })
+          this.showAlertB = true
+        })
+        .catch(() => this.loading = false)
+      },
       $_editor_alertHandler (showAlert, active, isCompleted) {
         this.postActive = active
         this.isCompleted = isCompleted
         this.showAlert = showAlert
+      },
+      $_editor_alertHandlerB (showAlert) {
+        this.showAlertB = showAlertB
       },
       $_editor_deleteMultiple (items) {
         this.action = 'edit'
@@ -376,6 +428,24 @@
             })
         }
       },
+      $_editor_deletePosts () {
+        deletePosts(this.$store, {
+          params: {
+            ids: this.itemsSelectedID,
+            updated_by: _.get(this.$store.state, [ 'profile', 'id' ])
+          }
+        }).then(() => {
+          this.$_editor_updatePostList({ needFetchCount: true })
+          this.needConfirm = false
+        })
+      },
+      $_editor_deleteTags () {
+        deleteTags(this.$store, this.itemsSelectedID)
+          .then(() => {
+            this.$_editor_updateTagList({ needFetchCount: true })
+            this.needConfirm = false
+          })
+      },
       $_editor_followingHandler (resource) {
         fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: resource })
       },
@@ -384,6 +454,7 @@
         this.activePanel = panel
         switch (this.activePanel) {
           case 'records':
+            this.alertType = 'post'
             Promise.all([
               fetchPostsByUser(this.$store, {
                 where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
@@ -396,6 +467,7 @@
             .catch(() => this.loading = false)
             break
           case 'posts':
+            this.alertType = 'post'
             Promise.all([
               fetchPosts(this.$store, {}),
               fetchPostsCount(this.$store, {})
@@ -404,6 +476,7 @@
             .catch(() => this.loading = false)
             break
           case 'tags':
+            this.alertType = 'tag'
             Promise.all([
               fetchTags(this.$store, { stats: true }),
               fetchTagsCount(this.$store)
@@ -412,6 +485,7 @@
             .catch(() => this.loading = false)
             break
           default:
+            this.alertType = 'post'
             Promise.all([
               fetchPostsByUser(this.$store, {
                 where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
@@ -477,6 +551,35 @@
               })
           }
         }
+      },
+      $_editor_publishPosts () {
+        const params = {}
+        params.updated_by = _.get(this.$store.state, [ 'profile', 'id' ])
+        params.ids = this.itemsSelectedID
+        publishPosts(this.$store, params)
+          .then(() => {
+            this.$_editor_updatePostList({ needFetchCount: true })
+            this.needConfirm = false
+          })
+      },
+      $_editor_showAlertB (ids, itemsActive) {
+        this.itemsSelected = []
+        switch (this.alertType) {
+          case 'post':
+            this.itemsActive = itemsActive
+            this.itemsSelected = _.filter(this.posts, (o) => {
+              return _.includes(ids, o.id)
+            })
+            break
+          case 'tag':
+            this.itemsActive = TAG_ACTIVE.DEACTIVE
+            this.itemsSelected = _.filter(this.tags, (o) => {
+              return _.includes(ids, o.id)
+            })
+            break
+        }
+        this.needConfirm = true
+        this.showAlertB = true
       },
       $_editor_showAlert (id) {
         this.post = _.find(this.posts, { 'id': id })
@@ -584,12 +687,17 @@
           addTags(this.$store, tagName)
           .then(() => {
             this.$_editor_updateTagList({ needFetchCount: true })
-            this.alertType = 'tag'
             this.showAlert = true
             this.isCompleted = true
           })
           .catch(() => this.loading = false)
         }
+      },
+      $_editor_showEditor (action, postType, id = '') {
+        this.post = _.find(this.posts, { 'id': id }) || {}
+        this.action = action
+        this.postType = postType
+        this.showEditor = true
       },
       $_editor_textEditorHandler (showEditor, action, postType, id) {
         this.showEditor = showEditor

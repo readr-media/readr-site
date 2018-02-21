@@ -28,6 +28,7 @@
 <script>
   import { POST_ACTIVE } from '../../api/config'
   import {
+    WORDING_ALERTPANEL_ADD_SUCCESSFUL,
     WORDING_ALERTPANEL_AUTHOR,
     WORDING_ALERTPANEL_CANCEL,
     WORDING_ALERTPANEL_CONFIRM,
@@ -37,7 +38,6 @@
     WORDING_ALERTPANEL_POST,
     WORDING_ALERTPANEL_PUBLISH_CONFIRMATION,
     WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL,
-    WORDING_ALERTPANEL_SAVE_SUCCESSFUL,
     WORDING_ALERTPANEL_STATUS,
     WORDING_ALERTPANEL_TAG,
     WORDING_ALERTPANEL_TITLE,
@@ -87,6 +87,7 @@
           active: POST_ACTIVE,
         },
         wording: {
+          WORDING_ALERTPANEL_ADD_SUCCESSFUL,
           WORDING_ALERTPANEL_AUTHOR,
           WORDING_ALERTPANEL_CANCEL,
           WORDING_ALERTPANEL_CONFIRM,
@@ -96,7 +97,6 @@
           WORDING_ALERTPANEL_POST,
           WORDING_ALERTPANEL_PUBLISH_CONFIRMATION,
           WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL,
-          WORDING_ALERTPANEL_SAVE_SUCCESSFUL,
           WORDING_ALERTPANEL_STATUS,
           WORDING_ALERTPANEL_TAG,
           WORDING_ALERTPANEL_TITLE,
@@ -114,7 +114,7 @@
               } else if (this.active === POST_ACTIVE.ACTIVE) {
                 return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL}！`
               } else if (this.action === 'add') {
-                return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_SAVE_SUCCESSFUL}！`
+                return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_ADD_SUCCESSFUL}！`
               } else if (this.action === 'edit' && this.active === POST_ACTIVE.DRAFT) {
                 return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_DRAFT}${this.wording.WORDING_ALERTPANEL_UPDATE_SUCCESSFUL}！`
               } else if (this.action === 'edit' && this.active === POST_ACTIVE.PENDING) {
@@ -122,7 +122,7 @@
               }
             case 'tag':
               if (this.action === 'add') {
-                return `${this.wording.WORDING_ALERTPANEL_TAG}${this.wording.WORDING_ALERTPANEL_SAVE_SUCCESSFUL}！`
+                return `${this.wording.WORDING_ALERTPANEL_TAG}${this.wording.WORDING_ALERTPANEL_ADD_SUCCESSFUL}！`
               }
           }
         }

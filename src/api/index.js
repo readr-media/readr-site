@@ -160,6 +160,15 @@ export function deletePostSelf (id) {
   return _doDelete(url)
 }
 
+export function deleteTags ({ params }) {
+  let url = `${host}/api/tags`
+  const query = _buildQuery(params)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }
+  return _doDelete(url)
+}
+
 export function fetchCommentCount ({ params }) {
   return new Promise((resolve) => {
     const url = `${host}/api/comment/count?asset_url=${params.assetUrl}`

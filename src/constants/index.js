@@ -104,18 +104,21 @@ export const WORDING_POSTLIST_ACTIVE_DRAFT = '草稿'
 export const WORDING_POSTLIST_DRAFT_RECORD = '未提交評論記錄'
 
 // Post editor
+export const WORDING_POSTEDITOR_DELETE = '刪除'
 export const WORDING_POSTEDITOR_EDITOR = '編輯器'
 export const WORDING_POSTEDITOR_INPUT_TITLE = '輸入標題'
 export const WORDING_POSTEDITOR_LINK = '新聞連結'
-export const WORDING_POSTEDITOR_PUBLISH_DATE = '發布日期'
-export const WORDING_POSTEDITOR_OG_TITLE = '分享標題'
 export const WORDING_POSTEDITOR_OG_DESCRIPTION = '分享說明'
 export const WORDING_POSTEDITOR_OG_IMAGE = '分享縮圖'
-export const WORDING_POSTEDITOR_UPLOAD = '上傳'
-export const WORDING_POSTEDITOR_DELETE = '刪除'
-export const WORDING_POSTEDITOR_SAVE_DRAFT = '存成草稿'
-export const WORDING_POSTEDITOR_SAVE_PENDING = '提交'
+export const WORDING_POSTEDITOR_OG_TITLE = '分享標題'
 export const WORDING_POSTEDITOR_PUBLISH = '發布'
+export const WORDING_POSTEDITOR_PUBLISH_DATE = '發布日期'
+export const WORDING_POSTEDITOR_RETURN_TO_DRAFT = '退回草稿'
+export const WORDING_POSTEDITOR_SAVE = '儲存'
+export const WORDING_POSTEDITOR_SAVE_DRAFT = '儲存草稿'
+export const WORDING_POSTEDITOR_SAVE_PENDING = '提交'
+export const WORDING_POSTEDITOR_UPLOAD = '上傳'
+
 // Profile editor use
 export const WORDING_PROFILEEDIT_NICKNAME = '暱稱'
 export const WORDING_PROFILEEDIT_EMAIL = 'Email'
@@ -150,6 +153,8 @@ export const WORDING_TAB_NEWS_RECORD = '新聞記錄'
 // Tag List
 export const WORDING_TAGLIST_ADD = '新增'
 export const WORDING_TAGLIST_ADD_PLACEHOLDER = '輸入欲新增之關鍵字詞'
+export const WORDING_TAGLIST_CANCEL = '取消'
+export const WORDING_TAGLIST_CONFIRM = '確定'
 export const WORDING_TAGLIST_DELETE = '刪除'
 export const WORDING_TAGLIST_EDIT = '修改'
 export const WORDING_TAGLIST_NEWS_COUNT = '相關新聞數'
@@ -159,6 +164,7 @@ export const WORDING_TAGLIST_TAG = '關鍵字詞'
 export const WORDING_TAGLIST_UPDATE_AT = '更新時間'
 
 // Alert Paenl
+export const WORDING_ALERTPANEL_ADD_SUCCESSFUL = '已新增'
 export const WORDING_ALERTPANEL_AUTHOR = '作者'
 export const WORDING_ALERTPANEL_CANCEL = '取消'
 export const WORDING_ALERTPANEL_CONFIRM = '確定'
@@ -168,14 +174,10 @@ export const WORDING_ALERTPANEL_DRAFT = '草稿'
 export const WORDING_ALERTPANEL_POST = '文章'
 export const WORDING_ALERTPANEL_PUBLISH_CONFIRMATION = '你確定要發布嗎'
 export const WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL = '已發布'
-export const WORDING_ALERTPANEL_SAVE_SUCCESSFUL = '已儲存'
 export const WORDING_ALERTPANEL_STATUS = '狀態'
-export const WORDING_ALERTPANEL_TAG = '標籤'
+export const WORDING_ALERTPANEL_TAG = '關鍵字'
 export const WORDING_ALERTPANEL_TITLE = '標題'
 export const WORDING_ALERTPANEL_UPDATE_SUCCESSFUL = '已更新'
-
-
-
 
 // Agreement Use
 export const WORDING_AGREEMENT_TERMS_AND_SERVICE = '會員服務條款'
