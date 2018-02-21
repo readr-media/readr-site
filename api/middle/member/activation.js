@@ -73,7 +73,7 @@ const activate = (req, res) => {
             `)
         }
       } else {
-        res.status(200).send(`<script>location.replace('/')</script>`)
+        res.status(200).send(`Go Home Page`)
       }
     }
   })
