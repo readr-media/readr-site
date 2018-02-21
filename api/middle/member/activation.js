@@ -51,9 +51,7 @@ const activate = (req, res) => {
           activateMem(member).then(({ err: e, res: r }) => {
             if (!e && r) {
               buildUserForTalk(member).then(() => {
-                res.status(200).send(`
-                  <script>location.replace('/login')</script>
-                `)
+                res.redirect(302, '/login')
               })
             } else {
               console.log(r.status)
@@ -67,13 +65,10 @@ const activate = (req, res) => {
           })
           const cookies = new Cookies( req, res, {} )
           cookies.set('initmember', tokenForActivation, { httpOnly: false, expires: new Date(Date.now() + 24 * 60 * 60 * 1000) })      
-          res.status(200)
-            .send(`
-              <script>location.replace('/initmember')</script>
-            `)
+          res.redirect(302, '/initmember')
         }
       } else {
-        res.status(200).send(`Go Home Page`)
+        res.redirect(302, '/')
       }
     }
   })
