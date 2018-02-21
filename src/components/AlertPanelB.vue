@@ -168,7 +168,7 @@
         }
       },
       $_alertPanel_getPostAuthor (post) {
-        return _.get(post, [ 'author', 'nickname' ])
+        return _.get(post, [ 'author', 'nickname' ]) || _.get(post, [ 'author' ])
       }
     }
   }

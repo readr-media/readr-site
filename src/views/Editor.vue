@@ -8,7 +8,7 @@
       <main class="main-container">
         <app-about :profile="profile"></app-about>
         <control-bar
-          @addNews="$_editor_textEditorHandler(true, 'add', config.type.NEWS)"
+          @addNews="$_editor_textEditorHandler(true, 'add', config.type.NEWS)" 
           @addReview="$_editor_textEditorHandler(true, 'add', config.type.REVIEW)"
           @editNews="$_editor_showDraftList(config.type.NEWS)"
           @editReview="$_editor_showDraftList(config.type.REVIEW)"
@@ -83,24 +83,13 @@
             :post.sync="post"
             :showLightBox="showEditor"
             :type="postType"
-            @closeLightBox="$_editor_textEditorHandler(false)"
-            @deletePost="$_editor_showAlert"
+            @closeLightBox="$_editor_textEditorHandler(false)" 
+            @deletePost="$_editor_showAlert" 
             @showAlert="$_editor_alertHandler">
           </post-panel>
         </base-light-box>
         <base-light-box :isAlert="true" :showLightBox.sync="showAlert">
           <alert-panel
-            :active="itemsActive"
-            :items="itemsSelected"
-            :needConfirm="needConfirm"
-            :showLightBox="showAlert"
-            :type="alertType"
-            @closeAlert="$_editor_alertHandlerB(false)"
-            @deletePosts="$_editor_deletePosts"
-            @deleteTags="$_editor_deleteTags"
-            @publishPosts="$_editor_publishPosts">
-          </alert-panel>
-          <!-- <alert-panel
             :action="action"
             :active="postActive"
             :isCompleted="isCompleted"
@@ -113,7 +102,20 @@
             @closeEditor="$_editor_textEditorHandler(false)"
             @deletePost="$_editor_deletePost"
             @publishPost="$_editor_publishPost">
-          </alert-panel> -->
+          </alert-panel>
+        </base-light-box>
+        <base-light-box :isAlert="true" :showLightBox.sync="showAlertB">
+          <alert-panel-b
+            :active="itemsActive"
+            :items="itemsSelected"
+            :needConfirm="needConfirm"
+            :showLightBox="showAlert"
+            :type="alertType"
+            @closeAlert="$_editor_alertHandlerB(false)"
+            @deletePosts="$_editor_deletePosts"
+            @deleteTags="$_editor_deleteTags"
+            @publishPosts="$_editor_publishPosts">
+          </alert-panel-b>
         </base-light-box>
       </main>
     </div>
@@ -142,6 +144,7 @@
   import PostListDetailed from '../components/PostListDetailed.vue'
   import PostListInTab from '../components/PostListInTab.vue'
   import PostPanel from '../components/PostPanel.vue'
+  import PostPanelB from '../components/PostPanelB.vue'
   import Tab from '../components/Tab.vue'
   import TagList from '../components/TagList.vue'
   import TheControlBar from '../components/TheControlBar.vue'
@@ -266,7 +269,8 @@
   export default {
     name: 'AppEditor',
     components: {
-      'alert-panel': AlertPanelB,
+      'alert-panel': AlertPanel,
+      'alert-panel-b': AlertPanelB,
       'app-about': About,
       'app-header': AppHeader,
       'app-tab': Tab,
@@ -305,6 +309,7 @@
         postType: POST_TYPE.REVIEW,
         postsSelected: [],
         showAlert: false,
+        showAlertB: false,
         showEditor: false,
         showNewsDraftList: false,
         showReviewsDraftList: false,
@@ -374,7 +379,7 @@
         addTags(this.$store, tagName)
         .then(() => {
           this.$_editor_updateTagList({ needFetchCount: true })
-          this.showAlert = true
+          this.showAlertB = true
         })
         .catch(() => this.loading = false)
       },
@@ -384,7 +389,7 @@
         this.showAlert = showAlert
       },
       $_editor_alertHandlerB (showAlert) {
-        this.showAlert = showAlert
+        this.showAlertB = showAlertB
       },
       $_editor_deleteMultiple (items) {
         this.action = 'edit'
@@ -574,7 +579,7 @@
             break
         }
         this.needConfirm = true
-        this.showAlert = true
+        this.showAlertB = true
       },
       $_editor_showAlert (id) {
         this.post = _.find(this.posts, { 'id': id })
@@ -687,6 +692,12 @@
           })
           .catch(() => this.loading = false)
         }
+      },
+      $_editor_showEditor (action, postType, id = '') {
+        this.post = _.find(this.posts, { 'id': id }) || {}
+        this.action = action
+        this.postType = postType
+        this.showEditor = true
       },
       $_editor_textEditorHandler (showEditor, action, postType, id) {
         this.showEditor = showEditor

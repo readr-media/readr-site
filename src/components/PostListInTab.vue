@@ -47,7 +47,8 @@
     props: {
       posts: {
         type: Array,
-        required: true
+        default: []
+        // required: true
       }
     },
     data () {

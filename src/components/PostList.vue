@@ -13,13 +13,14 @@
             <button
               class="postList__btn postList__btn--multiple"
               :disabled="!canPublishPosts"
-              v-text="wording.WORDING_POSTLIST_PUBLISH"
-              @click="$_postList_publishPosts">
+              @click="$_postList_publishPosts"
+              v-text="wording.WORDING_POSTLIST_PUBLISH">
             </button>
           </th>
           <th class="postList__delete postList--center">
             <button
               class="postList__btn postList__btn--multiple"
+              :disabled="!canDeletePosts"
               @click="$_postList_deletePosts"
               v-text="wording.WORDING_POSTLIST_DELETE">
             </button>
@@ -112,12 +113,15 @@
       }
     },
     computed: {
+      canDeletePosts () {
+        return this.checkedIems.length > 0
+      },
       canPublishPosts () {
         const items = _.filter(this.checkedIems, (item) => {
           const post = _.find(this.posts, { id: item })
           return _.get(post, [ 'active' ]) !== POST_ACTIVE.ACTIVE
         })
-        return items.length !== 0
+        return items.length > 0
       },
       totalPages () {
         return Math.ceil(_.get(this.$store, [ 'state', 'postsCount' ], 0) / this.maxResult)
@@ -132,11 +136,7 @@
         this.$emit('deletePosts', this.checkedIems, POST_ACTIVE.DEACTIVE)
       },
       $_postList_editPost (id, type) {
-        if (type === POST_TYPE.NEWS) {
-          this.$emit('editPost', true, 'edit', POST_TYPE.NEWS, id)
-        } else {
-          this.$emit('editPost', true, 'edit', POST_TYPE.REVIEW, id)
-        }
+        this.$emit('editPost', 'edit', type, id)
       },
       $_postList_getAuthorId (post) {
         return _.get(post, [ 'author', 'nickname' ])
@@ -268,8 +268,9 @@
       font-size 13px
       text-align center
       line-height 20px
-      background-color blue
+      background-color #4280A2
       border-radius 50%
+      user-select none
   &__title
     padding-right 10px
     cursor pointer
