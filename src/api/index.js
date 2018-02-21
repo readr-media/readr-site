@@ -247,6 +247,15 @@ export function getMembers ({ params }) {
   return _doFetchStrict(url, {})
 }
 
+export function getPublicMembers ({ params }) {
+  let url = `${host}/api/public-members`
+  const query = _buildQuery(params)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }
+  return _doFetch(url)
+}
+
 export function getMeta (targetUrl) {
   let url = `${host}/api/meta`
   return _doPost(url, { url: targetUrl })

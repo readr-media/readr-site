@@ -93,7 +93,7 @@ const basicDeleteRequst = (url, req, res, cb) => {
   })
 }
 
-const fetchProfile = (url, req) => {
+const fetchPromise = (url, req) => {
   return new Promise((resolve, reject) => {
     superagent
     .get(`${apiHost}${url}`)
@@ -104,32 +104,6 @@ const fetchProfile = (url, req) => {
         reject(err)
         console.error(`error during fetch data from : ${url}`)
         console.error(err) 
-      }
-    })
-  })
-}
-const fetchPublicPost = (url, req) => {
-  return new Promise((resolve, reject) => {
-    superagent
-    .get(`${apiHost}${url}`)
-    .end((err, res) => {
-      if (!err && res) {
-        resolve(camelizeKeys(res.body))
-      } else {
-        reject(err)
-      }
-    })
-  })
-}
-const fetchPublicProjectsList = (url, req) => {
-  return new Promise((resolve, reject) => {
-    superagent
-    .get(`${apiHost}${url}`)
-    .end((err, res) => {
-      if (!err && res) {
-        resolve(camelizeKeys(res.body))
-      } else {
-        reject(err)
       }
     })
   })
@@ -247,7 +221,7 @@ router.get('/profile', [ authVerify ], (req, res) => {
   const targetProfile = req.user.id
   const url = `/member/${targetProfile}`
   Promise.all([
-    fetchProfile(url, req),
+    fetchPromise(url, req),
     fetchPermissions()
   ]).then((response) => {
     const profile = response[ 0 ][ 'items' ][ 0 ]
@@ -276,7 +250,7 @@ router.get('/status', authVerify, function(req, res) {
 
 router.get('/public-posts', (req, res) => {
   const url = req.url.replace('public-posts', 'posts')
-  fetchPublicPost(url, req)
+  fetchPromise(url, req)
   .then((response) => {
     res.status(200).send(response)
   })
@@ -293,8 +267,31 @@ router.get('/public-posts', (req, res) => {
   })
 })
 
+router.get('/public-members', (req, res, next) => {
+  if ('custom_editor' in req.query) {
+    const url = req.url.replace('public-members', 'members')
+    fetchPromise(url, req)
+    .then((response) => {
+      res.status(200).send(response)
+    })
+    .catch((err) => {
+      if (err.status === 404) {
+        res.status(404).send(err)
+        console.error(`public member list not found from : ${url}`)
+        console.error(err)
+      } else if (err.status === 500) {
+        res.status(500).send(err)
+        console.error(`error during fetch data from : ${url}`)
+        console.error(err)
+      }
+    })
+  } else {
+    res.status(403).send('Forbidden. No right to access.').end()
+  }
+})
+
 router.get('/project/list', (req, res) => {
-  fetchPublicProjectsList(req.url, req)
+  fetchPromise(req.url, req)
   .then((response) => {
     res.status(200).send(response)
   })

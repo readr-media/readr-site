@@ -79,8 +79,8 @@ export default {
 
 <style lang="stylus" scoped>
 .home-article-aside
-  width 100%
-  // height 204px
+  width calc(355px - 15px - 15px)
+  margin 0 15px
   background-color white
   padding 15px 0px 12.5px 0px
   border-bottom .5px solid #979797

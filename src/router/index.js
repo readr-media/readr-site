@@ -20,6 +20,7 @@ const Login = () => import('../views/Login.vue')
 const Post = () => import('../views/Post.vue')
 const SetPassword = () => import('../views/SetPassword.vue')
 const ProjectsList = () => import('../views/ProjectsList.vue')
+const Editors = () => import('../views/Editors.vue')
 
 const router = new Router({
   mode: 'history',
@@ -34,7 +35,8 @@ const router = new Router({
     { path: '/login', component: Login },
     { path: '/initmember', component: SetPassword },
     { path: '/post/:id', component: Post },
-    { path: '/projects', component: ProjectsList }
+    { path: '/projects', component: ProjectsList },
+    { path: '/editors', component: Editors }
   ]
 })
 

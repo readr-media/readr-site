@@ -18,6 +18,7 @@ import {
   getFollowingByResource,
   getFollowingByUser,
   getMembers,
+  getPublicMembers,
   getMeta,
   getPosts,
   getPostsCount,
@@ -122,6 +123,15 @@ export default {
           commit('SET_CUSTOM_EDITORS', { members: body })
         } else {
           commit('SET_MEMBERS', { members: body })
+        }
+      }
+    })
+  },
+  GET_PUBLIC_MEMBERS: ({ commit, dispatch, state }, { params }) => {
+    return getPublicMembers({ params }).then(({ status, body }) => {
+      if (status === 200) {
+        if (params.custom_editor) {
+          commit('SET_CUSTOM_EDITORS', { members: body })
         }
       }
     })

@@ -12,7 +12,8 @@ export function createStore () {
       'customEditors': [],
       'followingByResource': {
         'post': [],
-        'project': []
+        'project': [],
+        'member': []
       },
       'followingByUser': [],
       'isLoggedIn': false,
