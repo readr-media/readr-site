@@ -259,11 +259,14 @@ router.get('/public-posts', (req, res) => {
 })
 
 router.get('/public-members', (req, res, next) => {
-  if ('custom_editor' in req.query) {
+  if ('custom_editor' in req.query || 'role' in req.query) {
     const url = req.url.replace('public-members', 'members')
     fetchPromise(url, req)
     .then((response) => {
-      res.status(200).send(response)
+      // res.status(200).send(response)
+      res.status(200).json({
+        'items': response['items'].map((object) => _.pick(object, [ 'id', 'nickname', 'description', 'profileImage']))
+      })
     })
     .catch((err) => {
       if (err.status === 404) {

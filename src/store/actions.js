@@ -1,4 +1,6 @@
+import _ from 'lodash'
 import { POST_ACTIVE, POST_TYPE } from '../../api/config'
+import { ROLE_MAP } from '../../src/constants'
 import {
   addMember,
   addPost,
@@ -134,6 +136,8 @@ export default {
       if (status === 200) {
         if (params.custom_editor) {
           commit('SET_CUSTOM_EDITORS', { members: body })
+        } else if (params.role) {
+          commit('SET_PUBLIC_MEMBERS', { members: body, role: _.find(ROLE_MAP, { key: params.role }).value })
         }
       }
     })

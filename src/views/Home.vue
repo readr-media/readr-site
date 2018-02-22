@@ -31,14 +31,14 @@
       </aside>
       <main class="homepage__main">
         <div class="homepage__list-main">
-          <HomeListMain/>
+          <HomeArticleMain v-for="post in postsLatest" :articleData="post" :key="post.id"/>
         </div>
         <div class="homepage__list-aside">
           <AppTitledList :listTitle="'議題'">
             <HomeProjectAside/>
           </AppTitledList>
           <AppTitledList :listTitle="'焦點'">
-            <HomeArticleAside v-for="post in posts" :articleData="post" :key="post.id"/> 
+            <HomeArticleAside v-for="post in postsHot" :articleData="post" :key="post.id"/> 
           </AppTitledList>
         </div>
       </main>
@@ -49,11 +49,12 @@
 <script>
   // import { SECTIONS_DEFAULT } from '../constants'
   import { removeToken } from '../util/services'
+  import { isScrollBarReachBottom } from '../util/comm'
   // import AppHeader from '../components/AppHeader.vue'
   import AppAsideNav from '../components/AppAsideNav.vue'
-  import HomeListMain from '../components/home/HomeListMain.vue'
   import AppTitledList from '../components/AppTitledList.vue'
   import HomeProjectAside from '../components/home/HomeProjectAside.vue'
+  import HomeArticleMain from '../components/home/HomeArticleMain.vue'
   import HomeArticleAside from '../components/home/HomeArticleAside.vue'
 
   const fetchPosts = (store, { mode, category, max_result, page, sort }) => {
@@ -92,16 +93,32 @@
     components: {
       // 'app-header': AppHeader,
       AppAsideNav,
-      HomeListMain,
       AppTitledList,
       HomeProjectAside,
+      HomeArticleMain,
       HomeArticleAside
+    },
+    watch: {
+      isReachBottom(isReachBottom) {
+        if (isReachBottom) {
+          this.loadmoreLatest()
+        }
+      }
+    },
+    data () {
+      return {
+        isReachBottom: false,
+        currentPageLatest: 1
+      } 
     },
     computed: {
       // sections () {
       //   return SECTIONS_DEFAULT
       // }
-      posts () {
+      postsLatest () {
+        return this.$store.state.publicPosts.items
+      },
+      postsHot () {
         return this.$store.state.publicPostsHot.items
       }
     },
@@ -109,7 +126,27 @@
     methods: {
       logout () {
         removeToken()
-      }
+      },
+      loadmoreLatest () {
+        fetchPosts(this.$store, { mode: 'update', max_result: 10, page: this.currentPageLatest + 1 })
+        .then((res) => {
+          this.currentPageLatest += 1
+          if (this.$store.state.isLoggedIn) {
+            const ids = res.items.map(post => post.id)
+            fetchFollowing(this.$store, {
+              mode: 'update',
+              resource: 'post',
+              ids: ids
+            })
+          }
+        })
+        .catch((res) => {
+          if (res === 'not found') {
+            console.log('auto loadmore reach the end')
+          }
+        })
+      },
+      isScrollBarReachBottom
     },
     beforeMount () {
       // console.log('currentUser', currentUser())
@@ -119,7 +156,7 @@
           mode: 'set',
           category: 'latest',
           max_result: 10,
-          page: 1,
+          page: this.currentPageLatest,
           sort: '-updated_at'
         }),
         fetchPosts(this.$store, {
@@ -148,6 +185,11 @@
           })
         }
       })
+    },
+    mounted () {
+      window.addEventListener('scroll', () => {
+        this.isReachBottom = this.isScrollBarReachBottom()
+      })
     }
   }
 </script>
@@ -172,6 +214,8 @@
       display flex
       justify-content flex-start
       align-items flex-start
+    &__list-main
+      max-width 650px
     &__list-aside
       section
         &:nth-child(2)
