@@ -35,9 +35,7 @@
             <p class="editor-writing-source__cite" v-if="articleData.linkName">出處：{{ articleData.linkName }}</p>
           </div>
         </div>
-        <figure class="editor-writing-source__figure">
-          <img :src="articleData.linkImage" alt="source-fig">
-        </figure>
+        <img class="editor-writing-source__figure" :src="articleData.linkImage" alt="source-fig">
       </a>
       <AppArticleNav :postId="this.articleData.id" :commentCount="commentCount"/>
     </div>
@@ -218,6 +216,7 @@ export default {
     border solid 0.5px #d3d3d3
     padding 8px 15px 5px 19.5px
     display flex
+    justify-content space-between
     margin-bottom 7.5px
     &__content
       width 350.5px
@@ -236,12 +235,11 @@ export default {
         margin 5px 0 0 0
         text-align justify
     &__figure
-      margin 0 0 0 15px
+      margin 0
       display flex
-      align-items center
-      img[alt=source-fig]
-        width 150px
-        height 78.5px
+      align-self center
+      width 150px
+      height 78.5px
     &__cite
       font-size 14px
       font-weight 300

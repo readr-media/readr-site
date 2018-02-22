@@ -1,12 +1,12 @@
 <template>
-  <section class="home-list-aside">
-    <div class="home-list-aside__title">
+  <section class="app-titled-list">
+    <div class="app-titled-list__title">
       <div class="plus"></div>
       <h1 v-text="listTitle"></h1>
     </div>
-    <div :class="`home-list-aside__article-container${paddingLeftRight ? '' : '--none-pr-pl'}`">
+    <ul class="app-titled-list__article-container">
       <slot></slot>
-    </div>
+    </ul>
   </section>
 </template>
 
@@ -14,23 +14,18 @@
 export default {
   props: {
     listTitle: {
-      type: String
-    },
-    paddingLeftRight: {
-      type: Boolean
+      type: String,
+      required: true
     }
   }
 }
 </script>
 
 <style lang="stylus" scoped>
-.home-list-aside
-  width 355px
+.app-titled-list
   margin-left 35px
   background-color white
-  // padding 5px 15px 22.5px 15px
   padding 6px 0px 12px 0px
-  // height auto
   &__title
     display flex
     align-items center
@@ -70,13 +65,7 @@ export default {
       font-size 18px
       font-weight 600
       margin 0
-      // &::before
-      //   content '＋'
-      //   font-weight bold
-      //   color #ddcf21
-      //   margin-right 7.5px
   &__article-container
-    padding 0 15px
-    &--none-pr-pl
-      padding 0 0
+    margin 0
+    padding 0
 </style>

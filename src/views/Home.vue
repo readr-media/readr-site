@@ -34,12 +34,12 @@
           <HomeListMain/>
         </div>
         <div class="homepage__list-aside">
-          <HomeListAside :listTitle="'議題'" :paddingLeftRight="false">
+          <AppTitledList :listTitle="'議題'">
             <HomeProjectAside/>
-          </HomeListAside>
-          <HomeListAside :listTitle="'焦點'" :paddingLeftRight="true">
+          </AppTitledList>
+          <AppTitledList :listTitle="'焦點'">
             <HomeArticleAside v-for="post in posts" :articleData="post" :key="post.id"/> 
-          </HomeListAside>
+          </AppTitledList>
         </div>
       </main>
     </div>
@@ -52,7 +52,7 @@
   // import AppHeader from '../components/AppHeader.vue'
   import AppAsideNav from '../components/AppAsideNav.vue'
   import HomeListMain from '../components/home/HomeListMain.vue'
-  import HomeListAside from '../components/home/HomeListAside.vue'
+  import AppTitledList from '../components/AppTitledList.vue'
   import HomeProjectAside from '../components/home/HomeProjectAside.vue'
   import HomeArticleAside from '../components/home/HomeArticleAside.vue'
 
@@ -93,7 +93,7 @@
       // 'app-header': AppHeader,
       AppAsideNav,
       HomeListMain,
-      HomeListAside,
+      AppTitledList,
       HomeProjectAside,
       HomeArticleAside
     },

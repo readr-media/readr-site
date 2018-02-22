@@ -55,15 +55,7 @@ export default {
   },
   computed: {
     isFollow () {
-      if (!this.$store.state.isLoggedIn) {
-        return false
-      } else {
-        if (this.postFollowers.indexOf(this.$store.state.profile.id) !== -1) {
-          return true
-        } else {
-          return false
-        }
-      }
+      return this.$store.state.isLoggedIn && this.postFollowers.indexOf(this.$store.state.profile.id) !== -1
     },
     postFollowers () {
       if (this.$store.state.isLoggedIn) {
