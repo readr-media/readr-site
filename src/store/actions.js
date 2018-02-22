@@ -31,6 +31,8 @@ import {
   publishAction,
   publishPosts,
   register,
+  resetPwd,
+  resetPwdEmail,
   setupBasicProfile,
   updateMember,
   updatePassword,
@@ -277,6 +279,12 @@ export default {
   },
   REGISTER: ({ commit, dispatch, state }, { params, token }) => {
     return register(params, token)
+  },
+  RESET_PWD_EMAIL: ({ commit, dispatch, state }, { params, token }) => {
+    return resetPwdEmail(params, token)
+  },
+  RESET_PWD: ({ commit, dispatch, state }, { params }) => {
+    return resetPwd(params)
   },
   SETUP_BASIC_PROFILE: ({ commit, dispatch, state }, { params }) => {
     return setupBasicProfile({ params })

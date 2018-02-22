@@ -2,11 +2,13 @@
   <div class="login-panel">
     <div class="login-panel__left">
       <div class="title">
-        <span class="login" :class="{ active: isLoginTabAcitve }" v-text="wording['WORDING_LOGIN']" @click="tabChoose('login')"></span>
-        <span class="register" :class="{ active: !isLoginTabAcitve }" v-text="wording['WORDING_REGISTER']" @click="tabChoose('register')"></span>
+        <span class="login" :class="{ active: isLoginTabAcitve && !isGoingRecoverPwd }" v-text="wording['WORDING_LOGIN']" @click="tabChoose('login')"></span>
+        <span class="register" :class="{ active: !isLoginTabAcitve && !isGoingRecoverPwd }" v-text="wording['WORDING_REGISTER']" @click="tabChoose('register')"></span>
+        <span class="forgot" :class="{ active: isGoingRecoverPwd }" v-if="isGoingRecoverPwd" v-text="wording['WORDING_FORGET_PASSWORD']" @click="tabChoose('recoverpwd')"></span>
       </div>
       <div class="container">
-        <Login v-if="isLoginTabAcitve"></Login>
+        <RecoverPassword v-if="isGoingRecoverPwd"></RecoverPassword>
+        <Login v-else-if="isLoginTabAcitve" @goRecoverPwd="goRecoverPwd"></Login>
         <Register v-else></Register>
       </div>
     </div>
@@ -22,12 +24,13 @@
   </div>
 </template>
 <script>
-  import { WORDING_LOGIN, WORDING_LOGIN_COMMUNITY, WORDING_REGISTER } from '../constants'
-  import { consoleLogOnDev } from '../util/comm'
-  import FacebookLogin from './login/FacebookLogin.vue'
-  import GooglePlusLogin from './login/GooglePlusLogin.vue'
-  import Login from './login/Login.vue'
-  import Register from './register/Register.vue'
+  import { WORDING_LOGIN, WORDING_LOGIN_COMMUNITY, WORDING_REGISTER, WORDING_FORGET_PASSWORD } from 'src/constants'
+  import { consoleLogOnDev } from 'src/util/comm'
+  import FacebookLogin from 'src/components/login/FacebookLogin.vue'
+  import GooglePlusLogin from 'src/components/login/GooglePlusLogin.vue'
+  import Login from 'src/components/login/Login.vue'
+  import RecoverPassword from 'src/components/login/RecoverPassword.vue'
+  import Register from 'src/components/register/Register.vue'
 
   const getDisposableToken = (store) => {
     return store.dispatch('DISPOSABLE_TOKEN', {
@@ -40,27 +43,39 @@
       FacebookLogin,
       GooglePlusLogin,
       Login,
+      RecoverPassword,
       Register
     },
     data () {
       return {
         isLoginTabAcitve: true,
+        isGoingRecoverPwd: false,
         wording: {
           WORDING_LOGIN,
           WORDING_LOGIN_COMMUNITY,
-          WORDING_REGISTER
+          WORDING_REGISTER,
+          WORDING_FORGET_PASSWORD
         }
       }
     },
     name: 'login-panel',
     methods: {
+      goRecoverPwd () {
+        this.isGoingRecoverPwd = true
+      },
       tabChoose (targ) {
         switch (targ) {
           case 'login':
             this.isLoginTabAcitve = true
+            this.isGoingRecoverPwd = false
             break
           case 'register':
             this.isLoginTabAcitve = false
+            this.isGoingRecoverPwd = false
+            break
+          case 'recoverpwd':
+            this.isLoginTabAcitve = false
+            this.isGoingRecoverPwd = false
             break
         }
       }

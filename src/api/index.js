@@ -1,9 +1,10 @@
 import { camelizeKeys } from 'humps'
 import { getHost } from '../util/comm'
-import { delInitMemToken, getToken, getInitMemToken, saveToken } from '../util/services'
+import { delInitMemToken, getToken, getSetupToken, saveToken } from '../util/services'
 import _ from 'lodash'
 import qs from 'qs'
 
+const debug = require('debug')('CLIENT:src:api')
 const superagent = require('superagent')
 const host = getHost()
 
@@ -66,14 +67,15 @@ function _doFetchStrict (url, { cookie }) {
   })
 }
 
-function _doPost (url, params) {
+function _doPost (url, params, token) {
   return new Promise((resolve, reject) => {
     superagent
       .post(url)
-      .set('Authorization', `Bearer ${getToken()}`)
+      .set('Authorization', `Bearer ${token || getToken()}`)
       .send(params)
       .end(function (err, res) {
         if (err) {
+          debug(err)
           reject(err)
         } else {
           resolve({ status: res.status, body: camelizeKeys(res.body) })
@@ -388,6 +390,20 @@ export function register (params, token) {
   })
 }
 
+export function resetPwd (params) {
+  const url = `${host}/api/recoverpwd/set`
+  const token = getSetupToken()
+  if (!token) {
+    return Promise.resolve({ status: 403 })
+  }
+  return _doPost(url, params, token)
+}
+
+export function resetPwdEmail (params, token) {
+  const url = `${host}/api/recoverpwd`
+  return _doPost(url, params, token)
+}
+
 export function addMember (params, token) {
   const url = `${host}/api/register/admin`
   params.register_mode = 'ordinary'
@@ -400,27 +416,12 @@ export function addMember (params, token) {
 }
 
 export function setupBasicProfile ({ params }) {
-  return new Promise((resolve) => {
-    const token = getInitMemToken()
-    if (!token) {
-      return resolve({ status: 403 })
-    }
-    const url = `${host}/api/initmember`
-    superagent
-      .post(url)
-      .set('Authorization', `Bearer ${token}`)
-      .send(params)
-      .end(function (err, res) {
-        if (err) {
-          reject({ status: res.status, err: res.body.Error })
-        } else {
-          if (res.status === 200) {
-            delInitMemToken()
-          }
-          resolve({ status: res.status })
-        }
-      })
-  })
+  const url = `${host}/api/initmember`
+  const token = getSetupToken()
+  if (!token) {
+    return Promise.resolve({ status: 403 })
+  }
+  return _doPost(url, params, token)
 }
 
 export function updateMember ({ params, type }) {

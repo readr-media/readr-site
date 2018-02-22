@@ -1,9 +1,11 @@
 const { buildUserForTalk } = require('../talk')
+const { fetchMem } = require('./comm')
 const _ = require('lodash')
 const Cookies = require('cookies')
 const config = require('../../config')
 const debug = require('debug')('READR:api:member:activation')
 const express = require('express')
+const jwtService = require('../../service.js')
 const router = express.Router()
 const superagent = require('superagent')
 
@@ -25,17 +27,10 @@ const activateMem = (member) => new Promise((resolve) => {
     })
 })
 
-const fetchMem = (member) => new Promise((resolve) => {
-  superagent
-  .get(`${apiHost}/member/${member.id}`)
-  .end((err, res) => {
-    resolve({ err, res })
-  })
-})
-
 const activate = (req, res) => {
   debug('req.url', req.url)
   const decoded = req.decoded
+
   fetchMem(decoded).then(({ err, res: data }) => {
     debug('Fecth member data sucessfully.')
     const member = _.get(data, [ 'body', '_items', 0 ])
@@ -45,8 +40,9 @@ const activate = (req, res) => {
       res.status(data.status).json(err)
     } else {
       debug('data', _.get(data, [ 'body', '_items', 0, 'active' ]))
+      debug('decoded.type', decoded.type)
       if (_.get(member, [ 'active' ]) === 0) {
-        if (decoded.way !== 'admin') {
+        if (decoded.type !== 'init') {
           debug('About to send req to activate mem')
           activateMem(member).then(({ err: e, res: r }) => {
             if (!e && r) {
@@ -60,12 +56,15 @@ const activate = (req, res) => {
             }
           })
         } else {
+          debug('Redirect user to fill in basic info.')
           const tokenForActivation = jwtService.generateActivateAccountJwt({
-            id: decoded.id, role: decoded.role || 1, way: 'initmember', secret: currSecret
+            id: decoded.id,
+            role: decoded.role || 1,
+            type: 'init'
           })
           const cookies = new Cookies( req, res, {} )
-          cookies.set('initmember', tokenForActivation, { httpOnly: false, expires: new Date(Date.now() + 24 * 60 * 60 * 1000) })      
-          res.redirect(302, '/initmember')
+          cookies.set('setup', tokenForActivation, { httpOnly: false, expires: new Date(Date.now() + 24 * 60 * 60 * 1000) })      
+          res.redirect(302, '/setup/init')
         }
       } else {
         res.redirect(302, '/')
@@ -74,6 +73,13 @@ const activate = (req, res) => {
   })
 }
 
-router.get('*', activate)
+router.get('*', (req, res, next) => {
+  const decoded = req.decoded
+  if (!decoded.type) {
+    res.status(403).send(`Invalid activation token.`)
+  } else {
+    next()
+  }
+}, activate)
 
 module.exports = router

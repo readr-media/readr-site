@@ -41,12 +41,28 @@ const generateDisposableJwt = ({ host }) => {
   }, config.JWT_SECRET)
 }
 
-const generateActivateAccountJwt = ({ id, role, way }) => {
+const generateResetToken = ({ id, type }) => {
+  const expiry = new Date(Date.now() + 1 * 60 * 60 * 1000)
+  const claims = { id, type }
+  return jwt.sign(
+    claims,
+    config.JWT_SECRET,
+    {
+      algorithm: config.JWT_ALG,
+      audience: config.JWT_AUDIENCE,
+      expiresIn: parseInt(expiry.getTime() / 1000),
+      issuer: config.JWT_ISSUER,
+      jwtid: uuid.v4()
+    }
+  )
+}
+
+const generateActivateAccountJwt = ({ id, role, type }) => {
   const expiry = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
   return jwt.sign({
     id,
     role,
-    way,
+    type,
     exp: parseInt(expiry.getTime() / 1000)
   }, config.JWT_SECRET)
 }
@@ -58,6 +74,7 @@ const verifyToken = (token, cb) => {
 module.exports = {
   generateJwt,
   generateDisposableJwt,
+  generateResetToken,
   generateActivateAccountJwt,
   verifyToken
 }
