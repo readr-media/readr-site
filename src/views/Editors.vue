@@ -6,10 +6,10 @@
       </aside>
       <main class="editors__main">
         <AppTitledList :listTitle="'本週客座'">
-          <EditorsIntro class="editors-intro-main" v-for="customEditor in customEditors" :editor="customEditor"/>
+          <EditorsIntro class="editors-intro-main" v-for="customEditor in customEditors" :key="customEditor.id" :editor="customEditor"/>
         </AppTitledList>
         <ul class="editors__list-aside">
-          <EditorsIntro class="editors-intro-aside" v-for="customEditor in customEditors" :editor="customEditor" :trimDescription="true"/>
+          <EditorsIntro class="editors-intro-aside" v-for="member in asideListMembers" :key="member.id" :editor="member" :trimDescription="true"/>
         </ul>
       </main>
     </div>
@@ -17,17 +17,15 @@
 </template>
 
 <script>
+import { ROLE_MAP } from '../constants'
 import AppAsideNav from '../components/AppAsideNav.vue'
 import AppTitledList from '../components/AppTitledList.vue'
 import EditorsIntro from '../components/editors/EditorsIntro.vue'
 import _ from 'lodash'
 
-const getCustomEditors = (store, { page, sort }) => {
+const getMembersPublic = (store, params) => {
   return store.dispatch('GET_PUBLIC_MEMBERS', {
-  // return store.dispatch('GET_MEMBERS', {
-    params: {
-      custom_editor: true
-    }
+    params: params
   })
 }
 const fetchFollowing = (store, params) => {
@@ -50,20 +48,38 @@ export default {
     AppTitledList,
     EditorsIntro
   },
+  data () {
+    return {
+      asideListRoleValue: '總編'
+    }
+  },
   computed: {
+    asideListRoleKey () {
+      return _.find(ROLE_MAP, { value: this.asideListRoleValue }).key
+    },
     customEditors () {
       return _.get(this.$store, 'state.customEditors.items', [])
+    },
+    asideListMembers () {
+      return _.get(this.$store, `state.publicMembers[${this.asideListRoleValue}].items`, [])
     }
   },
   beforeMount () {
     Promise.all([
-      getCustomEditors(this.$store, {})
+      getMembersPublic(this.$store, {
+        custom_editor: true
+      }),
+      getMembersPublic(this.$store, {
+        role: this.asideListRoleKey
+      })
     ]).then(() => {
       if (this.$store.state.isLoggedIn) {
         const customEditorsIds = this.$store.state.customEditors.items.map(editor => editor.id)
+        const asideListMembersIds = this.$store.state.publicMembers[this.asideListRoleValue].items.map(member => member.id)
+        const ids = _.uniq(_.concat(customEditorsIds, asideListMembersIds))
         fetchFollowing(this.$store, {
           resource: 'member',
-          ids: customEditorsIds
+          ids: ids
         })
       }
     })
@@ -107,6 +123,8 @@ export default {
   width calc(355px - 15px - 15px)
   margin 0 15px
   padding 10px 0
+  &:nth-child(1)
+    padding-top 0
 </style>
 
 

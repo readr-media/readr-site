@@ -26,6 +26,7 @@ export function createStore () {
       'projectsList': [],
       'publicPosts': [],
       'publicPostsHot': [],
+      'publicMembers': {},
       'register-token': '',
       'tags': [],
       'tagsCount': 0,

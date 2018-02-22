@@ -84,6 +84,9 @@ export default {
   SET_PUBLIC_POSTS: (state, { posts }) => {
     state['publicPosts'] = posts
   },
+  SET_PUBLIC_MEMBERS: (state, { members, role }) => {
+    Vue.set(state['publicMembers'], role, members)
+  },
   SET_PROJECTS_LIST: (state, { projectsList }) => {
     state['projectsList'] = projectsList
   },
