@@ -13,14 +13,16 @@ export function getToken () {
     return undefined
   }
 }
-export function getInitMemToken () {
+
+export function getSetupToken () {
   if (process.browser && window) {
-    const token = Cookie.get('initmember')
+    const token = Cookie.get('setup')
     return token
   } else {
     return undefined
-  }
+  }  
 }
+
 export function delInitMemToken () {
   if (process.browser && window) {
     const token = Cookie.delete('initmember')

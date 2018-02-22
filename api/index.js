@@ -8,6 +8,7 @@ const { camelizeKeys } = require('humps')
 const { constructScope, fetchPermissions } = require('./services/perm')
 const { initBucket, makeFilePublic, uploadFileToBucket, deleteFileFromBucket, publishAction } = require('./gcs.js')
 const { processImage } = require('./sharp.js')
+const { verifyToken } = require('./middle/member/comm')
 const Cookies = require('cookies')
 const GoogleAuth = require('google-auth-library')
 const bodyParser = require('body-parser')
@@ -138,22 +139,12 @@ const authorize = (req, res, next) => {
  * 
  */
 
-const activationKeyVerify = function (req, res, next) {
-  const key = req.url.split('/')[1]
-  jwtService.verifyToken(key, (error, decoded) => {
-    if (error || !decoded.way) {
-      res.status(403).send(`Invalid activation token.`)
-    } else {
-      req.decoded = decoded
-      next()
-    }
-  })
-}
-router.use('/activate', activationKeyVerify, require('./middle/member/activation'))
+router.use('/activate', verifyToken, require('./middle/member/activation'))
 router.use('/initmember', authVerify, require('./middle/member/initMember'))
 router.use('/member', [ authVerify, authorize ], require('./middle/member'))
 router.use('/comment', require('./middle/comment'))
 router.use('/register', authVerify, require('./middle/member/register'))
+router.use('/recoverpwd', require('./middle/member/recover'))
 
 
 /**

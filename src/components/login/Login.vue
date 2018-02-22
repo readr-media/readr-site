@@ -8,7 +8,7 @@
         <label for="keep-alive" v-text="' ' + wording.WORDING_KEEP_ALIVE"></label>
       </div>
       <div class="forget-pwd">
-        <span v-text="wording.WORDING_FORGET_PASSWORD"></span>
+        <span v-text="wording.WORDING_FORGET_PASSWORD" @click="goRecoverPwd"></span>
       </div>
     </div>
     <div class="login__msg">
@@ -21,10 +21,19 @@
 </template>
 <script>
   import _ from 'lodash'
-  import { WORDING_EMAIL, WORDING_FORGET_PASSWORD, WORDING_KEEP_ALIVE, WORDING_LOGIN, WORDING_LOGIN_UNAUTHORIZED, WORDING_LOGIN_INFAIL_VALIDATION_ISSUE, WORDING_PASSWORD, WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL, WORDING_REGISTER_PWD_EMPTY } from '../../constants'
-  import { ROLE_MAP } from '../../constants'
-  import { consoleLogOnDev } from '../../util/comm'
-  import InputItem from '../form/InputItem.vue'
+  import {
+    WORDING_EMAIL,
+    WORDING_FORGET_PASSWORD,
+    WORDING_KEEP_ALIVE,
+    WORDING_LOGIN,
+    WORDING_LOGIN_UNAUTHORIZED,
+    WORDING_LOGIN_INFAIL_VALIDATION_ISSUE,
+    WORDING_PASSWORD,
+    WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL,
+    WORDING_REGISTER_PWD_EMPTY } from 'src/constants'
+  import { ROLE_MAP } from 'src/constants'
+  import { consoleLogOnDev } from 'src/util/comm'
+  import InputItem from 'src/components/form/InputItem.vue'
   import validator from 'validator'
 
   const login = (store, profile, token) => {
@@ -64,6 +73,9 @@
     },
     name: 'login',
     methods: {
+      goRecoverPwd () {
+        this.$emit('goRecoverPwd')
+      },
       login () {
         if (this.validatInput()) {
           login(this.$store, {
@@ -168,4 +180,6 @@
       cursor pointer
       &:hover
         background-color #737373
+  .forget-pwd
+    cursor pointer
 </style>

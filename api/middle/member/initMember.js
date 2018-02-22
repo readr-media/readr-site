@@ -1,3 +1,6 @@
+const { buildUserForTalk } = require('../talk')
+const { get } = require('lodash')
+const Cookies = require('cookies')
 const config = require('../../config')
 const express = require('express')
 const router = express.Router()
@@ -6,6 +9,7 @@ const superagent = require('superagent')
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
 
 router.post('/', (req, res) => {
+  if (get(req, [ 'user', 'type' ]) !== 'init') { res.status(403).send(`Forbidden.`) }
   const id = req.user.id
   const role = req.user.role
   superagent
@@ -24,11 +28,19 @@ router.post('/', (req, res) => {
         role,
         active: 1
       })
-      .end((e, response) => {
-        if (!e && response) {
-          res.status(200).end()
+      .end((e, r) => {
+        if (!e && r) {
+          buildUserForTalk({
+            id,
+            mail: id,
+            nickname: req.body.nickname
+          }).then(() => {
+            const cookies = new Cookies( req, res, {} )
+            cookies.set('setup', '', { httpOnly: false, expires: new Date(Date.now() - 1000) })  
+            res.status(200).end()
+          })
         } else {
-          res.status(500).json(e)
+          res.status(r.status).json(e)
         }
       })
     } else {
