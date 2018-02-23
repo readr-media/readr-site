@@ -48,7 +48,7 @@ $icon-size
   height 25px
 .article-nav
   margin-top 10px
-  height 25px
+  min-height 25px
 
 .comment-icon
   cursor pointer
