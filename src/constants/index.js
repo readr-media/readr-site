@@ -67,6 +67,7 @@ export const WORDING_CREATE_PWD = '新增密碼'
 export const WORDING_HEADER_LOGIN = '登入'
 export const WORDING_HEADER_LOGOUT = '登出'
 export const WORIDNG_HEADER_MEMBER_CENTRE = '會員中心'
+export const WORIDNG_HEADER_MEMBER_SEARCH = '搜尋'
 // Admin use
 export const WORDING_ADMIN_ACCOUNT = '帳號'
 export const WORDING_ADMIN_EMAIL = '信箱'
@@ -189,3 +190,9 @@ export const WORDING_ALERTPANEL_UPDATE_SUCCESSFUL = '已更新'
 export const WORDING_AGREEMENT_TERMS_AND_SERVICE = '會員服務條款'
 export const WORDING_AGREEMENT_IPR = '著作權、智慧財產權政策'
 export const WORDING_AGREEMENT_PRIVACY = '隱私權政策'
+
+// Search Use
+export const WORDING_SEARCH_FILTER_TITLE = '篩選搜尋結果'
+export const WORDING_SEARCH_FILTER_VIEW = '視角'
+export const WORDING_SEARCH_FILTER_CONVERSATION = '對話'
+export const WORDING_SEARCH_FILTER_PROJECT = '議題'
