@@ -85,7 +85,7 @@ export default {
       })
     },
     commentCount () {
-      return this.articleData.commentAmount || 0
+      return _.get(_.find(_.get(this.$store, [ 'state', 'commentCount' ]), { postId: this.articleData.id }), [ 'count' ], 0)
     },
     dateDiffFromNow () {
       return dateDiffFromNow(this.articleData.updatedAt)
