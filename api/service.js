@@ -18,8 +18,6 @@ const generateJwt = ({ id, email, name, nickname, role, keepAlive, scopes, talk_
   }
   
   set(claims, config.JWT_USER_ID_CLAIM, talk_id)
-  // set(claims, config.JWT_USER_ID_CLAIM, '78c7e8ae-8a6a-4b5a-b58b-f4d4de5e9013')
-  // set(claims, config.JWT_USER_ID_CLAIM, '94b9a187-7045-4f51-bf13-dda1fdbc110d')
   return jwt.sign(
     claims,
     config.JWT_SECRET,
