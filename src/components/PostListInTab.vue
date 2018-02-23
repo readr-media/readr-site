@@ -11,14 +11,14 @@
         <div class="postListInTab__title">
           <h2 v-text="p.title"></h2>
           <div v-if="!(!$can('editOtherPost') && p.active !== config.active.DRAFT)" class="postListInTab__control--desktop">
-            <button class="postListInTab__btn" @click="$_postListInTab_editPost(p.id, p.type)" v-text="wording.WORDING_POSTLIST_EDIT"></button>
+            <button class="postListInTab__btn" @click="$_postListInTab_editPost(p.id)" v-text="wording.WORDING_POSTLIST_EDIT"></button>
             <button class="postListInTab__btn" @click="$_postListInTab_deletePost(p.id)" v-text="wording.WORDING_POSTLIST_DELETE"></button>
           </div>
         </div>
         <p v-if="p.content" class="postListInTab__descr" v-text="$_postListInTab_getDescr(p.content)"></p>
       </div>
       <div class="postListInTab__control--mobile">
-        <button class="postListInTab__btn" @click="$_postListInTab_editPost(p.id, p.type)" v-text="wording.WORDING_POSTLIST_EDIT"></button>
+        <button class="postListInTab__btn" @click="$_postListInTab_editPost(p.id)" v-text="wording.WORDING_POSTLIST_EDIT"></button>
         <button class="postListInTab__btn" @click="$_postListInTab_deletePost(p.id)" v-text="wording.WORDING_POSTLIST_DELETE"></button>
       </div>
     </div>
@@ -74,14 +74,10 @@
     },
     methods: {
       $_postListInTab_deletePost (id) {
-        this.$emit('deletePost', id)
+        this.$emit('deletePost', [ id ], POST_ACTIVE.DEACTIVE)
       },
-      $_postListInTab_editPost (id, type) {
-        if (type === POST_TYPE.NEWS) {
-          this.$emit('editPost', true, 'edit', POST_TYPE.NEWS, id)
-        } else {
-          this.$emit('editPost', true, 'edit', POST_TYPE.REVIEW, id)
-        }
+      $_postListInTab_editPost (id) {
+        this.$emit('editPost', { postPanel: 'edit', id: id })
       },
       $_postListInTab_getActive (post) {
         switch (post.active) {

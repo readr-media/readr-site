@@ -51,8 +51,8 @@ export default {
   ADD_POST: ({ commit, dispatch, state }, { params }) => {
     return addPost(params)
   },
-  ADD_TAGS: ({ commit, dispatch, state }, { name }) => {
-    return addTags({ name })
+  ADD_TAGS: ({ commit, dispatch, state }, { params }) => {
+    return addTags(params)
   },
   CHECK_LOGIN_STATUS: ({ commit, dispatch, state }, { params }) => {
     return checkLoginStatus({ params }).then(({ status, body }) => {

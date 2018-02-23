@@ -40,7 +40,7 @@
           <td class="postList__type"><div v-if="p.type === postType.NEWS" class="postList__type--news">N</div></td>
           <td class="postList__title" @click="$_showPost(p)" v-text="p.title"></td>
           <td class="postList__status postList--center" v-text="$_postList_getStatus(p)"></td>
-          <td class="postList__update postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_editPost(p.id, p.type)" v-text="wording.WORDING_POSTLIST_UPDATE"></button></td>
+          <td class="postList__update postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_editPost(p.id)" v-text="wording.WORDING_POSTLIST_UPDATE"></button></td>
           <td class="postList__delete postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_deletePost(p.id)" v-text="wording.WORDING_POSTLIST_DELETE"></button></td>
           <td class="postList__sort"></td>
         </tr>
@@ -135,8 +135,8 @@
       $_postList_deletePosts () {
         this.$emit('deletePosts', this.checkedIems, POST_ACTIVE.DEACTIVE)
       },
-      $_postList_editPost (id, type) {
-        this.$emit('editPost', 'edit', type, id)
+      $_postList_editPost (id) {
+        this.$emit('editPost', { postPanel: 'edit', id: id })
       },
       $_postList_getAuthorId (post) {
         return _.get(post, [ 'author', 'nickname' ])

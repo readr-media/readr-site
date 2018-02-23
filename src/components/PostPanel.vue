@@ -22,6 +22,9 @@
         </datepicker>
       </no-ssr>
     </div>
+    <div v-if="$can('editPostOg')">
+      <label for="" v-text="`${wording.WORDING_POSTEDITOR_TAG}：`"></label>
+    </div>
     <div v-if="$can('editPostOg')" class="postPanelEdit__input">
       <label for="" v-text="`${wording.WORDING_POSTEDITOR_OG_TITLE}：`"></label>
       <input v-model="post.ogTitle" type="text">
@@ -87,6 +90,7 @@
     WORDING_POSTEDITOR_PUBLISH_DATE,
     WORDING_POSTEDITOR_SAVE_DRAFT,
     WORDING_POSTEDITOR_SAVE_PENDING,
+    WORDING_POSTEDITOR_TAG,
     WORDING_POSTEDITOR_UPLOAD
   } from '../constants'
   import { POST_ACTIVE } from '../../api/config'
@@ -163,6 +167,7 @@
           WORDING_POSTEDITOR_PUBLISH_DATE,
           WORDING_POSTEDITOR_SAVE_DRAFT,
           WORDING_POSTEDITOR_SAVE_PENDING,
+          WORDING_POSTEDITOR_TAG,
           WORDING_POSTEDITOR_UPLOAD
         }
       }

@@ -46,9 +46,9 @@ export default {
     contentEdit: {
       default: ''
     },
-    needReset: {
-      type: Boolean
-    },
+    // needReset: {
+    //   type: Boolean
+    // },
     type: {
       type: Number,
       required: true
@@ -103,11 +103,11 @@ export default {
         this.contentNews = val
       }
     },
-    needReset () {
-      this.content = ''
-      this.contentNews = ''
-      this.contentReview = ''
-    }
+    // needReset () {
+    //   this.content = ''
+    //   this.contentNews = ''
+    //   this.contentReview = ''
+    // }
   },
   methods: {
     onEditorChange(event) {
