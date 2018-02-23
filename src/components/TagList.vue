@@ -66,7 +66,8 @@
     return store.dispatch('UPDATE_TAGS', {
       params: {
         id: id,
-        text: text
+        text: text,
+        updated_by: _.get(store, [ 'state', 'profile', 'id' ])
       }
     })
   }
@@ -107,7 +108,7 @@
     },
     computed: {
       tagNameValidated () {
-        return this.addTag.replace(/\s/g,'')
+        return this.addTag.trim()
       },
       totalPages () {
         return Math.ceil(_.get(this.$store, [ 'state', 'tagsCount' ], 0) / this.maxResult)
@@ -116,14 +117,14 @@
     methods: {
       $_tagList_addTag () {
         if (this.tagNameValidated) {
-          this.$emit('addTag', this.addTag.replace(/\s/g,''))
+          this.$emit('addTag', this.addTag.trim())
         }
       },
       $_tagList_cancel (event) {
         event.target.parentNode.classList.toggle('modify')
       },
       $_tagList_confirmEdit (event, index, id) {
-        const newText = this.$refs.inputTagText[index].value.replace(/\s/g,'')
+        const newText = this.$refs.inputTagText[index].value.trim()
         if (newText === this.$refs.originTagText[index].innerText) {
           event.target.parentNode.classList.toggle('modify')
         } else {

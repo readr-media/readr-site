@@ -43,12 +43,12 @@
   export default {
     name: 'AlertPanel',
     props: {
-      // action: {
-      //   type: String,
-      //   required: true
-      // },
       active: {
         type: Number
+      },
+      activeChanged: {
+        type: Boolean,
+        default: false
       },
       items: {
         type: Array,
@@ -95,11 +95,20 @@
       alertMessage () {
         switch (this.type) {
           case 'post':
-            switch (this.active) {
-              case POST_ACTIVE.ACTIVE:
-                return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL}！`
-              case POST_ACTIVE.DEACTIVE:
-                return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_DELETE_SUCCESSFUL}！`
+            if (!this.activeChanged) {
+              return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_UPDATE_SUCCESSFUL}！`
+            } else {
+              switch (this.active) {
+                case POST_ACTIVE.ACTIVE:
+                  return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL}！`
+                case POST_ACTIVE.DEACTIVE:
+                  return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_DELETE_SUCCESSFUL}！`
+                case POST_ACTIVE.DRAFT:
+                  if (!_.get(this.items, [ 0, 'id' ])) {
+                    return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_ADD_SUCCESSFUL}！`
+                  }
+                  return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_UPDATE_SUCCESSFUL}！`
+              }
             }
           case 'tag':
             switch (this.active) {
@@ -141,9 +150,9 @@
     watch: {
       needConfirm (val) {
         if (!val && this.showLightBox) {
-          setTimeout(() => {
-            this.$emit('closeAlert')
-          }, 5000)
+          // setTimeout(() => {
+          //   this.$emit('closeAlert')
+          // }, 5000)
         }
       }
     },
