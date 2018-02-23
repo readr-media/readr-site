@@ -1,27 +1,8 @@
 <template>
   <div class="header">
-    <!-- <div class="header__top">
-      <div class="header__top__wrapper">
-        <div class="logo">
-          <div class="logo__container"></div>
-        </div>
-        <div class="sharebar">
-          <span></span>
-          <i class="sharebar__search"></i>
-          <i class="sharebar__fb-page"></i>
-          <i class="sharebar__github"></i>
-          <i class="sharebar__about"></i>
-        </div>
-      </div>
-    </div> -->
-    <div class="header__bottom">
-      <div class="header__bottom__wrapper">
-        <!-- <div class="nav">
-          <a v-for="(section, name) in sections" class="nav__item" :class="name" v-text="section" href="/"></a>
-        </div> -->
-        <div class="search-form">
-          <input class="search-form__input" type="text" placeholder="搜尋">
-        </div>
+    <div class="header__container">
+      <div class="header__container__wrapper">
+        <Search></Search>
         <div class="login-status" v-if="isClientSide">
           <div class="login-status__nickname login-status__item" v-text="userNickname" v-if="isLoggedIn" @click="goMemberCenter"></div>
           <a class="login-status__login-btn login-status__item" href="/login" v-text="wording.WORDING_HEADER_LOGIN" v-if="!isLoggedIn"></a>
@@ -36,6 +17,7 @@
   import { WORDING_HEADER_LOGIN, WORDING_HEADER_LOGOUT, WORIDNG_HEADER_MEMBER_CENTRE } from '../constants'
   import { ROLE_MAP } from '../constants'
   import { removeToken } from '../util/services'
+  import Search from 'src/components/search/Search.vue'
 
   const checkLoginStatus = (store) => {
     return store.dispatch('CHECK_LOGIN_STATUS', {})
@@ -48,6 +30,9 @@
   }
 
   export default {
+    components: {
+      Search
+    },
     computed: {
       currUrl () {
         return _.get(this.$router, [ 'fullpath' ])
@@ -112,52 +97,7 @@
       > div
         width 100%
         margin 0 auto
-    &__top
-      height 75px
-      background-color #444746
-      &__wrapper
-        padding 15px 0
-        height 100%
-        display flex
-        justify-content space-between
-        align-items flex-start
-        // > div
-          // display inline-block
-        .logo
-          position relative
-          width 93.6px
-          height 100%
-          &__container
-            background-image url(/public/icons/readr-logo.png)
-            background-position center center
-            background-repeat no-repeat
-            background-size contain          
-            width 93.6px
-            height 86.5px
-            position absolute
-            left 0
-            top 0
-        .sharebar
-          > i
-            background-position center center
-            background-repeat no-repeat
-            background-size contain
-            width 30px
-            height 30px
-            display inline-block
-            margin-left 10px
-            vertical-align top
-            cursor pointer
-          &__search
-            background-image url(/public/icons/search.png)
-          &__fb-page
-            background-image url(/public/icons/fb.png)
-          &__github
-            background-image url(/public/icons/github.png)
-          &__about
-            background-image url(/public/icons/info.png)
-
-    &__bottom
+    &__container
       height 35px
       background-color #444746
       color #fff
@@ -202,9 +142,6 @@
               height 14px
               background-color #fff
               display block
-        .search-form
-          &__input
-            padding-left 9px
         .login-status
           // margin-left auto
           min-width 74px
@@ -260,20 +197,7 @@
   
   @media (max-width 768px)
     .header
-      &__top
-        height 25px
-        &__wrapper
-          padding 5px 0 5px 17px
-          .sharebar
-            display none
-          .logo
-            width 33px
-            height 30px
-            &__container
-              width 100%
-              height 100%
-
-      &__bottom
+      &__container
         height 15px
         &__wrapper
           .nav, .login-status
