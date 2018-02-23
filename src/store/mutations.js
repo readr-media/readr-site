@@ -29,8 +29,12 @@ export default {
     Vue.delete(state.followingByResource[params.resource][resourceIndex].follower, userIndex)
   },
   SET_COMMENT_COUNT: (state, { count, postId, type }) => {
-    const post = _.get(_.filter(_.get(state, [ type, 'items' ]), { id: postId }), [ 0 ])
-    post && (post.commentAmount = count)
+    let commentCount = _.find(_.get(state, [ 'commentCount' ]), { postId })
+    if (!commentCount) {
+      commentCount = { postId, count: 0 }
+      _.get(state, [ 'commentCount' ]).push(commentCount)
+    }
+    commentCount.count = count || 0
   },
   SET_COMMENTS_ME: (state, { comments }) => {
     const profile = state['profile']
