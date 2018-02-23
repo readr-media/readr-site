@@ -14,13 +14,14 @@ if (process.browser) {
 const Admin = () => import('../views/Admin.vue')
 const Agreement = () => import('../views/Agreement.vue')
 const Editor = () => import('../views/Editor.vue')
+const Editors = () => import('../views/Editors.vue')
 const GuestEditor = () => import('../views/GuestEditor.vue')
 const Home = () => import('../views/Home.vue')
 const Login = () => import('../views/Login.vue')
 const Post = () => import('../views/Post.vue')
-const SetPassword = () => import('../views/SetPassword.vue')
 const ProjectsList = () => import('../views/ProjectsList.vue')
-const Editors = () => import('../views/Editors.vue')
+const Search = () => import('../views/Search.vue')
+const SetPassword = () => import('../views/SetPassword.vue')
 
 const router = new Router({
   mode: 'history',
@@ -31,12 +32,13 @@ const router = new Router({
     { path: '/admin', component: Admin, meta: { permission: 'admin' }},
     { path: '/agreement', component: Agreement },
     { path: '/editor', component: Editor, meta: { permission: 'editor' }},
+    { path: '/editors', component: Editors },
     { path: '/guesteditor', component: GuestEditor, meta: { permission: 'guesteditor' }},
     { path: '/login', component: Login },
-    { path: '/setup/:type', component: SetPassword },
     { path: '/post/:id', component: Post },
     { path: '/projects', component: ProjectsList },
-    { path: '/editors', component: Editors }
+    { path: '/search', component: Search },
+    { path: '/setup/:type', component: SetPassword },
   ]
 })
 

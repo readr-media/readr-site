@@ -65,7 +65,7 @@ export default {
   &__container
     max-width 1200px
     margin auto
-    padding 60px 0
+    padding 25px 0
     display flex
   &__aside
     width 75px

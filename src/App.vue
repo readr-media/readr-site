@@ -35,6 +35,7 @@ button
   margin 0 auto
   position relative
   background-color #fff
+  padding-top 35px
   &.locked
     width 100%
     height 100vh
