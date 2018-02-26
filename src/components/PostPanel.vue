@@ -74,9 +74,9 @@
         v-text="wording.WORDING_POSTEDITOR_DELETE">
       </button>
       <button
-        v-if="(panelType === 'edit') && $can('editPostOg')"
+        v-if="(panelType === 'edit') && $can('editPostOg') && (post.active !== config.active.DRAFT)"
         class="postPanel__btn"
-        :disabled="post.active === config.active.DRAFT"
+        :disabled="isEmpty"
         @click="$_postPanel_submitHandler(config.active.DRAFT)"
         v-text="wording.WORDING_POSTEDITOR_RETURN_TO_DRAFT">
       </button>
@@ -101,9 +101,9 @@
         v-text="wording.WORDING_POSTEDITOR_SAVE_PENDING">
       </button>
       <button
-        v-if="$can('publishPost')"
+        v-if="$can('publishPost') && (post.active !== config.active.ACTIVE)"
         class="postPanel__btn"
-        :disabled="isEmpty || (post.active === config.active.ACTIVE)"
+        :disabled="isEmpty"
         @click="$_postPanel_submitHandler(config.active.ACTIVE)"
         v-text="wording.WORDING_POSTEDITOR_PUBLISH">
       </button>

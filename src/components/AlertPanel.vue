@@ -31,6 +31,7 @@
     WORDING_ALERTPANEL_DELETE_CONFIRMATION,
     WORDING_ALERTPANEL_DELETE_SUCCESSFUL,
     WORDING_ALERTPANEL_DRAFT,
+    WORDING_ALERTPANEL_PENDING,
     WORDING_ALERTPANEL_POST,
     WORDING_ALERTPANEL_PUBLISH_CONFIRMATION,
     WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL,
@@ -74,20 +75,11 @@
           tag: TAG_ACTIVE
         },
         wording: {
-          WORDING_ALERTPANEL_ADD_SUCCESSFUL,
           WORDING_ALERTPANEL_AUTHOR,
           WORDING_ALERTPANEL_CANCEL,
           WORDING_ALERTPANEL_CONFIRM,
-          WORDING_ALERTPANEL_DELETE_CONFIRMATION,
-          WORDING_ALERTPANEL_DELETE_SUCCESSFUL,
-          WORDING_ALERTPANEL_DRAFT,
-          WORDING_ALERTPANEL_POST,
-          WORDING_ALERTPANEL_PUBLISH_CONFIRMATION,
-          WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL,
-          WORDING_ALERTPANEL_STATUS,
           WORDING_ALERTPANEL_TAG,
-          WORDING_ALERTPANEL_TITLE,
-          WORDING_ALERTPANEL_UPDATE_SUCCESSFUL
+          WORDING_ALERTPANEL_TITLE
         }
       }
     },
@@ -96,26 +88,28 @@
         switch (this.type) {
           case 'post':
             if (!this.activeChanged) {
-              return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_UPDATE_SUCCESSFUL}！`
+              return `${WORDING_ALERTPANEL_POST}${WORDING_ALERTPANEL_UPDATE_SUCCESSFUL}！`
             } else {
               switch (this.active) {
                 case POST_ACTIVE.ACTIVE:
-                  return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL}！`
+                  return `${WORDING_ALERTPANEL_POST}${WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL}！`
                 case POST_ACTIVE.DEACTIVE:
-                  return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_DELETE_SUCCESSFUL}！`
+                  return `${WORDING_ALERTPANEL_POST}${WORDING_ALERTPANEL_DELETE_SUCCESSFUL}！`
                 case POST_ACTIVE.DRAFT:
                   if (!_.get(this.items, [ 0, 'id' ])) {
-                    return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_ADD_SUCCESSFUL}！`
+                    return `${WORDING_ALERTPANEL_POST}${WORDING_ALERTPANEL_ADD_SUCCESSFUL}！`
                   }
-                  return `${this.wording.WORDING_ALERTPANEL_POST}${this.wording.WORDING_ALERTPANEL_UPDATE_SUCCESSFUL}！`
+                  return `${WORDING_ALERTPANEL_POST}${WORDING_ALERTPANEL_UPDATE_SUCCESSFUL}！`
+                case POST_ACTIVE.PENDING:
+                  return `${WORDING_ALERTPANEL_POST}${WORDING_ALERTPANEL_PENDING}！`
               }
             }
           case 'tag':
             switch (this.active) {
               case TAG_ACTIVE.ACTIVE:
-                return `${this.wording.WORDING_ALERTPANEL_TAG}${this.wording.WORDING_ALERTPANEL_ADD_SUCCESSFUL}！` 
+                return `${WORDING_ALERTPANEL_TAG}${WORDING_ALERTPANEL_ADD_SUCCESSFUL}！` 
               case TAG_ACTIVE.DEACTIVE:
-                return `${this.wording.WORDING_ALERTPANEL_TAG}${this.wording.WORDING_ALERTPANEL_DELETE_SUCCESSFUL}！`
+                return `${WORDING_ALERTPANEL_TAG}${WORDING_ALERTPANEL_DELETE_SUCCESSFUL}！`
             }
         }
       },
@@ -124,12 +118,12 @@
           case 'post':
             switch (this.active) {
               case POST_ACTIVE.ACTIVE:
-                return this.wording.WORDING_ALERTPANEL_PUBLISH_CONFIRMATION
+                return WORDING_ALERTPANEL_PUBLISH_CONFIRMATION
               case POST_ACTIVE.DEACTIVE:
-                return this.wording.WORDING_ALERTPANEL_DELETE_CONFIRMATION
+                return WORDING_ALERTPANEL_DELETE_CONFIRMATION
             }
           case 'tag':
-            return this.wording.WORDING_ALERTPANEL_DELETE_CONFIRMATION
+            return WORDING_ALERTPANEL_DELETE_CONFIRMATION
         }
       },
       isMultiple () {

@@ -157,12 +157,18 @@
     }
   }
 
-  const getPosts = (store, { page, sort }) => {
+  const getPosts = (store, {
+    maxResult = MAXRESULT,
+    page = DEFAULT_PAGE,
+    sort = DEFAULT_SORT,
+    where = {}
+  } = {}) => {
     return store.dispatch('GET_POSTS', {
       params: {
-        max_result: MAXRESULT,
-        page: page || DEFAULT_PAGE,
-        sort: sort || DEFAULT_SORT
+        max_result: maxResult,
+        page: page,
+        sort: sort,
+        where: where
       }
     })
   }
@@ -343,11 +349,11 @@
         this.needConfirm = false
         this.loading = true
         addTags(this.$store, tagName)
-        .then(() => {
-          this.$_editor_updateTagList({ needUpdateCount: true })
-          this.showAlert = true
-        })
-        .catch(() => this.loading = false)
+          .then(() => {
+            this.$_editor_updateTagList({ needUpdateCount: true })
+            this.showAlert = true
+          })
+          .catch(() => this.loading = false)
       },
       $_editor_alertHandler (showAlert) {
         this.showAlert = showAlert
@@ -398,7 +404,9 @@
           case 'posts':
             this.alertType = 'post'
             Promise.all([
-              getPosts(this.$store, {}),
+              getPosts(this.$store, {
+                where: { active: [ POST_ACTIVE.ACTIVE, POST_ACTIVE.PENDING ] }
+              }),
               getPostsCount(this.$store, {})
             ])
             .then(() => this.loading = false)
@@ -623,7 +631,8 @@
             }
             getPosts(this.$store, {
               page: this.page,
-              sort: this.sort
+              sort: this.sort,
+              where: { active: [ POST_ACTIVE.ACTIVE, POST_ACTIVE.PENDING ] }
             })
             .then(() => this.loading = false)
             .catch(() => this.loading = false)

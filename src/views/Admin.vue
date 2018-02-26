@@ -187,12 +187,18 @@
     }
   }
 
-  const getPosts = (store, { page, sort }) => {
+  const getPosts = (store, {
+    maxResult = MAXRESULT,
+    page = DEFAULT_PAGE,
+    sort = DEFAULT_SORT,
+    where = {}
+  } = {}) => {
     return store.dispatch('GET_POSTS', {
       params: {
-        max_result: MAXRESULT,
-        page: page || DEFAULT_PAGE,
-        sort: sort || DEFAULT_SORT
+        max_result: maxResult,
+        page: page,
+        sort: sort,
+        where: where
       }
     })
   }
@@ -466,7 +472,9 @@
           case 'posts':
             this.alertType = 'post'
             Promise.all([
-              getPosts(this.$store, {}),
+              getPosts(this.$store, {
+                where: { active: [ POST_ACTIVE.ACTIVE, POST_ACTIVE.PENDING ] }
+              }),
               getPostsCount(this.$store, {})
             ])
             .then(() => this.loading = false)
@@ -691,7 +699,8 @@
             }
             getPosts(this.$store, {
               page: this.page,
-              sort: this.sort
+              sort: this.sort,
+              where: { active: [ POST_ACTIVE.ACTIVE, POST_ACTIVE.PENDING ] }
             })
             .then(() => this.loading = false)
             .catch(() => this.loading = false)
