@@ -8,7 +8,7 @@
   import { WORIDNG_HEADER_MEMBER_SEARCH } from 'src/constants'
 
   export default {
-    name: 'Search',
+    name: 'SearchTool',
     data () {
       return {
         wording: {

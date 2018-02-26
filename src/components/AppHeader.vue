@@ -2,7 +2,7 @@
   <div class="header">
     <div class="header__container">
       <div class="header__container__wrapper">
-        <Search></Search>
+        <SearchTool></SearchTool>
         <div class="login-status" v-if="isClientSide">
           <div class="login-status__nickname login-status__item" v-text="userNickname" v-if="isLoggedIn" @click="goMemberCenter"></div>
           <a class="login-status__login-btn login-status__item" href="/login" v-text="wording.WORDING_HEADER_LOGIN" v-if="!isLoggedIn"></a>
@@ -17,7 +17,7 @@
   import { WORDING_HEADER_LOGIN, WORDING_HEADER_LOGOUT, WORIDNG_HEADER_MEMBER_CENTRE } from '../constants'
   import { ROLE_MAP } from '../constants'
   import { removeToken } from '../util/services'
-  import Search from 'src/components/search/Search.vue'
+  import SearchTool from 'src/components/search/SearchTool.vue'
 
   const checkLoginStatus = (store) => {
     return store.dispatch('CHECK_LOGIN_STATUS', {})
@@ -31,7 +31,7 @@
 
   export default {
     components: {
-      Search
+      SearchTool
     },
     computed: {
       currUrl () {

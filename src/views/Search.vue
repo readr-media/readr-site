@@ -5,8 +5,12 @@
         <AppAsideNav></AppAsideNav>
       </aside>
       <main class="search__container__main">
-        <SearchFilter></SearchFilter>
-        <ProjectsFigure v-for="project in projects" :project="project" :key="project.id"></ProjectsFigure>
+        <SearchFilter @searchChange="searchChange"></SearchFilter>
+        <div v-if="currFilter === 'view'"></div>
+        <div v-else-if="currFilter === 'conversation'"></div>
+        <div v-else>
+          <ProjectsFigure v-for="project in projects" :project="project" :key="project.id"></ProjectsFigure>
+        </div>
       </main>
     </div>
   </div>
@@ -17,6 +21,7 @@
   import ProjectsFigure from 'src/components/projects/ProjectsFigure.vue'
   import SearchFilter from 'src/components/search/SearchFilter.vue'
 
+  const debug = require('debug')('CLIENT:views:Search')
   const fetchProjectsList = (store, params) => {
     return store.dispatch('GET_PROJECTS_LIST', {
       params: params
@@ -48,6 +53,11 @@
         return get(this.$store, 'state.projectsList.items', [])
       }
     },
+    data () {
+      return {
+        currFilter: 'view'
+      }
+    },
     beforeMount () {
       fetchProjectsList(this.$store, {}).then(() => {
         const postIdFeaturedProject = this.$store.state.projectsList.items.map(project => project.id)
@@ -57,10 +67,13 @@
         })
       })
     },
-    methods: {},
-    mounted () {
-
+    methods: {
+      searchChange (key) {
+        debug('Filter changes to:', key)
+        this.currFilter = key
+      }
     },
+    mounted () {},
   }
 </script>
 <style lang="stylus" scoped>
