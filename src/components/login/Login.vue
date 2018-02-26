@@ -85,7 +85,11 @@
           }, _.get(this.$store, [ 'state', 'register-token' ])).then((res) => {
             if (res.status === 200) {
               const memberCenter = _.get(_.filter(ROLE_MAP, { key: _.get(this.$store, [ 'state', 'profile', 'role' ]) }), [ 0, 'route' ], 'member')
-              location.replace(`/${memberCenter}`)
+              if (memberCenter.match(/member/)) {
+                location.replace('/')
+              } else {
+                location.replace(`/${memberCenter}`)
+              }
               // this.$router.replace(`/${memberCenter}`)
             } else {
               this.resMsg = this.wording.WORDING_LOGIN_INFAIL_VALIDATION_ISSUE
