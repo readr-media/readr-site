@@ -104,6 +104,7 @@
   import AppAsideNav from '../components/AppAsideNav.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
   import CommentManagement from '../components/comment/CommentManagement.vue'
+  import FollowingListInTab from '../components/FollowingListInTab.vue'
   import PostList from '../components/PostList.vue'
   import PostListDetailed from '../components/PostListDetailed.vue'
   import PostListInTab from '../components/PostListInTab.vue'
@@ -142,6 +143,20 @@
         updated_by: _.get(store, [ 'state', 'profile', 'id' ])
       }
     })
+  }
+
+  const fetchFollowing = (store, params) => {
+    if (params.subject) {
+      return store.dispatch('GET_FOLLOWING_BY_USER', {
+        subject: params.subject,
+        resource: params.resource
+      })
+    } else {
+      return store.dispatch('GET_FOLLOWING_BY_RESOURCE', {
+        resource: params.resource,
+        ids: params.ids
+      })
+    }
   }
 
   const fetchPosts = (store, { page, sort }) => {
@@ -202,6 +217,17 @@
     return store.dispatch('PUBLISH_POSTS', { params })
   }
 
+  const unfollow = (store, resource, subject, object) => {
+    return store.dispatch('PUBLISH_ACTION', {
+      params: {
+        action: 'unfollow',
+        resource: resource,
+        subject: subject,
+        object: object
+      }
+    })
+  }
+
   const updatePost = (store, params) => {
     return store.dispatch('UPDATE_POST', { params })
   }
@@ -214,6 +240,7 @@
       'app-tab': Tab,
       'base-light-box': BaseLightBox,
       'control-bar': TheControlBar,
+      'following-list-tab': FollowingListInTab,
       'post-list': PostList,
       'post-list-detailed': PostListDetailed,
       'post-list-tab': PostListInTab,
@@ -389,6 +416,7 @@
             ])
             .then(() => this.loading = false)
             .catch(() => this.loading = false)
+            break
         }
       },
       $_editor_publishPost (params) {
@@ -507,7 +535,7 @@
           this.post = {}
           this.postType = postType
         } else {
-          this.post = _.find(this.posts, { 'id': id })
+          this.post = _.find(this.posts, { 'id': id }) || _.find(this.postsDraft, { 'id': id })
           this.postType = _.get(this.post, [ 'type' ])
           this.itemsSelected.push(this.post)
         }
@@ -543,6 +571,12 @@
             .then(() => this.loading = false)
             .catch(() => this.loading = false)
             break
+          case 2:
+            this.activeTab = 'followings'
+            fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'member' })
+              .then(() => this.loading = false)
+              .catch(() => this.loading = false)
+              break
         }
       },
       $_editor_updatePost(params, activeChanged) {
