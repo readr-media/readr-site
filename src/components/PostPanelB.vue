@@ -74,7 +74,7 @@
         v-text="wording.WORDING_POSTEDITOR_DELETE">
       </button>
       <button
-        v-if="(panelType === 'edit')"
+        v-if="(panelType === 'edit') && $can('editPostOg')"
         class="postPanel__btn"
         :disabled="post.active === config.active.DRAFT"
         @click="$_postPanel_submitHandler(config.active.DRAFT)"
@@ -97,6 +97,7 @@
         v-if="!$can('publishPost')"
         class="postPanel__btn"
         :disabled="isEmpty"
+        @click="$_postPanel_submitHandler(config.active.PENDING)"
         v-text="wording.WORDING_POSTEDITOR_SAVE_PENDING">
       </button>
       <button
@@ -339,7 +340,7 @@
           _.mapKeys(Object.assign({}, this.post), (value, key) => _.snakeCase(key)),
           [ 'author', 'comment_amount', 'created_at', 'like_amount', 'tags', 'updated_at' ]
         )
-        params.og_title = _.get(this.post, [ 'ogTitle' ]) || _.get(this.post, [ 'title' ]) || ''
+        // params.og_title = _.get(this.post, [ 'ogTitle' ]) || _.get(this.post, [ 'title' ]) || ''
         params.updated_by = _.get(this.$store.state, [ 'profile', 'id' ])
         
         if (Date.parse(_.get(this.post, [ 'date' ]))) {
