@@ -69,10 +69,10 @@
   import { POST_ACTIVE, POST_TYPE } from '../../api/config'
   import {
     SECTIONS_DEFAULT,
-    WORDING_TAB_REVIEW_RECORD,
-    WORDING_TAB_NEWS_RECORD,
     WORDING_TAB_COMMENT_RECORD,
-    WORDING_TAB_FOLLOW_RECORD
+    WORDING_TAB_FOLLOW_RECORD,
+    WORDING_TAB_NEWS_RECORD,
+    WORDING_TAB_REVIEW_RECORD
   } from '../constants'
   import _ from 'lodash'
   import About from '../components/About.vue'
@@ -101,7 +101,7 @@
     return store.dispatch('DELETE_POST', { id: id })
   }
 
-  const fetchFollowing = (store, params) => {
+  const getFollowing = (store, params) => {
     if (params.subject) {
       return store.dispatch('GET_FOLLOWING_BY_USER', {
         subject: params.subject,
@@ -115,7 +115,7 @@
     }
   }
 
-  const fetchPostsByUser = (store, {
+  const getPostsByUser = (store, {
     maxResult = MAXRESULT,
     page = DEFAULT_PAGE,
     sort = DEFAULT_SORT,
@@ -131,7 +131,7 @@
     })
   }
 
-  const fetchPostsCount = (store, params = {}) => {
+  const getPostsCount = (store, params = {}) => {
     return store.dispatch('GET_POSTS_COUNT', {
       params: params
     })
@@ -223,13 +223,13 @@
     beforeMount () {
       this.loading = true
       Promise.all([
-        fetchPostsByUser(this.$store, {
+        getPostsByUser(this.$store, {
           where: {
             author: _.get(this.profile, [ 'id' ]),
             type: POST_TYPE.REVIEW
           }
         }),
-        fetchPostsCount(this.$store, {
+        getPostsCount(this.$store, {
           where: {
             author: _.get(this.profile, [ 'id' ]),
             type: POST_TYPE.REVIEW
@@ -245,7 +245,7 @@
         this.itemsSelected.push(params)
         addPost(this.$store, params)
           .then(() => {
-            this.$_guestEditor_updatePostList({ needFetchCount: true })
+            this.$_guestEditor_updatePostList({ needUpdateCount: true })
             this.showEditor = false
             this.itemsActive = params.active
             this.postActiveChanged = true
@@ -262,7 +262,7 @@
       $_guestEditor_deletePosts () {
         deletePost(this.$store, this.itemsSelectedID)
           .then(() => {
-            this.$_guestEditor_updatePostList({ needFetchCount: true })
+            this.$_guestEditor_updatePostList({ needUpdateCount: true })
             this.showEditor = false
             this.showDraftList = false
             this.needConfirm = false
@@ -275,10 +275,10 @@
           case 'records':
             this.alertType = 'post'
             Promise.all([
-              fetchPostsByUser(this.$store, {
+              getPostsByUser(this.$store, {
                 where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
               }),
-              fetchPostsCount(this.$store, {
+              getPostsCount(this.$store, {
                 where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
               })
             ])
@@ -305,14 +305,14 @@
         switch (type) {
           case POST_TYPE.REVIEW:
             Promise.all([
-              fetchPostsByUser(this.$store, {
+              getPostsByUser(this.$store, {
                 where: {
                   author: _.get(this.profile, [ 'id' ]),
                   active: POST_ACTIVE.DRAFT,
                   type: POST_TYPE.REVIEW
                 }
               }),
-              fetchPostsCount(this.$store, {
+              getPostsCount(this.$store, {
                 where: {
                   author: _.get(this.profile, [ 'id' ]),
                   active: POST_ACTIVE.DRAFT,
@@ -328,14 +328,14 @@
             break
           case POST_TYPE.NEWS:
             Promise.all([
-              fetchPostsByUser(this.$store, {
+              getPostsByUser(this.$store, {
                 where: {
                   author: _.get(this.profile, [ 'id' ]),
                   active: POST_ACTIVE.DRAFT,
                   type: POST_TYPE.NEWS
                 }
               }),
-              fetchPostsCount(this.$store, {
+              getPostsCount(this.$store, {
                 where: {
                   author: _.get(this.profile, [ 'id' ]),
                   active: POST_ACTIVE.DRAFT,
@@ -371,10 +371,10 @@
           case 0:
             this.activeTab = 'reviews'
             Promise.all([
-              fetchPostsByUser(this.$store, {
+              getPostsByUser(this.$store, {
                 where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
               }),
-              fetchPostsCount(this.$store, {
+              getPostsCount(this.$store, {
                 where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
               })
             ])
@@ -384,10 +384,10 @@
           case 1:
             this.activeTab = 'news'
             Promise.all([
-              fetchPostsByUser(this.$store, {
+              getPostsByUser(this.$store, {
                 where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.NEWS }
               }),
-              fetchPostsCount(this.$store, {
+              getPostsCount(this.$store, {
                 where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.NEWS }
               })
             ])
@@ -396,7 +396,7 @@
             break
           case 2:
             this.activeTab = 'followings'
-            fetchFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'member' })
+            getFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'member' })
               .then(() => this.loading = false)
               .catch(() => this.loading = false)
               break
@@ -415,27 +415,27 @@
           })
           .catch((err) => console.error(err))
       },
-      $_guestEditor_updatePostList ({ sort, needFetchCount = false }) {
+      $_guestEditor_updatePostList ({ sort, needUpdateCount = false }) {
         this.sort = sort || this.sort
         switch (this.activeTab) {
           case 'reviews':
-            if (needFetchCount) {
-              fetchPostsCount(this.$store, {
+            if (needUpdateCount) {
+              getPostsCount(this.$store, {
                 where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
               })
             }
-            fetchPostsByUser(this.$store, {
+            getPostsByUser(this.$store, {
               page: this.page,
               where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
             })
             break
           case 'news':
-            if (needFetchCount) {
-              fetchPostsCount(this.$store, {
+            if (needUpdateCount) {
+              getPostsCount(this.$store, {
                 where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.NEWS }
               })
             }
-            fetchPostsByUser(this.$store, {
+            getPostsByUser(this.$store, {
               page: this.page,
               where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.NEWS }
             })
