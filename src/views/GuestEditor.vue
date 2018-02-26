@@ -194,8 +194,7 @@
         tabs: [
           WORDING_TAB_REVIEW_RECORD,
           WORDING_TAB_NEWS_RECORD,
-          WORDING_TAB_FOLLOW_RECORD,
-          WORDING_TAB_COMMENT_RECORD
+          WORDING_TAB_FOLLOW_RECORD
         ]
       }
     },

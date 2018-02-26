@@ -28,7 +28,6 @@
                 @deletePost="$_editor_showAlert"
                 @editPost="$_editor_showEditor">
               </post-list-tab>
-              <CommentManagement slot="3"></CommentManagement>
             </app-tab>
           </section>
         </template>
@@ -103,7 +102,6 @@
   import AlertPanelB from '../components/AlertPanel.vue'
   import AppAsideNav from '../components/AppAsideNav.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
-  import CommentManagement from '../components/comment/CommentManagement.vue'
   import FollowingListInTab from '../components/FollowingListInTab.vue'
   import PostList from '../components/PostList.vue'
   import PostListDetailed from '../components/PostListDetailed.vue'
@@ -246,8 +244,7 @@
       'post-list-tab': PostListInTab,
       'post-panel': PostPanelB,
       'tag-list': TagList,
-      AppAsideNav,
-      CommentManagement
+      AppAsideNav
     },
     data () {
       return {
@@ -275,8 +272,7 @@
         tabs: [
           WORDING_TAB_REVIEW_RECORD,
           WORDING_TAB_NEWS_RECORD,
-          WORDING_TAB_FOLLOW_RECORD,
-          WORDING_TAB_COMMENT_RECORD
+          WORDING_TAB_FOLLOW_RECORD
         ]
       }
     },
