@@ -100,7 +100,7 @@
   } from '../constants'
   import _ from 'lodash'
   import About from '../components/About.vue'
-  import AlertPanelB from '../components/AlertPanelB.vue'
+  import AlertPanelB from '../components/AlertPanel.vue'
   import AppAsideNav from '../components/AppAsideNav.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
   import CommentManagement from '../components/comment/CommentManagement.vue'
@@ -108,7 +108,7 @@
   import PostList from '../components/PostList.vue'
   import PostListDetailed from '../components/PostListDetailed.vue'
   import PostListInTab from '../components/PostListInTab.vue'
-  import PostPanelB from '../components/PostPanelB.vue'
+  import PostPanelB from '../components/PostPanel.vue'
   import Tab from '../components/Tab.vue'
   import TagList from '../components/TagList.vue'
   import TheControlBar from '../components/TheControlBar.vue'
@@ -632,9 +632,7 @@
             .then(() => this.loading = false)
             .catch(() => this.loading = false)
             break
-
         }
-        
       },
       $_editor_updateTagList ({ sort, needFetchCount = false }) {
         if (needFetchCount) {
