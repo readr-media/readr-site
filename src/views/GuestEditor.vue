@@ -76,7 +76,7 @@
   } from '../constants'
   import _ from 'lodash'
   import About from '../components/About.vue'
-  import AlertPanel from '../components/AlertPanelB.vue'
+  import AlertPanel from '../components/AlertPanel.vue'
   import AppAsideNav from '../components/AppAsideNav.vue'
   import AppHeader from '../components/AppHeader.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
@@ -85,7 +85,7 @@
   import PostList from '../components/PostList.vue'
   import PostListDetailed from '../components/PostListDetailed.vue'
   import PostListInTab from '../components/PostListInTab.vue'
-  import PostPanel from '../components/PostPanelB.vue'
+  import PostPanel from '../components/PostPanel.vue'
   import Tab from '../components/Tab.vue'
   import TheControlBar from '../components/TheControlBar.vue'
 
