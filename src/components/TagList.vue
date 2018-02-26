@@ -27,17 +27,17 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(t, index) in tags" :key="t.id">
+        <tr v-for="t in tags" :key="t.id">
           <td><input type="checkbox" ref="checkboxItems" @change="$_tagList_toggleHandler($event, t.id)"></td>
           <td ref="tagTextBlock" class="tagList__text">
-            <span ref="originTagText" @click="$_tagList_editTag(index)" v-text="t.text"></span>
+            <span ref="originTagText" @click="$_tagList_editTag" v-text="t.text"></span>
             <input ref="inputTagText" type="text" :value="t.text">
-            <button @click="$_tagList_confirmEdit($event, index, t.id)" v-text="wording.WORDING_TAGLIST_CONFIRM"></button>
+            <button @click="$_tagList_confirmEdit($event, t.id)" v-text="wording.WORDING_TAGLIST_CONFIRM"></button>
             <button @click="$_tagList_cancel" v-text="wording.WORDING_TAGLIST_CANCEL"></button>
           </td>
           <td v-text="t.relatedReviews"></td>
           <td v-text="t.relatedNews"></td>
-          <td class="tagList__edit"><button class="tagList__btn tagList__btn--single" @click="$_tagList_editTag(index)" v-text="wording.WORDING_TAGLIST_EDIT"></button></td>
+          <td class="tagList__edit"><button class="tagList__btn tagList__btn--single" @click="$_tagList_editTagBtn" v-text="wording.WORDING_TAGLIST_EDIT"></button></td>
           <td class="tagList__delete"><button class="tagList__btn tagList__btn--single" @click="$_tagList_deleteTag(t.id)" v-text="wording.WORDING_TAGLIST_DELETE"></button></td>
           <td></td>
         </tr>
@@ -114,6 +114,11 @@
         return Math.ceil(_.get(this.$store, [ 'state', 'tagsCount' ], 0) / this.maxResult)
       }
     },
+    watch: {
+      tags () {
+        this.addTag = ''
+      }
+    },
     methods: {
       $_tagList_addTag () {
         if (this.tagNameValidated) {
@@ -123,9 +128,10 @@
       $_tagList_cancel (event) {
         event.target.parentNode.classList.toggle('modify')
       },
-      $_tagList_confirmEdit (event, index, id) {
-        const newText = this.$refs.inputTagText[index].value.trim()
-        if (newText === this.$refs.originTagText[index].innerText) {
+      $_tagList_confirmEdit (event, id) {
+        const newText = event.target.parentNode.querySelector('input').value
+        const originText = event.target.parentNode.querySelector('span').innerText
+        if (newText === originText) {
           event.target.parentNode.classList.toggle('modify')
         } else {
           updateTags(this.$store, id, newText)
@@ -141,8 +147,11 @@
       $_postList_deleteTags () {
         this.$emit('deleteTags', this.checkedIems)
       },
-      $_tagList_editTag (index) {
-        this.$refs.tagTextBlock[index].classList.toggle('modify')
+      $_tagList_editTag (event) {
+        event.target.parentNode.classList.toggle('modify')
+      },
+      $_tagList_editTagBtn (event) {
+        event.target.parentNode.parentNode.querySelector('.tagList__text').classList.toggle('modify')
       },
       $_tagList_toggleHandler (event, id) {
         if (event.target.checked) {
