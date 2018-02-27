@@ -239,6 +239,10 @@ router.get('/status', authVerify, function(req, res) {
   res.status(200).send(true)
 })
 
+
+/**
+ * ToDo: public-posts has security issue
+ */
 router.get('/public-posts', (req, res) => {
   const url = req.url.replace('public-posts', 'posts')
   fetchPromise(url, req)

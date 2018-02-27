@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import Vue from 'vue'
 const { camelize } = require('humps')
+const debug = require('debug')('STORE:mutations')
 
 export default {
   ADD_ITEM_TO_FOLLOWING_BY_USER: (state, data) => {
@@ -109,8 +110,9 @@ export default {
     })
   },
   UPDATE_PUBLIC_POSTS: (state, { posts }) => {
-    posts['items'].forEach((post) => {
-      state['publicPosts']['items'].push(post)
-    })
+    state['publicPosts']['items'] = _.concat(
+      _.get(state, 'publicPosts.items', []),
+      _.get(posts, 'items', [])
+    )
   }
 }
