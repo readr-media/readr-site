@@ -103,5 +103,5 @@
         cursor pointer
   @media (min-width 950px)
     .about
-      width 950px
+      max-width 950px
 </style>
