@@ -35,7 +35,7 @@
           </template>
         </div>
         <div class="postPanel__tags-input">
-          <input ref="tagsInput" v-model="tagInput" type="text" @blur="$_postPanel_closeTagList" @focus="$_postPanel_showTagList" @input="$_postPanel_getTags">
+          <input ref="tagsInput" v-model="tagInput" type="text" @blur="$_postPanel_closeTagList" @focus="$_postPanel_showTagList">
           <div ref="tagsList" class="postPanel__tags-list hidden">
             <button v-show="tags.length === 0" class="noResult" v-text="wording.WORDING_POSTEDITOR_NOT_FOUND"></button>
             <template>
@@ -226,10 +226,9 @@
       },
       tags () {
         let tags = _.get(this.$store, [ 'state', 'tags' ], [])
-        _.forEach(this.tagsSelected, (tag) => {
-          tags = _.without(tags, tag)
+        return _.filter(tags, (tag) => {
+          return !_.includes(this.tagsSelectedID, tag.id)
         })
-        return tags
       },
       tagsSelectedID () {
         const items = []
@@ -248,6 +247,9 @@
         tags.forEach((tag) => {
           this.tagsSelected.push(tag)
         })
+      },
+      tagInput (val) {
+        this.$_postPanel_getTags()
       }
     },
     beforeMount () {
@@ -340,9 +342,12 @@
           _.mapKeys(Object.assign({}, this.post), (value, key) => _.snakeCase(key)),
           [ 'author', 'comment_amount', 'created_at', 'like_amount', 'tags', 'updated_at' ]
         )
-        // params.og_title = _.get(this.post, [ 'ogTitle' ]) || _.get(this.post, [ 'title' ]) || ''
         params.updated_by = _.get(this.$store.state, [ 'profile', 'id' ])
         
+        if (this.$can('editPostOg')) {
+          params.og_title = _.get(this.post, [ 'ogTitle' ]) || _.get(this.post, [ 'title' ]) || ''
+        }
+
         if (Date.parse(_.get(this.post, [ 'date' ]))) {
           params.published_at = _.get(this.post, [ 'date' ])
         }
@@ -365,11 +370,7 @@
       },
       $_postPanel_updateContent (content) {
         this.post.content = content
-      },
-      
-      // $_postPanel_toggleTag () {
-      //   this.toggleTagInput = !this.toggleTagInput
-      // }
+      }
     }
   }
 </script>
