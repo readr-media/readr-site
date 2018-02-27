@@ -36,8 +36,10 @@
             <post-list
               :maxResult="20"
               :posts="posts"
+              :sort="sort"
               @deletePosts="$_editor_showAlert"
               @editPost="$_editor_showEditor"
+              @filterChanged="$_editor_filterHandler"
               @publishPosts="$_editor_showAlert">
             </post-list>
           </section>
@@ -46,9 +48,11 @@
           <section class="main-panel">
             <tag-list
               :maxResult="20"
+              :sort="sort"
               :tags="tags"
               @addTag="$_editor_addTag"
               @deleteTags="$_editor_showAlert"
+              @filterChanged="$_editor_filterHandler"
               @updateTagList="$_editor_updateTagList({})">
             </tag-list>
           </section>
@@ -384,9 +388,19 @@
             this.needConfirm = false
           })
       },
+      $_editor_filterHandler ({ sort = this.sort, page = this.page }) {
+        switch (this.activePanel) {
+          case 'posts':
+            return this.$_editor_updatePostList({ sort: sort, page: page })
+          case 'tags':
+            return this.$_editor_updateTagList({ sort: sort, page: page })
+        }
+      },
       $_editor_openPanel (panel) {
         this.loading = true
         this.activePanel = panel
+        this.sort = DEFAULT_SORT
+        this.page = DEFAULT_PAGE
         switch (this.activePanel) {
           case 'records':
             this.alertType = 'post'
@@ -407,7 +421,9 @@
               getPosts(this.$store, {
                 where: { active: [ POST_ACTIVE.ACTIVE, POST_ACTIVE.PENDING ] }
               }),
-              getPostsCount(this.$store, {})
+              getPostsCount(this.$store, {
+                where: { active: [ POST_ACTIVE.ACTIVE, POST_ACTIVE.PENDING ] }
+              })
             ])
             .then(() => this.loading = false)
             .catch(() => this.loading = false)
@@ -596,8 +612,9 @@
           })
           .catch((err) => console.error(err))
       },
-      $_editor_updatePostList ({ sort, needUpdateCount = false }) {
+      $_editor_updatePostList ({ sort, page, needUpdateCount = false }) {
         this.sort = sort || this.sort
+        this.page = page || this.sort
         switch (this.activePanel) {
           case 'records':
             switch (this.activeTab) {
@@ -627,7 +644,9 @@
             break
           case 'posts':
             if (needUpdateCount) {
-              getPostsCount(this.$store, {})
+              getPostsCount(this.$store, {
+                where: { active: [ POST_ACTIVE.ACTIVE, POST_ACTIVE.PENDING ] }
+              })
             }
             getPosts(this.$store, {
               page: this.page,
@@ -639,7 +658,9 @@
             break
         }
       },
-      $_editor_updateTagList ({ sort, needUpdateCount = false }) {
+      $_editor_updateTagList ({ sort, page, needUpdateCount = false }) {
+        this.sort = sort || this.sort
+        this.page = page || this.sort
         if (needUpdateCount) {
           getTagsCount(this.$store)
         }

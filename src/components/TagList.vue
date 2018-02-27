@@ -5,15 +5,15 @@
         <input v-model="addTag" type="text" :placeholder="wording.WORDING_TAGLIST_ADD_PLACEHOLDER">
         <button :disabled="!tagNameValidated" @click="$_tagList_addTag" v-text="wording.WORDING_TAGLIST_ADD"></button>
       </div>
-      <pagination-nav :totalPages="totalPages"></pagination-nav>
+      <pagination-nav :totalPages="totalPages" @pageChanged="$_tagList_pageChanged"></pagination-nav>
     </div>
     <table>
       <thead>
         <tr>
           <th class="tagList__checkbox"><input type="checkbox" ref="checkboxSelectAll"  @click="$_tagList_toggleSelectAll"></th>
-          <th class="tagList__text"><span v-text="wording.WORDING_TAGLIST_TAG"></span></th>
-          <th><span v-text="wording.WORDING_TAGLIST_REVIEW_COUNT"></span></th>
-          <th><span v-text="wording.WORDING_TAGLIST_NEWS_COUNT"></span></th>
+          <th class="tagList__text"><span @click="$_tagList_orderBy('text')" v-text="wording.WORDING_TAGLIST_TAG"></span></th>
+          <th><span @click="$_tagList_orderBy('related_reviews')" v-text="wording.WORDING_TAGLIST_REVIEW_COUNT"></span></th>
+          <th><span @click="$_tagList_orderBy('related_news')" v-text="wording.WORDING_TAGLIST_NEWS_COUNT"></span></th>
           <th class="tagList__edit"></th>
           <th class="tagList__delete">
             <button class="tagList__btn tagList__btn--multiple" v-text="wording.WORDING_TAGLIST_DELETE" @click="$_postList_deleteTags"></button>
@@ -80,6 +80,10 @@
     props: {
       maxResult: {
         type: Number,
+        required: true
+      },
+      sort: {
+        type: String,
         required: true
       },
       tags: {
@@ -152,6 +156,18 @@
       },
       $_tagList_editTagBtn (event) {
         event.target.parentNode.parentNode.querySelector('.tagList__text').classList.toggle('modify')
+      },
+      $_tagList_orderBy (field) {
+        let order
+        if (this.sort === field || this.sort === `-${field}`) {
+          order = this.sort.indexOf('-') === 0 ? field : `-${field}`
+        } else {
+          order = field
+        }
+        this.$emit('filterChanged', { sort: order })
+      },
+      $_tagList_pageChanged (index) {
+        this.$emit('filterChanged', { page: index })
       },
       $_tagList_toggleHandler (event, id) {
         if (event.target.checked) {

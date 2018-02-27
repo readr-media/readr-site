@@ -87,7 +87,11 @@
       posts: {
         type: Array,
         required: true
-      }
+      },
+      sort: {
+        type: String,
+        required: true
+      },
     },
     data () {
       return {
@@ -157,16 +161,16 @@
         }
       },
       $_postList_orderBy (field) {
-        if (this.order === field || this.order === `-${field}`) {
-          this.order = this.order.indexOf('-') === 0 ? field : `-${field}`
-          this.$emit('filterChanged', { sort: this.order })
+        let order
+        if (this.sort === field || this.sort === `-${field}`) {
+          order = this.sort.indexOf('-') === 0 ? field : `-${field}`
         } else {
-          this.order = field
-          this.$emit('filterChanged', { sort: this.order })
+          order = field
         }
+        this.$emit('filterChanged', { sort: order })
       },
       $_postList_pageChanged (index) {
-        this.$emit('pageChanged', index)
+        this.$emit('filterChanged', { page: index })
       },
       $_postList_publishPosts () {
         const items = _.filter(this.checkedIems, (item) => {
