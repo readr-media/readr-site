@@ -27,13 +27,15 @@
                 slot="0"
                 :posts="posts"
                 @deletePost="showAlertHandler"
-                @editPost="showEditorHandler">
+                @editPost="showEditorHandler"
+                @filterChanged="filterChanged">
               </PostListInTab>
               <PostListInTab
                 slot="1"
                 :posts="posts"
                 @deletePost="showAlertHandler"
-                @editPost="showEditorHandler">
+                @editPost="showEditorHandler"
+                @filterChanged="filterChanged">
               </PostListInTab>
               <!-- <FollowingListInTab
                 slot="2"
@@ -232,7 +234,7 @@
   const getTags = (store, {
     max_result = MAXRESULT,
     page = DEFAULT_PAGE,
-    sorting = DEFAULT_SORT,
+    sort = DEFAULT_SORT,
     keyword = '',
     stats = false
   }) => {
@@ -240,7 +242,7 @@
       params: {
         max_result: max_result,
         page: page,
-        sorting: sorting,
+        sort: sort,
         keyword: keyword,
         stats: stats
       }
@@ -443,6 +445,7 @@
         switch (this.activePanel) {
           case 'accounts':
             return getMembers(this.$store, { page: this.currPage, sort: this.currSort })
+          case 'records':
           case 'posts':
             return this.updatePostList({ page: this.currPage, sort: this.currSort })
           case 'tags':

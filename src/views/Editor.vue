@@ -20,13 +20,15 @@
                 slot="0"
                 :posts="posts"
                 @deletePost="$_editor_showAlert"
-                @editPost="$_editor_showEditor">
+                @editPost="$_editor_showEditor"
+                @filterChanged="$_editor_filterHandler">
               </post-list-tab>
               <post-list-tab
                 slot="1"
                 :posts="posts"
                 @deletePost="$_editor_showAlert"
-                @editPost="$_editor_showEditor">
+                @editPost="$_editor_showEditor"
+                @filterChanged="$_editor_filterHandler">
               </post-list-tab>
             </app-tab>
           </section>
@@ -68,6 +70,7 @@
     </base-light-box>
     <base-light-box :showLightBox.sync="showEditor">
       <post-panel
+        v-if="showEditor"
         :post="post"
         :panelType="postPanel"
         :postType="postType"
@@ -202,7 +205,7 @@
   const getTags = (store, {
     max_result = MAXRESULT,
     page = DEFAULT_PAGE,
-    sorting = DEFAULT_SORT,
+    sort = DEFAULT_SORT,
     keyword = '',
     stats = false
   }) => {
@@ -210,7 +213,7 @@
       params: {
         max_result: max_result,
         page: page,
-        sorting: sorting,
+        sort: sort,
         keyword: keyword,
         stats: stats
       }
@@ -390,6 +393,7 @@
       },
       $_editor_filterHandler ({ sort = this.sort, page = this.page }) {
         switch (this.activePanel) {
+          case 'records':
           case 'posts':
             return this.$_editor_updatePostList({ sort: sort, page: page })
           case 'tags':
