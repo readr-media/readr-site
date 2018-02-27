@@ -26,22 +26,20 @@
       class="postPanel__input">
       <label for="" v-text="`${wording.WORDING_POSTEDITOR_TAG}：`"></label>
       <div class="postPanel__tags">
-        <div class="postPanel__tags-selected">
+        <div class="postPanel__tags-box" @mousedown.prevent="$_postPanel_focusTagInput">
           <template>
-            <div v-for="t in tagsSelected" :key="`${t.id}-selected`" class="postPanel__tags-selected-item">
+            <div v-for="t in tagsSelected" :key="`${t.id}-selected`" class="postPanel__tags-box-selected">
               <p v-text="t.text"></p>
               <button @click="$_postPanel_deleteTag(t.id)">Ｘ</button>
             </div>
+            <input ref="tagsInput" v-model="tagInput" type="text" @blur="$_postPanel_closeTagList" @focus="$_postPanel_showTagList">
           </template>
         </div>
-        <div class="postPanel__tags-input">
-          <input ref="tagsInput" v-model="tagInput" type="text" @blur="$_postPanel_closeTagList" @focus="$_postPanel_showTagList">
-          <div ref="tagsList" class="postPanel__tags-list hidden">
-            <button v-show="tags.length === 0" class="noResult" v-text="wording.WORDING_POSTEDITOR_NOT_FOUND"></button>
-            <template>
-              <button v-for="(t) in tags" :key="t.id" @mousedown="$_postPanel_addTag(t.id)" v-text="t.text"></button>
-            </template>
-          </div>
+        <div ref="tagsList" class="postPanel__tags-list hidden">
+          <button v-show="tags.length === 0" class="noResult" v-text="wording.WORDING_POSTEDITOR_NOT_FOUND"></button>
+          <template>
+            <button v-for="(t) in tags" :key="t.id" @mousedown="$_postPanel_addTag(t.id)" v-text="t.text"></button>
+          </template>
         </div>
       </div>
     </div>
@@ -240,9 +238,6 @@
     },
     watch: {
       post () {
-        this.metaChanged = false
-        this.tagInput = ''
-        this.tagsSelected = []
         const tags = _.get(this.post, [ 'tags' ]) || []
         tags.forEach((tag) => {
           this.tagsSelected.push(tag)
@@ -254,6 +249,10 @@
     },
     beforeMount () {
       getTags(this.$store, { stats: true })
+      const tags = _.get(this.post, [ 'tags' ]) || []
+      tags.forEach((tag) => {
+        this.tagsSelected.push(tag)
+      })
     },
     methods: {
       $_postPanel_addOgImage () {
@@ -296,6 +295,9 @@
         const tag = [ _.find(this.tagsSelected, { id: id }) ]
         this.tagsSelected = _.xor(this.tagsSelected, tag)
       },
+      $_postPanel_focusTagInput () {
+        this.$refs.tagsInput.focus()
+      },
       $_postPanel_getTags () {
         getTags(this.$store, { keyword: this.tagInput })
       },
@@ -311,6 +313,11 @@
             params.active = active
             params.author = _.get(this.$store.state, [ 'profile', 'id' ])
             params.type = this.postType
+
+            if (this.$can('editPostOg')) {
+              params.tags = this.tagsSelectedID
+            }
+
             this.$emit('addPost', params)
             break
           case 'edit':
@@ -412,12 +419,21 @@
   &__tags
     flex 1
     display flex
+    position relative
+    flex-wrap wrap
     padding-left 10px
     border 1px solid rgba(128, 128, 128, .4)
-    &-selected
-      &-item
+    &-box
+      width 100%
+      > input 
+        width auto
+        height 25px
+        padding 0
+        margin-left 10px
+        border none
+        outline none
+      &-selected
         display inline-block
-        
         > p
           display inline-block
           height 25px
@@ -430,44 +446,34 @@
           width 18px
           height 18px
           padding 0
+          margin-right 10px
           font-size 8px
           background-color transparent
           border 1px solid rgba(128, 128, 128, .4)
           border-radius 50%
           outline none
-        &:not(:first-of-type)
-          margin-left 10px
-    &-input
-      flex 1
-      display flex
-      position relative
-      > input 
-        width auto
-        height 25px
-        padding 0
-        margin-left 10px
-        border none
-        outline none
-      // &.hidden
-      //   display none
     &-list
       position absolute
-      top 25px
+      top 100%
       left -1px
-      width 100%
+      width calc(100% + 2px)
+      max-height 175px
       background-color #fff
       border 1px solid rgba(128, 128, 128, .4)
       border-top 1px solid rgba(128, 128, 128, .2)
+      overflow-y scroll
       &.hidden
         display none
       > button
         display block
         width 100%
+        max-width 100%
         font-size 14px
         text-align left
         background-color transparent
         border none
         outline none
+        overflow hidden
         &:hover
           background-color rgba(66, 128, 162, .3)
         &.noResult

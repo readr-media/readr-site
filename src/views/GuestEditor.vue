@@ -21,13 +21,15 @@
                 slot="0"
                 :posts="posts"
                 @deletePost="$_guestEditor_showAlert"
-                @editPost="$_guestEditor_showEditor">
+                @editPost="$_guestEditor_showEditor"
+                @filterChanged="$_guestEditor_filterHandler">
               </post-list-tab>
               <post-list-tab
                 slot="1"
                 :posts="posts"
                 @deletePost="$_guestEditor_showAlert"
-                @editPost="$_guestEditor_showEditor">
+                @editPost="$_guestEditor_showEditor"
+                @filterChanged="$_guestEditor_filterHandler">
               </post-list-tab>
             </app-tab>
           </section>
@@ -267,9 +269,17 @@
             this.needConfirm = false
           })
       },
+      $_guestEditor_filterHandler ({ sort = this.sort, page = this.page }) {
+        switch (this.activePanel) {
+          case 'records':
+            return this.$_guestEditor_updatePostList({ sort: sort, page: page })
+        }
+      },
       $_guestEditor_openPanel (panel) {
         this.loading = true
         this.activePanel = panel
+        this.sort = DEFAULT_SORT
+        this.page = DEFAULT_PAGE
         switch (this.activePanel) {
           case 'records':
             this.alertType = 'post'
@@ -414,8 +424,10 @@
           })
           .catch((err) => console.error(err))
       },
-      $_guestEditor_updatePostList ({ sort, needUpdateCount = false }) {
+      $_guestEditor_updatePostList ({ sort, page, needUpdateCount = false }) {
         this.sort = sort || this.sort
+        this.page = page || this.sort
+        
         switch (this.activeTab) {
           case 'reviews':
             if (needUpdateCount) {

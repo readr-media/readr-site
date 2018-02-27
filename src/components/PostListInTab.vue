@@ -107,7 +107,7 @@
         return origin
       },
       $_postListInTab_pageChanged (index) {
-        this.$emit('pageChanged', index)
+        this.$emit('filterChanged', { page: index })
       }
     }
   }
