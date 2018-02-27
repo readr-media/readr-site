@@ -49,8 +49,10 @@
             <PostList
               :maxResult="20"
               :posts="posts"
+              :sort="currSort"
               @deletePosts="showAlertHandler"
               @editPost="showEditorHandler"
+              @filterChanged="filterChanged"
               @publishPosts="showAlertHandler">
             </PostList>
           </section>
@@ -59,9 +61,11 @@
           <section class="panel">
             <TagList
               :maxResult="20"
+              :sort="currSort"
               :tags="tags"
               @addTag="addTag"
               @deleteTags="showAlertHandler"
+              @filterChanged="filterChanged"
               @updateTagList="updateTagList({})">
             </TagList>
           </section>
@@ -297,7 +301,7 @@
     },
     data () {
       return {
-        activePanel: 'records',
+        activePanel: 'accounts',
         activeTab: 'reviews',
         alertType: 'post',
         config: {
@@ -361,19 +365,7 @@
     beforeMount () {
       this.loading = true
       this.$can('memberManage') && Promise.all([
-        getMembers(this.$store, {}),
-        getPostsByUser(this.$store, {
-          where: {
-            author: _.get(this.profile, [ 'id' ]),
-            type: POST_TYPE.REVIEW
-          }
-        }),
-        getPostsCount(this.$store, {
-          where: {
-            author: _.get(this.profile, [ 'id' ]),
-            type: POST_TYPE.REVIEW
-          }
-        })
+        getMembers(this.$store, {})
       ])
       .then(() => this.loading = false)
       .catch(() => this.loading = false)
@@ -447,14 +439,22 @@
       filterChanged (filter = {}) {
         this.currPage = filter.page || this.currPage
         this.currSort = filter.sort || this.currSort
-        getMembers(this.$store, {
-          page: this.currPage,
-          sort: this.currSort
-        })
+        
+        switch (this.activePanel) {
+          case 'accounts':
+            return getMembers(this.$store, { page: this.currPage, sort: this.currSort })
+          case 'posts':
+            return this.updatePostList({ page: this.currPage, sort: this.currSort })
+          case 'tags':
+            return this.updateTagList({ page: this.currPage, sort: this.currSort })
+          
+        }
       },
       openPanel (panel) {
         this.loading = true
         this.activePanel = panel
+        this.currSort = DEFAULT_SORT
+        this.currPage = DEFAULT_PAGE
         switch (this.activePanel) {
           case 'records':
             this.alertType = 'post'
@@ -475,7 +475,9 @@
               getPosts(this.$store, {
                 where: { active: [ POST_ACTIVE.ACTIVE, POST_ACTIVE.PENDING ] }
               }),
-              getPostsCount(this.$store, {})
+              getPostsCount(this.$store, {
+                where: { active: [ POST_ACTIVE.ACTIVE, POST_ACTIVE.PENDING ] }
+              })
             ])
             .then(() => this.loading = false)
             .catch(() => this.loading = false)
@@ -664,8 +666,9 @@
           })
           .catch((err) => console.error(err))
       },
-      updatePostList ({ sort, needUpdateCount = false }) {
+      updatePostList ({ sort, page, needUpdateCount = false }) {
         this.sort = sort || this.sort
+        this.page = page || this.sort
         switch (this.activePanel) {
           case 'records':
             switch (this.activeTab) {
@@ -695,7 +698,9 @@
             break
           case 'posts':
             if (needUpdateCount) {
-              getPostsCount(this.$store, {})
+              getPostsCount(this.$store, {
+                where: { active: [ POST_ACTIVE.ACTIVE, POST_ACTIVE.PENDING ] }
+              })
             }
             getPosts(this.$store, {
               page: this.page,
@@ -707,7 +712,9 @@
             break
         }
       },
-      updateTagList ({ sort, needUpdateCount = false }) {
+      updateTagList ({ sort, page, needUpdateCount = false }) {
+        this.sort = sort || this.sort
+        this.page = page || this.sort
         if (needUpdateCount) {
           getTagsCount(this.$store)
         }
