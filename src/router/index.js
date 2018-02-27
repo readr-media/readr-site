@@ -19,6 +19,7 @@ const GuestEditor = () => import('../views/GuestEditor.vue')
 const Home = () => import('../views/Home.vue')
 const Login = () => import('../views/Login.vue')
 const Post = () => import('../views/Post.vue')
+const Profile = () => import('../views/Profile.vue')
 const ProjectsList = () => import('../views/ProjectsList.vue')
 const Search = () => import('../views/Search.vue')
 const SetPassword = () => import('../views/SetPassword.vue')
@@ -36,6 +37,7 @@ const router = new Router({
     { path: '/guesteditor', component: GuestEditor, meta: { permission: 'guesteditor' }},
     { path: '/login', component: Login },
     { path: '/post/:id', component: Post },
+    { path: '/profile/:id', component: Profile },
     { path: '/projects', component: ProjectsList },
     { path: '/search', component: Search },
     { path: '/setup/:type', component: SetPassword },
