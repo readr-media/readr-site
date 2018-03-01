@@ -6,9 +6,20 @@
     <main class="profile__main">
       <About :profile="profile"></About>
       <Tab :tabs="tabs" @changeTab="tabHandler">
-        <!--PostListInTab slot="0" :posts="posts"></PostListInTab-->
         <template slot="0">
-          <!--HomeArticleMain v-for="post in posts" :articleData="post" :key="post.id"></HomeArticleMain-->
+          <div class="profile__main__review">
+            <div class="profile__main__review__filter">
+              <select @change="filterChanged">
+                <option v-text="wording[ 'WORDING_PROFILE_FILTER_ALL' ]" value="all"></option>
+                <option v-for="item in filters" v-text="item" :value="item"></option>
+              </select>
+            </div>
+            <div class="profile__main__review__container">
+              <div class="item" v-for="post in posts" :key="post.id">
+                <PostContent :post="post"></PostContent>
+              </div>
+            </div>
+          </div>
         </template>
       </Tab>
     </main>
@@ -16,13 +27,13 @@
 </template>
 <script>
   import { POST_ACTIVE, POST_TYPE } from 'api/config'
-  import { WORDING_TAB_REVIEW_RECORD, WORDING_TAB_FOLLOW_RECORD } from 'src/constants'
-  import { get } from 'lodash'
+  import { WORDING_TAB_REVIEW_RECORD, WORDING_TAB_FOLLOW_RECORD, WORDING_PROFILE_FILTER_ALL } from 'src/constants'
+  import { filter, get, map } from 'lodash'
   import About from 'src/components/About.vue'
   import AppAsideNav from 'src/components/AppAsideNav.vue'
-  // import PostListInTab from 'src/components/PostListInTab.vue'
-  // import HomeArticleMain from 'src/components/home/HomeArticleMain.vue'
+  import PostContent from 'src/components/PostContent.vue'
   import Tab from 'src/components/Tab.vue'
+  import moment from 'moment'
 
   const debug = require('debug')('CLIENT:Profile')
   const MAXRESULT = 20
@@ -49,6 +60,12 @@
     })
   }
 
+  const getMemberPublic = (store, params) => {
+    return store.dispatch('GET_PUBLIC_MEMBER', {
+      params: params
+    })
+  }
+
   const getPostsCount = (store, params = {}) => {
     return store.dispatch('GET_POSTS_COUNT', {
       params: params
@@ -60,40 +77,57 @@
     components: {
       About,
       AppAsideNav,
-      // HomeArticleMain,
-      // PostListInTab,
+      PostContent,
       Tab
     },
     computed: {
+      profileId () {
+        return get(this.$route, 'params.id')
+      },
+      filters () {
+        return map(get(this.$store, 'state.publicPosts.items', []), post => moment(new Date(post.publishedAt)).format('YYYY/MM/DD'))
+      },
       posts () {
-        return get(this.$store, 'state.publicPosts.items', [])
+        if (this.filter === 'all') {
+          return get(this.$store, 'state.publicPosts.items', [])
+        } else {
+          return filter(get(this.$store, 'state.publicPosts.items', []), post => (moment(new Date(post.publishedAt)).format('YYYY/MM/DD') === this.filter))
+        }
       },
       profile () {
-        return get(this.$store, 'state.profile', {})
+        const profile = get(this.$store, 'state.publicMember', {})
+        return get(profile, 'id') === get(this.$route, 'params.id') && profile
       },
     },
     data () {
       return {
+        filter: 'all',
         tabs: [
           WORDING_TAB_REVIEW_RECORD,
           WORDING_TAB_FOLLOW_RECORD
-        ]
+        ],
+        wording: {
+          WORDING_PROFILE_FILTER_ALL
+        }
       }
     },
     methods: {
+      filterChanged (event) {
+        this.filter = event.target.value
+      },
       tabHandler (tab) {
         switch (tab) {
           case 0: 
             Promise.all([
               getPosts(this.$store, {
                 where: {
-                  author: _.get(this.profile, [ 'id' ]),
+                  author: this.profileId,
                   type: POST_TYPE.REVIEW
                 }
               }),
               getPostsCount(this.$store, {
                 where: {
-                  author: _.get(this.profile, [ 'id' ]),
+                  author: this.profileId,
                   type: POST_TYPE.REVIEW
                 }
               })              
@@ -106,19 +140,24 @@
       Promise.all([
         getPosts(this.$store, {
           where: {
-            author: _.get(this.profile, [ 'id' ]),
+            author: this.profileId,
             type: POST_TYPE.REVIEW
           }
         }),
         getPostsCount(this.$store, {
           where: {
-            author: _.get(this.profile, [ 'id' ]),
+            author: this.profileId,
             type: POST_TYPE.REVIEW
           }
+        }),
+        getMemberPublic(this.$store, {
+          id: get(this.$route, 'params.id')
         })
       ])
     },
-    mounted () {},
+    mounted () {
+      debug(`/profile/${this.$route.params.id}`)
+    },
   }
 </script>
 <style lang="stylus" scoped>
@@ -134,8 +173,67 @@
       position sticky
       top 60px
     &__main
-      margin-left 93.5px
+      padding-left 93.5px
+      width 100%
+      &__review
+        padding 0 100px
+        &__filter
+          margin-bottom 30px
+          width 130px
+          height 30px
+          border solid 1px #d3d3d3
+
+          position relative
+          padding 0
+          overflow hidden
+          background-color #fff
+          cursor pointer
+          
+          &:hover
+            padding 0
+            border 1px solid rgba(211, 211, 211, 0.5)
+            &::before
+              opacity 0.5
+
+          &::before
+            content ''
+            position absolute
+            top 0
+            right 0
+            background-color #fff
+            background-repeat no-repeat
+            background-position center center
+            background-size 7px auto
+            background-image url(/public/icons/triangle-grey.png)
+            display block
+            width 15px
+            height 100%
+            z-index 1
+
+          > select
+            color #808080
+            padding 5px 15px 5px 8px
+            width 100%
+            height 100%
+            border none
+            box-shadow none
+            background-color transparent
+            background-image none
+            appearance none
+            outline none
+            cursor pointer
+            position relative
+            z-index 2
+            font-size 0.875rem
+        &__container
+          > .item
+            margin 35px auto
+  @media (min-width 950px)
+    .profile
+      &__main
+        max-width 950px
   @media (min-width 1200px)
     .profile
       max-width 1200px
+
 </style>

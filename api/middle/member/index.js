@@ -1,5 +1,6 @@
 const { constructScope, fetchPermissions } = require('../../services/perm')
-const { find } = require('lodash')
+const { redisFetching, redisWriting } = require('../redisHandler')
+const { find, pick } = require('lodash')
 const config = require('../../config')
 const debug = require('debug')('READR:api:member')
 const express = require('express')
@@ -101,6 +102,52 @@ router.delete('*', (req, res, next) => {
   userid && banUserForTalk(userid).then(() => {
     next()
   })
+})
+
+router.get('/profile/:id', (req, res) => {
+  const id = req.params.id
+  const url = `${apiHost}/member/${id}`
+  if (!id) { res.status(403).send(`Forbidden.`) }
+  debug('Abt to fetch public member data.')
+  debug('>>>', req.url)
+  // res.send('ok')
+  redisFetching(`member${req.url}`, ({ err, data }) => {
+    if (!err && data) {
+      debug('Fetch public member data from Redis.')
+      debug('>>>', req.url)
+      const mem = JSON.parse(data)
+      res.json({
+        'items': mem['_items'].map((object) => pick(object, [ 'id', 'nickname', 'description', 'profileImage']))
+      })
+    } else {
+      superagent
+      .get(url)
+      .end((e, response) => {
+        debug('Fetchpublic member data from api.', url)
+        if (!e && response) {
+          redisWriting(`member${req.url}`, response.text)
+          const mem = JSON.parse(response.text)
+          res.json({
+            'items': mem['_items'].map((object) => pick(object, [ 'id', 'nickname', 'description', 'profileImage']))
+          })
+        } else {
+          res.status(response.status).send('{\'error\':' + e + '}')
+          console.error(`error during fetch data from: member${req.url}`)
+          console.error(e)  
+        }
+      })
+    }
+  })
+
+  // superagent
+  // .get(url)
+  // .end((err, response) => {
+  //   if (!err && response) {
+
+  //     } else {
+  //     res.status(500).json(err)
+  //   }
+  // })
 })
 
 module.exports = router

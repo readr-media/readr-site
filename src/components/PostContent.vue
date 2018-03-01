@@ -95,9 +95,10 @@
   .editor-writing
     margin 10px 0
     &__container 
-      min-height 105px
+      // min-height 105px
       // overflow hidden
       // text-overflow: ellipsis;
+      margin-bottom 15px
       & > p
         font-size 15px
         font-weight 300

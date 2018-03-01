@@ -20,11 +20,12 @@ import {
   getFollowingByResource,
   getFollowingByUser,
   getMembers,
-  getPublicMembers,
   getMeta,
   getPosts,
   getPostsCount,
   getProfile,
+  getPublicMember,
+  getPublicMembers,
   getPublicPosts,
   getPublicProjectsList,
   getTags,
@@ -43,7 +44,9 @@ import {
   uploadImage,
   verifyRecaptchaToken
 } from '../api'
+import { camelizeKeys } from 'humps'
 
+const debug = require('debug')('STORE:actions')
 export default {
   ADD_MEMBER: ({ commit, dispatch, state }, { params }) => {
     return addMember(params)
@@ -128,6 +131,14 @@ export default {
         } else {
           commit('SET_MEMBERS', { members: body })
         }
+      }
+    })
+  },
+  GET_PUBLIC_MEMBER: ({ commit, dispatch, state }, { params }) => {
+    return getPublicMember({ params }).then(({ status, body }) => {
+      debug('GET_PUBLIC_MEMBER', body)
+      if (status === 200) {
+        commit('SET_PUBLIC_MEMBER', { member: body })
       }
     })
   },

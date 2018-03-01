@@ -210,3 +210,6 @@ export const WORDING_SEARCH_FILTER_PROJECT = '議題'
 // Home Use
 export const WORDING_HOME_POST_MORE = '更多'
 export const WORDING_HOME_POST_SOURCE = '出處：'
+
+// Profile
+export const WORDING_PROFILE_FILTER_ALL = '所有'
