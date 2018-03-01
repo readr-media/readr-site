@@ -27,8 +27,9 @@
 </template>
 <script>
   import { POST_ACTIVE, POST_TYPE } from 'api/config'
+  import { ROLE_MAP } from 'src/constants'
   import { WORDING_TAB_REVIEW_RECORD, WORDING_TAB_FOLLOW_RECORD, WORDING_PROFILE_FILTER_ALL } from 'src/constants'
-  import { filter, get, map } from 'lodash'
+  import { find, filter, get, map } from 'lodash'
   import About from 'src/components/About.vue'
   import AppAsideNav from 'src/components/AppAsideNav.vue'
   import PostContent from 'src/components/PostContent.vue'
@@ -36,6 +37,7 @@
   import moment from 'moment'
 
   const debug = require('debug')('CLIENT:Profile')
+  const router = require('src/router').createRouter()
   const MAXRESULT = 20
   const DEFAULT_PAGE = 1
   const DEFAULT_SORT = '-updated_at'
@@ -81,8 +83,13 @@
       Tab
     },
     computed: {
-      profileId () {
-        return get(this.$route, 'params.id')
+      currUser () {
+        return get(this.$store, 'state.profile.id')
+      },
+      isCurrUser () {
+        debug('currUser', this.currUser)
+        debug('targUser', get(this.$route, 'params.id'))
+        return this.currUser === get(this.$route, 'params.id')
       },
       filters () {
         return map(get(this.$store, 'state.publicPosts.items', []), post => moment(new Date(post.publishedAt)).format('YYYY/MM/DD'))
@@ -93,6 +100,9 @@
         } else {
           return filter(get(this.$store, 'state.publicPosts.items', []), post => (moment(new Date(post.publishedAt)).format('YYYY/MM/DD') === this.filter))
         }
+      },
+      profileId () {
+        return get(this.$route, 'params.id')
       },
       profile () {
         const profile = get(this.$store, 'state.publicMember', {})
@@ -114,6 +124,13 @@
     methods: {
       filterChanged (event) {
         this.filter = event.target.value
+      },
+      routeToMemCenter () {
+        if (this.isCurrUser) {
+          const route = get(find(ROLE_MAP, (r) => (r.key === get(this.$store, 'state.profile.role'))), 'route')
+          debug('About to route to member center.', route)
+          router.push(`/${route}`)
+        }
       },
       tabHandler (tab) {
         switch (tab) {
@@ -137,6 +154,7 @@
       }
     },
     beforeMount () {
+      debug('isCurrUser', this.isCurrUser)
       Promise.all([
         getPosts(this.$store, {
           where: {
@@ -157,7 +175,14 @@
     },
     mounted () {
       debug(`/profile/${this.$route.params.id}`)
+      this.routeToMemCenter()
     },
+    watch: {
+      currUser: function () {
+        debug('currUser changed', this.currUser)
+        this.routeToMemCenter()
+      }
+    }
   }
 </script>
 <style lang="stylus" scoped>

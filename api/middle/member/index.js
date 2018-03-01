@@ -117,7 +117,7 @@ router.get('/profile/:id', (req, res) => {
       debug('>>>', req.url)
       const mem = JSON.parse(data)
       res.json({
-        'items': mem['_items'].map((object) => pick(object, [ 'id', 'nickname', 'description', 'profileImage']))
+        'items': mem['_items'].map((object) => pick(object, [ 'id', 'nickname', 'description', 'profile_image']))
       })
     } else {
       superagent
@@ -128,7 +128,7 @@ router.get('/profile/:id', (req, res) => {
           redisWriting(`member${req.url}`, response.text)
           const mem = JSON.parse(response.text)
           res.json({
-            'items': mem['_items'].map((object) => pick(object, [ 'id', 'nickname', 'description', 'profileImage']))
+            'items': mem['_items'].map((object) => pick(object, [ 'id', 'nickname', 'description', 'profile_image']))
           })
         } else {
           res.status(response.status).send('{\'error\':' + e + '}')
@@ -138,16 +138,6 @@ router.get('/profile/:id', (req, res) => {
       })
     }
   })
-
-  // superagent
-  // .get(url)
-  // .end((err, response) => {
-  //   if (!err && response) {
-
-  //     } else {
-  //     res.status(500).json(err)
-  //   }
-  // })
 })
 
 module.exports = router
