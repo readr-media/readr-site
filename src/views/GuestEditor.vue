@@ -31,6 +31,12 @@
                 @editPost="$_guestEditor_showEditor"
                 @filterChanged="$_guestEditor_filterHandler">
               </post-list-tab>
+              <following-list-tab
+                slot="2"
+                :currentResource="followingResource"
+                :followingByUser="followingByUser"
+                @changeResource="$_guestEditor_followingHandler">
+              </following-list-tab>
             </app-tab>
           </section>
         </template>
@@ -179,6 +185,7 @@
         config: {
           type: POST_TYPE
         },
+        followingResource: 'member',
         isPublishPostInEditor: false,
         itemsActive: undefined,
         itemsSelected: [],
@@ -201,6 +208,9 @@
       }
     },
     computed: {
+      followingByUser () {
+        return _.get(this.$store, [ 'state', 'followingByUser' ], [])
+      },
       itemsSelectedID () {
         const items = []
         _.forEach(this.itemsSelected, (item) => {
@@ -274,6 +284,11 @@
           case 'records':
             return this.$_guestEditor_updatePostList({ sort: sort, page: page })
         }
+      },
+      $_guestEditor_followingHandler (resource) {
+        this.followingResource = resource
+        this.page = DEFAULT_PAGE
+        getFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: resource })
       },
       $_guestEditor_openPanel (panel) {
         this.loading = true

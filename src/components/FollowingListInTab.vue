@@ -1,15 +1,28 @@
 <template>
   <section class="followingListInTab">
     <nav class="followingListInTab__nav">
-      <button :class="[ currentResource === 'member' ? 'active' : '' ]" @click="$_followingListInTab_resourceHandler('member')">客座總編</button>
-      <button :class="[ currentResource === 'post' ? 'active' : '' ]" @click="$_followingListInTab_resourceHandler('post')">追蹤評論</button>
-      <button :class="[ currentResource === 'project' ? 'active' : '' ]" @click="$_followingListInTab_resourceHandler('project')">追蹤專題</button>
+      <button
+        :class="[ currentResource === 'member' ? 'active' : '' ]"
+        @click="$_followingListInTab_resourceHandler('member')"
+        v-text="wording.WORDING_FOLLOW_LIST_GUEST_EDITOR">
+      </button>
+      <button
+        :class="[ currentResource === 'post' ? 'active' : '' ]"
+        @click="$_followingListInTab_resourceHandler('post')"
+        v-text="`${wording.WORDING_FOLLOW_LIST_FOLLOW}${wording.WORDING_FOLLOW_LIST_REVIEW}`">
+      </button>
+      <button
+        :class="[ currentResource === 'project' ? 'active' : '' ]"
+        @click="$_followingListInTab_resourceHandler('project')"
+        v-text="`${wording.WORDING_FOLLOW_LIST_FOLLOW}${wording.WORDING_FOLLOW_LIST_PROJECT}`">
+      </button>
     </nav>
+    <!-- <pagination-nav></pagination-nav> -->
     <div class="followingListInTab__list">
       <div v-for="follow in followingByUser" :key="follow.id" class="followingListInTab__item">
         <div class="followingListInTab__img">
           <div v-if="currentResource === 'member'"></div>
-          <button @click="$_followingListInTab_unfollow(follow.id)"><img src="/public/icons/star.png"></button>
+          <button @click="$_followingListInTab_unfollow(follow.id)"><img src="/public/icons/star-grey.png"></button>
         </div>
         <div class="followingListInTab__content">
           <h2 v-text="follow.title"></h2>
@@ -21,9 +34,25 @@
   </section>
 </template>
 <script>
+  import {
+    WORDING_FOLLOW_LIST_FOLLOW,
+    WORDING_FOLLOW_LIST_GUEST_EDITOR,
+    WORDING_FOLLOW_LIST_NEWS,
+    WORDING_FOLLOW_LIST_PROJECT,
+    WORDING_FOLLOW_LIST_REVIEW
+  } from '../constants'
+  import PaginationNav from './PaginationNav.vue'
+
   export default {
     name: 'FollowingListInTab',
+    components: {
+      'pagination-nav': PaginationNav
+    },
     props: {
+      currentResource: {
+        type: String,
+        required: true
+      },
       followingByUser: {
         type: Array,
         required: true
@@ -31,7 +60,13 @@
     },
     data () {
       return {
-        currentResource: 'member'
+        wording: {
+          WORDING_FOLLOW_LIST_FOLLOW,
+          WORDING_FOLLOW_LIST_GUEST_EDITOR,
+          WORDING_FOLLOW_LIST_NEWS,
+          WORDING_FOLLOW_LIST_PROJECT,
+          WORDING_FOLLOW_LIST_REVIEW
+        }
       }
     },
     methods: {
@@ -56,11 +91,10 @@
         }
       },
       $_followingListInTab_resourceHandler (resource) {
-        this.currentResource = resource
         this.$emit('changeResource', resource)
       },
       $_followingListInTab_unfollow (id) {
-        this.$emit('unfollow', this.currentResource, id)
+        // this.$emit('unfollow', this.currentResource, id)
       }
     }
   }
