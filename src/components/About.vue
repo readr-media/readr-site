@@ -1,5 +1,5 @@
 <template>
-  <div class="about">
+  <div class="about" v-if="profile">
     <div class="about__thumbnail">
       <img :src="thumbnail">
     </div>
@@ -8,8 +8,8 @@
       <span class="role" v-text="`（${role}）`" v-if="role"></span>
     </div>
     <div class="about__introduction" v-text="introduction"></div>
-    <div class="about__edit">
-      <span class="about__edit__btn" v-text="editText" @click="showLightBox = true"></span>
+    <div class="about__edit" v-if="isCurrUser">
+      <span class="about__edit__btn" v-text="editText" @click="goEdit"></span>
     </div>
     <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder">
       <BaseLightBoxProfileEdit :showLightBox="showLightBox" :profile="profile"/>
@@ -17,28 +17,35 @@
   </div>
 </template>
 <script>
-  import _ from 'lodash'
-  import { ROLE_MAP } from '../constants'
-  import BaseLightBox from './BaseLightBox.vue'
-  import BaseLightBoxProfileEdit from './BaseLightBoxProfileEdit.vue'
+  import { filter, get } from 'lodash'
+  import { ROLE_MAP } from 'src/constants'
+  import BaseLightBox from 'src/components/BaseLightBox.vue'
+  import BaseLightBoxProfileEdit from 'src/components/BaseLightBoxProfileEdit.vue'
 
+  const debug = require('debug')('CLIENT:About')
   export default {
     components: {
       BaseLightBox,
       BaseLightBoxProfileEdit
     },
     computed: {
+      isCurrUser () {
+        const currUser = get(this.$store, 'state.profile.id')
+        debug('currUser', currUser)
+        debug('profile', get(this.profile, 'id'))
+        return currUser === get(this.profile, 'id')
+      },
       introduction () {
-        return _.get(this.profile, [ 'description' ], '')
+        return get(this.profile, [ 'description' ], '')
       },
       name () {
-        return _.get(this.profile, [ 'nickname' ])
+        return get(this.profile, [ 'nickname' ])
       },
       role () {
-        return _.get(_.filter(ROLE_MAP, { key: _.get(this.profile, [ 'role' ]) }), [ 0, 'value' ])
+        return get(filter(ROLE_MAP, { key: get(this.profile, [ 'role' ]) }), [ 0, 'value' ])
       },
       thumbnail () {
-        return _.get(this.profile, [ 'profileImage' ]) || '/public/icons/exclamation.png'
+        return get(this.profile, [ 'profileImage' ]) || '/public/icons/exclamation.png'
       }
     },
     data () {
@@ -48,7 +55,12 @@
       }
     },
     name: 'about',
-    methods: {},
+    methods: {
+      goEdit () {
+        debug('isCurrUser', this.isCurrUser)
+        this.isCurrUser && (this.showLightBox = true)
+      },
+    },
     mounted () {},
     props: [ 'profile' ]
   }
@@ -91,5 +103,5 @@
         cursor pointer
   @media (min-width 950px)
     .about
-      width 950px
+      max-width 950px
 </style>

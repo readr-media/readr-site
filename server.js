@@ -112,8 +112,12 @@ function render (req, res, next) {
   let isPageNotFound = false
   let isErrorOccurred = false  
 
+  const curr_host = _.get(req, 'headers.host') || ''
+  const targ_exp = /(dev)|(localhost)/
+  debug('Current client host:', curr_host, !curr_host.match(targ_exp))
+
   if (_.filter(PAGE_CACHE_EXCLUDING, (p) => (req.url.indexOf(p) > -1)).length === 0) {
-    res.setHeader('Cache-Control', 'public, max-age=3600')  
+    !curr_host.match(targ_exp) && res.setHeader('Cache-Control', 'public, max-age=3600')  
   }
   res.setHeader("Content-Type", "text/html")
   res.setHeader("Server", serverInfo)

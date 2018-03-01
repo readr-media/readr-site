@@ -249,6 +249,12 @@ export function getMembers ({ params }) {
   return _doFetchStrict(url, {})
 }
 
+export function getPublicMember ({ params }) {
+  let url = `${host}/api/member/public`
+  url = `${url}/profile/${params.id}`
+  return _doFetch(url)
+}
+
 export function getPublicMembers ({ params }) {
   let url = `${host}/api/public-members`
   const query = _buildQuery(params)

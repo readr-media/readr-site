@@ -20,11 +20,12 @@ import {
   getFollowingByResource,
   getFollowingByUser,
   getMembers,
-  getPublicMembers,
   getMeta,
   getPosts,
   getPostsCount,
   getProfile,
+  getPublicMember,
+  getPublicMembers,
   getPublicPosts,
   getPublicProjectsList,
   getTags,
@@ -43,7 +44,9 @@ import {
   uploadImage,
   verifyRecaptchaToken
 } from '../api'
+import { camelizeKeys } from 'humps'
 
+const debug = require('debug')('STORE:actions')
 export default {
   ADD_MEMBER: ({ commit, dispatch, state }, { params }) => {
     return addMember(params)
@@ -128,6 +131,14 @@ export default {
         } else {
           commit('SET_MEMBERS', { members: body })
         }
+      }
+    })
+  },
+  GET_PUBLIC_MEMBER: ({ commit, dispatch, state }, { params }) => {
+    return getPublicMember({ params }).then(({ status, body }) => {
+      debug('GET_PUBLIC_MEMBER', body)
+      if (status === 200) {
+        commit('SET_PUBLIC_MEMBER', { member: body })
       }
     })
   },
@@ -267,6 +278,18 @@ export default {
   PUBLISH_POSTS: ({ commit, dispatch, state }, { params }) => {
     return publishPosts({ params })
   },
+  REGISTER: ({ commit, dispatch, state }, { params, token }) => {
+    return register(params, token)
+  },
+  RESET_PWD_EMAIL: ({ commit, dispatch, state }, { params, token }) => {
+    return resetPwdEmail(params, token)
+  },
+  RESET_PWD: ({ commit, dispatch, state }, { params }) => {
+    return resetPwd(params)
+  },
+  SETUP_BASIC_PROFILE: ({ commit, dispatch, state }, { params }) => {
+    return setupBasicProfile({ params })
+  },
   UPDATE_FOLLOWING_BY_USER: ({ commit, dispatch, state }, { params }) => {
     if (params.action === 'follow' && params.resource === 'post') {
       commit('ADD_ITEM_TO_FOLLOWING_BY_USER', params.data)
@@ -280,18 +303,6 @@ export default {
     } else if (params.action === 'unfollow') {
       commit('REMOVE_USER_FROM_FOLLOWING_BY_RESOURCE', params)
     }
-  },
-  REGISTER: ({ commit, dispatch, state }, { params, token }) => {
-    return register(params, token)
-  },
-  RESET_PWD_EMAIL: ({ commit, dispatch, state }, { params, token }) => {
-    return resetPwdEmail(params, token)
-  },
-  RESET_PWD: ({ commit, dispatch, state }, { params }) => {
-    return resetPwd(params)
-  },
-  SETUP_BASIC_PROFILE: ({ commit, dispatch, state }, { params }) => {
-    return setupBasicProfile({ params })
   },
   UPDATE_MEMBER: ({ commit, dispatch, state }, { params, type }) => {
     return updateMember({ params, type })

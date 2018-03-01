@@ -26,7 +26,7 @@ const sharp = require('sharp')
 const scrape = require('html-metadata')
 const upload = multer({ dest: 'tmp/' })
 
-const { fetchFromRedis, insertIntoRedis, redisFetching, redisWriting } = require('./middle/redisHandler')
+const { fetchFromRedis, insertIntoRedis } = require('./middle/redisHandler')
 
 const router = express.Router()
 const superagent = require('superagent')
@@ -141,6 +141,7 @@ const authorize = (req, res, next) => {
 
 router.use('/activate', verifyToken, require('./middle/member/activation'))
 router.use('/initmember', authVerify, require('./middle/member/initMember'))
+router.use('/member/public', require('./middle/member'))
 router.use('/member', [ authVerify, authorize ], require('./middle/member'))
 router.use('/comment', require('./middle/comment'))
 router.use('/register', authVerify, require('./middle/member/register'))
@@ -239,6 +240,10 @@ router.get('/status', authVerify, function(req, res) {
   res.status(200).send(true)
 })
 
+
+/**
+ * ToDo: public-posts has security issue, and need to go through redis
+ */
 router.get('/public-posts', (req, res) => {
   const url = req.url.replace('public-posts', 'posts')
   fetchPromise(url, req)
@@ -258,8 +263,10 @@ router.get('/public-posts', (req, res) => {
   })
 })
 
+// router.use('/public-member', require('./middle/member'))
 router.get('/public-members', (req, res, next) => {
   if ('custom_editor' in req.query || 'role' in req.query) {
+    debug('req.query', req.query)
     const url = req.url.replace('public-members', 'members')
     fetchPromise(url, req)
     .then((response) => {
