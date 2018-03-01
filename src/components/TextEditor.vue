@@ -46,9 +46,6 @@ export default {
     contentEdit: {
       default: ''
     },
-    // needReset: {
-    //   type: Boolean
-    // },
     type: {
       type: Number,
       required: true
@@ -95,28 +92,25 @@ export default {
     content () {
       this.$emit('updateContent', this.content)
     },
-    contentEdit (val) {
-      this.content = val
-      if (this.type === POST_TYPE.REVIEW) {
-        this.contentReview = val
-      } else if (this.type === POST_TYPE.NEWS) {
-        this.contentNews = val
-      }
-    },
-    // needReset () {
-    //   this.content = ''
-    //   this.contentNews = ''
-    //   this.contentReview = ''
-    // }
+  },
+  beforeMount () {
+    this.content = this.contentEdit
+    if (this.type === POST_TYPE.REVIEW) {
+      this.contentReview = this.content
+    } else if (this.type === POST_TYPE.NEWS) {
+      this.contentNews = this.content
+    }
   },
   methods: {
     onEditorChange(event) {
-      if (this.type === POST_TYPE.REVIEW) {
-        this.contentReview = event.html
-      } else if (this.type === POST_TYPE.NEWS) {
-        this.contentNews = event.html
+      if (event.html) {
+        if (this.type === POST_TYPE.REVIEW) {
+          this.contentReview = event.html
+        } else if (this.type === POST_TYPE.NEWS) {
+          this.contentNews = event.html
+        }
+        this.content = event.html
       }
-      this.content = event.html
     },
     $_editor_imageHandler () {
       this.$_editor_selectImage()

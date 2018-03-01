@@ -172,6 +172,13 @@ export const WORDING_TAGLIST_REVIEW_COUNT = '相關評論數'
 export const WORDING_TAGLIST_TAG = '關鍵字詞'
 export const WORDING_TAGLIST_UPDATE_AT = '更新時間'
 
+// Following List
+export const WORDING_FOLLOW_LIST_FOLLOW = '追蹤'
+export const WORDING_FOLLOW_LIST_GUEST_EDITOR = '客座總編'
+export const WORDING_FOLLOW_LIST_NEWS = '新聞'
+export const WORDING_FOLLOW_LIST_PROJECT = '專題'
+export const WORDING_FOLLOW_LIST_REVIEW = '評論'
+
 // Alert Paenl
 export const WORDING_ALERTPANEL_ADD_SUCCESSFUL = '已新增'
 export const WORDING_ALERTPANEL_AUTHOR = '作者'

@@ -37,12 +37,12 @@
                 @editPost="showEditorHandler"
                 @filterChanged="filterChanged">
               </PostListInTab>
-              <!-- <FollowingListInTab
+              <FollowingListInTab
                 slot="2"
+                :currentResource="followingResource"
                 :followingByUser="followingByUser"
-                @changeResource="$_admin_followingHandler"
-                @unfollow="$_admin_unfollowingHandler">
-              </FollowingListInTab> -->
+                @changeResource="followingHandler">
+              </FollowingListInTab>
             </app-tab>
           </section>
         </template>
@@ -312,6 +312,7 @@
         currPage: DEFAULT_PAGE,
         currPagePostsDraft: DEFAULT_PAGE,
         currSort: DEFAULT_SORT,
+        followingResource: 'member',
         isPublishPostInEditor: false,
         itemsActive: undefined,
         itemsSelected: [],
@@ -338,9 +339,9 @@
       }
     },
     computed: {
-      // followingByUser () {
-      //   return _.get(this.$store, [ 'state', 'followingByUser' ], [])
-      // },
+      followingByUser () {
+        return _.get(this.$store, [ 'state', 'followingByUser' ], [])
+      },
       itemsSelectedID () {
         const items = []
         _.forEach(this.itemsSelected, (item) => {
@@ -452,6 +453,11 @@
             return this.updateTagList({ page: this.currPage, sort: this.currSort })
           
         }
+      },
+      followingHandler (resource) {
+        this.followingResource = resource
+        this.page = DEFAULT_PAGE
+        getFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: resource })
       },
       openPanel (panel) {
         this.loading = true
