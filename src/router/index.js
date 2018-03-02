@@ -23,6 +23,7 @@ const Profile = () => import('../views/Profile.vue')
 const ProjectsList = () => import('../views/ProjectsList.vue')
 const Search = () => import('../views/Search.vue')
 const SetPassword = () => import('../views/SetPassword.vue')
+const Videos = () => import('../views/Videos.vue')
 
 const router = new Router({
   mode: 'history',
@@ -41,6 +42,7 @@ const router = new Router({
     { path: '/projects', component: ProjectsList },
     { path: '/search', component: Search },
     { path: '/setup/:type', component: SetPassword },
+    { path: '/videos', component: Videos },
   ]
 })
 
