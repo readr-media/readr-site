@@ -63,13 +63,13 @@
       @click="$_baseControlBar_openPanel($event, 'tags')"
       :text="`${wording.WORDING_CONTROLBAR_TAG}${wording.WORDING_CONTROLBAR_MANAGE}`">
     </control-bar-button>
-    <control-bar-button
-      v-if="$can('editVideo') && viewport > 767"
-      class="controlBar--btn"
-      @changeBtnAmount="$_baseControlBar_btnAmountHandler"
-      @click="$_baseControlBar_openPanel($event, 'videos')"
-      :text="`${wording.WORDING_CONTROLBAR_VIDEO}${wording.WORDING_CONTROLBAR_MANAGE}`">
-    </control-bar-button>
+    <control-bar-button-box
+      v-if="viewport > 767"
+      class="controlBar__btnBox"
+      :amount="2">
+      <button slot="0" class="controlBar--btn" @click="$_baseControlBar_openPanel($event, 'videos')" v-text="`${wording.WORDING_CONTROLBAR_VIDEO}${wording.WORDING_CONTROLBAR_MANAGE}`"></button>
+      <button slot="1" class="controlBar--subBtn" v-text="wording.WORDING_CONTROLBAR_ADD_VIDEO" @click="$_baseControlBar_clickHandler('addVideo')"></button>
+    </control-bar-button-box>
     <control-bar-button
       v-if="$can('addAccount') && viewport > 767"
       class="controlBar--btn"
@@ -94,6 +94,7 @@
     WORDING_CONTROLBAR_ADD_DIRECTLY,
     WORDING_CONTROLBAR_ADD_NEWS,
     WORDING_CONTROLBAR_ADD_REVIEW,
+    WORDING_CONTROLBAR_ADD_VIDEO,
     WORDING_CONTROLBAR_EDIT_DRAFT,
     WORDING_CONTROLBAR_MANAGE,
     WORDING_CONTROLBAR_NEWS,
@@ -124,6 +125,7 @@
           WORDING_CONTROLBAR_ADD_DIRECTLY,
           WORDING_CONTROLBAR_ADD_NEWS,
           WORDING_CONTROLBAR_ADD_REVIEW,
+          WORDING_CONTROLBAR_ADD_VIDEO,
           WORDING_CONTROLBAR_EDIT_DRAFT,
           WORDING_CONTROLBAR_MANAGE,
           WORDING_CONTROLBAR_NEWS,
@@ -208,7 +210,7 @@
     width 90px
     height 30px
     padding 0
-    margin 0 2.5px
+    margin-right 5px
     color #808080
     font-size 15px
     background-color #fff
@@ -217,8 +219,6 @@
     transition all .5s ease-in-out
     &:first-of-type
       margin-left 0
-    &:last-of-type
-      margin-right 0
   
   &--subBtn
     box-sizing content-box

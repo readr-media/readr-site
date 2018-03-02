@@ -1,13 +1,18 @@
 <template>
   <section class="postPanel">
-    <input v-model="post.title" type="text" class="postPanel__title" :placeholder="wording.WORDING_POSTEDITOR_INPUT_TITLE">
+    <div class="postPanel__input">
+      <label for="" v-text="`${wording.WORDING_POSTEDITOR_VIDEO}${wording.WORDING_POSTEDITOR_TITLE}：`"></label>
+      <input v-model="post.title" type="text" class="postPanel__title" :placeholder="wording.WORDING_POSTEDITOR_INPUT_TITLE">
+    </div>
     <text-editor
+      v-if="!isVideo"
       :contentEdit="post.content"
       :type="postType"
       @updateContent="$_postPanel_updateContent">
     </text-editor>
     <div class="postPanel__input postPanel__link">
-      <label for="" v-text="`${wording.WORDING_POSTEDITOR_LINK}：`"></label>
+      <label v-if="!isVideo" for="" v-text="`${wording.WORDING_POSTEDITOR_NEWS}${wording.WORDING_POSTEDITOR_LINK}：`"></label>
+      <label v-if="isVideo" for="" v-text="`${wording.WORDING_POSTEDITOR_VIDEO}${wording.WORDING_POSTEDITOR_LINK}：`"></label>
       <input v-model="post.link" type="url" @change="$_postPanel_metaChanged">
     </div>
     <div v-if="$can('editPostOg')" class="postPanel__input postPanel--publishDate">
@@ -22,7 +27,7 @@
       </no-ssr>
     </div>
     <div
-      v-if="$can('editPostOg')"
+      v-if="$can('editPostOg') && !isVideo"
       class="postPanel__input">
       <label for="" v-text="`${wording.WORDING_POSTEDITOR_TAG}：`"></label>
       <div class="postPanel__tags">
@@ -114,6 +119,7 @@
     WORDING_POSTEDITOR_DELETE,
     WORDING_POSTEDITOR_INPUT_TITLE,
     WORDING_POSTEDITOR_LINK,
+    WORDING_POSTEDITOR_NEWS,
     WORDING_POSTEDITOR_NOT_FOUND,
     WORDING_POSTEDITOR_OG_DESCRIPTION,
     WORDING_POSTEDITOR_OG_IMAGE,
@@ -125,9 +131,11 @@
     WORDING_POSTEDITOR_SAVE_DRAFT,
     WORDING_POSTEDITOR_SAVE_PENDING,
     WORDING_POSTEDITOR_TAG,
-    WORDING_POSTEDITOR_UPLOAD
+    WORDING_POSTEDITOR_TITLE,
+    WORDING_POSTEDITOR_UPLOAD,
+    WORDING_POSTEDITOR_VIDEO
   } from '../constants'
-  import { POST_ACTIVE } from '../../api/config'
+  import { POST_ACTIVE, POST_TYPE } from '../../api/config'
   import _ from 'lodash'
   import AlertPanel from './AlertPanel.vue'
   import BaseLightBox from './BaseLightBox.vue'
@@ -199,6 +207,7 @@
           WORDING_POSTEDITOR_DELETE,
           WORDING_POSTEDITOR_INPUT_TITLE,
           WORDING_POSTEDITOR_LINK,
+          WORDING_POSTEDITOR_NEWS,
           WORDING_POSTEDITOR_NOT_FOUND,
           WORDING_POSTEDITOR_OG_DESCRIPTION,
           WORDING_POSTEDITOR_OG_IMAGE,
@@ -210,7 +219,9 @@
           WORDING_POSTEDITOR_SAVE_DRAFT,
           WORDING_POSTEDITOR_SAVE_PENDING,
           WORDING_POSTEDITOR_TAG,
-          WORDING_POSTEDITOR_UPLOAD
+          WORDING_POSTEDITOR_TITLE,
+          WORDING_POSTEDITOR_UPLOAD,
+          WORDING_POSTEDITOR_VIDEO
         },
         tagInput: '',
         tagsSelected: []
@@ -221,6 +232,9 @@
         return _.isEmpty(_.trim(_.get(this.post, [ 'link' ], '')))
           && _.isEmpty(_.trim(_.get(this.post, [ 'title' ], '')))
           && _.isEmpty(_.trim(_.replace(_.get(this.post, [ 'content' ], ''), /<[^>]*>/g, '')))
+      },
+      isVideo () {
+        return this.postType === POST_TYPE.VIDEO
       },
       tags () {
         let tags = _.get(this.$store, [ 'state', 'tags' ], [])
@@ -398,10 +412,15 @@
     color #000
     font-size 18px
     font-weight 600
+    &::placeholder
+      color #808080
+      font-size 14px
+      font-weight 400
   &__input
     display flex
     width 100%
-    margin-top 10px
+    &:not(:first-of-type)
+      margin-top 10px
     label
       line-height 25px
     input

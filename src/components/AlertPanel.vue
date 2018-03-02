@@ -2,7 +2,7 @@
   <section class="alert">
     <p v-if="needConfirm" class="alert__title"><strong v-text="alertTitle"></strong></p>
     <div v-if="needList" class="alert__list" :class="{ multiple: isMultiple }">
-      <template v-if="type === 'post'">
+      <template v-if="type === 'post' || type === 'video'">
         <div v-for="i in items" :key="i.id" class="alert__item">
           <p><strong v-text="`${wording.WORDING_ALERTPANEL_AUTHOR}：`"></strong><span v-text="$_alertPanel_getPostAuthor(i)"></span></p>
           <p><strong v-text="`${wording.WORDING_ALERTPANEL_TITLE}：`"></strong><span v-text="i.title"></span></p>
@@ -38,7 +38,8 @@
     WORDING_ALERTPANEL_STATUS,
     WORDING_ALERTPANEL_TAG,
     WORDING_ALERTPANEL_TITLE,
-    WORDING_ALERTPANEL_UPDATE_SUCCESSFUL
+    WORDING_ALERTPANEL_UPDATE_SUCCESSFUL,
+    WORDING_ALERTPANEL_VIDEO
   } from '../constants'
   import _ from 'lodash'
   export default {
@@ -111,11 +112,28 @@
               case TAG_ACTIVE.DEACTIVE:
                 return `${WORDING_ALERTPANEL_TAG}${WORDING_ALERTPANEL_DELETE_SUCCESSFUL}！`
             }
+          case 'video':
+            if (!this.activeChanged) {
+              return `${WORDING_ALERTPANEL_VIDEO}${WORDING_ALERTPANEL_UPDATE_SUCCESSFUL}！`
+            } else {
+              switch (this.active) {
+                case POST_ACTIVE.ACTIVE:
+                  return `${WORDING_ALERTPANEL_VIDEO}${WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL}！`
+                case POST_ACTIVE.DEACTIVE:
+                  return `${WORDING_ALERTPANEL_VIDEO}${WORDING_ALERTPANEL_DELETE_SUCCESSFUL}！`
+                case POST_ACTIVE.DRAFT:
+                  if (!_.get(this.items, [ 0, 'id' ])) {
+                    return `${WORDING_ALERTPANEL_VIDEO}${WORDING_ALERTPANEL_ADD_SUCCESSFUL}！`
+                  }
+                  return `${WORDING_ALERTPANEL_VIDEO}${WORDING_ALERTPANEL_UPDATE_SUCCESSFUL}！`
+              }
+            }
         }
       },
       alertTitle () {
         switch (this.type) {
           case 'post':
+          case 'video':
             switch (this.active) {
               case POST_ACTIVE.ACTIVE:
                 return WORDING_ALERTPANEL_PUBLISH_CONFIRMATION
@@ -131,22 +149,19 @@
       },
       needList () {
         switch (this.type) {
-          case 'post':
-            return true
-            // return this.active !== POST_ACTIVE.ACTIVE
           case 'tag':
             return this.active !== TAG_ACTIVE.ACTIVE
           default:
-            return false
+            return true
         }
       }
     },
     watch: {
       needConfirm (val) {
         if (!val && this.showLightBox) {
-          // setTimeout(() => {
-          //   this.$emit('closeAlert')
-          // }, 5000)
+          setTimeout(() => {
+            this.$emit('closeAlert')
+          }, 5000)
         }
       }
     },
@@ -157,6 +172,7 @@
       $_alertPanel_confirm () {
         switch (this.type) {
           case 'post':
+          case 'video':
             switch (this.active) {
               case POST_ACTIVE.ACTIVE:
                 this.$emit('publishPosts')

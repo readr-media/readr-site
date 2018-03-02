@@ -12,6 +12,7 @@
             @addAccount="addMember"
             @addNews="showEditorHandler({ postPanel: 'add', postType: config.type.NEWS })"
             @addReview="showEditorHandler({ postPanel: 'add', postType: config.type.REVIEW })"
+            @addVideo="showEditorHandler({ postPanel: 'add', postType: config.type.VIDEO })"
             @editNews="showDraftListHandler(config.type.NEWS)"
             @editReview="showDraftListHandler(config.type.REVIEW)"
             @openPanel="openPanel">
@@ -70,6 +71,19 @@
               @filterChanged="filterChanged"
               @updateTagList="updateTagList({})">
             </TagList>
+          </section>
+        </template>
+        <template v-else-if="activePanel === 'videos'">
+          <section class="panel">
+            <VideoList
+              :maxResult="20"
+              :posts="posts"
+              :sort="currSort"
+              @deletePosts="showAlertHandler"
+              @editPost="showEditorHandler"
+              @filterChanged="filterChanged"
+              @publishPosts="showAlertHandler">
+            </VideoList>
           </section>
         </template>
         <BaseLightBox borderStyle="nonBorder" :showLightBox.sync="showLightBox" :isConversation="true">
@@ -142,6 +156,7 @@
   import Tab from '../components/Tab.vue'
   import TagList from '../components/TagList.vue'
   import TheControlBar from '../components/TheControlBar.vue'
+  import VideoList from '../components/VideoList.vue'
 
   const MAXRESULT = 20
   const DEFAULT_PAGE = 1
@@ -299,7 +314,8 @@
       PostListInTab,
       PostPanel,
       TagList,
-      TheControlBar
+      TheControlBar,
+      VideoList
     },
     data () {
       return {
@@ -448,6 +464,7 @@
             return getMembers(this.$store, { page: this.currPage, sort: this.currSort })
           case 'records':
           case 'posts':
+          case 'videos':
             return this.updatePostList({ page: this.currPage, sort: this.currSort })
           case 'tags':
             return this.updateTagList({ page: this.currPage, sort: this.currSort })
@@ -482,10 +499,10 @@
             this.alertType = 'post'
             Promise.all([
               getPosts(this.$store, {
-                where: { active: [ POST_ACTIVE.ACTIVE, POST_ACTIVE.PENDING ] }
+                where: { active: [ POST_ACTIVE.ACTIVE, POST_ACTIVE.PENDING ], type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS ] }
               }),
               getPostsCount(this.$store, {
-                where: { active: [ POST_ACTIVE.ACTIVE, POST_ACTIVE.PENDING ] }
+                where: { active: [ POST_ACTIVE.ACTIVE, POST_ACTIVE.PENDING ], type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS ] }
               })
             ])
             .then(() => this.loading = false)
@@ -496,6 +513,19 @@
             Promise.all([
               getTags(this.$store, { stats: true }),
               getTagsCount(this.$store)
+            ])
+            .then(() => this.loading = false)
+            .catch(() => this.loading = false)
+            break
+          case 'videos':
+            this.alertType = 'video'
+            Promise.all([
+              getPosts(this.$store, {
+                where: { type: POST_TYPE.VIDEO }
+              }),
+              getPostsCount(this.$store, {
+                where: { type: POST_TYPE.VIDEO }
+              })
             ])
             .then(() => this.loading = false)
             .catch(() => this.loading = false)
@@ -543,6 +573,7 @@
         this.itemsSelected = []
         switch (this.alertType) {
           case 'post':
+          case 'video':
             this.postActiveChanged = true
             this.isPublishPostInEditor = false
             this.itemsActive = itemsActive
@@ -614,6 +645,11 @@
       showEditorHandler ({ postPanel, id, postType }) {
         this.itemsSelected = []
         this.alertType = 'post'
+
+        if (this.activePanel === 'videos') {
+          this.alertType = 'video'
+        }
+
         if (postPanel === 'add') {
           this.post = {}
           this.postType = postType
@@ -708,13 +744,27 @@
           case 'posts':
             if (needUpdateCount) {
               getPostsCount(this.$store, {
-                where: { active: [ POST_ACTIVE.ACTIVE, POST_ACTIVE.PENDING ] }
+                where: { active: [ POST_ACTIVE.ACTIVE, POST_ACTIVE.PENDING ], type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS ] }
               })
             }
             getPosts(this.$store, {
               page: this.page,
               sort: this.sort,
-              where: { active: [ POST_ACTIVE.ACTIVE, POST_ACTIVE.PENDING ] }
+              where: { active: [ POST_ACTIVE.ACTIVE, POST_ACTIVE.PENDING ], type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS ] }
+            })
+            .then(() => this.loading = false)
+            .catch(() => this.loading = false)
+            break
+          case 'videos':
+            if (needUpdateCount) {
+              getPostsCount(this.$store, {
+                where: { type: POST_TYPE.VIDEO }
+              })
+            }
+            getPosts(this.$store, {
+              page: this.page,
+              sort: this.sort,
+              where: { type: POST_TYPE.VIDEO }
             })
             .then(() => this.loading = false)
             .catch(() => this.loading = false)
