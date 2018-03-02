@@ -281,7 +281,7 @@
             fd.append('image', file)
             uploadImage(this.$store, fd)
               .then((res) => {
-                this.ogImage = res.body.url
+                this.$set(this.post, 'ogImage', res.body.url)
               })
               .catch((err) => {
                 console.error(err)
