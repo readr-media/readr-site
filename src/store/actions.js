@@ -28,6 +28,7 @@ import {
   getPublicMembers,
   getPublicPosts,
   getPublicProjectsList,
+  getPublicVideos,
   getTags,
   getTagsCount,
   login,
@@ -214,6 +215,19 @@ export default {
         reject(res)
       })
     }) 
+  },
+  GET_PUBLIC_VIDEOS: ({ commit, dispatch, state }, { params }) => {
+    return new Promise((resolve, reject) => {
+      getPublicVideos({ params })
+      .then(({ status, body }) => {
+        if (status === 200) {
+          commit('SET_PUBLIC_VIDEOS', { videos: body })
+        }
+      })
+      .catch((res) => {
+        reject(res)
+      })
+    })
   },
   GET_PROJECTS_LIST: ({ commit, dispatch, state }, { params }) => {
     return new Promise((resolve, reject) => {

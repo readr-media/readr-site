@@ -264,6 +264,15 @@ export function getPublicMembers ({ params }) {
   return _doFetch(url)
 }
 
+export function getPublicVideos ({ params }) {
+  let url = `${host}/api/videos`
+  const query = _buildQuery(params)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }
+  return _doFetch(url)
+}
+
 export function getMeta (targetUrl) {
   let url = `${host}/api/meta`
   return _doPost(url, { url: targetUrl })

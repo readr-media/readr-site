@@ -29,6 +29,7 @@ export function createStore () {
       'publicPostsHot': [],
       'publicMember': {},
       'publicMembers': {},
+      'publicVideos': {},
       'register-token': '',
       'tags': [],
       'tagsCount': 0,

@@ -96,6 +96,9 @@ export default {
   SET_PUBLIC_MEMBERS: (state, { members, role }) => {
     Vue.set(state['publicMembers'], role, members)
   },
+  SET_PUBLIC_VIDEOS: (state, { videos }) => {
+    state['publicVideos'] = videos.items
+  },
   SET_PROJECTS_LIST: (state, { projectsList }) => {
     state['projectsList'] = projectsList
   },

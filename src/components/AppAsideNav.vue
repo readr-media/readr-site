@@ -21,7 +21,7 @@
             <span class="option__dot"></span>
           </span>
         </router-link>
-        <a :class="`list-item aside-navigation__list-item${$route.path === '/nothing' ? '--highlight' : ''}`" href="/"><span v-text="wording['celebrities-talk']"></span></a>
+        <router-link :class="`list-item aside-navigation__list-item${$route.path === '/videos' ? '--highlight' : ''}`" to="/videos"><span v-text="wording['celebrities-talk']"></span></router-link>
         <router-link :class="`list-item aside-navigation__list-item${$route.path === '/editors' ? '--highlight' : ''}`" to="/editors"><span v-text="wording['chief-editor-list']"></span></router-link>
         <router-link :class="`list-item aside-navigation__list-item${$route.path === '/projects' ? '--highlight' : ''}`" to="/projects"><span v-text="wording['projects']"></span></router-link>
       </div>

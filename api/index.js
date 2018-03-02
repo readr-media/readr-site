@@ -4,6 +4,7 @@ const { GCP_FILE_BUCKET, GOOGLE_CLIENT_ID, GOOGLE_RECAPTCHA_SECRET, GCS_IMG_MEMB
 const { REDIS_AUTH, REDIS_MAX_CLIENT, REDIS_READ_HOST, REDIS_READ_PORT, REDIS_WRITE_HOST, REDIS_WRITE_PORT, REDIS_TIMEOUT } = require('./config')
 const { ENDPOINT_SECURE, SCOPES } = require('./config')
 const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT } = require('./config')
+const { POST_ACTIVE, POST_TYPE } = require('./config')
 const { camelizeKeys } = require('humps')
 const { constructScope, fetchPermissions } = require('./services/perm')
 const { initBucket, makeFilePublic, uploadFileToBucket, deleteFileFromBucket, publishAction } = require('./gcs.js')
@@ -289,6 +290,30 @@ router.get('/public-members', (req, res, next) => {
   } else {
     res.status(403).send('Forbidden. No right to access.').end()
   }
+})
+
+router.get('/videos', (req, res, next) => {
+  let url = `/posts?active={"$in":[${POST_ACTIVE.ACTIVE}]}&type={"$in":[${POST_TYPE.VIDEO}]}`
+  const whitelist = [ 'max_result', 'page', 'sort' ]
+  whitelist.forEach((ele) => {
+    if (req.query.hasOwnProperty(ele)) {
+      url = `${url}&${ele}=${req.query[ele]}`
+    }
+  })
+  
+  fetchPromise(url, req)
+  .then((response) => {
+    res.status(200).send(response)
+  })
+  .catch((err) => {
+    if (err.status === 404) {
+      res.status(200).send({ items: [] })
+    } else {
+      res.status(500).send(err)
+      console.error(`error during fetch data from : ${url}`)
+      console.error(err)
+    }
+  })
 })
 
 router.get('/project/list', (req, res) => {
