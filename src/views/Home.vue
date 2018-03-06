@@ -77,15 +77,9 @@
   }
   const fetchFollowing = (store, params) => {
     if (params.subject) {
-      return store.dispatch('GET_FOLLOWING_BY_USER', {
-        subject: params.subject,
-        resource: params.resource
-      })
+      return store.dispatch('GET_FOLLOWING_BY_USER', params)
     } else {
-      return store.dispatch('GET_FOLLOWING_BY_RESOURCE', {
-        resource: params.resource,
-        ids: params.ids
-      })
+      return store.dispatch('GET_FOLLOWING_BY_RESOURCE', params)
     }
   }
 

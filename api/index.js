@@ -147,6 +147,7 @@ router.use('/member', [ authVerify, authorize ], require('./middle/member'))
 router.use('/comment', require('./middle/comment'))
 router.use('/register', authVerify, require('./middle/member/register'))
 router.use('/recoverpwd', require('./middle/member/recover'))
+router.use('/public', require('./middle/public'))
 
 
 /**
@@ -239,57 +240,6 @@ router.get('/profile', [ authVerify ], (req, res) => {
 
 router.get('/status', authVerify, function(req, res) {
   res.status(200).send(true)
-})
-
-
-/**
- * ToDo: public-posts has security issue, and need to go through redis
- */
-router.get('/public-posts', (req, res) => {
-  const url = req.url.replace('public-posts', 'posts')
-  fetchPromise(url, req)
-  .then((response) => {
-    res.status(200).send(response)
-  })
-  .catch((err) => {
-    if (err.status === 404) {
-      res.status(200).send('not found')
-      // console.error(`public post not found from : ${url}`)
-      // console.error(err)
-    } else {
-      res.status(500).send(err)
-      console.error(`error during fetch data from : ${url}`)
-      console.error(err)
-    }
-  })
-})
-
-// router.use('/public-member', require('./middle/member'))
-router.get('/public-members', (req, res, next) => {
-  if ('custom_editor' in req.query || 'role' in req.query) {
-    debug('req.query', req.query)
-    const url = req.url.replace('public-members', 'members')
-    fetchPromise(url, req)
-    .then((response) => {
-      // res.status(200).send(response)
-      res.status(200).json({
-        'items': response['items'].map((object) => _.pick(object, [ 'id', 'nickname', 'description', 'profileImage']))
-      })
-    })
-    .catch((err) => {
-      if (err.status === 404) {
-        res.status(404).send(err)
-        console.error(`public member list not found from : ${url}`)
-        console.error(err)
-      } else if (err.status === 500) {
-        res.status(500).send(err)
-        console.error(`error during fetch data from : ${url}`)
-        console.error(err)
-      }
-    })
-  } else {
-    res.status(403).send('Forbidden. No right to access.').end()
-  }
 })
 
 router.get('/videos', (req, res, next) => {
