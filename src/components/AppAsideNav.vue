@@ -13,7 +13,7 @@
             <span v-text="wording['hot-talk']"></span>
           </a>
         </transition>
-        <router-link :class="`list-item aside-navigation__list-item${$route.path === '/' ? '--highlight' : ''}`" to="/" @mouseover="isHoverFirstListItem = true" @mouseout="isHoverFirstListItem = false">
+        <router-link :class="`list-item aside-navigation__list-item${isCurrentRoute('/') ? '--highlight' : ''}`" to="/" @mouseover.native="isHoverFirstListItem = true" @mouseout.native="isHoverFirstListItem = false">
           <span v-text="wording['chief-editor-talk']"></span>
           <span class="option">
             <span class="option__dot"></span>
@@ -21,9 +21,9 @@
             <span class="option__dot"></span>
           </span>
         </router-link>
-        <router-link :class="`list-item aside-navigation__list-item${$route.path === '/videos' ? '--highlight' : ''}`" to="/videos"><span v-text="wording['celebrities-talk']"></span></router-link>
-        <router-link :class="`list-item aside-navigation__list-item${$route.path === '/editors' ? '--highlight' : ''}`" to="/editors"><span v-text="wording['chief-editor-list']"></span></router-link>
-        <router-link :class="`list-item aside-navigation__list-item${$route.path === '/projects' ? '--highlight' : ''}`" to="/projects"><span v-text="wording['projects']"></span></router-link>
+        <a :class="`list-item aside-navigation__list-item${isCurrentRoute('/nothing') ? '--highlight' : ''}`" href="/"><span v-text="wording['celebrities-talk']"></span></a>
+        <router-link :class="`list-item aside-navigation__list-item${isCurrentRoute('/editors') ? '--highlight' : ''}`" to="/editors"><span v-text="wording['chief-editor-list']"></span></router-link>
+        <router-link :class="`list-item aside-navigation__list-item${isCurrentRoute('/projects') ? '--highlight' : ''}`" to="/projects"><span v-text="wording['projects']"></span></router-link>
       </div>
       <div class="aside-navigation__external--gray">
         <a class="list-item aside-navigation__list-item" href="/"><span><img src="/public/icons/fb.png" alt="fb"></span></a>
@@ -43,6 +43,11 @@ export default {
     return {
       wording: SECTIONS_DEFAULT,
       isHoverFirstListItem: false
+    }
+  },
+  methods: {
+    isCurrentRoute (path) {
+      return this.$route.path === path
     }
   }
 }

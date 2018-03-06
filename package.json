@@ -35,6 +35,7 @@
     "graphql-request": "^1.4.1",
     "html-metadata": "^1.7.0",
     "humps": "^2.0.1",
+    "joi": "^13.1.2",
     "jsonwebtoken": "^8.1.0",
     "lodash": "^4.17.4",
     "lru-cache": "^4.1.1",

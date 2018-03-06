@@ -256,7 +256,7 @@ export function getPublicMember ({ params }) {
 }
 
 export function getPublicMembers ({ params }) {
-  let url = `${host}/api/public-members`
+  let url = `${host}/api/public/members`
   const query = _buildQuery(params)
   if (query && (query.length > 0)) {
     url = url + `?${query}`
@@ -299,7 +299,7 @@ export function getPostsCount ({ params }) {
 }
 
 export function getPublicPosts ({ params }) {
-  let url = `${host}/api/public-posts`
+  let url = `${host}/api/public/posts`
   const query = _buildQuery(params)
   if (query && (query.length > 0)) {
     url = url + `?${query}`
