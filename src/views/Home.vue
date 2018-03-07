@@ -35,10 +35,14 @@
         </div>
         <div class="homepage__list-aside">
           <AppTitledList :listTitle="'議題'">
-            <HomeProjectAside/>
+            <ul class="aside-list-container">
+              <HomeProjectAside/>
+            </ul>
           </AppTitledList>
           <AppTitledList :listTitle="'焦點'">
-            <HomeArticleAside v-for="post in postsHot" :articleData="post" :key="post.id"/> 
+            <ul class="aside-list-container">
+              <HomeArticleAside v-for="post in postsHot" :articleData="post" :key="post.id"/> 
+            </ul>
           </AppTitledList>
         </div>
       </main>
@@ -94,7 +98,7 @@
     },
     watch: {
       isReachBottom(isReachBottom) {
-        if (isReachBottom) {
+        if (isReachBottom && !this.endPage) {
           this.loadmoreLatest()
         }
       }
@@ -102,7 +106,8 @@
     data () {
       return {
         isReachBottom: false,
-        currentPageLatest: 1
+        currentPageLatest: 1,
+        endPage: false
       } 
     },
     computed: {
@@ -135,8 +140,10 @@
           }
         })
         .catch((res) => {
-          if (res === 'not found') {
-            console.log('auto loadmore reach the end')
+          if (res === 'end') {
+            this.endPage = true
+          } else {
+            console.log(res)
           }
         })
       },
@@ -173,10 +180,10 @@
             resource: 'post',
             ids: ids
           })
-          fetchFollowing(this.$store, {
-            resource: 'project',
-            ids: postIdFeaturedProject
-          })
+          // fetchFollowing(this.$store, {
+          //   resource: 'project',
+          //   ids: postIdFeaturedProject
+          // })
         }
       })
     },
@@ -211,6 +218,10 @@
     &__list-main
       max-width 650px
     &__list-aside
+      margin-left 35px
+      .aside-list-container
+        margin 0
+        padding 0
       section
         &:nth-child(2)
           margin-top 10px

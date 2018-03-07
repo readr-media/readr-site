@@ -5,7 +5,25 @@
         <AppAsideNav/>
       </aside>
       <main class="projects-list__main">
-        <ProjectsFigure v-for="project in projects" :project="project" :key="project.id"/>
+        <div class="projects-list__list-main">
+          <ProjectsFigure v-for="project in projects" :project="project" :key="project.id"/>
+        </div>
+        <div class="projects-list__list-aside">
+          <ProjectsFigureProgress/>
+          <ProjectsFigureProgress/>
+          <AppTitledList :listTitle="'熱門關鍵字'">
+            <ul class="projects-tags-hot-list-container">
+              <li class="projects-tags-hot-list-container__list">
+                <span class="projects-tags-hot-list-container__tag-name">原住民傳統領域</span>
+                <span class="projects-tags-hot-list-container__tag-count">7631</span>
+              </li>
+              <li class="projects-tags-hot-list-container__list">
+                <span class="projects-tags-hot-list-container__tag-name">農舍</span>
+                <span class="projects-tags-hot-list-container__tag-count">631</span>
+              </li>
+            </ul>
+          </AppTitledList>
+        </div>
       </main>
     </div>
   </div>
@@ -13,7 +31,9 @@
 
 <script>
 import AppAsideNav from '../components/AppAsideNav.vue'
+import AppTitledList from '../components/AppTitledList.vue'
 import ProjectsFigure from '../components/projects/ProjectsFigure.vue'
+import ProjectsFigureProgress from '../components/projects/ProjectsFigureProgress.vue'
 import _ from 'lodash'
 
 const fetchProjectsList = (store, params) => {
@@ -38,7 +58,9 @@ const fetchFollowing = (store, params) => {
 export default {
   components: {
     AppAsideNav,
-    ProjectsFigure
+    AppTitledList,
+    ProjectsFigure,
+    ProjectsFigureProgress
   },
   computed: {
     projects () {
@@ -56,7 +78,6 @@ export default {
   }
 }
 </script>
-
 
 <style lang="stylus" scoped>
 .projects-list
@@ -77,8 +98,36 @@ export default {
   &__main
     margin-left 40px
     display flex
+  &__list-main
+    display flex
     flex-direction column
     justify-content flex-start
     align-items flex-start
+  &__list-aside
+    margin-left 40px
+    display flex
+    flex-direction column
+    justify-content flex-start
+    align-items flex-start
+    & > figure
+      & + figure
+        margin-top 10px
+    section
+      margin-top 16.5px
+
+.projects-tags-hot-list-container
+  margin 15px 0 0 0
+  padding 0 15px
+  width 355px
+  list-style none
+  &__list
+    margin 10px 0
+    font-size 15px
+    display flex
+  &__tag-count
+    margin-left 10px
+    font-size 12px
+    align-self center
+    color #444746
 </style>
 

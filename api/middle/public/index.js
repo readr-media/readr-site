@@ -6,11 +6,11 @@ const express = require('express')
 const router = express.Router()
 const superagent = require('superagent')
 const publicQueryValidation = require('./validate')
-const scheme = require('./scheme')
+const schema = require('./schema')
 
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
 
-router.get('/members', publicQueryValidation.validate(scheme.members), (req, res, next) => {
+router.get('/members', publicQueryValidation.validate(schema.members), (req, res, next) => {
   const url = `${apiHost}${req.url}`
   debug('Abt to fetch public members data.')
   debug('>>>', req.url)
@@ -43,7 +43,7 @@ router.get('/members', publicQueryValidation.validate(scheme.members), (req, res
   })
 })
 
-router.get('/posts', publicQueryValidation.validate(scheme.posts), (req, res, next) => {
+router.get('/posts', publicQueryValidation.validate(schema.posts), (req, res, next) => {
   const activePostQueryString = '{"$in":[1]}'
   if (Object.keys(req.query).length === 0) {
     req.url += `?active=${activePostQueryString}`
@@ -71,15 +71,12 @@ function (req, res, next) {
       .end((e, r) => {
         if (!e && r) {
           const dt = JSON.parse(r.text)
-          if (Object.keys(dt).length !== 0 && dt.constructor === Object) {
+          if (dt['_items'] !== null && dt.constructor === Object) {
             res.dataString = r.text
             /**
              * if data not empty, go next to save data to redis
-             * if endpoint is not /members, go next to save data to redis
              */
-            if (req.url.indexOf('/members') === -1 && req.url.indexOf('/post') === -1 && req.url.indexOf('/posts') === -1 && req.url.indexOf('/tags') === -1) {
-              next()
-            }
+            next()
           }
           const resData = JSON.parse(r.text)
           res.json(resData)

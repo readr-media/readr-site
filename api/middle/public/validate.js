@@ -1,7 +1,7 @@
 const Joi = require('joi')
 
-const validate = (scheme) => (req, res, next) => {
-  Joi.validate(req.query, scheme, { allowUnknown: true }, (err, result) => {
+const validate = (schema) => (req, res, next) => {
+  Joi.validate(req.query, schema, { allowUnknown: true }, (err, result) => {
     if (err) {
       res.status(403).send('Forbidden. No right to access.').end()
     } else {
