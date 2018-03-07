@@ -198,7 +198,7 @@ export default {
     return new Promise((resolve, reject) => {
       getPublicPosts({ params })
       .then(({ status, body }) => {
-        if (status === 200) {
+        if (status === 200 && body.items) {
           if (params.mode === 'set') {
             if (params.category === 'latest') {
               commit('SET_PUBLIC_POSTS', { posts: body })
@@ -208,8 +208,10 @@ export default {
           } else if (params.mode === 'update') {
             commit('UPDATE_PUBLIC_POSTS', { posts: body })
           }
+          resolve(body)
+        } else {
+          reject('end')
         }
-        resolve(body)
       })
       .catch((res) => {
         reject(res)

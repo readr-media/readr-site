@@ -7,7 +7,7 @@
           <p class="editor-writing__paragraph--visible" v-if="i === 0">
             <span v-html="firstParagraph"></span>
             <span v-if="(p.length > 150 || postContent.length > 1) ? !isReadMore : false">
-              ......<span class="editor-writing__more" @click="toogleReadmore" v-text="wording['']"></span>
+              ......<span class="editor-writing__more" @click="toogleReadmore" v-text="wording['WORDING_HOME_POST_MORE']"></span>
             </span>
           </p>
           <p :class="`editor-writing__paragraph--${isReadMore ? 'visible' : 'invisible'}`" v-else v-html="p"></p>

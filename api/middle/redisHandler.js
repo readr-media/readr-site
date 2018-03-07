@@ -68,7 +68,7 @@ const redisWriting = (url, data, callback) => {
 }
 const insertIntoRedis = (req, res, next) => {
   redisWriting(req.url, res.dataString, () => {
-    next()
+    // next()
   })
 }
 const fetchFromRedis = (req, res, next) => {

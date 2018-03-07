@@ -6,7 +6,9 @@
       </aside>
       <main class="editors__main">
         <AppTitledList :listTitle="'本週客座'">
-          <EditorsIntro class="editors-intro-main" v-for="customEditor in customEditors" :key="customEditor.id" :editor="customEditor"/>
+          <ul class="editors-list-container">
+            <EditorsIntro class="editors-intro-main" v-for="customEditor in customEditors" :key="customEditor.id" :editor="customEditor"/>
+          </ul>
         </AppTitledList>
         <ul class="editors__list-aside">
           <EditorsIntro class="editors-intro-aside" v-for="member in asideListMembers" :key="member.id" :editor="member" :trimDescription="true"/>
@@ -115,6 +117,9 @@ export default {
     margin 0
     margin-left 35px
 
+.editors-list-container
+  margin 0
+  padding 0
 .editors-intro-main
   width calc(650px - 20px - 20px)
   margin 0 20px

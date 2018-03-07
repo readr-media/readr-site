@@ -4,9 +4,7 @@
       <div class="plus"></div>
       <h1 v-text="listTitle"></h1>
     </div>
-    <ul class="app-titled-list__article-container">
-      <slot></slot>
-    </ul>
+    <slot></slot>
   </section>
 </template>
 
@@ -23,7 +21,6 @@ export default {
 
 <style lang="stylus" scoped>
 .app-titled-list
-  margin-left 35px
   background-color white
   padding 6px 0px 12px 0px
   &__title
@@ -65,7 +62,4 @@ export default {
       font-size 18px
       font-weight 600
       margin 0
-  &__article-container
-    margin 0
-    padding 0
 </style>
