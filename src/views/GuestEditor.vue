@@ -109,18 +109,12 @@
     return store.dispatch('DELETE_POST', { id: id })
   }
 
-  const getFollowing = (store, params) => {
-    if (params.subject) {
-      return store.dispatch('GET_FOLLOWING_BY_USER', {
-        subject: params.subject,
-        resource: params.resource
-      })
-    } else {
-      return store.dispatch('GET_FOLLOWING_BY_RESOURCE', {
-        resource: params.resource,
-        ids: params.ids
-      })
-    }
+  const getFollowing = (store, { subject, resource, resourceType = '' }) => {
+    return store.dispatch('GET_FOLLOWING_BY_USER', {
+      subject: subject,
+      resource: resource,
+      resource_type: resourceType
+    })
   }
 
   const getPostsByUser = (store, {
@@ -288,7 +282,14 @@
       $_guestEditor_followingHandler (resource) {
         this.followingResource = resource
         this.page = DEFAULT_PAGE
-        getFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: resource })
+        switch (resource) {
+          case 'review':
+            return getFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'post', resourceType: resource })
+          case 'news':
+            return getFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'post', resourceType: resource })
+          default:
+            getFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: resource })
+        }
       },
       $_guestEditor_openPanel (panel) {
         this.loading = true

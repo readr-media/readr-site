@@ -7,9 +7,14 @@
         v-text="wording.WORDING_FOLLOW_LIST_GUEST_EDITOR">
       </button>
       <button
-        :class="[ currentResource === 'post' ? 'active' : '' ]"
-        @click="$_followingListInTab_resourceHandler('post')"
+        :class="[ currentResource === 'review' ? 'active' : '' ]"
+        @click="$_followingListInTab_resourceHandler('review')"
         v-text="`${wording.WORDING_FOLLOW_LIST_FOLLOW}${wording.WORDING_FOLLOW_LIST_REVIEW}`">
+      </button>
+      <button
+        :class="[ currentResource === 'news' ? 'active' : '' ]"
+        @click="$_followingListInTab_resourceHandler('news')"
+        v-text="`${wording.WORDING_FOLLOW_LIST_FOLLOW}${wording.WORDING_FOLLOW_LIST_NEWS}`">
       </button>
       <button
         :class="[ currentResource === 'project' ? 'active' : '' ]"
@@ -19,14 +24,15 @@
     </nav>
     <!-- <pagination-nav></pagination-nav> -->
     <div class="followingListInTab__list">
-      <div v-for="follow in followingByUser" :key="follow.id" class="followingListInTab__item">
+      <div v-for="follow in followingByUser" :key="follow.id" class="followingListInTab__item" :class="currentResource">
         <div class="followingListInTab__img">
-          <div v-if="currentResource === 'member'"></div>
+          <div v-if="currentResource === 'member'" :style="{ backgroundImage: `url(${follow.profileImage})` }"></div>
           <button @click="$_followingListInTab_unfollow(follow.id)"><img src="/public/icons/star-grey.png"></button>
         </div>
         <div class="followingListInTab__content">
-          <h2 v-text="follow.title"></h2>
-          <p v-text="$_followingListInTab_getDescription(follow)"></p>
+          <h2 v-if="currentResource === 'member'" v-text="follow.nickname"></h2>
+          <h2 v-if="currentResource !== 'member'" v-text="follow.title"></h2>
+          <p v-if="$_followingListInTab_getDescription(follow)" v-text="$_followingListInTab_getDescription(follow)"></p>
         </div>
         <div v-if="currentResource === 'project'" class="followingListInTab__og"></div>
       </div>
@@ -94,7 +100,7 @@
         this.$emit('changeResource', resource)
       },
       $_followingListInTab_unfollow (id) {
-        // this.$emit('unfollow', this.currentResource, id)
+        this.$emit('unfollow', this.currentResource, id)
       }
     }
   }
@@ -132,6 +138,17 @@
     min-height 297px
   &__item
     display flex
+    align-items flex-start
+    margin-bottom 25px
+    &.review
+      .followingListInTab__img
+        width 25px
+        height 25px
+        text-align left
+      .followingListInTab__content
+        h2
+          height 25px
+          line-height 25px
   &__img
       width 60px
       text-align center
@@ -139,6 +156,9 @@
         width 60px
         height 60px
         margin-bottom 10px
+        background-position center
+        background-size cover
+        background-repeat no-repeat
         border 1px solid #979797
         border-radius 50%
       > button
@@ -161,6 +181,7 @@
     p
       max-height 63px
       margin-top 1em
+      margin-bottom 0
       font-size 15px
       text-align justify
       line-height 1.4
