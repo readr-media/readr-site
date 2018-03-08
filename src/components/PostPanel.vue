@@ -375,7 +375,11 @@
 
         if (this.metaChanged) {
           const link = _.get(this.post, [ 'link' ])
-          if (validator.isURL(link, { protocols: [ 'http','https' ] })) {
+          params.link_name = ''
+          params.link_title = ''
+          params.link_description = ''
+          params.link_image = ''
+          if (validator.isURL(link, { protocols: [ 'http','https' ] }) && !this.isVideo) {
             getMeta(this.$store, link)
             .then((res) => {
               params.link_name = _.truncate(_.get(res, [ 'body', 'openGraph', 'siteName' ]), { 'length': 50 })
@@ -384,6 +388,8 @@
               params.link_image = _.get(res, [ 'body', 'openGraph', 'image', 'url' ])
               this.$_postPanel_submit(active, params)
             })
+          } else {
+            this.$_postPanel_submit(active, params)
           }
         } else {
           this.$_postPanel_submit(active, params)

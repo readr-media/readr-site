@@ -29,7 +29,7 @@
       <button slot="0" class="controlBar--btn" @click="$_controlBar_toggleBtnBox" v-text="wording.WORDING_CONTROLBAR_MANAGE"></button>
       <button slot="1" class="controlBar--subBtn" :class="[ activePanel === 'record' ? 'active' : '' ]" v-text="wording.WORDING_CONTROLBAR_RECORD" @click="$_controlBar_openPanel($event, 'records')"></button>
       <button slot="2" class="controlBar--subBtn" :class="[ activePanel === 'posts' ? 'active' : '' ]" v-text="wording.WORDING_CONTROLBAR_POST" @click="$_controlBar_openPanel($event, 'posts')"></button>
-      <button slot="3" class="controlBar--subBtn" :class="[ activePanel === 'video' ? 'active' : '' ]" v-text="wording.WORDING_CONTROLBAR_VIDEO" @click="$_controlBar_openPanel($event, 'videos')"></button>
+      <!-- <button slot="3" class="controlBar--subBtn" :class="[ activePanel === 'video' ? 'active' : '' ]" v-text="wording.WORDING_CONTROLBAR_VIDEO" @click="$_controlBar_openPanel($event, 'videos')"></button> -->
       <button slot="4" class="controlBar--subBtn" :class="[ activePanel === 'tag' ? 'active' : '' ]" v-text="wording.WORDING_CONTROLBAR_TAG" @click="$_controlBar_openPanel($event, 'tags')"></button>
     </control-bar-button-box>
     <control-bar-button-box
@@ -63,13 +63,13 @@
       @click="$_controlBar_openPanel($event, 'tags')"
       :text="`${wording.WORDING_CONTROLBAR_TAG}${wording.WORDING_CONTROLBAR_MANAGE}`">
     </control-bar-button>
-    <control-bar-button-box
+    <!-- <control-bar-button-box
       v-if="viewport > 767"
       class="controlBar__btnBox"
       :amount="2">
       <button slot="0" class="controlBar--btn" @click="$_controlBar_openPanel($event, 'videos')" v-text="`${wording.WORDING_CONTROLBAR_VIDEO}${wording.WORDING_CONTROLBAR_MANAGE}`"></button>
       <button slot="1" class="controlBar--subBtn" v-text="wording.WORDING_CONTROLBAR_ADD_VIDEO" @click="$_controlBar_clickHandler('addVideo')"></button>
-    </control-bar-button-box>
+    </control-bar-button-box> -->
     <control-bar-button
       v-if="$can('addAccount') && viewport > 767"
       class="controlBar--btn"
