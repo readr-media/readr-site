@@ -51,10 +51,6 @@
   export default {
     name: 'Search',
     asyncData ({ store, route }) {
-      /**
-       * dont fetch data through this method on client side. instead, use the hook beforeMount().
-       */
-      // return !process.browser ? fetchData(store) : Promise.resolve()
       return fetchData(store, route)
     },
     components: {

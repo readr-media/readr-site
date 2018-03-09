@@ -90,8 +90,10 @@ export default {
     state['publicPosts'] = posts
   },
   SET_PUBLIC_MEMBER: (state, { member }) => {
-    debug('SET_PUBLIC_MEMBER', member)
-    Vue.set(state, 'publicMember', _.get(member, [ 'items', 0 ]))
+    // debug('SET_PUBLIC_MEMBER', _.get(member, [ 'items', 0 ]))
+    // Vue.set(state, 'publicMember', _.get(member, [ 'items', 0 ]))
+    state['publicMember'] = _.get(member, [ 'items', 0 ])
+    debug('SET_PUBLIC_MEMBER', state['publicMember'])
   },
   SET_PUBLIC_MEMBERS: (state, { members, role }) => {
     Vue.set(state['publicMembers'], role, members)

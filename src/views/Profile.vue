@@ -37,7 +37,6 @@
   import moment from 'moment'
 
   const debug = require('debug')('CLIENT:Profile')
-  const router = require('src/router').createRouter()
   const MAXRESULT = 20
   const DEFAULT_PAGE = 1
   const DEFAULT_SORT = '-updated_at'
@@ -81,6 +80,26 @@
       AppAsideNav,
       PostContent,
       Tab
+    },
+    asyncData ({ store, route }) {
+      debug('profileId', get(route, 'params.id'))
+      return Promise.all([
+        getPosts(store, {
+          where: {
+            author: get(route, 'params.id'),
+            type: POST_TYPE.REVIEW
+          }
+        }),
+        getPostsCount(store, {
+          where: {
+            author: get(route, 'params.id'),
+            type: POST_TYPE.REVIEW
+          }
+        }),
+        getMemberPublic(store, {
+          id: get(route, 'params.id')
+        })
+      ])
     },
     computed: {
       currUser () {
@@ -129,7 +148,7 @@
         if (this.isCurrUser) {
           const route = get(find(ROLE_MAP, (r) => (r.key === get(this.$store, 'state.profile.role'))), 'route')
           debug('About to route to member center.', route)
-          router.push(`/${route}`)
+          this.$route.push(`/${route}`)
         }
       },
       tabHandler (tab) {
@@ -152,26 +171,6 @@
             break
         }
       }
-    },
-    beforeMount () {
-      debug('isCurrUser', this.isCurrUser)
-      Promise.all([
-        getPosts(this.$store, {
-          where: {
-            author: this.profileId,
-            type: POST_TYPE.REVIEW
-          }
-        }),
-        getPostsCount(this.$store, {
-          where: {
-            author: this.profileId,
-            type: POST_TYPE.REVIEW
-          }
-        }),
-        getMemberPublic(this.$store, {
-          id: get(this.$route, 'params.id')
-        })
-      ])
     },
     mounted () {
       debug(`/profile/${this.$route.params.id}`)
