@@ -34,12 +34,12 @@
       params
     })
   }
-  const fetchData = (store) => {
-    debug('store.state.route.params', store.state.route.params)
-    debug('store.state.route.params.keyword', store.state.route.params.keyword)
+  const fetchData = (store, route) => {
+    debug('store.state.route.params', route.params)
+    debug('store.state.route.params.keyword', route.params.keyword)
     return Promise.all([
       fetchSearch(store, {
-        keyword: store.state.route.params.keyword,
+        keyword: route.params.keyword,
         params: {
           page: PAGE,
           max_results: MAXRESULT
@@ -50,12 +50,13 @@
 
   export default {
     name: 'Search',
-    // asyncData ({ store }) {
-    //   /**
-    //    * dont fetch data through this method on client side. instead, use the hook beforeMount().
-    //    */
-    //   return !process.browser ? fetchData(store) : Promise.resolve()
-    // },
+    asyncData ({ store, route }) {
+      /**
+       * dont fetch data through this method on client side. instead, use the hook beforeMount().
+       */
+      // return !process.browser ? fetchData(store) : Promise.resolve()
+      return fetchData(store, route)
+    },
     components: {
       AppAsideNav,
       HomeArticleMain,
@@ -72,48 +73,24 @@
         currFilter: 'post'
       }
     },
-    // beforeRouteEnter (to, from, next) {
-    //   debug('beforeRouteEnter')
-    //   // next(vm => {
-    //   //   return fetchSearch(vm.$store, {
-    //   //     keyword: to.params.keyword,
-    //   //     params: {
-    //   //       page: PAGE,
-    //   //       max_results: MAXRESULT
-    //   //     }
-    //   //   })
-    //   // })
-    //   next()
-    // }, 
-    beforeRouteUpdate (to, from, next) {
-      debug('beforeRouteUpdate')
-      this.page = PAGE
-      fetchSearch(this.$store, {
-        keyword: to.params.keyword,
-        params: {
-          page: PAGE,
-          max_results: MAXRESULT
-        }
-      }).then(() => {
-        next()
-      })
-    },
     methods: {
       searchChange (key) {
         debug('Filter changes to:', key)
         this.currFilter = key
       }
     },
-    beforeMount () {
-      debug('this.$route.params.keyword', this.$route.params.keyword)
-      fetchSearch(this.$store, {
-        keyword: this.$route.params.keyword,
-        params: {
-          page: PAGE,
-          max_results: MAXRESULT
-        }
-      })
-    },
+    // beforeMount () {
+    //   debug('this.$route.params.keyword', this.$route.params.keyword)
+    //   debug('process.browser', process.browser)
+    //   debug('this.reault', get(this.$store, 'state.searchResult.items'))
+    //   get(this.$store, 'state.searchResult.items').length === 0 && fetchSearch(this.$store, {
+    //     keyword: this.$route.params.keyword,
+    //     params: {
+    //       page: PAGE,
+    //       max_results: MAXRESULT
+    //     }
+    //   }).then(() => debug('####################'))
+    // },
     mounted () {
       debug('Mounted')
     }
