@@ -75,18 +75,6 @@
         this.currFilter = key
       }
     },
-    // beforeMount () {
-    //   debug('this.$route.params.keyword', this.$route.params.keyword)
-    //   debug('process.browser', process.browser)
-    //   debug('this.reault', get(this.$store, 'state.searchResult.items'))
-    //   get(this.$store, 'state.searchResult.items').length === 0 && fetchSearch(this.$store, {
-    //     keyword: this.$route.params.keyword,
-    //     params: {
-    //       page: PAGE,
-    //       max_results: MAXRESULT
-    //     }
-    //   }).then(() => debug('####################'))
-    // },
     mounted () {
       debug('Mounted')
     }
