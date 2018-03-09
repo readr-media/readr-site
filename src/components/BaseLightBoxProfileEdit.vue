@@ -154,21 +154,19 @@ export default {
       const saveImage = (file) => {
         const fd = new FormData()
         const fileExt = file.type.split('image/')[1]
-        fd.append('image', file, `${this.profile.id}-${Math.random()}.${fileExt}`)
-        // fd.append('image', file)
-
+        fd.append('image', file, `${this.profile.id}`)
+        
         uploadImage(this.$store, fd)
-          .then((res) => {
-            updateInfo(this.$store, {
-              id: this.profile.id,
-              edit_mode: 'edit_profile',
-              profile_image: res.body.url
-            }, 'UPDATE_PROFILE')
-            // .then(callback)
-          })
-          .catch((err) => {
-            console.log(err)
-          })
+        .then((res) => {
+          updateInfo(this.$store, {
+            id: this.profile.id,
+            edit_mode: 'edit_profile',
+            profile_image: res.body.url
+          }, 'UPDATE_PROFILE')
+        })
+        .catch((err) => {
+          console.log(err)
+        })
       }
 
       const input = document.createElement('input')

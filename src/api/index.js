@@ -193,10 +193,9 @@ export function getFollowingByResource (params) {
   let url = `${host}/api/following/byresource`
   return new Promise((resolve, reject) => {
     superagent
-      .get(url)
-      // .send(params)
+      .post(url)
       .set('Authorization', `Bearer ${getToken()}`)
-      .query(params)
+      .send(params)
       .end(function (err, res) {
         if (err) {
           reject(err)
@@ -211,9 +210,9 @@ export function getFollowingByUser (params) {
   let url = `${host}/api/following/byuser`
   return new Promise((resolve, reject) => {
     superagent
-      .get(url)
+      .post(url)
       .set('Authorization', `Bearer ${getToken()}`)
-      .query(params)
+      .send(params)
       .end(function (err, res) {
         if (err) {
           reject(err)

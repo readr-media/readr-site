@@ -172,18 +172,18 @@
         })
       ]).then(() => {
         if (this.$store.state.isLoggedIn) {
-          const postIdsLatest = this.$store.state.publicPosts.items.map(post => post.id)
-          const postIdsHot = this.$store.state.publicPostsHot.items.map(post => post.id)
-          const postIdFeaturedProject = this.$store.state.projectsList.items.map(project => project.id)
+          const postIdsLatest = this.$store.state.publicPosts.items.map(post => String(post.id))
+          const postIdsHot = this.$store.state.publicPostsHot.items.map(post => String(post.id))
+          const postIdFeaturedProject = this.$store.state.projectsList.items.map(project => String(project.id))
           const ids = _.uniq(_.concat(postIdsLatest, postIdsHot))
           fetchFollowing(this.$store, {
             resource: 'post',
             ids: ids
           })
-          // fetchFollowing(this.$store, {
-          //   resource: 'project',
-          //   ids: postIdFeaturedProject
-          // })
+          fetchFollowing(this.$store, {
+            resource: 'project',
+            ids: postIdFeaturedProject
+          })
         }
       })
     },
