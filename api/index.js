@@ -7,7 +7,7 @@ const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT } = require('./config')
 const { POST_ACTIVE, POST_TYPE } = require('./config')
 const { camelizeKeys } = require('humps')
 const { constructScope, fetchPermissions } = require('./services/perm')
-const { initBucket, makeFilePublic, uploadFileToBucket, deleteFileFromBucket, publishAction } = require('./gcs.js')
+const { initBucket, getFileMd5Hash, renameFile, makeFilePublic, uploadFileToBucket, deleteFileFromBucket, publishAction } = require('./gcs.js')
 const { processImage } = require('./sharp.js')
 const { verifyToken } = require('./middle/member/comm')
 const Cookies = require('cookies')
@@ -284,11 +284,17 @@ router.get('/project/list', (req, res) => {
   })
 })
 
-router.get('/following/byuser', authVerify, (req, res) => {
+/**
+ * 
+ * METHOD POST
+ * 
+ */
+
+router.post('/following/byuser', authVerify, (req, res) => {
   const url = `${apiHost}/following/byuser`
   superagent
   .get(url)
-  .send(req.query)
+  .send(req.body)
   .end((err, response) => {
     if (!err && response) {
       const resData = JSON.parse(response.text)
@@ -305,11 +311,11 @@ router.get('/following/byuser', authVerify, (req, res) => {
   })
 })
 
-router.get('/following/byresource', authVerify, (req, res) => {
+router.post('/following/byresource', authVerify, (req, res) => {
   const url = `${apiHost}/following/byresource`
   superagent
   .get(url)
-  .send(req.query)
+  .send(req.body)
   .end((err, response) => {
     if (!err && response) {
       const resData = JSON.parse(response.text)
@@ -317,16 +323,10 @@ router.get('/following/byresource', authVerify, (req, res) => {
     } else {
       res.json(err)
       console.error(`error during fetch data from : ${url}`)
-      console.error(err)  
+      console.error(err)
     }
   })
 })
-
-/**
- * 
- * METHOD POST
- * 
- */
 
 router.post('/verify-recaptcha-token', (req, res) => {
   let url = 'https://www.google.com/recaptcha/api/siteverify'
@@ -382,22 +382,32 @@ router.post('/image-member', authVerify, upload.single('image'), (req, res) => {
   const url = `${apiHost}${req.url}`
   const bucket = initBucket(GCP_FILE_BUCKET)
   const file = req.file
+  const filename = file.originalname
+  const fileext = file.mimetype.split('image/')[1]
+  const filepath = `${filename}.${fileext}`
   
   uploadFileToBucket(bucket, file.path, {
-    destination: `${GCS_IMG_MEMBER_PATH}/${file.originalname}`,
+    destination: `${GCS_IMG_MEMBER_PATH}/${filepath}`,
     metadata: {
       contentType: file.mimetype
     }
   }).then((bucketFile) => {
-    console.info(`file ${file.originalname}(${file.path}) completed uploading to bucket `)
+    console.info(`file ${filename}(${file.path}) completed uploading to bucket `)
     fs.unlink(file.path, (err) => {
       if (err) {
         console.error(`Error: delete ${file.path} fail`)
       }
       console.info(`successfully deleted ${file.path}`)
     })
-    return makeFilePublic(bucketFile)
-  }).then((bucketFile) => {
+    return getFileMd5Hash(bucketFile)
+  })
+  .then((hash) => {
+    const hexString = new Buffer(hash, 'base64').toString('hex')
+    const filepathWithHash = `${filename}${hexString}.${fileext}` 
+    return renameFile(bucket, `${GCS_IMG_MEMBER_PATH}/${filepath}`, `${GCS_IMG_MEMBER_PATH}/${filepathWithHash}`)
+  })
+  .then((bucketFile) => {
+    makeFilePublic(bucketFile)
     res.status(200).send({url: `https://dev.readr.tw/${bucketFile.name}`})
   })
   .catch((err) => {

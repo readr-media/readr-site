@@ -11,6 +11,30 @@ const initBucket = (bucket) => {
 	return gcs.bucket(bucket);
 }
 
+const getFileMd5Hash = (bucketFile) => {
+  return new Promise((resolve, reject) => {
+    bucketFile.getMetadata().then(results => {
+      const metadata = results[0]
+      resolve(metadata.md5Hash)
+    }).catch(err => {
+      reject(err)
+    })
+  })
+}
+
+const renameFile = (bucket, srcFilename, destFilename) => {
+  return new Promise((resolve, reject) => {
+    bucket.file(srcFilename)
+    .move(bucket.file(destFilename))
+    .then(() => {
+      resolve(bucket.file(destFilename))
+    })
+    .catch(err => {
+      reject(err)
+    })
+  })
+}
+
 const makeFilePublic = (bucketFile) => {
 	return new Promise((resolve, reject) => {
 		bucketFile.makePublic()
@@ -74,7 +98,9 @@ const publishAction = (data) => {
 }
 
 module.exports = {
-	initBucket,
+  initBucket,
+  getFileMd5Hash,
+  renameFile,
 	makeFilePublic,
   uploadFileToBucket,
   deleteFileFromBucket,
