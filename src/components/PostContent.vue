@@ -29,10 +29,14 @@
 </template>
 <script>
   import { WORDING_HOME_POST_MORE, WORDING_HOME_POST_SOURCE } from 'src/constants'
-  import { find, get } from 'lodash'
+  import { find, filter, get, map } from 'lodash'
   import AppArticleNav from 'src/components/AppArticleNav.vue'
+  import sanitizeHtml from 'sanitize-html'
   import truncate from 'truncate'
 
+  const dom = require('xmldom').DOMParser
+  const seializer  = require('xmldom').XMLSerializer
+  const debug = require('debug')('CLIENT:PostContent')
   export default {
     name: 'PostContent',
     computed: {
@@ -54,15 +58,9 @@
         return truncate(this.post.linkDescription, 45)
       },
       postContent () {
-        const parser = new DOMParser()
-        const html = parser.parseFromString(this.post.content, 'text/html')
-        return Array.from(html.querySelectorAll('p'))
-        .filter((node) => {
-          return node.innerHTML !== '<br>'
-        })
-        .map((node) => {
-          return node.innerHTML
-        })
+        const doc = new dom().parseFromString(this.post.content)
+        const postParagraphs = map(filter(get(doc, 'childNodes'), { tagName: 'p' }), (p) => (sanitizeHtml(new seializer().serializeToString(p), { allowedTags: [ ] })))
+        return postParagraphs
       },
     },
     components: {
