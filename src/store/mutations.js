@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import Vue from 'vue'
 const { camelize } = require('humps')
-const debug = require('debug')('STORE:mutations')
+const debug = require('debug')('READR:STORE:mutations')
 
 export default {
   ADD_ITEM_TO_FOLLOWING_BY_USER: (state, data) => {
@@ -107,6 +107,11 @@ export default {
   },
   SET_PROFILE: (state, { profile }) => {
     state['profile'] = profile
+  },
+  SET_SEARCH: (state, { searchResult }) => {
+    debug('searchResult:')
+    debug(searchResult)
+    state['searchResult']['items'] = searchResult[ 'items' ]
   },
   UPDATED_PROFILE: (state, { profile }) => {
     // Update the entry when user saving the profile value which has been edited

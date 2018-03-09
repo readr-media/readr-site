@@ -553,3 +553,10 @@ export function publishPosts ({ params }) {
     .then(res => ({ status: res.status }))
     .catch(err => err)
 }
+
+export function search (keyword = '', params = {}) {
+  let url = `${host}/api/search`
+  debug('keyword', keyword)
+  url = `${url}?query=${encodeURIComponent(`"${keyword}"`)}&hitsPerPage=${params.max_results}&page=${params.page - 1}`
+  return _doFetch(url)
+}

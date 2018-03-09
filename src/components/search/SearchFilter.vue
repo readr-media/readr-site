@@ -26,9 +26,9 @@
     name: 'SearchFilter',
     data () {
       return {
-        flag: 'view',
+        flag: 'post',
         filters: [
-          { key: 'view', name: WORDING_SEARCH_FILTER_VIEW },
+          { key: 'post', name: WORDING_SEARCH_FILTER_VIEW },
           { key: 'conversation', name: WORDING_SEARCH_FILTER_CONVERSATION },
           { key: 'project', name: WORDING_SEARCH_FILTER_PROJECT },
         ],

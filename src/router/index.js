@@ -40,7 +40,7 @@ const router = new Router({
     { path: '/post/:id', component: Post },
     { path: '/profile/:id', component: Profile },
     { path: '/projects', component: ProjectsList },
-    { path: '/search', component: Search },
+    { path: '/search/:keyword', component: Search },
     { path: '/setup/:type', component: SetPassword },
     { path: '/videos', component: Videos },
   ]

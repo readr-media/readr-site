@@ -1,27 +1,56 @@
 <template>
   <div class="search">
-    <input class="search__input" type="text" :placeholder="wording[ 'WORIDNG_HEADER_MEMBER_SEARCH' ]">
+    <input class="search__input" type="text" ref="searchInput"
+      :placeholder="wording[ 'WORIDNG_HEADER_MEMBER_SEARCH' ]"
+      @keyup="setCurrVal"
+      @change="checkIsChanged">
     <span class="search__icon" @click="goSearch"></span>
   </div>
 </template>
 <script>
   import { WORIDNG_HEADER_MEMBER_SEARCH } from 'src/constants'
+  import { get } from 'lodash'
 
+  const debug = require('debug')('CLIENT:SearchTool')
   export default {
     name: 'SearchTool',
     data () {
       return {
+        currentSearchVal: get(this.$refs, 'searchInput.value'),
+        isChanged: true,
+        // searchVal: get(this.$route, [ 'params', 'keyword' ]),
         wording: {
           WORIDNG_HEADER_MEMBER_SEARCH
         }
       }
     },
-    methods: {
-      goSearch () {
-        location.href = '/search'
+    computed: {
+      searchVal () {
+        return get(this.$route, [ 'params', 'keyword' ])
       }
     },
-    mounted () {},
+    methods: {
+      checkIsChanged () {
+        debug('Change Detected.', this.searchVal, this.currentSearchVal)
+        if (this.searchVal !== this.currentSearchVal) {
+          this.isChanged = true
+        } else {
+          this.isChanged = false
+        }
+      },
+      goSearch () {
+        debug('this.isChanged', this.isChanged)
+        debug('this.currentSearch', this.currentSearchVal)
+        debug('this.searchVal', this.searchVal)
+        if (this.searchVal !== this.currentSearchVal && this.currentSearchVal) {
+          this.$router.push('/search/' + this.currentSearchVal)
+        }
+      },
+      setCurrVal () {
+        debug('Abt to change current search words to:', get(this.$refs, 'searchInput.value'))
+        this.currentSearchVal = get(this.$refs, 'searchInput.value')
+      }
+    }
   }
 </script>
 <style lang="stylus" scoped>
