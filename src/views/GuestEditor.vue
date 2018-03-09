@@ -35,7 +35,8 @@
                 slot="2"
                 :currentResource="followingResource"
                 :followingByUser="followingByUser"
-                @changeResource="$_guestEditor_followingHandler">
+                @changeResource="$_guestEditor_updateFollowingList"
+                @unfollow="$_guestEditor_unfollow">
               </following-list-tab>
             </app-tab>
           </section>
@@ -279,18 +280,6 @@
             return this.$_guestEditor_updatePostList({ sort: sort, page: page })
         }
       },
-      $_guestEditor_followingHandler (resource) {
-        this.followingResource = resource
-        this.page = DEFAULT_PAGE
-        switch (resource) {
-          case 'review':
-            return getFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'post', resourceType: resource })
-          case 'news':
-            return getFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'post', resourceType: resource })
-          default:
-            getFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: resource })
-        }
-      },
       $_guestEditor_openPanel (panel) {
         this.loading = true
         this.activePanel = panel
@@ -425,6 +414,26 @@
               .then(() => this.loading = false)
               .catch(() => this.loading = false)
               break
+        }
+      },
+      $_guestEditor_unfollow (resource, object) {
+        const subject = _.get(this.profile, [ 'id' ]) 
+        const objectID = object.toString()
+        unfollow(this.$store, resource, subject, objectID) 
+        .then(() => {
+          setTimeout(() => this.$_guestEditor_updateFollowingList(), 1000)
+        }) 
+      },
+      $_guestEditor_updateFollowingList (resource = this.followingResource) {
+        this.followingResource = resource
+        this.page = DEFAULT_PAGE
+        switch (resource) {
+          case 'review':
+            return getFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'post', resourceType: resource })
+          case 'news':
+            return getFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'post', resourceType: resource })
+          default:
+            getFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: resource })
         }
       },
       $_guestEditor_updatePost(params, activeChanged) {
