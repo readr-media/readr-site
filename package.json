@@ -46,6 +46,7 @@
     "redis-connection-pool": "^1.6.1",
     "request-ip": "^2.0.2",
     "route-cache": "0.4.4",
+    "sanitize-html": "^1.18.2",
     "serve-favicon": "^2.4.4",
     "sharp": "^0.19.0",
     "superagent": "^3.8.2",
@@ -60,7 +61,8 @@
     "vue-server-renderer": "^2.5.13",
     "vuejs-datepicker": "^0.9.22",
     "vuex": "^3.0.1",
-    "vuex-router-sync": "^5.0.0"
+    "vuex-router-sync": "^5.0.0",
+    "xmldom": "^0.1.27"
   },
   "devDependencies": {
     "autoprefixer": "^8.0.0",
