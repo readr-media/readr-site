@@ -148,7 +148,7 @@ router.use('/comment', require('./middle/comment'))
 router.use('/register', authVerify, require('./middle/member/register'))
 router.use('/recoverpwd', require('./middle/member/recover'))
 router.use('/public', require('./middle/public'))
-
+router.use('/search', require('./middle/search'))
 
 /**
  * 

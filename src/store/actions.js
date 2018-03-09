@@ -38,6 +38,7 @@ import {
   resetPwd,
   resetPwdEmail,
   setupBasicProfile,
+  search,
   updateMember,
   updatePassword,
   updatePost,
@@ -47,7 +48,7 @@ import {
 } from '../api'
 import { camelizeKeys } from 'humps'
 
-const debug = require('debug')('STORE:actions')
+const debug = require('debug')('READR:STORE:actions')
 export default {
   ADD_MEMBER: ({ commit, dispatch, state }, { params }) => {
     return addMember(params)
@@ -305,6 +306,17 @@ export default {
   },
   SETUP_BASIC_PROFILE: ({ commit, dispatch, state }, { params }) => {
     return setupBasicProfile({ params })
+  },
+  SEARCH: ({ commit, dispatch, state }, { keyword, params }) => {
+    const orig = _.values(state.searchResult[ 'items' ])
+    return state.searchResult.items && (params.page > 1)
+      ? search(keyword, params).then(searchResult => {
+        searchResult[ 'items' ] = _.concat(orig, _.get(searchResult, 'body.hits'))
+        commit('SET_SEARCH', { searchResult })
+      }) : search(keyword, params).then(searchResult => {
+        searchResult[ 'items' ] = _.get(searchResult, 'body.hits')
+        commit('SET_SEARCH', { searchResult })
+      })
   },
   UPDATE_FOLLOWING_BY_USER: ({ commit, dispatch, state }, { params }) => {
     if (params.action === 'follow' && params.resource === 'post') {

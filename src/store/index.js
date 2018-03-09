@@ -31,6 +31,9 @@ export function createStore () {
       'publicMembers': {},
       'publicVideos': {},
       'register-token': '',
+      'searchResult': {
+        'items': []
+      },
       'tags': [],
       'tagsCount': 0,
     },
