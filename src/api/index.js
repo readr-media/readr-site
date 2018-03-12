@@ -272,6 +272,11 @@ export function getPublicVideos ({ params }) {
   return _doFetch(url)
 }
 
+export function getPublicVideosCount () {
+  let url = `${host}/api/videos/count`
+  return _doFetch(url)
+}
+
 export function getMeta (targetUrl) {
   let url = `${host}/api/meta`
   return _doPost(url, { url: targetUrl })

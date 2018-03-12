@@ -99,6 +99,9 @@ export default {
   SET_PUBLIC_VIDEOS: (state, { videos }) => {
     state['publicVideos'] = videos.items
   },
+  SET_PUBLIC_VIDEOS_COUNT: (state, { meta }) => {
+    state['publicVideosCount'] = meta.total
+  },
   SET_PROJECTS_LIST: (state, { projectsList }) => {
     state['projectsList'] = projectsList
   },
