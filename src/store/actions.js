@@ -32,6 +32,7 @@ import {
   getPublicVideosCount,
   getTags,
   getTagsCount,
+  getRewardPointsTransactions,
   login,
   publishAction,
   publishPosts,
@@ -282,6 +283,13 @@ export default {
     return getTagsCount().then(({ status, body }) => {
       if (status === 200) {
         commit('SET_TAGS_COUNT', { meta: body.meta })
+      }
+    })
+  },
+  GET_REWARD_POINTS_TRANSACTIONS: ({ commit, dispatch, state }, { params }) => {
+    return getRewardPointsTransactions({ params }).then(({ status, body }) => {
+      if (status === 200) {
+        commit('SET_REWARD_POINTS_TRANSACTIONS', { transactions: body })
       }
     })
   },

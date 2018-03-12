@@ -339,6 +339,11 @@ export function getTagsCount () {
   return _doFetchStrict(url, {})
 }
 
+export function getRewardPointsTransactions ({ params }) {
+  const url = `${host}/api/points/${params.id}`
+  return _doFetchStrict(url, {})
+}
+
 export function checkLoginStatus ({ params = {}}) {
   const url = `${host}/api/status`
 

@@ -98,7 +98,9 @@ export const WORDING_ADMIN_SET_ERROR_CUSTOMEDITOR = '無法設定，請重新選
 export const WORDING_POSTLIST_ACTIVE = '狀態'
 export const WORDING_POSTLIST_ACTIVE_DRAFT = '草稿'
 export const WORDING_POSTLIST_ACTIVE_PENDING = '待審核'
+export const WORDING_POSTLIST_ACTIVE_PENDING_PROJECT = '進行中'
 export const WORDING_POSTLIST_ACTIVE_PUBLISH = '已發布'
+export const WORDING_POSTLIST_ACTIVE_PUBLISH_PROJECT = '已完成'
 export const WORDING_POSTLIST_ACTIVE_UNPUBLISH = '已下架'
 export const WORDING_POSTLIST_DELETE = '刪除'
 export const WORDING_POSTLIST_DRAFT_RECORD = '未提交評論記錄'
@@ -160,7 +162,7 @@ export const WORDING_CONTROLBAR_TAG = '關鍵字'
 export const WORDING_CONTROLBAR_VIDEO = '影片'
 
 // Tab
-export const WORDING_TAB_COMMENT_RECORD = '留言記錄'
+export const WORDING_TAB_REWARD_POINTS_RECORD = '點數記錄'
 export const WORDING_TAB_FOLLOW_RECORD = '追蹤記錄'
 export const WORDING_TAB_REVIEW_RECORD = '評論記錄'
 export const WORDING_TAB_NEWS_RECORD = '新聞記錄'
