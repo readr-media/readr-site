@@ -30,6 +30,7 @@ export function createStore () {
       'publicMember': {},
       'publicMembers': {},
       'publicVideos': {},
+      'publicVideosCount': 0,
       'register-token': '',
       'searchResult': {
         'items': []

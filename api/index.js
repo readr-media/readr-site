@@ -243,14 +243,32 @@ router.get('/status', authVerify, function(req, res) {
 })
 
 router.get('/videos', (req, res, next) => {
-  let url = `/posts?active={"$in":[${POST_ACTIVE.ACTIVE}]}&type={"$in":[${POST_TYPE.VIDEO}]}`
+  // let url = `/posts?active={"$in":[${POST_ACTIVE.ACTIVE}]}&type={"$in":[${POST_TYPE.VIDEO}]}`
+  let url = `/posts?active={"$in":[${POST_ACTIVE.ACTIVE}]}`
   const whitelist = [ 'max_result', 'page', 'sort' ]
   whitelist.forEach((ele) => {
     if (req.query.hasOwnProperty(ele)) {
       url = `${url}&${ele}=${req.query[ele]}`
     }
   })
-  
+  fetchPromise(url, req)
+  .then((response) => {
+    res.status(200).send(response)
+  })
+  .catch((err) => {
+    if (err.status === 404) {
+      res.status(200).send({ items: [] })
+    } else {
+      res.status(500).send(err)
+      console.error(`error during fetch data from : ${url}`)
+      console.error(err)
+    }
+  })
+})
+
+router.get('/videos/count', (req, res, next) => {
+  // let url = `/posts?active={"$in":[${POST_ACTIVE.ACTIVE}]}&type={"$in":[${POST_TYPE.VIDEO}]}`
+  const url = `/posts/count?active={"$in":[${POST_ACTIVE.ACTIVE}]}`
   fetchPromise(url, req)
   .then((response) => {
     res.status(200).send(response)

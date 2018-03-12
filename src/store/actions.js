@@ -29,6 +29,7 @@ import {
   getPublicPosts,
   getPublicProjectsList,
   getPublicVideos,
+  getPublicVideosCount,
   getTags,
   getTagsCount,
   login,
@@ -220,11 +221,28 @@ export default {
     }) 
   },
   GET_PUBLIC_VIDEOS: ({ commit, dispatch, state }, { params }) => {
+    const orig = _.values(_.get(state, [ 'publicVideos' ]))
     return new Promise((resolve, reject) => {
       getPublicVideos({ params })
       .then(({ status, body }) => {
         if (status === 200) {
+          body.items =  _.concat(orig, body.items)
           commit('SET_PUBLIC_VIDEOS', { videos: body })
+          resolve()
+        }
+      })
+      .catch((res) => {
+        reject(res)
+      })
+    })
+  },
+  GET_PUBLIC_VIDEOS_COUNT: ({ commit, dispatch, state }) => {
+    return new Promise((resolve, reject) => {
+      getPublicVideosCount()
+      .then(({ status, body }) => {
+        if (status === 200) {
+          commit('SET_PUBLIC_VIDEOS_COUNT', { meta: body.meta })
+          resolve()
         }
       })
       .catch((res) => {
