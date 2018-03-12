@@ -31,6 +31,7 @@ export function createStore () {
       'publicMembers': {},
       'publicVideos': {},
       'publicVideosCount': 0,
+      'rewardPointsTransactions': [],
       'register-token': '',
       'searchResult': {
         'items': []

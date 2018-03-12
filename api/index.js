@@ -174,6 +174,9 @@ router.all('/following', [ authVerify, authorize ], function(req, res, next) {
 router.all('/tags', [ authVerify, authorize ], function(req, res, next) {
   next()
 })
+router.all('/points/:id', [ authVerify, authorize ], function(req, res, next) {
+  next()
+})
 
 /**
  * 
@@ -229,7 +232,8 @@ router.get('/profile', [ authVerify ], (req, res) => {
       id: profile.id,
       role: profile.role,
       scopes,
-      profileImage: profile.profileImage
+      profileImage: profile.profileImage,
+      points: profile.points
     })
   }).catch((err) => {
     res.status(500).send(err)

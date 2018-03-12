@@ -1,21 +1,25 @@
 <template>
   <section class="postListInTab">
-    <PaginationNav :totalPages="totalPages" @pageChanged="$_postListInTab_pageChanged"></PaginationNav>
+    <PaginationNav v-if="parent !== 'RewardPointsInTab'" :totalPages="totalPages" @pageChanged="$_postListInTab_pageChanged"></PaginationNav>
     <div v-for="p in posts" :key="p.id" class="postListInTab__post">
       <div
         class="postListInTab__active"
-        :class="[ p.active === config.active.DRAFT ? 'draft' : '' ]"
+        :class="[ $_shouldHighlightStatus(p) ? 'draft' : '' ]"
         v-text="$_postListInTab_getActive(p)">
       </div>
       <div class="postListInTab__content">
         <div class="postListInTab__title">
           <h2 v-text="p.title"></h2>
-          <div v-if="!(!$can('editOtherPost') && p.active !== config.active.DRAFT)" class="postListInTab__control--desktop">
+          <div v-if="!(!$can('editOtherPost') && p.active !== config.active.DRAFT) && parent !== 'RewardPointsInTab'" class="postListInTab__control--desktop">
             <button class="postListInTab__btn" @click="$_postListInTab_editPost(p.id)" v-text="wording.WORDING_POSTLIST_EDIT"></button>
             <button class="postListInTab__btn" @click="$_postListInTab_deletePost(p.id)" v-text="wording.WORDING_POSTLIST_DELETE"></button>
           </div>
         </div>
-        <p v-if="p.content" class="postListInTab__descr" v-text="$_postListInTab_getDescr(p.content)"></p>
+        <p v-if="parent !== 'RewardPointsInTab' && p.content" class="postListInTab__descr" v-text="$_postListInTab_getDescr(p.content)"></p>
+        <div v-else class="postListInTab__descr">
+          <p class="points-info">使用點數： {{ p.points }} 點</p>
+          <p class="points-info">使用時間： {{ p.createdAt.replace(/-/g, '/').replace('T', ' ').replace('Z', '') }}</p>
+        </div>
       </div>
       <div class="postListInTab__control--mobile">
         <button class="postListInTab__btn" @click="$_postListInTab_editPost(p.id)" v-text="wording.WORDING_POSTLIST_EDIT"></button>
@@ -30,7 +34,9 @@
     WORDING_POSTLIST_DELETE,
     WORDING_POSTLIST_EDIT,
     WORDING_POSTLIST_ACTIVE_PUBLISH,
+    WORDING_POSTLIST_ACTIVE_PUBLISH_PROJECT,
     WORDING_POSTLIST_ACTIVE_PENDING,
+    WORDING_POSTLIST_ACTIVE_PENDING_PROJECT,
     WORDING_POSTLIST_ACTIVE_UNPUBLISH,
     WORDING_POSTLIST_ACTIVE_DRAFT
   } from '../constants'
@@ -45,6 +51,9 @@
       PaginationNav
     },
     props: {
+      parent: {
+        type: String
+      },
       posts: {
         type: Array,
         default: []
@@ -61,7 +70,9 @@
           WORDING_POSTLIST_DELETE,
           WORDING_POSTLIST_EDIT,
           WORDING_POSTLIST_ACTIVE_PUBLISH,
+          WORDING_POSTLIST_ACTIVE_PUBLISH_PROJECT,
           WORDING_POSTLIST_ACTIVE_PENDING,
+          WORDING_POSTLIST_ACTIVE_PENDING_PROJECT,
           WORDING_POSTLIST_ACTIVE_UNPUBLISH,
           WORDING_POSTLIST_ACTIVE_DRAFT
         }
@@ -82,11 +93,11 @@
       $_postListInTab_getActive (post) {
         switch (post.active) {
           case POST_ACTIVE.ACTIVE:
-            return WORDING_POSTLIST_ACTIVE_PUBLISH
+            return this.parent !== 'RewardPointsInTab' ? WORDING_POSTLIST_ACTIVE_PUBLISH : WORDING_POSTLIST_ACTIVE_PUBLISH_PROJECT
           case POST_ACTIVE.DRAFT:
             return WORDING_POSTLIST_ACTIVE_DRAFT
           case POST_ACTIVE.PENDING:
-            return WORDING_POSTLIST_ACTIVE_PENDING
+            return this.parent !== 'RewardPointsInTab' ? WORDING_POSTLIST_ACTIVE_PENDING : WORDING_POSTLIST_ACTIVE_PENDING_PROJECT
           case POST_ACTIVE.UNPUBLISH:
             return WORDING_POSTLIST_ACTIVE_UNPUBLISH
           default:
@@ -108,6 +119,9 @@
       },
       $_postListInTab_pageChanged (index) {
         this.$emit('filterChanged', { page: index })
+      },
+      $_shouldHighlightStatus (post) {
+        return post.active === this.config.active.DRAFT || (this.parent === 'RewardPointsInTab' && post.active === this.config.active.ACTIVE)
       }
     }
   }
@@ -171,8 +185,10 @@
     text-align justify
     line-height 1.4
     overflow hidden
-  
 
+.points-info
+  margin 0
+  
 @media (min-width 950px)
   .postListInTab
     width 750px
