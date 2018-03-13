@@ -6,7 +6,7 @@
     </div>
     <text-editor
       v-if="!isVideo"
-      :contentEdit="post.content"
+      :content="post.content"
       :type="postType"
       @updateContent="$_postPanel_updateContent">
     </text-editor>
@@ -396,7 +396,7 @@
         }
       },
       $_postPanel_updateContent (content) {
-        this.post.content = content
+        this.$set(this.post, 'content', content)
       }
     }
   }
