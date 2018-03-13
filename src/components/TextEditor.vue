@@ -5,7 +5,7 @@
       <div class="editor__heading--switch" :class="{ active: showHtml }" @click="$_editor_toggleHtml">&lt; / &gt;</div>
     </div>
     <div class="editor__main">
-      <div v-show="type === config.type.REVIEW">
+      <div v-show="type === postType.REVIEW">
         <div
           ref="quillReviewEditor"
           :content="contentReview"
@@ -14,7 +14,7 @@
           @change="onEditorChange($event)">
         </div>
       </div>
-      <div v-show="type === config.type.NEWS">
+      <div v-show="type === postType.NEWS">
         <div
           ref="quillNewsEditor"
           :content="contentNews"
@@ -26,7 +26,7 @@
       <div
         v-show="showHtml"
         class="editor__main--html"
-        :class="{ review: type === config.type.REVIEW, news: type === config.type.NEWS }"
+        :class="{ review: type === postType.REVIEW, news: type === postType.NEWS }"
         v-text="content">
       </div>
     </div>
@@ -58,9 +58,6 @@ export default {
   },
   data () {
     return {
-      config: {
-        type: POST_TYPE
-      },
       contentNews: '',
       contentReview: '',
       editorNewsOption: {
@@ -86,6 +83,7 @@ export default {
           }
         }
       },
+      postType: POST_TYPE,
       showHtml: false,
       wording: {
         WORDING_POSTEDITOR_EDITOR
