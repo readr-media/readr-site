@@ -23,7 +23,12 @@
           @change="onEditorChange($event)">
         </div>
       </div>
-      <div v-show="showHtml" class="editor__main--html" v-text="content"></div>
+      <div
+        v-show="showHtml"
+        class="editor__main--html"
+        :class="{ review: type === config.type.REVIEW, news: type === config.type.NEWS }"
+        v-text="content">
+      </div>
     </div>
   </section>
 </template>
@@ -43,7 +48,7 @@ const uploadImage = (store, file) => {
 export default {
   name: 'TextEditor',
   props: {
-    contentEdit: {
+    content: {
       default: ''
     },
     type: {
@@ -56,7 +61,6 @@ export default {
       config: {
         type: POST_TYPE
       },
-      content: '',
       contentNews: '',
       contentReview: '',
       editorNewsOption: {
@@ -90,26 +94,21 @@ export default {
   },
   watch: {
     content () {
-      this.$emit('updateContent', this.content)
+      if (this.type === POST_TYPE.REVIEW) {
+        this.contentReview = this.content
+      } else if (this.type === POST_TYPE.NEWS) {
+        this.contentNews = this.content
+      }
     },
-  },
-  beforeMount () {
-    this.content = this.contentEdit
-    if (this.type === POST_TYPE.REVIEW) {
-      this.contentReview = this.content
-    } else if (this.type === POST_TYPE.NEWS) {
-      this.contentNews = this.content
-    }
   },
   methods: {
     onEditorChange(event) {
       if (event.html) {
         if (this.type === POST_TYPE.REVIEW) {
-          this.contentReview = event.html
+          this.$emit('updateContent', event.html)
         } else if (this.type === POST_TYPE.NEWS) {
-          this.contentNews = event.html
+          this.$emit('updateContent', event.html)
         }
-        this.content = event.html
       }
     },
     $_editor_imageHandler () {
@@ -144,10 +143,10 @@ export default {
     },
     $_editor_toggleHtml () {
       this.showHtml = !this.showHtml
-      if (this.showHtml) {
-        this.$refs.quillNewsEditor.classList.add('half')
-      } else {
-        this.$refs.quillNewsEditor.classList.remove('half')
+      if (this.type === POST_TYPE.REVIEW) {
+        this.$refs.quillReviewEditor.classList.toggle('half')
+      } else if (this.type === POST_TYPE.NEWS) {
+        this.$refs.quillNewsEditor.classList.toggle('half')
       }
     }
   }
@@ -205,13 +204,17 @@ export default {
     
     &--html
       position absolute
-      top 42px
+      
       right 0
       width 50%
       height 338px
       padding 10px
       border-right 1px solid #d3d3d3
       overflow-x hidden
+      &.news
+        top 42px
+      &.review
+        top 0
 
 @media (min-width 950px)
   .editor
