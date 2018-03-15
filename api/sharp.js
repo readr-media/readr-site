@@ -5,21 +5,32 @@ const moment = require('moment')
 const sharp = require('sharp')
 
 
-const resizeOpts = [
-  { target: 'mobile@4x', width: 1500 },
-  { target: 'mobile@3x', width: 1200 },
-  { target: 'mobile@2x', width: 800 },
-  { target: 'tablet@2x', width: 2700 },
-  { target: 'tablet@1x', width: 1000 },
-  { target: 'desktop@2x', width: 3000 },
-  { target: 'desktop@1x', width: 2000 }
-]
+const resizeOpts = {
+  post: [
+    { target: 'mobile@4x', width: 1500 },
+    { target: 'mobile@3x', width: 1200 },
+    { target: 'mobile@2x', width: 800 },
+    { target: 'tablet@2x', width: 2700 },
+    { target: 'tablet@1x', width: 1000 },
+    { target: 'desktop@2x', width: 3000 },
+    { target: 'desktop@1x', width: 2000 }
+  ],
+  member: [
+    { target: 'mobile@4x', width: 150 },
+    { target: 'mobile@3x', width: 120 },
+    { target: 'mobile@2x', width: 80 },
+    { target: 'tablet@2x', width: 270 },
+    { target: 'tablet@1x', width: 100 },
+    { target: 'desktop@2x', width: 300 },
+    { target: 'desktop@1x', width: 200 }
+  ]
+}
 
-const processImage = (file) => {
+const processImage = (file, sourceType) => {
   const outputPaths = []
   return new Promise((resolve, reject) => {
     const filePath = file.path
-    const fileName = file.filename
+    const fileName = sourceType === 'member' ? file.originalname : file.filename
     const timePrefix = moment().unix()
     const image = sharp(filePath)
     let fileFormat
@@ -43,7 +54,7 @@ const processImage = (file) => {
           })
       })
       .then(() => {
-        Promise.all(resizeOpts.map((opt) => {
+        Promise.all(resizeOpts[sourceType].map((opt) => {
           return image
             .jpeg({ quality: IMAGE_UPLOAD_QUALITY_JPEG, force: false })
             .png({ compressionLevel: IMAGE_UPLOAD_QUALITY_PNG, force: false })
@@ -66,5 +77,5 @@ const processImage = (file) => {
 }
 
 module.exports = {
-	processImage
+  processImage
 }

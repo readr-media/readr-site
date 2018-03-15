@@ -7,7 +7,7 @@ const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT } = require('./config')
 const { POST_ACTIVE, POST_TYPE } = require('./config')
 const { camelizeKeys } = require('humps')
 const { constructScope, fetchPermissions } = require('./services/perm')
-const { initBucket, getFileMd5Hash, renameFile, makeFilePublic, uploadFileToBucket, deleteFileFromBucket, publishAction } = require('./gcs.js')
+const { initBucket, getFileMd5Hash, renameFile, makeFilePublic, uploadFileToBucket, deleteFileFromBucket, deleteFilesInFolder, publishAction } = require('./gcs.js')
 const { processImage } = require('./sharp.js')
 const { verifyToken } = require('./middle/member/comm')
 const Cookies = require('cookies')
@@ -397,55 +397,19 @@ router.post('/post', authVerify, (req, res) => {
   })
 })
 
-router.post('/image-member', authVerify, upload.single('image'), (req, res) => {
+router.post('/image/:sourceType', authVerify, upload.single('image'), (req, res) => {
   const url = `${apiHost}${req.url}`
   const bucket = initBucket(GCP_FILE_BUCKET)
   const file = req.file
-  const filename = file.originalname
-  const fileext = file.mimetype.split('image/')[1]
-  const filepath = `${filename}.${fileext}`
+  const destination = req.params.sourceType === 'member' ? `${GCS_IMG_MEMBER_PATH}/${file.originalname}` : GCS_IMG_POST_PATH
   
-  uploadFileToBucket(bucket, file.path, {
-    destination: `${GCS_IMG_MEMBER_PATH}/${filepath}`,
-    metadata: {
-      contentType: file.mimetype
-    }
-  }).then((bucketFile) => {
-    console.info(`file ${filename}(${file.path}) completed uploading to bucket `)
-    fs.unlink(file.path, (err) => {
-      if (err) {
-        console.error(`Error: delete ${file.path} fail`)
-      }
-      console.info(`successfully deleted ${file.path}`)
-    })
-    return getFileMd5Hash(bucketFile)
-  })
-  .then((hash) => {
-    const hexString = new Buffer(hash, 'base64').toString('hex')
-    const filepathWithHash = `${filename}${hexString}.${fileext}` 
-    return renameFile(bucket, `${GCS_IMG_MEMBER_PATH}/${filepath}`, `${GCS_IMG_MEMBER_PATH}/${filepathWithHash}`)
-  })
-  .then((bucketFile) => {
-    makeFilePublic(bucketFile)
-    res.status(200).send({url: `https://dev.readr.tw/${bucketFile.name}`})
-  })
-  .catch((err) => {
-    res.status(400).send('Upload Fail').end()
-  })
-})
-
-router.post('/image-post', authVerify, upload.single('image'), (req, res) => {
-  const url = `${apiHost}${req.url}`
-  const bucket = initBucket(GCP_FILE_BUCKET)
-  const file = req.file
-  
-  processImage(file)
+  processImage(file, req.params.sourceType)
     .then((images) => {
-      const origImg = _.trim(images[0], 'tmp/')
+      const origImg = req.params.sourceType === 'member' ? _.trim(images[images.length - 1], 'tmp/') : _.trim(images[0], 'tmp/')
       Promise.all(images.map((path) => {
         const fileName = _.trim(path, 'tmp/')
         return uploadFileToBucket(bucket, path, {
-          destination: `${GCS_IMG_POST_PATH}/${fileName}`,
+          destination: `${destination}/${fileName}`,
           metadata: {
             contentType: file.mimetype
           }
@@ -461,7 +425,7 @@ router.post('/image-post', authVerify, upload.single('image'), (req, res) => {
         })
       }))
       .then(() => {
-        res.status(200).send({url: `http://dev.readr.tw${GCS_IMG_POST_PATH}/${origImg}`})
+        res.status(200).send({url: `http://dev.readr.tw${destination}/${origImg}`})
       })
     })
     .catch((err) => {
@@ -471,26 +435,14 @@ router.post('/image-post', authVerify, upload.single('image'), (req, res) => {
     })
 })
 
-router.post('/deleteImg', (req, res) => {
+router.post('/deleteMemberProfileThumbnails', authVerify, (req, res) => {
   const bucket = initBucket(GCP_FILE_BUCKET)
-  const filePath = req.body.filePath
-  deleteFileFromBucket(bucket, {
-    destination: `/assets/images/${filePath}`
-  }).then((bucketFile) => {
-    res.status(200).send(`file ${filePath} completely delete from bucket `)
-  })
-  .catch((err) => {
-    res.status(400).send('Delete Fail').end()
-  })
-})
-
-router.post('/deleteMemberImg', (req, res) => {
-  const bucket = initBucket(GCP_FILE_BUCKET)
-  const filePath = req.body.filePath
-  deleteFileFromBucket(bucket, {
-    destination: `${GCS_IMG_MEMBER_PATH}/${filePath}`
-  }).then((bucketFile) => {
-    res.status(200).send(`file ${filePath} completely delete from /assets/images/members/ in bucket`)
+  const id = req.body.id
+  const gcsImgPathTrim = GCS_IMG_MEMBER_PATH.replace('/', '')
+  deleteFilesInFolder(bucket, {
+    folder: `${gcsImgPathTrim}/${id}`
+  }).then(() => {
+    res.status(200).send(`Files in folder ${id} completely delete from /assets/images/members/ in bucket`)
   })
   .catch((err) => {
     res.status(400).send('Delete Fail').end()
