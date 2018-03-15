@@ -1,7 +1,7 @@
+const { GoogleAuth, OAuth2Client } = require('google-auth-library')
 const { constructScope } = require('../../services/perm')
 const { get } = require('lodash')
 const Cookies = require('cookies')
-const GoogleAuth = require('google-auth-library')
 const config = require('../../config')
 const debug = require('debug')('READR:api/middle/member')
 const express = require('express')
@@ -65,23 +65,22 @@ const preLogin = (req, res, next) => {
     At ${(new Date).toString()}`)
 
   if (req.body.login_mode === 'google') {
-    const auth = new GoogleAuth()
-    const client = new auth.OAuth2(config.GOOGLE_CLIENT_ID, '', '');
-    client.verifyIdToken(
-      req.body.idToken,
-      config.GOOGLE_CLIENT_ID,
-      (e, login) => {
-        const payload = login.getPayload()
-        if (payload[ 'aud' ] !== config.GOOGLE_CLIENT_ID) {
-          res.status(403).send('Forbidden. Invalid token detected.').end()
-          return
-        }
-        req.body.id = payload[ 'sub' ]
-        req.body.mail = payload[ 'email' ]
-        req.body.email = payload[ 'email' ]
-        req.body.register_mode = 'oauth-goo'
-        next()
-      })
+    const client = new OAuth2Client(config.GOOGLE_CLIENT_ID, '', '')
+    client.verifyIdToken({
+      idToken: req.body.idToken,
+      audience: config.GOOGLE_CLIENT_ID
+    }, (e, login) => {
+      const payload = login.getPayload()
+      if (payload[ 'aud' ] !== config.GOOGLE_CLIENT_ID) {
+        res.status(403).send('Forbidden. Invalid token detected.').end()
+        return
+      }
+      req.body.id = payload[ 'sub' ]
+      req.body.mail = payload[ 'email' ]
+      req.body.email = payload[ 'email' ]
+      req.body.register_mode = 'oauth-goo'
+      next()
+    })
   } else if (req.body.login_mode === 'facebook') {
     req.body.register_mode = 'oauth-fb'    
     next()
