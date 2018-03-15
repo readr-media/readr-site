@@ -11,7 +11,6 @@ const { initBucket, getFileMd5Hash, renameFile, makeFilePublic, uploadFileToBuck
 const { processImage } = require('./sharp.js')
 const { verifyToken } = require('./middle/member/comm')
 const Cookies = require('cookies')
-const GoogleAuth = require('google-auth-library')
 const bodyParser = require('body-parser')
 const crypto = require('crypto')
 const config = require('./config')
