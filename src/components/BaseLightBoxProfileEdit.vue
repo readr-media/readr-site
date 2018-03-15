@@ -78,8 +78,8 @@ const logout = (store) => {
 const uploadImage = (store, file) => {
   return store.dispatch('UPLOAD_IMAGE', { file, type: 'member' })
 }
-const deleteImage = (store, file) => {
-  return store.dispatch('DELETE_IMAGE', { file, type: 'member' })
+const deleteMemberProfileThumbnails = (store, id) => {
+  return store.dispatch('DELETE_MEMBER_PROFILE_THUMBNAILS', { id })
 }
 
 export default {
@@ -176,7 +176,7 @@ export default {
       input.onchange = () => {
         const file = input.files[0]
         if (/^image\//.test(file.type)) {
-          deleteImage(this.$store, this.thumbnailFilePath)
+          deleteMemberProfileThumbnails(this.$store, this.profile.id)
           file.size <= 5242880 ? saveImage(file) : console.log(`file size is ${file.size} bytes bigger than 5MB`)
         }
       }

@@ -480,9 +480,9 @@ export function uploadImage (file, type) {
   let url
   return new Promise((resolve, reject) => {
     if (type === 'member') {
-      url = `${host}/api/image-member`
+      url = `${host}/api/image/member`
     } else if (type === 'post') {
-      url = `${host}/api/image-post`
+      url = `${host}/api/image/post`
     } else {
       reject()
     }
@@ -500,19 +500,13 @@ export function uploadImage (file, type) {
   })
 }
 
-export function deleteImage (file, type) {
-  let url
-  const param = { 'filePath': file }
+export function deleteMemberProfileThumbnails (id) {
+  let url = `${host}/api/deleteMemberProfileThumbnails`
   return new Promise((resolve, reject) => {
-    if (type === 'member') {
-      url = `${host}/api/deleteMemberImg`
-    } else {
-      reject()
-    }
     superagent
       .post(url)
       .set('Authorization', `Bearer ${getToken()}`)
-      .send(param)
+      .send({ id })
       .end((err, res) => {
         if (err) {
           reject(err)

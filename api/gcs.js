@@ -74,6 +74,18 @@ const deleteFileFromBucket = (bucket, options) => {
 	})
 }
 
+const deleteFilesInFolder = (bucket, options) => {
+  return new Promise((resolve, reject) => {
+    const opts = options || {}
+    bucket.deleteFiles({
+      prefix: opts.folder,
+      force: true
+    })
+		.then(() => { resolve() })
+		.catch(err => { reject(err) })
+  })
+}
+
 const publishAction = (data) => {
   process.env['GOOGLE_APPLICATION_CREDENTIALS'] = GCP_KEYFILE
   const projectId = GCP_PROJECT_ID
@@ -104,5 +116,6 @@ module.exports = {
 	makeFilePublic,
   uploadFileToBucket,
   deleteFileFromBucket,
+  deleteFilesInFolder,
   publishAction
 }
