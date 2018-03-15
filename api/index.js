@@ -247,8 +247,7 @@ router.get('/status', authVerify, function(req, res) {
 })
 
 router.get('/videos', (req, res, next) => {
-  // let url = `/posts?active={"$in":[${POST_ACTIVE.ACTIVE}]}&type={"$in":[${POST_TYPE.VIDEO}]}`
-  let url = `/posts?active={"$in":[${POST_ACTIVE.ACTIVE}]}`
+  let url = `/posts?active={"$in":[${POST_ACTIVE.ACTIVE}]}&type={"$in":[${POST_TYPE.VIDEO}, ${POST_TYPE.LIVE}]}`
   const whitelist = [ 'max_result', 'page', 'sort' ]
   whitelist.forEach((ele) => {
     if (req.query.hasOwnProperty(ele)) {
@@ -271,8 +270,7 @@ router.get('/videos', (req, res, next) => {
 })
 
 router.get('/videos/count', (req, res, next) => {
-  // let url = `/posts?active={"$in":[${POST_ACTIVE.ACTIVE}]}&type={"$in":[${POST_TYPE.VIDEO}]}`
-  const url = `/posts/count?active={"$in":[${POST_ACTIVE.ACTIVE}]}`
+  const url = `/posts/count?active={"$in":[${POST_ACTIVE.ACTIVE}]}&type={"$in":[${POST_TYPE.VIDEO}, ${POST_TYPE.LIVE}]}`
   fetchPromise(url, req)
   .then((response) => {
     res.status(200).send(response)
