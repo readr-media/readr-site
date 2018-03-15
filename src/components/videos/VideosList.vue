@@ -1,19 +1,20 @@
 <template>
   <section class="videosList">
     <template v-for="video in videos" >
-      <div :key="get(video, [ 'id' ])" class="videosList__item">
-        <div class="videosList__item-img"></div>
+      <div :key="get(video, [ 'videoId' ])" class="videosList__item">
+        <div class="videosList__item-img" @click="$_videosList_play(get(video, [ 'id' ]))"></div>
+        <h3 v-text="moment(video.publishedAt).format('YYYY/MM/DD')"></h3>
         <h2 v-text="get(video, [ 'title' ])"></h2>
         <div class="videosList__item-info">
           <div
             class="videosList__item-info-icon comment"
             @click="$_videosList_renderComment(get(video, [ 'id' ]))">
             <img src="/public/icons/comment-blue.png">
-            <comment-count class="videosList__item-info-icon-count" :commentAmount="12345"></comment-count>
+            <comment-count class="videosList__item-info-icon-count" :commentAmount="( get(video, [ 'commentAmount' ]) || 0 )"></comment-count>
           </div>
           <div class="videosList__item-info-icon">
             <img src="/public/icons/view-blue.png">
-            <span class="videosList__item-info-icon-count">709</span>
+            <span class="videosList__item-info-icon-count">{{ get(video, [ 'videoViews' ]) || 0 }}</span>
           </div>
         </div>
         <div :class="`videosList__item-comment hidden video-${get(video, [ 'id' ])}`">
@@ -21,6 +22,7 @@
         </div>
       </div>
     </template>
+    <button v-if="hasMore" class="videosList__btn" @click="$_videosList_loadMore">More</button>
   </section>
 </template>
 
@@ -29,6 +31,7 @@
   import { get } from 'lodash'
   import { renderComment } from '../../../src/util/talk'
   import CommentCount from '../../components/comment/CommentCount.vue'
+  import moment from 'moment'
 
   export default {
     name: 'VideosList',
@@ -36,6 +39,10 @@
       CommentCount
     },
     props: {
+      hasMore: {
+        type: Boolean,
+        required: true
+      },
       videos: {
         type: Array,
         default: function () {
@@ -44,6 +51,12 @@
       }
     },
     methods: {
+      $_videosList_loadMore () {
+        this.$emit('loadMore')
+      },
+      $_videosList_play (id) {
+        this.$emit('play', id)
+      },
       $_videosList_renderComment (id) {
         document.querySelector(`.videosList__item-comment.video-${id}`).classList.toggle('hidden')
         const rendered = document.querySelector(`.videosList__item-comment.video-${id} iframe`)
@@ -51,7 +64,8 @@
           renderComment(this.$el, `.videosList__item-comment.video-${id} > .comment`, `${location.protocol}//${SITE_DOMAIN_DEV}/post/${id}`)
         }
       },
-      get
+      get,
+      moment
     }
   }
 </script>
@@ -68,15 +82,20 @@
         margin 5px 0
         font-size 15px
         font-weight normal
+      h3
+        margin 5px 0
+        font-size 14px
+        font-weight 300
       &:last-of-type
         margin-bottom 0
       &-img
         width 325px
         height 183px
-        background-image url('https://projects.mirrormedia.mg/proj-assets/farmhouse/images/og.jpg')
+        background-color #d3d3d3
         background-size cover
         background-position center
         background-repeat no-repeat
+        cursor pointer
       &-info
         &-icon
           display inline-block
@@ -100,6 +119,14 @@
       &-comment
         &.hidden
           display none
+    &__btn
+      width 100%
+      height 30px
+      margin-top 20px
+      background-color #d3d3d3
+      border none
+
+
 </style>
 
 

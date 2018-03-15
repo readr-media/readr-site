@@ -6,7 +6,7 @@
       </aside>
       <main class="videos__main">
         <videos-highlight :video="highlightVideo"></videos-highlight>
-        <videos-list ref="videosList" :videos="videoList"></videos-list>
+        <videos-list ref="videosList" :hasMore="hasMore" :videos="videoList" @loadMore="$_videos_loadMore" @play="$_videos_changeHighlight"></videos-list>
       </main>
     </div>
   </div>
@@ -14,13 +14,13 @@
 
 <script>
   import { currentYPosition, elmYPosition } from 'kc-scroll'
-  import { get, xor } from 'lodash'
+  import { filter, find, get, xor } from 'lodash'
   import _ from 'lodash'
   import AppAsideNav from '../components/AppAsideNav.vue'
   import VideosHighlight from '../components/videos/VideosHighlight.vue'
   import VideosList from '../components/videos/VideosList.vue'
 
-  const MAXRESULT = 6
+  const MAXRESULT = 4
   const DEFAULT_PAGE = 1
   const DEFAULT_SORT = '-updated_at'
 
@@ -44,8 +44,12 @@
 
   export default {
     name: 'AppVideos',
-    // asyncData ({ store, route }) {
-    // },
+    asyncData ({ store, route }) {
+      return Promise.all([
+        getVideos(store),
+        getVideosCount(store)
+      ])
+    },
     components: {
       AppAsideNav,
       VideosHighlight,
@@ -53,6 +57,7 @@
     },
     data () {
       return {
+        highlightVideo: {},
         loading: false,
         page: DEFAULT_PAGE
       }
@@ -61,32 +66,30 @@
       hasMore () {
         return get(this.$store, [ 'state', 'publicVideos', 'length' ], 0) < get(this.$store, [ 'state', 'publicVideosCount' ], 0)
       },
-      highlightVideo () {
-        return get(this.videos, [ 0 ])
+      items () {
+        return get(this.$store, [ 'state', 'publicVideos' ], [])
+      },
+      live () {
+        return find(this.videos, { type: 3 })
       },
       videoList () {
         return xor(this.videos, [ this.highlightVideo ])
       },
       videos () {
-        return get(this.$store, [ 'state', 'publicVideos' ], [])
+        return filter(this.items, { type: 2 })
       }
-    },
-    beforeMount () {
-      Promise.all([
-        getVideos(this.$store),
-        getVideosCount(this.$store)
-      ])
       
     },
     mounted () {
-      window.addEventListener('scroll', this.$_videos_scrollHandler)
+      this.highlightVideo = this.live ? this.live : get(this.videos, 0)
+      // window.addEventListener('scroll', this.$_videos_scrollHandler)
     },
     methods: {
-      $_videos_scrollHandler (e) {
-        const vh = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
-        const currentBtm = currentYPosition() + vh
-        const currentListBtm = elmYPosition('.videosList') + this.$refs.videosList.$el.offsetHeight
-        if (this.hasMore && !this.loading && currentBtm > currentListBtm - 100) {
+      $_videos_changeHighlight (id) {
+        this.highlightVideo = find(this.videos, { id: id })
+      },
+      $_videos_loadMore () {
+        if (this.hasMore && !this.loading) {
           this.loading = true
           this.page += 1
           getVideos(this.$store, { page: this.page })
@@ -95,6 +98,19 @@
           })
         }
       },
+      // $_videos_scrollHandler (e) {
+      //   const vh = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
+      //   const currentBtm = currentYPosition() + vh
+      //   const currentListBtm = elmYPosition('.videosList') + this.$refs.videosList.$el.offsetHeight
+      //   if (this.hasMore && !this.loading && currentBtm > currentListBtm - 100) {
+      //     this.loading = true
+      //     this.page += 1
+      //     getVideos(this.$store, { page: this.page })
+      //     .then(() => {
+      //       this.loading = false
+      //     })
+      //   }
+      // },
       get
     }
   }
