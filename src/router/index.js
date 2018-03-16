@@ -18,6 +18,7 @@ const Editors = () => import('../views/Editors.vue')
 const GuestEditor = () => import('../views/GuestEditor.vue')
 const Home = () => import('../views/Home.vue')
 const Login = () => import('../views/Login.vue')
+const Member = () => import('../views/Member.vue')
 const Post = () => import('../views/Post.vue')
 const Profile = () => import('../views/Profile.vue')
 const ProjectsList = () => import('../views/ProjectsList.vue')
@@ -37,6 +38,7 @@ const router = new Router({
     { path: '/editors', component: Editors },
     { path: '/guesteditor', component: GuestEditor, meta: { permission: 'guesteditor' }},
     { path: '/login', component: Login },
+    { path: '/member', component: Member, meta: { permission: 'member' }},
     { path: '/post/:id', component: Post },
     { path: '/profile/:id', component: Profile },
     { path: '/projects', component: ProjectsList },

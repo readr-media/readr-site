@@ -65,6 +65,23 @@ button
 .fade-enter, .fade-leave-active
   opacity 0
 
+.backstage
+  width 100%
+  height 100vh
+  overflow hidden
+  &-container
+    width 950px
+    height 100%
+    margin 0 auto
+    padding 25px 0
+    overflow hidden
+  &__controlBar
+    margin-top 40px
+  &__record
+    margin-top 30px
+    background-color #fff
+  
+
 @media (min-width 768px)
   .view
     background-color #e6e6e6
