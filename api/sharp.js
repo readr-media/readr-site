@@ -41,21 +41,23 @@ const processImage = (file, sourceType) => {
         if (fileFormat === 'jpeg') {
           fileFormat = 'jpg'
         }
-        image
-          .toFile(`tmp/${timePrefix}-${fileName}.${fileFormat}`)
-          .then(() => {
-            outputPaths.push(`tmp/${timePrefix}-${fileName}.${fileFormat}`)
-            fs.unlink(filePath, (err) => {
-              if (err) {
-                console.error(`Error: delete ${filePath} fail`)
-              }
-              console.info(`successfully deleted ${filePath}`)
-            })
-          })
+        return image.toFile(`tmp/${timePrefix}-${fileName}.${fileFormat}`)
+      })
+      .then((data) => {
+        outputPaths.push(`tmp/${timePrefix}-${fileName}.${fileFormat}`)
+        console.log('-- processImage 1', outputPaths)
+        // fs.unlink(filePath, (err) => {
+        //   if (err) {
+        //     console.error(`Error: delete ${filePath} fail`)
+        //   }
+        //   console.info(`successfully deleted ${filePath}`)
+        //   return data
+        // })
       })
       .then(() => {
+        console.log('-- processImage 3', outputPaths)
         Promise.all(resizeOpts[sourceType].map((opt) => {
-          return image
+          image
             .jpeg({ quality: IMAGE_UPLOAD_QUALITY_JPEG, force: false })
             .png({ compressionLevel: IMAGE_UPLOAD_QUALITY_PNG, force: false })
             .resize(opt.width)
@@ -63,13 +65,64 @@ const processImage = (file, sourceType) => {
             .withoutEnlargement()
             .toFile(`tmp/${timePrefix}-${fileName}-${opt.target}-${opt.width}.${fileFormat}`)
             .then(() => {
-              outputPaths.push(`tmp/${timePrefix}-${fileName}-${opt.target}-${opt.width}.${fileFormat}`)
+              console.log('-- processImage 4')
+              return outputPaths.push(`tmp/${timePrefix}-${fileName}-${opt.target}-${opt.width}.${fileFormat}`)
             })
         }))
         .then(() => {
-          resolve(outputPaths)
+          console.log('-- processImage 5', outputPaths)
         })
+        // Promise.all(resizeOpts[sourceType].map((opt) => {
+        //   return image
+        //     .jpeg({ quality: IMAGE_UPLOAD_QUALITY_JPEG, force: false })
+        //     .png({ compressionLevel: IMAGE_UPLOAD_QUALITY_PNG, force: false })
+        //     .resize(opt.width)
+        //     .min()
+        //     .withoutEnlargement()
+        //     .toFile(`tmp/${timePrefix}-${fileName}-${opt.target}-${opt.width}.${fileFormat}`)
+        //     .then(() => {
+        //       outputPaths.push(`tmp/${timePrefix}-${fileName}-${opt.target}-${opt.width}.${fileFormat}`)
+        //     })
+        // }))
+        // .then(() => {
+        //   console.log('-- processImage 4', outputPaths)
+        //   resolve(outputPaths)
+        // })
       })
+
+      // .then(() => {
+      //   image
+      //     .toFile(`tmp/${timePrefix}-${fileName}.${fileFormat}`)
+      //     .then(() => {
+      //       outputPaths.push(`tmp/${timePrefix}-${fileName}.${fileFormat}`)
+      //       console.log('-- processImage 1', outputPaths)
+      //       fs.unlink(filePath, (err) => {
+      //         if (err) {
+      //           console.error(`Error: delete ${filePath} fail`)
+      //         }
+      //         console.info(`successfully deleted ${filePath}`)
+      //       })
+      //     })
+      // })
+      // .then(() => {
+      //   console.log('-- processImage 2', outputPaths)
+      //   resizeOpts[sourceType].map((opt) => {
+      //     return image
+      //       .jpeg({ quality: IMAGE_UPLOAD_QUALITY_JPEG, force: false })
+      //       .png({ compressionLevel: IMAGE_UPLOAD_QUALITY_PNG, force: false })
+      //       .resize(opt.width)
+      //       .min()
+      //       .withoutEnlargement()
+      //       .toFile(`tmp/${timePrefix}-${fileName}-${opt.target}-${opt.width}.${fileFormat}`)
+      //       .then(() => {
+      //         outputPaths.push(`tmp/${timePrefix}-${fileName}-${opt.target}-${opt.width}.${fileFormat}`)
+      //       })
+      //   })
+      //   .then(() => {
+      //     console.log('-- processImage 3', outputPaths)
+      //     resolve(outputPaths)
+      //   })
+      // })
       .catch(err => {
         reject(err)
       })

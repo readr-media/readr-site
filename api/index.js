@@ -405,6 +405,7 @@ router.post('/image/:sourceType', authVerify, upload.single('image'), (req, res)
   
   processImage(file, req.params.sourceType)
     .then((images) => {
+      console.log('-- processImage --', images)
       const origImg = req.params.sourceType === 'member' ? _.trim(images[images.length - 1], 'tmp/') : _.trim(images[0], 'tmp/')
       Promise.all(images.map((path) => {
         const fileName = _.trim(path, 'tmp/')
