@@ -99,6 +99,13 @@ export default {
       }
     },
   },
+  mounted () {
+    if (this.type === POST_TYPE.REVIEW) {
+      this.contentReview = this.content
+    } else if (this.type === POST_TYPE.NEWS) {
+      this.contentNews = this.content
+    }
+  },
   methods: {
     onEditorChange(event) {
       if (event.html) {
