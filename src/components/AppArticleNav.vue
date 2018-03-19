@@ -6,7 +6,6 @@
         <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="postId" :type="'publicPostsHot'"></CommentCount>
       </span>
       <img class="follow-icon" :src="isFollow ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="follow" @click="toogleFollow">
-      <img v-if="articleType === 'project'" class="donate-icon" src="/public/icons/encourage.png" alt="donate" @click="donate">
     </nav>
     <div :class="`article-nav__comment`">
       <div :class="`comment comment-${postId}`"></div>
@@ -33,11 +32,6 @@ const updateStoreFollowingByResource = (store, { action, resource, resourceId, u
       resourceId: resourceId,
       userId: userId
     }
-  })
-}
-const donatePost = (store, params) => {
-  return store.dispatch('ADD_REWARD_POINTS_TRANSACTIONS', {
-    params: params
   })
 }
 
@@ -107,22 +101,6 @@ export default {
             userId: this.$store.state.profile.id
           })
         }
-      }
-    },
-    donate () {
-      if (!this.$store.state.isLoggedIn) {
-        alert('please login first')
-      } else {
-        donatePost(this.$store, {
-          member_id: this.$store.state.profile.id,
-          object_type: 1,
-          object_id: this.postId,
-          points: 20,
-        }).then(() => {
-          alert('donate 20 points')
-        }).catch(() => {
-          alert('donate fail')
-        })
       }
     }
   }
