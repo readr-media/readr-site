@@ -1,10 +1,10 @@
 <template>
   <div class="article-nav">
     <nav class="article-nav__nav-btns">
-      <!-- <span class="comment-icon" @click="renderComment(`.article-nav__comment > .comment.comment-${postId}`)">
+      <span class="comment-icon" @click="renderComment(`.article-nav__comment > .comment.comment-${postId}`)">
         <img class="comment-icon__thumbnail" src="/public/icons/comment-blue.png" alt="comment">
         <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="postId" :type="'publicPostsHot'"></CommentCount>
-      </span> -->
+      </span>
       <img class="follow-icon" :src="isFollow ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="follow" @click="toogleFollow">
       <img v-if="articleType === 'project'" class="donate-icon" src="/public/icons/encourage.png" alt="donate" @click="donate">
     </nav>

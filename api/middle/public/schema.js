@@ -1,5 +1,6 @@
+const config = require('../../config')
 const Joi = require('joi')
-const activePostQueryString = '{"$in":[1]}'
+const activePostQueryString = `{"$in":[${config.POST_ACTIVE.ACTIVE}]}`
 
 module.exports = {
   members: Joi.object().keys({
