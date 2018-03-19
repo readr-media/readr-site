@@ -1,11 +1,12 @@
 <template>
   <div class="article-nav">
     <nav class="article-nav__nav-btns">
-      <span class="comment-icon" @click="renderComment(`.article-nav__comment > .comment.comment-${postId}`)">
+      <!-- <span class="comment-icon" @click="renderComment(`.article-nav__comment > .comment.comment-${postId}`)">
         <img class="comment-icon__thumbnail" src="/public/icons/comment-blue.png" alt="comment">
         <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="postId" :type="'publicPostsHot'"></CommentCount>
-      </span>
+      </span> -->
       <img class="follow-icon" :src="isFollow ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="follow" @click="toogleFollow">
+      <img v-if="articleType === 'project'" class="donate-icon" src="/public/icons/encourage.png" alt="donate" @click="donate">
     </nav>
     <div :class="`article-nav__comment`">
       <div :class="`comment comment-${postId}`"></div>
@@ -25,13 +26,18 @@ const publishAction = (store, data) => {
   })
 }
 const updateStoreFollowingByResource = (store, { action, resource, resourceId, userId }) => {
-  store.dispatch('UPDATE_FOLLOWING_BY_RESOURCE', {
+  return store.dispatch('UPDATE_FOLLOWING_BY_RESOURCE', {
     params: {
       action: action,
       resource: resource,
       resourceId: resourceId,
       userId: userId
     }
+  })
+}
+const donatePost = (store, params) => {
+  return store.dispatch('ADD_REWARD_POINTS_TRANSACTIONS', {
+    params: params
   })
 }
 
@@ -102,6 +108,22 @@ export default {
           })
         }
       }
+    },
+    donate () {
+      if (!this.$store.state.isLoggedIn) {
+        alert('please login first')
+      } else {
+        donatePost(this.$store, {
+          member_id: this.$store.state.profile.id,
+          object_type: 1,
+          object_id: this.postId,
+          points: 20,
+        }).then(() => {
+          alert('donate 20 points')
+        }).catch(() => {
+          alert('donate fail')
+        })
+      }
     }
   }
 }
@@ -131,6 +153,11 @@ $icon-size
 .follow-icon
   @extends $icon-size
   margin-left 4.5px
+  cursor pointer
+.donate-icon
+  width 20px
+  height 25px
+  margin-left 16.2px
   cursor pointer
 </style>
 

@@ -143,6 +143,13 @@ export function addTags (params) {
     .catch(err => err)
 }
 
+export function addRewardPointsTransactions (params) {
+  const url = `${host}/api/points`
+  return _doPost(url, params)
+    .then(res => res.status)
+    .catch(err => err)
+}
+
 export function deletePost (id) {
   const url = `${host}/api/post/${id}`
   return _doDelete(url)

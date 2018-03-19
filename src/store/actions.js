@@ -5,6 +5,7 @@ import {
   addMember,
   addPost,
   addTags,
+  addRewardPointsTransactions,
   checkLoginStatus,
   checkPassword,
   deleteMemberProfileThumbnails,
@@ -60,6 +61,9 @@ export default {
   },
   ADD_TAGS: ({ commit, dispatch, state }, { params }) => {
     return addTags(params)
+  },
+  ADD_REWARD_POINTS_TRANSACTIONS: ({ commit, dispatch, state }, { params }) => {
+    return addRewardPointsTransactions(params)
   },
   CHECK_LOGIN_STATUS: ({ commit, dispatch, state }, { params }) => {
     return checkLoginStatus({ params }).then(({ status, body }) => {

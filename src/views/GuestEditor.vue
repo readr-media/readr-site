@@ -38,6 +38,9 @@
                 @changeResource="$_guestEditor_updateFollowingList"
                 @unfollow="$_guestEditor_unfollow">
               </following-list-tab>
+              <RewardPointsInTab
+                slot="3">
+              </RewardPointsInTab>
             </app-tab>
           </section>
         </template>
@@ -81,7 +84,8 @@
     WORDING_TAB_COMMENT_RECORD,
     WORDING_TAB_FOLLOW_RECORD,
     WORDING_TAB_NEWS_RECORD,
-    WORDING_TAB_REVIEW_RECORD
+    WORDING_TAB_REVIEW_RECORD,
+    WORDING_TAB_REWARD_POINTS_RECORD
   } from '../constants'
   import _ from 'lodash'
   import About from '../components/About.vue'
@@ -97,6 +101,7 @@
   import PostPanel from '../components/PostPanel.vue'
   import Tab from '../components/Tab.vue'
   import TheControlBar from '../components/TheControlBar.vue'
+  import RewardPointsInTab from '../components/RewardPointsInTab.vue'
 
   const MAXRESULT = 20
   const DEFAULT_PAGE = 1
@@ -170,7 +175,8 @@
       'post-list-detailed': PostListDetailed,
       'post-list-tab': PostListInTab,
       'post-panel': PostPanel,
-      AppAsideNav
+      AppAsideNav,
+      RewardPointsInTab
     },
     data () {
       return {
@@ -198,7 +204,8 @@
         tabs: [
           WORDING_TAB_REVIEW_RECORD,
           WORDING_TAB_NEWS_RECORD,
-          WORDING_TAB_FOLLOW_RECORD
+          WORDING_TAB_FOLLOW_RECORD,
+          WORDING_TAB_REWARD_POINTS_RECORD
         ]
       }
     },
