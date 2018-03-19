@@ -41,17 +41,10 @@ const processImage = (file, sourceType) => {
         if (fileFormat === 'jpeg') {
           fileFormat = 'jpg'
         }
-        image
-          .toFile(`tmp/${timePrefix}-${fileName}.${fileFormat}`)
-          .then(() => {
-            outputPaths.push(`tmp/${timePrefix}-${fileName}.${fileFormat}`)
-            fs.unlink(filePath, (err) => {
-              if (err) {
-                console.error(`Error: delete ${filePath} fail`)
-              }
-              console.info(`successfully deleted ${filePath}`)
-            })
-          })
+        return image.toFile(`tmp/${timePrefix}-${fileName}.${fileFormat}`)
+      })
+      .then((data) => {
+        outputPaths.push(`tmp/${timePrefix}-${fileName}.${fileFormat}`)
       })
       .then(() => {
         Promise.all(resizeOpts[sourceType].map((opt) => {
@@ -67,6 +60,12 @@ const processImage = (file, sourceType) => {
             })
         }))
         .then(() => {
+          fs.unlink(filePath, (err) => {
+            if (err) {
+              console.error(`Error: delete ${filePath} fail`)
+            }
+            console.info(`successfully deleted ${filePath}`)
+          })
           resolve(outputPaths)
         })
       })
