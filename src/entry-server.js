@@ -36,16 +36,19 @@ export default context => {
       debug('permission:', permission)
       debug('url', url)
 
+      let targUrl
       if ((permission && permission !== role) || (isInitMember && !initmember)) {
         store.state.unauthorized = true
         router.push('/')
+        targUrl = '/'
       } else {
         router.push(url)
+        targUrl = url
       }
 
       // wait until router has resolved possible async hooks
       router.onReady(() => {
-        const matchedComponents = router.getMatchedComponents()
+        const matchedComponents = router.getMatchedComponents(targUrl)
         // const matchedComponents = get(route, [ 'matched' ], [])
         // no matched routes
         if (!matchedComponents.length) {
