@@ -9,5 +9,12 @@ module.exports = {
   }).or('custom_editor', 'role'),
   posts: Joi.object().keys({
     active: Joi.string().valid(activePostQueryString)
+  }),
+  videos: Joi.object().keys({
+    active: Joi.any().forbidden(),
+    max_result: Joi.number(),
+    page: Joi.number().min(1),
+    sort: Joi.string(),
+    type: Joi.any().forbidden(),
   })
 }
