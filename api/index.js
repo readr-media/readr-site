@@ -19,14 +19,22 @@ const multer  = require('multer')
 const scrape = require('html-metadata')
 const upload = multer({ dest: 'tmp/' })
 
-const { fetchFromRedis, insertIntoRedis } = require('./middle/redisHandler')
+const { fetchFromRedis, insertIntoRedis, redisFetching } = require('./middle/redisHandler')
 
 const router = express.Router()
 const superagent = require('superagent')
 
 const apiHost = API_PROTOCOL + '://' + API_HOST + ':' + API_PORT
 
-const authVerify = jwtExpress({ secret: config.JWT_SECRET })
+const authVerify = jwtExpress({
+  secret: config.JWT_SECRET,
+  isRevoked: (req, payload, done) => {
+    const token = req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer' && req.headers.authorization.split(' ')[1]
+    redisFetching(token, ({ error, data }) => {
+      done(null, !!data)
+    })
+  }
+})
 
 const fetchStaticJson = (req, res, next, jsonFileName) => {
   const url = `${SERVER_PROTOCOL}${SERVER_PORT ? ':' + SERVER_PORT : ''}://${SERVER_HOST}/json/${jsonFileName}.json`
@@ -141,6 +149,7 @@ router.use('/register', authVerify, require('./middle/member/register'))
 router.use('/recoverpwd', require('./middle/member/recover'))
 router.use('/public', require('./middle/public'))
 router.use('/search', require('./middle/search'))
+router.use('/token', require('./middle/services/token'))
 
 /**
  * 
@@ -316,16 +325,6 @@ router.post('/verify-recaptcha-token', (req, res) => {
       res.send(response.body)
     }
   })
-})
-
-router.post('/token', (req, res) => {
-  const type = _.get(req, [ 'body', 'type' ])
-  if (_.findIndex(DISPOSABLE_TOKEN_WHITE_LIST, (o) => (o === type)) > -1) {
-    const token = jwtService.generateDisposableJwt({ host: SERVER_HOST })
-    res.status(200).send({ token })
-  } else {
-    res.status(403).send('Forbidden.')
-  }
 })
 
 router.post('/login', authVerify, require('./middle/member/login'))

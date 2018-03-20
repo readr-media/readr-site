@@ -1,5 +1,6 @@
 const { OAuth2Client } = require('google-auth-library')
 const { get } = require('lodash')
+const { redisWriting } = require('../redisHandler')
 const { sendActivationMail } = require('./comm')
 const { API_HOST, API_PORT, API_PROTOCOL, GOOGLE_CLIENT_ID } = require('../../config')
 const debug = require('debug')('READR:api:middle:member:register')
@@ -14,6 +15,7 @@ const sendRegisterReq = (req, res) => {
     return
   }
 
+  const tokenShouldBeBanned = req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer' && req.headers.authorization.split(' ')[1]
   delete req.body.idToken
   delete req.body.email
 
@@ -27,6 +29,10 @@ const sendRegisterReq = (req, res) => {
       sendActivationMail({ id: req.body.id, email: req.body.mail, type: 'member' }, (e, response, tokenForActivation) => {
         if (!e && response) {
           res.status(200).send({ token: tokenForActivation })
+          /**
+           * Revoke the token
+           */
+          redisWriting(tokenShouldBeBanned, 'registered', null, 24 * 60 * 60 * 1000)
         } else {
           res.status(response.status).json(e)
           console.error(`error during register: ${url}`)
