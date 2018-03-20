@@ -271,7 +271,7 @@ export function getPublicMembers ({ params }) {
 }
 
 export function getPublicVideos ({ params }) {
-  let url = `${host}/api/videos`
+  let url = `${host}/api/public/videos`
   const query = _buildQuery(params)
   if (query && (query.length > 0)) {
     url = url + `?${query}`
@@ -280,7 +280,7 @@ export function getPublicVideos ({ params }) {
 }
 
 export function getPublicVideosCount () {
-  let url = `${host}/api/videos/count`
+  let url = `${host}/api/public/videos/count`
   return _doFetch(url)
 }
 

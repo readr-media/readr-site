@@ -43,9 +43,7 @@ const processImage = (file, sourceType) => {
         }
         return image.toFile(`tmp/${timePrefix}-${fileName}.${fileFormat}`)
       })
-      .then((data) => {
-        outputPaths.push(`tmp/${timePrefix}-${fileName}.${fileFormat}`)
-      })
+      .then(() => outputPaths.push(`tmp/${timePrefix}-${fileName}.${fileFormat}`))
       .then(() => {
         Promise.all(resizeOpts[sourceType].map((opt) => {
           return image
