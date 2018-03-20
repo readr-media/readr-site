@@ -1,14 +1,15 @@
 <template>
   <section class="reward-points-in-tab">
-    <h1 class="reward-points-in-tab__current-points">目前點數：<span :class="`points${currentRewardPoints < 0 ? '--less-than-zero' : ''}`" v-text="currentRewardPoints"></span></h1>
+    <h1 class="reward-points-in-tab__current-points">{{ wording.WORDING_POINTS_AVAILABLE }}：<span :class="`points${currentRewardPoints < 0 ? '--less-than-zero' : ''}`" v-text="currentRewardPoints"></span></h1>
     <PostListInTab
       :parent="$options.name"
-      :posts="rewardPointsTransactions">
+      :posts="transactionJoinProjects">
     </PostListInTab>
   </section>
 </template>
 
 <script>
+import { WORDING_POINTS_AVAILABLE } from '../constants'
 import PostListInTab from './PostListInTab.vue'
 import _ from 'lodash'
 
@@ -31,12 +32,15 @@ export default {
   },
   data () {
     return {
+      wording: {
+        WORDING_POINTS_AVAILABLE
+      },
       userId: _.get(this.$store.state, 'profile.id', ''),
-      currentRewardPoints: 300 - _.get(this.$store.state, 'profile.points', '')
+      currentRewardPoints: _.get(this.$store.state, 'profile.points', '')
     }
   },
   computed: {
-    rewardPointsTransactions () {
+    transactionJoinProjects () {
       return _.forEach(_.get(this.$store.state, 'rewardPointsTransactions.items', []), transaction => {
         const id = transaction.objectId
         const found = _.find(this.projects, [ 'id', id ])
@@ -44,6 +48,10 @@ export default {
         const title = found ? found.title : '不存在的專題'
         this.$set(transaction, 'active', active)
         this.$set(transaction, 'title', title)
+      }).sort((a, b) => {
+        const dateA = new Date(a.createdAt)
+        const dateB = new Date(b.createdAt)
+        return dateB - dateA
       })
     },
     projects () {

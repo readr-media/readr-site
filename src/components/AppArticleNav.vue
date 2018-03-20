@@ -25,7 +25,7 @@ const publishAction = (store, data) => {
   })
 }
 const updateStoreFollowingByResource = (store, { action, resource, resourceId, userId }) => {
-  store.dispatch('UPDATE_FOLLOWING_BY_RESOURCE', {
+  return store.dispatch('UPDATE_FOLLOWING_BY_RESOURCE', {
     params: {
       action: action,
       resource: resource,
@@ -131,6 +131,11 @@ $icon-size
 .follow-icon
   @extends $icon-size
   margin-left 4.5px
+  cursor pointer
+.donate-icon
+  width 20px
+  height 25px
+  margin-left 16.2px
   cursor pointer
 </style>
 

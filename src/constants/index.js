@@ -114,6 +114,11 @@ export const WORDING_POSTLIST_UPDATE = '修改'
 export const WORDING_POSTLIST_UPDATE_AT = '更新時間'
 export const WORDING_POSTLIST_VIDEO = '影片'
 
+// Points
+export const WORDING_POINTS_AVAILABLE = '目前點數'
+export const WORDING_POINTS_SPENT = '使用點數'
+export const WORDING_POINTS_SPENT_WHEN = '使用時間'
+
 // Post editor
 export const WORDING_POSTEDITOR_DELETE = '刪除'
 export const WORDING_POSTEDITOR_EDITOR = '編輯器'
