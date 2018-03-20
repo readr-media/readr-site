@@ -1,32 +1,48 @@
 const _ = require('lodash')
 const { API_DEADLINE, API_HOST, API_PORT, API_PROTOCOL, API_TIMEOUT } = require('./config')
-const { DISPOSABLE_TOKEN_WHITE_LIST, GCP_FILE_BUCKET, GCS_IMG_MEMBER_PATH, GCS_IMG_POST_PATH, GOOGLE_RECAPTCHA_SECRET } = require('./config')
+const { GCP_FILE_BUCKET, GOOGLE_CLIENT_ID, GOOGLE_RECAPTCHA_SECRET, GCS_IMG_MEMBER_PATH, GCS_IMG_POST_PATH, DISPOSABLE_TOKEN_WHITE_LIST, SECRET_KEY } = require('./config')
+const { REDIS_AUTH, REDIS_MAX_CLIENT, REDIS_READ_HOST, REDIS_READ_PORT, REDIS_WRITE_HOST, REDIS_WRITE_PORT, REDIS_TIMEOUT } = require('./config')
+// const { DISPOSABLE_TOKEN_WHITE_LIST, GCP_FILE_BUCKET, GCS_IMG_MEMBER_PATH, GCS_IMG_POST_PATH, GOOGLE_RECAPTCHA_SECRET } = require('./config')
 const { ENDPOINT_SECURE, SCOPES } = require('./config')
-const { JWT_SECRET } = require('./config')
-const { SERVER_PORT, SERVER_PROTOCOL, SERVER_HOST } = require('./config')
+const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT } = require('./config')
+const { POST_ACTIVE, POST_TYPE } = require('./config')
+// const { JWT_SECRET } = require('./config')
+// const { SERVER_PORT, SERVER_PROTOCOL, SERVER_HOST } = require('./config')
 const { camelizeKeys } = require('humps')
 const { constructScope, fetchPermissions } = require('./services/perm')
-const { deleteFilesInFolder, initBucket, makeFilePublic, publishAction, uploadFileToBucket} = require('./gcs.js')
-const { fetchFromRedis, insertIntoRedis } = require('./middle/redisHandler')
+const { initBucket, getFileMd5Hash, renameFile, makeFilePublic, uploadFileToBucket, deleteFileFromBucket, deleteFilesInFolder, publishAction } = require('./gcs.js')
+// const { deleteFilesInFolder, initBucket, makeFilePublic, publishAction, uploadFileToBucket} = require('./gcs.js')
+// const { fetchFromRedis, insertIntoRedis } = require('./middle/redisHandler')
 const { processImage } = require('./sharp.js')
 const { verifyToken } = require('./middle/member/comm')
+const Cookies = require('cookies')
 const bodyParser = require('body-parser')
+const crypto = require('crypto')
+const config = require('./config')
 const debug = require('debug')('READR:api')
 const express = require('express')
 const fs = require('fs')
+const isProd = process.env.NODE_ENV === 'production'
+const isTest = process.env.NODE_ENV === 'test'
 const jwtExpress = require('express-jwt')
 const jwtService = require('./service.js')
 const multer  = require('multer')
-const scrape = require('html-metadata')
 const sharp = require('sharp')
-const superagent = require('superagent')
+const scrape = require('html-metadata')
+// const sharp = require('sharp')
+// const superagent = require('superagent')
 const upload = multer({ dest: 'tmp/' })
 
+const { fetchFromRedis, insertIntoRedis } = require('./middle/redisHandler')
+
 const router = express.Router()
+const superagent = require('superagent')
 
 const apiHost = API_PROTOCOL + '://' + API_HOST + ':' + API_PORT
 
-const authVerify = jwtExpress({ secret: JWT_SECRET })
+const SECRET_LENGTH = 10
+const authVerify = jwtExpress({ secret: config.JWT_SECRET })
+// const authVerify = jwtExpress({ secret: JWT_SECRET })
 
 const fetchStaticJson = (req, res, next, jsonFileName) => {
   const url = `${SERVER_PROTOCOL}${SERVER_PORT ? ':' + SERVER_PORT : ''}://${SERVER_HOST}/json/${jsonFileName}.json`
