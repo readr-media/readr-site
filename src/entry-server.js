@@ -1,4 +1,4 @@
-import _ from 'lodash'
+import { filter, get } from 'lodash'
 import { ROLE_MAP } from './constants'
 import { createApp } from './app' 
 
@@ -29,11 +29,12 @@ export default context => {
     ] : [ new Promise((rslv) => rslv()) ]
 
     Promise.all(preRouteInit).then(() => {
-      const role = _.get(_.filter(ROLE_MAP, { key: _.get(store, [ 'state', 'profile', 'role' ]) }), [ 0, 'route' ], 'visitor')
-      const permission = _.get(route, [ 'meta', 'permission' ])
-      const isInitMember = _.get(route, [ 'path' ]) === '/initmember'
+      const role = get(filter(ROLE_MAP, { key: get(store, [ 'state', 'profile', 'role' ]) }), [ 0, 'route' ], 'visitor')
+      const permission = get(route, [ 'meta', 'permission' ])
+      const isInitMember = get(route, [ 'path' ]) === '/initmember'
       debug('role:', role)
       debug('permission:', permission)
+      debug('url', url)
 
       if ((permission && permission !== role) || (isInitMember && !initmember)) {
         store.state.unauthorized = true
@@ -44,7 +45,8 @@ export default context => {
 
       // wait until router has resolved possible async hooks
       router.onReady(() => {
-        const matchedComponents = router.getMatchedComponents()
+        // const matchedComponents = router.getMatchedComponents()
+        const matchedComponents = get(route, [ 'matched' ], [])
         // no matched routes
         if (!matchedComponents.length) {
           return reject({ code: 404 })
