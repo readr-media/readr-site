@@ -20,7 +20,7 @@ router.post('/', authVerify, (req, res) => {
   debug(req.body)
 
   const account = req.body && req.body.email
-  const url = `${apiHost}/member/${account}`
+  // const url = `${apiHost}/member/${account}`
   if (!account) { res.status(400).end() }
   fetchMem({ id: account }).then(({ err, res: response }) => {
     if (!err) {
@@ -31,7 +31,7 @@ router.post('/', authVerify, (req, res) => {
       debug(response.body)
       sendRecoverPwdEmail({
         email: account
-      }, (e, r, token) => {
+      }, (e, r) => {
         debug('Sending done.')
         if (!e) {
           res.status(200).end()

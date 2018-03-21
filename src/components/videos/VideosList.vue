@@ -60,7 +60,7 @@
       $_videosList_renderComment (id) {
         document.querySelector(`.videosList__item-comment.video-${id}`).classList.toggle('hidden')
         const rendered = document.querySelector(`.videosList__item-comment.video-${id} iframe`)
-        if (!rendered) {
+        if (!rendered && window.Coral) {
           renderComment(this.$el, `.videosList__item-comment.video-${id} > .comment`, `${location.protocol}//${SITE_DOMAIN_DEV}/post/${id}`)
         }
       },

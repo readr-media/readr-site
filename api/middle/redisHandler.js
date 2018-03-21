@@ -1,5 +1,5 @@
 const isProd = process.env.NODE_ENV === 'production'
-const isTest = process.env.NODE_ENV === 'test'
+// const isTest = process.env.NODE_ENV === 'test'
 const RedisConnectionPool = require('redis-connection-pool')
 
 const { 
@@ -38,7 +38,7 @@ const redisFetching = (url, callback) => {
     redisPoolRead.ttl(decodeURIComponent(url), (err, dt) => {
       if (!err && dt) {
         if (dt <= -1) {
-          redisPoolWrite.del(decodeURIComponent(url), (e, d) => {
+          redisPoolWrite.del(decodeURIComponent(url), (e) => {
             if (e) {
               console.log('deleting key ', decodeURIComponent(url), 'from redis in fail ', e)
             }
@@ -56,7 +56,7 @@ const redisWriting = (url, data, callback) => {
     if(err) {
       console.log('redis writing in fail. ', decodeURIComponent(url), err)
     } else {
-      redisPoolWrite.expire(decodeURIComponent(url), REDIS_TIMEOUT, function(error, d) {
+      redisPoolWrite.expire(decodeURIComponent(url), REDIS_TIMEOUT, function(error) {
         if(error) {
           console.log('failed to set redis expire time. ', decodeURIComponent(url), err)
         } else {
@@ -66,13 +66,13 @@ const redisWriting = (url, data, callback) => {
     }
   })
 }
-const insertIntoRedis = (req, res, next) => {
+const insertIntoRedis = (req, res) => {
   redisWriting(req.url, res.dataString, () => {
     // next()
   })
 }
 const fetchFromRedis = (req, res, next) => {
- redisFetching(req.url, ({ error, data }) => {
+  redisFetching(req.url, ({ error, data }) => {
     if (!error) {
       res.redis = data
       next()
