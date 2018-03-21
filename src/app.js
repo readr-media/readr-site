@@ -6,6 +6,11 @@ import { sync } from 'vuex-router-sync'
 import titleMetaMixin from './util/titleMeta'
 import * as filters from './util/filters'
 
+import ZHTW from 'src/locale/zh-TW'
+import EN from 'src/locale/en'
+import VueI18n from 'vue-i18n'
+Vue.use(VueI18n)
+
 // mixin for handling title
 Vue.mixin(titleMetaMixin)
 
@@ -21,6 +26,15 @@ export function createApp () {
   const store = createStore()
   const router = createRouter()
 
+  const messages = {
+    'zh-TW': ZHTW,
+    'en': EN
+  }
+  const i18n = new VueI18n({
+    locale: 'zh-TW', // set locale
+    messages, // set locale messages
+  })
+
   // sync the router with the vuex store.
   // this registers `store.state.route`
   sync(store, router)
@@ -29,6 +43,7 @@ export function createApp () {
   // here we inject the router, store and ssr context to all child components,
   // making them available everywhere as `this.$router` and `this.$store`.
   const app = new Vue({
+    i18n,
     router,
     store,
     render: h => h(App)

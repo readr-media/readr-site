@@ -1,11 +1,11 @@
 <template>
   <div class="recover-password">
     <InputItem type="text" class="recover-password__input-email" v-if="!isSentEmail"
-      :placeHolder="wording.WORDING_EMAIL" inputKey="email"
       @inputFocus="resetAllAlertShow"
       @inputFocusOut="resetAlertShow"
       @removeAlert="removeAlert"
       @filled="setInputValue"
+      :placeHolder="$t('login.WORDING_EMAIL')" inputKey="email"
       :alertFlag="alertFlags.email"
       :alertMsg="alertMsgs.email"
       :alertMsgShow="alertMsgShow.email"></InputItem>
@@ -13,7 +13,7 @@
       <span v-text="desc"></span>
     </div>
     <div class="recover-password__btn" @click="resetPwd" v-if="!isSentEmail">
-      <span v-text="wording['WORDING_LOGIN_RESET_PWD']" v-if="!shouldShowSpinner"></span>
+      <span v-text="$t('login.WORDING_LOGIN_RESET_PWD')" v-if="!shouldShowSpinner"></span>
       <span v-else :class="{ disabled: shouldShowSpinner }">
         <Spinner :show="shouldShowSpinner"></Spinner>
       </span>
@@ -25,13 +25,6 @@
   import InputItem from 'src/components/form/InputItem.vue'
   import Spinner from 'src/components/Spinner.vue'
   import validator from 'validator'
-  import {
-    WORDING_EMAIL,
-    WORDING_LOGIN_PLEASE_ENTER_YOUR_REGISTERED_EMAIL,
-    WORDING_LOGIN_RESET_PWD,
-    WORDING_LOGIN_INVALID_EMAIL_FORMAT,
-    WORDING_LOGIN_UNAUTHORIZED,
-    WORDING_LOGIN_RESET_PWD_SUCCESSFULLY } from 'src/constants'
 
   const debug = require('debug')('CLIENT:RecoverPassword')
   const sendResetEmail = (store, params, token) => {
@@ -49,7 +42,9 @@
     },
     computed: {
       desc () {
-        return !this.isSentEmail ? this.wording.WORDING_LOGIN_PLEASE_ENTER_YOUR_REGISTERED_EMAIL : this.wording.WORDING_LOGIN_RESET_PWD_SUCCESSFULLY
+        return !this.isSentEmail
+          ? this.$t('login.WORDING_LOGIN_PLEASE_ENTER_YOUR_REGISTERED_EMAIL')
+          : this.$t('login.WORDING_LOGIN_RESET_PWD_SUCCESSFULLY')
       }
     },
     data () {
@@ -59,15 +54,7 @@
         alertMsgShow: {},
         formData: {},
         isSentEmail: false,
-        shouldShowSpinner: false,
-        wording: {
-          WORDING_EMAIL,
-          WORDING_LOGIN_PLEASE_ENTER_YOUR_REGISTERED_EMAIL,
-          WORDING_LOGIN_RESET_PWD,
-          WORDING_LOGIN_INVALID_EMAIL_FORMAT,
-          WORDING_LOGIN_UNAUTHORIZED,
-          WORDING_LOGIN_RESET_PWD_SUCCESSFULLY
-        }
+        shouldShowSpinner: false
       }
     },
     methods: {
@@ -99,14 +86,14 @@
               this.isSentEmail = true
             } else {
               this.alertFlags.email = true
-              this.alertMsgs.email = this.wording.WORDING_LOGIN_UNAUTHORIZED
+              this.alertMsgs.email = this.$t('login.WORDING_LOGIN_UNAUTHORIZED')
             }
           }).catch(err => {
             debug('err:')
             debug(err)
             this.shouldShowSpinner = false
             this.alertFlags.email = true
-            this.alertMsgs.email = this.wording.WORDING_LOGIN_UNAUTHORIZED
+            this.alertMsgs.email = this.$t('login.WORDING_LOGIN_UNAUTHORIZED')
           })
         }
       },
@@ -124,7 +111,7 @@
         if (!this.formData.email || !validator.isEmail(this.formData.email)) {
           pass = false
           this.alertFlags.email = true
-          this.alertMsgs.email = this.wording.WORDING_LOGIN_INVALID_EMAIL_FORMAT
+          this.alertMsgs.email = this.$t('login.WORDING_LOGIN_INVALID_EMAIL_FORMAT')
           debug('MAIL WRONG')
           debug('>>>', this.formData.email)
         }

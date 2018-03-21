@@ -1,34 +1,47 @@
 <template>
   <div class="login">
-    <InputItem class="login__input-email" type="text" :placeHolder="wording.WORDING_EMAIL" inputKey="mail" v-on:filled="setInputValue" v-on:inputFocus="resetAllAlertShow" v-on:inputFocusOut="resetAlertShow" v-on:removeAlert="removeAlert" :alertFlag="alertFlags.mail" :alertMsg="alertMsgs.mail" :alertMsgShow="alertMsgShow.mail"></InputItem>
-    <InputItem class="login__input-pwd" type="password" :placeHolder="wording.WORDING_PASSWORD" inputKey="pwd" v-on:filled="setInputValue" v-on:inputFocus="resetAllAlertShow" v-on:inputFocusOut="resetAlertShow" v-on:removeAlert="removeAlert" :alertFlag="alertFlags.pwd" :alertMsg="alertMsgs.pwd" :alertMsgShow="alertMsgShow.pwd"></InputItem>
+    <InputItem class="login__input-email" type="text"
+      inputKey="mail"
+      v-on:filled="setInputValue"
+      v-on:inputFocus="resetAllAlertShow"
+      v-on:inputFocusOut="resetAlertShow"
+      v-on:removeAlert="removeAlert"
+      :placeHolder="$t('login.WORDING_EMAIL')"
+      :alertFlag="alertFlags.mail"
+      :alertMsg="alertMsgs.mail"
+      :alertMsgShow="alertMsgShow.mail"></InputItem>
+    <InputItem class="login__input-pwd" type="password"
+      inputKey="pwd"
+      v-on:filled="setInputValue"
+      v-on:inputFocus="resetAllAlertShow"
+      v-on:inputFocusOut="resetAlertShow"
+      v-on:removeAlert="removeAlert"
+      :placeHolder="$t('login.WORDING_PASSWORD')"
+      :alertFlag="alertFlags.pwd"
+      :alertMsg="alertMsgs.pwd"
+      :alertMsgShow="alertMsgShow.pwd"></InputItem>
     <div class="login__wrapper">
       <div class="keep-login-alive">
         <input type="checkbox" id="keep-alive" ref="keep-alive">
-        <label for="keep-alive" v-text="' ' + wording.WORDING_KEEP_ALIVE"></label>
+        <label for="keep-alive" v-text="' ' + $t('login.WORDING_KEEP_ALIVE')"></label>
       </div>
       <div class="forget-pwd">
-        <span v-text="wording.WORDING_FORGET_PASSWORD" @click="goRecoverPwd"></span>
+        <span v-text="$t('login.WORDING_FORGET_PASSWORD')" @click="goRecoverPwd"></span>
       </div>
     </div>
     <div class="login__msg">
       <div class='content' v-text="resMsg"></div>
     </div>
     <div class="login__btn" @click="login">
-      <span v-text="wording.WORDING_LOGIN"></span>
+      <span v-text="$t('login.WORDING_LOGIN')"></span>
     </div>
   </div>
 </template>
 <script>
   import _ from 'lodash'
   import {
-    WORDING_EMAIL,
-    WORDING_FORGET_PASSWORD,
-    WORDING_KEEP_ALIVE,
-    WORDING_LOGIN,
     WORDING_LOGIN_UNAUTHORIZED,
     WORDING_LOGIN_INFAIL_VALIDATION_ISSUE,
-    WORDING_PASSWORD,
     WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL,
     WORDING_REGISTER_PWD_EMPTY } from 'src/constants'
   import { ROLE_MAP } from 'src/constants'
@@ -57,18 +70,7 @@
         alertMsgs: {},
         alertMsgShow: {},
         formData: {},
-        resMsg: null,
-        wording: {
-          WORDING_LOGIN,
-          WORDING_LOGIN_INFAIL_VALIDATION_ISSUE,
-          WORDING_LOGIN_UNAUTHORIZED,
-          WORDING_PASSWORD,
-          WORDING_EMAIL,
-          WORDING_KEEP_ALIVE,
-          WORDING_FORGET_PASSWORD,
-          WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL,
-          WORDING_REGISTER_PWD_EMPTY
-        }
+        resMsg: null
       }
     },
     name: 'login',
@@ -92,11 +94,11 @@
               }
               // this.$router.replace(`/${memberCenter}`)
             } else {
-              this.resMsg = this.wording.WORDING_LOGIN_INFAIL_VALIDATION_ISSUE
+              this.resMsg = this.$t('login.WORDING_LOGIN_INFAIL_VALIDATION_ISSUE')
             }
           }).catch((err) => {
             if (err.status === 401) {
-              this.resMsg = this.wording.WORDING_LOGIN_UNAUTHORIZED
+              this.resMsg = this.$t('login.WORDING_LOGIN_UNAUTHORIZED')
             }
           })
         }
@@ -131,13 +133,13 @@
         if (!this.formData.mail || !validator.isEmail(this.formData.mail)) {
           pass = false
           this.alertFlags.mail = true
-          this.alertMsgs.mail = this.wording.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL
+          this.alertMsgs.mail = this.$t('login.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL')
           consoleLogOnDev({ msg: 'mail wrong, ' + this.formData.mail })
         }
         if (!this.formData.pwd || validator.isEmpty(this.formData.pwd)) {
           pass = false
           this.alertFlags.pwd = true
-          this.alertMsgs.pwd = this.wording.WORDING_REGISTER_PWD_EMPTY
+          this.alertMsgs.pwd = this.$t('login.WORDING_REGISTER_PWD_EMPTY')
           consoleLogOnDev({ msg: 'pwd empty, ' + this.formData.pwd })
         }
         this.$forceUpdate()

@@ -2,9 +2,17 @@
   <div class="login-panel">
     <div class="login-panel__left">
       <div class="title">
-        <span class="login" :class="{ active: isLoginTabAcitve && !isGoingRecoverPwd }" v-text="wording['WORDING_LOGIN']" @click="tabChoose('login')"></span>
-        <span class="register" :class="{ active: !isLoginTabAcitve && !isGoingRecoverPwd }" v-text="wording['WORDING_REGISTER']" @click="tabChoose('register')"></span>
-        <span class="forgot" :class="{ active: isGoingRecoverPwd }" v-if="isGoingRecoverPwd" v-text="wording['WORDING_FORGET_PASSWORD']" @click="tabChoose('recoverpwd')"></span>
+        <span class="login" v-text="$t('login.WORDING_LOGIN')"
+          :class="{ active: isLoginTabAcitve && !isGoingRecoverPwd }"
+          @click="tabChoose('login')"></span>
+        <span class="register" v-text="$t('login.WORDING_REGISTER')"
+          :class="{ active: !isLoginTabAcitve && !isGoingRecoverPwd }"
+          @click="tabChoose('register')"></span>
+        <span class="forgot"
+          v-if="isGoingRecoverPwd"
+          v-text="$t('login.WORDING_FORGET_PASSWORD')"
+          :class="{ active: isGoingRecoverPwd }"
+          @click="tabChoose('recoverpwd')"></span>
       </div>
       <div class="container">
         <RecoverPassword v-if="isGoingRecoverPwd"></RecoverPassword>
@@ -24,7 +32,6 @@
   </div>
 </template>
 <script>
-  import { WORDING_LOGIN, WORDING_LOGIN_COMMUNITY, WORDING_REGISTER, WORDING_FORGET_PASSWORD } from 'src/constants'
   import { consoleLogOnDev } from 'src/util/comm'
   import FacebookLogin from 'src/components/login/FacebookLogin.vue'
   import GooglePlusLogin from 'src/components/login/GooglePlusLogin.vue'
@@ -49,13 +56,7 @@
     data () {
       return {
         isLoginTabAcitve: true,
-        isGoingRecoverPwd: false,
-        wording: {
-          WORDING_LOGIN,
-          WORDING_LOGIN_COMMUNITY,
-          WORDING_REGISTER,
-          WORDING_FORGET_PASSWORD
-        }
+        isGoingRecoverPwd: false
       }
     },
     name: 'login-panel',
