@@ -9,9 +9,9 @@
   import { get } from 'lodash'
   import About from '../components/About.vue'
 
-  const MAXRESULT = 20
-  const DEFAULT_PAGE = 1
-  const DEFAULT_SORT = '-updated_at'
+  // const MAXRESULT = 20
+  // const DEFAULT_PAGE = 1
+  // const DEFAULT_SORT = '-updated_at'
 
   export default {
     name: 'AppMember',

@@ -153,7 +153,7 @@ export default {
     profileEditorUploadThumbnail () {
       const saveImage = (file) => {
         const fd = new FormData()
-        const fileExt = file.type.split('image/')[1]
+        // const fileExt = file.type.split('image/')[1]
         fd.append('image', file, `${this.profile.id}`)
         
         uploadImage(this.$store, fd)
@@ -165,7 +165,7 @@ export default {
           }, 'UPDATE_PROFILE')
         })
         .catch((err) => {
-          console.log(err)
+          console.error(err)
         })
       }
 
@@ -177,7 +177,7 @@ export default {
         const file = input.files[0]
         if (/^image\//.test(file.type)) {
           deleteMemberProfileThumbnails(this.$store, this.profile.id)
-          file.size <= 5242880 ? saveImage(file) : console.log(`file size is ${file.size} bytes bigger than 5MB`)
+          file.size <= 5242880 ? saveImage(file) : console.info(`file size is ${file.size} bytes bigger than 5MB`)
         }
       }
     },
@@ -226,7 +226,7 @@ export default {
               edit_mode: 'edit_profile',
               password: this.inputNewPassword
             }, 'UPDATE_PASSWORD')
-            .then((res) => {
+            .then(() => {
               this.inputOldPassword = ''
               this.inputNewPassword = ''
               this.inputConfirmPassword = ''

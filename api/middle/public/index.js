@@ -44,7 +44,7 @@ router.get('/members', publicQueryValidation.validate(schema.members), (req, res
 })
 
 router.get('/posts', publicQueryValidation.validate(schema.posts), (req, res, next) => {
-  const activePostQueryString = `{"$in":[${config.POST_ACTIVE.ACTIVE}]}`
+  const activePostQueryString = `{"$in":[${POST_ACTIVE.ACTIVE}]}`
   if (Object.keys(req.query).length === 0) {
     req.url += `?active=${activePostQueryString}`
   } else {

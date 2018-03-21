@@ -30,12 +30,10 @@
     WORDING_ALERTPANEL_CONFIRM,
     WORDING_ALERTPANEL_DELETE_CONFIRMATION,
     WORDING_ALERTPANEL_DELETE_SUCCESSFUL,
-    WORDING_ALERTPANEL_DRAFT,
     WORDING_ALERTPANEL_PENDING,
     WORDING_ALERTPANEL_POST,
     WORDING_ALERTPANEL_PUBLISH_CONFIRMATION,
     WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL,
-    WORDING_ALERTPANEL_STATUS,
     WORDING_ALERTPANEL_TAG,
     WORDING_ALERTPANEL_TITLE,
     WORDING_ALERTPANEL_UPDATE_SUCCESSFUL,
@@ -104,6 +102,7 @@
                 case POST_ACTIVE.PENDING:
                   return `${WORDING_ALERTPANEL_POST}${WORDING_ALERTPANEL_PENDING}！`
               }
+              break
             }
           case 'tag':
             switch (this.active) {
@@ -112,6 +111,7 @@
               case TAG_ACTIVE.DEACTIVE:
                 return `${WORDING_ALERTPANEL_TAG}${WORDING_ALERTPANEL_DELETE_SUCCESSFUL}！`
             }
+            break
           case 'video':
             if (!this.activeChanged) {
               return `${WORDING_ALERTPANEL_VIDEO}${WORDING_ALERTPANEL_UPDATE_SUCCESSFUL}！`
@@ -127,6 +127,7 @@
                   }
                   return `${WORDING_ALERTPANEL_VIDEO}${WORDING_ALERTPANEL_UPDATE_SUCCESSFUL}！`
               }
+              break
             }
         }
       },
@@ -140,6 +141,7 @@
               case POST_ACTIVE.DEACTIVE:
                 return WORDING_ALERTPANEL_DELETE_CONFIRMATION
             }
+            break
           case 'tag':
             return WORDING_ALERTPANEL_DELETE_CONFIRMATION
         }
@@ -181,6 +183,7 @@
                 this.$emit('deletePosts')
                 break
             }
+            break
           case 'tag':
             this.$emit('deleteTags')
             break

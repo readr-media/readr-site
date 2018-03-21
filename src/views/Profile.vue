@@ -26,7 +26,7 @@
   </div>
 </template>
 <script>
-  import { POST_ACTIVE, POST_TYPE } from 'api/config'
+  import { POST_TYPE } from 'api/config'
   import { ROLE_MAP } from 'src/constants'
   import { WORDING_TAB_REVIEW_RECORD, WORDING_TAB_FOLLOW_RECORD, WORDING_PROFILE_FILTER_ALL } from 'src/constants'
   import { find, filter, get, map } from 'lodash'

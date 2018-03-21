@@ -257,7 +257,7 @@
           this.tagsSelected.push(tag)
         })
       },
-      tagInput (val) {
+      tagInput () {
         this.$_postPanel_getTags()
       }
     },
@@ -334,7 +334,7 @@
 
             this.$emit('addPost', params)
             break
-          case 'edit':
+          case 'edit': {
             let activeChanged = false
             
             params.author = _.get(this.post, [ 'author', 'id' ])
@@ -356,6 +356,7 @@
             } else {
               this.$emit('updatePost', params, activeChanged)
             }
+          }
         }
       },
       $_postPanel_submitHandler (active) {

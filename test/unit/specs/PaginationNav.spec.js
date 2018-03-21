@@ -6,7 +6,7 @@ import { mount } from 'avoriaz'
 describe('PaginationNav.vue', () => {
   sinon.stub(PaginationNav, 'mounted').callsFake(() => {})
   const PaginationNavCom = mount(PaginationNav)
-  it('component PaginationNav should have class name \"pagination-nav\"', () => {
+  it('component PaginationNav should have class name "pagination-nav"', () => {
     const totalPages = 10
     PaginationNavCom.setProps({
       totalPages

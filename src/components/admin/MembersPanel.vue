@@ -63,7 +63,7 @@
   import MemberAccountEditor from './MemberAccountEditor.vue'
   import PaginationNav from '../PaginationNav.vue'
 
-  const getCustomEditors = (store, { page, sort }) => {
+  const getCustomEditors = (store) => {
     return store.dispatch('GET_MEMBERS', {
       params: {
         custom_editor: true
@@ -165,7 +165,7 @@
           }).then(() => {
             event.target.checked = false
             this.updated()
-            getCustomEditors(this.$store, {})
+            getCustomEditors(this.$store)
           })
         } else if (exceedMaxCustomEditor()) {
           this.action = 'customEditor_exceedError'
@@ -178,7 +178,7 @@
           }).then(() => {
             event.target.checked = true
             this.updated()
-            getCustomEditors(this.$store, {})
+            getCustomEditors(this.$store)
           })
         }
       },
@@ -213,7 +213,7 @@
       }
     },
     mounted () {
-      getCustomEditors(this.$store, {})
+      getCustomEditors(this.$store)
     }
   }
 </script>

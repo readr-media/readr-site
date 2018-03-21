@@ -21,6 +21,7 @@
   </div>
 </template>
 <script>
+  import _ from 'lodash'
   import InputItem from 'src/components/form/InputItem.vue'
   import Spinner from 'src/components/Spinner.vue'
   import validator from 'validator'

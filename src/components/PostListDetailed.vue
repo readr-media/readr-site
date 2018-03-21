@@ -20,13 +20,12 @@
   </section>
 </template>
 <script>
-  import { POST_TYPE, POST_ACTIVE } from '../../api/config'
+  import { POST_ACTIVE } from '../../api/config'
   import {
     WORDING_POSTLIST_DELETE,
     WORDING_POSTLIST_DRAFT_RECORD,
     WORDING_POSTLIST_EDIT
   } from '../constants'
-  import _ from 'lodash'
 
   export default {
     name: 'PostListDetailed',

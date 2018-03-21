@@ -104,6 +104,7 @@
     WORDING_CONTROLBAR_TAG,
     WORDING_CONTROLBAR_VIDEO
   } from '../constants'
+  import { includes } from 'lodash'
   import ControlBarButton from './ControlBarButton.vue'
   import ControlBarButtonBox from './ControlBarButtonBox.vue'
 
@@ -174,7 +175,7 @@
         }
       },
       $_controlBar_toggleBtnBox (e) {
-        if (this.viewport < 950 && _.includes(e.target.parentNode.classList, 'active')) {
+        if (this.viewport < 950 && includes(e.target.parentNode.classList, 'active')) {
           e.target.parentNode.classList.remove('active')
         } else {
           e.target.parentNode.classList.add('active')
