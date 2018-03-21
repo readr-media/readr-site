@@ -54,6 +54,7 @@
   // import { SECTIONS_DEFAULT } from '../constants'
   import { removeToken } from '../util/services'
   import { isScrollBarReachBottom } from '../util/comm'
+  import _ from 'lodash'
   // import AppHeader from '../components/AppHeader.vue'
   import AppAsideNav from '../components/AppAsideNav.vue'
   import AppTitledList from '../components/AppTitledList.vue'

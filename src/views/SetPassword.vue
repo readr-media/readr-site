@@ -11,7 +11,7 @@
   import ResetPwd from 'src/components/login/ResetPwd.vue'
   import { get } from 'lodash'
 
-  const debug = require('debug')('CLIENT:SetPassword')
+  // const debug = require('debug')('CLIENT:SetPassword')
   export default {
     components: {
       'app-header': AppHeader,

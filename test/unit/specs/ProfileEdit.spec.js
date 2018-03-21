@@ -52,7 +52,7 @@ describe('ProfileEdit.vue', () => {
     ProfileEditComponent.setProps({
       profile
     })
-    const inputNickname = ProfileEditComponent.find('input[name=nickname]')[0]
+    // const inputNickname = ProfileEditComponent.find('input[name=nickname]')[0]
     const save = ProfileEditComponent.find('.save-button')[0]
 
     ProfileEditComponent.vm.inputNickname = 'Justin BB Modified'

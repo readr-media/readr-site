@@ -89,13 +89,13 @@
     })
   }
 
-  const getCustomEditors = (store, { page, sort }) => {
-    return store.dispatch('GET_MEMBERS', {
-      params: {
-        custom_editor: true
-      }
-    })
-  }
+  // const getCustomEditors = (store, { page, sort }) => {
+  //   return store.dispatch('GET_MEMBERS', {
+  //     params: {
+  //       custom_editor: true
+  //     }
+  //   })
+  // }
 
   export default {
     components: {

@@ -13,9 +13,7 @@
 </template>
 
 <script>
-  import { currentYPosition, elmYPosition } from 'kc-scroll'
   import { filter, find, get, xor } from 'lodash'
-  import _ from 'lodash'
   import AppAsideNav from '../components/AppAsideNav.vue'
   import VideosHighlight from '../components/videos/VideosHighlight.vue'
   import VideosList from '../components/videos/VideosList.vue'
@@ -44,7 +42,7 @@
 
   export default {
     name: 'AppVideos',
-    asyncData ({ store, route }) {
+    asyncData ({ store }) {
       return Promise.all([
         getVideos(store),
         getVideosCount(store)

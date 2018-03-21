@@ -24,10 +24,9 @@
 </template>
 
 <script>
-import AppArticleNav from 'src/components/AppArticleNav.vue'
 import { updatedAtYYYYMMDD } from '../../util/comm'
-import { SITE_DOMAIN_DEV } from 'src/constants'
-import { renderComment } from 'src/util/talk'
+import _ from 'lodash'
+import AppArticleNav from 'src/components/AppArticleNav.vue'
 
 export default {
   components: {

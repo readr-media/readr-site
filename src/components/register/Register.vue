@@ -103,7 +103,7 @@
       },
       register () {
         if (this.shouldShowSpinner) { return }
-        this.verifyRecaptchaToken().then((response) => {
+        this.verifyRecaptchaToken().then(() => {
           if (this.isRecaptchaPassed && this.validatInput()) {
             this.shouldShowSpinner = true
             debug('Abt to send req of register.')
@@ -111,7 +111,7 @@
               nickname: this.formData.nickname,
               email: this.formData.mail,
               password: this.formData.pwd
-            }, _.get(this.$store, [ 'state', 'register-token' ])).then(({ status, err }) => {
+            }, _.get(this.$store, [ 'state', 'register-token' ])).then(({ status }) => {
               this.isRegistered = true
               this.shouldShowSpinner = false
               if (status === 200) {
@@ -120,7 +120,7 @@
                 this.resMsg = this.wording.WORDING_REGISTER_INFAIL
                 window.grecaptcha.reset(this.recaptcha)
               }
-            }).catch(({ status, err }) => {
+            }).catch(({ err }) => {
               this.shouldShowSpinner = false
               if (err === 'User Already Existed') {
                 this.alertFlags.mail = true

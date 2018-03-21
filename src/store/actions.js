@@ -1,3 +1,4 @@
+/*eslint no-unused-vars: 0*/
 import _ from 'lodash'
 import { POST_ACTIVE, POST_TYPE } from '../../api/config'
 import { ROLE_MAP } from '../../src/constants'
@@ -49,7 +50,6 @@ import {
   uploadImage,
   verifyRecaptchaToken
 } from '../api'
-import { camelizeKeys } from 'humps'
 
 const debug = require('debug')('READR:STORE:actions')
 export default {
@@ -231,7 +231,9 @@ export default {
       getPublicVideos({ params })
       .then(({ status, body }) => {
         if (status === 200) {
-          body.items =  _.concat(orig, body.items)
+          if (params.page > 1) {
+            body.items =  _.concat(orig, body.items)
+          }
           commit('SET_PUBLIC_VIDEOS', { videos: body })
           resolve()
         }

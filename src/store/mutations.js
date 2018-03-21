@@ -29,7 +29,7 @@ export default {
     const userIndex = state.followingByResource[params.resource][resourceIndex].follower.indexOf(params.userId)
     Vue.delete(state.followingByResource[params.resource][resourceIndex].follower, userIndex)
   },
-  SET_COMMENT_COUNT: (state, { count, postId, type }) => {
+  SET_COMMENT_COUNT: (state, { count, postId }) => {
     let commentCount = _.find(_.get(state, [ 'commentCount' ]), { postId })
     if (!commentCount) {
       commentCount = { postId, count: 0 }
@@ -55,7 +55,7 @@ export default {
   SET_FOLLOWING_BY_USER: (state, { following }) => {
     state['followingByUser'] = following
   },
-  SET_LOGGEIN_STATUS: (state, { status, body }) => {
+  SET_LOGGEIN_STATUS: (state, { body }) => {
     state['isLoggedIn'] = body
   },
   SET_TAGS: (state, { tags }) => {

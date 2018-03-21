@@ -36,7 +36,7 @@
 
   const dom = require('xmldom').DOMParser
   const seializer  = require('xmldom').XMLSerializer
-  const debug = require('debug')('CLIENT:PostContent')
+  // const debug = require('debug')('CLIENT:PostContent')
   export default {
     name: 'PostContent',
     computed: {

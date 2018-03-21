@@ -136,7 +136,6 @@
   import { SECTIONS_DEFAULT } from '../constants'
   import {
     WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER,
-    WORDING_TAB_COMMENT_RECORD,
     WORDING_TAB_FOLLOW_RECORD,
     WORDING_TAB_NEWS_RECORD,
     WORDING_TAB_REVIEW_RECORD
@@ -174,10 +173,6 @@
         updated_by: _.get(store, [ 'state', 'profile', 'id' ])
       }
     })
-  }
-
-  const deletePostSelf = (store, id) => {
-    return store.dispatch('DELETE_POST_SELF', { id: id })
   }
 
   const deletePosts = (store, { params }) => {

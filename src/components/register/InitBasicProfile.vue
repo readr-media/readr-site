@@ -17,7 +17,7 @@
 <script>
   import InputItem from '../form/InputItem.vue'
   import validator from 'validator'
-  import { WORDING_NICKNAME, WORDING_PASSWORD, WORDING_PASSWORD_CHECK, WORDING_REGISTER } from '../../constants'
+  import { WORDING_NICKNAME, WORDING_PASSWORD, WORDING_PASSWORD_CHECK } from '../../constants'
   import { WORDING_BTN_SAVE, WORDING_CREATE_PWD } from '../../constants'
   import { WORDING_REGISTER_NICKNAME_EMPTY, WORDING_REGISTER_PWD_EMPTY, WORDING_REGISTER_PWD_CHECK_EMPTY, WORDING_REGISTER_PWD_CHECK_INFAIL } from '../../constants'
   import { consoleLogOnDev } from '../../util/comm'

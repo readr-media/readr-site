@@ -70,13 +70,13 @@
                 // gender:  _.get(response, [ 'nicknames', 0, 'value' ], '-'),
                 // occupation: _.get(response, [ 'occupations', 0, 'value' ], '-'),
                 register_mode: 'oauth-goo'
-              }, _.get(this.$store, [ 'state', 'register-token' ])).then(({ status, err }) => {
+              }, _.get(this.$store, [ 'state', 'register-token' ])).then(({ status }) => {
                 this.isRegistered = true
                 if (status === 200) {
                   consoleLogOnDev({ msg: 'successfully' })
                   readyToLogin(idToken)
                 }
-              }).catch(({ status, err }) => {
+              }).catch(({ err }) => {
                 if (err === 'User Already Existed') {
                   consoleLogOnDev({ msg: 'User Already Existed' })
                   readyToLogin(idToken)

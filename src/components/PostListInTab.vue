@@ -29,7 +29,7 @@
   </section>
 </template>
 <script>
-  import { POST_ACTIVE, POST_TYPE } from '../../api/config'
+  import { POST_ACTIVE } from '../../api/config'
   import {
     WORDING_POSTLIST_DELETE,
     WORDING_POSTLIST_EDIT,

@@ -58,7 +58,7 @@
             })
         }
         if (window && !window.fbStatus) {
-          FB.login((response) => {
+          FB.login(() => {
             FB.api('/me', { fields: 'id,name,gender,email' }, (res) => {
               register(this.$store, {
                 // nickname: '-',
@@ -66,7 +66,7 @@
                 // gender: res.gender,
                 register_mode: 'oauth-fb',
                 social_id: res.id
-              }, _.get(this.$store, [ 'state', 'register-token' ])).then(({ status, err }) => {
+              }, _.get(this.$store, [ 'state', 'register-token' ])).then(({ status }) => {
                 this.isRegistered = true
                 if (status === 200) {
                   consoleLogOnDev({ msg: 'successfully' })
@@ -76,7 +76,7 @@
                     login_mode: 'facebook'
                   })
                 }
-              }).catch(({ status, err }) => {
+              }).catch(({ err }) => {
                 if (err === 'User Already Existed') {
                   consoleLogOnDev({ msg: 'User Already Existed' })
                   readyToLogin({

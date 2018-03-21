@@ -5,7 +5,7 @@ import { mount } from 'avoriaz'
 
 describe('SetPassword.vue', () => {
   const SetPasswordComponent = mount(SetPassword)
-  it('view SetPassword should has class=\"pwd-set\"', () => {
+  it('view SetPassword should has class="pwd-set"', () => {
     expect(SetPasswordComponent.hasClass('pwd-set')).to.equal(true)
   })
   it('view SetPassword should contain component Header', () => {

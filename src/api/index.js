@@ -1,6 +1,6 @@
 import { camelizeKeys } from 'humps'
 import { getHost } from '../util/comm'
-import { delInitMemToken, getToken, getSetupToken, saveToken } from '../util/services'
+import { getToken, getSetupToken, saveToken } from '../util/services'
 import _ from 'lodash'
 import qs from 'qs'
 
@@ -435,7 +435,7 @@ export function resetPwdEmail (params, token) {
   return _doPost(url, params, token)
 }
 
-export function addMember (params, token) {
+export function addMember (params) {
   const url = `${host}/api/register/admin`
   params.register_mode = 'ordinary'
   params.id = params.email

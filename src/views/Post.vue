@@ -10,7 +10,7 @@ import _ from 'lodash'
 
 const DEFAULT_MODE = 'set'
 const DEFAULT_CATEGORY = 'latest'
-const fetchPosts = (store, { mode, max, page, sort }) => {
+const fetchPosts = (store, { mode }) => {
   return store.dispatch('GET_PUBLIC_POSTS', {
     params: {
       mode: mode || DEFAULT_MODE,
@@ -20,7 +20,7 @@ const fetchPosts = (store, { mode, max, page, sort }) => {
 }
 
 export default {
-  asyncData ({ store, route }) {
+  asyncData ({ store }) {
     return fetchPosts(store, {})
   },
   computed: {
