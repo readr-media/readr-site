@@ -39,11 +39,6 @@
 </template>
 <script>
   import _ from 'lodash'
-  import {
-    WORDING_LOGIN_UNAUTHORIZED,
-    WORDING_LOGIN_INFAIL_VALIDATION_ISSUE,
-    WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL,
-    WORDING_REGISTER_PWD_EMPTY } from 'src/constants'
   import { ROLE_MAP } from 'src/constants'
   import { consoleLogOnDev } from 'src/util/comm'
   import InputItem from 'src/components/form/InputItem.vue'

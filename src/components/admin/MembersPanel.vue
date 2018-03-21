@@ -8,15 +8,15 @@
         <div class="checkbox select-all title">
           <input type="checkbox" @click="toggoleSelectAll" ref="selectAll">
         </div>
-        <div class="nickname title"><span v-text="wording.WORDING_ADMIN_NICKNAME" @click="orderBy('nickname')"></span></div>
-        <div class="email title"><span v-text="wording.WORDING_ADMIN_EMAIL" @click="orderBy('mail')"></span></div>
-        <div class="role title"><span v-text="wording.WORDING_ADMIN_ROLE" @click="orderBy('role')"></span></div>
+        <div class="nickname title"><span v-text="$t('admin.WORDING_ADMIN_NICKNAME')" @click="orderBy('nickname')"></span></div>
+        <div class="email title"><span v-text="$t('admin.WORDING_ADMIN_EMAIL')" @click="orderBy('mail')"></span></div>
+        <div class="role title"><span v-text="$t('admin.WORDING_ADMIN_ROLE')" @click="orderBy('role')"></span></div>
         <!-- <div class="guesteditor title"><span v-text="wording.WORDING_ADMIN_GUESTEDITOR" @click="orderBy('role')"></span></div> -->
         <div class="actions title">
           <!-- <div class="actions__guesteditor" v-text="wording.WORDING_ADMIN_GUESTEDITOR"></div> -->
-          <div class="actions__guesteditor"><span v-text="wording.WORDING_ADMIN_GUESTEDITOR" @click="orderBy('custom_editor')"></span></div>
-          <div class="actions__update" v-if="$can('updateAccount')" v-text="wording.WORDING_ADMIN_UPDATE"></div>
-          <div class="actions__delete" v-if="$can('deleteAccount')" v-text="wording.WORDING_ADMIN_DELETE" @click="delMultiple"></div>
+          <div class="actions__guesteditor"><span v-text="$t('admin.WORDING_ADMIN_GUESTEDITOR')" @click="orderBy('custom_editor')"></span></div>
+          <div class="actions__update" v-if="$can('updateAccount')" v-text="$t('admin.WORDING_ADMIN_UPDATE')"></div>
+          <div class="actions__delete" v-if="$can('deleteAccount')" v-text="$t('admin.WORDING_ADMIN_DELETE')" @click="delMultiple"></div>
         </div>
         <div class="filter title">
           <select @change="filterChanged">
@@ -40,8 +40,8 @@
               <label :for="`checkbox-${m.id}`" class='ios-style-switch__label'></label>
             </div>
           </div>
-          <div class="actions__update" v-if="$can('updateAccount')" v-text="wording.WORDING_ADMIN_UPDATE" @click="update(k)"></div>
-          <div class="actions__delete" v-if="$can('deleteAccount')" v-text="wording.WORDING_ADMIN_DELETE" @click="del(k)"></div>
+          <div class="actions__update" v-if="$can('updateAccount')" v-text="$t('admin.WORDING_ADMIN_UPDATE')" @click="update(k)"></div>
+          <div class="actions__delete" v-if="$can('deleteAccount')" v-text="$t('admin.WORDING_ADMIN_DELETE')" @click="del(k)"></div>
         </div>
       </div>
       <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder" :isConversation="true">
@@ -52,9 +52,6 @@
 </template>
 <script>
   import _ from 'lodash'
-  import { WORDING_ADMIN_ACCOUNT, WORDING_ADMIN_EMAIL, WORDING_ADMIN_ROLE, WORDING_ADMIN_UPDATE, WORDING_ADMIN_DELETE } from '../../constants'
-  import { WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER, WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION, WORDING_ADMIN_NICKNAME, WORDING_ADMIN_GUESTEDITOR } from '../../constants'
-  import { WORDING_ADMIN_MEMBER_EDITOR_SET_CONFIRMATION_CUSTOMEDITOR, WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION_CUSTOMEDITOR } from '../../constants'
   import { CUSTOM_EDITOR_LIMIT } from '../../constants'
   import { FILTER } from '../../constants/admin'
   import { ROLE_MAP } from '../../constants'
@@ -107,19 +104,6 @@
         editorTitle: '',
         showLightBox: false,
         targMember: null,
-        wording: {
-          WORDING_ADMIN_ACCOUNT,
-          WORDING_ADMIN_EMAIL,
-          WORDING_ADMIN_ROLE,
-          WORDING_ADMIN_UPDATE,
-          WORDING_ADMIN_DELETE,
-          WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER,
-          WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION,
-          WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION_CUSTOMEDITOR,
-          WORDING_ADMIN_MEMBER_EDITOR_SET_CONFIRMATION_CUSTOMEDITOR,
-          WORDING_ADMIN_NICKNAME,
-          WORDING_ADMIN_GUESTEDITOR
-        }
       }
     },
     name: 'member-panel',
@@ -134,13 +118,13 @@
         this.action = 'delete'
         this.showLightBox = true
         this.targMember = [ this.members[ index ] ]
-        this.editorTitle = this.wording.WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION
+        this.editorTitle = this.$t('admin.WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION')
       },
       delMultiple () {
         this.action = 'delete'
         this.showLightBox = true
         this.targMember = _.map(_.filter(this.$refs[ 'checkboxItems' ], (checkbox) => (checkbox.checked)), (checkbox) => (this.members[ checkbox.value ]))
-        this.editorTitle = this.wording.WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION
+        this.editorTitle = this.$t('admin.WORDING_ADMIN_MEMBER_EDITOR_DELETE_CONFIRMATION')
       },
       filterChanged (event) {
         this.$refs[ 'selectAll' ].checked = false
@@ -206,7 +190,7 @@
         this.action = 'update'
         this.showLightBox = true
         this.targMember = [ this.members[ index ] ]
-        this.editorTitle = this.wording.WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER
+        this.editorTitle = this.$t('admin.WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER')
       },
       updated () {
         this.$emit('filterChanged')

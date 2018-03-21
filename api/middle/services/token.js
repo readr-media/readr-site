@@ -1,4 +1,4 @@
-const { findIndex, get } = require('lodash')
+const { findIndex } = require('lodash')
 const config = require('../../config')
 const debug = require('debug')('READR:api:services:token')
 const express = require('express')
