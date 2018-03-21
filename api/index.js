@@ -31,8 +31,8 @@ const authVerify = jwtExpress({
   isRevoked: (req, payload, done) => {
     const token = req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer' && req.headers.authorization.split(' ')[1]
     redisFetching(token, ({ error, data }) => {
-      console.error('Error occurred during fetching token from redis.')
-      console.error(error)
+      error && console.error('Error occurred during fetching token from redis.')
+      error && console.error(error)
       done(null, !!data)
     })
   }
