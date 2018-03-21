@@ -1,5 +1,5 @@
 const { fetchFromRedis, redisFetching, redisWriting, insertIntoRedis } = require('../redisHandler')
-const { find, mapKeys, pick } = require('lodash')
+const { mapKeys, pick } = require('lodash')
 const { API_PROTOCOL, API_HOST, API_PORT, API_TIMEOUT, POST_ACTIVE, POST_TYPE } = require('../../config')
 const debug = require('debug')('READR:api:public')
 const express = require('express')
@@ -10,7 +10,7 @@ const schema = require('./schema')
 
 const apiHost = API_PROTOCOL + '://' + API_HOST + ':' + API_PORT
 
-router.get('/members', publicQueryValidation.validate(schema.members), (req, res, next) => {
+router.get('/members', publicQueryValidation.validate(schema.members), (req, res) => {
   const url = `${apiHost}${req.url}`
   debug('Abt to fetch public members data.')
   debug('>>>', req.url)

@@ -34,7 +34,7 @@ const updateUserRoleForTalk = (role, email) => new Promise((resolve) => {
     const db = client.db('talk')
     const collection = db.collection('users')
     collection.updateOne({ "profiles.id": { $in: [ email ] } }
-      , { $set: { role : role } }, function(err, result) {
+      , { $set: { role : role } }, function() {
       debug('Updating ', email, '\'s role to', role, 'to talk')
       client.close()
       resolve()
@@ -48,7 +48,7 @@ const updateUserNameForTalk = (email, username) => new Promise((resolve) => {
     const db = client.db('talk')
     const collection = db.collection('users')
     collection.updateOne({ "profiles.id": { $in: [ email ] } }
-      , { $set: { username: username, lowercaseUsername: username.toLowerCase() } }, function(err, result) {
+      , { $set: { username: username, lowercaseUsername: username.toLowerCase() } }, function() {
       debug('Updating ', email, '\'s username to', username, 'to talk')
       client.close()
       resolve()
@@ -62,7 +62,7 @@ const banUserForTalk = (email) => new Promise((resolve) => {
     const db = client.db('talk')
     const collection = db.collection('users')
     collection.updateOne({ "profiles.id": { $in: [ email ] } }
-      , { $set: { status: { banned: { status: true }}}}, function(err, result) {
+      , { $set: { status: { banned: { status: true }}}}, function() {
       debug('Ban ', email)
       client.close()
       resolve()
@@ -92,7 +92,7 @@ router.put('/', (req, res, next) => {
   next()
 })
 
-router.post('*', (req, res) => {})
+router.post('*', () => {})
 
 router.delete('*', (req, res, next) => {
   debug('going to del member')

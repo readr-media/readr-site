@@ -44,11 +44,15 @@
     },
     watch: {
       video () {
-        renderComment(this.$el, `.comment`, `${location.protocol}//${SITE_DOMAIN_DEV}/post/${get(this.video, [ 'id' ])}`)
+        if (window.Coral) {
+          renderComment(this.$el, `.comment`, `${location.protocol}//${SITE_DOMAIN_DEV}/post/${get(this.video, [ 'id' ])}`)
+        }
       }
     },
     mounted () {
-      renderComment(this.$el, `.comment`, `${location.protocol}//${SITE_DOMAIN_DEV}/post/${get(this.video, [ 'id' ])}`)
+      if (window.Coral) {
+        renderComment(this.$el, `.comment`, `${location.protocol}//${SITE_DOMAIN_DEV}/post/${get(this.video, [ 'id' ])}`)
+      }
     },
     methods: {
       moment

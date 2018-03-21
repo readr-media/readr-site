@@ -21,7 +21,7 @@ const updateTalkId = (member, talkId) => new Promise((resolve) => {
 
 const buildUserForTalk = (member) => new Promise((resolve) => {
   debug('Talk server host:', `${config.TALK_SERVER}/api/v1/users`)
-  const username = member.id.replace(/@[A-Za-z0-9.*+?^=!:${}()#%~&_@\-`|\[\]\/\\]*$/, '')
+  const username = member.id.replace(/@[A-Za-z0-9.*+?^=!:${}()#%~&_@\-`|[\]/\\]*$/, '')
   superagent
     .post(`${config.TALK_SERVER}/api/v1/users`)
     .send({ 

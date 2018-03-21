@@ -1,12 +1,13 @@
+const { OAuth2Client } = require('google-auth-library')
 const { get } = require('lodash')
 const { sendActivationMail } = require('./comm')
-const config = require('../../config')
+const { API_HOST, API_PORT, API_PROTOCOL, GOOGLE_CLIENT_ID } = require('../../config')
 const debug = require('debug')('READR:api:middle:member:register')
 const express = require('express')
 const router = express.Router()
 const superagent = require('superagent')
 
-const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
+const apiHost = API_PROTOCOL + '://' + API_HOST + ':' + API_PORT
 const sendRegisterReq = (req, res) => {
   if (!req.body.email || !(req.body.password || req.body.social_id)) {
     res.status(400).send({ message: 'Please offer all requirements.' })
@@ -46,8 +47,7 @@ const preRigister = (req, res, next) => {
   debug(`At ${(new Date).toString()}`)
 
   if (req.body.register_mode === 'oauth-goo') {
-    const auth = new GoogleAuth()
-    const client = new auth.OAuth2(GOOGLE_CLIENT_ID, '', '')
+    const client = new OAuth2Client(GOOGLE_CLIENT_ID, '', '')
     client.verifyIdToken(
       req.body.idToken,
       GOOGLE_CLIENT_ID,
@@ -93,7 +93,7 @@ router.post('/admin', (req, res, next) => {
         debug('Added member by Admin successfully.')
         next()
       } else {
-        res.status(response.status).json(err)
+        res.status(resp.status).json(err)
         console.error(`Error occurred during register`)
         console.error(err)
       }

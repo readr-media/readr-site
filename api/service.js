@@ -31,7 +31,7 @@ const generateJwt = ({ id, email, name, nickname, role, keepAlive, scopes, talk_
   )
 }
 
-const generateDisposableJwt = ({ host }) => {
+const generateDisposableJwt = () => {
   const expiry = new Date(Date.now() + 1 * 60 * 60 * 1000)
   return jwt.sign({
     host: config.SERVER_HOST || '',

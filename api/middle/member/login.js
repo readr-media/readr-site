@@ -1,4 +1,4 @@
-const { GoogleAuth, OAuth2Client } = require('google-auth-library')
+const { OAuth2Client } = require('google-auth-library')
 const { constructScope } = require('../../services/perm')
 const { get } = require('lodash')
 const Cookies = require('cookies')

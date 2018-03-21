@@ -1,5 +1,4 @@
 const { IMAGE_UPLOAD_QUALITY_JPEG, IMAGE_UPLOAD_QUALITY_PNG } = require('./config')
-const _ = require('lodash')
 const fs = require('fs')
 const moment = require('moment')
 const sharp = require('sharp')
