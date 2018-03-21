@@ -231,11 +231,10 @@ export function getFollowingByUser (params) {
 }
 
 export function getDisposableToken (type) {
-  const url = `${host}/api/token`
+  const url = `${host}/api/token/${type}`
   return new Promise((resolve, reject) => {
     superagent
-      .post(url)
-      .send({ type })
+      .get(url)
       .end(function (err, res) {
         if (err) {
           reject(err)

@@ -2,14 +2,41 @@
   <div class="init-basic-profile">
     <div class="profile">
       <div class="profile__title">
-        <div class="title" v-text="wording.WORDING_CREATE_PWD"></div>
+        <div class="title" v-text="$t('login.WORDING_CREATE_PWD')"></div>
         <div class="email"></div>
       </div>
-      <InputItem class="profile__nickname" type="text" :placeHolder="wording.WORDING_NICKNAME" inputKey="nickname" v-on:filled="setInputValue" v-on:inputFocus="resetAllAlertShow" v-on:inputFocusOut="resetAlertShow" v-on:removeAlert="removeAlert" :alertFlag="alertFlags[ 'nickname' ]" :alertMsg="alertMsgs[ 'nickname' ]" :alertMsgShow="alertMsgShow[ 'nickname' ]"></InputItem>
-      <InputItem class="profile__pwd" type="password" :placeHolder="wording.WORDING_PASSWORD" inputKey="pwd" v-on:filled="setInputValue" v-on:inputFocus="resetAllAlertShow" v-on:inputFocusOut="resetAlertShow" v-on:removeAlert="removeAlert" :alertFlag="alertFlags[ 'pwd' ]" :alertMsg="alertMsgs[ 'pwd' ]" :alertMsgShow="alertMsgShow[ 'pwd' ]"></InputItem>
-      <InputItem class="profile__pwd-check" type="password" :placeHolder="wording.WORDING_PASSWORD_CHECK" inputKey="pwd-check" v-on:filled="setInputValue" v-on:inputFocus="resetAllAlertShow" v-on:inputFocusOut="resetAlertShow" v-on:removeAlert="removeAlert" :alertFlag="alertFlags[ 'pwd-check' ]" :alertMsg="alertMsgs[ 'pwd-check' ]" :alertMsgShow="alertMsgShow[ 'pwd-check' ]"></InputItem>
+      <InputItem class="profile__nickname" type="text"
+        inputKey="nickname"
+        v-on:filled="setInputValue"
+        v-on:inputFocus="resetAllAlertShow"
+        v-on:inputFocusOut="resetAlertShow"
+        v-on:removeAlert="removeAlert"
+        :placeHolder="$t('login.WORDING_NICKNAME')"
+        :alertFlag="alertFlags[ 'nickname' ]"
+        :alertMsg="alertMsgs[ 'nickname' ]"
+        :alertMsgShow="alertMsgShow[ 'nickname' ]"></InputItem>
+      <InputItem class="profile__pwd" type="password"
+        inputKey="pwd"
+        v-on:filled="setInputValue"
+        v-on:inputFocus="resetAllAlertShow"
+        v-on:inputFocusOut="resetAlertShow"
+        v-on:removeAlert="removeAlert"
+        :placeHolder="$t('login.WORDING_PASSWORD')"
+        :alertFlag="alertFlags[ 'pwd' ]"
+        :alertMsg="alertMsgs[ 'pwd' ]"
+        :alertMsgShow="alertMsgShow[ 'pwd' ]"></InputItem>
+      <InputItem class="profile__pwd-check" type="password"
+        inputKey="pwd-check"
+        v-on:filled="setInputValue"
+        v-on:inputFocus="resetAllAlertShow"
+        v-on:inputFocusOut="resetAlertShow"
+        v-on:removeAlert="removeAlert"
+        :placeHolder="$t('login.WORDING_PASSWORD_CHECK')"
+        :alertFlag="alertFlags[ 'pwd-check' ]"
+        :alertMsg="alertMsgs[ 'pwd-check' ]"
+        :alertMsgShow="alertMsgShow[ 'pwd-check' ]"></InputItem>
       <div class="profile__save" @click="setPwd">
-        <span v-text="wording.WORDING_BTN_SAVE"></span>
+        <span v-text="$t('login.WORDING_BTN_SAVE')"></span>
       </div>
     </div>
   </div>
@@ -17,9 +44,6 @@
 <script>
   import InputItem from '../form/InputItem.vue'
   import validator from 'validator'
-  import { WORDING_NICKNAME, WORDING_PASSWORD, WORDING_PASSWORD_CHECK } from '../../constants'
-  import { WORDING_BTN_SAVE, WORDING_CREATE_PWD } from '../../constants'
-  import { WORDING_REGISTER_NICKNAME_EMPTY, WORDING_REGISTER_PWD_EMPTY, WORDING_REGISTER_PWD_CHECK_EMPTY, WORDING_REGISTER_PWD_CHECK_INFAIL } from '../../constants'
   import { consoleLogOnDev } from '../../util/comm'
 
   const setupBasicProfile = (store, params) => {
@@ -36,17 +60,6 @@
         alertMsgs: {},
         alertMsgShow: {},
         formData: {},
-        wording: {
-          WORDING_NICKNAME,
-          WORDING_PASSWORD,
-          WORDING_PASSWORD_CHECK,
-          WORDING_BTN_SAVE,
-          WORDING_CREATE_PWD,
-          WORDING_REGISTER_NICKNAME_EMPTY,
-          WORDING_REGISTER_PWD_EMPTY,
-          WORDING_REGISTER_PWD_CHECK_EMPTY,
-          WORDING_REGISTER_PWD_CHECK_INFAIL
-        }
       }
     },
     name: 'InitBasicProfile',
@@ -98,27 +111,27 @@
         if (!this.formData.nickname || validator.isEmpty(this.formData.nickname)) {
           pass = false
           this.alertFlags.nickname = true
-          this.alertMsgs.nickname = this.wording.WORDING_REGISTER_NICKNAME_EMPTY
+          this.alertMsgs.nickname = this.$t('login.WORDING_REGISTER_NICKNAME_EMPTY')
           consoleLogOnDev({ msg: 'nickname empty, ' + this.formData.nickname })
         }
         if (!this.formData.pwd || validator.isEmpty(this.formData.pwd)) {
           pass = false
           this.alertFlags.pwd = true
-          this.alertMsgs.pwd = this.wording.WORDING_REGISTER_PWD_EMPTY
+          this.alertMsgs.pwd = this.$t('login.WORDING_REGISTER_PWD_EMPTY')
           consoleLogOnDev({ msg: 'pwd empty, ' + this.formData.pwd })
         }
         if (!this.formData[ 'pwd-check' ] || validator.isEmpty(this.formData[ 'pwd-check' ])) {
           pass = false
           this.alertFlags[ 'pwd-check' ] = true
-          this.alertMsgs[ 'pwd-check' ] = this.wording.WORDING_REGISTER_PWD_CHECK_EMPTY
+          this.alertMsgs[ 'pwd-check' ] = this.$t('login.WORDING_REGISTER_PWD_CHECK_EMPTY')
           consoleLogOnDev({ msg: 'pwd-check empty, ' + this.formData[ 'pwd-check' ] })
         }
         if (!this.formData.pwd || !this.formData[ 'pwd-check' ] || this.formData.pwd !== this.formData[ 'pwd-check' ]) {
           consoleLogOnDev({ msg: 'pwd != pwd check, ' + this.formData.pwd + ',' + this.formData[ 'pwd-check' ] })
           this.alertFlags.pwd = true
-          this.alertMsgs.pwd = this.wording.WORDING_REGISTER_PWD_CHECK_INFAIL
+          this.alertMsgs.pwd = this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL')
           this.alertFlags[ 'pwd-check' ] = true
-          this.alertMsgs[ 'pwd-check' ] = this.wording.WORDING_REGISTER_PWD_CHECK_INFAIL
+          this.alertMsgs[ 'pwd-check' ] = this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL')
           pass = false
         }
         return pass

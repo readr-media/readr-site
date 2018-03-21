@@ -4,7 +4,7 @@
       <div class="error">
         <div class="error__container">
           <img src="/public/icons/exclamation.png" alt="error">
-          <p v-text="wording.WORDING_ADMIN_EXCEED_ERROR_CUSTOMEDITOR"></p>
+          <p v-text="$t('admin.WORDING_ADMIN_EXCEED_ERROR_CUSTOMEDITOR')"></p>
         </div>
       </div>
     </div>
@@ -12,24 +12,45 @@
       <div class="error">
         <div class="error__container">
           <img src="/public/icons/exclamation.png" alt="error">
-          <p v-text="wording.WORDING_ADMIN_SET_ERROR_CUSTOMEDITOR"></p>
+          <p v-text="$t('admin.WORDING_ADMIN_SET_ERROR_CUSTOMEDITOR')"></p>
         </div>
       </div>
     </div>
     <div class="member-editor__form" v-else-if="action !== 'delete' && action !== 'customEditor_cancel' && action !== 'customEditor_set'">
       <div class="title" v-text="title" v-if="!message"></div>
       <div class="email">
-        <span class="label" v-text="wording.WORDING_ADMIN_MEMBER_EDITOR_EMAIL + '：'"></span>
-        <div><InputItem class="admin" inputKey="mail" @filled="fillHandler" :disabled="action === 'add' ? !isEdible : true" :initValue="emailVal" :alertFlag="alertFlags.mail" :alertMsg="alertMsgs.mail" :alertMsgShow="alertMsgShow.mail" @inputFocus="resetAllAlertShow" @inputFocusOut="resetAlertShow" @removeAlert="removeAlert"></InputItem></div>
+        <span class="label" v-text="$t('admin.WORDING_ADMIN_MEMBER_EDITOR_EMAIL') + '：'"></span>
+        <div>
+          <InputItem class="admin"
+            inputKey="mail"
+            :disabled="action === 'add' ? !isEdible : true"
+            :initValue="emailVal"
+            :alertFlag="alertFlags.mail"
+            :alertMsg="alertMsgs.mail"
+            :alertMsgShow="alertMsgShow.mail"
+            @filled="fillHandler"
+            @inputFocus="resetAllAlertShow"
+            @inputFocusOut="resetAlertShow"
+            @removeAlert="removeAlert"></InputItem>
+        </div>
       </div>
       <div class="role">
-        <span class="label" v-text="wording.WORDING_ADMIN_ROLE + '：'"></span>
+        <span class="label" v-text="$t('admin.WORDING_ADMIN_ROLE') + '：'"></span>
         <div class="options">
-          <Radio class="admin" :label="role.value" v-for="role in roles" :key="role.key" :value="role.key" v-if="role.key > 1" name="role" @selected="selectedHandler" :disabled="!isEdible" :initValue="roleValue"></Radio>
+          <Radio class="admin"
+            v-for="role in roles"
+            v-if="role.key > 1"
+            name="role"
+            @selected="selectedHandler"
+            :label="role.value"
+            :key="role.key"
+            :value="role.key"
+            :disabled="!isEdible"
+            :initValue="roleValue"></Radio>
         </div>
       </div>
       <div class="btn--save" @click="save" v-if="!message">
-        <span v-text="wording.WORDING_ADMIN_MEMBER_EDITOR_SAVE" v-if="!shouldShowSpinner"></span>
+        <span v-text="$t('admin.WORDING_ADMIN_MEMBER_EDITOR_SAVE')" v-if="!shouldShowSpinner"></span>
         <Spinner :show="shouldShowSpinner"></Spinner>
       </div>
       <div class="message" v-else v-text="message"></div>      
@@ -38,17 +59,17 @@
       <div class="title" v-text="title" v-if="!message"></div>
       <template v-for="(m, k) in members">
         <div class="nickname" :class="{ multiple: k > 0 }">
-          <span class="label" v-text="wording.WORDING_ADMIN_MEMBER_EDITOR_NICKNAME + '：'"></span>
+          <span class="label" v-text="$t('admin.WORDING_ADMIN_MEMBER_EDITOR_NICKNAME') + '：'"></span>
           <div><InputItem class="admin" inputKey="nickname" :disabled="true" :initValue="getValue(m, [ 'nickname' ], '')"></InputItem></div>
         </div>
         <div class="email" :class="{ multiple: k > 0 }">
-          <span class="label" v-text="wording.WORDING_ADMIN_MEMBER_EDITOR_EMAIL + '：'"></span>
+          <span class="label" v-text="$t('admin.WORDING_ADMIN_MEMBER_EDITOR_EMAIL') + '：'"></span>
           <div><InputItem class="admin" inputKey="email" :disabled="true" :initValue="getValue(m, [ 'mail' ], '')"></InputItem></div>
         </div>      
       </template>
       <div class="btn--set" v-if="!message">
-        <div class="btn--set__confirm" @click="save"><span v-text="wording.WORDING_ADMIN_YES"></span></div>
-        <div class="btn--set__cancel" @click="closeEditor"><span v-text="wording.WORDING_ADMIN_CANCEL"></span></div>
+        <div class="btn--set__confirm" @click="save"><span v-text="$t('admin.WORDING_ADMIN_YES')"></span></div>
+        <div class="btn--set__cancel" @click="closeEditor"><span v-text="$('admin.WORDING_ADMIN_CANCEL')"></span></div>
       </div>
       <div class="message" v-else v-text="message"></div>
     </div>
@@ -56,11 +77,11 @@
 </template>
 <script>
   import _ from 'lodash'
-  import * as CONSTANTS from 'src/constants'
   import InputItem from 'src/components/form/InputItem.vue'
   import Radio from 'src/components/form/Radio.vue'
   import Spinner from 'src/components/Spinner.vue'
   import validator from 'validator'
+  import { ROLE_MAP } from 'src/constants/'
   import { getValue } from 'src/util/comm'
 
   const debug = require('debug')('CLIENT:MemberAccountEditor')
@@ -117,7 +138,7 @@
         return this.selectedRole || _.get(this.members, [ 0, 'role' ])
       },
       roles () {
-        return CONSTANTS.ROLE_MAP
+        return ROLE_MAP
       }
     },
     data () {
@@ -130,24 +151,6 @@
         typedEmail: _.get(this.members, [ 0, 'mail' ], null),
         selectedRole: _.get(this.members, [ 0, 'role' ], null),
         shouldShowBtnSet: false,
-        wording: {
-          WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER: CONSTANTS.WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER,
-          WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER: CONSTANTS.WORDING_ADMIN_MEMBER_EDITOR_REVISE_MEMBER,
-          WORDING_ADMIN_MEMBER_EDITOR_EMAIL: CONSTANTS.WORDING_ADMIN_MEMBER_EDITOR_EMAIL,
-          WORDING_ADMIN_MEMBER_EDITOR_SAVE: CONSTANTS.WORDING_ADMIN_MEMBER_EDITOR_SAVE,
-          WORDING_ADMIN_ROLE: CONSTANTS.WORDING_ADMIN_ROLE,
-          WORDING_ADMIN_SUCCESS: CONSTANTS.WORDING_ADMIN_SUCCESS,
-          WORDING_ADMIN_INFAIL: CONSTANTS.WORDING_ADMIN_INFAIL,
-          WORDING_ADMIN_MEMBER_EDITOR_NICKNAME: CONSTANTS.WORDING_ADMIN_MEMBER_EDITOR_NICKNAME,
-          WORDING_ADMIN_CANCEL: CONSTANTS.WORDING_ADMIN_CANCEL,
-          WORDING_ADMIN_YES: CONSTANTS.WORDING_ADMIN_YES,
-          WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL: CONSTANTS.WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL,
-          WORDING_ADMIN_MEMBER_EDITOR_SET_SUCCESSFUL_CUSTOMEDITOR: CONSTANTS.WORDING_ADMIN_MEMBER_EDITOR_SET_SUCCESSFUL_CUSTOMEDITOR,
-          WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL_CUSTOMEDITOR: CONSTANTS.WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL_CUSTOMEDITOR,
-          WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL: CONSTANTS.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL,
-          WORDING_ADMIN_EXCEED_ERROR_CUSTOMEDITOR: CONSTANTS.WORDING_ADMIN_EXCEED_ERROR_CUSTOMEDITOR,
-          WORDING_ADMIN_SET_ERROR_CUSTOMEDITOR: CONSTANTS.WORDING_ADMIN_SET_ERROR_CUSTOMEDITOR
-        },
         shouldShowSpinner: false
       }
     },
@@ -186,14 +189,14 @@
             this.shouldShowSpinner = false
             if (status === 200) {
               if (this.action === 'delete') {
-                this.message = this.wording.WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL + '！'
+                this.message = this.$t('admin.WORDING_ADMIN_MEMBER_EDITOR_DELETE_SUCCESSFUL') + '！'
               } else {
-                this.message = this.title + this.wording.WORDING_ADMIN_SUCCESS + '！'
+                this.message = this.title + this.$t('admin.WORDING_ADMIN_SUCCESS') + '！'
               }
               this.$emit('updated')
             } else {
               debug('status', status)
-              this.message = this.title + this.wording.WORDING_ADMIN_INFAIL
+              this.message = this.title + this.$t('admin.WORDING_ADMIN_INFAIL')
             }
           }
           if (this.action === 'update') {
@@ -232,7 +235,7 @@
         if (!this.typedEmail || !validator.isEmail(this.typedEmail)) {
           pass = false
           this.alertFlags.mail = true
-          this.alertMsgs.mail = this.wording.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL
+          this.alertMsgs.mail = this.$t('admin.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL')
           debug('Mail format invalid:', this.typedEmail)
         }
         if (this.selectedRole === null || this.selectedRole === undefined || !validator.isInt(this.selectedRole.toString())) {

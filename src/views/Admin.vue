@@ -91,7 +91,7 @@
           <MemberAccountEditor
             action="add"
             :shouldShow="showLightBox"
-            :title="wording.WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER"
+            :title="$t('admin.WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER')"
             @updated="filterChanged">
           </MemberAccountEditor>
         </BaseLightBox>
@@ -134,12 +134,6 @@
 <script>
   import { POST_ACTIVE, POST_TYPE, TAG_ACTIVE } from '../../api/config'
   import { SECTIONS_DEFAULT } from '../constants'
-  import {
-    WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER,
-    WORDING_TAB_FOLLOW_RECORD,
-    WORDING_TAB_NEWS_RECORD,
-    WORDING_TAB_REVIEW_RECORD
-  } from '../constants'
   import _ from 'lodash'
   import About from '../components/About.vue'
   import AlertPanel from '../components/AlertPanel.vue'
@@ -335,13 +329,10 @@
         showEditor: false,
         showLightBox: false,
         tabs: [
-          WORDING_TAB_REVIEW_RECORD,
-          WORDING_TAB_NEWS_RECORD,
-          WORDING_TAB_FOLLOW_RECORD
+          this.$t('tab.WORDING_TAB_REVIEW_RECORD'),
+          this.$t('tab.WORDING_TAB_NEWS_RECORD'),
+          this.$t('tab.WORDING_TAB_FOLLOW_RECORD')
         ],
-        wording: {
-          WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER,
-        }
       }
     },
     computed: {

@@ -8,7 +8,6 @@
 </template>
 <script>
   import _ from 'lodash'
-  import { WORDING_FACEBOOK_LOGIN, WORDING_FACEBOOK_REGISTER } from '../../constants'
   import { consoleLogOnDev } from '../../util/comm'
 
   const login = (store, profile, token) => {
@@ -26,21 +25,13 @@
   }
 
   export default {
-    data () {
-      return {
-        wording: {
-          WORDING_FACEBOOK_LOGIN,
-          WORDING_FACEBOOK_REGISTER
-        }
-      }
-    },
     computed: {
       labelWording () {
         switch (this.type) {
           case 'register':
-            return this.wording.WORDING_FACEBOOK_REGISTER
+            return this.$t('login.WORDING_FACEBOOK_REGISTER')
           case 'login':
-            return this.wording.WORDING_FACEBOOK_LOGIN
+            return this.$t('login.WORDING_FACEBOOK_LOGIN')
           default:
             return ''
         }
