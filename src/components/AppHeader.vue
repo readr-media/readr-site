@@ -61,11 +61,17 @@
     methods: {
       goMemberCenter () {
         const memberCenter = _.get(_.filter(ROLE_MAP, { key: _.get(this.$store, [ 'state', 'profile', 'role' ]) }), [ 0, 'route' ], 'member')
+        /**
+         * use location.replace instead of router.push to server-side render page
+         */
         location && location.replace(`/${memberCenter}`)
       },
       logout () {
         logout(this.$store).then(() => {
           return removeToken().then(() => {
+            /**
+              * use location.replace instead of router.push to server-side render page
+              */
             location && location.replace('/')
           })
         })
