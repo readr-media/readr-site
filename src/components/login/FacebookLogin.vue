@@ -7,7 +7,6 @@
   </div>
 </template>
 <script>
-  import _ from 'lodash'
   import { get } from 'lodash'
 
   const debug = require('debug')('CLIENT:FacebookLogin')
@@ -64,7 +63,7 @@
                 gender: get(res, 'genders', '').toUpperCase().substr(0, 1),
                 register_mode: 'oauth-fb',
                 social_id: res.id
-              }, _.get(this.$store, [ 'state', 'register-token' ])).then(({ status }) => {
+              }, get(this.$store, [ 'state', 'register-token' ])).then(({ status }) => {
                 if (status === 200) {
                   debug('Registered successfully')
                   readyToLogin({
