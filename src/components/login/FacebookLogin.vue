@@ -8,7 +8,7 @@
 </template>
 <script>
   import _ from 'lodash'
-  import { consoleLogOnDev } from '../../util/comm'
+  import { get } from 'lodash'
 
   const debug = require('debug')('CLIENT:FacebookLogin')
   const login = (store, profile, token) => {
@@ -41,38 +41,42 @@
     methods: {
       login () {
         const readyToLogin = (params) => {
-          login(this.$store, params, _.get(this.$store, [ 'state', 'register-token' ]))
+          login(this.$store, params, get(this.$store, [ 'state', 'register-token' ]))
             .then((res) => {
               if (res.status === 200) {
+                /**
+                 * use location.replace instead of router.push to server-side render page
+                 */
                 location.replace('/')
+              } else {
+                debug('res', res)
               }
             })
         }
+        debug('Checking fb status before login...', window.fbStatus)
         if (window && !window.fbStatus) {
+          debug('Never Authorized.')
           FB.login(() => {
             FB.api('/me', { fields: 'id,name,gender,email' }, (res) => {
               register(this.$store, {
-                // nickname: '-',
+                nickname: get(res, 'name'),
                 email: res.email,
-                // gender: res.gender,
+                gender: get(res, 'genders', '').toUpperCase().substr(0, 1),
                 register_mode: 'oauth-fb',
                 social_id: res.id
               }, _.get(this.$store, [ 'state', 'register-token' ])).then(({ status }) => {
-                this.isRegistered = true
                 if (status === 200) {
-                  consoleLogOnDev({ msg: 'successfully' })
+                  debug('Registered successfully')
                   readyToLogin({
                     id: res.id,
-                    email: res.email,
                     login_mode: 'facebook'
                   })
                 }
               }).catch(({ err }) => {
-                if (err === 'User Already Existed') {
-                  consoleLogOnDev({ msg: 'User Already Existed' })
+                if (err === 'User Already Existed' || err === 'User Duplicated') {
+                  debug('User Already Existed')
                   readyToLogin({
                     id: res.id,
-                    email: res.email,
                     login_mode: 'facebook'
                   })
                 } else {
@@ -82,15 +86,13 @@
             })
           }, { scope: 'public_profile,email' })
         } else {
+          debug('Already authorized.')
           readyToLogin({
             id: window.fbStatus.uid,
             login_mode: 'facebook'
           })
         }
       }
-    },
-    mounted () {
-      debug('window.fbStatus', (window.fbStatus))
     },
     props: [ 'type' ]
   }
