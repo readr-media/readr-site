@@ -161,7 +161,28 @@ function render (req, res, next) {
           }
         })`
       : '',
-    GOOGLE_CLIENT_ID: GOOGLE_CLIENT_ID,
+    include_gapi: req.url.match(targ_exp_login) ? `
+      <script src="https://apis.google.com/js/api.js"></script>
+      <script>
+        var gapiLoadedHandler = function () {
+          window.gapi.client.init({
+            discoveryDocs: [ 'https://people.googleapis.com/$discovery/rest?version=v1' ],
+            clientId: "${GOOGLE_CLIENT_ID}",
+            scope: 'profile'
+          }).then((res) => {
+            const isSignedIn = window.gapi.auth2.getAuthInstance().isSignedIn.get()
+            if (isSignedIn) {
+              const currUser = window.gapi.auth2.getAuthInstance().currentUser.get()
+              window.googleStatus = {
+                status: 'singedIn',
+                idToken: currUser && (currUser.getAuthResponse().id_token)
+              }
+            }
+          })
+        } 
+        window.gapi && window.gapi.load('client', this.gapiLoadedHandler);
+      </script>
+      <script src='https://www.google.com/recaptcha/api.js'></script>` : '',
     TALK_SERVER
   }
   renderer.renderToString(context, (err, html) => {
