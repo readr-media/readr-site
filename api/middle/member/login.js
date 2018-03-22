@@ -1,6 +1,7 @@
 const { OAuth2Client } = require('google-auth-library')
 const { constructScope } = require('../../services/perm')
 const { get } = require('lodash')
+const { redisWriting } = require('../redisHandler')
 const Cookies = require('cookies')
 const config = require('../../config')
 const debug = require('debug')('READR:api/middle/member')
@@ -17,6 +18,7 @@ const login = (req, res) => {
     res.status(400).send({ message: 'Please offer id/password.' })
     return
   }
+  const tokenShouldBeBanned = req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer' && req.headers.authorization.split(' ')[1]
   const url = `${apiHost}/login`
   superagent
     .post(url)
@@ -43,6 +45,10 @@ const login = (req, res) => {
           // secure: process.env.NODE_ENV === 'production',
           expires: new Date(Date.now() + (req.body.keepAlive ? 30 : 1) * 24 * 60 * 60 * 1000)
         })
+        /**
+         * Revoke the token
+         */
+        redisWriting(tokenShouldBeBanned, 'logged', null, 24 * 60 * 60 * 1000)
         res.status(200).send({ token, profile: {
           name: get(mem, [ 'name' ]),
           nickname: get(mem, [ 'nickname' ]),

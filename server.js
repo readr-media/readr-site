@@ -114,7 +114,9 @@ function render (req, res, next) {
 
   const curr_host = _.get(req, 'headers.host') || ''
   const targ_exp = /(dev)|(localhost)/
+  const targ_exp_login = /(\/login)/
   debug('Current client host:', curr_host, !curr_host.match(targ_exp))
+  debug('Requested page:', req.url, req.url.match(targ_exp_login))
 
   if (_.filter(PAGE_CACHE_EXCLUDING, (p) => (req.url.indexOf(p) > -1)).length === 0) {
     !curr_host.match(targ_exp) && res.setHeader('Cache-Control', 'public, max-age=3600')  
@@ -149,7 +151,38 @@ function render (req, res, next) {
     url: req.url,
     cookie: cookies.get('csrf'),
     initmember: cookies.get('initmember'),
-    GOOGLE_CLIENT_ID: GOOGLE_CLIENT_ID,
+    check_fb_status: req.url.match(targ_exp_login)
+      ? `FB.getLoginStatus(function(response) {
+          if (response.status === 'connected') {
+            window.fbStatus = {
+              status: 'connected',
+              uid: response.authResponse.userID
+            };
+          }
+        })`
+      : '',
+    include_gapi: req.url.match(targ_exp_login) ? `
+      <script src="https://apis.google.com/js/api.js"></script>
+      <script>
+        var gapiLoadedHandler = function () {
+          window.gapi.client.init({
+            discoveryDocs: [ 'https://people.googleapis.com/$discovery/rest?version=v1' ],
+            clientId: "${GOOGLE_CLIENT_ID}",
+            scope: 'profile'
+          }).then((res) => {
+            const isSignedIn = window.gapi.auth2.getAuthInstance().isSignedIn.get()
+            if (isSignedIn) {
+              const currUser = window.gapi.auth2.getAuthInstance().currentUser.get()
+              window.googleStatus = {
+                status: 'singedIn',
+                idToken: currUser && (currUser.getAuthResponse().id_token)
+              }
+            }
+          })
+        } 
+        window.gapi && window.gapi.load('client', this.gapiLoadedHandler);
+      </script>
+      <script src='https://www.google.com/recaptcha/api.js'></script>` : '',
     TALK_SERVER
   }
   renderer.renderToString(context, (err, html) => {

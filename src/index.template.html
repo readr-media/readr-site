@@ -92,26 +92,18 @@
     </style>
     <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/medium-editor@5.23.2/dist/css/medium-editor.min.css" type="text/css" media="screen" charset="utf-8"> -->
     <!--link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet"-->
-    <script src="https://apis.google.com/js/api.js"></script>
     <script src="https://sdk.accountkit.com/en_US/sdk.js"></script>
     <!-- Facebook SDK code -->
     <script>
       window.fbAsyncInit = function() {
-          FB.init({
+        FB.init({
           appId            : '143500093073133',
           autoLogAppEvents : true,
           xfbml            : true,
           version          : 'v2.9'
-          });
-          FB.AppEvents.logPageView();
-          FB.getLoginStatus(function(response) {
-            if (response.status === 'connected') {
-              window.fbStatus = {
-                status: 'connected',
-                uid: response.authResponse.userID
-              };
-            }
-          })
+        });
+        FB.AppEvents.logPageView();
+        {{{ check_fb_status }}}
       };
 
       (function(d, s, id){
@@ -121,27 +113,9 @@
           js.src = "//connect.facebook.net/zh_TW/sdk.js";
           fjs.parentNode.insertBefore(js, fjs);
       }(document, 'script', 'facebook-jssdk'));
-
-      var gapiLoadedHandler = function () {
-        gapi.client.init({
-          discoveryDocs: [ 'https://people.googleapis.com/$discovery/rest?version=v1' ],
-          clientId: "{{ GOOGLE_CLIENT_ID }}",
-          scope: 'profile'
-        }).then((res) => {
-          const isSignedIn = gapi.auth2.getAuthInstance().isSignedIn.get()
-          if (isSignedIn) {
-            const currUser = gapi.auth2.getAuthInstance().currentUser.get()
-            window.googleStatus = {
-              status: 'singedIn',
-              idToken: currUser && (currUser.getAuthResponse().id_token)
-            }
-          }
-        })
-      } 
-      window.gapi && window.gapi.load('client', this.gapiLoadedHandler);
-      </script>
+    </script>
     <!-- End of Facebook SDK code -->
-    <script src='https://www.google.com/recaptcha/api.js'></script>    
+    {{{ include_gapi }}}
   </head>
   <body>
   <div id="skip"><a href="#app">skip to content</a></div>
