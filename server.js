@@ -172,7 +172,7 @@ function render (req, res, next) {
           }).then((res) => {
             const isSignedIn = window.gapi.auth2.getAuthInstance().isSignedIn.get()
             if (isSignedIn) {
-              const currUser = window.gapi.auth2.getAuthInstance().currentUser.get()
+              var currUser = window.gapi.auth2.getAuthInstance().currentUser.get()
               window.googleStatus = {
                 status: 'singedIn',
                 idToken: currUser && (currUser.getAuthResponse().id_token)
@@ -181,8 +181,8 @@ function render (req, res, next) {
           })
         } 
         window.gapi && window.gapi.load('client', this.gapiLoadedHandler);
-      </script>
-      <script src='https://www.google.com/recaptcha/api.js'></script>` : '',
+      </script>` : '',
+      include_recaptcha: req.url.match(targ_exp_login) ? `<script src='https://www.google.com/recaptcha/api.js'></script>` : '',
     TALK_SERVER
   }
   renderer.renderToString(context, (err, html) => {
