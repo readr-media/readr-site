@@ -10,13 +10,13 @@
   import _ from 'lodash'
   import { consoleLogOnDev } from '../../util/comm'
 
+  const debug = require('debug')('CLIENT:FacebookLogin')
   const login = (store, profile, token) => {
     return store.dispatch('LOGIN', {
       params: profile,
       token
     })
   }
-  
   const register = (store, profile, token) => {
     return store.dispatch('REGISTER', {
       params: profile,
@@ -37,7 +37,7 @@
         }
       }
     },
-    name: 'facebook-login',
+    name: 'FacebookLogin',
     methods: {
       login () {
         const readyToLogin = (params) => {
@@ -89,7 +89,9 @@
         }
       }
     },
-    mounted () {},
+    mounted () {
+      debug('window.fbStatus', (window.fbStatus))
+    },
     props: [ 'type' ]
   }
 </script>

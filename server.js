@@ -114,7 +114,9 @@ function render (req, res, next) {
 
   const curr_host = _.get(req, 'headers.host') || ''
   const targ_exp = /(dev)|(localhost)/
+  const targ_exp_login = /(\/login)/
   debug('Current client host:', curr_host, !curr_host.match(targ_exp))
+  debug('Requested page:', req.url, req.url.match(targ_exp_login))
 
   if (_.filter(PAGE_CACHE_EXCLUDING, (p) => (req.url.indexOf(p) > -1)).length === 0) {
     !curr_host.match(targ_exp) && res.setHeader('Cache-Control', 'public, max-age=3600')  
@@ -149,6 +151,16 @@ function render (req, res, next) {
     url: req.url,
     cookie: cookies.get('csrf'),
     initmember: cookies.get('initmember'),
+    check_fb_status: req.url.match(targ_exp_login)
+      ? `FB.getLoginStatus(function(response) {
+          if (response.status === 'connected') {
+            window.fbStatus = {
+              status: 'connected',
+              uid: response.authResponse.userID
+            };
+          }
+        })`
+      : '',
     GOOGLE_CLIENT_ID: GOOGLE_CLIENT_ID,
     TALK_SERVER
   }

@@ -97,21 +97,14 @@
     <!-- Facebook SDK code -->
     <script>
       window.fbAsyncInit = function() {
-          FB.init({
+        FB.init({
           appId            : '143500093073133',
           autoLogAppEvents : true,
           xfbml            : true,
           version          : 'v2.9'
-          });
-          FB.AppEvents.logPageView();
-          FB.getLoginStatus(function(response) {
-            if (response.status === 'connected') {
-              window.fbStatus = {
-                status: 'connected',
-                uid: response.authResponse.userID
-              };
-            }
-          })
+        });
+        FB.AppEvents.logPageView();
+        {{{ check_fb_status }}}
       };
 
       (function(d, s, id){
