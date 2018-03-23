@@ -28,4 +28,7 @@
     mounted () {},
   }
 </script>
-<style lang="stylus" scoped></style>
+<style lang="stylus" scoped>
+  .pwd-set
+    min-height 100vh
+</style>

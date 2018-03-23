@@ -101,6 +101,7 @@
           }
           debug('Empty pwd', this.formData.pwd)
         }
+        this.$forceUpdate()
         return pass
       },
     },

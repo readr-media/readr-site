@@ -1,46 +1,22 @@
 <template>
   <div class="register">
     <div class="register-container" v-if="!isRegistered">
-      <InputItem class="register-container__input-nickname" type="text"
-        inputKey="nickname"
-        v-on:filled="setInputValue"
-        v-on:inputFocus="resetAllAlertShow"
-        v-on:inputFocusOut="resetAlertShow"
-        v-on:removeAlert="removeAlert"
+      <InputTextItem class="register-container__input-nickname" type="text"
         :placeHolder="$t('login.WORDING_NICKNAME')"
-        :alertFlag="alertFlags.nickname"
-        :alertMsg="alertMsgs.nickname"
-        :alertMsgShow="alertMsgShow.nickname"></InputItem>
-      <InputItem class="register-container__input-email" type="text"
-        inputKey="mail"
-        v-on:filled="setInputValue"
-        v-on:inputFocus="resetAllAlertShow"
-        v-on:inputFocusOut="resetAlertShow"
-        v-on:removeAlert="removeAlert"
+        :alert.sync="alert.nickname"
+        :value.sync="formData.nickname"></InputTextItem>
+      <InputTextItem class="register-container__input-email" type="text"
         :placeHolder="$t('login.WORDING_EMAIL')"
-        :alertFlag="alertFlags.mail"
-        :alertMsg="alertMsgs.mail"
-        :alertMsgShow="alertMsgShow.mail"></InputItem>
-      <InputItem class="register-container__input-pwd" type="password"
-        inputKey="pwd"
-        v-on:filled="setInputValue"
-        v-on:inputFocus="resetAllAlertShow"
-        v-on:inputFocusOut="resetAlertShow"
-        v-on:removeAlert="removeAlert"
+        :alert.sync="alert.mail"
+        :value.sync="formData.mail"></InputTextItem>
+      <InputTextItem class="register-container__input-pwd" type="password"
         :placeHolder="$t('login.WORDING_PASSWORD')"
-        :alertFlag="alertFlags.pwd"
-        :alertMsg="alertMsgs.pwd"
-        :alertMsgShow="alertMsgShow.pwd"></InputItem>
-      <InputItem class="register-container__input-pwd-check" type="password"
-        inputKey="pwd-check"
-        v-on:filled="setInputValue"
-        v-on:inputFocus="resetAllAlertShow"
-        v-on:inputFocusOut="resetAlertShow"
-        v-on:removeAlert="removeAlert"
+        :alert.sync="alert.pwd"
+        :value.sync="formData.pwd"></InputTextItem>
+      <InputTextItem class="register-container__input-pwd-check" type="password"
         :placeHolder="$t('login.WORDING_PASSWORD_CHECK')"
-        :alertFlag="alertFlags[ 'pwd-check' ]"
-        :alertMsg="alertMsgs[ 'pwd-check' ]"
-        :alertMsgShow="alertMsgShow[ 'pwd-check' ]"></InputItem>
+        :alert.sync="alert[ 'pwd-check' ]"
+        :value.sync="formData[ 'pwd-check' ]"></InputTextItem>
       <div class="register-container__notice">
         <span class="notice" v-text="$t('login.WORDING_REGISTER_NOTICE')"></span>
         <router-link to="/agreement" target="_blank" class="agreement" v-text="$t('login.WORDING_MEMBER_AGREEMENT')"></router-link>
@@ -60,12 +36,11 @@
   </div>
 </template>
 <script>
-  import _ from 'lodash'
-  import InputItem from 'src/components/form/InputItem.vue'
+  import InputTextItem from 'src/components/form/InputTextItem.vue'
   import Spinner from 'src/components/Spinner.vue'
   import validator from 'validator'
   import config from 'api/config'
-  import { consoleLogOnDev, } from 'src/util/comm'
+  import { get, } from 'lodash'
 
   const debug = require('debug')('CLIENT:Register')
   const register = (store, profile, token) => {
@@ -83,14 +58,12 @@
 
   export default {
     components: {
-      InputItem,
+      InputTextItem,
       Spinner,
     },
     data () {
       return {
-        alertFlags: {},
-        alertMsgs: {},
-        alertMsgShow: {},
+        alert: {},
         formData: {},
         isRegistered: false,
         isRegisterClicked: false,
@@ -103,22 +76,6 @@
     },
     name: 'Register',
     methods: {
-      setInputValue (key, value) {
-        switch (key) {
-          case 'nickname':
-            this.formData.nickname = value
-            break
-          case 'mail':
-            this.formData.mail = value
-            break
-          case 'pwd':
-            this.formData.pwd = value
-            break
-          case 'pwd-check':
-            this.formData[ 'pwd-check' ] = value
-            break
-        }
-      },
       register () {
         if (this.shouldShowSpinner) { return }
         this.verifyRecaptchaToken().then(() => {
@@ -129,7 +86,7 @@
               nickname: this.formData.nickname,
               email: this.formData.mail,
               password: this.formData.pwd,
-            }, _.get(this.$store, [ 'state', 'register-token', ])).then(({ status, }) => {
+            }, get(this.$store, [ 'state', 'register-token', ])).then(({ status, }) => {
               this.isRegistered = true
               this.shouldShowSpinner = false
               if (status === 200) {
@@ -152,53 +109,50 @@
           }
         })
       },
-      resetAllAlertShow (excluding) {
-        this.alertMsgShow = {}
-        this.alertMsgShow[ excluding ] = true
-        this.$forceUpdate()
-      },
-      resetAlertShow (target) {
-        this.alertMsgShow[ target ] = false
-        this.$forceUpdate()
-      },
-      removeAlert (target) {
-        this.alertFlags[ target ] = false
-        this.$forceUpdate()
-      },
       validatInput () {
         let pass = true
-        this.alertFlags = {}
-        this.alertMsgs = {}
         if (!this.formData.nickname || validator.isEmpty(this.formData.nickname)) {
           pass = false
-          this.alertFlags.nickname = true
-          this.alertMsgs.nickname = this.$t('login.WORDING_REGISTER_NICKNAME_EMPTY')
-          consoleLogOnDev({ msg: 'nickname empty, ' + this.formData.nickname, })
+          this.alert.nickname = {
+            flag: true,
+            msg: this.$t('login.WORDING_REGISTER_NICKNAME_EMPTY'),
+          }
+          debug('Empty nickname', this.formData.nickname)
         }
         if (!this.formData.mail || !validator.isEmail(this.formData.mail)) {
           pass = false
-          this.alertFlags.mail = true
-          this.alertMsgs.mail = this.$t('login.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL')
-          consoleLogOnDev({ msg: 'mail wrong, ' + this.formData.mail, })
+          this.alert.mail = {
+            flag: true,
+            msg: this.$t('login.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL'),
+          }          
+          debug('Wrong email', this.formData.mail)
         }
         if (!this.formData.pwd || validator.isEmpty(this.formData.pwd)) {
           pass = false
-          this.alertFlags.pwd = true
-          this.alertMsgs.pwd = this.$t('login.WORDING_REGISTER_PWD_EMPTY')
-          consoleLogOnDev({ msg: 'pwd empty, ' + this.formData.pwd, })
+          this.alert.pwd = {
+            flag: true,
+            msg: this.$t('login.WORDING_REGISTER_PWD_EMPTY'),
+          }          
+          debug('Empty password', this.formData.pwd)
         }
         if (!this.formData[ 'pwd-check' ] || validator.isEmpty(this.formData[ 'pwd-check' ])) {
           pass = false
-          this.alertFlags[ 'pwd-check' ] = true
-          this.alertMsgs[ 'pwd-check' ] = this.$t('login.WORDING_REGISTER_PWD_CHECK_EMPTY')
-          consoleLogOnDev({ msg: 'pwd-check empty, ' + this.formData[ 'pwd-check' ], })
+          this.alert[ 'pwd-check' ] = {
+            flag: true,
+            msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_EMPTY'),
+          }          
+          debug('Empty password check', this.formData[ 'pwd-check' ])
         }
         if (!this.formData.pwd || !this.formData[ 'pwd-check' ] || this.formData.pwd !== this.formData[ 'pwd-check' ]) {
-          consoleLogOnDev({ msg: 'pwd != pwd check, ' + this.formData.pwd + ',' + this.formData[ 'pwd-check' ], })
-          this.alertFlags.pwd = true
-          this.alertMsgs.pwd = this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL')
-          this.alertFlags[ 'pwd-check' ] = true
-          this.alertMsgs[ 'pwd-check' ] = this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL')
+          this.alert.pwd = {
+            flag: true,
+            msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL'),
+          }          
+          this.alert[ 'pwd-check' ] = {
+            flag: true,
+            msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL'),
+          }          
+          debug('Password is not the same as password-check', this.formData.pwd, this.formData[ 'pwd-check' ])
           pass = false
         }
         this.$forceUpdate()
@@ -209,7 +163,7 @@
       },
       verifyRecaptchaToken () {
         return verifyRecaptchaToken(this.$store, { token: this.recaptchaToken, }).then((response) => {
-          this.isRecaptchaPassed = _.get(response, [ 'success', ], false)
+          this.isRecaptchaPassed = get(response, [ 'success', ], false)
         })
       },
     },

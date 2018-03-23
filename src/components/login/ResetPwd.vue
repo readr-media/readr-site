@@ -4,30 +4,14 @@
       <div class="title" v-text="$t('login.WORDING_LOGIN_RESET_PWD')"></div>
       <div class="email"></div>
     </div>
-    <InputItem class="reset-pwd__pwd"
-      v-if="!isDone"
-      type="text" 
-      inputKey="pwd"
-      @filled="setInputValue"
-      @inputFocus="resetAllAlertShow"
-      @inputFocusOut="resetAlertShow"
-      @removeAlert="removeAlert"
+    <InputTextItem class="reset-pwd__pwd" type="password" v-if="!isDone"
       :placeHolder="$t('login.WORDING_PASSWORD')"
-      :alertFlag="alertFlags[ 'pwd' ]"
-      :alertMsg="alertMsgs[ 'pwd' ]"
-      :alertMsgShow="alertMsgShow[ 'pwd' ]"></InputItem>
-    <InputItem class="reset-pwd__pwd-check" 
-      v-if="!isDone"
-      type="password" 
-      inputKey="pwd-check"
-      @filled="setInputValue"
-      @inputFocus="resetAllAlertShow"
-      @inputFocusOut="resetAlertShow"
-      @removeAlert="removeAlert"
+      :alert.sync="alert.pwd"
+      :value.sync="formData.pwd"></InputTextItem>
+    <InputTextItem class="reset-pwd__pwd-check" type="password" v-if="!isDone"
       :placeHolder="$t('login.WORDING_PASSWORD_CHECK')"
-      :alertFlag="alertFlags[ 'pwd-check' ]"
-      :alertMsg="alertMsgs[ 'pwd-check' ]"
-      :alertMsgShow="alertMsgShow[ 'pwd-check' ]"></InputItem>
+      :alert.sync="alert[ 'pwd-check' ]"
+      :value.sync="formData[ 'pwd-check' ]"></InputTextItem>
     <div class="reset-pwd__btn" @click="save" :class="{ disabled: shouldShowSpinner }" v-if="!isDone">
         <span v-text="$t('login.WORDING_BTN_SAVE')" v-if="!shouldShowSpinner"></span>
         <Spinner :show="shouldShowSpinner"></Spinner>
@@ -38,7 +22,7 @@
   </div>
 </template>
 <script>
-  import InputItem from 'src/components/form/InputItem.vue'
+  import InputTextItem from 'src/components/form/InputTextItem.vue'
   import Spinner from 'src/components/Spinner.vue'
   import validator from 'validator'
 
@@ -49,14 +33,12 @@
   export default {
     name: 'ResetPwd',
     components: {
-      InputItem,
+      InputTextItem,
       Spinner,
     },
     data () {
       return {
-        alertMsgs: {},
-        alertMsgShow: {},
-        alertFlags: {},
+        alert: {},
         formData: {},
         isDone: false,
         result: '',
@@ -64,19 +46,6 @@
       }
     },
     methods: {
-      resetAllAlertShow (excluding) {
-        this.alertMsgShow = {}
-        this.alertMsgShow[ excluding ] = true
-        this.$forceUpdate()
-      },
-      resetAlertShow (target) {
-        this.alertMsgShow[ target ] = false
-        this.$forceUpdate()
-      },
-      removeAlert (target) {
-        this.alertFlags[ target ] = false
-        this.$forceUpdate()
-      },
       save () {
         if (this.validate()) {
           this.shouldShowSpinner = true
@@ -112,28 +81,35 @@
       },
       validate () {
         let pass = true
-        this.alertFlags = {}
-        this.alertMsgs = {}
         if (!this.formData.pwd || validator.isEmpty(this.formData.pwd)) {
           pass = false
-          this.alertFlags.pwd = true
-          this.alertMsgs.pwd = this.$t('login.WORDING_REGISTER_PWD_EMPTY')
+          this.alert.pwd = {
+            flag: true,
+            msg: this.$t('login.WORDING_REGISTER_PWD_EMPTY'),
+          }
           debug('pwd empty', this.formData.pwd)
         }
         if (!this.formData[ 'pwd-check' ] || validator.isEmpty(this.formData[ 'pwd-check' ])) {
           pass = false
-          this.alertFlags[ 'pwd-check' ] = true
-          this.alertMsgs[ 'pwd-check' ] = this.$t('login.WORDING_REGISTER_PWD_CHECK_EMPTY')
+          this.alert[ 'pwd-check' ] = {
+            flag: true,
+            msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_EMPTY'),
+          }
           debug('pwd-check empty,', this.formData[ 'pwd-check' ])
         }
         if (!this.formData.pwd || !this.formData[ 'pwd-check' ] || this.formData.pwd !== this.formData[ 'pwd-check' ]) {
-          debug('pwd != pwd check,', this.formData.pwd, ',', this.formData[ 'pwd-check' ])
-          this.alertFlags.pwd = true
-          this.alertMsgs.pwd = this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL')
-          this.alertFlags[ 'pwd-check' ] = true
-          this.alertMsgs[ 'pwd-check' ] = this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL')
+          this.alert.pwd = {
+            flag: true,
+            msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL'),
+          }          
+          this.alert[ 'pwd-check' ] = {
+            flag: true,
+            msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL'),
+          }          
           pass = false
+          debug('pwd != pwd check,', this.formData.pwd, ',', this.formData[ 'pwd-check' ])
         }
+        this.$forceUpdate()
         return pass
       },
     },
