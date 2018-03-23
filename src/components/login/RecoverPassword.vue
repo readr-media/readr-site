@@ -101,6 +101,7 @@
           debug('MAIL WRONG')
           debug('>>>', this.formData.email)
         }
+        this.$forceUpdate()
         return pass
       },
     },
