@@ -1,6 +1,6 @@
 <template>
   <div class="login">
-    <InputTextItem class="login__input-email"
+    <InputTextItem class="login__input-email" type="text"
       :placeHolder="$t('login.WORDING_EMAIL')"
       :alert.sync="alert.mail"
       :value.sync="formData.mail"></InputTextItem>
@@ -28,7 +28,6 @@
 <script>
   import { ROLE_MAP } from 'src/constants'
   import { filter, get } from 'lodash'
-  import InputItem from 'src/components/form/InputItem.vue'
   import InputTextItem from 'src/components/form/InputTextItem.vue'
   import validator from 'validator'
 
@@ -46,7 +45,6 @@
 
   export default {
     components: {
-      InputItem,
       InputTextItem
     },
     data () {
