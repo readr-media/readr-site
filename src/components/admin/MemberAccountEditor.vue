@@ -1,5 +1,8 @@
 <template>
-  <div class="member-editor" :class="{ result: message, confirm: action === 'delete' || action === 'customEditor_cancel' || action === 'customEditor_set' }">
+  <div class="member-editor"
+    :class="{
+      result: message,
+      confirm: action === 'delete' || action === 'customEditor_cancel' || action === 'customEditor_set' }">
     <div class="member-editor__form" v-if="action === 'customEditor_exceedError'">
       <div class="error">
         <div class="error__container">
@@ -21,32 +24,23 @@
       <div class="email">
         <span class="label" v-text="$t('admin.WORDING_ADMIN_MEMBER_EDITOR_EMAIL') + '：'"></span>
         <div>
-          <InputItem class="admin"
-            inputKey="mail"
-            :disabled="action === 'add' ? !isEdible : true"
+          <InputTextItem class="admin" type="text"
+            :alert.sync="alert.mail"
+            :disabled="action === 'add' ? !isEditable : true"
             :initValue="emailVal"
-            :alertFlag="alertFlags.mail"
-            :alertMsg="alertMsgs.mail"
-            :alertMsgShow="alertMsgShow.mail"
-            @filled="fillHandler"
-            @inputFocus="resetAllAlertShow"
-            @inputFocusOut="resetAlertShow"
-            @removeAlert="removeAlert"></InputItem>
+            :value.sync="typedEmail"></InputTextItem>
         </div>
       </div>
       <div class="role">
         <span class="label" v-text="$t('admin.WORDING_ADMIN_ROLE') + '：'"></span>
         <div class="options">
-          <Radio class="admin"
-            v-for="role in roles"
-            v-if="role.key > 1"
-            name="role"
-            @selected="selectedHandler"
+          <RadioItem class="admin" name="role"
+            v-if="role.key > 1" v-for="role in roles"
             :label="role.value"
             :key="role.key"
             :value="role.key"
-            :disabled="!isEdible"
-            :initValue="roleValue"></Radio>
+            :disabled="!isEditable"
+            :currSelected.sync="selectedRole"></RadioItem>  
         </div>
       </div>
       <div class="btn--save" @click="save" v-if="!message">
@@ -60,29 +54,38 @@
       <template v-for="(m, k) in members">
         <div class="nickname" :class="{ multiple: k > 0 }">
           <span class="label" v-text="$t('admin.WORDING_ADMIN_MEMBER_EDITOR_NICKNAME') + '：'"></span>
-          <div><InputItem class="admin" inputKey="nickname" :disabled="true" :initValue="getValue(m, [ 'nickname' ], '')"></InputItem></div>
+          <div>
+            <InputTextItem class="admin" type="text"
+              :disabled="true"
+              :initValue="get(m, [ 'nickname' ], '')"
+              :value="get(m, [ 'nickname' ], '')"></InputTextItem>
+          </div>
         </div>
         <div class="email" :class="{ multiple: k > 0 }">
           <span class="label" v-text="$t('admin.WORDING_ADMIN_MEMBER_EDITOR_EMAIL') + '：'"></span>
-          <div><InputItem class="admin" inputKey="email" :disabled="true" :initValue="getValue(m, [ 'mail' ], '')"></InputItem></div>
+          <div>
+            <InputTextItem class="admin" type="text"
+              :disabled="true"
+              :initValue="get(m, [ 'mail' ], '')"
+              :value="get(m, [ 'mail' ], '')"></InputTextItem>
+          </div>
         </div>      
       </template>
       <div class="btn--set" v-if="!message">
         <div class="btn--set__confirm" @click="save"><span v-text="$t('admin.WORDING_ADMIN_YES')"></span></div>
-        <div class="btn--set__cancel" @click="closeEditor"><span v-text="$('admin.WORDING_ADMIN_CANCEL')"></span></div>
+        <div class="btn--set__cancel" @click="closeEditor"><span v-text="$t('admin.WORDING_ADMIN_CANCEL')"></span></div>
       </div>
       <div class="message" v-else v-text="message"></div>
     </div>
   </div>
 </template>
 <script>
-  import _ from 'lodash'
-  import InputItem from 'src/components/form/InputItem.vue'
-  import Radio from 'src/components/form/Radio.vue'
+  import InputTextItem from 'src/components/form/InputTextItem.vue'
+  import RadioItem from 'src/components/form/RadioItem.vue'
   import Spinner from 'src/components/Spinner.vue'
   import validator from 'validator'
   import { ROLE_MAP, } from 'src/constants/'
-  import { getValue, } from 'src/util/comm'
+  import { get, map, } from 'lodash'
 
   const debug = require('debug')('CLIENT:MemberAccountEditor')
   const register = (store, profile) => {
@@ -120,22 +123,22 @@
 
   export default {
     components: {
-      InputItem,
-      Radio,
+      InputTextItem,
+      RadioItem,
       Spinner,
     },
     computed: {
       emailVal () {
-        return this.typedEmail || _.get(this.members, [ 0, 'mail', ], '')
+        return this.typedEmail || get(this.members, [ 0, 'mail', ], '')
       },
       id () {
-        return _.get(this.members, [ 0, 'id', ])
+        return get(this.members, [ 0, 'id', ])
       },
       nicknameVal () {
-        return _.get(this.members, [ 0, 'nickname', ])
+        return get(this.members, [ 0, 'nickname', ])
       },
       roleValue () {
-        return this.selectedRole || _.get(this.members, [ 0, 'role', ])
+        return this.selectedRole || get(this.members, [ 0, 'role', ])
       },
       roles () {
         return ROLE_MAP
@@ -143,13 +146,11 @@
     },
     data () {
       return {
-        alertFlags: {},
-        alertMsgs: {},
-        alertMsgShow: {},
-        isEdible: true,
+        alert: {},
+        isEditable: true,
         message: null,
-        typedEmail: _.get(this.members, [ 0, 'mail', ], null),
-        selectedRole: _.get(this.members, [ 0, 'role', ], null),
+        typedEmail: get(this.members, [ 0, 'mail', ], null),
+        selectedRole: get(this.members, [ 0, 'role', ], null),
         shouldShowBtnSet: false,
         shouldShowSpinner: false,
       }
@@ -159,33 +160,13 @@
       closeEditor () {
         this.$emit('closeLightBox')
       },
-      fillHandler (key, value) {
-        switch (key) {
-          case 'mail':
-            this.typedEmail = value
-            break
-        }
-      },
-      getValue,
-      resetAllAlertShow (excluding) {
-        this.alertMsgShow = {}
-        this.alertMsgShow[ excluding ] = true
-        this.$forceUpdate()
-      },
-      resetAlertShow (target) {
-        this.alertMsgShow[ target ] = false
-        this.$forceUpdate()
-      },
-      removeAlert (target) {
-        this.alertFlags[ target ] = false
-        this.$forceUpdate()
-      },
+      get,
       save () {
         if (this.shouldShowSpinner) { return }
         if (this.validate() || this.action === 'delete') {
           this.shouldShowSpinner = true
           const callback = ({ status, }) => {
-            this.isEdible = false
+            this.isEditable = false
             this.shouldShowSpinner = false
             if (status === 200) {
               if (this.action === 'delete') {
@@ -213,7 +194,7 @@
           } else if (this.action === 'delete') {
             if (this.members.length > 1) {
               deleteMembers(this.$store, {
-                ids: _.map(this.members, (m) => (m.id)),
+                ids: map(this.members, (m) => (m.id)),
               }).then(callback)
             } else {
               deleteMember(this.$store, {
@@ -223,19 +204,14 @@
           }
         }
       },
-      selectedHandler (group, value) {
-        switch (group) {
-          case 'role':
-            this.selectedRole = value
-            break
-        }
-      },
       validate () {
         let pass = true
         if (!this.typedEmail || !validator.isEmail(this.typedEmail)) {
           pass = false
-          this.alertFlags.mail = true
-          this.alertMsgs.mail = this.$t('admin.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL')
+          this.alert.mail = {
+            flag: true,
+            msg: this.$t('admin.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL'),
+          }
           debug('Mail format invalid:', this.typedEmail)
         }
         if (this.selectedRole === null || this.selectedRole === undefined || !validator.isInt(this.selectedRole.toString())) {
@@ -249,16 +225,16 @@
     props: [ 'shouldShow', 'title', 'members', 'action', ],
     watch: {
       members: function () {
-        this.typedEmail = _.get(this.members, [ 0, 'mail', ], null)
-        this.selectedRole = _.get(this.members, [ 0, 'role', ], null)
+        this.typedEmail = get(this.members, [ 0, 'mail', ], null)
+        this.selectedRole = get(this.members, [ 0, 'role', ], null)
         this.message = null
-        this.isEdible = true
+        this.isEditable = true
       },
       shouldShow: function () {
-        this.typedEmail = _.get(this.members, [ 0, 'mail', ], '')
-        this.selectedRole = _.get(this.members, [ 0, 'role', ])
+        this.typedEmail = get(this.members, [ 0, 'mail', ], '')
+        this.selectedRole = get(this.members, [ 0, 'role', ])
         this.message = null
-        this.isEdible = true
+        this.isEditable = true
       },
     },
   }

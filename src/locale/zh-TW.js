@@ -58,6 +58,7 @@ export default {
     'WORDING_ADMIN_CANCEL' : '取消',
     'WORDING_ADMIN_EXCEED_ERROR_CUSTOMEDITOR' : '超過可設定人數，請重新選擇。',
     'WORDING_ADMIN_SET_ERROR_CUSTOMEDITOR' : '無法設定，請重新選擇。',
+    'WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL' : '請輸入有效的電子信箱（Email）',
   },
   'tab': {
     'WORDING_TAB_REWARD_POINTS_RECORD' : '點數記錄',
