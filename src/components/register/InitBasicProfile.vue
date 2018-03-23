@@ -44,15 +44,15 @@
 <script>
   import InputItem from '../form/InputItem.vue'
   import validator from 'validator'
-  import { consoleLogOnDev } from '../../util/comm'
+  import { consoleLogOnDev, } from '../../util/comm'
 
   const setupBasicProfile = (store, params) => {
-    return store.dispatch('SETUP_BASIC_PROFILE', { params })
+    return store.dispatch('SETUP_BASIC_PROFILE', { params, })
   }
 
   export default {
     components: {
-      InputItem
+      InputItem,
     },
     data () {
       return {
@@ -94,7 +94,7 @@
         if (this.validate()) {
           setupBasicProfile(this.$store, {
             nickname: this.formData.nickname,
-            password: this.formData.pwd
+            password: this.formData.pwd,
           }).then((res) => {
             if (res.status === 200) {
               location.replace('/login')
@@ -112,22 +112,22 @@
           pass = false
           this.alertFlags.nickname = true
           this.alertMsgs.nickname = this.$t('login.WORDING_REGISTER_NICKNAME_EMPTY')
-          consoleLogOnDev({ msg: 'nickname empty, ' + this.formData.nickname })
+          consoleLogOnDev({ msg: 'nickname empty, ' + this.formData.nickname, })
         }
         if (!this.formData.pwd || validator.isEmpty(this.formData.pwd)) {
           pass = false
           this.alertFlags.pwd = true
           this.alertMsgs.pwd = this.$t('login.WORDING_REGISTER_PWD_EMPTY')
-          consoleLogOnDev({ msg: 'pwd empty, ' + this.formData.pwd })
+          consoleLogOnDev({ msg: 'pwd empty, ' + this.formData.pwd, })
         }
         if (!this.formData[ 'pwd-check' ] || validator.isEmpty(this.formData[ 'pwd-check' ])) {
           pass = false
           this.alertFlags[ 'pwd-check' ] = true
           this.alertMsgs[ 'pwd-check' ] = this.$t('login.WORDING_REGISTER_PWD_CHECK_EMPTY')
-          consoleLogOnDev({ msg: 'pwd-check empty, ' + this.formData[ 'pwd-check' ] })
+          consoleLogOnDev({ msg: 'pwd-check empty, ' + this.formData[ 'pwd-check' ], })
         }
         if (!this.formData.pwd || !this.formData[ 'pwd-check' ] || this.formData.pwd !== this.formData[ 'pwd-check' ]) {
-          consoleLogOnDev({ msg: 'pwd != pwd check, ' + this.formData.pwd + ',' + this.formData[ 'pwd-check' ] })
+          consoleLogOnDev({ msg: 'pwd != pwd check, ' + this.formData.pwd + ',' + this.formData[ 'pwd-check' ], })
           this.alertFlags.pwd = true
           this.alertMsgs.pwd = this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL')
           this.alertFlags[ 'pwd-check' ] = true
@@ -135,7 +135,7 @@
           pass = false
         }
         return pass
-      }
+      },
     },
     mounted () {},
   }

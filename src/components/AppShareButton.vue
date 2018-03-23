@@ -13,31 +13,31 @@ export default {
     shareUrl: {
       type: String,
       // required: true
-      default: 'www.google.com'
+      default: 'www.google.com',
     },
     direction: { // options: up, down, left, right
       type: String,
-      default: 'down' 
+      default: 'down', 
     },
     iconColor: {
       type: String,
-      default: 'blue'
+      default: 'blue',
     },
     backgroundColor: {
       type: String,
-      default: 'white'
-    }
+      default: 'white',
+    },
   },
   data () {
     return {
-      isToogle: false
+      isToogle: false,
     }
   },
   methods: {
     toogleShare () {
       this.isToogle = !this.isToogle
-    }
-  }
+    },
+  },
 }
 </script>
 

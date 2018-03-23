@@ -18,8 +18,8 @@
   </div>
 </template>
 <script>
-  import { AGREEMENT_CONTENT } from '../constants/agreement'
-  import { WORDING_AGREEMENT_TERMS_AND_SERVICE, WORDING_AGREEMENT_IPR, WORDING_AGREEMENT_PRIVACY } from '../constants'
+  import { AGREEMENT_CONTENT, } from '../constants/agreement'
+  import { WORDING_AGREEMENT_TERMS_AND_SERVICE, WORDING_AGREEMENT_IPR, WORDING_AGREEMENT_PRIVACY, } from '../constants'
   // import AppHeader from '../components/AppHeader.vue'
   import Tab from '../components/Tab.vue'
   import AppAsideNav from '../components/AppAsideNav.vue'
@@ -28,7 +28,7 @@
     components: {
       // 'app-header': AppHeader,
       Tab,
-      AppAsideNav
+      AppAsideNav,
     },
     data () {
       return {
@@ -36,17 +36,17 @@
         tabs: [
           WORDING_AGREEMENT_TERMS_AND_SERVICE,
           WORDING_AGREEMENT_IPR,
-          WORDING_AGREEMENT_PRIVACY
-        ]
+          WORDING_AGREEMENT_PRIVACY,
+        ],
       }
     },
     name: 'agreement',
     methods: {
       navClickHandler (itemIndex) {
         this.activeItem = itemIndex
-      }
+      },
     },
-    mounted () {}
+    mounted () {},
   }
 </script>
 <style lang="stylus" scoped>

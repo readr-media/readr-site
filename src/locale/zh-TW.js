@@ -64,5 +64,5 @@ export default {
     'WORDING_TAB_FOLLOW_RECORD' : '追蹤記錄',
     'WORDING_TAB_REVIEW_RECORD' : '評論記錄',
     'WORDING_TAB_NEWS_RECORD' : '新聞記錄',
-  }
+  },
 }

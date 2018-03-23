@@ -7,19 +7,19 @@
   </div>
 </template>
 <script>
-  import { get } from 'lodash'
+  import { get, } from 'lodash'
 
   const debug = require('debug')('CLIENT:FacebookLogin')
   const login = (store, profile, token) => {
     return store.dispatch('LOGIN', {
       params: profile,
-      token
+      token,
     })
   }
   const register = (store, profile, token) => {
     return store.dispatch('REGISTER', {
       params: profile,
-      token
+      token,
     })
   }
 
@@ -34,13 +34,13 @@
           default:
             return ''
         }
-      }
+      },
     },
     name: 'FacebookLogin',
     methods: {
       login () {
         const readyToLogin = (params) => {
-          login(this.$store, params, get(this.$store, [ 'state', 'register-token' ]))
+          login(this.$store, params, get(this.$store, [ 'state', 'register-token', ]))
             .then((res) => {
               if (res.status === 200) {
                 /**
@@ -56,44 +56,44 @@
         if (window && !window.fbStatus) {
           debug('Never Authorized.')
           FB.login(() => {
-            FB.api('/me', { fields: 'id,name,gender,email' }, (res) => {
+            FB.api('/me', { fields: 'id,name,gender,email', }, (res) => {
               register(this.$store, {
                 nickname: get(res, 'name'),
                 email: res.email,
                 gender: get(res, 'genders', '').toUpperCase().substr(0, 1),
                 register_mode: 'oauth-fb',
-                social_id: res.id
-              }, get(this.$store, [ 'state', 'register-token' ])).then(({ status }) => {
+                social_id: res.id,
+              }, get(this.$store, [ 'state', 'register-token', ])).then(({ status, }) => {
                 if (status === 200) {
                   debug('Registered successfully')
                   readyToLogin({
                     id: res.id,
-                    login_mode: 'facebook'
+                    login_mode: 'facebook',
                   })
                 }
-              }).catch(({ err }) => {
+              }).catch(({ err, }) => {
                 if (err === 'User Already Existed' || err === 'User Duplicated') {
                   debug('User Already Existed')
                   readyToLogin({
                     id: res.id,
-                    login_mode: 'facebook'
+                    login_mode: 'facebook',
                   })
                 } else {
                   console.log(err)
                 }
               })
             })
-          }, { scope: 'public_profile,email' })
+          }, { scope: 'public_profile,email', })
         } else {
           debug('Already authorized.')
           readyToLogin({
             id: window.fbStatus.uid,
-            login_mode: 'facebook'
+            login_mode: 'facebook',
           })
         }
-      }
+      },
     },
-    props: [ 'type' ]
+    props: [ 'type', ],
   }
 </script>
 <style lang="stylus" scoped>

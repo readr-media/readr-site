@@ -38,56 +38,56 @@ import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 
-import { POST_TYPE } from '../../api/config'
-import { WORDING_POSTEDITOR_EDITOR } from '../constants'
+import { POST_TYPE, } from '../../api/config'
+import { WORDING_POSTEDITOR_EDITOR, } from '../constants'
 
 const uploadImage = (store, file) => {
-  return store.dispatch('UPLOAD_IMAGE', { file, type: 'post' })
+  return store.dispatch('UPLOAD_IMAGE', { file, type: 'post', })
 }
 
 export default {
   name: 'TextEditor',
   props: {
     content: {
-      default: ''
+      default: '',
     },
     type: {
       type: Number,
-      required: true
-    }
+      required: true,
+    },
   },
   data () {
     return {
       contentNews: '',
       contentReview: '',
       editorNewsOption: {
-        formats: [ 'bold', 'italic', 'blockquote', 'code-block', 'link', 'image', 'video' ],
+        formats: [ 'bold', 'italic', 'blockquote', 'code-block', 'link', 'image', 'video', ],
         modules: {
           toolbar: {
-            container: [ [ 'bold', 'italic', 'blockquote', 'code-block' ], [ 'link', 'image', 'video' ] ],
+            container: [ [ 'bold', 'italic', 'blockquote', 'code-block', ], [ 'link', 'image', 'video', ], ],
             handlers: {
-              'image': this.$_editor_imageHandler
-            }
+              'image': this.$_editor_imageHandler,
+            },
           },
           clipboard: {
-            matchVisual: false
-          }
-        }
+            matchVisual: false,
+          },
+        },
       },
       editorReviewOption: {
         formats: [],
         modules: {
           toolbar: false,
           clipboard: {
-            matchVisual: false
-          }
-        }
+            matchVisual: false,
+          },
+        },
       },
       postType: POST_TYPE,
       showHtml: false,
       wording: {
-        WORDING_POSTEDITOR_EDITOR
-      }
+        WORDING_POSTEDITOR_EDITOR,
+      },
     }
   },
   watch: {
@@ -153,8 +153,8 @@ export default {
       } else if (this.type === POST_TYPE.NEWS) {
         this.$refs.quillNewsEditor.classList.toggle('half')
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -26,10 +26,10 @@
   </div>
 </template>
 <script>
-  import { POST_TYPE } from 'api/config'
-  import { ROLE_MAP } from 'src/constants'
-  import { WORDING_TAB_REVIEW_RECORD, WORDING_TAB_FOLLOW_RECORD, WORDING_PROFILE_FILTER_ALL } from 'src/constants'
-  import { find, filter, get, map } from 'lodash'
+  import { POST_TYPE, } from 'api/config'
+  import { ROLE_MAP, } from 'src/constants'
+  import { WORDING_TAB_REVIEW_RECORD, WORDING_TAB_FOLLOW_RECORD, WORDING_PROFILE_FILTER_ALL, } from 'src/constants'
+  import { find, filter, get, map, } from 'lodash'
   import About from 'src/components/About.vue'
   import AppAsideNav from 'src/components/AppAsideNav.vue'
   import PostContent from 'src/components/PostContent.vue'
@@ -47,7 +47,7 @@
     maxResult = MAXRESULT,
     page = DEFAULT_PAGE,
     sort = DEFAULT_SORT,
-    where = {}
+    where = {},
   }) => {
     return store.dispatch('GET_PUBLIC_POSTS', {
       params: {
@@ -56,20 +56,20 @@
         max_result: maxResult,
         page,
         sort,
-        where
-      }
+        where,
+      },
     })
   }
 
   const getMemberPublic = (store, params) => {
     return store.dispatch('GET_PUBLIC_MEMBER', {
-      params: params
+      params: params,
     })
   }
 
   const getPostsCount = (store, params = {}) => {
     return store.dispatch('GET_POSTS_COUNT', {
-      params: params
+      params: params,
     })
   }
 
@@ -79,26 +79,26 @@
       About,
       AppAsideNav,
       PostContent,
-      Tab
+      Tab,
     },
-    asyncData ({ store, route }) {
+    asyncData ({ store, route, }) {
       debug('profileId', get(route, 'params.id'))
       return Promise.all([
         getPosts(store, {
           where: {
             author: get(route, 'params.id'),
-            type: POST_TYPE.REVIEW
-          }
+            type: POST_TYPE.REVIEW,
+          },
         }),
         getPostsCount(store, {
           where: {
             author: get(route, 'params.id'),
-            type: POST_TYPE.REVIEW
-          }
+            type: POST_TYPE.REVIEW,
+          },
         }),
         getMemberPublic(store, {
-          id: get(route, 'params.id')
-        })
+          id: get(route, 'params.id'),
+        }),
       ])
     },
     computed: {
@@ -133,11 +133,11 @@
         filter: 'all',
         tabs: [
           WORDING_TAB_REVIEW_RECORD,
-          WORDING_TAB_FOLLOW_RECORD
+          WORDING_TAB_FOLLOW_RECORD,
         ],
         wording: {
-          WORDING_PROFILE_FILTER_ALL
-        }
+          WORDING_PROFILE_FILTER_ALL,
+        },
       }
     },
     methods: {
@@ -158,19 +158,19 @@
               getPosts(this.$store, {
                 where: {
                   author: this.profileId,
-                  type: POST_TYPE.REVIEW
-                }
+                  type: POST_TYPE.REVIEW,
+                },
               }),
               getPostsCount(this.$store, {
                 where: {
                   author: this.profileId,
-                  type: POST_TYPE.REVIEW
-                }
-              })              
+                  type: POST_TYPE.REVIEW,
+                },
+              }),              
             ])
             break
         }
-      }
+      },
     },
     mounted () {
       debug(`/profile/${this.$route.params.id}`)
@@ -180,8 +180,8 @@
       currUser: function () {
         debug('currUser changed', this.currUser)
         this.routeToMemCenter()
-      }
-    }
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>

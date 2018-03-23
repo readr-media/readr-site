@@ -1,4 +1,4 @@
-const { findIndex } = require('lodash')
+const { findIndex, } = require('lodash')
 const config = require('../../config')
 const debug = require('debug')('READR:api:services:token')
 const express = require('express')
@@ -12,8 +12,8 @@ router.get('/:type', (req, res) => {
   const type = req.params.type
   debug('Token type:', type)
   if (findIndex(config.DISPOSABLE_TOKEN_WHITE_LIST, (o) => (o === type)) > -1) {
-    const token = jwtService.generateDisposableJwt({ host: config.SERVER_HOST })
-    res.status(200).send({ token })
+    const token = jwtService.generateDisposableJwt({ host: config.SERVER_HOST, })
+    res.status(200).send({ token, })
   } else {
     res.status(403).send('Forbidden.')
   }

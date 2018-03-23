@@ -1,4 +1,4 @@
-const { GCP_KEYFILE, GCP_PROJECT_ID, GCP_PUBSUB_TOPIC_NAME } = require('./config')
+const { GCP_KEYFILE, GCP_PROJECT_ID, GCP_PUBSUB_TOPIC_NAME, } = require('./config')
 const storage = require('@google-cloud/storage')
 const PubSub = require('@google-cloud/pubsub')
 
@@ -79,7 +79,7 @@ const deleteFilesInFolder = (bucket, options) => {
     const opts = options || {}
     bucket.deleteFiles({
       prefix: opts.folder,
-      force: true
+      force: true,
     })
 		.then(() => { resolve() })
 		.catch(err => { reject(err) })
@@ -90,7 +90,7 @@ const publishAction = (data) => {
   process.env['GOOGLE_APPLICATION_CREDENTIALS'] = GCP_KEYFILE
   const projectId = GCP_PROJECT_ID
   const pubsubClient = PubSub({
-    projectId: projectId
+    projectId: projectId,
   })
   const topicName = GCP_PUBSUB_TOPIC_NAME
   const topic = pubsubClient.topic(topicName)
@@ -117,5 +117,5 @@ module.exports = {
   uploadFileToBucket,
   deleteFileFromBucket,
   deleteFilesInFolder,
-  publishAction
+  publishAction,
 }

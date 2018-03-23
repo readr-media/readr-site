@@ -27,28 +27,28 @@
 </template>
 
 <script>
-  import { SITE_DOMAIN_DEV } from '../../../src/constants'
-  import { get } from 'lodash'
-  import { renderComment } from '../../../src/util/talk'
+  import { SITE_DOMAIN_DEV, } from '../../../src/constants'
+  import { get, } from 'lodash'
+  import { renderComment, } from '../../../src/util/talk'
   import CommentCount from '../../components/comment/CommentCount.vue'
   import moment from 'moment'
 
   export default {
     name: 'VideosList',
     components: {
-      CommentCount
+      CommentCount,
     },
     props: {
       hasMore: {
         type: Boolean,
-        required: true
+        required: true,
       },
       videos: {
         type: Array,
         default: function () {
           return []
-        }
-      }
+        },
+      },
     },
     methods: {
       $_videosList_loadMore () {
@@ -65,8 +65,8 @@
         }
       },
       get,
-      moment
-    }
+      moment,
+    },
   }
 </script>
 

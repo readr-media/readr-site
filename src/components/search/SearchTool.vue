@@ -8,8 +8,8 @@
   </div>
 </template>
 <script>
-  import { WORIDNG_HEADER_MEMBER_SEARCH } from 'src/constants'
-  import { get } from 'lodash'
+  import { WORIDNG_HEADER_MEMBER_SEARCH, } from 'src/constants'
+  import { get, } from 'lodash'
 
   const debug = require('debug')('CLIENT:SearchTool')
   export default {
@@ -20,14 +20,14 @@
         isChanged: true,
         // searchVal: get(this.$route, [ 'params', 'keyword' ]),
         wording: {
-          WORIDNG_HEADER_MEMBER_SEARCH
-        }
+          WORIDNG_HEADER_MEMBER_SEARCH,
+        },
       }
     },
     computed: {
       searchVal () {
-        return get(this.$route, [ 'params', 'keyword' ])
-      }
+        return get(this.$route, [ 'params', 'keyword', ])
+      },
     },
     methods: {
       checkIsChanged () {
@@ -49,8 +49,8 @@
       setCurrVal () {
         debug('Abt to change current search words to:', get(this.$refs, 'searchInput.value'))
         this.currentSearchVal = get(this.$refs, 'searchInput.value')
-      }
-    }
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>

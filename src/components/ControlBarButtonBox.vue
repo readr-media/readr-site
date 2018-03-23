@@ -10,15 +10,15 @@
     props: {
       amount: {
         type: Number,
-        default: 0
-      }
+        default: 0,
+      },
     },
     computed: {
       slotItems () {
         const items = []
         items.length = this.amount
         return items
-      }
+      },
     },
     mounted () {
       this.$emit('changeBtnAmount', true)

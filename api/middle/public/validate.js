@@ -1,7 +1,7 @@
 const Joi = require('joi')
 
 const validate = (schema) => (req, res, next) => {
-  Joi.validate(req.query, schema, { allowUnknown: true }, (err) => {
+  Joi.validate(req.query, schema, { allowUnknown: true, }, (err) => {
     if (err) {
       res.status(403).send('Forbidden. No right to access.').end()
     } else {
@@ -11,5 +11,5 @@ const validate = (schema) => (req, res, next) => {
 }
 
 module.exports = {
-  validate
+  validate,
 }

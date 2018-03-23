@@ -65,26 +65,26 @@
   import Spinner from 'src/components/Spinner.vue'
   import validator from 'validator'
   import config from 'api/config'
-  import { consoleLogOnDev } from 'src/util/comm'
+  import { consoleLogOnDev, } from 'src/util/comm'
 
   const debug = require('debug')('CLIENT:Register')
   const register = (store, profile, token) => {
     return store.dispatch('REGISTER', {
       params: profile,
-      token
+      token,
     })
   }
 
   const verifyRecaptchaToken = (store, token) => {
     return store.dispatch('VERIFY_RECAPTCHA_TOKEN', {
-      token
+      token,
     })
   }
 
   export default {
     components: {
       InputItem,
-      Spinner
+      Spinner,
     },
     data () {
       return {
@@ -98,7 +98,7 @@
         resMsg: '',
         recaptcha: {},
         recaptchaToken: '',
-        shouldShowSpinner: false
+        shouldShowSpinner: false,
       }
     },
     name: 'Register',
@@ -128,8 +128,8 @@
             register(this.$store, {
               nickname: this.formData.nickname,
               email: this.formData.mail,
-              password: this.formData.pwd
-            }, _.get(this.$store, [ 'state', 'register-token' ])).then(({ status }) => {
+              password: this.formData.pwd,
+            }, _.get(this.$store, [ 'state', 'register-token', ])).then(({ status, }) => {
               this.isRegistered = true
               this.shouldShowSpinner = false
               if (status === 200) {
@@ -138,7 +138,7 @@
                 this.resMsg = this.$t('login.WORDING_REGISTER_INFAIL')
                 window.grecaptcha.reset(this.recaptcha)
               }
-            }).catch(({ err }) => {
+            }).catch(({ err, }) => {
               this.shouldShowSpinner = false
               if (err === 'User Already Existed') {
                 this.alertFlags.mail = true
@@ -173,28 +173,28 @@
           pass = false
           this.alertFlags.nickname = true
           this.alertMsgs.nickname = this.$t('login.WORDING_REGISTER_NICKNAME_EMPTY')
-          consoleLogOnDev({ msg: 'nickname empty, ' + this.formData.nickname })
+          consoleLogOnDev({ msg: 'nickname empty, ' + this.formData.nickname, })
         }
         if (!this.formData.mail || !validator.isEmail(this.formData.mail)) {
           pass = false
           this.alertFlags.mail = true
           this.alertMsgs.mail = this.$t('login.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL')
-          consoleLogOnDev({ msg: 'mail wrong, ' + this.formData.mail })
+          consoleLogOnDev({ msg: 'mail wrong, ' + this.formData.mail, })
         }
         if (!this.formData.pwd || validator.isEmpty(this.formData.pwd)) {
           pass = false
           this.alertFlags.pwd = true
           this.alertMsgs.pwd = this.$t('login.WORDING_REGISTER_PWD_EMPTY')
-          consoleLogOnDev({ msg: 'pwd empty, ' + this.formData.pwd })
+          consoleLogOnDev({ msg: 'pwd empty, ' + this.formData.pwd, })
         }
         if (!this.formData[ 'pwd-check' ] || validator.isEmpty(this.formData[ 'pwd-check' ])) {
           pass = false
           this.alertFlags[ 'pwd-check' ] = true
           this.alertMsgs[ 'pwd-check' ] = this.$t('login.WORDING_REGISTER_PWD_CHECK_EMPTY')
-          consoleLogOnDev({ msg: 'pwd-check empty, ' + this.formData[ 'pwd-check' ] })
+          consoleLogOnDev({ msg: 'pwd-check empty, ' + this.formData[ 'pwd-check' ], })
         }
         if (!this.formData.pwd || !this.formData[ 'pwd-check' ] || this.formData.pwd !== this.formData[ 'pwd-check' ]) {
-          consoleLogOnDev({ msg: 'pwd != pwd check, ' + this.formData.pwd + ',' + this.formData[ 'pwd-check' ] })
+          consoleLogOnDev({ msg: 'pwd != pwd check, ' + this.formData.pwd + ',' + this.formData[ 'pwd-check' ], })
           this.alertFlags.pwd = true
           this.alertMsgs.pwd = this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL')
           this.alertFlags[ 'pwd-check' ] = true
@@ -208,10 +208,10 @@
         return pass
       },
       verifyRecaptchaToken () {
-        return verifyRecaptchaToken(this.$store, { token: this.recaptchaToken }).then((response) => {
-          this.isRecaptchaPassed = _.get(response, [ 'success' ], false)
+        return verifyRecaptchaToken(this.$store, { token: this.recaptchaToken, }).then((response) => {
+          this.isRecaptchaPassed = _.get(response, [ 'success', ], false)
         })
-      }
+      },
     },
     mounted () {
       if (window.grecaptcha) {
@@ -219,10 +219,10 @@
           'sitekey': config.GOOGLE_RECAPTCHA_SITE_KEY,
           'callback': (res) => {
             this.recaptchaToken = res
-          }
+          },
         })
       }
-    }
+    },
   }
 </script>
 <style lang="stylus" scoped>

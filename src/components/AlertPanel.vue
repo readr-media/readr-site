@@ -22,7 +22,7 @@
   </section>
 </template>
 <script>
-  import { POST_ACTIVE, TAG_ACTIVE } from '../../api/config'
+  import { POST_ACTIVE, TAG_ACTIVE, } from '../../api/config'
   import {
     WORDING_ALERTPANEL_ADD_SUCCESSFUL,
     WORDING_ALERTPANEL_AUTHOR,
@@ -37,49 +37,49 @@
     WORDING_ALERTPANEL_TAG,
     WORDING_ALERTPANEL_TITLE,
     WORDING_ALERTPANEL_UPDATE_SUCCESSFUL,
-    WORDING_ALERTPANEL_VIDEO
+    WORDING_ALERTPANEL_VIDEO,
   } from '../constants'
   import _ from 'lodash'
   export default {
     name: 'AlertPanel',
     props: {
       active: {
-        type: Number
+        type: Number,
       },
       activeChanged: {
         type: Boolean,
-        default: false
+        default: false,
       },
       items: {
         type: Array,
-        required: true
+        required: true,
       },
       needConfirm: {
         type: Boolean,
-        required: true
+        required: true,
       },
       showLightBox: {
         type: Boolean,
-        required: true
+        required: true,
       },
       type: {
         type: String,
-        required: true
-      }
+        required: true,
+      },
     },
     data () {
       return {
         config: {
           post: POST_ACTIVE,
-          tag: TAG_ACTIVE
+          tag: TAG_ACTIVE,
         },
         wording: {
           WORDING_ALERTPANEL_AUTHOR,
           WORDING_ALERTPANEL_CANCEL,
           WORDING_ALERTPANEL_CONFIRM,
           WORDING_ALERTPANEL_TAG,
-          WORDING_ALERTPANEL_TITLE
-        }
+          WORDING_ALERTPANEL_TITLE,
+        },
       }
     },
     computed: {
@@ -95,7 +95,7 @@
                 case POST_ACTIVE.DEACTIVE:
                   return `${WORDING_ALERTPANEL_POST}${WORDING_ALERTPANEL_DELETE_SUCCESSFUL}！`
                 case POST_ACTIVE.DRAFT:
-                  if (!_.get(this.items, [ 0, 'id' ])) {
+                  if (!_.get(this.items, [ 0, 'id', ])) {
                     return `${WORDING_ALERTPANEL_POST}${WORDING_ALERTPANEL_ADD_SUCCESSFUL}！`
                   }
                   return `${WORDING_ALERTPANEL_POST}${WORDING_ALERTPANEL_UPDATE_SUCCESSFUL}！`
@@ -122,7 +122,7 @@
                 case POST_ACTIVE.DEACTIVE:
                   return `${WORDING_ALERTPANEL_VIDEO}${WORDING_ALERTPANEL_DELETE_SUCCESSFUL}！`
                 case POST_ACTIVE.DRAFT:
-                  if (!_.get(this.items, [ 0, 'id' ])) {
+                  if (!_.get(this.items, [ 0, 'id', ])) {
                     return `${WORDING_ALERTPANEL_VIDEO}${WORDING_ALERTPANEL_ADD_SUCCESSFUL}！`
                   }
                   return `${WORDING_ALERTPANEL_VIDEO}${WORDING_ALERTPANEL_UPDATE_SUCCESSFUL}！`
@@ -156,7 +156,7 @@
           default:
             return true
         }
-      }
+      },
     },
     watch: {
       needConfirm (val) {
@@ -165,7 +165,7 @@
             this.$emit('closeAlert')
           }, 5000)
         }
-      }
+      },
     },
     methods: {
       $_alertPanel_cancel () {
@@ -190,9 +190,9 @@
         }
       },
       $_alertPanel_getPostAuthor (post) {
-        return _.get(post, [ 'author', 'nickname' ]) || _.get(post, [ 'author' ])
-      }
-    }
+        return _.get(post, [ 'author', 'nickname', ]) || _.get(post, [ 'author', ])
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>

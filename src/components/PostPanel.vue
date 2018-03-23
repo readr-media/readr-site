@@ -133,9 +133,9 @@
     WORDING_POSTEDITOR_TAG,
     WORDING_POSTEDITOR_TITLE,
     WORDING_POSTEDITOR_UPLOAD,
-    WORDING_POSTEDITOR_VIDEO
+    WORDING_POSTEDITOR_VIDEO,
   } from '../constants'
-  import { POST_ACTIVE, POST_TYPE } from '../../api/config'
+  import { POST_ACTIVE, POST_TYPE, } from '../../api/config'
   import _ from 'lodash'
   import AlertPanel from './AlertPanel.vue'
   import BaseLightBox from './BaseLightBox.vue'
@@ -148,7 +148,7 @@
   const DEFAULT_PAGE = 1
 
   const getMeta = (store, url) => {
-    return store.dispatch('GET_META', { url })
+    return store.dispatch('GET_META', { url, })
   }
 
   const getTags = (store, {
@@ -156,7 +156,7 @@
     page = DEFAULT_PAGE,
     sorting = '-update_at',
     keyword = '',
-    stats = false
+    stats = false,
   }) => {
     return store.dispatch('GET_TAGS', {
       params: {
@@ -164,13 +164,13 @@
         page: page,
         sorting: sorting,
         keyword: keyword,
-        stats: stats
-      }
+        stats: stats,
+      },
     })
   }
 
   const uploadImage = (store, file) => {
-    return store.dispatch('UPLOAD_IMAGE', { file, type: 'post' })
+    return store.dispatch('UPLOAD_IMAGE', { file, type: 'post', })
   }
 
   export default {
@@ -180,26 +180,26 @@
       'base-light-box': BaseLightBox,
       'datepicker': Datepicker,
       'text-editor': TextEditor,
-      'no-ssr': NoSSR
+      'no-ssr': NoSSR,
     },
     props: {
       post: {
         type: Object,
-        default: {}
+        default: {},
       },
       panelType: {
         type: String,
-        required: true
+        required: true,
       },
       postType: {
         type: Number,
-        required: true
-      }
+        required: true,
+      },
     },
     data () {
       return {
         config: {
-          active: POST_ACTIVE
+          active: POST_ACTIVE,
         },
         dateFormat: 'yyyy/MM/d',
         metaChanged: false,
@@ -221,23 +221,23 @@
           WORDING_POSTEDITOR_TAG,
           WORDING_POSTEDITOR_TITLE,
           WORDING_POSTEDITOR_UPLOAD,
-          WORDING_POSTEDITOR_VIDEO
+          WORDING_POSTEDITOR_VIDEO,
         },
         tagInput: '',
-        tagsSelected: []
+        tagsSelected: [],
       }
     },
     computed: {
       isEmpty () {
-        return _.isEmpty(_.trim(_.get(this.post, [ 'link' ], '')))
-          && _.isEmpty(_.trim(_.get(this.post, [ 'title' ], '')))
-          && _.isEmpty(_.trim(_.replace(_.get(this.post, [ 'content' ], ''), /<[^>]*>/g, '')))
+        return _.isEmpty(_.trim(_.get(this.post, [ 'link', ], '')))
+          && _.isEmpty(_.trim(_.get(this.post, [ 'title', ], '')))
+          && _.isEmpty(_.trim(_.replace(_.get(this.post, [ 'content', ], ''), /<[^>]*>/g, '')))
       },
       isVideo () {
         return this.postType === POST_TYPE.VIDEO
       },
       tags () {
-        let tags = _.get(this.$store, [ 'state', 'tags' ], [])
+        let tags = _.get(this.$store, [ 'state', 'tags', ], [])
         return _.filter(tags, (tag) => {
           return !_.includes(this.tagsSelectedID, tag.id)
         })
@@ -248,22 +248,22 @@
           items.push(Number(item.id))
         })
         return items
-      }
+      },
     },
     watch: {
       post () {
-        const tags = _.get(this.post, [ 'tags' ]) || []
+        const tags = _.get(this.post, [ 'tags', ]) || []
         tags.forEach((tag) => {
           this.tagsSelected.push(tag)
         })
       },
       tagInput () {
         this.$_postPanel_getTags()
-      }
+      },
     },
     beforeMount () {
-      getTags(this.$store, { stats: true })
-      const tags = _.get(this.post, [ 'tags' ]) || []
+      getTags(this.$store, { stats: true, })
+      const tags = _.get(this.post, [ 'tags', ]) || []
       tags.forEach((tag) => {
         this.tagsSelected.push(tag)
       })
@@ -291,7 +291,7 @@
       },
       $_postPanel_addTag (id) {
         this.$refs.tagsInput.focus()
-        this.tagsSelected.push(_.find(this.tags, { id: id }))
+        this.tagsSelected.push(_.find(this.tags, { id: id, }))
         this.tagsSelected = _.uniq(this.tagsSelected)
         this.tagInput = ''
         this.$refs.tagsList.classList.add('hidden')
@@ -306,14 +306,14 @@
         this.$emit('deletePost')
       },
       $_postPanel_deleteTag (id) {
-        const tag = [ _.find(this.tagsSelected, { id: id }) ]
+        const tag = [ _.find(this.tagsSelected, { id: id, }), ]
         this.tagsSelected = _.xor(this.tagsSelected, tag)
       },
       $_postPanel_focusTagInput () {
         this.$refs.tagsInput.focus()
       },
       $_postPanel_getTags () {
-        getTags(this.$store, { keyword: this.tagInput })
+        getTags(this.$store, { keyword: this.tagInput, })
       },
       $_postPanel_metaChanged () {
         this.metaChanged = true
@@ -325,7 +325,7 @@
         switch (this.panelType) {
           case 'add':
             params.active = active
-            params.author = _.get(this.$store.state, [ 'profile', 'id' ])
+            params.author = _.get(this.$store.state, [ 'profile', 'id', ])
             params.type = this.postType
 
             if (this.$can('editPostOg')) {
@@ -337,7 +337,7 @@
           case 'edit': {
             let activeChanged = false
             
-            params.author = _.get(this.post, [ 'author', 'id' ])
+            params.author = _.get(this.post, [ 'author', 'id', ])
             params.tags = this.tagsSelectedID
 
             if (active) {
@@ -362,31 +362,31 @@
       $_postPanel_submitHandler (active) {
         const params = _.omit(
           _.mapKeys(Object.assign({}, this.post), (value, key) => _.snakeCase(key)),
-          [ 'author', 'comment_amount', 'created_at', 'like_amount', 'tags', 'updated_at' ]
+          [ 'author', 'comment_amount', 'created_at', 'like_amount', 'tags', 'updated_at', ]
         )
-        params.updated_by = _.get(this.$store.state, [ 'profile', 'id' ])
+        params.updated_by = _.get(this.$store.state, [ 'profile', 'id', ])
         
         if (this.$can('editPostOg')) {
-          params.og_title = _.get(this.post, [ 'ogTitle' ]) || _.get(this.post, [ 'title' ]) || ''
+          params.og_title = _.get(this.post, [ 'ogTitle', ]) || _.get(this.post, [ 'title', ]) || ''
         }
 
-        if (Date.parse(_.get(this.post, [ 'date' ]))) {
-          params.published_at = _.get(this.post, [ 'date' ])
+        if (Date.parse(_.get(this.post, [ 'date', ]))) {
+          params.published_at = _.get(this.post, [ 'date', ])
         }
 
         if (this.metaChanged) {
-          const link = _.get(this.post, [ 'link' ])
+          const link = _.get(this.post, [ 'link', ])
           params.link_name = ''
           params.link_title = ''
           params.link_description = ''
           params.link_image = ''
-          if (validator.isURL(link, { protocols: [ 'http','https' ] }) && !this.isVideo) {
+          if (validator.isURL(link, { protocols: [ 'http','https', ], }) && !this.isVideo) {
             getMeta(this.$store, link)
             .then((res) => {
-              params.link_name = _.truncate(_.get(res, [ 'body', 'openGraph', 'siteName' ]), { 'length': 50 })
-              params.link_title = _.get(res, [ 'body', 'openGraph', 'title' ])
-              params.link_description = _.get(res, [ 'body', 'openGraph', 'description' ])
-              params.link_image = _.get(res, [ 'body', 'openGraph', 'image', 'url' ])
+              params.link_name = _.truncate(_.get(res, [ 'body', 'openGraph', 'siteName', ]), { 'length': 50, })
+              params.link_title = _.get(res, [ 'body', 'openGraph', 'title', ])
+              params.link_description = _.get(res, [ 'body', 'openGraph', 'description', ])
+              params.link_image = _.get(res, [ 'body', 'openGraph', 'image', 'url', ])
               this.$_postPanel_submit(active, params)
             })
           } else {
@@ -398,8 +398,8 @@
       },
       $_postPanel_updateContent (content) {
         this.$set(this.post, 'content', content)
-      }
-    }
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>

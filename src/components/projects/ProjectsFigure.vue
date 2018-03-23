@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { updatedAtYYYYMMDD } from '../../util/comm'
+import { updatedAtYYYYMMDD, } from '../../util/comm'
 import AppShareButton from 'src/components/AppShareButton.vue'
 import AppArticleNav from 'src/components/AppArticleNav.vue'
 
@@ -22,16 +22,16 @@ export default {
   props: {
     project: {
       type: Object,
-      required: true
-    }
+      required: true,
+    },
   },
   components: {
     AppShareButton,
-    AppArticleNav
+    AppArticleNav,
   },
   methods: {
-    updatedAtYYYYMMDD
-  }
+    updatedAtYYYYMMDD,
+  },
 }
 </script>
 

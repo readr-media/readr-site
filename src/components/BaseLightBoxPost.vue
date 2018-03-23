@@ -20,37 +20,37 @@
 </template>
 
 <script>
-import { updatedAtYYYYMMDD } from '../util/comm'
+import { updatedAtYYYYMMDD, } from '../util/comm'
 import _ from 'lodash'
 
 export default {
   props: {
     post: {
-      type: Object
+      type: Object,
     },
     showLightBox: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   watch: {
     showLightBox (val) {
       if (!val) {
         this.$emit('closeEditor')
       }
-    }
+    },
   },
   computed: {
     isPostEmpty () {
       return _.isEmpty(this.post)
-    }
+    },
   },
   methods: {
     updatedAtYYYYMMDD,
     profileImage (post) {
       return post.author.profileImage || '/public/icons/exclamation.png'
-    }
-  }
+    },
+  },
 }
 </script>
 

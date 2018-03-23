@@ -34,7 +34,7 @@ export class ReadrPerm {
     this.store = store
   }
   permVerify (comp) {
-    return _.filter(_.get(this.store, [ 'state', 'profile', 'scopes' ]), (s) => (s === comp)).length > 0
+    return _.filter(_.get(this.store, [ 'state', 'profile', 'scopes', ]), (s) => (s === comp)).length > 0
   }
 }
 const readrPerm = new ReadrPerm()
@@ -42,7 +42,7 @@ ReadrPerm.install = (Vue) => {
   Vue.mixin({
     created () {
       readrPerm.init(this.$store)
-    }
+    },
   })
 
   Vue.prototype.$can = (comp) => readrPerm.permVerify(comp)

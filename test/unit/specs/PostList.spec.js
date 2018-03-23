@@ -1,4 +1,4 @@
-import { mount } from 'avoriaz'
+import { mount, } from 'avoriaz'
 import PostList from 'src/components/PostList.vue'
 
 describe('PostList.vue', () => {

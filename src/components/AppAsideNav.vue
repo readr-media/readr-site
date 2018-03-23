@@ -36,20 +36,20 @@
 </template>
 
 <script>
-import { SECTIONS_DEFAULT } from '../constants'
+import { SECTIONS_DEFAULT, } from '../constants'
 
 export default {
   data () {
     return {
       wording: SECTIONS_DEFAULT,
-      isHoverFirstListItem: false
+      isHoverFirstListItem: false,
     }
   },
   methods: {
     isCurrentRoute (path) {
       return this.$route.path === path
-    }
-  }
+    },
+  },
 }
 </script>
 

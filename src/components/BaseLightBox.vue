@@ -19,35 +19,35 @@
     computed: {
       closeButtonClass () {
         return {
-          'hide': this.hideCloseButton
+          'hide': this.hideCloseButton,
         }
       },
       containerClass () {
         return {
           'alert': this.isAlert,
           'non-border': this.borderStyle === 'nonBorder',
-          'conversation': this.isConversation
+          'conversation': this.isConversation,
         }
-      }
+      },
     },
     props: {
       borderStyle: {
-        default: 'normal'
+        default: 'normal',
       },
       isAlert: {
         type: Boolean,
-        default: false
+        default: false,
       },
       isConversation: {
-        default: false
+        default: false,
       },
       hideCloseButton: {
-        default: false
+        default: false,
       },
       showLightBox: {
         type: Boolean,
-        default: false
-      }
+        default: false,
+      },
     },
     watch: {
       showLightBox (val) {
@@ -56,14 +56,14 @@
         } else {
           document.querySelector('.view').classList.remove('locked')
         }
-      }
+      },
     },
     mounted () {},
     methods: {
       $_baseLightBox_close () {
         this.$emit('update:showLightBox', false)
-      }
-    }
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>

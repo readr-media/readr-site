@@ -1,4 +1,4 @@
-import { mount } from 'avoriaz'
+import { mount, } from 'avoriaz'
 import Editor from 'src/components/Editor.vue'
 
 describe('Editor.vue', () => {

@@ -1,5 +1,5 @@
-const { filter, find, get, map } = require('lodash')
-const { redisFetching, redisWriting } = require('../middle/redisHandler')
+const { filter, find, get, map, } = require('lodash')
+const { redisFetching, redisWriting, } = require('../middle/redisHandler')
 const config = require('../config')
 const debug = require('debug')('READR:api:perms')
 const superagent = require('superagent')
@@ -8,7 +8,7 @@ const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API
 
 const constructScope = (perms, role) => (
   map(filter(config.SCOPES, (comp) => (
-    get(comp, [ 'perm', 'length' ], 0) === filter(comp.perm, (perm) => (
+    get(comp, [ 'perm', 'length', ], 0) === filter(comp.perm, (perm) => (
       find(perms, (p) => (
         perm === p.object && p.role === role
       ))
@@ -24,7 +24,7 @@ const fetchPermissions = () => {
   return new Promise((resolve, reject) => {
     debug('About to fetch permissions')
     const url = `/permission/all`
-    redisFetching(url, ({ error, data }) => {
+    redisFetching(url, ({ error, data, }) => {
       if (!error && data) {
         debug('Got permissions from Redis secessfully')
         resolve(JSON.parse(data))
@@ -52,5 +52,5 @@ const fetchPermissions = () => {
 
 module.exports = {
   constructScope,
-  fetchPermissions
+  fetchPermissions,
 }

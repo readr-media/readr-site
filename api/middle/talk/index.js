@@ -7,7 +7,7 @@ const updateTalkId = (member, talkId) => new Promise((resolve) => {
   const url = `${apiHost}/member`
   const payload = {
     id: member.id,
-    talk_id: talkId
+    talk_id: talkId,
   }
   superagent
     .put(url)
@@ -15,7 +15,7 @@ const updateTalkId = (member, talkId) => new Promise((resolve) => {
     .end((err, res) => {
       debug('Finished update talk_is back to the member', member.id)
       debug('err', err)
-      resolve({ err, res })
+      resolve({ err, res, })
     })
 })
 
@@ -28,18 +28,18 @@ const buildUserForTalk = (member) => new Promise((resolve) => {
       email: member.mail, // should make sure that it is email
       username,
       password: member.id,
-      confirmPassword: member.id
+      confirmPassword: member.id,
     })
     .end((err, res) => {
       debug('Finished insert member to Talk')
       debug('err', err)
       debug('res', res.body)
       updateTalkId(member, res.body.id).then(() => {
-        resolve({ err, res })
+        resolve({ err, res, })
       })
     })
 })
 
 module.exports = {
-  buildUserForTalk
+  buildUserForTalk,
 }

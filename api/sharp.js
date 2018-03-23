@@ -1,4 +1,4 @@
-const { IMAGE_UPLOAD_QUALITY_JPEG, IMAGE_UPLOAD_QUALITY_PNG } = require('./config')
+const { IMAGE_UPLOAD_QUALITY_JPEG, IMAGE_UPLOAD_QUALITY_PNG, } = require('./config')
 const fs = require('fs')
 const moment = require('moment')
 const sharp = require('sharp')
@@ -6,23 +6,23 @@ const sharp = require('sharp')
 
 const resizeOpts = {
   post: [
-    { target: 'mobile@4x', width: 1500 },
-    { target: 'mobile@3x', width: 1200 },
-    { target: 'mobile@2x', width: 800 },
-    { target: 'tablet@2x', width: 2700 },
-    { target: 'tablet@1x', width: 1000 },
-    { target: 'desktop@2x', width: 3000 },
-    { target: 'desktop@1x', width: 2000 }
+    { target: 'mobile@4x', width: 1500, },
+    { target: 'mobile@3x', width: 1200, },
+    { target: 'mobile@2x', width: 800, },
+    { target: 'tablet@2x', width: 2700, },
+    { target: 'tablet@1x', width: 1000, },
+    { target: 'desktop@2x', width: 3000, },
+    { target: 'desktop@1x', width: 2000, },
   ],
   member: [
-    { target: 'mobile@4x', width: 150 },
-    { target: 'mobile@3x', width: 120 },
-    { target: 'mobile@2x', width: 80 },
-    { target: 'tablet@2x', width: 270 },
-    { target: 'tablet@1x', width: 100 },
-    { target: 'desktop@2x', width: 300 },
-    { target: 'desktop@1x', width: 200 }
-  ]
+    { target: 'mobile@4x', width: 150, },
+    { target: 'mobile@3x', width: 120, },
+    { target: 'mobile@2x', width: 80, },
+    { target: 'tablet@2x', width: 270, },
+    { target: 'tablet@1x', width: 100, },
+    { target: 'desktop@2x', width: 300, },
+    { target: 'desktop@1x', width: 200, },
+  ],
 }
 
 const processImage = (file, sourceType) => {
@@ -46,8 +46,8 @@ const processImage = (file, sourceType) => {
       .then(() => {
         Promise.all(resizeOpts[sourceType].map((opt) => {
           return image
-            .jpeg({ quality: IMAGE_UPLOAD_QUALITY_JPEG, force: false })
-            .png({ compressionLevel: IMAGE_UPLOAD_QUALITY_PNG, force: false })
+            .jpeg({ quality: IMAGE_UPLOAD_QUALITY_JPEG, force: false, })
+            .png({ compressionLevel: IMAGE_UPLOAD_QUALITY_PNG, force: false, })
             .resize(opt.width)
             .min()
             .withoutEnlargement()
@@ -73,5 +73,5 @@ const processImage = (file, sourceType) => {
 }
 
 module.exports = {
-  processImage
+  processImage,
 }

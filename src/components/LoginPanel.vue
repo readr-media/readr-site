@@ -32,7 +32,7 @@
   </div>
 </template>
 <script>
-  import { consoleLogOnDev } from 'src/util/comm'
+  import { consoleLogOnDev, } from 'src/util/comm'
   import FacebookLogin from 'src/components/login/FacebookLogin.vue'
   import GooglePlusLogin from 'src/components/login/GooglePlusLogin.vue'
   import Login from 'src/components/login/Login.vue'
@@ -41,7 +41,7 @@
 
   const getDisposableToken = (store) => {
     return store.dispatch('DISPOSABLE_TOKEN', {
-      type: 'register'
+      type: 'register',
     })
   }
 
@@ -51,12 +51,12 @@
       GooglePlusLogin,
       Login,
       RecoverPassword,
-      Register
+      Register,
     },
     data () {
       return {
         isLoginTabAcitve: true,
-        isGoingRecoverPwd: false
+        isGoingRecoverPwd: false,
       }
     },
     name: 'login-panel',
@@ -79,16 +79,16 @@
             this.isGoingRecoverPwd = false
             break
         }
-      }
+      },
     },
     mounted () {
-      consoleLogOnDev({ msg: 'login panel' })
+      consoleLogOnDev({ msg: 'login panel', })
     },
     beforeMount () {
       Promise.all([
-        getDisposableToken(this.$store)
+        getDisposableToken(this.$store),
       ])
-    }
+    },
   }
 </script>
 <style lang="stylus" scoped>

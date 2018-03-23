@@ -17,22 +17,22 @@
 </template>
 
 <script>
-  import { SITE_DOMAIN_DEV } from '../../../src/constants'
-  import { get } from 'lodash'
-  import { renderComment } from '../../../src/util/talk'
+  import { SITE_DOMAIN_DEV, } from '../../../src/constants'
+  import { get, } from 'lodash'
+  import { renderComment, } from '../../../src/util/talk'
   import AppShareButton from '../../components/AppShareButton.vue'
   import moment from 'moment'
 
   export default {
     name: 'VideosHighlight',
     components: {
-      AppShareButton
+      AppShareButton,
     },
     props: {
       video: {
         type: Object,
-        required: true
-      }
+        required: true,
+      },
     },
     computed: {
       link () {
@@ -40,23 +40,23 @@
           return this.video.link.split(';')[0]
         }
         return 
-      }
+      },
     },
     watch: {
       video () {
         if (window.Coral) {
-          renderComment(this.$el, `.comment`, `${location.protocol}//${SITE_DOMAIN_DEV}/post/${get(this.video, [ 'id' ])}`)
+          renderComment(this.$el, `.comment`, `${location.protocol}//${SITE_DOMAIN_DEV}/post/${get(this.video, [ 'id', ])}`)
         }
-      }
+      },
     },
     mounted () {
       if (window.Coral) {
-        renderComment(this.$el, `.comment`, `${location.protocol}//${SITE_DOMAIN_DEV}/post/${get(this.video, [ 'id' ])}`)
+        renderComment(this.$el, `.comment`, `${location.protocol}//${SITE_DOMAIN_DEV}/post/${get(this.video, [ 'id', ])}`)
       }
     },
     methods: {
-      moment
-    }
+      moment,
+    },
   }
 </script>
 

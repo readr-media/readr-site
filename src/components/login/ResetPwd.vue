@@ -44,13 +44,13 @@
 
   const debug = require('debug')('CLIENT:SetPassword')
   const resetpwd = (store, params) => (store.dispatch('RESET_PWD', {
-    params
+    params,
   }))
   export default {
     name: 'ResetPwd',
     components: {
       InputItem,
-      Spinner
+      Spinner,
     },
     data () {
       return {
@@ -60,7 +60,7 @@
         formData: {},
         isDone: false,
         result: '',
-        shouldShowSpinner: false
+        shouldShowSpinner: false,
       }
     },
     methods: {
@@ -82,7 +82,7 @@
           this.shouldShowSpinner = true
           debug('About to save password')
           resetpwd(this.$store, {
-            password: this.formData.pwd
+            password: this.formData.pwd,
           }).then(res => {
             debug(res)
             this.isDone = true
@@ -135,7 +135,7 @@
           pass = false
         }
         return pass
-      }
+      },
     },
     mounted () {
 

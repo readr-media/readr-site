@@ -3,8 +3,8 @@ const debug = require('debug')('READR:api:search')
 const express = require('express')
 const router = express.Router()
 const superagent = require('superagent')
-const { fetchFromRedis, insertIntoRedis } = require('../redisHandler')
-const { get } = require('lodash')
+const { fetchFromRedis, insertIntoRedis, } = require('../redisHandler')
+const { get, } = require('lodash')
 
 router.get('/', fetchFromRedis, function(req, res, next) {
   debug('Got a search call.')

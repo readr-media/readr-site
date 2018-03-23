@@ -14,13 +14,13 @@ import _ from 'lodash'
 
 export default {
   components: {
-    AppArticleNav
+    AppArticleNav,
   },
   computed: {
     featuredProject () {
       return _.get(this.$store, 'state.projectsList.items[0]', {})
-    }
-  }
+    },
+  },
 }
 </script>
 

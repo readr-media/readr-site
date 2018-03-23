@@ -45,25 +45,25 @@
     WORDING_FOLLOW_LIST_GUEST_EDITOR,
     WORDING_FOLLOW_LIST_NEWS,
     WORDING_FOLLOW_LIST_PROJECT,
-    WORDING_FOLLOW_LIST_REVIEW
+    WORDING_FOLLOW_LIST_REVIEW,
   } from '../constants'
-  import { get } from 'lodash'
+  import { get, } from 'lodash'
   import PaginationNav from './PaginationNav.vue'
 
   export default {
     name: 'FollowingListInTab',
     components: {
-      'pagination-nav': PaginationNav
+      'pagination-nav': PaginationNav,
     },
     props: {
       currentResource: {
         type: String,
-        required: true
+        required: true,
       },
       followingByUser: {
         type: Array,
-        required: true
-      }
+        required: true,
+      },
     },
     data () {
       return {
@@ -72,15 +72,15 @@
           WORDING_FOLLOW_LIST_GUEST_EDITOR,
           WORDING_FOLLOW_LIST_NEWS,
           WORDING_FOLLOW_LIST_PROJECT,
-          WORDING_FOLLOW_LIST_REVIEW
-        }
+          WORDING_FOLLOW_LIST_REVIEW,
+        },
       }
     },
     methods: {
       $_followingListInTab_getDescription (follow) {
         switch (this.currentResource) {
           case 'member': {
-            return get(follow, [ 'description' ])
+            return get(follow, [ 'description', ])
           }
           case 'post': {
             const parser = new DOMParser()
@@ -104,8 +104,8 @@
       },
       $_followingListInTab_unfollow (id) {
         this.$emit('unfollow', this.currentResource, id)
-      }
-    }
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>

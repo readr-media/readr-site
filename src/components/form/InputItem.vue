@@ -9,7 +9,7 @@
   export default {
     data () {
       return {
-        isTooLong: false
+        isTooLong: false,
       }
     },
     name: 'input-item',
@@ -28,12 +28,12 @@
       },
       valueChange () {
         this.$emit('filled', this.inputKey, this.$refs['input'].value)
-      }
+      },
     },
     mounted () {
       this.initValue && (this.$refs['input'].value = this.initValue)
     },
-    props: [ 'inputKey', 'type', 'placeHolder', 'alertFlag', 'alertMsg', 'alertMsgShow', 'disabled', 'initValue' ],
+    props: [ 'inputKey', 'type', 'placeHolder', 'alertFlag', 'alertMsg', 'alertMsgShow', 'disabled', 'initValue', ],
     watch: {
       alertMsg: function () {
         const len = this.alertMsg ? this.alertMsg.length : 0
@@ -41,8 +41,8 @@
       },
       initValue: function () {
         this.$refs['input'].value = this.initValue
-      }
-    }
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>

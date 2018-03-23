@@ -1,6 +1,6 @@
-const { constructScope, fetchPermissions } = require('../../services/perm')
-const { redisFetching, redisWriting } = require('../redisHandler')
-const { find, pick } = require('lodash')
+const { constructScope, fetchPermissions, } = require('../../services/perm')
+const { redisFetching, redisWriting, } = require('../redisHandler')
+const { find, pick, } = require('lodash')
 const config = require('../../config')
 const debug = require('debug')('READR:api:member')
 const express = require('express')
@@ -33,8 +33,8 @@ const updateUserRoleForTalk = (role, email) => new Promise((resolve) => {
     debug("Connected successfully to server")
     const db = client.db('talk')
     const collection = db.collection('users')
-    collection.updateOne({ "profiles.id": { $in: [ email ] } }
-      , { $set: { role : role } }, function() {
+    collection.updateOne({ "profiles.id": { $in: [ email, ], }, }
+      , { $set: { role : role, }, }, function() {
       debug('Updating ', email, '\'s role to', role, 'to talk')
       client.close()
       resolve()
@@ -47,8 +47,8 @@ const updateUserNameForTalk = (email, username) => new Promise((resolve) => {
     debug("Connected successfully to server")
     const db = client.db('talk')
     const collection = db.collection('users')
-    collection.updateOne({ "profiles.id": { $in: [ email ] } }
-      , { $set: { username: username, lowercaseUsername: username.toLowerCase() } }, function() {
+    collection.updateOne({ "profiles.id": { $in: [ email, ], }, }
+      , { $set: { username: username, lowercaseUsername: username.toLowerCase(), }, }, function() {
       debug('Updating ', email, '\'s username to', username, 'to talk')
       client.close()
       resolve()
@@ -61,8 +61,8 @@ const banUserForTalk = (email) => new Promise((resolve) => {
     debug("Connected successfully to server")
     const db = client.db('talk')
     const collection = db.collection('users')
-    collection.updateOne({ "profiles.id": { $in: [ email ] } }
-      , { $set: { status: { banned: { status: true }}}}, function() {
+    collection.updateOne({ "profiles.id": { $in: [ email, ], }, }
+      , { $set: { status: { banned: { status: true, },},},}, function() {
       debug('Ban ', email)
       client.close()
       resolve()
@@ -111,13 +111,13 @@ router.get('/profile/:id', (req, res) => {
   debug('Abt to fetch public member data.')
   debug('>>>', req.url)
   // res.send('ok')
-  redisFetching(`member${req.url}`, ({ err, data }) => {
+  redisFetching(`member${req.url}`, ({ err, data, }) => {
     if (!err && data) {
       debug('Fetch public member data from Redis.')
       debug('>>>', req.url)
       const mem = JSON.parse(data)
       res.json({
-        'items': mem['_items'].map((object) => pick(object, [ 'id', 'nickname', 'description', 'profile_image' ]))
+        'items': mem['_items'].map((object) => pick(object, [ 'id', 'nickname', 'description', 'profile_image', ])),
       })
     } else {
       superagent
@@ -128,7 +128,7 @@ router.get('/profile/:id', (req, res) => {
           redisWriting(`member${req.url}`, response.text)
           const mem = JSON.parse(response.text)
           res.json({
-            'items': mem['_items'].map((object) => pick(object, [ 'id', 'nickname', 'description', 'profile_image' ]))
+            'items': mem['_items'].map((object) => pick(object, [ 'id', 'nickname', 'description', 'profile_image', ])),
           })
         } else {
           res.status(response.status).send('{\'error\':' + e + '}')

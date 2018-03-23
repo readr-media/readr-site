@@ -38,19 +38,19 @@ import _ from 'lodash'
 
 const fetchProjectsList = (store, params) => {
   return store.dispatch('GET_PROJECTS_LIST', {
-    params: params
+    params: params,
   })
 }
 const fetchFollowing = (store, params) => {
   if (params.subject) {
     return store.dispatch('GET_FOLLOWING_BY_USER', {
       subject: params.subject,
-      resource: params.resource
+      resource: params.resource,
     })
   } else {
     return store.dispatch('GET_FOLLOWING_BY_RESOURCE', {
       resource: params.resource,
-      ids: params.ids
+      ids: params.ids,
     })
   }
 }
@@ -60,22 +60,22 @@ export default {
     AppAsideNav,
     AppTitledList,
     ProjectsFigure,
-    ProjectsFigureProgress
+    ProjectsFigureProgress,
   },
   computed: {
     projects () {
       return _.get(this.$store, 'state.projectsList.items', [])
-    }
+    },
   },
   beforeMount () {
     fetchProjectsList(this.$store, {}).then(() => {
       const postIdFeaturedProject = this.$store.state.projectsList.items.map(project => project.id)
       fetchFollowing(this.$store, {
         resource: 'project',
-        ids: postIdFeaturedProject
+        ids: postIdFeaturedProject,
       })
     })
-  }
+  },
 }
 </script>
 

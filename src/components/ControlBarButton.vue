@@ -8,8 +8,8 @@
     props: {
       text: {
         type: String,
-        required: true
-      }
+        required: true,
+      },
     },
     mounted () {
       this.$emit('changeBtnAmount', true)
@@ -20,8 +20,8 @@
     methods: {
       $_controlBarButton_clickHandler () {
         this.$emit('click')
-      }
-    }
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped></style>

@@ -13,9 +13,9 @@ export default {
   props: {
     listTitle: {
       type: String,
-      required: true
-    }
-  }
+      required: true,
+    },
+  },
 }
 </script>
 

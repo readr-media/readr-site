@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import { ReadrPerm } from '../util/services'
+import { ReadrPerm, } from '../util/services'
 
 Vue.use(Router)
 Vue.use(ReadrPerm)
@@ -29,23 +29,23 @@ const SetPassword = () => import('../views/SetPassword.vue')
 const router = new Router({
   mode: 'history',
   fallback: false,
-  scrollBehavior: () => ({ y: 0 }),
+  scrollBehavior: () => ({ y: 0, }),
   routes: [
-    { path: '/', component: Home },
-    { path: '/admin', component: Admin, meta: { permission: 'admin' }},
-    { path: '/agreement', component: Agreement },
-    { path: '/editor', component: Editor, meta: { permission: 'editor' }},
-    { path: '/editors', component: Editors },
-    { path: '/guesteditor', component: GuestEditor, meta: { permission: 'guesteditor' }},
-    { path: '/login', component: Login },
-    { path: '/member', component: Member, meta: { permission: 'member' }},
-    { path: '/post/:id', component: Post },
-    { path: '/profile/:id', component: Profile },
-    { path: '/projects', component: ProjectsList },
-    { path: '/search/:keyword', component: Search },
-    { path: '/setup/:type', component: SetPassword },
+    { path: '/', component: Home, },
+    { path: '/admin', component: Admin, meta: { permission: 'admin', },},
+    { path: '/agreement', component: Agreement, },
+    { path: '/editor', component: Editor, meta: { permission: 'editor', },},
+    { path: '/editors', component: Editors, },
+    { path: '/guesteditor', component: GuestEditor, meta: { permission: 'guesteditor', },},
+    { path: '/login', component: Login, },
+    { path: '/member', component: Member, meta: { permission: 'member', },},
+    { path: '/post/:id', component: Post, },
+    { path: '/profile/:id', component: Profile, },
+    { path: '/projects', component: ProjectsList, },
+    { path: '/search/:keyword', component: Search, },
+    { path: '/setup/:type', component: SetPassword, },
     // { path: '/videos', component: Videos },
-  ]
+  ],
 })
 
 export function createRouter () {

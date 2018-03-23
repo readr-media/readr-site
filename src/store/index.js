@@ -14,7 +14,7 @@ export function createStore () {
       'followingByResource': {
         'post': [],
         'project': [],
-        'member': []
+        'member': [],
       },
       'followingByUser': [],
       'isLoggedIn': false,
@@ -34,13 +34,13 @@ export function createStore () {
       'rewardPointsTransactions': [],
       'register-token': '',
       'searchResult': {
-        'items': []
+        'items': [],
       },
       'tags': [],
       'tagsCount': 0,
     },
     actions,
     mutations,
-    getters
+    getters,
   })
 }
