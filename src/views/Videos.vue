@@ -13,7 +13,7 @@
 </template>
 
 <script>
-  import { filter, find, get, xor } from 'lodash'
+  import { filter, find, get, xor, } from 'lodash'
   import AppAsideNav from '../components/AppAsideNav.vue'
   import VideosHighlight from '../components/videos/VideosHighlight.vue'
   import VideosList from '../components/videos/VideosList.vue'
@@ -32,7 +32,7 @@
         max_result: max_result,
         page: page,
         sort: sort,
-      }
+      },
     })
   }
 
@@ -42,55 +42,55 @@
 
   export default {
     name: 'AppVideos',
-    asyncData ({ store }) {
+    asyncData ({ store, }) {
       return Promise.all([
         getVideos(store),
-        getVideosCount(store)
+        getVideosCount(store),
       ])
     },
     components: {
       AppAsideNav,
       VideosHighlight,
-      VideosList
+      VideosList,
     },
     data () {
       return {
         highlightVideo: {},
         loading: false,
-        page: DEFAULT_PAGE
+        page: DEFAULT_PAGE,
       }
     },
     computed: {
       hasMore () {
-        return get(this.$store, [ 'state', 'publicVideos', 'length' ], 0) < get(this.$store, [ 'state', 'publicVideosCount' ], 0)
+        return get(this.$store, [ 'state', 'publicVideos', 'length', ], 0) < get(this.$store, [ 'state', 'publicVideosCount', ], 0)
       },
       items () {
-        return get(this.$store, [ 'state', 'publicVideos' ], [])
+        return get(this.$store, [ 'state', 'publicVideos', ], [])
       },
       live () {
-        return find(this.videos, { type: 3 })
+        return find(this.videos, { type: 3, })
       },
       videoList () {
-        return xor(this.videos, [ this.highlightVideo ])
+        return xor(this.videos, [ this.highlightVideo, ])
       },
       videos () {
-        return filter(this.items, { type: 2 })
-      }
+        return filter(this.items, { type: 2, })
+      },
       
     },
     mounted () {
-      this.highlightVideo = this.live ? this.live : get(this.videos, [ 0 ], {})
+      this.highlightVideo = this.live ? this.live : get(this.videos, [ 0, ], {})
       // window.addEventListener('scroll', this.$_videos_scrollHandler)
     },
     methods: {
       $_videos_changeHighlight (id) {
-        this.highlightVideo = find(this.videos, { id: id })
+        this.highlightVideo = find(this.videos, { id: id, })
       },
       $_videos_loadMore () {
         if (this.hasMore && !this.loading) {
           this.loading = true
           this.page += 1
-          getVideos(this.$store, { page: this.page })
+          getVideos(this.$store, { page: this.page, })
           .then(() => {
             this.loading = false
           })
@@ -109,8 +109,8 @@
       //     })
       //   }
       // },
-      get
-    }
+      get,
+    },
   }
 </script>
 

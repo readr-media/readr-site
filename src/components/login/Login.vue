@@ -26,8 +26,8 @@
   </div>
 </template>
 <script>
-  import { ROLE_MAP } from 'src/constants'
-  import { filter, get } from 'lodash'
+  import { ROLE_MAP, } from 'src/constants'
+  import { filter, get, } from 'lodash'
   import InputTextItem from 'src/components/form/InputTextItem.vue'
   import validator from 'validator'
 
@@ -37,21 +37,21 @@
       params: {
         email: profile.email,
         password: profile.password,
-        keepAlive: profile.keepAlive
+        keepAlive: profile.keepAlive,
       },
-      token
+      token,
     })
   }
 
   export default {
     components: {
-      InputTextItem
+      InputTextItem,
     },
     data () {
       return {
         alert: {},
         formData: {},
-        resMsg: null
+        resMsg: null,
       }
     },
     name: 'Login',
@@ -64,10 +64,10 @@
           login(this.$store, {
             email: this.formData.mail,
             password: this.formData.pwd,
-            keepAlive: this.$refs[ 'keep-alive' ].checked
-          }, get(this.$store, [ 'state', 'register-token' ])).then((res) => {
+            keepAlive: this.$refs[ 'keep-alive' ].checked,
+          }, get(this.$store, [ 'state', 'register-token', ])).then((res) => {
             if (res.status === 200) {
-              const memberCenter = get(filter(ROLE_MAP, { key: get(this.$store, [ 'state', 'profile', 'role' ]) }), [ 0, 'route' ], 'member')
+              const memberCenter = get(filter(ROLE_MAP, { key: get(this.$store, [ 'state', 'profile', 'role', ]), }), [ 0, 'route', ], 'member')
               if (memberCenter.match(/member/)) {
                 location.replace('/')
               } else {
@@ -102,9 +102,9 @@
           debug('Empty pwd', this.formData.pwd)
         }
         return pass
-      }
+      },
     },
-    mounted () {}
+    mounted () {},
   }
 </script>
 <style lang="stylus" scoped>

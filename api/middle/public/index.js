@@ -1,6 +1,6 @@
-const { fetchFromRedis, redisFetching, redisWriting, insertIntoRedis } = require('../redisHandler')
-const { mapKeys, pick } = require('lodash')
-const { API_PROTOCOL, API_HOST, API_PORT, API_TIMEOUT, POST_ACTIVE, POST_TYPE } = require('../../config')
+const { fetchFromRedis, redisFetching, redisWriting, insertIntoRedis, } = require('../redisHandler')
+const { mapKeys, pick, } = require('lodash')
+const { API_PROTOCOL, API_HOST, API_PORT, API_TIMEOUT, POST_ACTIVE, POST_TYPE, } = require('../../config')
 const debug = require('debug')('READR:api:public')
 const express = require('express')
 const router = express.Router()
@@ -14,13 +14,13 @@ router.get('/members', publicQueryValidation.validate(schema.members), (req, res
   const url = `${apiHost}${req.url}`
   debug('Abt to fetch public members data.')
   debug('>>>', req.url)
-  redisFetching(`member${req.url}`, ({ err, data }) => {
+  redisFetching(`member${req.url}`, ({ err, data, }) => {
     if (!err && data) {
       debug('Fetch public members data from Redis.')
       debug('>>>', req.url)
       const mem = JSON.parse(data)
       res.json({
-        'items': mem['_items'].map((object) => pick(object, [ 'id', 'nickname', 'description', 'profile_image' ]))
+        'items': mem['_items'].map((object) => pick(object, [ 'id', 'nickname', 'description', 'profile_image', ])),
       })
     } else {
       superagent
@@ -31,7 +31,7 @@ router.get('/members', publicQueryValidation.validate(schema.members), (req, res
           redisWriting(`member${req.url}`, response.text)
           const mem = JSON.parse(response.text)
           res.json({
-            'items': mem['_items'].map((object) => pick(object, [ 'id', 'nickname', 'description', 'profile_image' ]))
+            'items': mem['_items'].map((object) => pick(object, [ 'id', 'nickname', 'description', 'profile_image', ])),
           })
         } else {
           res.status(response.status).send('{\'error\':' + e + '}')

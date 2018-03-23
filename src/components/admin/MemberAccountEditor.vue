@@ -81,32 +81,32 @@
   import Radio from 'src/components/form/Radio.vue'
   import Spinner from 'src/components/Spinner.vue'
   import validator from 'validator'
-  import { ROLE_MAP } from 'src/constants/'
-  import { getValue } from 'src/util/comm'
+  import { ROLE_MAP, } from 'src/constants/'
+  import { getValue, } from 'src/util/comm'
 
   const debug = require('debug')('CLIENT:MemberAccountEditor')
   const register = (store, profile) => {
     return store.dispatch('ADD_MEMBER', {
-      params: profile
+      params: profile,
     })
   }
 
   const updateMember = (store, profile, type = '') => {
     return store.dispatch('UPDATE_MEMBER', {
       params: profile,
-      type
+      type,
     })
   }
 
   const deleteMember = (store, profile) => {
     return store.dispatch('DELETE_MEMBER', {
-      params: profile
+      params: profile,
     })
   }
 
   const deleteMembers = (store, params) => {
     return store.dispatch('DELETE_MEMBERS', {
-      params
+      params,
     })
   }
 
@@ -122,24 +122,24 @@
     components: {
       InputItem,
       Radio,
-      Spinner
+      Spinner,
     },
     computed: {
       emailVal () {
-        return this.typedEmail || _.get(this.members, [ 0, 'mail' ], '')
+        return this.typedEmail || _.get(this.members, [ 0, 'mail', ], '')
       },
       id () {
-        return _.get(this.members, [ 0, 'id' ])
+        return _.get(this.members, [ 0, 'id', ])
       },
       nicknameVal () {
-        return _.get(this.members, [ 0, 'nickname' ])
+        return _.get(this.members, [ 0, 'nickname', ])
       },
       roleValue () {
-        return this.selectedRole || _.get(this.members, [ 0, 'role' ])
+        return this.selectedRole || _.get(this.members, [ 0, 'role', ])
       },
       roles () {
         return ROLE_MAP
-      }
+      },
     },
     data () {
       return {
@@ -148,10 +148,10 @@
         alertMsgShow: {},
         isEdible: true,
         message: null,
-        typedEmail: _.get(this.members, [ 0, 'mail' ], null),
-        selectedRole: _.get(this.members, [ 0, 'role' ], null),
+        typedEmail: _.get(this.members, [ 0, 'mail', ], null),
+        selectedRole: _.get(this.members, [ 0, 'role', ], null),
         shouldShowBtnSet: false,
-        shouldShowSpinner: false
+        shouldShowSpinner: false,
       }
     },
     name: 'MemberAccountEditor',
@@ -184,7 +184,7 @@
         if (this.shouldShowSpinner) { return }
         if (this.validate() || this.action === 'delete') {
           this.shouldShowSpinner = true
-          const callback = ({ status }) => {
+          const callback = ({ status, }) => {
             this.isEdible = false
             this.shouldShowSpinner = false
             if (status === 200) {
@@ -203,21 +203,21 @@
             updateMember(this.$store, {
               id: this.id,
               mail: this.typedEmail,
-              role: this.selectedRole
+              role: this.selectedRole,
             }, 'role').then(callback)
           } else if (this.action === 'add') {
             register(this.$store, {
               email: this.typedEmail,
-              role: this.selectedRole
+              role: this.selectedRole,
             }).then(callback)
           } else if (this.action === 'delete') {
             if (this.members.length > 1) {
               deleteMembers(this.$store, {
-                ids: _.map(this.members, (m) => (m.id))
+                ids: _.map(this.members, (m) => (m.id)),
               }).then(callback)
             } else {
               deleteMember(this.$store, {
-                id: this.id
+                id: this.id,
               }).then(callback)
             }
           }
@@ -243,24 +243,24 @@
         }
         this.$forceUpdate()
         return pass
-      }
+      },
     },
     mounted () {},
-    props: [ 'shouldShow', 'title', 'members', 'action' ],
+    props: [ 'shouldShow', 'title', 'members', 'action', ],
     watch: {
       members: function () {
-        this.typedEmail = _.get(this.members, [ 0, 'mail' ], null)
-        this.selectedRole = _.get(this.members, [ 0, 'role' ], null)
+        this.typedEmail = _.get(this.members, [ 0, 'mail', ], null)
+        this.selectedRole = _.get(this.members, [ 0, 'role', ], null)
         this.message = null
         this.isEdible = true
       },
       shouldShow: function () {
-        this.typedEmail = _.get(this.members, [ 0, 'mail' ], '')
-        this.selectedRole = _.get(this.members, [ 0, 'role' ])
+        this.typedEmail = _.get(this.members, [ 0, 'mail', ], '')
+        this.selectedRole = _.get(this.members, [ 0, 'role', ])
         this.message = null
         this.isEdible = true
-      }
-    }
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>

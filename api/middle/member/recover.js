@@ -1,5 +1,5 @@
-const { fetchMem, sendRecoverPwdEmail, verifyToken } = require('./comm')
-const { get } = require('lodash')
+const { fetchMem, sendRecoverPwdEmail, verifyToken, } = require('./comm')
+const { get, } = require('lodash')
 const Cookies = require('cookies')
 const config = require('../../config')
 const debug = require('debug')('READR:api:member:recoverpwd')
@@ -10,7 +10,7 @@ const router = express.Router()
 const superagent = require('superagent')
 
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
-const authVerify = jwtExpress({ secret: config.JWT_SECRET })
+const authVerify = jwtExpress({ secret: config.JWT_SECRET, })
 router.post('/', authVerify, (req, res) => {
   /**
    * Check if the account exists at first.
@@ -22,7 +22,7 @@ router.post('/', authVerify, (req, res) => {
   const account = req.body && req.body.email
   // const url = `${apiHost}/member/${account}`
   if (!account) { res.status(400).end() }
-  fetchMem({ id: account }).then(({ err, res: response }) => {
+  fetchMem({ id: account, }).then(({ err, res: response, }) => {
     if (!err) {
       /**
        * About to send gen token and go reset process.
@@ -30,7 +30,7 @@ router.post('/', authVerify, (req, res) => {
       debug('account')
       debug(response.body)
       sendRecoverPwdEmail({
-        email: account
+        email: account,
       }, (e, r) => {
         debug('Sending done.')
         if (!e) {
@@ -52,21 +52,21 @@ router.post('/', authVerify, (req, res) => {
 })
 
 router.post('/set', authVerify, (req, res) => {
-  debug('Going to set up pwd:', get(req, [ 'user' ]))
+  debug('Going to set up pwd:', get(req, [ 'user', ]))
   debug(req.body)
-  if (get(req, [ 'user', 'type' ]) !== 'reset') { res.status(403).send(`Forbidden.`) }
+  if (get(req, [ 'user', 'type', ]) !== 'reset') { res.status(403).send(`Forbidden.`) }
   const id = req.user.id
   superagent
   .put(`${apiHost}/member/password`)
   .send({
     id,
-    password: req.body.password
+    password: req.body.password,
   })
   .end((err, response) => {
     if (!err && response) {
       debug('reset pwd successfully.')
       const cookies = new Cookies( req, res, {} )
-      cookies.set('setup', '', { httpOnly: false, expires: new Date(Date.now() - 1000) })          
+      cookies.set('setup', '', { httpOnly: false, expires: new Date(Date.now() - 1000), })          
       res.status(response.status).end()
     } else {
       res.status(response.status).json(err)
@@ -84,10 +84,10 @@ router.get('*', verifyToken, (req, res) => {
   debug('>>>', decoded.id)
   const token = jwtService.generateResetToken({
     id: decoded.id,
-    type: 'reset'
+    type: 'reset',
   })
   const cookies = new Cookies( req, res, {} )
-  cookies.set('setup', token, { httpOnly: false, expires: new Date(Date.now() + 24 * 60 * 60 * 1000) })      
+  cookies.set('setup', token, { httpOnly: false, expires: new Date(Date.now() + 24 * 60 * 60 * 1000), })      
   res.redirect(302, '/setup/reset')
 })
 

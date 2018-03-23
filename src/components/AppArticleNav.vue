@@ -14,24 +14,24 @@
 </template>
 
 <script>
-import { SITE_DOMAIN_DEV } from 'src/constants'
-import { renderComment } from 'src/util/talk'
+import { SITE_DOMAIN_DEV, } from 'src/constants'
+import { renderComment, } from 'src/util/talk'
 import _ from 'lodash'
 import CommentCount from 'src/components/comment/CommentCount.vue'
 
 const publishAction = (store, data) => {
   return store.dispatch('PUBLISH_ACTION', {
-    params: data
+    params: data,
   })
 }
-const updateStoreFollowingByResource = (store, { action, resource, resourceId, userId }) => {
+const updateStoreFollowingByResource = (store, { action, resource, resourceId, userId, }) => {
   return store.dispatch('UPDATE_FOLLOWING_BY_RESOURCE', {
     params: {
       action: action,
       resource: resource,
       resourceId: resourceId,
-      userId: userId
-    }
+      userId: userId,
+    },
   })
 }
 
@@ -39,19 +39,19 @@ export default {
   props: {
     articleType: {
       type: String,
-      default: 'post'
+      default: 'post',
     },
     postId: {
       // type: [ String, Number ],
-      required: true
+      required: true,
     },
     commentCount: {
       type: Number,
-      required: true
+      required: true,
     },
   },
   components: {
-    CommentCount
+    CommentCount,
   },
   computed: {
     isFollow () {
@@ -59,12 +59,12 @@ export default {
     },
     postFollowers () {
       if (this.$store.state.isLoggedIn) {
-        const postFollowersData = _.find(this.$store.state.followingByResource[this.articleType], { resourceid: `${this.postId}` })
+        const postFollowersData = _.find(this.$store.state.followingByResource[this.articleType], { resourceid: `${this.postId}`, })
         return postFollowersData ? postFollowersData.follower : []
       } else {
         return []
       }
-    }
+    },
   },
   methods: {
     renderComment (ref) {
@@ -79,31 +79,31 @@ export default {
             action: 'follow',
             resource: this.articleType,
             subject: this.$store.state.profile.id,
-            object: `${this.postId}`
+            object: `${this.postId}`,
           })
           updateStoreFollowingByResource(this.$store, {
             action: 'follow',
             resource: this.articleType,
             resourceId: this.postId,
-            userId: this.$store.state.profile.id
+            userId: this.$store.state.profile.id,
           })
         } else {
           publishAction(this.$store, {
             action: 'unfollow',
             resource: this.articleType,
             subject: this.$store.state.profile.id,
-            object: `${this.postId}`
+            object: `${this.postId}`,
           })
           updateStoreFollowingByResource(this.$store, {
             action: 'unfollow',
             resource: this.articleType,
             resourceId: this.postId,
-            userId: this.$store.state.profile.id
+            userId: this.$store.state.profile.id,
           })
         }
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

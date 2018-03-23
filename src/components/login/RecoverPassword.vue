@@ -16,7 +16,7 @@
   </div>
 </template>
 <script>
-  import { get } from 'lodash'
+  import { get, } from 'lodash'
   import InputTextItem from 'src/components/form/InputTextItem.vue'
   import Spinner from 'src/components/Spinner.vue'
   import validator from 'validator'
@@ -25,7 +25,7 @@
   const sendResetEmail = (store, params, token) => {
     return store.dispatch('RESET_PWD_EMAIL', {
       params,
-      token
+      token,
     })
   }
 
@@ -33,21 +33,21 @@
     name: 'RecoverPassword',
     components: {
       InputTextItem,
-      Spinner
+      Spinner,
     },
     computed: {
       desc () {
         return !this.isSentEmail
           ? this.$t('login.WORDING_LOGIN_PLEASE_ENTER_YOUR_REGISTERED_EMAIL')
           : this.$t('login.WORDING_LOGIN_RESET_PWD_SUCCESSFULLY')
-      }
+      },
     },
     data () {
       return {
         alert: {},
         formData: {},
         isSentEmail: false,
-        shouldShowSpinner: false
+        shouldShowSpinner: false,
       }
     },
     methods: {
@@ -57,8 +57,8 @@
           debug('abt to send reset email')
           this.shouldShowSpinner = true
           sendResetEmail(this.$store, {
-            email: this.formData.email
-          }, get(this.$store, [ 'state', 'register-token' ])).then((res) => {
+            email: this.formData.email,
+          }, get(this.$store, [ 'state', 'register-token', ])).then((res) => {
             this.shouldShowSpinner = false
             debug('res:')
             debug(res)
@@ -102,7 +102,7 @@
           debug('>>>', this.formData.email)
         }
         return pass
-      }
+      },
     },
     mounted () {},
   }

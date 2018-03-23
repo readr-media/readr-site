@@ -11,17 +11,17 @@
   export default {
     data () {
       return {
-        selected: false
+        selected: false,
       }
     },
     name: 'radio',
     methods: {
       clickHandler () {
         !this.disabled && this.$emit('selected', this.name, this.value)
-      }
+      },
     },
     mounted () {},
-    props: [ 'label', 'value', 'name', 'disabled', 'initValue' ]
+    props: [ 'label', 'value', 'name', 'disabled', 'initValue', ],
   }
 </script>
 <style lang="stylus" scoped>

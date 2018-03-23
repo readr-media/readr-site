@@ -45,7 +45,7 @@
     mounted () {
       this.currValue = this.value
     },
-    props: [ 'alert', 'type', 'placeHolder', 'disabled', 'initValue', 'width', 'value' ],
+    props: [ 'alert', 'type', 'placeHolder', 'disabled', 'initValue', 'width', 'value', ],
     watch: {
       alert: function () {
         this.flag = this.alert.flag
@@ -58,8 +58,8 @@
       },
       currValue: function () {
         this.$emit('update:value', this.currValue)
-      }
-    }
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>

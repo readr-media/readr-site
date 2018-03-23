@@ -14,9 +14,9 @@
 </template>
 <script>
   import _ from 'lodash'
-  import { WORDING_HEADER_LOGIN, WORDING_HEADER_LOGOUT, WORIDNG_HEADER_MEMBER_CENTRE } from '../constants'
-  import { ROLE_MAP } from '../constants'
-  import { removeToken } from '../util/services'
+  import { WORDING_HEADER_LOGIN, WORDING_HEADER_LOGOUT, WORIDNG_HEADER_MEMBER_CENTRE, } from '../constants'
+  import { ROLE_MAP, } from '../constants'
+  import { removeToken, } from '../util/services'
   import SearchTool from 'src/components/search/SearchTool.vue'
 
   const checkLoginStatus = (store) => {
@@ -31,21 +31,21 @@
 
   export default {
     components: {
-      SearchTool
+      SearchTool,
     },
     computed: {
       currUrl () {
-        return _.get(this.$router, [ 'fullpath' ])
+        return _.get(this.$router, [ 'fullpath', ])
       },
       currentUser () {
-        return _.get(this.$store, [ 'state', 'profile' ], {})
+        return _.get(this.$store, [ 'state', 'profile', ], {})
       },
       isLoggedIn () {
-        return _.get(this.$store, [ 'state', 'isLoggedIn' ])
+        return _.get(this.$store, [ 'state', 'isLoggedIn', ])
       },
       userNickname () {
-        return this.isLoggedIn && _.get(this.currentUser, [ 'nickname' ], _.get(this.currentUser, [ 'name' ], this.wording.WORIDNG_HEADER_MEMBER_CENTRE))
-      }
+        return this.isLoggedIn && _.get(this.currentUser, [ 'nickname', ], _.get(this.currentUser, [ 'name', ], this.wording.WORIDNG_HEADER_MEMBER_CENTRE))
+      },
     },
     data () {
       return {
@@ -53,14 +53,14 @@
         wording: {
           WORDING_HEADER_LOGIN,
           WORDING_HEADER_LOGOUT,
-          WORIDNG_HEADER_MEMBER_CENTRE
-        }
+          WORIDNG_HEADER_MEMBER_CENTRE,
+        },
       }
     },
     name: 'AppHeader',
     methods: {
       goMemberCenter () {
-        const memberCenter = _.get(_.filter(ROLE_MAP, { key: _.get(this.$store, [ 'state', 'profile', 'role' ]) }), [ 0, 'route' ], 'member')
+        const memberCenter = _.get(_.filter(ROLE_MAP, { key: _.get(this.$store, [ 'state', 'profile', 'role', ]), }), [ 0, 'route', ], 'member')
         /**
          * use location.replace instead of router.push to server-side render page
          */
@@ -75,7 +75,7 @@
             location && location.replace('/')
           })
         })
-      }
+      },
     },
     mounted () {
       this.isClientSide = true
@@ -88,7 +88,7 @@
         return
       })
     },
-    props: [ 'sections' ]
+    props: [ 'sections', ],
   }
 </script>
 <style lang="stylus" scoped>

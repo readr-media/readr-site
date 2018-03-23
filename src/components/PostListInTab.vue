@@ -29,7 +29,7 @@
   </section>
 </template>
 <script>
-  import { POST_ACTIVE } from '../../api/config'
+  import { POST_ACTIVE, } from '../../api/config'
   import {
     WORDING_POSTLIST_DELETE,
     WORDING_POSTLIST_EDIT,
@@ -40,7 +40,7 @@
     WORDING_POSTLIST_ACTIVE_UNPUBLISH,
     WORDING_POSTLIST_ACTIVE_DRAFT,
     WORDING_POINTS_SPENT,
-    WORDING_POINTS_SPENT_WHEN
+    WORDING_POINTS_SPENT_WHEN,
   } from '../constants'
   import _ from 'lodash'
   import PaginationNav from './PaginationNav.vue'
@@ -50,17 +50,17 @@
   export default {
     name: 'PostListInTab',
     components: {
-      PaginationNav
+      PaginationNav,
     },
     props: {
       parent: {
-        type: String
+        type: String,
       },
       posts: {
         type: Array,
-        default: []
+        default: [],
         // required: true
-      }
+      },
     },
     data () {
       return {
@@ -78,21 +78,21 @@
           WORDING_POSTLIST_ACTIVE_UNPUBLISH,
           WORDING_POSTLIST_ACTIVE_DRAFT,
           WORDING_POINTS_SPENT,
-          WORDING_POINTS_SPENT_WHEN
-        }
+          WORDING_POINTS_SPENT_WHEN,
+        },
       }
     },
     computed: {
       totalPages () {
-        return Math.ceil(_.get(this.$store, [ 'state', 'postsCount' ], 0) / MAXRESULT)
-      }
+        return Math.ceil(_.get(this.$store, [ 'state', 'postsCount', ], 0) / MAXRESULT)
+      },
     },
     methods: {
       $_postListInTab_deletePost (id) {
-        this.$emit('deletePost', [ id ], POST_ACTIVE.DEACTIVE)
+        this.$emit('deletePost', [ id, ], POST_ACTIVE.DEACTIVE)
       },
       $_postListInTab_editPost (id) {
-        this.$emit('editPost', { postPanel: 'edit', id: id })
+        this.$emit('editPost', { postPanel: 'edit', id: id, })
       },
       $_postListInTab_getActive (post) {
         switch (post.active) {
@@ -122,12 +122,12 @@
         return origin
       },
       $_postListInTab_pageChanged (index) {
-        this.$emit('filterChanged', { page: index })
+        this.$emit('filterChanged', { page: index, })
       },
       $_shouldHighlightStatus (post) {
         return post.active === this.config.active.DRAFT || (this.parent === 'RewardPointsInTab' && post.active === this.config.active.ACTIVE)
-      }
-    }
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>

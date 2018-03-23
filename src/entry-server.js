@@ -1,6 +1,6 @@
-import { filter, get } from 'lodash'
-import { ROLE_MAP } from './constants'
-import { createApp } from './app' 
+import { filter, get, } from 'lodash'
+import { ROLE_MAP, } from './constants'
+import { createApp, } from './app' 
 
 const debug = require('debug')('READR:entry-server')
 const isDev = process.env.NODE_ENV !== 'production'
@@ -13,25 +13,25 @@ const isDev = process.env.NODE_ENV !== 'production'
 export default context => {
   return new Promise((resolve, reject) => {
     const s = isDev && Date.now()
-    const { app, router, store } = createApp()
+    const { app, router, store, } = createApp()
 
-    const { url, cookie, initmember } = context
-    const { route } = router.resolve(url)
-    const { fullPath } = route
+    const { url, cookie, initmember, } = context
+    const { route, } = router.resolve(url)
+    const { fullPath, } = route
 
     if (fullPath !== url) {
-      return reject({ url: fullPath })
+      return reject({ url: fullPath, })
     }
 
     const preRouteInit = cookie ? [
-      store.dispatch('CHECK_LOGIN_STATUS', { params: { cookie }}),
-      store.dispatch('GET_PROFILE', { params: { cookie }})
-    ] : [ new Promise((rslv) => rslv()) ]
+      store.dispatch('CHECK_LOGIN_STATUS', { params: { cookie, },}),
+      store.dispatch('GET_PROFILE', { params: { cookie, },}),
+    ] : [ new Promise((rslv) => rslv()), ]
 
     Promise.all(preRouteInit).then(() => {
-      const role = get(filter(ROLE_MAP, { key: get(store, [ 'state', 'profile', 'role' ]) }), [ 0, 'route' ], 'visitor')
-      const permission = get(route, [ 'meta', 'permission' ])
-      const isInitMember = get(route, [ 'path' ]) === '/initmember'
+      const role = get(filter(ROLE_MAP, { key: get(store, [ 'state', 'profile', 'role', ]), }), [ 0, 'route', ], 'visitor')
+      const permission = get(route, [ 'meta', 'permission', ])
+      const isInitMember = get(route, [ 'path', ]) === '/initmember'
       debug('role:', role)
       debug('permission:', permission)
       debug('url', url)
@@ -52,15 +52,15 @@ export default context => {
         // const matchedComponents = get(route, [ 'matched' ], [])
         // no matched routes
         if (!matchedComponents.length) {
-          return reject({ code: 404 })
+          return reject({ code: 404, })
         }
         // Call fetchData hooks on components matched by the route.
         // A preFetch hook dispatches a store action and returns a Promise,
         // which is resolved when the action is complete and store state has been
         // updated.
-        const jobs = matchedComponents.map(({ asyncData }) => asyncData && asyncData({
+        const jobs = matchedComponents.map(({ asyncData, }) => asyncData && asyncData({
           store,
-          route: router.currentRoute
+          route: router.currentRoute,
         }))
         Promise.all(jobs).then(() => {
           isDev && console.log(`data pre-fetch: ${Date.now() - s}ms`)

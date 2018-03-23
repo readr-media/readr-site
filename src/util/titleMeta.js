@@ -1,7 +1,7 @@
-import { SITE_DOMAIN_DEV } from '../constants'
+import { SITE_DOMAIN_DEV, } from '../constants'
 
 function getMetaInfo (vm) {
-  const { metaInfo } = vm.$options
+  const { metaInfo, } = vm.$options
   if (metaInfo) {
     return typeof metaInfo === 'function'
       ? metaInfo.call(vm)
@@ -31,7 +31,7 @@ const serverMetaInfoMixin = {
         this.$ssrContext.metaImage = metaImage
       }
     }
-  }
+  },
 }
 
 const clientMetaInfoMixin = {
@@ -57,7 +57,7 @@ const clientMetaInfoMixin = {
         document.head.querySelector(`meta[property='og:image']`).content = metaImage
       }
     }
-  }
+  },
 }
 
 export default process.env.VUE_ENV === 'server'

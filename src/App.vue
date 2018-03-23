@@ -8,17 +8,17 @@
 </template>
 
 <script>
-  import { SECTIONS_DEFAULT } from './constants'
+  import { SECTIONS_DEFAULT, } from './constants'
   import AppHeader from './components/AppHeader.vue'
   export default {
     components: {
-      'app-header': AppHeader
+      'app-header': AppHeader,
     },
     computed: {
       sections () {
         return SECTIONS_DEFAULT
-      }
-    }
+      },
+    },
   }
 </script>
 

@@ -1,7 +1,7 @@
-const { OAuth2Client } = require('google-auth-library')
-const { constructScope } = require('../../services/perm')
-const { get } = require('lodash')
-const { redisWriting } = require('../redisHandler')
+const { OAuth2Client, } = require('google-auth-library')
+const { constructScope, } = require('../../services/perm')
+const { get, } = require('lodash')
+const { redisWriting, } = require('../redisHandler')
 const Cookies = require('cookies')
 const config = require('../../config')
 const debug = require('debug')('READR:api/middle/member')
@@ -15,7 +15,7 @@ const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API
 const login = (req, res) => {
   debug('About to send login req.')
   if ((!req.body.email || !req.body.password) && (req.body.login_mode === 'google' && req.body.login_mode === 'facebook')) {
-    res.status(400).send({ message: 'Please offer id/password.' })
+    res.status(400).send({ message: 'Please offer id/password.', })
     return
   }
   const tokenShouldBeBanned = req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer' && req.headers.authorization.split(' ')[1]
@@ -27,37 +27,37 @@ const login = (req, res) => {
       debug('Got response from login req.')
       debug('login_mode:', req.body.login_mode)
       if (!err && response) {
-        const mem = get(response, [ 'body', 'member' ], {})
-        const scopes = constructScope(get(response, [ 'body', 'permissions' ]), get(mem, [ 'role' ], 1))
+        const mem = get(response, [ 'body', 'member', ], {})
+        const scopes = constructScope(get(response, [ 'body', 'permissions', ]), get(mem, [ 'role', ], 1))
         const token = jwtService.generateJwt({
-          id: get(mem, [ 'id' ], req.body.id),
-          email: get(mem, [ 'mail' ], req.body.email),
-          name: get(mem, [ 'name' ]),
-          role: get(mem, [ 'role' ], 1),
-          talk_id: get(mem, [ 'talk_id' ], ''),
+          id: get(mem, [ 'id', ], req.body.id),
+          email: get(mem, [ 'mail', ], req.body.email),
+          name: get(mem, [ 'name', ]),
+          role: get(mem, [ 'role', ], 1),
+          talk_id: get(mem, [ 'talk_id', ], ''),
           keepAlive: req.body.keepAlive,
-          scopes
+          scopes,
         })
         
         const cookies = new Cookies( req, res, {} )
         cookies.set(config.JWT_SIGNING_COOKIE_NAME, token, {
           httpOnly: false,
           // secure: process.env.NODE_ENV === 'production',
-          expires: new Date(Date.now() + (req.body.keepAlive ? 30 : 1) * 24 * 60 * 60 * 1000)
+          expires: new Date(Date.now() + (req.body.keepAlive ? 30 : 1) * 24 * 60 * 60 * 1000),
         })
         /**
          * Revoke the token
          */
         redisWriting(tokenShouldBeBanned, 'logged', null, 24 * 60 * 60 * 1000)
         res.status(200).send({ token, profile: {
-          name: get(mem, [ 'name' ]),
-          nickname: get(mem, [ 'nickname' ]),
-          description: get(mem, [ 'description' ]),
-          id: get(mem, [ 'id' ]),
-          mail: get(mem, [ 'mail' ], req.body.email),
-          role: get(mem, [ 'role' ], req.body.email),
-          scopes
-        }})
+          name: get(mem, [ 'name', ]),
+          nickname: get(mem, [ 'nickname', ]),
+          description: get(mem, [ 'description', ]),
+          id: get(mem, [ 'id', ]),
+          mail: get(mem, [ 'mail', ], req.body.email),
+          role: get(mem, [ 'role', ], req.body.email),
+          scopes,
+        },})
       } else {
         debug('Validated in fail. Please offer correct credentials.')
         res.status(401).send('Validated in fail. Please offer correct credentials.')
@@ -74,7 +74,7 @@ const preLogin = (req, res, next) => {
     const client = new OAuth2Client(config.GOOGLE_CLIENT_ID, '', '')
     client.verifyIdToken({
       idToken: req.body.idToken,
-      audience: config.GOOGLE_CLIENT_ID
+      audience: config.GOOGLE_CLIENT_ID,
     }, (e, login) => {
       const payload = login.getPayload()
       if (payload[ 'aud' ] !== config.GOOGLE_CLIENT_ID) {

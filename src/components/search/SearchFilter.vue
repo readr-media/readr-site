@@ -20,7 +20,7 @@
     WORDING_SEARCH_FILTER_TITLE,
     WORDING_SEARCH_FILTER_VIEW,
     WORDING_SEARCH_FILTER_CONVERSATION,
-    WORDING_SEARCH_FILTER_PROJECT } from 'src/constants'
+    WORDING_SEARCH_FILTER_PROJECT, } from 'src/constants'
 
   export default {
     name: 'SearchFilter',
@@ -28,21 +28,21 @@
       return {
         flag: 'post',
         filters: [
-          { key: 'post', name: WORDING_SEARCH_FILTER_VIEW },
-          { key: 'conversation', name: WORDING_SEARCH_FILTER_CONVERSATION },
-          { key: 'project', name: WORDING_SEARCH_FILTER_PROJECT },
+          { key: 'post', name: WORDING_SEARCH_FILTER_VIEW, },
+          { key: 'conversation', name: WORDING_SEARCH_FILTER_CONVERSATION, },
+          { key: 'project', name: WORDING_SEARCH_FILTER_PROJECT, },
         ],
         wording: {
-          WORDING_SEARCH_FILTER_TITLE
-        }
+          WORDING_SEARCH_FILTER_TITLE,
+        },
       }
     },
     methods: {
       change (key) {
         this.flag = key
         this.$emit('searchChange', key)
-      }
-    }
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>

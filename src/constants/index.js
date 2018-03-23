@@ -5,10 +5,10 @@ export const SITE_DOMAIN = 'readr.com'
 export const SITE_DOMAIN_DEV = 'dev.readr.tw'
 
 export const ROLE_MAP = [
-  { key: 9, value: '管理員', route: 'admin' },
-  { key: 3, value: '編輯', route: 'editor' },
-  { key: 2, value: '總編', route: 'guesteditor' },
-  { key: 1, value: '會員', route: 'member' }
+  { key: 9, value: '管理員', route: 'admin', },
+  { key: 3, value: '編輯', route: 'editor', },
+  { key: 2, value: '總編', route: 'guesteditor', },
+  { key: 1, value: '會員', route: 'member', },
 ]
 
 export const SECTIONS_DEFAULT = {
@@ -21,7 +21,7 @@ export const SECTIONS_DEFAULT = {
   'celebrities-talk': '對話',
   'hot-talk': '焦點',
   'chief-editor-list': '客座',
-  'projects': '議題'
+  'projects': '議題',
 }
 
 // Image upload max size 30 MB

@@ -1,6 +1,6 @@
-import { camelizeKeys } from 'humps'
-import { getHost } from '../util/comm'
-import { getToken, getSetupToken, saveToken } from '../util/services'
+import { camelizeKeys, } from 'humps'
+import { getHost, } from '../util/comm'
+import { getToken, getSetupToken, saveToken, } from '../util/services'
 import _ from 'lodash'
 import qs from 'qs'
 
@@ -10,13 +10,13 @@ const host = getHost()
 
 function _buildQuery (params = {}) {
   let query = {}
-  const whitelist = [ 'where', 'max_result', 'page', 'sort', 'sorting', 'ids', 'custom_editor', 'updated_by', 'keyword', 'stats', 'role' ]
+  const whitelist = [ 'where', 'max_result', 'page', 'sort', 'sorting', 'ids', 'custom_editor', 'updated_by', 'keyword', 'stats', 'role', ]
   whitelist.forEach((ele) => {
     if (params.hasOwnProperty(ele)) {
       if (ele === 'where') {
         const where = _.mapValues(params[ele], (value) => {
-          value = Array.isArray(value) ? value : [ value ]
-          return { '$in': value }
+          value = Array.isArray(value) ? value : [ value, ]
+          return { '$in': value, }
         })
         Object.keys(where).forEach((key) => {
           query[key] = JSON.stringify(where[key])
@@ -44,14 +44,14 @@ function _doFetch (url) {
         if (res.text === 'not found') {
           reject(res.text)
         } else {
-          resolve({ status: res.status, body: camelizeKeys(res.body) })
+          resolve({ status: res.status, body: camelizeKeys(res.body), })
         }
       }
     })
   })
 }
 
-function _doFetchStrict (url, { cookie }) {
+function _doFetchStrict (url, { cookie, }) {
   return new Promise((resolve, reject) => {
     superagent
       .get(url)
@@ -61,7 +61,7 @@ function _doFetchStrict (url, { cookie }) {
           reject(err)
         } else {
           // resolve(camelizeKeys(res.body))
-          resolve({ status: res.status, body: camelizeKeys(res.body) })
+          resolve({ status: res.status, body: camelizeKeys(res.body), })
         }
       })
   })
@@ -78,7 +78,7 @@ function _doPost (url, params, token) {
           debug(err)
           reject(err)
         } else {
-          resolve({ status: res.status, body: camelizeKeys(res.body) })
+          resolve({ status: res.status, body: camelizeKeys(res.body), })
         }
       })
   })
@@ -94,7 +94,7 @@ function _doPut (url, params) {
         if (err) {
           reject(err)
         } else {
-          resolve({ status: res.status, body: camelizeKeys(res.body) })
+          resolve({ status: res.status, body: camelizeKeys(res.body), })
         }
       })
   })
@@ -109,18 +109,18 @@ function _doDelete (url) {
         if (err) {
           reject(err)
         } else {
-          resolve({ status: res.status, body: camelizeKeys(res.body) })
+          resolve({ status: res.status, body: camelizeKeys(res.body), })
         }
       })
   })
 }
 
-export function deleteMember ({ params }) {
+export function deleteMember ({ params, }) {
   const url = `${host}/api/member/${params.id}`
   return _doDelete(url)
 }
 
-export function deleteMembers ({ params }) {
+export function deleteMembers ({ params, }) {
   let url = `${host}/api/members`
   const query = _buildQuery(params)
   if (query && (query.length > 0)) {
@@ -155,7 +155,7 @@ export function deletePost (id) {
   return _doDelete(url)
 }
 
-export function deletePosts ({ params }) {
+export function deletePosts ({ params, }) {
   let url = `${host}/api/posts`
   const query = _buildQuery(params)
   if (query && (query.length > 0)) {
@@ -169,7 +169,7 @@ export function deletePostSelf (id) {
   return _doDelete(url)
 }
 
-export function deleteTags ({ params }) {
+export function deleteTags ({ params, }) {
   let url = `${host}/api/tags`
   const query = _buildQuery(params)
   if (query && (query.length > 0)) {
@@ -178,10 +178,10 @@ export function deleteTags ({ params }) {
   return _doDelete(url)
 }
 
-export function fetchCommentCount ({ params }) {
+export function fetchCommentCount ({ params, }) {
   return new Promise((resolve) => {
     const url = `${host}/api/comment/count?asset_url=${params.assetUrl}`
-    _doFetch(url).then(({ body }) => {
+    _doFetch(url).then(({ body, }) => {
       resolve(body.count)
     })
   })
@@ -190,7 +190,7 @@ export function fetchCommentCount ({ params }) {
 export function fetchMeComments () {
   return new Promise((resolve) => {
     const url = `${host}/api/comment/me`
-    _doFetchStrict(url, {}).then(({ body }) => {
+    _doFetchStrict(url, {}).then(({ body, }) => {
       resolve(body)
     })
   })
@@ -207,7 +207,7 @@ export function getFollowingByResource (params) {
         if (err) {
           reject(err)
         } else {
-          resolve({ status: res.status, body: camelizeKeys(res.body) })
+          resolve({ status: res.status, body: camelizeKeys(res.body), })
         }
       })
   })
@@ -224,7 +224,7 @@ export function getFollowingByUser (params) {
         if (err) {
           reject(err)
         } else {
-          resolve({ status: res.status, body: camelizeKeys(res.body) })
+          resolve({ status: res.status, body: camelizeKeys(res.body), })
         }
       })
   })
@@ -245,7 +245,7 @@ export function getDisposableToken (type) {
   })
 }
 
-export function getMembers ({ params }) {
+export function getMembers ({ params, }) {
   let url = `${host}/api/members`
   const query = _buildQuery(params)
   if (query && (query.length > 0)) {
@@ -254,13 +254,13 @@ export function getMembers ({ params }) {
   return _doFetchStrict(url, {})
 }
 
-export function getPublicMember ({ params }) {
+export function getPublicMember ({ params, }) {
   let url = `${host}/api/member/public`
   url = `${url}/profile/${params.id}`
   return _doFetch(url)
 }
 
-export function getPublicMembers ({ params }) {
+export function getPublicMembers ({ params, }) {
   let url = `${host}/api/public/members`
   const query = _buildQuery(params)
   if (query && (query.length > 0)) {
@@ -269,7 +269,7 @@ export function getPublicMembers ({ params }) {
   return _doFetch(url)
 }
 
-export function getPublicVideos ({ params }) {
+export function getPublicVideos ({ params, }) {
   let url = `${host}/api/public/videos`
   const query = _buildQuery(params)
   if (query && (query.length > 0)) {
@@ -285,12 +285,12 @@ export function getPublicVideosCount () {
 
 export function getMeta (targetUrl) {
   let url = `${host}/api/meta`
-  return _doPost(url, { url: targetUrl })
-    .then(res => ({ status: res.status, body: camelizeKeys(res.body) }))
+  return _doPost(url, { url: targetUrl, })
+    .then(res => ({ status: res.status, body: camelizeKeys(res.body), }))
     .catch(err => err)
 }
 
-export function getPosts ({ params }) {
+export function getPosts ({ params, }) {
   let url = `${host}/api/posts`
   const query = _buildQuery(params)
   if (query && (query.length > 0)) {
@@ -299,7 +299,7 @@ export function getPosts ({ params }) {
   return _doFetchStrict(url, {})
 }
 
-export function getPostsCount ({ params }) {
+export function getPostsCount ({ params, }) {
   let url = `${host}/api/posts/count`
   const query = _buildQuery(params)
   if (query && (query.length > 0)) {
@@ -308,7 +308,7 @@ export function getPostsCount ({ params }) {
   return _doFetchStrict(url, {})
 }
 
-export function getPublicPosts ({ params }) {
+export function getPublicPosts ({ params, }) {
   let url = `${host}/api/public/posts`
   const query = _buildQuery(params)
   if (query && (query.length > 0)) {
@@ -317,7 +317,7 @@ export function getPublicPosts ({ params }) {
   return _doFetch(url)
 }
 
-export function getPublicProjectsList ({ params }) {
+export function getPublicProjectsList ({ params, }) {
   let url = `${host}/api/project/list`
   const query = _buildQuery(params)
   if (query && (query.length > 0)) {
@@ -326,12 +326,12 @@ export function getPublicProjectsList ({ params }) {
   return _doFetch(url)
 }
 
-export function getProfile ({ params = {}}) {
+export function getProfile ({ params = {},}) {
   const url = `${host}/api/profile`
-  return _doFetchStrict(url, { cookie: params.cookie })
+  return _doFetchStrict(url, { cookie: params.cookie, })
 }
 
-export function getTags ({ params = {}}) {
+export function getTags ({ params = {},}) {
   let url = `${host}/api/tags`
   const query = _buildQuery(params)
   if (query && (query.length > 0)) {
@@ -345,15 +345,15 @@ export function getTagsCount () {
   return _doFetchStrict(url, {})
 }
 
-export function getRewardPointsTransactions ({ params }) {
+export function getRewardPointsTransactions ({ params, }) {
   const url = `${host}/api/points/${params.id}`
   return _doFetchStrict(url, {})
 }
 
-export function checkLoginStatus ({ params = {}}) {
+export function checkLoginStatus ({ params = {},}) {
   const url = `${host}/api/status`
 
-  return _doFetchStrict(url, { cookie: params.cookie })
+  return _doFetchStrict(url, { cookie: params.cookie, })
 }
 
 export function checkPassword (params) {
@@ -369,7 +369,7 @@ export function checkPassword (params) {
           reject(err)
         } else {
           saveToken(res.body.token)
-          resolve({ status: res.status, profile: res.body.profile })
+          resolve({ status: res.status, profile: res.body.profile, })
         }
       })
   })
@@ -388,7 +388,7 @@ export function login (params, token) {
           reject(err)
         } else {
           saveToken(res.body.token)
-          resolve({ status: res.status, profile: res.body.profile })
+          resolve({ status: res.status, profile: res.body.profile, })
         }
       })
   })
@@ -412,9 +412,9 @@ export function register (params, token) {
       )
       .end(function (err, res) {
         if (err) {
-          reject({ status: res.status, err: res.body.Error })
+          reject({ status: res.status, err: res.body.Error, })
         } else {
-          resolve({ status: res.status })
+          resolve({ status: res.status, })
         }
       })
   })
@@ -424,7 +424,7 @@ export function resetPwd (params) {
   const url = `${host}/api/recoverpwd/set`
   const token = getSetupToken()
   if (!token) {
-    return Promise.resolve({ status: 403 })
+    return Promise.resolve({ status: 403, })
   }
   return _doPost(url, params, token)
 }
@@ -441,44 +441,44 @@ export function addMember (params) {
   params.mail = params.email
   params.active = 0
   return _doPost(url, params)
-    .then(res => ({ status: res.status }))
+    .then(res => ({ status: res.status, }))
     .catch(err => err)
 }
 
-export function setupBasicProfile ({ params }) {
+export function setupBasicProfile ({ params, }) {
   const url = `${host}/api/initmember`
   const token = getSetupToken()
   if (!token) {
-    return Promise.resolve({ status: 403 })
+    return Promise.resolve({ status: 403, })
   }
   return _doPost(url, params, token)
 }
 
-export function updateMember ({ params, type }) {
+export function updateMember ({ params, type, }) {
   const url = type !== 'role' ? `${host}/api/member` : `${host}/api/member/role`
   return _doPut(url, params)
-    .then(res => ({ status: res.status }))
+    .then(res => ({ status: res.status, }))
     .catch(err => err)
 }
 
-export function updatePassword ({ params }) {
+export function updatePassword ({ params, }) {
   const url = `${host}/api/member/password`
   return _doPut(url, params)
-    .then(res => ({ status: res.status }))
+    .then(res => ({ status: res.status, }))
     .catch(err => err)
 }
 
-export function updatePost ({ params }) {
+export function updatePost ({ params, }) {
   const url = `${host}/api/post`
   return _doPut(url, params)
-    .then(res => ({ status: res.status }))
+    .then(res => ({ status: res.status, }))
     .catch(err => err)
 }
 
-export function updateTags ({ params }) {
+export function updateTags ({ params, }) {
   const url = `${host}/api/tags`
   return _doPut(url, params)
-    .then(res => ({ status: res.status }))
+    .then(res => ({ status: res.status, }))
     .catch(err => err)
 }
 
@@ -512,7 +512,7 @@ export function deleteMemberProfileThumbnails (id) {
     superagent
       .post(url)
       .set('Authorization', `Bearer ${getToken()}`)
-      .send({ id })
+      .send({ id, })
       .end((err, res) => {
         if (err) {
           reject(err)
@@ -523,12 +523,12 @@ export function deleteMemberProfileThumbnails (id) {
   })
 }
 
-export function verifyRecaptchaToken ({ token }) {
+export function verifyRecaptchaToken ({ token, }) {
   return new Promise((resolve, reject) => {
     const url = `${host}/api/verify-recaptcha-token`
     superagent
       .post(url)
-      .send({ token })
+      .send({ token, })
       .end(function (err, res) {
         if (err) {
           reject(err)
@@ -539,7 +539,7 @@ export function verifyRecaptchaToken ({ token }) {
   })
 }
 
-export function publishAction ({ params }) {
+export function publishAction ({ params, }) {
   return new Promise((resolve, reject) => {
     const url = `${host}/api/publish-action`
     superagent
@@ -556,10 +556,10 @@ export function publishAction ({ params }) {
   })
 }
 
-export function publishPosts ({ params }) {
+export function publishPosts ({ params, }) {
   const url = `${host}/api/posts`
   return _doPut(url, params)
-    .then(res => ({ status: res.status }))
+    .then(res => ({ status: res.status, }))
     .catch(err => err)
 }
 

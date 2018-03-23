@@ -33,13 +33,13 @@
           }
         }
         return pagesArr
-      }
+      },
     },
     data () {
       return {
         currPage: 1,
         showLeftRest: false,
-        showRightRest: false
+        showRightRest: false,
       }
     },
     name: 'PaginationNav',
@@ -70,7 +70,7 @@
               break
           }
         }
-      }
+      },
     },
     mounted () {
       this.$refs[ 'pagination' ].addEventListener('dragstart', (e) => {
@@ -84,14 +84,14 @@
     },
     props: {
       totalPages: {
-        default: 0
-      }
+        default: 0,
+      },
     },
     watch: {
       currPage: function () {
         this.$emit('pageChanged', this.currPage)
-      }
-    }
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>

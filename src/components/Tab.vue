@@ -11,30 +11,30 @@
 <script>
   export default {
     name: 'AppTab',
-    props: [ 'tabs' ],
+    props: [ 'tabs', ],
     data () {
       return {
-        activeItem: 0
+        activeItem: 0,
       }
     },
     computed: {
       tabStyle () {
         return {
-          width: `${100 / (this.tabs ? this.tabs.length : 1)}%`
+          width: `${100 / (this.tabs ? this.tabs.length : 1)}%`,
         }
-      }
+      },
     },
     watch: {
       activeItem (val) {
         this.$emit('changeTab', val)
-      }
+      },
     },
     mounted () {},
     methods: {
       navClickHandler (itemIndex) {
         this.activeItem = itemIndex
-      }
-    }
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>

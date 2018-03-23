@@ -24,13 +24,13 @@
 </template>
 
 <script>
-import { updatedAtYYYYMMDD } from '../../util/comm'
+import { updatedAtYYYYMMDD, } from '../../util/comm'
 import _ from 'lodash'
 import AppArticleNav from 'src/components/AppArticleNav.vue'
 
 export default {
   components: {
-    AppArticleNav
+    AppArticleNav,
   },
   computed: {
     articleContent () {
@@ -45,7 +45,7 @@ export default {
       })
     },
     commentCount () {
-      return _.get(_.find(_.get(this.$store, [ 'state', 'commentCount' ]), { postId: this.articleData.id }), [ 'count' ], 0)
+      return _.get(_.find(_.get(this.$store, [ 'state', 'commentCount', ]), { postId: this.articleData.id, }), [ 'count', ], 0)
     },
     titleTrim () {
       const limit = 18
@@ -56,23 +56,23 @@ export default {
       const limit = 35
       if (!this.articleContent[0]) return ''
       return this.articleContent[0].length > limit ? this.articleContent[0].slice(0, limit) + ' ......' : this.articleContent[0]
-    }
+    },
   },
   methods: {
-    updatedAtYYYYMMDD
+    updatedAtYYYYMMDD,
   },
   props: {
     articleData: {
       type: Object,
       default: {
         author: {
-          nickname: ''
+          nickname: '',
         },
         title: '',
-        content: ''
-      }
-    }
-  }
+        content: '',
+      },
+    },
+  },
 }
 </script>
 

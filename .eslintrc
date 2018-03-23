@@ -14,20 +14,22 @@
   "rules": { 
     "array-bracket-spacing": [ 2, "always" ],
     "camelcase": [ 0, "" ],
+    "comma-dangle": [ 2, "always" ],
     "no-console": 1,
     "yoda": [ 0, "never" ]
   },
   "globals": {
+    "Coral": true,
     "FB": true,
     "FormData": true,
     "expect": true,
     "gapi": true,
     "location": true,
-    "source": true,
-    "Coral": true
+    "source": true
   },
   "env": {
-    "node": true,
-    "mocha": true
+    "es6": true,
+    "mocha": true,
+    "node": true
   }
 }

@@ -1,9 +1,9 @@
 import MembersPanel from 'src/components/admin/MembersPanel.vue'
 import PaginationNav from 'src/components/PaginationNav.vue'
 import _ from 'lodash'
-import { WORDING_ADMIN_NICKNAME, WORDING_ADMIN_EMAIL, WORDING_ADMIN_ROLE } from 'src/constants'
-import { ROLE_MAP } from 'src/constants'
-import { mount } from 'avoriaz'
+import { WORDING_ADMIN_NICKNAME, WORDING_ADMIN_EMAIL, WORDING_ADMIN_ROLE, } from 'src/constants'
+import { ROLE_MAP, } from 'src/constants'
+import { mount, } from 'avoriaz'
 
 describe('MembersPanel.vue', () => {
   const MembersPanelComponent = mount(MembersPanel)
@@ -37,17 +37,17 @@ describe('MembersPanel.vue', () => {
   })
 
   const memberList = [
-    { nickname: '1', mail: 'a', role: 1 },
-    { nickname: '2', mail: 'b', role: 2 },
-    { nickname: '3', mail: 'c', role: 3 },
-    { nickname: '4', mail: 'd', role: 9 }
+    { nickname: '1', mail: 'a', role: 1, },
+    { nickname: '2', mail: 'b', role: 2, },
+    { nickname: '3', mail: 'c', role: 3, },
+    { nickname: '4', mail: 'd', role: 9, },
   ]
   const MembersPanelComponentWidthMemberList = mount(MembersPanel, {
     computed: {
       members () {
         return memberList
-      }
-    }
+      },
+    },
   })
   const memberItemsWidthMemberList = MembersPanelComponentWidthMemberList.find('.member-panel__items > .member-panel__items__item')
   it('component MembersPanel should render correct member list', () => {
@@ -59,7 +59,7 @@ describe('MembersPanel.vue', () => {
       if (i !== 0) {
         expect(nickname.text()).to.be.string(memberList[i - 1].nickname)
         expect(email.text()).to.be.string(memberList[i - 1].mail)
-        expect(role.text()).to.be.string(_.get(_.filter(ROLE_MAP, { key: memberList[i - 1].role }), [ 0, 'value' ]))
+        expect(role.text()).to.be.string(_.get(_.filter(ROLE_MAP, { key: memberList[i - 1].role, }), [ 0, 'value', ]))
       } else {
         expect(nickname.text()).to.be.string(WORDING_ADMIN_NICKNAME)
         expect(email.text()).to.be.string(WORDING_ADMIN_EMAIL)
@@ -75,12 +75,12 @@ describe('MembersPanel.vue', () => {
         updateBtn.trigger('click')
         expect(MembersPanelComponentWidthMemberList.vm.showLightBox).to.equal(true)
         MembersPanelComponentWidthMemberList.setData({
-          showLightBox: false
+          showLightBox: false,
         })
         deleteBtn.trigger('click')
         expect(MembersPanelComponentWidthMemberList.vm.showLightBox).to.equal(true)
         MembersPanelComponentWidthMemberList.setData({
-          showLightBox: false
+          showLightBox: false,
         })
       }
     })

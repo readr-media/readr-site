@@ -9,7 +9,7 @@ const {
   REDIS_READ_PORT,
   REDIS_WRITE_HOST,
   REDIS_WRITE_PORT,
-  REDIS_TIMEOUT } = require('../config')
+  REDIS_TIMEOUT, } = require('../config')
 
 const redisPoolRead = RedisConnectionPool('myRedisPoolRead', {
   host: REDIS_READ_HOST,
@@ -18,8 +18,8 @@ const redisPoolRead = RedisConnectionPool('myRedisPoolRead', {
   perform_checks: false,
   database: 0,
   options: {
-    auth_pass: REDIS_AUTH
-  }
+    auth_pass: REDIS_AUTH,
+  },
 })
 
 const redisPoolWrite = isProd ? RedisConnectionPool('myRedisPoolWrite', {
@@ -29,8 +29,8 @@ const redisPoolWrite = isProd ? RedisConnectionPool('myRedisPoolWrite', {
   perform_checks: false,
   database: 0,
   options: {
-    auth_pass: REDIS_AUTH
-  }
+    auth_pass: REDIS_AUTH,
+  },
 }) : redisPoolRead
 
 const redisFetching = (url, callback) => {
@@ -48,7 +48,7 @@ const redisFetching = (url, callback) => {
         console.log('fetching ttl in fail ', err)
       }
     })
-    callback && callback({ error, data })
+    callback && callback({ error, data, })
   })
 }
 const redisWriting = (url, data, callback, timeout) => {
@@ -72,7 +72,7 @@ const insertIntoRedis = (req, res) => {
   })
 }
 const fetchFromRedis = (req, res, next) => {
-  redisFetching(req.url, ({ error, data }) => {
+  redisFetching(req.url, ({ error, data, }) => {
     if (!error) {
       res.redis = data
       next()
@@ -86,5 +86,5 @@ module.exports = {
   fetchFromRedis,
   insertIntoRedis,
   redisFetching,
-  redisWriting
+  redisWriting,
 }

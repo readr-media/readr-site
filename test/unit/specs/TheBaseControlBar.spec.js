@@ -1,4 +1,4 @@
-import { mount } from 'avoriaz'
+import { mount, } from 'avoriaz'
 import TheBaseControlBar from 'src/components/TheBaseControlBar.vue'
 
 describe('TheBaseControlBar.vue', () => {

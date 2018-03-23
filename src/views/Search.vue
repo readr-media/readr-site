@@ -18,7 +18,7 @@
   </div>
 </template>
 <script>
-  import { filter, get } from 'lodash'
+  import { filter, get, } from 'lodash'
   import AppAsideNav from 'src/components/AppAsideNav.vue'
   import HomeArticleMain from 'src/components/home/HomeArticleMain.vue'
   import ProjectsFigure from 'src/components/projects/ProjectsFigure.vue'
@@ -28,10 +28,10 @@
   const PAGE = 1
   const debug = require('debug')('CLIENT:views:Search')
 
-  const fetchSearch = (store, { keyword, params }) => {
+  const fetchSearch = (store, { keyword, params, }) => {
     return store.dispatch('SEARCH', {
       keyword,
-      params
+      params,
     })
   }
   const fetchData = (store, route) => {
@@ -42,42 +42,42 @@
         keyword: route.params.keyword,
         params: {
           page: PAGE,
-          max_results: MAXRESULT
-        }
+          max_results: MAXRESULT,
+        },
       }),
     ])
   }
 
   export default {
     name: 'Search',
-    asyncData ({ store, route }) {
+    asyncData ({ store, route, }) {
       return fetchData(store, route)
     },
     components: {
       AppAsideNav,
       HomeArticleMain,
       ProjectsFigure,
-      SearchFilter
+      SearchFilter,
     },
     computed: {
       items () {
-        return filter(get(this.$store, 'state.searchResult.items'), { objectType: this.currFilter })
-      }
+        return filter(get(this.$store, 'state.searchResult.items'), { objectType: this.currFilter, })
+      },
     },
     data () {
       return {
-        currFilter: 'post'
+        currFilter: 'post',
       }
     },
     methods: {
       searchChange (key) {
         debug('Filter changes to:', key)
         this.currFilter = key
-      }
+      },
     },
     mounted () {
       debug('Mounted')
-    }
+    },
   }
 </script>
 <style lang="stylus" scoped>

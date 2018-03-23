@@ -17,8 +17,8 @@
   </div>
 </template>
 <script>
-  import { filter, get } from 'lodash'
-  import { ROLE_MAP } from 'src/constants'
+  import { filter, get, } from 'lodash'
+  import { ROLE_MAP, } from 'src/constants'
   import BaseLightBox from 'src/components/BaseLightBox.vue'
   import BaseLightBoxProfileEdit from 'src/components/BaseLightBoxProfileEdit.vue'
 
@@ -26,7 +26,7 @@
   export default {
     components: {
       BaseLightBox,
-      BaseLightBoxProfileEdit
+      BaseLightBoxProfileEdit,
     },
     computed: {
       isCurrUser () {
@@ -36,22 +36,22 @@
         return currUser === get(this.profile, 'id')
       },
       introduction () {
-        return get(this.profile, [ 'description' ], '')
+        return get(this.profile, [ 'description', ], '')
       },
       name () {
-        return get(this.profile, [ 'nickname' ])
+        return get(this.profile, [ 'nickname', ])
       },
       role () {
-        return get(filter(ROLE_MAP, { key: get(this.profile, [ 'role' ]) }), [ 0, 'value' ])
+        return get(filter(ROLE_MAP, { key: get(this.profile, [ 'role', ]), }), [ 0, 'value', ])
       },
       thumbnail () {
-        return get(this.profile, [ 'profileImage' ]) || '/public/icons/exclamation.png'
-      }
+        return get(this.profile, [ 'profileImage', ]) || '/public/icons/exclamation.png'
+      },
     },
     data () {
       return {
         editText: '(edit)',
-        showLightBox: false
+        showLightBox: false,
       }
     },
     name: 'about',
@@ -62,7 +62,7 @@
       },
     },
     mounted () {},
-    props: [ 'profile' ]
+    props: [ 'profile', ],
   }
 </script>
 <style lang="stylus" scoped>

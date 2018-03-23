@@ -75,11 +75,11 @@
   </div>
 </template>
 <script>
-  import { POST_ACTIVE, POST_TYPE } from '../../api/config'
+  import { POST_ACTIVE, POST_TYPE, } from '../../api/config'
   import {
     WORDING_TAB_FOLLOW_RECORD,
     WORDING_TAB_NEWS_RECORD,
-    WORDING_TAB_REVIEW_RECORD
+    WORDING_TAB_REVIEW_RECORD,
   } from '../constants'
   import _ from 'lodash'
   import About from '../components/About.vue'
@@ -101,18 +101,18 @@
   const DEFAULT_SORT = '-updated_at'
 
   const addPost = (store, params) => {
-    return store.dispatch('ADD_POST', { params })
+    return store.dispatch('ADD_POST', { params, })
   }
 
   const deletePost = (store, id) => {
-    return store.dispatch('DELETE_POST', { id: id })
+    return store.dispatch('DELETE_POST', { id: id, })
   }
 
-  const getFollowing = (store, { subject, resource, resourceType = '' }) => {
+  const getFollowing = (store, { subject, resource, resourceType = '', }) => {
     return store.dispatch('GET_FOLLOWING_BY_USER', {
       subject: subject,
       resource: resource,
-      resource_type: resourceType
+      resource_type: resourceType,
     })
   }
 
@@ -120,21 +120,21 @@
     maxResult = MAXRESULT,
     page = DEFAULT_PAGE,
     sort = DEFAULT_SORT,
-    where = {}
+    where = {},
   }) => {
     return store.dispatch('GET_POSTS_BY_USER', {
       params: {
         max_result: maxResult,
         page: page,
         sort: sort,
-        where: where
-      }
+        where: where,
+      },
     })
   }
 
   const getPostsCount = (store, params = {}) => {
     return store.dispatch('GET_POSTS_COUNT', {
-      params: params
+      params: params,
     })
   }
 
@@ -144,13 +144,13 @@
         action: 'unfollow',
         resource: resource,
         subject: subject,
-        object: object
-      }
+        object: object,
+      },
     })
   }
 
   const updatePost = (store, params) => {
-    return store.dispatch('UPDATE_POST', { params })
+    return store.dispatch('UPDATE_POST', { params, })
   }
 
   export default {
@@ -168,7 +168,7 @@
       'post-list-detailed': PostListDetailed,
       'post-list-tab': PostListInTab,
       'post-panel': PostPanel,
-      AppAsideNav
+      AppAsideNav,
     },
     data () {
       return {
@@ -176,7 +176,7 @@
         activeTab: 'reviews',
         alertType: 'post',
         config: {
-          type: POST_TYPE
+          type: POST_TYPE,
         },
         followingResource: 'member',
         isPublishPostInEditor: false,
@@ -196,13 +196,13 @@
         tabs: [
           WORDING_TAB_REVIEW_RECORD,
           WORDING_TAB_NEWS_RECORD,
-          WORDING_TAB_FOLLOW_RECORD
-        ]
+          WORDING_TAB_FOLLOW_RECORD,
+        ],
       }
     },
     computed: {
       followingByUser () {
-        return _.get(this.$store, [ 'state', 'followingByUser' ], [])
+        return _.get(this.$store, [ 'state', 'followingByUser', ], [])
       },
       itemsSelectedID () {
         const items = []
@@ -212,33 +212,33 @@
         return items
       },
       posts () {
-        return _.get(this.$store, [ 'state', 'posts' ], [])
+        return _.get(this.$store, [ 'state', 'posts', ], [])
       },
       postsDraft () {
-        return _.get(this.$store, [ 'state', 'postsDraft' ], [])
+        return _.get(this.$store, [ 'state', 'postsDraft', ], [])
       },
       profile () {
-        return _.get(this.$store, [ 'state', 'profile' ], {})
+        return _.get(this.$store, [ 'state', 'profile', ], {})
       },
       tags () {
-        return _.get(this.$store, [ 'state', 'tags' ], [])
-      }
+        return _.get(this.$store, [ 'state', 'tags', ], [])
+      },
     },
     beforeMount () {
       this.loading = true
       Promise.all([
         getPostsByUser(this.$store, {
           where: {
-            author: _.get(this.profile, [ 'id' ]),
-            type: POST_TYPE.REVIEW
-          }
+            author: _.get(this.profile, [ 'id', ]),
+            type: POST_TYPE.REVIEW,
+          },
         }),
         getPostsCount(this.$store, {
           where: {
-            author: _.get(this.profile, [ 'id' ]),
-            type: POST_TYPE.REVIEW
-          }
-        })
+            author: _.get(this.profile, [ 'id', ]),
+            type: POST_TYPE.REVIEW,
+          },
+        }),
       ])
       .then(() => this.loading = false)
       .catch(() => this.loading = false)
@@ -249,7 +249,7 @@
         this.itemsSelected.push(params)
         addPost(this.$store, params)
           .then(() => {
-            this.$_guestEditor_updatePostList({ needUpdateCount: true })
+            this.$_guestEditor_updatePostList({ needUpdateCount: true, })
             this.showEditor = false
             this.itemsActive = params.active
             this.postActiveChanged = true
@@ -266,16 +266,16 @@
       $_guestEditor_deletePosts () {
         deletePost(this.$store, this.itemsSelectedID)
           .then(() => {
-            this.$_guestEditor_updatePostList({ needUpdateCount: true })
+            this.$_guestEditor_updatePostList({ needUpdateCount: true, })
             this.showEditor = false
             this.showDraftList = false
             this.needConfirm = false
           })
       },
-      $_guestEditor_filterHandler ({ sort = this.sort, page = this.page }) {
+      $_guestEditor_filterHandler ({ sort = this.sort, page = this.page, }) {
         switch (this.activePanel) {
           case 'records':
-            return this.$_guestEditor_updatePostList({ sort: sort, page: page })
+            return this.$_guestEditor_updatePostList({ sort: sort, page: page, })
         }
       },
       $_guestEditor_openPanel (panel) {
@@ -288,11 +288,11 @@
             this.alertType = 'post'
             Promise.all([
               getPostsByUser(this.$store, {
-                where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
+                where: { author: _.get(this.profile, [ 'id', ]), type: POST_TYPE.REVIEW, },
               }),
               getPostsCount(this.$store, {
-                where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
-              })
+                where: { author: _.get(this.profile, [ 'id', ]), type: POST_TYPE.REVIEW, },
+              }),
             ])
             .then(() => this.loading = false)
             .catch(() => this.loading = false)
@@ -319,18 +319,18 @@
             Promise.all([
               getPostsByUser(this.$store, {
                 where: {
-                  author: _.get(this.profile, [ 'id' ]),
+                  author: _.get(this.profile, [ 'id', ]),
                   active: POST_ACTIVE.DRAFT,
-                  type: POST_TYPE.REVIEW
-                }
+                  type: POST_TYPE.REVIEW,
+                },
               }),
               getPostsCount(this.$store, {
                 where: {
-                  author: _.get(this.profile, [ 'id' ]),
+                  author: _.get(this.profile, [ 'id', ]),
                   active: POST_ACTIVE.DRAFT,
-                  type: POST_TYPE.REVIEW
-                }
-              })
+                  type: POST_TYPE.REVIEW,
+                },
+              }),
             ])
             .then(() => {
               this.loading = false
@@ -342,18 +342,18 @@
             Promise.all([
               getPostsByUser(this.$store, {
                 where: {
-                  author: _.get(this.profile, [ 'id' ]),
+                  author: _.get(this.profile, [ 'id', ]),
                   active: POST_ACTIVE.DRAFT,
-                  type: POST_TYPE.NEWS
-                }
+                  type: POST_TYPE.NEWS,
+                },
               }),
               getPostsCount(this.$store, {
                 where: {
-                  author: _.get(this.profile, [ 'id' ]),
+                  author: _.get(this.profile, [ 'id', ]),
                   active: POST_ACTIVE.DRAFT,
-                  type: POST_TYPE.NEWS
-                }
-              })
+                  type: POST_TYPE.NEWS,
+                },
+              }),
             ])
             .then(() => {
               this.loading = false
@@ -363,15 +363,15 @@
             break
         }
       },
-      $_guestEditor_showEditor ({ postPanel, id, postType }) {
+      $_guestEditor_showEditor ({ postPanel, id, postType, }) {
         this.itemsSelected = []
         this.alertType = 'post'
         if (postPanel === 'add') {
           this.post = {}
           this.postType = postType
         } else {
-          this.post = _.find(this.posts, { 'id': id }) || _.find(this.postsDraft, { 'id': id })
-          this.postType = _.get(this.post, [ 'type' ])
+          this.post = _.find(this.posts, { 'id': id, }) || _.find(this.postsDraft, { 'id': id, })
+          this.postType = _.get(this.post, [ 'type', ])
           this.itemsSelected.push(this.post)
         }
         this.postPanel = postPanel
@@ -384,11 +384,11 @@
             this.activeTab = 'reviews'
             Promise.all([
               getPostsByUser(this.$store, {
-                where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
+                where: { author: _.get(this.profile, [ 'id', ]), type: POST_TYPE.REVIEW, },
               }),
               getPostsCount(this.$store, {
-                where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
-              })
+                where: { author: _.get(this.profile, [ 'id', ]), type: POST_TYPE.REVIEW, },
+              }),
             ])
             .then(() => this.loading = false)
             .catch(() => this.loading = false)
@@ -397,25 +397,25 @@
             this.activeTab = 'news'
             Promise.all([
               getPostsByUser(this.$store, {
-                where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.NEWS }
+                where: { author: _.get(this.profile, [ 'id', ]), type: POST_TYPE.NEWS, },
               }),
               getPostsCount(this.$store, {
-                where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.NEWS }
-              })
+                where: { author: _.get(this.profile, [ 'id', ]), type: POST_TYPE.NEWS, },
+              }),
             ])
             .then(() => this.loading = false)
             .catch(() => this.loading = false)
             break
           case 2:
             this.activeTab = 'followings'
-            getFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'member' })
+            getFollowing(this.$store, { subject: _.get(this.profile, [ 'id', ]), resource: 'member', })
               .then(() => this.loading = false)
               .catch(() => this.loading = false)
               break
         }
       },
       $_guestEditor_unfollow (resource, object) {
-        const subject = _.get(this.profile, [ 'id' ]) 
+        const subject = _.get(this.profile, [ 'id', ]) 
         const objectID = object.toString()
         unfollow(this.$store, resource, subject, objectID) 
         .then(() => {
@@ -427,11 +427,11 @@
         this.page = DEFAULT_PAGE
         switch (resource) {
           case 'review':
-            return getFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'post', resourceType: resource })
+            return getFollowing(this.$store, { subject: _.get(this.profile, [ 'id', ]), resource: 'post', resourceType: resource, })
           case 'news':
-            return getFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: 'post', resourceType: resource })
+            return getFollowing(this.$store, { subject: _.get(this.profile, [ 'id', ]), resource: 'post', resourceType: resource, })
           default:
-            getFollowing(this.$store, { subject: _.get(this.profile, [ 'id' ]), resource: resource })
+            getFollowing(this.$store, { subject: _.get(this.profile, [ 'id', ]), resource: resource, })
         }
       },
       $_guestEditor_updatePost(params, activeChanged) {
@@ -447,7 +447,7 @@
           })
           .catch((err) => console.error(err))
       },
-      $_guestEditor_updatePostList ({ sort, page, needUpdateCount = false }) {
+      $_guestEditor_updatePostList ({ sort, page, needUpdateCount = false, }) {
         this.sort = sort || this.sort
         this.page = page || this.sort
         
@@ -455,28 +455,28 @@
           case 'reviews':
             if (needUpdateCount) {
               getPostsCount(this.$store, {
-                where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
+                where: { author: _.get(this.profile, [ 'id', ]), type: POST_TYPE.REVIEW, },
               })
             }
             getPostsByUser(this.$store, {
               page: this.page,
-              where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.REVIEW }
+              where: { author: _.get(this.profile, [ 'id', ]), type: POST_TYPE.REVIEW, },
             })
             break
           case 'news':
             if (needUpdateCount) {
               getPostsCount(this.$store, {
-                where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.NEWS }
+                where: { author: _.get(this.profile, [ 'id', ]), type: POST_TYPE.NEWS, },
               })
             }
             getPostsByUser(this.$store, {
               page: this.page,
-              where: { author: _.get(this.profile, [ 'id' ]), type: POST_TYPE.NEWS }
+              where: { author: _.get(this.profile, [ 'id', ]), type: POST_TYPE.NEWS, },
             })
             break
         }
-      }
-    }
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>

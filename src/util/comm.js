@@ -1,9 +1,9 @@
 import _ from 'lodash'
 import Cookie from 'vue-cookie'
 import uuidv4 from 'uuid/v4'
-import { SITE_DOMAIN } from '../constants'
+import { SITE_DOMAIN, } from '../constants'
 
-export function consoleLogOnDev ({ msg }) {
+export function consoleLogOnDev ({ msg, }) {
   if (currEnv() === 'dev') {
     console.log(msg)
   }
@@ -67,7 +67,7 @@ export function isScrollBarReachBottom () {
       scrOfY = document.documentElement.scrollTop
       scrOfX = document.documentElement.scrollLeft
     }
-    return [ scrOfX, scrOfY ]
+    return [ scrOfX, scrOfY, ]
   }
 
   function getDocHeight () {
@@ -84,7 +84,7 @@ export function isScrollBarReachBottom () {
 
 export function setReadrCookie () {
   const uuid = uuidv4()
-  Cookie.set('mmid', uuid, { expires: (10 * 365 * 24) + 'h' })
+  Cookie.set('mmid', uuid, { expires: (10 * 365 * 24) + 'h', })
   return uuid
 }
 

@@ -6,7 +6,7 @@
   </div>
 </template>
 <script>
-  import { get } from 'lodash'
+  import { get, } from 'lodash'
   import About from '../components/About.vue'
 
   // const MAXRESULT = 20
@@ -20,9 +20,9 @@
     },
     computed: {
       profile () {
-        return get(this.$store, [ 'state', 'profile' ], {})
+        return get(this.$store, [ 'state', 'profile', ], {})
       },
-    }
+    },
   }
 </script>
 <style lang="stylus" scoped>

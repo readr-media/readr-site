@@ -20,11 +20,11 @@
   </section>
 </template>
 <script>
-  import { POST_ACTIVE } from '../../api/config'
+  import { POST_ACTIVE, } from '../../api/config'
   import {
     WORDING_POSTLIST_DELETE,
     WORDING_POSTLIST_DRAFT_RECORD,
-    WORDING_POSTLIST_EDIT
+    WORDING_POSTLIST_EDIT,
   } from '../constants'
 
   export default {
@@ -32,24 +32,24 @@
     props: {
       posts: {
         type: Array,
-        required: true
-      }
+        required: true,
+      },
     },
     data () {
       return {
         wording: {
           WORDING_POSTLIST_DELETE,
           WORDING_POSTLIST_DRAFT_RECORD,
-          WORDING_POSTLIST_EDIT
-        }
+          WORDING_POSTLIST_EDIT,
+        },
       }
     },
     methods: {
       $_postListDetailed_deletePost (id) {
-        this.$emit('deletePost', [ id ], POST_ACTIVE.DEACTIVE)
+        this.$emit('deletePost', [ id, ], POST_ACTIVE.DEACTIVE)
       },
       $_postListDetailed_editPost (id) {
-        this.$emit('editPost', { postPanel: 'edit', id: id })
+        this.$emit('editPost', { postPanel: 'edit', id: id, })
       },
       $_postListDetailed_getDescr (content) {
         const parser = new DOMParser()
@@ -63,8 +63,8 @@
           })
           .join('')
         return origin
-      }
-    }
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>

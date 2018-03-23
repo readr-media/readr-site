@@ -9,41 +9,41 @@
 </template>
 
 <script>
-import { WORDING_POINTS_AVAILABLE } from '../constants'
+import { WORDING_POINTS_AVAILABLE, } from '../constants'
 import PostListInTab from './PostListInTab.vue'
 import _ from 'lodash'
 
 const fetchProjectsList = (store, params) => {
   return store.dispatch('GET_PROJECTS_LIST', {
-    params: params
+    params: params,
   })
 }
 
 const fetchRewardPointsTransactions = (store, params) => {
   return store.dispatch('GET_REWARD_POINTS_TRANSACTIONS', {
-    params: params
+    params: params,
   })
 }
 
 export default {
   name: 'RewardPointsInTab',
   components: {
-    PostListInTab
+    PostListInTab,
   },
   data () {
     return {
       wording: {
-        WORDING_POINTS_AVAILABLE
+        WORDING_POINTS_AVAILABLE,
       },
       userId: _.get(this.$store.state, 'profile.id', ''),
-      currentRewardPoints: _.get(this.$store.state, 'profile.points', '')
+      currentRewardPoints: _.get(this.$store.state, 'profile.points', ''),
     }
   },
   computed: {
     transactionJoinProjects () {
       return _.forEach(_.get(this.$store.state, 'rewardPointsTransactions.items', []), transaction => {
         const id = transaction.objectId
-        const found = _.find(this.projects, [ 'id', id ])
+        const found = _.find(this.projects, [ 'id', id, ])
         const active = found ? found.active : 3
         const title = found ? found.title : '不存在的專題'
         this.$set(transaction, 'active', active)
@@ -56,14 +56,14 @@ export default {
     },
     projects () {
       return _.get(this.$store.state, 'projectsList.items', [])
-    }
+    },
   },
   beforeMount () {
     fetchRewardPointsTransactions(this.$store, {
-      id: this.userId
+      id: this.userId,
     })
     fetchProjectsList(this.$store, {})
-  }
+  },
 }
 </script>
 

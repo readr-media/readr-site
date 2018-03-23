@@ -21,8 +21,8 @@
 <script>
 import AppShareButton from 'src/components/AppShareButton.vue'
 import PostContent from 'src/components/PostContent.vue'
-import { SITE_DOMAIN_DEV } from 'src/constants'
-import { dateDiffFromNow } from 'src/util/comm'
+import { SITE_DOMAIN_DEV, } from 'src/constants'
+import { dateDiffFromNow, } from 'src/util/comm'
 
 export default {
   props: {
@@ -30,20 +30,20 @@ export default {
       type: Object,
       default: {
         author: {
-          nickname: ''
+          nickname: '',
         },
         title: '',
-        content: ''
-      }
-    }
+        content: '',
+      },
+    },
   },
   components: {
     AppShareButton,
-    PostContent
+    PostContent,
   },
   data () {
     return {
-      isReadMore: false
+      isReadMore: false,
     }
   },
   computed: {
@@ -52,8 +52,8 @@ export default {
     },
     shareUrl () {
       return `${SITE_DOMAIN_DEV}/post/${this.articleData.id}`
-    }
-  }
+    },
+  },
 }
 </script>
 

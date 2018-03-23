@@ -28,8 +28,8 @@
   </div>
 </template>
 <script>
-  import { WORDING_HOME_POST_MORE, WORDING_HOME_POST_SOURCE } from 'src/constants'
-  import { find, filter, get, map } from 'lodash'
+  import { WORDING_HOME_POST_MORE, WORDING_HOME_POST_SOURCE, } from 'src/constants'
+  import { find, filter, get, map, } from 'lodash'
   import AppArticleNav from 'src/components/AppArticleNav.vue'
   import sanitizeHtml from 'sanitize-html'
   import truncate from 'truncate'
@@ -41,7 +41,7 @@
     name: 'PostContent',
     computed: {
       commentCount () {
-        return get(find(get(this.$store, 'state.commentCount'), { postId: this.post.id }), 'count', 0)
+        return get(find(get(this.$store, 'state.commentCount'), { postId: this.post.id, }), 'count', 0)
       },
       firstParagraph () {
         const limit = 150
@@ -59,29 +59,29 @@
       },
       postContent () {
         const doc = new dom().parseFromString(this.post.content)
-        const postParagraphs = map(filter(get(doc, 'childNodes'), { tagName: 'p' }), (p) => (sanitizeHtml(new seializer().serializeToString(p), { allowedTags: [ ] })))
+        const postParagraphs = map(filter(get(doc, 'childNodes'), { tagName: 'p', }), (p) => (sanitizeHtml(new seializer().serializeToString(p), { allowedTags: [ ], })))
         return postParagraphs
       },
     },
     components: {
-      AppArticleNav
+      AppArticleNav,
     },
     data () {
       return {
         isReadMore: false,
         wording: {
           WORDING_HOME_POST_MORE,
-          WORDING_HOME_POST_SOURCE
-        }
+          WORDING_HOME_POST_SOURCE,
+        },
       }
     },
     methods: {
       toogleReadmore () {
         this.isReadMore = true
-      }
+      },
     },
     mounted () {},
-    props: [ 'post' ]
+    props: [ 'post', ],
   }
 </script>
 <style lang="stylus" scoped>

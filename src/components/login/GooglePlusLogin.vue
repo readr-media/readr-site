@@ -7,20 +7,20 @@
   </div>
 </template>
 <script>
-  import { get } from 'lodash'
+  import { get, } from 'lodash'
 
   const debug = require('debug')('CLIENT:GooglePlusLogin')
   const login = (store, profile, token) => {
     return store.dispatch('LOGIN', {
       params: profile,
-      token
+      token,
     })
   }
 
   const register = (store, profile, token) => {
     return store.dispatch('REGISTER', {
       params: profile,
-      token
+      token,
     })
   }
 
@@ -35,13 +35,13 @@
           default:
             return ''
         }
-      }
+      },
     },
     name: 'GooglePlusLogin',
     methods: {
       login () {
         const readyToLogin = (idToken) => {
-          login(this.$store, { idToken, login_mode: 'google' }, get(this.$store, [ 'state', 'register-token' ]))
+          login(this.$store, { idToken, login_mode: 'google', }, get(this.$store, [ 'state', 'register-token', ]))
             .then((res) => {
               if (res.status === 200) {
                 /**
@@ -54,24 +54,24 @@
             })
         }
         if (window && !window.googleStatus) {
-          gapi && gapi.auth2.getAuthInstance().signIn({ scope: 'profile email' }).then((currUser) => {
+          gapi && gapi.auth2.getAuthInstance().signIn({ scope: 'profile email', }).then((currUser) => {
             const idToken = currUser.getAuthResponse().id_token
             gapi.client.people.people.get({
               'resourceName': 'people/me',
-              'requestMask.includeField': 'person.nicknames,person.genders,person.birthdays,person.occupations'
+              'requestMask.includeField': 'person.nicknames,person.genders,person.birthdays,person.occupations',
             }).then((response) => {
               debug('Never Authorized.')
               register(this.$store, {
                 idToken,
-                nickname: get(response, [ 'result', 'nicknames', 0, 'value' ], null),
-                gender: get(response, [ 'result', 'genders', 0, 'value' ], '').toUpperCase().substr(0, 1),
-                register_mode: 'oauth-goo'
-              }, get(this.$store, [ 'state', 'register-token' ])).then(({ status }) => {
+                nickname: get(response, [ 'result', 'nicknames', 0, 'value', ], null),
+                gender: get(response, [ 'result', 'genders', 0, 'value', ], '').toUpperCase().substr(0, 1),
+                register_mode: 'oauth-goo',
+              }, get(this.$store, [ 'state', 'register-token', ])).then(({ status, }) => {
                 if (status === 200) {
                   debug('Register successfully.')
                   readyToLogin(idToken)
                 }
-              }).catch(({ err }) => {
+              }).catch(({ err, }) => {
                 if (err === 'User Already Existed' || err === 'User Duplicated') {
                   debug('User Already Existed')
                   readyToLogin(idToken)
@@ -80,17 +80,17 @@
                 }
               })
             }, function (reason) {
-              debug({ msg: 'Error: ' + reason.result.error.message })
+              debug({ msg: 'Error: ' + reason.result.error.message, })
             })
           })
         } else {
           debug('Already authorized.')
           readyToLogin(window.googleStatus.idToken)
         }
-      }
+      },
     },
     mounted () {},
-    props: [ 'type' ]
+    props: [ 'type', ],
   }
 </script>
 <style lang="stylus" scoped>

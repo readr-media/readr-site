@@ -52,53 +52,53 @@ import {
   WORDING_PROFILEEDIT_NEWPASSWORD,
   WORDING_PROFILEEDIT_CONFIRMPASSWORD,
   WORDING_PROFILEEDIT_PERSONAL_OPTIONS,
-  WORDING_PROFILEEDIT_SAVE
+  WORDING_PROFILEEDIT_SAVE,
 } from '../constants'
-import { removeToken } from '../util/services'
+import { removeToken, } from '../util/services'
 import validator from 'validator'
 import _ from 'lodash'
 
 const updateInfo = (store, profile, action) => {
   return store.dispatch(action, {
-    params: profile
+    params: profile,
   })
 }
 const checkPassword = (store, profile) => {
   return store.dispatch('CHECK_PASSWORD', {
     params: {
       email: profile.email,
-      password: profile.password
+      password: profile.password,
       // keepAlive: profile.keepAlive
-    }
+    },
   })
 }
 const logout = (store) => {
   return store.dispatch('LOGOUT', {})
 }
 const uploadImage = (store, file) => {
-  return store.dispatch('UPLOAD_IMAGE', { file, type: 'member' })
+  return store.dispatch('UPLOAD_IMAGE', { file, type: 'member', })
 }
 const deleteMemberProfileThumbnails = (store, id) => {
-  return store.dispatch('DELETE_MEMBER_PROFILE_THUMBNAILS', { id })
+  return store.dispatch('DELETE_MEMBER_PROFILE_THUMBNAILS', { id, })
 }
 
 export default {
   props: {
     profile: {
-      type: Object
+      type: Object,
     },
     showLightBox: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   },
   data () {
     return {
-      staticNickname : _.get(this.profile, [ 'nickname' ], ''),
+      staticNickname : _.get(this.profile, [ 'nickname', ], ''),
       // inputNickname: '',
       // inputDescription: '',
-      inputNickname: _.get(this.profile, [ 'nickname' ], ''),
-      inputDescription: _.get(this.profile, [ 'description' ], ''),
+      inputNickname: _.get(this.profile, [ 'nickname', ], ''),
+      inputDescription: _.get(this.profile, [ 'description', ], ''),
       inputOldPassword: '',
       inputNewPassword: '',
       inputConfirmPassword: '',
@@ -110,8 +110,8 @@ export default {
         WORDING_PROFILEEDIT_NEWPASSWORD,
         WORDING_PROFILEEDIT_CONFIRMPASSWORD,
         WORDING_PROFILEEDIT_PERSONAL_OPTIONS,
-        WORDING_PROFILEEDIT_SAVE
-      }
+        WORDING_PROFILEEDIT_SAVE,
+      },
     }
   },
   computed: {
@@ -132,22 +132,22 @@ export default {
     //   }
     // },
     thumbnail () {
-      return _.get(this.profile, [ 'profileImage' ]) || '/public/icons/exclamation.png'
+      return _.get(this.profile, [ 'profileImage', ]) || '/public/icons/exclamation.png'
     },
     thumbnailFilePath () {
       return this.thumbnail.substr(this.thumbnail.lastIndexOf('/') + 1)
-    }
+    },
   },
   watch: {
     showLightBox (value) {
       if (!value) {
-        this.inputNickname = _.get(this.profile, [ 'nickname' ], '')
-        this.inputDescription = _.get(this.profile, [ 'description' ], '')
+        this.inputNickname = _.get(this.profile, [ 'nickname', ], '')
+        this.inputDescription = _.get(this.profile, [ 'description', ], '')
         this.inputOldPassword = ''
         this.inputNewPassword = ''
         this.inputConfirmPassword = ''
       }
-    }
+    },
   },
   methods: {
     profileEditorUploadThumbnail () {
@@ -161,7 +161,7 @@ export default {
           updateInfo(this.$store, {
             id: this.profile.id,
             edit_mode: 'edit_profile',
-            profile_image: res.body.url
+            profile_image: res.body.url,
           }, 'UPDATE_PROFILE')
         })
         .catch((err) => {
@@ -188,7 +188,7 @@ export default {
         return this[`input${field}`] === this.profile[field.toLowerCase()]
       }
       const updateBasicInfo = () => {
-        let params = { id: this.profile.id, edit_mode: 'edit_profile' }
+        let params = { id: this.profile.id, edit_mode: 'edit_profile', }
         if (!inputNotChange('Nickname')) {
           params.nickname = this.inputNickname
         }
@@ -214,7 +214,7 @@ export default {
       const updatePassword = () => {
         checkPassword(this.$store, {
           email: this.profile.id,
-          password: this.inputOldPassword
+          password: this.inputOldPassword,
           // keepAlive: this.$refs[ 'keep-alive' ].checked
         })
         .then((res) => {
@@ -224,7 +224,7 @@ export default {
             updateInfo(this.$store, {
               id: this.profile.id,
               edit_mode: 'edit_profile',
-              password: this.inputNewPassword
+              password: this.inputNewPassword,
             }, 'UPDATE_PASSWORD')
             .then(() => {
               this.inputOldPassword = ''
@@ -255,8 +255,8 @@ export default {
       if (!isOldPasswordEmpty() && isConfirmNewPassword()) {
         updatePassword()
       }
-    }
-  }
+    },
+  },
 }
 </script>
 

@@ -1,13 +1,13 @@
 const _ = require('lodash')
-const { API_DEADLINE, API_HOST, API_PORT, API_PROTOCOL, API_TIMEOUT } = require('./config')
-const { GCP_FILE_BUCKET, GOOGLE_RECAPTCHA_SECRET, GCS_IMG_MEMBER_PATH, GCS_IMG_POST_PATH } = require('./config')
-const { ENDPOINT_SECURE } = require('./config')
-const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT } = require('./config')
-const { camelizeKeys } = require('humps')
-const { constructScope, fetchPermissions } = require('./services/perm')
-const { initBucket, makeFilePublic, uploadFileToBucket, deleteFilesInFolder, publishAction } = require('./gcs.js')
-const { processImage } = require('./sharp.js')
-const { verifyToken } = require('./middle/member/comm')
+const { API_DEADLINE, API_HOST, API_PORT, API_PROTOCOL, API_TIMEOUT, } = require('./config')
+const { GCP_FILE_BUCKET, GOOGLE_RECAPTCHA_SECRET, GCS_IMG_MEMBER_PATH, GCS_IMG_POST_PATH, } = require('./config')
+const { ENDPOINT_SECURE, } = require('./config')
+const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT, } = require('./config')
+const { camelizeKeys, } = require('humps')
+const { constructScope, fetchPermissions, } = require('./services/perm')
+const { initBucket, makeFilePublic, uploadFileToBucket, deleteFilesInFolder, publishAction, } = require('./gcs.js')
+const { processImage, } = require('./sharp.js')
+const { verifyToken, } = require('./middle/member/comm')
 const bodyParser = require('body-parser')
 const config = require('./config')
 const debug = require('debug')('READR:api')
@@ -17,9 +17,9 @@ const jwtExpress = require('express-jwt')
 // const jwtService = require('./service.js')
 const multer  = require('multer')
 const scrape = require('html-metadata')
-const upload = multer({ dest: 'tmp/' })
+const upload = multer({ dest: 'tmp/', })
 
-const { fetchFromRedis, insertIntoRedis, redisFetching } = require('./middle/redisHandler')
+const { fetchFromRedis, insertIntoRedis, redisFetching, } = require('./middle/redisHandler')
 
 const router = express.Router()
 const superagent = require('superagent')
@@ -30,12 +30,12 @@ const authVerify = jwtExpress({
   secret: config.JWT_SECRET,
   isRevoked: (req, payload, done) => {
     const token = req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer' && req.headers.authorization.split(' ')[1]
-    redisFetching(token, ({ error, data }) => {
+    redisFetching(token, ({ error, data, }) => {
       error && console.error('Error occurred during fetching token from redis.')
       error && console.error(error)
       done(null, !!data)
     })
-  }
+  },
 })
 
 const fetchStaticJson = (req, res, next, jsonFileName) => {
@@ -58,7 +58,7 @@ router.use('/grouped', function(req, res, next) {
 })
 
 // parse application/x-www-form-urlencoded
-router.use(bodyParser.urlencoded({ extended: false }))
+router.use(bodyParser.urlencoded({ extended: false, }))
 // parse application/json
 router.use(bodyParser.json())
 
@@ -114,12 +114,12 @@ const fetchPromise = (url) => {
 }
 
 const authorize = (req, res, next) => {
-  const whitelist = _.get(ENDPOINT_SECURE, [ `${req.method}${req.url.replace(/\?[A-Za-z0-9.*+?^=!:${}()#%~&_@\-`|[\]/\\]*$/, '')}` ])
+  const whitelist = _.get(ENDPOINT_SECURE, [ `${req.method}${req.url.replace(/\?[A-Za-z0-9.*+?^=!:${}()#%~&_@\-`|[\]/\\]*$/, '')}`, ])
   if (whitelist) {
     fetchPermissions().then((perms) => {
       Promise.all([
-        new Promise((resolve) => (resolve(_.get(whitelist, [ 'role' ]) ? _.find(_.get(whitelist, [ 'role' ]), (r) => (r === req.user.role)) : true))),
-        new Promise((resolve) => (resolve(_.get(whitelist, [ 'perm' ]) ? _.get(whitelist, [ 'perm' ]).length === _.filter(_.get(whitelist, [ 'perm' ]), (p) => (_.find(_.filter(perms, { role: req.user.role }), { object: p }))).length : true)))
+        new Promise((resolve) => (resolve(_.get(whitelist, [ 'role', ]) ? _.find(_.get(whitelist, [ 'role', ]), (r) => (r === req.user.role)) : true))),
+        new Promise((resolve) => (resolve(_.get(whitelist, [ 'perm', ]) ? _.get(whitelist, [ 'perm', ]).length === _.filter(_.get(whitelist, [ 'perm', ]), (p) => (_.find(_.filter(perms, { role: req.user.role, }), { object: p, }))).length : true))),
       ]).then((isAuthorized) => {
         const isRoleAuthorized = isAuthorized[ 0 ]
         const isPermsAuthorized = isAuthorized[ 1 ]
@@ -145,7 +145,7 @@ const authorize = (req, res, next) => {
 router.use('/activate', verifyToken, require('./middle/member/activation'))
 router.use('/initmember', authVerify, require('./middle/member/initMember'))
 router.use('/member/public', require('./middle/member'))
-router.use('/member', [ authVerify, authorize ], require('./middle/member'))
+router.use('/member', [ authVerify, authorize, ], require('./middle/member'))
 router.use('/comment', require('./middle/comment'))
 router.use('/register', authVerify, require('./middle/member/register'))
 router.use('/recoverpwd', require('./middle/member/recover'))
@@ -159,25 +159,25 @@ router.use('/token', require('./middle/services/token'))
  * 
  */
 
-router.all('/members', [ authVerify, authorize ], function(req, res, next) {
+router.all('/members', [ authVerify, authorize, ], function(req, res, next) {
   debug('Got a /members request.')
   debug('User payload:')
   debug(req.user)
   next()
 })
-router.all('/post', [ authVerify, authorize ], function(req, res, next) {
+router.all('/post', [ authVerify, authorize, ], function(req, res, next) {
   next()
 })
-router.all('/posts', [ authVerify, authorize ], function(req, res, next) {
+router.all('/posts', [ authVerify, authorize, ], function(req, res, next) {
   next()
 })
-router.all('/following', [ authVerify, authorize ], function(req, res, next) {
+router.all('/following', [ authVerify, authorize, ], function(req, res, next) {
   next()
 })
-router.all('/tags', [ authVerify, authorize ], function(req, res, next) {
+router.all('/tags', [ authVerify, authorize, ], function(req, res, next) {
   next()
 })
-router.all('/points/:id', [ authVerify, authorize ], function(req, res, next) {
+router.all('/points/:id', [ authVerify, authorize, ], function(req, res, next) {
   next()
 })
 
@@ -192,7 +192,7 @@ router.get('/posts', authVerify, (req, res) => {
     if (!req.query.author) {
       return res.status(403).send('Forbidden. No right to access.').end()
     } else {
-      const author = _.get(JSON.parse(req.query.author), [ '$in', 0 ])
+      const author = _.get(JSON.parse(req.query.author), [ '$in', 0, ])
       if (author !== req.user.id) {
         return res.status(403).send('Forbidden. No right to access.').end()
       }
@@ -215,14 +215,14 @@ router.get('/posts', authVerify, (req, res) => {
   })
 })
 
-router.get('/profile', [ authVerify ], (req, res) => {
+router.get('/profile', [ authVerify, ], (req, res) => {
   debug('req.user')
   debug(req.user)
   const targetProfile = req.user.id
   const url = `/member/${targetProfile}`
   Promise.all([
     fetchPromise(url, req),
-    fetchPermissions()
+    fetchPermissions(),
   ]).then((response) => {
     const profile = response[ 0 ][ 'items' ][ 0 ]
     const perms = response[ 1 ]
@@ -236,7 +236,7 @@ router.get('/profile', [ authVerify ], (req, res) => {
       role: profile.role,
       scopes,
       profileImage: profile.profileImage,
-      points: profile.points
+      points: profile.points,
     })
   }).catch((err) => {
     res.status(500).send(err)
@@ -318,7 +318,7 @@ router.post('/verify-recaptcha-token', (req, res) => {
   .set('Content-Type', 'application/x-www-form-urlencoded; charset=utf-8')
   .send({
     secret: GOOGLE_RECAPTCHA_SECRET,
-    response: req.body.token
+    response: req.body.token,
   })
   .end((err, response) => {
     if (err) {
@@ -346,7 +346,7 @@ router.post('/post', authVerify, (req, res) => {
     if (!err && resp) {
       return res.status(200).end()
     } else {
-      return res.status(400).json(_.get(err, [ 'response', 'body' ], { Error: 'Error occured.' }))
+      return res.status(400).json(_.get(err, [ 'response', 'body', ], { Error: 'Error occured.', }))
     }
   })
 })
@@ -365,8 +365,8 @@ router.post('/image/:sourceType', authVerify, upload.single('image'), (req, res)
         return uploadFileToBucket(bucket, path, {
           destination: `${destination}/${fileName}`,
           metadata: {
-            contentType: file.mimetype
-          }
+            contentType: file.mimetype,
+          },
         }).then((bucketFile) => {
           console.info(`file ${fileName}(${path}) completed uploading to bucket `)
           fs.unlink(path, (err) => {
@@ -379,7 +379,7 @@ router.post('/image/:sourceType', authVerify, upload.single('image'), (req, res)
         })
       }))
       .then(() => {
-        res.status(200).send({url: `http://dev.readr.tw${destination}/${origImg}`})
+        res.status(200).send({url: `http://dev.readr.tw${destination}/${origImg}`,})
       })
     })
     .catch((err) => {
@@ -394,7 +394,7 @@ router.post('/deleteMemberProfileThumbnails', authVerify, (req, res) => {
   const id = req.body.id
   const gcsImgPathTrim = GCS_IMG_MEMBER_PATH.replace('/', '')
   deleteFilesInFolder(bucket, {
-    folder: `${gcsImgPathTrim}/${id}`
+    folder: `${gcsImgPathTrim}/${id}`,
   }).then(() => {
     res.status(200).send(`Files in folder ${id} completely delete from /assets/images/members/ in bucket`)
   })

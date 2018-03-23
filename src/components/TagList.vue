@@ -57,7 +57,7 @@
     WORDING_TAGLIST_PUBLISH_AT,
     WORDING_TAGLIST_REVIEW_COUNT,
     WORDING_TAGLIST_TAG,
-    WORDING_TAGLIST_UPDATE_AT
+    WORDING_TAGLIST_UPDATE_AT,
   } from '../constants'
   import _ from 'lodash'
   import PaginationNav from './PaginationNav.vue'
@@ -67,29 +67,29 @@
       params: {
         id: id,
         text: text,
-        updated_by: _.get(store, [ 'state', 'profile', 'id' ])
-      }
+        updated_by: _.get(store, [ 'state', 'profile', 'id', ]),
+      },
     })
   }
 
   export default {
     name: 'TagList',
     components: {
-      'pagination-nav': PaginationNav
+      'pagination-nav': PaginationNav,
     },
     props: {
       maxResult: {
         type: Number,
-        required: true
+        required: true,
       },
       sort: {
         type: String,
-        required: true
+        required: true,
       },
       tags: {
         type: Array,
-        required: true
-      }
+        required: true,
+      },
     },
     data () {
       return {
@@ -106,7 +106,7 @@
           WORDING_TAGLIST_PUBLISH_AT,
           WORDING_TAGLIST_REVIEW_COUNT,
           WORDING_TAGLIST_TAG,
-          WORDING_TAGLIST_UPDATE_AT
+          WORDING_TAGLIST_UPDATE_AT,
         },
       }
     },
@@ -115,13 +115,13 @@
         return this.addTag.trim()
       },
       totalPages () {
-        return Math.ceil(_.get(this.$store, [ 'state', 'tagsCount' ], 0) / this.maxResult)
-      }
+        return Math.ceil(_.get(this.$store, [ 'state', 'tagsCount', ], 0) / this.maxResult)
+      },
     },
     watch: {
       tags () {
         this.addTag = ''
-      }
+      },
     },
     methods: {
       $_tagList_addTag () {
@@ -146,7 +146,7 @@
         }
       },
       $_tagList_deleteTag (id) {
-        this.$emit('deleteTags', [ id ])
+        this.$emit('deleteTags', [ id, ])
       },
       $_postList_deleteTags () {
         this.$emit('deleteTags', this.checkedIems)
@@ -164,10 +164,10 @@
         } else {
           order = field
         }
-        this.$emit('filterChanged', { sort: order })
+        this.$emit('filterChanged', { sort: order, })
       },
       $_tagList_pageChanged (index) {
-        this.$emit('filterChanged', { page: index })
+        this.$emit('filterChanged', { page: index, })
       },
       $_tagList_toggleHandler (event, id) {
         if (event.target.checked) {
@@ -190,8 +190,8 @@
           })
           this.checkedIems = _.uniq(this.checkedIems)
         }
-      }
-    }
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>

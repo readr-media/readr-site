@@ -50,7 +50,7 @@
   </div>
 </template>
 <script>
-  import { POST_ACTIVE, POST_TYPE } from '../../api/config'
+  import { POST_ACTIVE, POST_TYPE, } from '../../api/config'
   import {
     WORDING_POSTLIST_ACTIVE,
     WORDING_POSTLIST_ACTIVE_DRAFT,
@@ -62,7 +62,7 @@
     WORDING_POSTLIST_TITLE,
     WORDING_POSTLIST_UPDATE,
     WORDING_POSTLIST_UPDATE_AT,
-    WORDING_POSTLIST_VIDEO
+    WORDING_POSTLIST_VIDEO,
   } from '../constants'
   import _ from 'lodash'
   import BaseLightBox from './BaseLightBox.vue'
@@ -74,20 +74,20 @@
     components: {
       BaseLightBox,
       BaseLightBoxPost,
-      PaginationNav
+      PaginationNav,
     },
     props: {
       maxResult: {
         type: Number,
-        required: true
+        required: true,
       },
       posts: {
         type: Array,
-        required: true
+        required: true,
       },
       sort: {
         type: String,
-        required: true
+        required: true,
       },
     },
     data () {
@@ -108,8 +108,8 @@
           WORDING_POSTLIST_TITLE,
           WORDING_POSTLIST_UPDATE,
           WORDING_POSTLIST_UPDATE_AT,
-          WORDING_POSTLIST_VIDEO
-        }
+          WORDING_POSTLIST_VIDEO,
+        },
       }
     },
     computed: {
@@ -118,28 +118,28 @@
       },
       canPublishPosts () {
         const items = _.filter(this.checkedIems, (item) => {
-          const post = _.find(this.posts, { id: item })
-          return _.get(post, [ 'active' ]) !== POST_ACTIVE.ACTIVE
+          const post = _.find(this.posts, { id: item, })
+          return _.get(post, [ 'active', ]) !== POST_ACTIVE.ACTIVE
         })
         return items.length > 0
       },
       totalPages () {
-        return Math.ceil(_.get(this.$store, [ 'state', 'postsCount' ], 0) / this.maxResult)
-      }
+        return Math.ceil(_.get(this.$store, [ 'state', 'postsCount', ], 0) / this.maxResult)
+      },
     },
     mounted () {},
     methods: {
       $_videoList_deletePost (id) {
-        this.$emit('deletePosts', [ id ], POST_ACTIVE.DEACTIVE)
+        this.$emit('deletePosts', [ id, ], POST_ACTIVE.DEACTIVE)
       },
       $_videoList_deletePosts () {
         this.$emit('deletePosts', this.checkedIems, POST_ACTIVE.DEACTIVE)
       },
       $_videoList_editPost (id) {
-        this.$emit('editPost', { postPanel: 'edit', id: id })
+        this.$emit('editPost', { postPanel: 'edit', id: id, })
       },
       $_videoList_getStatus (post) {
-        const status = _.get(post, [ 'active' ])
+        const status = _.get(post, [ 'active', ])
         switch (status) {
           case POST_ACTIVE.ACTIVE:
             return this.wording.WORDING_POSTLIST_ACTIVE_PUBLISH
@@ -154,15 +154,15 @@
         } else {
           order = field
         }
-        this.$emit('filterChanged', { sort: order })
+        this.$emit('filterChanged', { sort: order, })
       },
       $_videoList_pageChanged (index) {
-        this.$emit('filterChanged', { page: index })
+        this.$emit('filterChanged', { page: index, })
       },
       $_videoList_publishPosts () {
         const items = _.filter(this.checkedIems, (item) => {
-          const post = _.find(this.posts, { id: item })
-          return _.get(post, [ 'active' ]) !== POST_ACTIVE.ACTIVE
+          const post = _.find(this.posts, { id: item, })
+          return _.get(post, [ 'active', ]) !== POST_ACTIVE.ACTIVE
         })
         this.$emit('publishPosts', items, POST_ACTIVE.ACTIVE)
       },
@@ -187,8 +187,8 @@
           })
           this.checkedIems = _.uniq(this.checkedIems)
         }
-      }
-    }
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>
