@@ -1,14 +1,9 @@
 <template>
   <div class="recover-password">
-    <InputItem type="text" class="recover-password__input-email" v-if="!isSentEmail"
-      @inputFocus="resetAllAlertShow"
-      @inputFocusOut="resetAlertShow"
-      @removeAlert="removeAlert"
-      @filled="setInputValue"
-      :placeHolder="$t('login.WORDING_EMAIL')" inputKey="email"
-      :alertFlag="alertFlags.email"
-      :alertMsg="alertMsgs.email"
-      :alertMsgShow="alertMsgShow.email"></InputItem>
+    <InputTextItem class="login__input-pwd" type="text" v-if="!isSentEmail"
+      :placeHolder="$t('login.WORDING_EMAIL')"
+      :alert.sync="alert.email"
+      :value.sync="formData.email"></InputTextItem>
     <div class="recover-password__desc">
       <span v-text="desc"></span>
     </div>
@@ -21,8 +16,8 @@
   </div>
 </template>
 <script>
-  import _ from 'lodash'
-  import InputItem from 'src/components/form/InputItem.vue'
+  import { get } from 'lodash'
+  import InputTextItem from 'src/components/form/InputTextItem.vue'
   import Spinner from 'src/components/Spinner.vue'
   import validator from 'validator'
 
@@ -37,7 +32,7 @@
   export default {
     name: 'RecoverPassword',
     components: {
-      InputItem,
+      InputTextItem,
       Spinner
     },
     computed: {
@@ -49,28 +44,13 @@
     },
     data () {
       return {
-        alertFlags: {},
-        alertMsgs: {},
-        alertMsgShow: {},
+        alert: {},
         formData: {},
         isSentEmail: false,
         shouldShowSpinner: false
       }
     },
     methods: {
-      resetAllAlertShow (excluding) {
-        this.alertMsgShow = {}
-        this.alertMsgShow[ excluding ] = true
-        this.$forceUpdate()
-      },
-      resetAlertShow (target) {
-        this.alertMsgShow[ target ] = false
-        this.$forceUpdate()
-      },
-      removeAlert (target) {
-        this.alertFlags[ target ] = false
-        this.$forceUpdate()
-      },
       resetPwd () {
         if (this.shouldShowSpinner) { return }
         if (this.validate()) {
@@ -78,22 +58,26 @@
           this.shouldShowSpinner = true
           sendResetEmail(this.$store, {
             email: this.formData.email
-          }, _.get(this.$store, [ 'state', 'register-token' ])).then((res) => {
+          }, get(this.$store, [ 'state', 'register-token' ])).then((res) => {
             this.shouldShowSpinner = false
             debug('res:')
             debug(res)
             if (res.status === 200) {
               this.isSentEmail = true
             } else {
-              this.alertFlags.email = true
-              this.alertMsgs.email = this.$t('login.WORDING_LOGIN_UNAUTHORIZED')
+              this.alert.email = {
+                flag: true,
+                msg: this.$t('login.WORDING_LOGIN_UNAUTHORIZED'),
+              }
             }
           }).catch(err => {
             debug('err:')
             debug(err)
             this.shouldShowSpinner = false
-            this.alertFlags.email = true
-            this.alertMsgs.email = this.$t('login.WORDING_LOGIN_UNAUTHORIZED')
+            this.alert.email = {
+              flag: true,
+              msg: this.$t('login.WORDING_LOGIN_UNAUTHORIZED'),
+            }
           })
         }
       },
@@ -110,8 +94,10 @@
         this.alertMsgs = {}
         if (!this.formData.email || !validator.isEmail(this.formData.email)) {
           pass = false
-          this.alertFlags.email = true
-          this.alertMsgs.email = this.$t('login.WORDING_LOGIN_INVALID_EMAIL_FORMAT')
+          this.alert.email = {
+            flag: true,
+            msg: this.$t('login.WORDING_LOGIN_INVALID_EMAIL_FORMAT'),
+          }
           debug('MAIL WRONG')
           debug('>>>', this.formData.email)
         }

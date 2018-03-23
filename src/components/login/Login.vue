@@ -1,25 +1,13 @@
 <template>
   <div class="login">
-    <InputItem class="login__input-email" type="text"
-      inputKey="mail"
-      v-on:filled="setInputValue"
-      v-on:inputFocus="resetAllAlertShow"
-      v-on:inputFocusOut="resetAlertShow"
-      v-on:removeAlert="removeAlert"
+    <InputTextItem class="login__input-email" type="text"
       :placeHolder="$t('login.WORDING_EMAIL')"
-      :alertFlag="alertFlags.mail"
-      :alertMsg="alertMsgs.mail"
-      :alertMsgShow="alertMsgShow.mail"></InputItem>
-    <InputItem class="login__input-pwd" type="password"
-      inputKey="pwd"
-      v-on:filled="setInputValue"
-      v-on:inputFocus="resetAllAlertShow"
-      v-on:inputFocusOut="resetAlertShow"
-      v-on:removeAlert="removeAlert"
+      :alert.sync="alert.mail"
+      :value.sync="formData.mail"></InputTextItem>
+    <InputTextItem class="login__input-pwd" type="password"
       :placeHolder="$t('login.WORDING_PASSWORD')"
-      :alertFlag="alertFlags.pwd"
-      :alertMsg="alertMsgs.pwd"
-      :alertMsgShow="alertMsgShow.pwd"></InputItem>
+      :alert.sync="alert.pwd"
+      :value.sync="formData.pwd"></InputTextItem>
     <div class="login__wrapper">
       <div class="keep-login-alive">
         <input type="checkbox" id="keep-alive" ref="keep-alive">
@@ -38,12 +26,12 @@
   </div>
 </template>
 <script>
-  import _ from 'lodash'
   import { ROLE_MAP } from 'src/constants'
-  import { consoleLogOnDev } from 'src/util/comm'
-  import InputItem from 'src/components/form/InputItem.vue'
+  import { filter, get } from 'lodash'
+  import InputTextItem from 'src/components/form/InputTextItem.vue'
   import validator from 'validator'
 
+  const debug = require('debug')('CLIENT:Login')
   const login = (store, profile, token) => {
     return store.dispatch('LOGIN', {
       params: {
@@ -57,18 +45,16 @@
 
   export default {
     components: {
-      InputItem
+      InputTextItem
     },
     data () {
       return {
-        alertFlags: {},
-        alertMsgs: {},
-        alertMsgShow: {},
+        alert: {},
         formData: {},
         resMsg: null
       }
     },
-    name: 'login',
+    name: 'Login',
     methods: {
       goRecoverPwd () {
         this.$emit('goRecoverPwd')
@@ -79,15 +65,14 @@
             email: this.formData.mail,
             password: this.formData.pwd,
             keepAlive: this.$refs[ 'keep-alive' ].checked
-          }, _.get(this.$store, [ 'state', 'register-token' ])).then((res) => {
+          }, get(this.$store, [ 'state', 'register-token' ])).then((res) => {
             if (res.status === 200) {
-              const memberCenter = _.get(_.filter(ROLE_MAP, { key: _.get(this.$store, [ 'state', 'profile', 'role' ]) }), [ 0, 'route' ], 'member')
+              const memberCenter = get(filter(ROLE_MAP, { key: get(this.$store, [ 'state', 'profile', 'role' ]) }), [ 0, 'route' ], 'member')
               if (memberCenter.match(/member/)) {
                 location.replace('/')
               } else {
                 location.replace(`/${memberCenter}`)
               }
-              // this.$router.replace(`/${memberCenter}`)
             } else {
               this.resMsg = this.$t('login.WORDING_LOGIN_INFAIL_VALIDATION_ISSUE')
             }
@@ -98,46 +83,24 @@
           })
         }
       },
-      resetAllAlertShow (excluding) {
-        this.alertMsgShow = {}
-        this.alertMsgShow[ excluding ] = true
-        this.$forceUpdate()
-      },
-      resetAlertShow (target) {
-        this.alertMsgShow[ target ] = false
-        this.$forceUpdate()
-      },
-      removeAlert (target) {
-        this.alertFlags[ target ] = false
-        this.$forceUpdate()
-      },
-      setInputValue (key, value) {
-        switch (key) {
-          case 'mail':
-            this.formData.mail = value
-            break
-          case 'pwd':
-            this.formData.pwd = value
-            break
-        }
-      },
       validatInput () {
         let pass = true
-        this.alertFlags = {}
-        this.alertMsgs = {}
         if (!this.formData.mail || !validator.isEmail(this.formData.mail)) {
           pass = false
-          this.alertFlags.mail = true
-          this.alertMsgs.mail = this.$t('login.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL')
-          consoleLogOnDev({ msg: 'mail wrong, ' + this.formData.mail })
+          this.alert.mail = {
+            flag: true,
+            msg: this.$t('login.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL'),
+          }
+          debug('Mail wrong', this.formData.mail)
         }
         if (!this.formData.pwd || validator.isEmpty(this.formData.pwd)) {
           pass = false
-          this.alertFlags.pwd = true
-          this.alertMsgs.pwd = this.$t('login.WORDING_REGISTER_PWD_EMPTY')
-          consoleLogOnDev({ msg: 'pwd empty, ' + this.formData.pwd })
+          this.alert.pwd = {
+            flag: true,
+            msg: this.$t('login.WORDING_REGISTER_PWD_EMPTY'),
+          }
+          debug('Empty pwd', this.formData.pwd)
         }
-        this.$forceUpdate()
         return pass
       }
     },
