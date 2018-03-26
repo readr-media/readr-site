@@ -1,22 +1,22 @@
 <template>
   <div class="register">
     <div class="register-container" v-if="!isRegistered">
-      <InputTextItem class="register-container__input-nickname" type="text"
+      <TextItem class="register-container__input-nickname" type="text"
         :placeHolder="$t('login.WORDING_NICKNAME')"
         :alert.sync="alert.nickname"
-        :value.sync="formData.nickname"></InputTextItem>
-      <InputTextItem class="register-container__input-email" type="text"
+        :value.sync="formData.nickname"></TextItem>
+      <TextItem class="register-container__input-email" type="text"
         :placeHolder="$t('login.WORDING_EMAIL')"
         :alert.sync="alert.mail"
-        :value.sync="formData.mail"></InputTextItem>
-      <InputTextItem class="register-container__input-pwd" type="password"
+        :value.sync="formData.mail"></TextItem>
+      <TextItem class="register-container__input-pwd" type="password"
         :placeHolder="$t('login.WORDING_PASSWORD')"
         :alert.sync="alert.pwd"
-        :value.sync="formData.pwd"></InputTextItem>
-      <InputTextItem class="register-container__input-pwd-check" type="password"
+        :value.sync="formData.pwd"></TextItem>
+      <TextItem class="register-container__input-pwd-check" type="password"
         :placeHolder="$t('login.WORDING_PASSWORD_CHECK')"
         :alert.sync="alert[ 'pwd-check' ]"
-        :value.sync="formData[ 'pwd-check' ]"></InputTextItem>
+        :value.sync="formData[ 'pwd-check' ]"></TextItem>
       <div class="register-container__notice">
         <span class="notice" v-text="$t('login.WORDING_REGISTER_NOTICE')"></span>
         <router-link to="/agreement" target="_blank" class="agreement" v-text="$t('login.WORDING_MEMBER_AGREEMENT')"></router-link>
@@ -36,7 +36,7 @@
   </div>
 </template>
 <script>
-  import InputTextItem from 'src/components/form/InputTextItem.vue'
+  import TextItem from 'src/components/form/TextItem.vue'
   import Spinner from 'src/components/Spinner.vue'
   import validator from 'validator'
   import config from 'api/config'
@@ -58,7 +58,7 @@
 
   export default {
     components: {
-      InputTextItem,
+      TextItem,
       Spinner,
     },
     data () {

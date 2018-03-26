@@ -1,9 +1,9 @@
 <template>
   <div class="recover-password">
-    <InputTextItem class="login__input-pwd" type="text" v-if="!isSentEmail"
+    <TextItem class="login__input-pwd" type="text" v-if="!isSentEmail"
       :placeHolder="$t('login.WORDING_EMAIL')"
       :alert.sync="alert.email"
-      :value.sync="formData.email"></InputTextItem>
+      :value.sync="formData.email"></TextItem>
     <div class="recover-password__desc">
       <span v-text="desc"></span>
     </div>
@@ -17,7 +17,7 @@
 </template>
 <script>
   import { get, } from 'lodash'
-  import InputTextItem from 'src/components/form/InputTextItem.vue'
+  import TextItem from 'src/components/form/TextItem.vue'
   import Spinner from 'src/components/Spinner.vue'
   import validator from 'validator'
 
@@ -32,7 +32,7 @@
   export default {
     name: 'RecoverPassword',
     components: {
-      InputTextItem,
+      TextItem,
       Spinner,
     },
     computed: {

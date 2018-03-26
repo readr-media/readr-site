@@ -1,13 +1,13 @@
 <template>
-  <div class="login">
-    <InputTextItem class="login__input-email" type="text"
+  <div class="login" @keyup="keyupHandler">
+    <TextItem class="login__input-email" type="text"
       :placeHolder="$t('login.WORDING_EMAIL')"
       :alert.sync="alert.mail"
-      :value.sync="formData.mail"></InputTextItem>
-    <InputTextItem class="login__input-pwd" type="password"
+      :value.sync="formData.mail"></TextItem>
+    <TextItem class="login__input-pwd" type="password"
       :placeHolder="$t('login.WORDING_PASSWORD')"
       :alert.sync="alert.pwd"
-      :value.sync="formData.pwd"></InputTextItem>
+      :value.sync="formData.pwd"></TextItem>
     <div class="login__wrapper">
       <div class="keep-login-alive">
         <input type="checkbox" id="keep-alive" ref="keep-alive">
@@ -28,7 +28,7 @@
 <script>
   import { ROLE_MAP, } from 'src/constants'
   import { filter, get, } from 'lodash'
-  import InputTextItem from 'src/components/form/InputTextItem.vue'
+  import TextItem from 'src/components/form/TextItem.vue'
   import validator from 'validator'
 
   const debug = require('debug')('CLIENT:Login')
@@ -45,7 +45,7 @@
 
   export default {
     components: {
-      InputTextItem,
+      TextItem,
     },
     data () {
       return {
@@ -58,6 +58,11 @@
     methods: {
       goRecoverPwd () {
         this.$emit('goRecoverPwd')
+      },
+      keyupHandler (e) {
+        if (e.keyCode === 13) {
+          this.login()
+        }
       },
       login () {
         if (this.validatInput()) {

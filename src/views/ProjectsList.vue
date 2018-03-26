@@ -36,6 +36,7 @@ import ProjectsFigure from '../components/projects/ProjectsFigure.vue'
 import ProjectsFigureProgress from '../components/projects/ProjectsFigureProgress.vue'
 import _ from 'lodash'
 
+// const debug = require('debug')('CLIENT:ProjectsList')
 const fetchProjectsList = (store, params) => {
   return store.dispatch('GET_PROJECTS_LIST', {
     params: params,
@@ -56,6 +57,10 @@ const fetchFollowing = (store, params) => {
 }
 
 export default {
+  name: 'ProjectsList',
+  asyncData ({ store, }) {
+    return fetchProjectsList(store, {})
+  },
   components: {
     AppAsideNav,
     AppTitledList,
@@ -68,12 +73,10 @@ export default {
     },
   },
   beforeMount () {
-    fetchProjectsList(this.$store, {}).then(() => {
-      const postIdFeaturedProject = this.$store.state.projectsList.items.map(project => project.id)
-      fetchFollowing(this.$store, {
-        resource: 'project',
-        ids: postIdFeaturedProject,
-      })
+    const postIdFeaturedProject = this.$store.state.projectsList.items.map(project => `${project.id}`)
+    fetchFollowing(this.$store, {
+      resource: 'project',
+      ids: postIdFeaturedProject,
     })
   },
 }

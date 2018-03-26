@@ -143,6 +143,7 @@ const authorize = (req, res, next) => {
  */
 
 router.use('/activate', verifyToken, require('./middle/member/activation'))
+router.use('/following', require('./middle/following'))
 router.use('/initmember', authVerify, require('./middle/member/initMember'))
 router.use('/member/public', require('./middle/member'))
 router.use('/member', [ authVerify, authorize, ], require('./middle/member'))
@@ -272,44 +273,6 @@ router.get('/project/list', (req, res) => {
  * METHOD POST
  * 
  */
-
-router.post('/following/byuser', authVerify, (req, res) => {
-  const url = `${apiHost}/following/byuser`
-  superagent
-  .get(url)
-  .send(req.body)
-  .end((err, response) => {
-    if (!err && response) {
-      const resData = JSON.parse(response.text)
-      res.json(resData)
-    } else {
-      if (err.status === 404) {
-        res.status(200).json([])
-      } else {
-        res.json(err)
-        console.error(`error during fetch data from : ${url}`)
-        console.error(err)  
-      }
-    }
-  })
-})
-
-router.post('/following/byresource', authVerify, (req, res) => {
-  const url = `${apiHost}/following/byresource`
-  superagent
-  .get(url)
-  .send(req.body)
-  .end((err, response) => {
-    if (!err && response) {
-      const resData = JSON.parse(response.text)
-      return res.json(resData)
-    } else {
-      res.json(err)
-      console.error(`error during fetch data from : ${url}`)
-      console.error(err)
-    }
-  })
-})
 
 router.post('/verify-recaptcha-token', (req, res) => {
   let url = 'https://www.google.com/recaptcha/api/siteverify'

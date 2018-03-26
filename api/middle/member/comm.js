@@ -1,6 +1,9 @@
 const config = require('../../config')
 const jwtService = require('../../service.js')
+const jwtExpress = require('express-jwt')
 const superagent = require('superagent')
+
+const { redisFetching, } = require('../redisHandler')
 
 const debug = require('debug')('READR:api:member:comm')
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
@@ -60,17 +63,39 @@ const fetchMem = (member) => new Promise((resolve) => {
 
 const verifyToken = function (req, res, next) {
   const key = req.url.split('/')[1]
-  jwtService.verifyToken(key, (error, decoded) => {
-    if (error) {
-      res.status(403).send(`Invalid activation token.`)
+  redisFetching(key, ({ error, data, }) => {
+    error && console.error('Error occurred during fetching token from redis.')
+    error && console.error(error)
+    data && debug(data)
+    if (!data) {
+      jwtService.verifyToken(key, (err, decoded) => {
+        if (err) {
+          res.status(403).send(`Invalid token.`)
+        } else {
+          req.decoded = decoded
+          next()
+        }
+      })
     } else {
-      req.decoded = decoded
-      next()
+      res.status(403).send(`Expired token.`)      
     }
   })
 }
 
+const authVerify = jwtExpress({
+  secret: config.JWT_SECRET,
+  isRevoked: (req, payload, done) => {
+    const token = req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer' && req.headers.authorization.split(' ')[1]
+    redisFetching(token, ({ error, data, }) => {
+      error && console.error('Error occurred during fetching token from redis.')
+      error && console.error(error)
+      done(null, !!data)
+    })
+  },
+})
+
 module.exports = {
+  authVerify,
   fetchMem,
   sendActivationMail,
   sendRecoverPwdEmail,
