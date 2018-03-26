@@ -5,18 +5,18 @@
         <div class="title" v-text="$t('login.WORDING_CREATE_PWD')"></div>
         <div class="email"></div>
       </div>
-      <InputTextItem class="profile__nickname" type="text"
+      <TextItem class="profile__nickname" type="text"
         :placeHolder="$t('login.WORDING_NICKNAME')"
         :alert.sync="alert.nickname"
-        :value.sync="formData.nickname"></InputTextItem>
-      <InputTextItem class="profile__pwd" type="password"
+        :value.sync="formData.nickname"></TextItem>
+      <TextItem class="profile__pwd" type="password"
         :placeHolder="$t('login.WORDING_PASSWORD')"
         :alert.sync="alert.pwd"
-        :value.sync="formData.pwd"></InputTextItem>
-      <InputTextItem class="profile__pwd-check" type="password"
+        :value.sync="formData.pwd"></TextItem>
+      <TextItem class="profile__pwd-check" type="password"
         :placeHolder="$t('login.WORDING_PASSWORD_CHECK')"
         :alert.sync="alert[ 'pwd-check' ]"
-        :value.sync="formData[ 'pwd-check' ]"></InputTextItem>
+        :value.sync="formData[ 'pwd-check' ]"></TextItem>
       <div class="profile__save" @click="setPwd">
         <span v-text="$t('login.WORDING_BTN_SAVE')"></span>
       </div>
@@ -24,17 +24,17 @@
   </div>
 </template>
 <script>
-  import InputTextItem from '../form/InputTextItem.vue'
+  import TextItem from 'src/components/form/TextItem.vue'
   import validator from 'validator'
 
-  const debug = require('debug')('CLIENT:InputTextItem')
+  const debug = require('debug')('CLIENT:TextItem')
   const setupBasicProfile = (store, params) => {
     return store.dispatch('SETUP_BASIC_PROFILE', { params, })
   }
 
   export default {
     components: {
-      InputTextItem,
+      TextItem,
     },
     data () {
       return {

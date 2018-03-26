@@ -24,11 +24,11 @@
       <div class="email">
         <span class="label" v-text="$t('admin.WORDING_ADMIN_MEMBER_EDITOR_EMAIL') + '：'"></span>
         <div>
-          <InputTextItem class="admin" type="text"
+          <TextItem class="admin" type="text"
             :alert.sync="alert.mail"
             :disabled="action === 'add' ? !isEditable : true"
             :initValue="emailVal"
-            :value.sync="typedEmail"></InputTextItem>
+            :value.sync="typedEmail"></TextItem>
         </div>
       </div>
       <div class="role">
@@ -55,19 +55,19 @@
         <div class="nickname" :class="{ multiple: k > 0 }">
           <span class="label" v-text="$t('admin.WORDING_ADMIN_MEMBER_EDITOR_NICKNAME') + '：'"></span>
           <div>
-            <InputTextItem class="admin" type="text"
+            <TextItem class="admin" type="text"
               :disabled="true"
               :initValue="get(m, [ 'nickname' ], '')"
-              :value="get(m, [ 'nickname' ], '')"></InputTextItem>
+              :value="get(m, [ 'nickname' ], '')"></TextItem>
           </div>
         </div>
         <div class="email" :class="{ multiple: k > 0 }">
           <span class="label" v-text="$t('admin.WORDING_ADMIN_MEMBER_EDITOR_EMAIL') + '：'"></span>
           <div>
-            <InputTextItem class="admin" type="text"
+            <TextItem class="admin" type="text"
               :disabled="true"
               :initValue="get(m, [ 'mail' ], '')"
-              :value="get(m, [ 'mail' ], '')"></InputTextItem>
+              :value="get(m, [ 'mail' ], '')"></TextItem>
           </div>
         </div>      
       </template>
@@ -80,7 +80,7 @@
   </div>
 </template>
 <script>
-  import InputTextItem from 'src/components/form/InputTextItem.vue'
+  import TextItem from 'src/components/form/TextItem.vue'
   import RadioItem from 'src/components/form/RadioItem.vue'
   import Spinner from 'src/components/Spinner.vue'
   import validator from 'validator'
@@ -123,7 +123,7 @@
 
   export default {
     components: {
-      InputTextItem,
+      TextItem,
       RadioItem,
       Spinner,
     },

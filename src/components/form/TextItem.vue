@@ -1,46 +1,63 @@
 <template>
-  <div class="input-item" :class="{ alert: alertFlag }">
-    <input :disabled="disabled" :type="type" :placeholder="placeHolder" @change="valueChange" ref="input" @focus="focus" @focusout="focusout" @keyup="keyup">
-    <span class="input-item__alert" @click="doFucus"></span>
-    <span class="input-item__msg" :class="{ long: isTooLong }" v-text="alertMsg" v-if="alertMsgShow"></span>
+  <div class="text-item" :class="{ alert: flag }">
+    <input ref="input"
+      v-model="currValue"
+      :style="{ width: width }"
+      :disabled="disabled"
+      :type="type"
+      :placeholder="placeHolder"
+      @focus="focus"
+      @focusout="focusout"
+      @keyup="keyup">
+    <span class="text-item__alert" @click="doFucus"></span>
+    <span class="text-item__msg" :class="{ long: isTooLong }" v-text="msg" v-if="show"></span>
   </div>
 </template>
 <script>
   export default {
     data () {
       return {
+        currValue: '',
+        flag: false,
         isTooLong: false,
+        msg: '',
+        show: false,
       }
     },
-    name: 'input-item',
+    name: 'TextItem',
     methods: {
       doFucus () {
         this.$refs['input'].focus()
       },
       focus () {
-        this.$emit('inputFocus', this.inputKey)
+        this.show = true
       },
       focusout () {
-        this.$emit('inputFocusOut', this.inputKey)
+        this.show = false
       },
       keyup () {
-        this.$emit('removeAlert', this.inputKey)
-      },
-      valueChange () {
-        this.$emit('filled', this.inputKey, this.$refs['input'].value)
+        this.$emit('update:alert', {
+          flag: false,
+        })
+        this.show = false
       },
     },
     mounted () {
-      this.initValue && (this.$refs['input'].value = this.initValue)
+      this.currValue = this.value
     },
-    props: [ 'inputKey', 'type', 'placeHolder', 'alertFlag', 'alertMsg', 'alertMsgShow', 'disabled', 'initValue', ],
+    props: [ 'alert', 'type', 'placeHolder', 'disabled', 'initValue', 'width', 'value', ],
     watch: {
-      alertMsg: function () {
-        const len = this.alertMsg ? this.alertMsg.length : 0
+      alert: function () {
+        this.flag = this.alert.flag
+        this.msg = this.alert.msg
+        const len = this.msg ? this.msg.length : 0
         this.isTooLong = len > 10
       },
       initValue: function () {
         this.$refs['input'].value = this.initValue
+      },
+      currValue: function () {
+        this.$emit('update:value', this.currValue)
       },
     },
   }
@@ -48,8 +65,7 @@
 <style lang="stylus" scoped>
   // input-width = calc(100% - 20px)
   input-width-alert = calc(100% - 20px - 35px - 1.5px)
-  .input-item
-    // margin 15px 0
+  .text-item
     position relative
     &.admin
       height 14px
@@ -59,10 +75,10 @@
         > input
           height 24px
           padding-left 5px
-        .input-item__alert
+        .text-item__alert
           height 24px
           background-size 14px 14px
-        .input-item__msg
+        .text-item__msg
           font-size 0.9375rem
           line-height 1.25rem
 
@@ -82,7 +98,7 @@
         border-left 1.5px solid #ddcf21
         height 35px
         width calc(100% - 35px)
-      .input-item__alert
+      .text-item__alert
         border-top 1.5px solid #ddcf21
         border-bottom 1.5px solid #ddcf21
         border-right 1.5px solid #ddcf21
@@ -91,13 +107,13 @@
         background-size 22px 22px
         background-repeat no-repeat
         display inline-block
-      .input-item__msg
+      .text-item__msg
         display block
     > input
       border none
       width 100%
       height 35px
-      font-size calc((18 / 16) * 1rem)
+      font-size 1.125rem
       padding 0 10px
       vertical-align top
       background-color #ffffff

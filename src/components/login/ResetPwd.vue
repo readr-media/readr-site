@@ -4,14 +4,14 @@
       <div class="title" v-text="$t('login.WORDING_LOGIN_RESET_PWD')"></div>
       <div class="email"></div>
     </div>
-    <InputTextItem class="reset-pwd__pwd" type="password" v-if="!isDone"
+    <TextItem class="reset-pwd__pwd" type="password" v-if="!isDone"
       :placeHolder="$t('login.WORDING_PASSWORD')"
       :alert.sync="alert.pwd"
-      :value.sync="formData.pwd"></InputTextItem>
-    <InputTextItem class="reset-pwd__pwd-check" type="password" v-if="!isDone"
+      :value.sync="formData.pwd"></TextItem>
+    <TextItem class="reset-pwd__pwd-check" type="password" v-if="!isDone"
       :placeHolder="$t('login.WORDING_PASSWORD_CHECK')"
       :alert.sync="alert[ 'pwd-check' ]"
-      :value.sync="formData[ 'pwd-check' ]"></InputTextItem>
+      :value.sync="formData[ 'pwd-check' ]"></TextItem>
     <div class="reset-pwd__btn" @click="save" :class="{ disabled: shouldShowSpinner }" v-if="!isDone">
         <span v-text="$t('login.WORDING_BTN_SAVE')" v-if="!shouldShowSpinner"></span>
         <Spinner :show="shouldShowSpinner"></Spinner>
@@ -22,7 +22,7 @@
   </div>
 </template>
 <script>
-  import InputTextItem from 'src/components/form/InputTextItem.vue'
+  import TextItem from 'src/components/form/TextItem.vue'
   import Spinner from 'src/components/Spinner.vue'
   import validator from 'validator'
 
@@ -33,7 +33,7 @@
   export default {
     name: 'ResetPwd',
     components: {
-      InputTextItem,
+      TextItem,
       Spinner,
     },
     data () {
