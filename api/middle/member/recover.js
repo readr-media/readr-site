@@ -1,4 +1,5 @@
 const { fetchMem, sendRecoverPwdEmail, verifyToken, } = require('./comm')
+const { redisFetching, redisWriting, } = require('../redisHandler')
 const { get, } = require('lodash')
 const Cookies = require('cookies')
 const config = require('../../config')
@@ -10,7 +11,17 @@ const router = express.Router()
 const superagent = require('superagent')
 
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
-const authVerify = jwtExpress({ secret: config.JWT_SECRET, })
+const authVerify = jwtExpress({
+  secret: config.JWT_SECRET,
+  isRevoked: (req, payload, done) => {
+    const token = req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer' && req.headers.authorization.split(' ')[1]
+    redisFetching(token, ({ error, data, }) => {
+      error && console.error('Error occurred during fetching token from redis.')
+      error && console.error(error)
+      done(null, !!data)
+    })
+  },
+})
 router.post('/', authVerify, (req, res) => {
   /**
    * Check if the account exists at first.
@@ -66,7 +77,12 @@ router.post('/set', authVerify, (req, res) => {
     if (!err && response) {
       debug('reset pwd successfully.')
       const cookies = new Cookies( req, res, {} )
-      cookies.set('setup', '', { httpOnly: false, expires: new Date(Date.now() - 1000), })          
+      cookies.set('setup', '', { httpOnly: false, expires: new Date(Date.now() - 1000), })  
+      /**
+       * Revoke the token
+       */
+      const tokenShouldBeBanned = req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer' && req.headers.authorization.split(' ')[1]
+      redisWriting(tokenShouldBeBanned, 'setuppwd-ed', null, 24 * 60 * 60 * 1000)        
       res.status(response.status).end()
     } else {
       res.status(response.status).json(err)
@@ -79,6 +95,7 @@ router.post('/set', authVerify, (req, res) => {
 
 router.get('*', verifyToken, (req, res) => {
   const decoded = req.decoded
+  const curr_token = req.url.split('/')[1]
   if (!decoded) { res.status(403).send(`Forbidden.`) }
   debug('About to go reset pwd')
   debug('>>>', decoded.id)
@@ -89,6 +106,10 @@ router.get('*', verifyToken, (req, res) => {
   const cookies = new Cookies( req, res, {} )
   cookies.set('setup', token, { httpOnly: false, expires: new Date(Date.now() + 24 * 60 * 60 * 1000), })      
   res.redirect(302, '/setup/reset')
+  /**
+   * Revoke the token
+   */
+  redisWriting(curr_token, 'presetuppwd-ed', null, 24 * 60 * 60 * 1000) 
 })
 
 module.exports = router
