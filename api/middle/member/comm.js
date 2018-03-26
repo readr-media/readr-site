@@ -1,5 +1,6 @@
 const config = require('../../config')
 const jwtService = require('../../service.js')
+const jwtExpress = require('express-jwt')
 const superagent = require('superagent')
 
 const { redisFetching, } = require('../redisHandler')
@@ -81,7 +82,20 @@ const verifyToken = function (req, res, next) {
   })
 }
 
+const authVerify = jwtExpress({
+  secret: config.JWT_SECRET,
+  isRevoked: (req, payload, done) => {
+    const token = req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer' && req.headers.authorization.split(' ')[1]
+    redisFetching(token, ({ error, data, }) => {
+      error && console.error('Error occurred during fetching token from redis.')
+      error && console.error(error)
+      done(null, !!data)
+    })
+  },
+})
+
 module.exports = {
+  authVerify,
   fetchMem,
   sendActivationMail,
   sendRecoverPwdEmail,
