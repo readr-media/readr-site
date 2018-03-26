@@ -1,5 +1,5 @@
 <template>
-  <div class="login">
+  <div class="login" @keyup="keyupHandler">
     <InputTextItem class="login__input-email" type="text"
       :placeHolder="$t('login.WORDING_EMAIL')"
       :alert.sync="alert.mail"
@@ -58,6 +58,11 @@
     methods: {
       goRecoverPwd () {
         this.$emit('goRecoverPwd')
+      },
+      keyupHandler (e) {
+        if (e.keyCode === 13) {
+          this.login()
+        }
       },
       login () {
         if (this.validatInput()) {
