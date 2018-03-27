@@ -108,9 +108,11 @@ export default {
     top 60px
     z-index 999
   &__main
+    flex 1
     margin-left 40px
+    margin-right 40px
     display flex
-    justify-content flex-start
+    justify-content flex-end
     align-items flex-start
   &__list-aside
     background-color white

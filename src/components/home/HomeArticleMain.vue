@@ -5,13 +5,14 @@
     </div>
     <div class="home-article-main__author">
       <figure class="author-info">
-        <router-link v-if="get(articleData, 'author.id')" class="author-info__thumbnail" :to="`/profile/${get(articleData, 'author.id')}`">
+        <router-link class="author-info__thumbnail" :to="`/profile/${get(articleData, 'author.id')}`">
           <img :src="get(articleData, 'author.profileImage', '/public/icons/star-blue.png')" alt="">
         </router-link>
-        <img v-else class="author-info__thumbnail" :src="get(articleData, 'author.profileImage') || '/public/icons/star-blue.png'" alt="">
         <figcaption class="author-info__meta">
           <p class="author-info__date" v-text="dateDiffFromNow"></p>
-          <p class="author-info__nickname" v-text="articleData.author.nickname"></p>
+          <router-link class="author-info__nickname" :to="`/profile/${get(articleData, 'author.id')}`">
+            <p class="author-info__nickname" v-text="articleData.author.nickname"></p>
+          </router-link>
         </figcaption>
       </figure>
     </div>
@@ -120,13 +121,14 @@ export default {
         object-fit cover
     &__meta
       margin-left 22.5px
-      > p
+      p
         margin 5px 0
     &__date
       font-size 14px
       font-weight 500
     &__nickname
       font-size 18px
+      color #000
     &:before
       content ''
       position absolute
