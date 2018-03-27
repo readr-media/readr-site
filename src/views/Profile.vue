@@ -148,7 +148,7 @@
         if (this.isCurrUser) {
           const route = get(find(ROLE_MAP, (r) => (r.key === get(this.$store, 'state.profile.role'))), 'route')
           debug('About to route to member center.', route)
-          this.$route.push(`/${route}`)
+          this.$router.push(`/${route}`)
         }
       },
       tabHandler (tab) {

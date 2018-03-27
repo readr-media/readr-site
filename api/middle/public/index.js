@@ -10,13 +10,11 @@ const schema = require('./schema')
 
 const apiHost = API_PROTOCOL + '://' + API_HOST + ':' + API_PORT
 
-router.get('/members', publicQueryValidation.validate(schema.members), (req, res) => {
+const fetchAndConstructMembers = (req, res) => {
   const url = `${apiHost}${req.url}`
-  debug('Abt to fetch public members data.')
-  debug('>>>', req.url)
   redisFetching(`member${req.url}`, ({ err, data, }) => {
     if (!err && data) {
-      debug('Fetch public members data from Redis.')
+      debug('Fetch public member data from Redis.')
       debug('>>>', req.url)
       const mem = JSON.parse(data)
       res.json({
@@ -26,7 +24,7 @@ router.get('/members', publicQueryValidation.validate(schema.members), (req, res
       superagent
       .get(url)
       .end((e, response) => {
-        debug('Fetch public members data from api.', url)
+        debug('Fetch public member data from api.', url)
         if (!e && response) {
           redisWriting(`member${req.url}`, response.text)
           const mem = JSON.parse(response.text)
@@ -35,13 +33,23 @@ router.get('/members', publicQueryValidation.validate(schema.members), (req, res
           })
         } else {
           res.status(response.status).send('{\'error\':' + e + '}')
-          console.error(`error during fetch public data from: member${req.url}`)
-          console.error(e)
+          console.error(`error during fetch data from: member${req.url}`)
+          console.error(e)  
         }
       })
     }
-  })
-})
+  })  
+}
+
+router.get('/profile/:id', (req, res, next) => {
+  const id = req.params.id
+  debug('Going to get member profile.', id)
+  if (!id) { res.status(403).send(`Forbidden.`) }
+  req.url = `/member/${id}`
+  next()
+}, fetchAndConstructMembers)
+
+router.get('/members', publicQueryValidation.validate(schema.members), fetchAndConstructMembers)
 
 router.get('/posts', publicQueryValidation.validate(schema.posts), (req, res, next) => {
   const activePostQueryString = `{"$in":[${POST_ACTIVE.ACTIVE}]}`

@@ -50,7 +50,32 @@ const fetchPermissions = () => {
   })
 }
 
+const authorize = (req, res, next) => {
+  debug('Going to authorize...', req.url)
+  const whitelist = get(config.ENDPOINT_SECURE, [ `${req.method}${req.url.replace(/\?[A-Za-z0-9.*+?^=!:${}()#%~&_@\-`|[\]/\\]*$/, '')}`, ])
+  if (whitelist) {
+    fetchPermissions().then((perms) => {
+      Promise.all([
+        new Promise((resolve) => (resolve(get(whitelist, [ 'role', ]) ? find(get(whitelist, [ 'role', ]), (r) => (r === req.user.role)) : true))),
+        new Promise((resolve) => (resolve(get(whitelist, [ 'perm', ]) ? get(whitelist, [ 'perm', ]).length === filter(get(whitelist, [ 'perm', ]), (p) => (find(filter(perms, { role: req.user.role, }), { object: p, }))).length : true))),
+      ]).then((isAuthorized) => {
+        const isRoleAuthorized = isAuthorized[ 0 ]
+        const isPermsAuthorized = isAuthorized[ 1 ]
+        if (isRoleAuthorized && isPermsAuthorized) {
+          next()
+        } else {
+          res.status(403).send('Forbidden. No right to access.').end()
+        }
+      })
+    })
+
+  } else {
+    next()
+  }
+}
+
 module.exports = {
+  authorize,
   constructScope,
   fetchPermissions,
 }
