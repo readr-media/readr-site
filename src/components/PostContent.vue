@@ -57,6 +57,7 @@
         return truncate(this.post.linkDescription, 45)
       },
       postContent () {
+        if (!this.post.content) { return }
         const doc = new dom().parseFromString(this.post.content)
         const postParagraphs = map(filter(get(doc, 'childNodes'), { tagName: 'p', }), (p) => (sanitizeHtml(new seializer().serializeToString(p), { allowedTags: [ ], })))
         return postParagraphs

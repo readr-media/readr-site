@@ -5,7 +5,10 @@
     </div>
     <div class="home-article-main__author">
       <figure class="author-info">
-        <img class="author-info__thumbnail" :src="articleData.author.profileImage" alt="">
+        <route-link v-if="get(articleData, 'author.id')" class="author-info__thumbnail" >
+          <img :src="get(articleData, 'author.profileImage', '/public/icons/star-blue.png')" alt="">
+        </route-link>
+        <img v-else class="author-info__thumbnail" :src="get(articleData, 'author.profileImage') || '/public/icons/star-blue.png'" alt="">
         <figcaption class="author-info__meta">
           <p class="author-info__date" v-text="dateDiffFromNow"></p>
           <p class="author-info__nickname" v-text="articleData.author.nickname"></p>
@@ -23,6 +26,7 @@ import AppShareButton from 'src/components/AppShareButton.vue'
 import PostContent from 'src/components/PostContent.vue'
 import { SITE_DOMAIN_DEV, } from 'src/constants'
 import { dateDiffFromNow, } from 'src/util/comm'
+import { get, } from 'lodash'
 
 export default {
   props: {
@@ -53,6 +57,9 @@ export default {
     shareUrl () {
       return `${SITE_DOMAIN_DEV}/post/${this.articleData.id}`
     },
+  },
+  methods: {
+    get,
   },
 }
 </script>
