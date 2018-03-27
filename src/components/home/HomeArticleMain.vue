@@ -114,6 +114,10 @@ export default {
     &__thumbnail
       width 60px
       height 60px
+      img
+        width 100%
+        height 100%
+        object-fit cover
     &__meta
       margin-left 22.5px
       > p
