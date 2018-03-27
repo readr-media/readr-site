@@ -5,9 +5,9 @@
     </div>
     <div class="home-article-main__author">
       <figure class="author-info">
-        <route-link v-if="get(articleData, 'author.id')" class="author-info__thumbnail" >
+        <router-link v-if="get(articleData, 'author.id')" class="author-info__thumbnail" :to="`/profile/${get(articleData, 'author.id')}`">
           <img :src="get(articleData, 'author.profileImage', '/public/icons/star-blue.png')" alt="">
-        </route-link>
+        </router-link>
         <img v-else class="author-info__thumbnail" :src="get(articleData, 'author.profileImage') || '/public/icons/star-blue.png'" alt="">
         <figcaption class="author-info__meta">
           <p class="author-info__date" v-text="dateDiffFromNow"></p>
