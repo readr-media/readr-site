@@ -66,4 +66,8 @@ export default {
     'WORDING_TAB_REVIEW_RECORD' : '評論記錄',
     'WORDING_TAB_NEWS_RECORD' : '新聞記錄',
   },
+  'editors': {
+    'WORDING_EDITORS_GUESTEDITOR': '總編',
+    'WORDING_EDITORS_CURRENT_GUESTEDITOR': '本週客座',
+  },
 }

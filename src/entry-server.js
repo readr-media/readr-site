@@ -13,7 +13,7 @@ const isDev = process.env.NODE_ENV !== 'production'
 export default context => {
   return new Promise((resolve, reject) => {
     const s = isDev && Date.now()
-    const { app, router, store, } = createApp()
+    const { app, i18n, router, store, } = createApp()
 
     const { url, cookie, initmember, } = context
     const { route, } = router.resolve(url)
@@ -59,6 +59,7 @@ export default context => {
         // which is resolved when the action is complete and store state has been
         // updated.
         const jobs = matchedComponents.map(({ asyncData, }) => asyncData && asyncData({
+          i18n,
           store,
           route: router.currentRoute,
         }))
