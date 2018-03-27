@@ -28,7 +28,7 @@
   </div>
 </template>
 <script>
-  import { find, filter, get, map, } from 'lodash'
+  import { find, get, map, } from 'lodash'
   import AppArticleNav from 'src/components/AppArticleNav.vue'
   import sanitizeHtml from 'sanitize-html'
   import truncate from 'truncate'
@@ -57,9 +57,10 @@
         return truncate(this.post.linkDescription, 45)
       },
       postContent () {
-        if (!this.post.content) { return }
-        const doc = new dom().parseFromString(this.post.content)
-        const postParagraphs = map(filter(get(doc, 'childNodes'), { tagName: 'p', }), (p) => (sanitizeHtml(new seializer().serializeToString(p), { allowedTags: [ ], })))
+        if (!this.post.content || this.post.content.length === 0) { return }
+        const wrappedContent = sanitizeHtml(this.post.content, { allowedTags: false, selfClosing: [ 'img', ], })
+        const doc = new dom().parseFromString(wrappedContent)
+        const postParagraphs = map(get(doc, 'childNodes'), (p) => (sanitizeHtml(new seializer().serializeToString(p), { allowedTags: [ 'img', ], })))
         return postParagraphs
       },
     },
@@ -80,7 +81,7 @@
     props: [ 'post', ],
   }
 </script>
-<style lang="stylus" scoped>
+<style lang="stylus">
   .post-content
     &__title
       font-size 18px
@@ -102,8 +103,9 @@
         // text-overflow: ellipsis;
       p > br
         display none
-      p > img
+      p > img, p img
         width 100%
+        margin 20px 0
       p + p
         margin-top 6px
     &__more
