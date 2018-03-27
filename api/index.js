@@ -222,24 +222,6 @@ router.get('/status', authVerify, function(req, res) {
   res.status(200).send(true)
 })
 
-router.get('/project/list', (req, res) => {
-  fetchPromise(req.url, req)
-  .then((response) => {
-    res.status(200).send(response)
-  })
-  .catch((err) => {
-    if (err.status === 404) {
-      res.status(404).send(err)
-      console.error(`public project list not found from : ${req.url}`)
-      console.error(err)
-    } else if (err.status === 500) {
-      res.status(500).send(err)
-      console.error(`error during fetch data from : ${req.url}`)
-      console.error(err)
-    }
-  })
-})
-
 /**
  * 
  * METHOD POST
@@ -412,7 +394,7 @@ router.route('*')
   .get(fetchFromRedis, function (req, res, next) {
     const url = `${apiHost}${req.url}`
     if (res.redis) {
-      console.log('fetch data from Redis.', req.url)
+      console.error('fetch data from Redis.', req.url)
       const resData = JSON.parse(res.redis)
       res.json(resData)
     } else {
@@ -433,7 +415,11 @@ router.route('*')
                * if data not empty, go next to save data to redis
                * if endpoint is not /members, go next to save data to redis
                */
-              if (req.url.indexOf('/members') === -1 && req.url.indexOf('/post') === -1 && req.url.indexOf('/posts') === -1 && req.url.indexOf('/tags') === -1 && req.url.indexOf('/following/byuser') === -1) {
+              if (req.url.indexOf('/members') === -1
+                && req.url.indexOf('/post') === -1
+                && req.url.indexOf('/posts') === -1
+                && req.url.indexOf('/tags') === -1
+                && req.url.indexOf('/following/byuser') === -1) {
                 next()
               }
             }
@@ -456,8 +442,8 @@ router.route('*')
       if (!err && response) {
         res.status(200).end()
       } else {
-        console.log('error occurred when handling a req: ', req.url)
-        console.log(err)
+        console.error('error occurred when handling a req: ', req.url)
+        console.error(err)
         res.status(500).json(err)
       }
     })
@@ -485,7 +471,7 @@ router.route('*')
       if (!err && response) {
         res.status(200).end()
       } else {
-        console.log('Error occurred when deleting stuff', err)
+        console.error('Error occurred when deleting stuff', err)
         res.status(500).json(err)
       }
     })
@@ -498,7 +484,7 @@ router.use(function (err, req, res, next) {
     if (err.name === 'UnauthorizedError') {
       res.status(200).send(false)
     } else {
-      console.log('Error occurred when checking login status', err)
+      console.error('Error occurred when checking login status', err)
     }
   }
   next()

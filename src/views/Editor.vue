@@ -119,11 +119,6 @@
 </template>
 <script>
   import { POST_ACTIVE, POST_TYPE, TAG_ACTIVE, } from '../../api/config'
-  import {
-    WORDING_TAB_FOLLOW_RECORD,
-    WORDING_TAB_NEWS_RECORD,
-    WORDING_TAB_REVIEW_RECORD,
-  } from '../constants'
   import _ from 'lodash'
   import About from '../components/About.vue'
   import AlertPanelB from '../components/AlertPanel.vue'
@@ -300,9 +295,9 @@
         showDraftList: false,
         showEditor: false,
         tabs: [
-          WORDING_TAB_REVIEW_RECORD,
-          WORDING_TAB_NEWS_RECORD,
-          WORDING_TAB_FOLLOW_RECORD,
+          this.$t('tab.WORDING_TAB_REVIEW_RECORD'),
+          this.$t('tab.WORDING_TAB_NEWS_RECORD'),
+          this.$t('tab.WORDING_TAB_FOLLOW_RECORD'),
         ],
       }
     },

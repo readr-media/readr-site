@@ -1,7 +1,7 @@
 <template>
   <section class="editor">
     <div class="editor__heading">
-      <div class="editor__heading--text" v-text="wording.WORDING_POSTEDITOR_EDITOR"></div>
+      <div class="editor__heading--text" v-text="$t('post_editor.WORDING_POSTEDITOR_EDITOR')"></div>
       <div class="editor__heading--switch" :class="{ active: showHtml }" @click="$_editor_toggleHtml">&lt; / &gt;</div>
     </div>
     <div class="editor__main">
@@ -39,7 +39,6 @@ import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
 
 import { POST_TYPE, } from '../../api/config'
-import { WORDING_POSTEDITOR_EDITOR, } from '../constants'
 
 const uploadImage = (store, file) => {
   return store.dispatch('UPLOAD_IMAGE', { file, type: 'post', })
@@ -85,9 +84,6 @@ export default {
       },
       postType: POST_TYPE,
       showHtml: false,
-      wording: {
-        WORDING_POSTEDITOR_EDITOR,
-      },
     }
   },
   watch: {

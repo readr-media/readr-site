@@ -3,29 +3,29 @@
     <div class="profile-edit__main">
       <div class="form">
         <div class="form__item">
-          <span class="form__name">{{ wording.WORDING_PROFILEEDIT_NICKNAME }}：</span>
+          <span class="form__name">{{ $t('profile_editor.WORDING_PROFILEEDIT_NICKNAME') }}：</span>
           <!-- <input type="text" name="nickname" v-model="computedNickname"> -->
           <input class="form__input" type="text" name="nickname" v-model="inputNickname">
         </div>
         <div class="form__item">
-          <span class="form__name--align-start">{{ wording.WORDING_PROFILEEDIT_DESCRIPTION }}：</span>
+          <span class="form__name--align-start">{{ $t('profile_editor.WORDING_PROFILEEDIT_DESCRIPTION') }}：</span>
           <!-- <textarea name="description" v-model="computedDescription"></textarea> -->
           <textarea class="form__description" name="description" v-model="inputDescription"></textarea>
         </div>
         <div class="form__item">
-          <span class="form__name">{{ wording.WORDING_PROFILEEDIT_OLDPASSWORD }}：</span>
+          <span class="form__name">{{ $t('profile_editor.WORDING_PROFILEEDIT_OLDPASSWORD') }}：</span>
           <input class="form__input" type="password" name="old_password" v-model="inputOldPassword">
         </div>
         <div class="form__item">
-          <span class="form__name">{{ wording.WORDING_PROFILEEDIT_NEWPASSWORD }}：</span>
+          <span class="form__name">{{ $t('profile_editor.WORDING_PROFILEEDIT_NEWPASSWORD') }}：</span>
           <input class="form__input" type="password" name="new_password" v-model="inputNewPassword">
         </div>
         <div class="form__item">
-          <span class="form__name">{{ wording.WORDING_PROFILEEDIT_CONFIRMPASSWORD }}：</span>
+          <span class="form__name">{{ $t('profile_editor.WORDING_PROFILEEDIT_CONFIRMPASSWORD') }}：</span>
           <input class="form__input" type="password" name="confirm_password" v-model="inputConfirmPassword">
         </div>
         <div class="form__item">
-          <span class="form__name">{{ wording.WORDING_PROFILEEDIT_PERSONAL_OPTIONS }}：</span>
+          <span class="form__name">{{ $t('profile_editor.WORDING_PROFILEEDIT_PERSONAL_OPTIONS') }}：</span>
           <div class="form__personal-options"></div>
         </div>
       </div>
@@ -38,22 +38,12 @@
         </div>
         <div class="portrait__name">{{ staticNickname }}</div>
       </div>
-      <button class="profile-edit__save-button" @click="profileEditorSave">{{ wording.WORDING_PROFILEEDIT_SAVE }}</button>
+      <button class="profile-edit__save-button" @click="profileEditorSave">{{ $t('profile_editor.WORDING_PROFILEEDIT_SAVE') }}</button>
     </div>
   </div>
 </template>
 
 <script>
-import { 
-  WORDING_PROFILEEDIT_NICKNAME,
-  WORDING_PROFILEEDIT_EMAIL,
-  WORDING_PROFILEEDIT_DESCRIPTION,
-  WORDING_PROFILEEDIT_OLDPASSWORD,
-  WORDING_PROFILEEDIT_NEWPASSWORD,
-  WORDING_PROFILEEDIT_CONFIRMPASSWORD,
-  WORDING_PROFILEEDIT_PERSONAL_OPTIONS,
-  WORDING_PROFILEEDIT_SAVE,
-} from '../constants'
 import { removeToken, } from '../util/services'
 import validator from 'validator'
 import _ from 'lodash'
@@ -102,16 +92,6 @@ export default {
       inputOldPassword: '',
       inputNewPassword: '',
       inputConfirmPassword: '',
-      wording: {
-        WORDING_PROFILEEDIT_NICKNAME,
-        WORDING_PROFILEEDIT_EMAIL,
-        WORDING_PROFILEEDIT_DESCRIPTION,
-        WORDING_PROFILEEDIT_OLDPASSWORD,
-        WORDING_PROFILEEDIT_NEWPASSWORD,
-        WORDING_PROFILEEDIT_CONFIRMPASSWORD,
-        WORDING_PROFILEEDIT_PERSONAL_OPTIONS,
-        WORDING_PROFILEEDIT_SAVE,
-      },
     }
   },
   computed: {

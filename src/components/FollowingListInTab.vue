@@ -4,22 +4,22 @@
       <button
         :class="[ currentResource === 'member' ? 'active' : '' ]"
         @click="$_followingListInTab_resourceHandler('member')"
-        v-text="wording.WORDING_FOLLOW_LIST_GUEST_EDITOR">
+        v-text="$t('follow.WORDING_FOLLOW_LIST_GUEST_EDITOR')">
       </button>
       <button
         :class="[ currentResource === 'review' ? 'active' : '' ]"
         @click="$_followingListInTab_resourceHandler('review')"
-        v-text="`${wording.WORDING_FOLLOW_LIST_FOLLOW}${wording.WORDING_FOLLOW_LIST_REVIEW}`">
+        v-text="`${$t('follow.WORDING_FOLLOW_LIST_FOLLOW')}${$t('follow.WORDING_FOLLOW_LIST_REVIEW')}`">
       </button>
       <button
         :class="[ currentResource === 'news' ? 'active' : '' ]"
         @click="$_followingListInTab_resourceHandler('news')"
-        v-text="`${wording.WORDING_FOLLOW_LIST_FOLLOW}${wording.WORDING_FOLLOW_LIST_NEWS}`">
+        v-text="`${$t('follow.WORDING_FOLLOW_LIST_FOLLOW')}${$t('follow.WORDING_FOLLOW_LIST_NEWS')}`">
       </button>
       <button
         :class="[ currentResource === 'project' ? 'active' : '' ]"
         @click="$_followingListInTab_resourceHandler('project')"
-        v-text="`${wording.WORDING_FOLLOW_LIST_FOLLOW}${wording.WORDING_FOLLOW_LIST_PROJECT}`">
+        v-text="`${$t('follow.WORDING_FOLLOW_LIST_FOLLOW')}${$t('follow.WORDING_FOLLOW_LIST_PROJECT')}`">
       </button>
     </nav>
     <!-- <pagination-nav></pagination-nav> -->
@@ -40,13 +40,6 @@
   </section>
 </template>
 <script>
-  import {
-    WORDING_FOLLOW_LIST_FOLLOW,
-    WORDING_FOLLOW_LIST_GUEST_EDITOR,
-    WORDING_FOLLOW_LIST_NEWS,
-    WORDING_FOLLOW_LIST_PROJECT,
-    WORDING_FOLLOW_LIST_REVIEW,
-  } from '../constants'
   import { get, } from 'lodash'
   import PaginationNav from './PaginationNav.vue'
 
@@ -64,17 +57,6 @@
         type: Array,
         required: true,
       },
-    },
-    data () {
-      return {
-        wording: {
-          WORDING_FOLLOW_LIST_FOLLOW,
-          WORDING_FOLLOW_LIST_GUEST_EDITOR,
-          WORDING_FOLLOW_LIST_NEWS,
-          WORDING_FOLLOW_LIST_PROJECT,
-          WORDING_FOLLOW_LIST_REVIEW,
-        },
-      }
     },
     methods: {
       $_followingListInTab_getDescription (follow) {

@@ -1,14 +1,13 @@
 <template>
   <div class="search">
     <input class="search__input" type="text" ref="searchInput"
-      :placeholder="wording[ 'WORIDNG_HEADER_MEMBER_SEARCH' ]"
+      :placeholder="$t('header.WORIDNG_HEADER_MEMBER_SEARCH')"
       @keyup="setCurrVal"
       @change="checkIsChanged">
     <span class="search__icon" @click="goSearch"></span>
   </div>
 </template>
 <script>
-  import { WORIDNG_HEADER_MEMBER_SEARCH, } from 'src/constants'
   import { get, } from 'lodash'
 
   const debug = require('debug')('CLIENT:SearchTool')
@@ -19,9 +18,6 @@
         currentSearchVal: get(this.$refs, 'searchInput.value'),
         isChanged: true,
         // searchVal: get(this.$route, [ 'params', 'keyword' ]),
-        wording: {
-          WORIDNG_HEADER_MEMBER_SEARCH,
-        },
       }
     },
     computed: {

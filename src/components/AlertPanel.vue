@@ -4,41 +4,25 @@
     <div v-if="needList" class="alert__list" :class="{ multiple: isMultiple }">
       <template v-if="type === 'post' || type === 'video'">
         <div v-for="i in items" :key="i.id" class="alert__item">
-          <p><strong v-text="`${wording.WORDING_ALERTPANEL_AUTHOR}：`"></strong><span v-text="$_alertPanel_getPostAuthor(i)"></span></p>
-          <p><strong v-text="`${wording.WORDING_ALERTPANEL_TITLE}：`"></strong><span v-text="i.title"></span></p>
+          <p><strong v-text="`${$t('alert.WORDING_ALERTPANEL_AUTHOR')}：`"></strong><span v-text="$_alertPanel_getPostAuthor(i)"></span></p>
+          <p><strong v-text="`${$t('alert.WORDING_ALERTPANEL_TITLE')}：`"></strong><span v-text="i.title"></span></p>
         </div>
       </template>
       <template v-if="type === 'tag'">
         <div v-for="i in items" :key="i.id" class="alert__item">
-          <p><strong v-text="`${wording.WORDING_ALERTPANEL_TAG}：`"></strong><span v-text="i.text"></span></p>
+          <p><strong v-text="`${$t('alert.WORDING_ALERTPANEL_TAG')}：`"></strong><span v-text="i.text"></span></p>
         </div>
       </template>
     </div>
     <div v-if="needConfirm" class="alert__control" :class="{ multiple: isMultiple }">
-      <button class="alert__btn" @click="$_alertPanel_confirm" v-text="wording.WORDING_ALERTPANEL_CONFIRM"></button>
-      <button class="alert__btn" @click="$_alertPanel_cancel" v-text="wording.WORDING_ALERTPANEL_CANCEL"></button>
+      <button class="alert__btn" @click="$_alertPanel_confirm" v-text="$t('alert.WORDING_ALERTPANEL_CONFIRM')"></button>
+      <button class="alert__btn" @click="$_alertPanel_cancel" v-text="$t('alert.WORDING_ALERTPANEL_CANCEL')"></button>
     </div>
     <p v-if="!needConfirm" class="alert--message"><strong v-text="alertMessage"></strong></p>
   </section>
 </template>
 <script>
   import { POST_ACTIVE, TAG_ACTIVE, } from '../../api/config'
-  import {
-    WORDING_ALERTPANEL_ADD_SUCCESSFUL,
-    WORDING_ALERTPANEL_AUTHOR,
-    WORDING_ALERTPANEL_CANCEL,
-    WORDING_ALERTPANEL_CONFIRM,
-    WORDING_ALERTPANEL_DELETE_CONFIRMATION,
-    WORDING_ALERTPANEL_DELETE_SUCCESSFUL,
-    WORDING_ALERTPANEL_PENDING,
-    WORDING_ALERTPANEL_POST,
-    WORDING_ALERTPANEL_PUBLISH_CONFIRMATION,
-    WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL,
-    WORDING_ALERTPANEL_TAG,
-    WORDING_ALERTPANEL_TITLE,
-    WORDING_ALERTPANEL_UPDATE_SUCCESSFUL,
-    WORDING_ALERTPANEL_VIDEO,
-  } from '../constants'
   import _ from 'lodash'
   export default {
     name: 'AlertPanel',
@@ -73,13 +57,6 @@
           post: POST_ACTIVE,
           tag: TAG_ACTIVE,
         },
-        wording: {
-          WORDING_ALERTPANEL_AUTHOR,
-          WORDING_ALERTPANEL_CANCEL,
-          WORDING_ALERTPANEL_CONFIRM,
-          WORDING_ALERTPANEL_TAG,
-          WORDING_ALERTPANEL_TITLE,
-        },
       }
     },
     computed: {
@@ -87,45 +64,45 @@
         switch (this.type) {
           case 'post':
             if (!this.activeChanged) {
-              return `${WORDING_ALERTPANEL_POST}${WORDING_ALERTPANEL_UPDATE_SUCCESSFUL}！`
+              return `${this.$t('alert.WORDING_ALERTPANEL_POST')}${this.$t('alert.WORDING_ALERTPANEL_UPDATE_SUCCESSFUL')}！`
             } else {
               switch (this.active) {
                 case POST_ACTIVE.ACTIVE:
-                  return `${WORDING_ALERTPANEL_POST}${WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL}！`
+                  return `${this.$t('alert.WORDING_ALERTPANEL_POST')}${this.$t('alert.WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL')}！`
                 case POST_ACTIVE.DEACTIVE:
-                  return `${WORDING_ALERTPANEL_POST}${WORDING_ALERTPANEL_DELETE_SUCCESSFUL}！`
+                  return `${this.$t('alert.WORDING_ALERTPANEL_POST')}${this.$t('alert.WORDING_ALERTPANEL_DELETE_SUCCESSFUL')}！`
                 case POST_ACTIVE.DRAFT:
                   if (!_.get(this.items, [ 0, 'id', ])) {
-                    return `${WORDING_ALERTPANEL_POST}${WORDING_ALERTPANEL_ADD_SUCCESSFUL}！`
+                    return `${this.$t('alert.WORDING_ALERTPANEL_POST')}${this.$t('alert.WORDING_ALERTPANEL_ADD_SUCCESSFUL')}！`
                   }
-                  return `${WORDING_ALERTPANEL_POST}${WORDING_ALERTPANEL_UPDATE_SUCCESSFUL}！`
+                  return `${this.$t('alert.WORDING_ALERTPANEL_POST')}${this.$t('alert.WORDING_ALERTPANEL_UPDATE_SUCCESSFUL')}！`
                 case POST_ACTIVE.PENDING:
-                  return `${WORDING_ALERTPANEL_POST}${WORDING_ALERTPANEL_PENDING}！`
+                  return `${this.$t('alert.WORDING_ALERTPANEL_POST')}${this.$t('alert.WORDING_ALERTPANEL_PENDING')}！`
               }
               break
             }
           case 'tag':
             switch (this.active) {
               case TAG_ACTIVE.ACTIVE:
-                return `${WORDING_ALERTPANEL_TAG}${WORDING_ALERTPANEL_ADD_SUCCESSFUL}！` 
+                return `${this.$t('alert.WORDING_ALERTPANEL_TAG')}${this.$t('alert.WORDING_ALERTPANEL_ADD_SUCCESSFUL')}！` 
               case TAG_ACTIVE.DEACTIVE:
-                return `${WORDING_ALERTPANEL_TAG}${WORDING_ALERTPANEL_DELETE_SUCCESSFUL}！`
+                return `${this.$t('alert.WORDING_ALERTPANEL_TAG')}${this.$t('alert.WORDING_ALERTPANEL_DELETE_SUCCESSFUL')}！`
             }
             break
           case 'video':
             if (!this.activeChanged) {
-              return `${WORDING_ALERTPANEL_VIDEO}${WORDING_ALERTPANEL_UPDATE_SUCCESSFUL}！`
+              return `${this.$t('alert.WORDING_ALERTPANEL_VIDEO')}${this.$t('alert.WORDING_ALERTPANEL_UPDATE_SUCCESSFUL')}！`
             } else {
               switch (this.active) {
                 case POST_ACTIVE.ACTIVE:
-                  return `${WORDING_ALERTPANEL_VIDEO}${WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL}！`
+                  return `${this.$t('alert.WORDING_ALERTPANEL_VIDEO')}${this.$t('alert.WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL')}！`
                 case POST_ACTIVE.DEACTIVE:
-                  return `${WORDING_ALERTPANEL_VIDEO}${WORDING_ALERTPANEL_DELETE_SUCCESSFUL}！`
+                  return `${this.$t('alert.WORDING_ALERTPANEL_VIDEO')}${this.$t('alert.WORDING_ALERTPANEL_DELETE_SUCCESSFUL')}！`
                 case POST_ACTIVE.DRAFT:
                   if (!_.get(this.items, [ 0, 'id', ])) {
-                    return `${WORDING_ALERTPANEL_VIDEO}${WORDING_ALERTPANEL_ADD_SUCCESSFUL}！`
+                    return `${this.$t('alert.WORDING_ALERTPANEL_VIDEO')}${this.$t('alert.WORDING_ALERTPANEL_ADD_SUCCESSFUL')}！`
                   }
-                  return `${WORDING_ALERTPANEL_VIDEO}${WORDING_ALERTPANEL_UPDATE_SUCCESSFUL}！`
+                  return `${this.$t('alert.WORDING_ALERTPANEL_VIDEO')}${this.$t('alert.WORDING_ALERTPANEL_UPDATE_SUCCESSFUL')}！`
               }
               break
             }
@@ -137,13 +114,13 @@
           case 'video':
             switch (this.active) {
               case POST_ACTIVE.ACTIVE:
-                return WORDING_ALERTPANEL_PUBLISH_CONFIRMATION
+                return this.$t('alert.WORDING_ALERTPANEL_PUBLISH_CONFIRMATION')
               case POST_ACTIVE.DEACTIVE:
-                return WORDING_ALERTPANEL_DELETE_CONFIRMATION
+                return this.$t('alert.WORDING_ALERTPANEL_DELETE_CONFIRMATION')
             }
             break
           case 'tag':
-            return WORDING_ALERTPANEL_DELETE_CONFIRMATION
+            return this.$t('alert.WORDING_ALERTPANEL_DELETE_CONFIRMATION')
         }
       },
       isMultiple () {

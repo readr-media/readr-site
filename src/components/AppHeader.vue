@@ -5,8 +5,8 @@
         <SearchTool></SearchTool>
         <div class="login-status" v-if="isClientSide">
           <div class="login-status__nickname login-status__item" v-text="userNickname" v-if="isLoggedIn" @click="goMemberCenter"></div>
-          <a class="login-status__login-btn login-status__item" href="/login" v-text="wording.WORDING_HEADER_LOGIN" v-if="!isLoggedIn"></a>
-          <div class="login-status__logout-btn login-status__item" v-text="wording.WORDING_HEADER_LOGOUT" v-else-if="isLoggedIn" @click="logout"></div>
+          <a class="login-status__login-btn login-status__item" href="/login" v-text="$t('header.WORDING_HEADER_LOGIN')" v-if="!isLoggedIn"></a>
+          <div class="login-status__logout-btn login-status__item" v-text="$t('header.WORDING_HEADER_LOGOUT')" v-else-if="isLoggedIn" @click="logout"></div>
         </div>
       </div>
     </div>
@@ -14,7 +14,6 @@
 </template>
 <script>
   import _ from 'lodash'
-  import { WORDING_HEADER_LOGIN, WORDING_HEADER_LOGOUT, WORIDNG_HEADER_MEMBER_CENTRE, } from '../constants'
   import { ROLE_MAP, } from '../constants'
   import { removeToken, } from '../util/services'
   import SearchTool from 'src/components/search/SearchTool.vue'
@@ -44,17 +43,12 @@
         return _.get(this.$store, [ 'state', 'isLoggedIn', ])
       },
       userNickname () {
-        return this.isLoggedIn && _.get(this.currentUser, [ 'nickname', ], _.get(this.currentUser, [ 'name', ], this.wording.WORIDNG_HEADER_MEMBER_CENTRE))
+        return this.isLoggedIn && _.get(this.currentUser, [ 'nickname', ], _.get(this.currentUser, [ 'name', ], this.$t('header.WORIDNG_HEADER_MEMBER_CENTRE')))
       },
     },
     data () {
       return {
         isClientSide: false,
-        wording: {
-          WORDING_HEADER_LOGIN,
-          WORDING_HEADER_LOGOUT,
-          WORIDNG_HEADER_MEMBER_CENTRE,
-        },
       }
     },
     name: 'AppHeader',

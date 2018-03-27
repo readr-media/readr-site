@@ -11,37 +11,25 @@
         <div class="postListInTab__title">
           <h2 v-text="p.title"></h2>
           <div v-if="!(!$can('editOtherPost') && p.active !== config.active.DRAFT) && parent !== 'RewardPointsInTab'" class="postListInTab__control--desktop">
-            <button class="postListInTab__btn" @click="$_postListInTab_editPost(p.id)" v-text="wording.WORDING_POSTLIST_EDIT"></button>
-            <button class="postListInTab__btn" @click="$_postListInTab_deletePost(p.id)" v-text="wording.WORDING_POSTLIST_DELETE"></button>
+            <button class="postListInTab__btn" @click="$_postListInTab_editPost(p.id)" v-text="$t('post_list.WORDING_POSTLIST_EDIT')"></button>
+            <button class="postListInTab__btn" @click="$_postListInTab_deletePost(p.id)" v-text="$t('post_list.WORDING_POSTLIST_DELETE')"></button>
           </div>
         </div>
         <div v-if="parent === 'RewardPointsInTab'" class="postListInTab__descr">
-          <p class="points-info">{{ wording.WORDING_POINTS_SPENT }}： {{ p.points }} 點</p>
-          <p class="points-info">{{ wording.WORDING_POINTS_SPENT_WHEN }}： {{ p.createdAt.replace(/-/g, '/').replace('T', ' ').replace('Z', '') }}</p>
+          <p class="points-info">{{ $t('point.WORDING_POINTS_SPENT') }}： {{ p.points }} 點</p>
+          <p class="points-info">{{ $t('point.WORDING_POINTS_SPENT_WHEN') }}： {{ p.createdAt.replace(/-/g, '/').replace('T', ' ').replace('Z', '') }}</p>
         </div>
         <p v-else-if="p.content" class="postListInTab__descr" v-text="$_postListInTab_getDescr(p.content)"></p>
       </div>
       <div class="postListInTab__control--mobile">
-        <button class="postListInTab__btn" @click="$_postListInTab_editPost(p.id)" v-text="wording.WORDING_POSTLIST_EDIT"></button>
-        <button class="postListInTab__btn" @click="$_postListInTab_deletePost(p.id)" v-text="wording.WORDING_POSTLIST_DELETE"></button>
+        <button class="postListInTab__btn" @click="$_postListInTab_editPost(p.id)" v-text="$t('point.WORDING_POSTLIST_EDIT')"></button>
+        <button class="postListInTab__btn" @click="$_postListInTab_deletePost(p.id)" v-text="$t('post_list.WORDING_POSTLIST_DELETE')"></button>
       </div>
     </div>
   </section>
 </template>
 <script>
   import { POST_ACTIVE, } from '../../api/config'
-  import {
-    WORDING_POSTLIST_DELETE,
-    WORDING_POSTLIST_EDIT,
-    WORDING_POSTLIST_ACTIVE_PUBLISH,
-    WORDING_POSTLIST_ACTIVE_PUBLISH_PROJECT,
-    WORDING_POSTLIST_ACTIVE_PENDING,
-    WORDING_POSTLIST_ACTIVE_PENDING_PROJECT,
-    WORDING_POSTLIST_ACTIVE_UNPUBLISH,
-    WORDING_POSTLIST_ACTIVE_DRAFT,
-    WORDING_POINTS_SPENT,
-    WORDING_POINTS_SPENT_WHEN,
-  } from '../constants'
   import _ from 'lodash'
   import PaginationNav from './PaginationNav.vue'
 
@@ -68,18 +56,6 @@
           active: POST_ACTIVE,
         },
         postConfig: POST_ACTIVE,
-        wording: {
-          WORDING_POSTLIST_DELETE,
-          WORDING_POSTLIST_EDIT,
-          WORDING_POSTLIST_ACTIVE_PUBLISH,
-          WORDING_POSTLIST_ACTIVE_PUBLISH_PROJECT,
-          WORDING_POSTLIST_ACTIVE_PENDING,
-          WORDING_POSTLIST_ACTIVE_PENDING_PROJECT,
-          WORDING_POSTLIST_ACTIVE_UNPUBLISH,
-          WORDING_POSTLIST_ACTIVE_DRAFT,
-          WORDING_POINTS_SPENT,
-          WORDING_POINTS_SPENT_WHEN,
-        },
       }
     },
     computed: {
@@ -97,15 +73,15 @@
       $_postListInTab_getActive (post) {
         switch (post.active) {
           case POST_ACTIVE.ACTIVE:
-            return this.parent !== 'RewardPointsInTab' ? WORDING_POSTLIST_ACTIVE_PUBLISH : WORDING_POSTLIST_ACTIVE_PUBLISH_PROJECT
+            return this.parent !== 'RewardPointsInTab' ? this.$t('post_list.WORDING_POSTLIST_ACTIVE_PUBLISH') : this.$t('post_list.WORDING_POSTLIST_ACTIVE_PUBLISH_PROJECT')
           case POST_ACTIVE.DRAFT:
-            return WORDING_POSTLIST_ACTIVE_DRAFT
+            return this.$t('post_list.WORDING_POSTLIST_ACTIVE_DRAFT')
           case POST_ACTIVE.PENDING:
-            return this.parent !== 'RewardPointsInTab' ? WORDING_POSTLIST_ACTIVE_PENDING : WORDING_POSTLIST_ACTIVE_PENDING_PROJECT
+            return this.parent !== 'RewardPointsInTab' ? this.$t('post_list.WORDING_POSTLIST_ACTIVE_PENDING') : this.$t('post_list.WORDING_POSTLIST_ACTIVE_PENDING_PROJECT')
           case POST_ACTIVE.UNPUBLISH:
-            return WORDING_POSTLIST_ACTIVE_UNPUBLISH
+            return this.$t('post_list.WORDING_POSTLIST_ACTIVE_UNPUBLISH')
           default:
-            return WORDING_POSTLIST_ACTIVE_DRAFT
+            return this.$t('post_list.WORDING_POSTLIST_ACTIVE_DRAFT')
         }
       },
       $_postListInTab_getDescr (content) {

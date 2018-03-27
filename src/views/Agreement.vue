@@ -19,7 +19,6 @@
 </template>
 <script>
   import { AGREEMENT_CONTENT, } from '../constants/agreement'
-  import { WORDING_AGREEMENT_TERMS_AND_SERVICE, WORDING_AGREEMENT_IPR, WORDING_AGREEMENT_PRIVACY, } from '../constants'
   // import AppHeader from '../components/AppHeader.vue'
   import Tab from '../components/Tab.vue'
   import AppAsideNav from '../components/AppAsideNav.vue'
@@ -34,9 +33,9 @@
       return {
         agreementContent: AGREEMENT_CONTENT,
         tabs: [
-          WORDING_AGREEMENT_TERMS_AND_SERVICE,
-          WORDING_AGREEMENT_IPR,
-          WORDING_AGREEMENT_PRIVACY,
+          this.$t('agreement.WORDING_AGREEMENT_TERMS_AND_SERVICE'),
+          this.$t('agreement.WORDING_AGREEMENT_IPR'),
+          this.$t('agreement.WORDING_AGREEMENT_PRIVACY'),
         ],
       }
     },
