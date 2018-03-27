@@ -22,7 +22,7 @@ Vue.mixin({
   },
 })
 
-const { app, router, store, } = createApp()
+const { app, i18n, router, store, } = createApp()
 
 // prime the store with server-initialized state.
 // the state is determined during SSR and inlined in the page markup.
@@ -55,7 +55,7 @@ router.onReady(() => {
     }
 
     bar.start()
-    Promise.all(asyncDataHooks.map(hook => hook({ store, route: to, })))
+    Promise.all(asyncDataHooks.map(hook => hook({ store, route: to, i18n, })))
       .then(() => {
         bar.finish()
         next()
