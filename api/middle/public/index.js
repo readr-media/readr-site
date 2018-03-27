@@ -54,9 +54,9 @@ router.get('/members', publicQueryValidation.validate(schema.members), fetchAndC
 router.get('/posts', publicQueryValidation.validate(schema.posts), (req, res, next) => {
   const activePostQueryString = `{"$in":[${POST_ACTIVE.ACTIVE}]}`
   if (Object.keys(req.query).length === 0) {
-    req.url += `?active=${activePostQueryString}`
+    req.url += `?active=${activePostQueryString}&type={"$in":[${POST_TYPE.REVIEW}, ${POST_TYPE.NEWS}]}`
   } else {
-    req.url += `&active=${activePostQueryString}`
+    req.url += `&active=${activePostQueryString}&type={"$in":[${POST_TYPE.REVIEW}, ${POST_TYPE.NEWS}]}`
   }
   next()
 },
