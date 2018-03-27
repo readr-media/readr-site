@@ -11,7 +11,7 @@
         <div class="projects-list__list-aside">
           <ProjectsFigureProgress/>
           <ProjectsFigureProgress/>
-          <AppTitledList :listTitle="'熱門關鍵字'">
+          <AppTitledList :listTitle="$t('project.WORDING_PROJECT_HOT_KEYWORD')">
             <ul class="projects-tags-hot-list-container">
               <li class="projects-tags-hot-list-container__list">
                 <span class="projects-tags-hot-list-container__tag-name">原住民傳統領域</span>

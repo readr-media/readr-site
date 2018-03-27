@@ -70,4 +70,16 @@ export default {
     'WORDING_EDITORS_GUESTEDITOR': '總編',
     'WORDING_EDITORS_CURRENT_GUESTEDITOR': '本週客座',
   },
+  'agreement': {
+    'WORDING_AGREEMENT_TERMS_AND_SERVICE' : '會員服務條款',
+    'WORDING_AGREEMENT_IPR' : '著作權、智慧財產權政策',
+    'WORDING_AGREEMENT_PRIVACY' : '隱私權政策',
+  },
+  'profile': {
+    'WORDING_PROFILE_FILTER_ALL' : '所有',
+  },
+  'project': {
+    'WORDING_PROJECT_HOT_KEYWORD' : '熱門關鍵字',
+    'WORDING_PROJECT' : '',
+  },
 }

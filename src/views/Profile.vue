@@ -10,7 +10,7 @@
           <div class="profile__main__review">
             <div class="profile__main__review__filter">
               <select @change="filterChanged">
-                <option v-text="wording[ 'WORDING_PROFILE_FILTER_ALL' ]" value="all"></option>
+                <option v-text="$t('profile.WORDING_PROFILE_FILTER_ALL')" value="all"></option>
                 <option v-for="item in filters" v-text="item" :value="item"></option>
               </select>
             </div>
@@ -28,7 +28,6 @@
 <script>
   import { POST_TYPE, } from 'api/config'
   import { ROLE_MAP, } from 'src/constants'
-  import { WORDING_TAB_REVIEW_RECORD, WORDING_TAB_FOLLOW_RECORD, WORDING_PROFILE_FILTER_ALL, } from 'src/constants'
   import { find, filter, get, map, } from 'lodash'
   import About from 'src/components/About.vue'
   import AppAsideNav from 'src/components/AppAsideNav.vue'
@@ -132,12 +131,9 @@
       return {
         filter: 'all',
         tabs: [
-          WORDING_TAB_REVIEW_RECORD,
-          WORDING_TAB_FOLLOW_RECORD,
+          this.$t('tab.WORDING_TAB_REVIEW_RECORD'),
+          this.$t('tab.WORDING_TAB_FOLLOW_RECORD'),
         ],
-        wording: {
-          WORDING_PROFILE_FILTER_ALL,
-        },
       }
     },
     methods: {
