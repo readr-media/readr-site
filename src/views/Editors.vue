@@ -5,7 +5,7 @@
         <AppAsideNav/>
       </aside>
       <main class="editors__main">
-        <AppTitledList :listTitle="'本週客座'">
+        <AppTitledList :listTitle="$t('editors.WORDING_EDITORS_CURRENT_GUESTEDITOR')">
           <ul class="editors-list-container">
             <EditorsIntro class="editors-intro-main" v-for="customEditor in customEditors" :key="customEditor.id" :editor="customEditor"/>
           </ul>
@@ -25,6 +25,7 @@ import AppTitledList from '../components/AppTitledList.vue'
 import EditorsIntro from '../components/editors/EditorsIntro.vue'
 import _ from 'lodash'
 
+// const debug = require('debug')('CLIENT:Editors')
 const getMembersPublic = (store, params) => {
   return store.dispatch('GET_PUBLIC_MEMBERS', {
     params: params,
@@ -45,6 +46,13 @@ const fetchFollowing = (store, params) => {
 }
 
 export default {
+  name: 'Editors',
+  asyncData ({ store, i18n, }) {
+    const targ_key = _.find(ROLE_MAP, { value: i18n.t('editors.WORDING_EDITORS_GUESTEDITOR'), }).key
+    return getMembersPublic(store, {
+      role: targ_key,
+    })
+  },
   components: {
     AppAsideNav,
     AppTitledList,
@@ -52,13 +60,10 @@ export default {
   },
   data () {
     return {
-      asideListRoleValue: '總編',
+      asideListRoleValue: this.$t('editors.WORDING_EDITORS_GUESTEDITOR'),
     }
   },
   computed: {
-    asideListRoleKey () {
-      return _.find(ROLE_MAP, { value: this.asideListRoleValue, }).key
-    },
     customEditors () {
       return _.get(this.$store, 'state.customEditors.items', [])
     },
@@ -70,9 +75,6 @@ export default {
     Promise.all([
       getMembersPublic(this.$store, {
         custom_editor: true,
-      }),
-      getMembersPublic(this.$store, {
-        role: this.asideListRoleKey,
       }),
     ]).then(() => {
       if (this.$store.state.isLoggedIn) {
