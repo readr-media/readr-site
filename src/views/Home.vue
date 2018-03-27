@@ -212,9 +212,11 @@
       top 60px
       z-index 999
     &__main
+      flex 1
       margin-left 30px
+      margin-right 30px
       display flex
-      justify-content flex-start
+      justify-content flex-end
       align-items flex-start
     &__list-main
       max-width 650px
