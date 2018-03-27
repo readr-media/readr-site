@@ -255,8 +255,8 @@ export function getMembers ({ params, }) {
 }
 
 export function getPublicMember ({ params, }) {
-  let url = `${host}/api/member/public`
-  url = `${url}/profile/${params.id}`
+  let url = `${host}/api/public/profile/${params.id}`
+  // url = `${url}/profile/${params.id}`
   return _doFetch(url)
 }
 

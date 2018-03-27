@@ -1,5 +1,6 @@
 const { API_PROTOCOL, API_HOST, API_PORT, API_TIMEOUT, } = require('../../config')
 const { authVerify, } = require('../member/comm')
+const { authorize, } = require('../../services/perm')
 const { fetchFromRedis, insertIntoRedis, } = require('../redisHandler')
 const { handlerError, } = require('../../comm')
 const debug = require('debug')('READR:api:middle:following')
@@ -9,7 +10,11 @@ const superagent = require('superagent')
 
 const apiHost = API_PROTOCOL + '://' + API_HOST + ':' + API_PORT
 
-router.post('/byuser', authVerify, (req, res) => {
+router.post('/byuser', (req, res, next) => {
+  req.url = '/following/byuser'
+  next()
+}, [ authVerify, authorize, ], (req, res) => {
+  debug('Got a /following/byuser call.')
   const url = `${apiHost}/following/byuser`
   superagent
   .get(url)
