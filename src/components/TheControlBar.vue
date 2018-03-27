@@ -7,8 +7,8 @@
       :style="[ viewport <= 767 ? { width: `calc((100% - (${(amountBtn - 1) * 5}px))/ ${amountBtn})` } : {} ]"
       @changeBtnAmount="$_controlBar_btnAmountHandler">
       <button slot="0" class="controlBar--btn edit" @click="$_controlBar_toggleBtnBox" v-text="wordingBtnReview"></button>
-      <button slot="1" class="controlBar--subBtn" @click="$_controlBar_clickHandler('addReview')" v-text="wording.WORDING_CONTROLBAR_ADD_DIRECTLY"></button>
-      <button slot="2" class="controlBar--subBtn" @click="$_controlBar_clickHandler('editReview')" v-text="wording.WORDING_CONTROLBAR_EDIT_DRAFT"></button>
+      <button slot="1" class="controlBar--subBtn" @click="$_controlBar_clickHandler('addReview')" v-text="$t('control_bar.WORDING_CONTROLBAR_ADD_DIRECTLY')"></button>
+      <button slot="2" class="controlBar--subBtn" @click="$_controlBar_clickHandler('editReview')" v-text="$t('control_bar.WORDING_CONTROLBAR_EDIT_DRAFT')"></button>
     </control-bar-button-box>
     <control-bar-button-box
       v-if="$can('addPost')"
@@ -17,8 +17,8 @@
       :style="[ viewport <= 767 ? { width: `calc((100% - (${(amountBtn - 1) * 5}px))/ ${amountBtn})` } : {} ]"
       @changeBtnAmount="$_controlBar_btnAmountHandler">
       <button slot="0" class="controlBar--btn edit" @click="$_controlBar_toggleBtnBox" v-text="wordingBtnNews"></button>
-      <button slot="1" class="controlBar--subBtn" @click="$_controlBar_clickHandler('addNews')" v-text="wording.WORDING_CONTROLBAR_ADD_DIRECTLY"></button>
-      <button slot="2" class="controlBar--subBtn" @click="$_controlBar_clickHandler('editNews')" v-text="wording.WORDING_CONTROLBAR_EDIT_DRAFT"></button>
+      <button slot="1" class="controlBar--subBtn" @click="$_controlBar_clickHandler('addNews')" v-text="$t('control_bar.WORDING_CONTROLBAR_ADD_DIRECTLY')"></button>
+      <button slot="2" class="controlBar--subBtn" @click="$_controlBar_clickHandler('editNews')" v-text="$t('control_bar.WORDING_CONTROLBAR_EDIT_DRAFT')"></button>
     </control-bar-button-box>
     <control-bar-button-box
       v-if="viewport <= 767"
@@ -26,11 +26,11 @@
       :amount="5"
       :style="[ viewport <= 767 ? { width: `calc((100% - (${(amountBtn - 1) * 5}px))/ ${amountBtn})` } : {} ]"
       @changeBtnAmount="$_controlBar_btnAmountHandler">
-      <button slot="0" class="controlBar--btn" @click="$_controlBar_toggleBtnBox" v-text="wording.WORDING_CONTROLBAR_MANAGE"></button>
-      <button slot="1" class="controlBar--subBtn" :class="[ activePanel === 'record' ? 'active' : '' ]" v-text="wording.WORDING_CONTROLBAR_RECORD" @click="$_controlBar_openPanel($event, 'records')"></button>
-      <button slot="2" class="controlBar--subBtn" :class="[ activePanel === 'posts' ? 'active' : '' ]" v-text="wording.WORDING_CONTROLBAR_POST" @click="$_controlBar_openPanel($event, 'posts')"></button>
-      <!-- <button slot="3" class="controlBar--subBtn" :class="[ activePanel === 'video' ? 'active' : '' ]" v-text="wording.WORDING_CONTROLBAR_VIDEO" @click="$_controlBar_openPanel($event, 'videos')"></button> -->
-      <button slot="4" class="controlBar--subBtn" :class="[ activePanel === 'tag' ? 'active' : '' ]" v-text="wording.WORDING_CONTROLBAR_TAG" @click="$_controlBar_openPanel($event, 'tags')"></button>
+      <button slot="0" class="controlBar--btn" @click="$_controlBar_toggleBtnBox" v-text="$t('control_bar.WORDING_CONTROLBAR_MANAGE')"></button>
+      <button slot="1" class="controlBar--subBtn" :class="[ activePanel === 'record' ? 'active' : '' ]" v-text="$t('control_bar.WORDING_CONTROLBAR_RECORD')" @click="$_controlBar_openPanel($event, 'records')"></button>
+      <button slot="2" class="controlBar--subBtn" :class="[ activePanel === 'posts' ? 'active' : '' ]" v-text="$t('control_bar.WORDING_CONTROLBAR_POST')" @click="$_controlBar_openPanel($event, 'posts')"></button>
+      <!-- <button slot="3" class="controlBar--subBtn" :class="[ activePanel === 'video' ? 'active' : '' ]" v-text="$t('control_bar.WORDING_CONTROLBAR_VIDEO')" @click="$_controlBar_openPanel($event, 'videos')"></button> -->
+      <button slot="4" class="controlBar--subBtn" :class="[ activePanel === 'tag' ? 'active' : '' ]" v-text="$t('control_bar.WORDING_CONTROLBAR_TAG')" @click="$_controlBar_openPanel($event, 'tags')"></button>
     </control-bar-button-box>
     <control-bar-button-box
       v-if="$can('addAccount') && $can('memberManage') && viewport <= 767"
@@ -38,72 +38,55 @@
       :amount="3"
       :style="[ viewport <= 767 ? { width: `calc((100% - (${(amountBtn - 1) * 5}px))/ ${amountBtn})` } : {} ]"
       @changeBtnAmount="$_controlBar_btnAmountHandler">
-      <button slot="0" class="controlBar--btn" @click="$_controlBar_toggleBtnBox" v-text="wording.WORDING_CONTROLBAR_ACCOUNT"></button>
-      <button slot="1" class="controlBar--subBtn" v-text="wording.WORDING_CONTROLBAR_ADD_DIRECTLY" @click="$_controlBar_clickHandler('addAccount')"></button>
-      <button slot="2" class="controlBar--subBtn" v-text="wording.WORDING_CONTROLBAR_ACCOUNT_LIST" @click="$_controlBar_openPanel($event, 'accounts')"></button>
+      <button slot="0" class="controlBar--btn" @click="$_controlBar_toggleBtnBox" v-text="$t('control_bar.WORDING_CONTROLBAR_ACCOUNT')"></button>
+      <button slot="1" class="controlBar--subBtn" v-text="$t('control_bar.WORDING_CONTROLBAR_ADD_DIRECTLY')" @click="$_controlBar_clickHandler('addAccount')"></button>
+      <button slot="2" class="controlBar--subBtn" v-text="$t('control_bar.WORDING_CONTROLBAR_ACCOUNT_LIST')" @click="$_controlBar_openPanel($event, 'accounts')"></button>
     </control-bar-button-box>
     <control-bar-button
       v-if="viewport > 767"
       class="controlBar--btn"
       @changeBtnAmount="$_controlBar_btnAmountHandler"
       @click="$_controlBar_openPanel($event, 'records')"
-      :text="`${wording.WORDING_CONTROLBAR_RECORD}${wording.WORDING_CONTROLBAR_MANAGE}`">
+      :text="`${$t('control_bar.WORDING_CONTROLBAR_RECORD')}${$t('control_bar.WORDING_CONTROLBAR_MANAGE')}`">
     </control-bar-button>
     <control-bar-button
       v-if="$can('editOtherPost') && viewport > 767"
       class="controlBar--btn"
       @changeBtnAmount="$_controlBar_btnAmountHandler"
       @click="$_controlBar_openPanel($event, 'posts')"
-      :text="`${wording.WORDING_CONTROLBAR_POST}${wording.WORDING_CONTROLBAR_MANAGE}`">
+      :text="`${$t('control_bar.WORDING_CONTROLBAR_POST')}${$t('control_bar.WORDING_CONTROLBAR_MANAGE')}`">
     </control-bar-button>
     <control-bar-button
       v-if="$can('editTag') && viewport > 767"
       class="controlBar--btn"
       @changeBtnAmount="$_controlBar_btnAmountHandler"
       @click="$_controlBar_openPanel($event, 'tags')"
-      :text="`${wording.WORDING_CONTROLBAR_TAG}${wording.WORDING_CONTROLBAR_MANAGE}`">
+      :text="`${$t('control_bar.WORDING_CONTROLBAR_TAG')}${$t('control_bar.WORDING_CONTROLBAR_MANAGE')}`">
     </control-bar-button>
     <!-- <control-bar-button-box
       v-if="viewport > 767"
       class="controlBar__btnBox"
       :amount="2">
-      <button slot="0" class="controlBar--btn" @click="$_controlBar_openPanel($event, 'videos')" v-text="`${wording.WORDING_CONTROLBAR_VIDEO}${wording.WORDING_CONTROLBAR_MANAGE}`"></button>
-      <button slot="1" class="controlBar--subBtn" v-text="wording.WORDING_CONTROLBAR_ADD_VIDEO" @click="$_controlBar_clickHandler('addVideo')"></button>
+      <button slot="0" class="controlBar--btn" @click="$_controlBar_openPanel($event, 'videos')" v-text="`${$t('control_bar.WORDING_CONTROLBAR_VIDEO')}${$t('control_bar.WORDING_CONTROLBAR_MANAGE')}`"></button>
+      <button slot="1" class="controlBar--subBtn" v-text="$t('control_bar.WORDING_CONTROLBAR_ADD_VIDEO')" @click="$_controlBar_clickHandler('addVideo')"></button>
     </control-bar-button-box> -->
     <control-bar-button
       v-if="$can('addAccount') && viewport > 767"
       class="controlBar--btn"
       @changeBtnAmount="$_controlBar_btnAmountHandler"
       @click="$_controlBar_clickHandler('addAccount')"
-      :text="wording.WORDING_CONTROLBAR_ADD_ACCOUNT">
+      :text="$t('control_bar.WORDING_CONTROLBAR_ADD_ACCOUNT')">
     </control-bar-button>
     <control-bar-button
       v-if="$can('memberManage') && viewport > 767"
       class="controlBar--btn"
       @changeBtnAmount="$_controlBar_btnAmountHandler"
       @click="$_controlBar_openPanel($event, 'accounts')"
-      :text="`${wording.WORDING_CONTROLBAR_ACCOUNT}${wording.WORDING_CONTROLBAR_MANAGE}`">
+      :text="`${$t('control_bar.WORDING_CONTROLBAR_ACCOUNT')}${$t('control_bar.WORDING_CONTROLBAR_MANAGE')}`">
     </control-bar-button>
   </section>
 </template>
 <script>
-  import {
-    WORDING_CONTROLBAR_ACCOUNT,
-    WORDING_CONTROLBAR_ACCOUNT_LIST,
-    WORDING_CONTROLBAR_ADD_ACCOUNT,
-    WORDING_CONTROLBAR_ADD_DIRECTLY,
-    WORDING_CONTROLBAR_ADD_NEWS,
-    WORDING_CONTROLBAR_ADD_REVIEW,
-    WORDING_CONTROLBAR_ADD_VIDEO,
-    WORDING_CONTROLBAR_EDIT_DRAFT,
-    WORDING_CONTROLBAR_MANAGE,
-    WORDING_CONTROLBAR_NEWS,
-    WORDING_CONTROLBAR_POST,
-    WORDING_CONTROLBAR_RECORD,
-    WORDING_CONTROLBAR_REVIEW,
-    WORDING_CONTROLBAR_TAG,
-    WORDING_CONTROLBAR_VIDEO,
-  } from '../constants'
   import { includes, } from 'lodash'
   import ControlBarButton from './ControlBarButton.vue'
   import ControlBarButtonBox from './ControlBarButtonBox.vue'
@@ -119,23 +102,6 @@
         activePanel: 'record',
         amountBtn: 0,
         viewport: 0,
-        wording: {
-          WORDING_CONTROLBAR_ACCOUNT,
-          WORDING_CONTROLBAR_ACCOUNT_LIST,
-          WORDING_CONTROLBAR_ADD_ACCOUNT,
-          WORDING_CONTROLBAR_ADD_DIRECTLY,
-          WORDING_CONTROLBAR_ADD_NEWS,
-          WORDING_CONTROLBAR_ADD_REVIEW,
-          WORDING_CONTROLBAR_ADD_VIDEO,
-          WORDING_CONTROLBAR_EDIT_DRAFT,
-          WORDING_CONTROLBAR_MANAGE,
-          WORDING_CONTROLBAR_NEWS,
-          WORDING_CONTROLBAR_POST,
-          WORDING_CONTROLBAR_RECORD,
-          WORDING_CONTROLBAR_REVIEW,
-          WORDING_CONTROLBAR_TAG,
-          WORDING_CONTROLBAR_VIDEO,
-        },
       }
     },
     computed: {

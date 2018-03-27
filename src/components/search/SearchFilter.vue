@@ -1,7 +1,7 @@
 <template>
   <div class="search-filter">
     <div class="search-filter__title">
-      <span v-text="wording[ 'WORDING_SEARCH_FILTER_TITLE' ]"></span>
+      <span v-text="$t('search.WORDING_SEARCH_FILTER_TITLE')"></span>
     </div>
     <div class="search-filter__container">
       <div class="icon">
@@ -16,25 +16,16 @@
   </div>
 </template>
 <script>
-  import {
-    WORDING_SEARCH_FILTER_TITLE,
-    WORDING_SEARCH_FILTER_VIEW,
-    WORDING_SEARCH_FILTER_CONVERSATION,
-    WORDING_SEARCH_FILTER_PROJECT, } from 'src/constants'
-
   export default {
     name: 'SearchFilter',
     data () {
       return {
         flag: 'post',
         filters: [
-          { key: 'post', name: WORDING_SEARCH_FILTER_VIEW, },
-          { key: 'conversation', name: WORDING_SEARCH_FILTER_CONVERSATION, },
-          { key: 'project', name: WORDING_SEARCH_FILTER_PROJECT, },
+          { key: 'post', name: this.$t('search.WORDING_SEARCH_FILTER_VIEW'), },
+          { key: 'conversation', name: this.$t('search.WORDING_SEARCH_FILTER_CONVERSATION'), },
+          { key: 'project', name: this.$t('search.WORDING_SEARCH_FILTER_PROJECT'), },
         ],
-        wording: {
-          WORDING_SEARCH_FILTER_TITLE,
-        },
       }
     },
     methods: {

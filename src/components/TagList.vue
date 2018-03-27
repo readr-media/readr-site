@@ -2,8 +2,8 @@
   <div class="tagList">
     <div class="tagList__control">
       <div class="tagList__add">
-        <input v-model="addTag" type="text" :placeholder="wording.WORDING_TAGLIST_ADD_PLACEHOLDER">
-        <button :disabled="!tagNameValidated" @click="$_tagList_addTag" v-text="wording.WORDING_TAGLIST_ADD"></button>
+        <input v-model="addTag" type="text" :placeholder="$t('tag_list.WORDING_TAGLIST_ADD_PLACEHOLDER')">
+        <button :disabled="!tagNameValidated" @click="$_tagList_addTag" v-text="$t('tag_list.WORDING_TAGLIST_ADD')"></button>
       </div>
       <pagination-nav :totalPages="totalPages" @pageChanged="$_tagList_pageChanged"></pagination-nav>
     </div>
@@ -11,17 +11,17 @@
       <thead>
         <tr>
           <th class="tagList__checkbox"><input type="checkbox" ref="checkboxSelectAll"  @click="$_tagList_toggleSelectAll"></th>
-          <th class="tagList__text"><span @click="$_tagList_orderBy('text')" v-text="wording.WORDING_TAGLIST_TAG"></span></th>
-          <th><span @click="$_tagList_orderBy('related_reviews')" v-text="wording.WORDING_TAGLIST_REVIEW_COUNT"></span></th>
-          <th><span @click="$_tagList_orderBy('related_news')" v-text="wording.WORDING_TAGLIST_NEWS_COUNT"></span></th>
+          <th class="tagList__text"><span @click="$_tagList_orderBy('text')" v-text="$t('tag_list.WORDING_TAGLIST_TAG')"></span></th>
+          <th><span @click="$_tagList_orderBy('related_reviews')" v-text="$t('tag_list.WORDING_TAGLIST_REVIEW_COUNT')"></span></th>
+          <th><span @click="$_tagList_orderBy('related_news')" v-text="$t('tag_list.WORDING_TAGLIST_NEWS_COUNT')"></span></th>
           <th class="tagList__edit"></th>
           <th class="tagList__delete">
-            <button class="tagList__btn tagList__btn--multiple" v-text="wording.WORDING_TAGLIST_DELETE" @click="$_postList_deleteTags"></button>
+            <button class="tagList__btn tagList__btn--multiple" v-text="$t('tag_list.WORDING_TAGLIST_DELETE')" @click="$_postList_deleteTags"></button>
           </th>
           <th class="tagList__sort">
             <select name="" id="">
-              <option value="-updated_at" v-text="wording.WORDING_TAGLIST_UPDATE_AT"></option>
-              <option value="-created_at" v-text="wording.WORDING_TAGLIST_PUBLISH_AT"></option>
+              <option value="-updated_at" v-text="$t('tag_list.WORDING_TAGLIST_UPDATE_AT')"></option>
+              <option value="-created_at" v-text="$t('tag_list.WORDING_TAGLIST_PUBLISH_AT')"></option>
             </select>
           </th>
         </tr>
@@ -32,13 +32,13 @@
           <td ref="tagTextBlock" class="tagList__text">
             <span ref="originTagText" @click="$_tagList_editTag" v-text="t.text"></span>
             <input ref="inputTagText" type="text" :value="t.text">
-            <button @click="$_tagList_confirmEdit($event, t.id)" v-text="wording.WORDING_TAGLIST_CONFIRM"></button>
-            <button @click="$_tagList_cancel" v-text="wording.WORDING_TAGLIST_CANCEL"></button>
+            <button @click="$_tagList_confirmEdit($event, t.id)" v-text="$t('tag_list.WORDING_TAGLIST_CONFIRM')"></button>
+            <button @click="$_tagList_cancel" v-text="$t('tag_list.WORDING_TAGLIST_CANCEL')"></button>
           </td>
           <td v-text="t.relatedReviews"></td>
           <td v-text="t.relatedNews"></td>
-          <td class="tagList__edit"><button class="tagList__btn tagList__btn--single" @click="$_tagList_editTagBtn" v-text="wording.WORDING_TAGLIST_EDIT"></button></td>
-          <td class="tagList__delete"><button class="tagList__btn tagList__btn--single" @click="$_tagList_deleteTag(t.id)" v-text="wording.WORDING_TAGLIST_DELETE"></button></td>
+          <td class="tagList__edit"><button class="tagList__btn tagList__btn--single" @click="$_tagList_editTagBtn" v-text="$t('tag_list.WORDING_TAGLIST_EDIT')"></button></td>
+          <td class="tagList__delete"><button class="tagList__btn tagList__btn--single" @click="$_tagList_deleteTag(t.id)" v-text="$t('tag_list.WORDING_TAGLIST_DELETE')"></button></td>
           <td></td>
         </tr>
       </tbody>
@@ -46,19 +46,6 @@
   </div>
 </template>
 <script>
-  import {
-    WORDING_TAGLIST_ADD,
-    WORDING_TAGLIST_ADD_PLACEHOLDER,
-    WORDING_TAGLIST_CANCEL,
-    WORDING_TAGLIST_CONFIRM,
-    WORDING_TAGLIST_DELETE,
-    WORDING_TAGLIST_EDIT,
-    WORDING_TAGLIST_NEWS_COUNT,
-    WORDING_TAGLIST_PUBLISH_AT,
-    WORDING_TAGLIST_REVIEW_COUNT,
-    WORDING_TAGLIST_TAG,
-    WORDING_TAGLIST_UPDATE_AT,
-  } from '../constants'
   import _ from 'lodash'
   import PaginationNav from './PaginationNav.vue'
 
@@ -95,19 +82,6 @@
       return {
         addTag: '',
         checkedIems: [],
-        wording: {
-          WORDING_TAGLIST_ADD,
-          WORDING_TAGLIST_ADD_PLACEHOLDER,
-          WORDING_TAGLIST_CANCEL,
-          WORDING_TAGLIST_CONFIRM,
-          WORDING_TAGLIST_DELETE,
-          WORDING_TAGLIST_EDIT,
-          WORDING_TAGLIST_NEWS_COUNT,
-          WORDING_TAGLIST_PUBLISH_AT,
-          WORDING_TAGLIST_REVIEW_COUNT,
-          WORDING_TAGLIST_TAG,
-          WORDING_TAGLIST_UPDATE_AT,
-        },
       }
     },
     computed: {

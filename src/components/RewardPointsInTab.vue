@@ -1,6 +1,6 @@
 <template>
   <section class="reward-points-in-tab">
-    <h1 class="reward-points-in-tab__current-points">{{ wording.WORDING_POINTS_AVAILABLE }}：<span :class="`points${currentRewardPoints < 0 ? '--less-than-zero' : ''}`" v-text="currentRewardPoints"></span></h1>
+    <h1 class="reward-points-in-tab__current-points">{{ $t('point.WORDING_POINTS_AVAILABLE') }}：<span :class="`points${currentRewardPoints < 0 ? '--less-than-zero' : ''}`" v-text="currentRewardPoints"></span></h1>
     <PostListInTab
       :parent="$options.name"
       :posts="transactionJoinProjects">
@@ -9,7 +9,6 @@
 </template>
 
 <script>
-import { WORDING_POINTS_AVAILABLE, } from '../constants'
 import PostListInTab from './PostListInTab.vue'
 import _ from 'lodash'
 
@@ -32,9 +31,6 @@ export default {
   },
   data () {
     return {
-      wording: {
-        WORDING_POINTS_AVAILABLE,
-      },
       userId: _.get(this.$store.state, 'profile.id', ''),
       currentRewardPoints: _.get(this.$store.state, 'profile.points', ''),
     }

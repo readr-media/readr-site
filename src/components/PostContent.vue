@@ -7,7 +7,7 @@
           <p class="editor-writing__paragraph--visible" v-if="i === 0">
             <span v-html="firstParagraph"></span>
             <span v-if="(p.length > 150 || postContent.length > 1) ? !isReadMore : false">
-              ......<span class="editor-writing__more" @click="toogleReadmore" v-text="wording['WORDING_HOME_POST_MORE']"></span>
+              ......<span class="editor-writing__more" @click="toogleReadmore" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span>
             </span>
           </p>
           <p :class="`editor-writing__paragraph--${isReadMore ? 'visible' : 'invisible'}`" v-else v-html="p"></p>
@@ -19,7 +19,7 @@
         <h1 class="editor-writing-source__title" v-text="linkTitleTrim"></h1>
         <div class="editor-writing-source__description">
           <p v-text="linkDescriptionTrim"></p>
-          <p class="editor-writing-source__cite" v-if="post.linkName">{{ wording[ 'WORDING_HOME_POST_SOURCE' ] }}{{ post.linkName }}</p>
+          <p class="editor-writing-source__cite" v-if="post.linkName">{{ $t('homepage.WORDING_HOME_POST_SOURCE') }}{{ post.linkName }}</p>
         </div>
       </div>
       <img class="editor-writing-source__figure" :src="post.linkImage" alt="source-fig">
@@ -28,7 +28,6 @@
   </div>
 </template>
 <script>
-  import { WORDING_HOME_POST_MORE, WORDING_HOME_POST_SOURCE, } from 'src/constants'
   import { find, filter, get, map, } from 'lodash'
   import AppArticleNav from 'src/components/AppArticleNav.vue'
   import sanitizeHtml from 'sanitize-html'
@@ -69,10 +68,6 @@
     data () {
       return {
         isReadMore: false,
-        wording: {
-          WORDING_HOME_POST_MORE,
-          WORDING_HOME_POST_SOURCE,
-        },
       }
     },
     methods: {

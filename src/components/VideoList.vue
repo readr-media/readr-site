@@ -5,15 +5,15 @@
       <thead>
         <tr>
           <th class="videoList__checkbox"><input type="checkbox" ref="checkboxSelectAll" @click="$_videoList_toggleSelectAll"></th>
-          <th class="videoList__title"><span @click="$_videoList_orderBy('title')" v-text="wording.WORDING_POSTLIST_TITLE"></span></th>
-          <th class="videoList__link"><span @click="$_videoList_orderBy('link')" v-text="`${wording.WORDING_POSTLIST_VIDEO}${wording.WORDING_POSTLIST_LINK}`"></span></th>
-          <th class="videoList__status videoList--center"><span @click="$_videoList_orderBy('active')" v-text="wording.WORDING_POSTLIST_ACTIVE"></span></th>
+          <th class="videoList__title"><span @click="$_videoList_orderBy('title')" v-text="$t('post_list.WORDING_POSTLIST_TITLE')"></span></th>
+          <th class="videoList__link"><span @click="$_videoList_orderBy('link')" v-text="`${$t('post_list.WORDING_POSTLIST_VIDEO')}${$t('post_list.WORDING_POSTLIST_LINK')}`"></span></th>
+          <th class="videoList__status videoList--center"><span @click="$_videoList_orderBy('active')" v-text="$t('post_list.WORDING_POSTLIST_ACTIVE')"></span></th>
           <th class="videoList__update videoList--center">
             <button
               class="videoList__btn videoList__btn--multiple"
               :disabled="!canPublishPosts"
               @click="$_videoList_publishPosts"
-              v-text="wording.WORDING_POSTLIST_PUBLISH">
+              v-text="$t('post_list.WORDING_POSTLIST_PUBLISH')">
             </button>
           </th>
           <th class="videoList__delete videoList--center">
@@ -21,13 +21,13 @@
               class="videoList__btn videoList__btn--multiple"
               :disabled="!canDeletePosts"
               @click="$_videoList_deletePosts"
-              v-text="wording.WORDING_POSTLIST_DELETE">
+              v-text="$t('post_list.WORDING_POSTLIST_DELETE')">
             </button>
           </th>
           <th class="videoList__sort videoList--center">
             <select name="" id="">
-              <option value="-updated_at" v-text="wording.WORDING_POSTLIST_UPDATE_AT"></option>
-              <option value="-created_at" v-text="wording.WORDING_POSTLIST_PUBLISH_AT"></option>
+              <option value="-updated_at" v-text="$t('post_list.WORDING_POSTLIST_UPDATE_AT')"></option>
+              <option value="-created_at" v-text="$t('post_list.WORDING_POSTLIST_PUBLISH_AT')"></option>
             </select>
           </th>
         </tr>
@@ -38,8 +38,8 @@
           <td class="videoList__title" v-text="p.title"></td>
           <td class="videoList__link" v-text="p.link"></td>
           <td class="videoList__status videoList--center" v-text="$_videoList_getStatus(p)"></td>
-          <td class="videoList__update videoList--center"><button class="videoList__btn videoList__btn--single" @click="$_videoList_editPost(p.id)" v-text="wording.WORDING_POSTLIST_UPDATE"></button></td>
-          <td class="videoList__delete videoList--center"><button class="videoList__btn videoList__btn--single" @click="$_videoList_deletePost(p.id)" v-text="wording.WORDING_POSTLIST_DELETE"></button></td>
+          <td class="videoList__update videoList--center"><button class="videoList__btn videoList__btn--single" @click="$_videoList_editPost(p.id)" v-text="$t('post_list.WORDING_POSTLIST_UPDATE')"></button></td>
+          <td class="videoList__delete videoList--center"><button class="videoList__btn videoList__btn--single" @click="$_videoList_deletePost(p.id)" v-text="$t('post_list.WORDING_POSTLIST_DELETE')"></button></td>
           <td class="videoList__sort"></td>
         </tr>
       </tbody>
@@ -51,19 +51,6 @@
 </template>
 <script>
   import { POST_ACTIVE, POST_TYPE, } from '../../api/config'
-  import {
-    WORDING_POSTLIST_ACTIVE,
-    WORDING_POSTLIST_ACTIVE_DRAFT,
-    WORDING_POSTLIST_ACTIVE_PUBLISH,
-    WORDING_POSTLIST_DELETE,
-    WORDING_POSTLIST_LINK,
-    WORDING_POSTLIST_PUBLISH,
-    WORDING_POSTLIST_PUBLISH_AT,
-    WORDING_POSTLIST_TITLE,
-    WORDING_POSTLIST_UPDATE,
-    WORDING_POSTLIST_UPDATE_AT,
-    WORDING_POSTLIST_VIDEO,
-  } from '../constants'
   import _ from 'lodash'
   import BaseLightBox from './BaseLightBox.vue'
   import BaseLightBoxPost from './BaseLightBoxPost.vue'
@@ -97,19 +84,6 @@
         post: {},
         postType: POST_TYPE,
         showLightBox: false,
-        wording: {
-          WORDING_POSTLIST_ACTIVE,
-          WORDING_POSTLIST_ACTIVE_DRAFT,
-          WORDING_POSTLIST_ACTIVE_PUBLISH,
-          WORDING_POSTLIST_DELETE,
-          WORDING_POSTLIST_LINK,
-          WORDING_POSTLIST_PUBLISH,
-          WORDING_POSTLIST_PUBLISH_AT,
-          WORDING_POSTLIST_TITLE,
-          WORDING_POSTLIST_UPDATE,
-          WORDING_POSTLIST_UPDATE_AT,
-          WORDING_POSTLIST_VIDEO,
-        },
       }
     },
     computed: {

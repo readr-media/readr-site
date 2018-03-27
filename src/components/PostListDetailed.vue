@@ -1,31 +1,26 @@
 <template>
   <section class="postListDetailed">
     <div class="postListDetailed__heading">
-      <h1 v-text="wording.WORDING_POSTLIST_DRAFT_RECORD"></h1>
+      <h1 v-text="$t('post_list.WORDING_POSTLIST_DRAFT_RECORD')"></h1>
     </div>
     <div v-for="p in posts" :key="p.id" class="postListDetailed__post">
       <div class="postListDetailed__post--titleBox">
         <h2 v-text="p.title"></h2>
         <div class="postListDetailed__control--desktop">
-          <button @click="$_postListDetailed_editPost(p.id)" v-text="wording.WORDING_POSTLIST_EDIT"></button>
-          <button @click="$_postListDetailed_deletePost(p.id)" v-text="wording.WORDING_POSTLIST_DELETE"></button>
+          <button @click="$_postListDetailed_editPost(p.id)" v-text="$t('post_list.WORDING_POSTLIST_EDIT')"></button>
+          <button @click="$_postListDetailed_deletePost(p.id)" v-text="$t('post_list.WORDING_POSTLIST_DELETE')"></button>
         </div>
       </div>
       <p class="postListDetailed__post--descr" v-text="$_postListDetailed_getDescr(p.content)"></p>
       <div class="postListDetailed__control--mobile">
-        <button @click="$_postListDetailed_editPost(p.id)" v-text="wording.WORDING_POSTLIST_EDIT"></button>
-        <button @click="$_postListDetailed_deletePost(p.id)" v-text="wording.WORDING_POSTLIST_DELETE"></button>
+        <button @click="$_postListDetailed_editPost(p.id)" v-text="$t('post_list.WORDING_POSTLIST_EDIT')"></button>
+        <button @click="$_postListDetailed_deletePost(p.id)" v-text="$t('post_list.WORDING_POSTLIST_DELETE')"></button>
       </div>
     </div>
   </section>
 </template>
 <script>
   import { POST_ACTIVE, } from '../../api/config'
-  import {
-    WORDING_POSTLIST_DELETE,
-    WORDING_POSTLIST_DRAFT_RECORD,
-    WORDING_POSTLIST_EDIT,
-  } from '../constants'
 
   export default {
     name: 'PostListDetailed',
@@ -34,15 +29,6 @@
         type: Array,
         required: true,
       },
-    },
-    data () {
-      return {
-        wording: {
-          WORDING_POSTLIST_DELETE,
-          WORDING_POSTLIST_DRAFT_RECORD,
-          WORDING_POSTLIST_EDIT,
-        },
-      }
     },
     methods: {
       $_postListDetailed_deletePost (id) {
