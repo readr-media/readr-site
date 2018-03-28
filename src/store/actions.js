@@ -43,6 +43,7 @@ import {
   resetPwdEmail,
   setupBasicProfile,
   search,
+  syncAvatar,
   updateMember,
   updatePassword,
   updatePost,
@@ -350,6 +351,9 @@ export default {
         commit('SET_SEARCH', { searchResult, })
       })
   },
+  SYNC_AVATAR: ({ commit, dispatch, state, }, { params, }) => {
+    return syncAvatar(params)
+  },
   UPDATE_FOLLOWING_BY_USER: ({ commit, dispatch, state, }, { params, }) => {
     if (params.action === 'follow' && params.resource === 'post') {
       commit('ADD_ITEM_TO_FOLLOWING_BY_USER', params.data)
@@ -381,6 +385,7 @@ export default {
     return updateTags({ params, })
   },
   UPLOAD_IMAGE: ({ commit, dispatch, }, { file, type, }) => {
+    debug('Got a action call to upload image.')
     return uploadImage(file, type)
   },
   VERIFY_RECAPTCHA_TOKEN: ({ commit, dispatch, state, }, { token, }) => {
