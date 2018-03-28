@@ -33,7 +33,7 @@ const router = new Router({
   routes: [
     { path: '/', component: Home, meta: { permission: 'member', }, },
     { path: '/admin', component: Admin, meta: { permission: 'admin', }, },
-    { path: '/agreement', component: Agreement, meta: { permission: 'member', }, },
+    { path: '/agreement', component: Agreement, },
     { path: '/editor', component: Editor, meta: { permission: 'editor', }, },
     { path: '/editors', component: Editors, meta: { permission: 'member', }, },
     { path: '/guesteditor', component: GuestEditor, meta: { permission: 'guesteditor', }, },
