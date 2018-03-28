@@ -8,7 +8,7 @@
       <main class="agreement__main">
         <div class="terms">
           <Tab :tabs="tabs">
-            <div slot="0">{{ agreementContent }}</div>
+            <div slot="0" v-html="agreementContent" class="terms__member"></div>
             <div slot="1">NA</div>
             <div slot="2">NA</div>
           </Tab>
@@ -48,7 +48,7 @@
     mounted () {},
   }
 </script>
-<style lang="stylus" scoped>
+<style lang="stylus">
   .agreement
     width 100%
     background-color #e6e6e6
@@ -72,6 +72,16 @@
       width 100%
       margin 32px auto
       background-color white
+      &__member
+        h3
+          margin 25px 0 20px
+        p
+          padding-left 20px
+          margin 15px 0
+          > span
+            padding-left 20px
+            margin 5px 0
+            display block
       
   @media (min-width 950px)
     .agreement
