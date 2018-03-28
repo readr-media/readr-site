@@ -32,7 +32,7 @@ if (window.__INITIAL_STATE__) {
 
 if (store.state.unauthorized) {
   delete store.state.unauthorized
-  router.push('/')
+  router.push(store.state.targ_url)
 }
 
 // wait until router has resolved all async before hooks
