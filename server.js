@@ -122,8 +122,9 @@ function render (req, res, next) {
   debug('Current client host:', curr_host, !curr_host.match(targ_exp))
   debug('Requested page:', req.url, req.url.match(targ_exp_login))
   debug('isMobile', req.useragent.isMobile)
+  debug('isTablet', req.useragent.isTablet)
 
-  if (req.useragent.isMobile && !curr_host.match(targ_localhost_exp)) {
+  if ((req.useragent.isMobile || req.useragent.isTablet) && !curr_host.match(targ_localhost_exp)) {
     if (SERVER_PROTOCOL_MOBILE && SERVER_HOST_MOBILE) {
       res.redirect(302, `${SERVER_PROTOCOL_MOBILE}://${SERVER_HOST_MOBILE}${SERVER_PORT_MOBILE ? ':' + SERVER_PORT_MOBILE : ''}${req.url}`)
       return
