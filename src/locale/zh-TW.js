@@ -186,7 +186,7 @@ export default {
     'WORDING_TAGLIST_TAG' : '關鍵字詞',
     'WORDING_TAGLIST_UPDATE_AT' : '更新時間',
   },
-  'controle_bar': {
+  'control_bar': {
     'WORDING_CONTROLBAR_ACCOUNT' : '帳號',
     'WORDING_CONTROLBAR_ACCOUNT_LIST' : '帳號列表',
     'WORDING_CONTROLBAR_ADD_ACCOUNT' : '新增帳號',

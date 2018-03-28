@@ -1,8 +1,8 @@
 <template>
   <section class="postPanel">
     <div class="postPanel__input">
-      <label for="" v-text="`${$t('post_list.WORDING_POSTEDITOR_VIDEO')}${$t('post_list.WORDING_POSTEDITOR_TITLE')}：`"></label>
-      <input v-model="post.title" type="text" class="postPanel__title" :placeholder="$t('post_list.WORDING_POSTEDITOR_INPUT_TITLE')">
+      <label for="" v-text="`${$t('post_editor.WORDING_POSTEDITOR_VIDEO')}${$t('post_editor.WORDING_POSTEDITOR_TITLE')}：`"></label>
+      <input v-model="post.title" type="text" class="postPanel__title" :placeholder="$t('post_editor.WORDING_POSTEDITOR_INPUT_TITLE')">
     </div>
     <text-editor
       v-if="!isVideo"
@@ -11,12 +11,12 @@
       @updateContent="$_postPanel_updateContent">
     </text-editor>
     <div class="postPanel__input postPanel__link">
-      <label v-if="!isVideo" for="" v-text="`${$t('post_list.WORDING_POSTEDITOR_NEWS')}${$t('post_list.WORDING_POSTEDITOR_LINK')}：`"></label>
-      <label v-if="isVideo" for="" v-text="`${$t('post_list.WORDING_POSTEDITOR_VIDEO')}${$t('post_list.WORDING_POSTEDITOR_LINK')}：`"></label>
+      <label v-if="!isVideo" for="" v-text="`${$t('post_editor.WORDING_POSTEDITOR_NEWS')}${$t('post_editor.WORDING_POSTEDITOR_LINK')}：`"></label>
+      <label v-if="isVideo" for="" v-text="`${$t('post_editor.WORDING_POSTEDITOR_VIDEO')}${$t('post_editor.WORDING_POSTEDITOR_LINK')}：`"></label>
       <input v-model="post.link" type="url" @change="$_postPanel_metaChanged">
     </div>
     <div v-if="$can('editPostOg')" class="postPanel__input postPanel--publishDate">
-      <label for="" v-text="`${$t('post_list.WORDING_POSTEDITOR_PUBLISH_DATE')}：`"></label>
+      <label for="" v-text="`${$t('post_editor.WORDING_POSTEDITOR_PUBLISH_DATE')}：`"></label>
       <no-ssr>
         <datepicker
           v-model="post.date"
@@ -29,7 +29,7 @@
     <div
       v-if="$can('editPostOg') && !isVideo"
       class="postPanel__input">
-      <label for="" v-text="`${$t('post_list.WORDING_POSTEDITOR_TAG')}：`"></label>
+      <label for="" v-text="`${$t('post_editor.WORDING_POSTEDITOR_TAG')}：`"></label>
       <div class="postPanel__tags">
         <div class="postPanel__tags-box" @mousedown.prevent="$_postPanel_focusTagInput">
           <template>
@@ -41,7 +41,7 @@
           </template>
         </div>
         <div ref="tagsList" class="postPanel__tags-list hidden">
-          <button v-show="tags.length === 0" class="noResult" v-text="$t('post_list.WORDING_POSTEDITOR_NOT_FOUND')"></button>
+          <button v-show="tags.length === 0" class="noResult" v-text="$t('post_editor.WORDING_POSTEDITOR_NOT_FOUND')"></button>
           <template>
             <button v-for="(t) in tags" :key="t.id" @mousedown="$_postPanel_addTag(t.id)" v-text="t.text"></button>
           </template>
@@ -49,21 +49,21 @@
       </div>
     </div>
     <div v-if="$can('editPostOg')" class="postPanel__input">
-      <label for="" v-text="`${$t('post_list.WORDING_POSTEDITOR_OG_TITLE')}：`"></label>
+      <label for="" v-text="`${$t('post_editor.WORDING_POSTEDITOR_OG_TITLE')}：`"></label>
       <input v-model="post.ogTitle" type="text">
     </div>
     <div v-if="$can('editPostOg')" class="postPanel__input">
-      <label for="" v-text="`${$t('post_list.WORDING_POSTEDITOR_OG_DESCRIPTION')}：`"></label>
+      <label for="" v-text="`${$t('post_editor.WORDING_POSTEDITOR_OG_DESCRIPTION')}：`"></label>
       <input v-model="post.ogDescription" type="text">
     </div>
     <div v-if="$can('editPostOg')" class="postPanel__input">
-      <label for="" v-text="`${$t('post_list.WORDING_POSTEDITOR_OG_IMAGE')}：`"></label>
+      <label for="" v-text="`${$t('post_editor.WORDING_POSTEDITOR_OG_IMAGE')}：`"></label>
       <input v-model="post.ogImage" type="text" readonly>
       <button class="postPanel__btn--img" @click="$_postPanel_addOgImage">
-        <img src="/public/icons/upload.png" :alt="$t('post_list.WORDING_POSTEDITOR_UPLOAD')">
+        <img src="/public/icons/upload.png" :alt="$t('post_editor.WORDING_POSTEDITOR_UPLOAD')">
       </button>
       <button class="postPanel__btn--img" @click="$_postPanel_deleteOgImage">
-        <img src="/public/icons/delete.png" :alt="$t('post_list.WORDING_POSTEDITOR_DELETE')">
+        <img src="/public/icons/delete.png" :alt="$t('post_editor.WORDING_POSTEDITOR_DELETE')">
       </button>
     </div>
     <div v-show="post.ogImage && $can('editPostOg')" class="postPanel__ogImg">
@@ -74,41 +74,41 @@
         v-if="$can('deletePost') && (panelType === 'edit')"
         class="postPanel__btn"
         @click="$_postPanel_deletePost"
-        v-text="$t('post_list.WORDING_POSTEDITOR_DELETE')">
+        v-text="$t('post_editor.WORDING_POSTEDITOR_DELETE')">
       </button>
       <button
         v-if="(panelType === 'edit') && $can('editPostOg') && (post.active !== config.active.DRAFT)"
         class="postPanel__btn"
         :disabled="isEmpty"
         @click="$_postPanel_submitHandler(config.active.DRAFT)"
-        v-text="$t('post_list.WORDING_POSTEDITOR_RETURN_TO_DRAFT')">
+        v-text="$t('post_editor.WORDING_POSTEDITOR_RETURN_TO_DRAFT')">
       </button>
       <button
         v-if="(panelType === 'edit')"
         class="postPanel__btn"
         @click="$_postPanel_submitHandler()"
-        v-text="$t('post_list.WORDING_POSTEDITOR_SAVE')">
+        v-text="$t('post_editor.WORDING_POSTEDITOR_SAVE')">
       </button>
       <button
         v-if="(panelType === 'add') && $can('addPost')"
         class="postPanel__btn"
         :disabled="isEmpty"
         @click="$_postPanel_submitHandler(config.active.DRAFT)"
-        v-text="$t('post_list.WORDING_POSTEDITOR_SAVE_DRAFT')">
+        v-text="$t('post_editor.WORDING_POSTEDITOR_SAVE_DRAFT')">
       </button>
       <button
         v-if="!$can('publishPost')"
         class="postPanel__btn"
         :disabled="isEmpty"
         @click="$_postPanel_submitHandler(config.active.PENDING)"
-        v-text="$t('post_list.WORDING_POSTEDITOR_SAVE_PENDING')">
+        v-text="$t('post_editor.WORDING_POSTEDITOR_SAVE_PENDING')">
       </button>
       <button
         v-if="$can('publishPost') && (post.active !== config.active.ACTIVE)"
         class="postPanel__btn"
         :disabled="isEmpty"
         @click="$_postPanel_submitHandler(config.active.ACTIVE)"
-        v-text="$t('post_list.WORDING_POSTEDITOR_PUBLISH')">
+        v-text="$t('post_editor.WORDING_POSTEDITOR_PUBLISH')">
       </button>
     </div>
   </section>

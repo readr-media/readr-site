@@ -37,10 +37,17 @@ export default context => {
       debug('url', url)
 
       let targUrl
-      if ((permission && permission !== role) || (isInitMember && !initmember)) {
+      if ((permission && (role === 'visitor' || (permission !== role && permission !== 'member'))) || (isInitMember && !initmember)) {
         store.state.unauthorized = true
-        router.push('/')
-        targUrl = '/'
+        if (!cookie) {
+          router.push('/login')
+          targUrl = '/login'
+          store.state.targ_url = '/login'
+        } else {
+          router.push('/')
+          targUrl = '/'
+          store.state.targ_url = '/'
+        }
       } else {
         router.push(url)
         targUrl = url
