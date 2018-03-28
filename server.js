@@ -9,8 +9,10 @@ const compression = require('compression')
 const microcache = require('route-cache')
 const requestIp = require('request-ip')
 const resolve = file => path.resolve(__dirname, file)
+const useragent = require('express-useragent')
 const uuidv4 = require('uuid/v4')
 const { PAGE_CACHE_EXCLUDING, GOOGLE_CLIENT_ID, TALK_SERVER } = require('./api/config')
+const { SERVER_PROTOCOL_MOBILE, SERVER_HOST_MOBILE, SERVER_PORT_MOBILE } = require('./api/config')
 const { createBundleRenderer } = require('vue-server-renderer')
 
 const debug = require('debug')('READR:server')
@@ -38,6 +40,7 @@ function createRenderer (bundle, options) {
   }))
 }
 
+app.use(useragent.express())
 app.use(requestIp.mw())
 app.set('views', path.join(__dirname, 'src/views'))
 app.set('view engine', 'ejs')
@@ -114,9 +117,18 @@ function render (req, res, next) {
 
   const curr_host = _.get(req, 'headers.host') || ''
   const targ_exp = /(dev)|(localhost)/
+  const targ_localhost_exp = /(localhost)/
   const targ_exp_login = /(\/login)/
   debug('Current client host:', curr_host, !curr_host.match(targ_exp))
   debug('Requested page:', req.url, req.url.match(targ_exp_login))
+  debug('isMobile', req.useragent.isMobile)
+
+  if (req.useragent.isMobile && !curr_host.match(targ_localhost_exp)) {
+    if (SERVER_PROTOCOL_MOBILE && SERVER_HOST_MOBILE) {
+      res.redirect(302, `${SERVER_PROTOCOL_MOBILE}://${SERVER_HOST_MOBILE}${SERVER_PORT_MOBILE ? ':' + SERVER_PORT_MOBILE : ''}${req.url}`)
+      return
+    }
+  }
 
   if (_.filter(PAGE_CACHE_EXCLUDING, (p) => (req.url.indexOf(p) > -1)).length === 0) {
     !curr_host.match(targ_exp) && res.setHeader('Cache-Control', 'public, max-age=3600')  
