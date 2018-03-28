@@ -39,24 +39,30 @@ const redisFetching = (key, callback) => {
   debug('Fetching data from redis.')
   debug(decodeURIComponent(key))
   redisPoolRead.get(decodeURIComponent(key), (error, data) => {
-    redisPoolRead.ttl(decodeURIComponent(key), (err, dt) => {
-      if (!err && dt) {
-        debug('Ttl:', dt)
-        if (dt <= -1) {
-          redisPoolWrite.del(decodeURIComponent(key), (e) => {
-            if (e) {
-              console.error('deleting key ', decodeURIComponent(key), 'from redis in fail ', e)
-            }
-            callback && callback({ error, data, })
-          })
+    if (!error) {
+      redisPoolRead.ttl(decodeURIComponent(key), (err, dt) => {
+        if (!err && dt) {
+          debug('Ttl:', dt)
+          if (dt <= -1) {
+            redisPoolWrite.del(decodeURIComponent(key), (e) => {
+              if (e) {
+                console.error('REDIS: deleting key ', decodeURIComponent(key), 'from redis in fail ', e)
+              }
+              console.error('REDIS: deleting key ', decodeURIComponent(key), 'from redis in fail ', e)
+              callback && callback({ e, data, })
+            })
+          } else {
+            callback && callback({ err, data, })
+          }
         } else {
-          callback && callback({ error, data, })
+          console.error('REDIS: fetching ttl in fail ', err)
+          callback && callback({ err, data, })
         }
-      } else {
-        console.error('fetching ttl in fail ', err)
-        callback && callback({ error, data, })
-      }
-    })
+      })
+    } else {
+      console.error('REDIS: fetching key/data in fail ', error)
+      callback && callback({ error, data, })
+    }
   })
 }
 const redisWriting = (key, data, callback, timeout) => {

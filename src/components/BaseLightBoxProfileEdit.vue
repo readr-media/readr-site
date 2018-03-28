@@ -48,6 +48,7 @@ import { removeToken, } from '../util/services'
 import validator from 'validator'
 import _ from 'lodash'
 
+const debug = require('debug')('CLIENT:')
 const updateInfo = (store, profile, action) => {
   return store.dispatch(action, {
     params: profile,
@@ -68,11 +69,15 @@ const logout = (store) => {
 const uploadImage = (store, file) => {
   return store.dispatch('UPLOAD_IMAGE', { file, type: 'member', })
 }
+const syncAvatar = (store, params) => {
+  return store.dispatch('SYNC_AVATAR', { params, })
+}
 const deleteMemberProfileThumbnails = (store, id) => {
   return store.dispatch('DELETE_MEMBER_PROFILE_THUMBNAILS', { id, })
 }
 
 export default {
+  name: 'BaseLightBoxProfileEdit',
   props: {
     profile: {
       type: Object,
@@ -142,7 +147,13 @@ export default {
             id: this.profile.id,
             edit_mode: 'edit_profile',
             profile_image: res.body.url,
-          }, 'UPDATE_PROFILE')
+          }, 'UPDATE_PROFILE').then(() => {
+            debug('Going to sync the avatar to talk db.')
+            return syncAvatar(this.$store, {
+              url: res.body.url,
+              id: this.profile.id,
+            })
+          })
         })
         .catch((err) => {
           console.error(err)
