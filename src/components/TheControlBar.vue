@@ -106,10 +106,10 @@
     },
     computed: {
       wordingBtnNews () {
-        return this.viewport <= 767 ? this.wording.WORDING_CONTROLBAR_NEWS : this.wording.WORDING_CONTROLBAR_ADD_NEWS
+        return this.viewport <= 767 ? this.$t('control_bar.WORDING_CONTROLBAR_NEWS') : this.$t('control_bar.WORDING_CONTROLBAR_ADD_NEWS')
       },
       wordingBtnReview () {
-        return this.viewport <= 767 ? this.wording.WORDING_CONTROLBAR_REVIEW : this.wording.WORDING_CONTROLBAR_ADD_REVIEW
+        return this.viewport <= 767 ? this.$t('control_bar.WORDING_CONTROLBAR_REVIEW') : this.$t('control_bar.WORDING_CONTROLBAR_ADD_REVIEW')
       },
     },
     mounted () {
