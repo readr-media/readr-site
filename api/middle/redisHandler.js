@@ -62,6 +62,7 @@ class TimeoutHandler {
     }, 1000)
   }
   destroy () {
+    debug('TimeoutHandler is about to destroy...')
     clearInterval(this.timeoutHandler)
   }
 }
