@@ -19,10 +19,12 @@ const GuestEditor = () => import('../views/GuestEditor.vue')
 const Home = () => import('../views/Home.vue')
 const Login = () => import('../views/Login.vue')
 const Member = () => import('../views/Member.vue')
+const PageNotFound = () => import('../views/PageNotFound.vue')
 const Post = () => import('../views/Post.vue')
 const Profile = () => import('../views/Profile.vue')
 const ProjectsList = () => import('../views/ProjectsList.vue')
 const Search = () => import('../views/Search.vue')
+const ServerError = () => import('../views/ServerError.vue')
 const SetPassword = () => import('../views/SetPassword.vue')
 // const Videos = () => import('../views/Videos.vue')
 
@@ -44,6 +46,8 @@ const router = new Router({
     { path: '/projects', component: ProjectsList, meta: { permission: 'member', }, },
     { path: '/search/:keyword', component: Search, meta: { permission: 'member', }, },
     { path: '/setup/:type', component: SetPassword, },
+    { path: '/404', component: PageNotFound, },
+    { path: '/500', component: ServerError, },
     // { path: '/videos', component: Videos },
   ],
 })

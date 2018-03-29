@@ -106,9 +106,6 @@ function render (req, res, next) {
   if (req.url.indexOf('/api/') === 0) {
     next()
     return
-  } else if (req.url.indexOf('/404') === 0) {
-    res.status(404).send('404 | Page Not Found')
-    return
   }
 
   const s = Date.now()
@@ -143,20 +140,7 @@ function render (req, res, next) {
     cookies.set('readrid', uuidv4(), { httpOnly: false, expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) })
   }
 
-  const handleError = err => {
-    if (err.url) {
-      res.redirect(err.url)
-    } else if(err.code === 404) {
-      res.status(404).send('404 | Page Not Found')
-    } else {
-      // Render Error Page or Redirect
-      res.status(500).send('500 | Internal Server Error')
-      console.error(`error during render : ${req.url}`)
-      console.error(err.stack)
-    }
-  }
-
-  const context = {
+  let context = {
     title: 'Readr',
     description: 'Readr',
     metaUrl: 'dev.readr.tw',
@@ -198,10 +182,30 @@ function render (req, res, next) {
       include_recaptcha: req.url.match(targ_exp_login) ? `<script src='https://www.google.com/recaptcha/api.js'></script>` : '',
     TALK_SERVER
   }
+  const handleError = err => {
+    if (err.url) {
+      res.redirect(err.url)
+    }
+    let status = err.code === 404 ? 404 : 500
+    renderer.renderToString(Object.assign({}, context, { url: `/${status}` }), (e, h) => {
+      if (!e) {
+        res.status(status).send(h)
+        if (!isProd) {
+          console.log(`whole request: ${Date.now() - s}ms`)
+        }        
+      } else {
+        res.status(500).send('500 | Internal Server Error')
+        console.error(`Error occurred  during render : ${req.url}`)
+        console.error(e.stack)        
+      }
+    })
+  }
+
   renderer.renderToString(context, (err, html) => {
     if (err) {
       return handleError(err)
     }
+    
     res.send(html)
     if (!isProd) {
       console.log(`whole request: ${Date.now() - s}ms`)
@@ -212,25 +216,6 @@ function render (req, res, next) {
 app.get('*', isProd ? render : (req, res, next) => {
   readyPromise.then(() => render(req, res, next))
 })
-// .put('*', (req, res, next) => {
-//   if (req.url.indexOf('/api/') === 0) {
-//     next()
-//     return
-//   }
-//   res.status(403).send('Forbidden')
-// }).post('*', (req, res, next) => {
-//   if (req.url.indexOf('/api/') === 0) {
-//     next()
-//     return
-//   }
-//   res.status(403).send('Forbidden')
-// }).delete('*', (req, res, next) => {
-//   if (req.url.indexOf('/api/') === 0) {
-//     next()
-//     return
-//   }
-//   res.status(403).send('Forbidden')
-// })
 
 app.use('/api', require('./api/index'))
 
