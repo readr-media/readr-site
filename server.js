@@ -148,16 +148,33 @@ function render (req, res, next) {
     url: req.url,
     cookie: cookies.get('csrf'),
     initmember: cookies.get('initmember'),
-    check_fb_status: req.url.match(targ_exp_login)
-      ? `FB.getLoginStatus(function(response) {
-          if (response.status === 'connected') {
-            window.fbStatus = {
-              status: 'connected',
-              uid: response.authResponse.userID
-            };
-          }
-        })`
-      : '',
+    includ_fbsdk: req.url.match(targ_exp_login) ? `
+      <script>
+        window.fbAsyncInit = function() {
+          FB.init({
+            appId            : '143500093073133',
+            autoLogAppEvents : true,
+            xfbml            : true,
+            version          : 'v2.9'
+          });
+          FB.AppEvents.logPageView();
+          FB.getLoginStatus(function(response) {
+            if (response.status === 'connected') {
+              window.fbStatus = {
+                status: 'connected',
+                uid: response.authResponse.userID
+              };
+            }
+          })
+        };
+        (function(d, s, id){
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {return;}
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/zh_TW/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+      </script>`: '',
     include_gapi: req.url.match(targ_exp_login) ? `
       <script src="https://apis.google.com/js/api.js"></script>
       <script>
