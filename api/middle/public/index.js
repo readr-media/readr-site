@@ -12,8 +12,8 @@ const apiHost = API_PROTOCOL + '://' + API_HOST + ':' + API_PORT
 
 const fetchAndConstructMembers = (req, res) => {
   const url = `${apiHost}${req.url}`
-  redisFetching(`member${req.url}`, ({ err, data, }) => {
-    if (!err && data) {
+  redisFetching(`member${req.url}`, ({ error, data, }) => {
+    if (!error && data) {
       debug('Fetch public member data from Redis.')
       debug('>>>', req.url)
       const mem = JSON.parse(data)

@@ -4,6 +4,7 @@ const RedisConnectionPool = require('redis-connection-pool')
 
 const { 
   REDIS_AUTH,
+  REDIS_CONNECTION_TIMEOUT,
   REDIS_MAX_CLIENT,
   REDIS_READ_HOST,
   REDIS_READ_PORT,
@@ -35,9 +36,46 @@ const redisPoolWrite = isProd ? RedisConnectionPool('myRedisPoolWrite', {
   },
 }) : redisPoolRead
 
+class TimeoutHandler {
+  constructor (callback) {
+    this.isResponded = false
+    this.timeout = REDIS_CONNECTION_TIMEOUT || 2000
+
+    this.destroy = this.destroy.bind(this)
+    this.init = this.init.bind(this)
+    this.init(callback)
+  }
+  init (callback) {
+    this.timeoutHandler = setInterval(() => {
+      this.timeout -= 1000
+      debug('Redis counting down...', this.timeout)
+      if (this.isResponded) {
+        this.destroy()
+        debug('this.timeoutHandler destroying...')
+        return
+      }
+      if (this.timeout <= 0) {
+        this.destroy()
+        debug('ERROR: Timeout occured while connecting to redis.')
+        callback && callback({ error: 'ERROR: Timeout occured while connecting to redis.', data: null, })
+      }
+    }, 1000)
+  }
+  destroy () {
+    clearInterval(this.timeoutHandler)
+  }
+}
+
 const redisFetching = (key, callback) => {
   debug('Fetching data from redis.')
   debug(decodeURIComponent(key))
+  const timeoutHandler = new TimeoutHandler(callback)
+  const onFinished = (error, data) => {
+    timeoutHandler.isResponded = true
+    timeoutHandler.destroy()
+    if (timeoutHandler.timeout <= 0) { return }
+    callback && callback({ error, data, })
+  }
   redisPoolRead.get(decodeURIComponent(key), (error, data) => {
     if (!error) {
       redisPoolRead.ttl(decodeURIComponent(key), (err, dt) => {
@@ -49,25 +87,26 @@ const redisFetching = (key, callback) => {
                 console.error('REDIS: deleting key ', decodeURIComponent(key), 'from redis in fail ', e)
               }
               console.error('REDIS: deleting key ', decodeURIComponent(key), 'from redis in fail ', e)
-              callback && callback({ e, data, })
+              onFinished(e, data)
             })
           } else {
-            callback && callback({ err, data, })
+            onFinished(err, data)
           }
         } else {
           console.error('REDIS: fetching ttl in fail ', err)
-          callback && callback({ err, data, })
+          onFinished(err, data)
         }
       })
     } else {
       console.error('REDIS: fetching key/data in fail ', error)
-      callback && callback({ error, data, })
+      onFinished(error, data)
     }
   })
 }
 const redisWriting = (key, data, callback, timeout) => {
   debug('Setting key/data to redis. Timeout:', timeout || REDIS_TIMEOUT)
   debug(decodeURIComponent(key))
+  const timeoutHandler = new TimeoutHandler(callback)
   redisPoolWrite.set(decodeURIComponent(key), data, (err) => {
     if(err) {
       console.error('redis writing in fail. ', decodeURIComponent(key), err)
@@ -77,6 +116,8 @@ const redisWriting = (key, data, callback, timeout) => {
           console.error('failed to set redis expire time. ', decodeURIComponent(key), err)
         } else {
           debug('Wrote redis successfully.')
+          timeoutHandler.isResponded = true
+          timeoutHandler.destroy()
           callback && callback()
         }
       })
