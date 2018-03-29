@@ -1,30 +1,28 @@
 <template>
   <div class="login-page">
-    <!-- <app-header :sections="sections"></app-header> -->
-    <aside class="login-page__aside">
-      <AppAsideNav/>
-    </aside>
     <main class="login-page__main">
-      <LoginPanel v-if="isClientSide && !isLoggedIn"></LoginPanel>
+      <!--LoginPanel v-if="isClientSide && !isLoggedIn"></LoginPanel-->
+      <LoginPanelPackingTest v-if="isClientSide && !isLoggedIn"></LoginPanelPackingTest>
     </main>
   </div>
 </template>
 <script>
-  import _ from 'lodash'
   import { SECTIONS_DEFAULT, } from '../constants'
-  import LoginPanel from '../components/LoginPanel.vue'
+  import { get, } from 'lodash'
+  // import LoginPanel from '../components/LoginPanel.vue'
+  import LoginPanelPackingTest from '../components/LoginPanelPackingTest.vue'
   import AppHeader from '../components/AppHeader.vue'
   import AppAsideNav from '../components/AppAsideNav.vue'
   
   export default {
     components: {
       'app-header': AppHeader,
-      LoginPanel,
+      LoginPanelPackingTest,
       AppAsideNav,
     },
     computed: {
       isLoggedIn () {
-        return _.get(this.$store, [ 'state', 'isLoggedIn', ], false)
+        return get(this.$store, [ 'state', 'isLoggedIn', ], false)
       },
       sections () {
         return SECTIONS_DEFAULT
@@ -58,12 +56,6 @@
   margin auto
   padding 25px 0
   display flex
-  &__aside
-    width 75px
-    height 100%
-    position sticky
-    // position fixed
-    top 60px
   &__main
     margin-left 93.5px
     width 950px
