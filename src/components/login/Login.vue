@@ -73,11 +73,7 @@
           }, get(this.$store, [ 'state', 'register-token', ])).then((res) => {
             if (res.status === 200) {
               const memberCenter = get(filter(ROLE_MAP, { key: get(this.$store, [ 'state', 'profile', 'role', ]), }), [ 0, 'route', ], 'member')
-              if (memberCenter.match(/member/)) {
-                location.replace('/')
-              } else {
-                location.replace(`/${memberCenter}`)
-              }
+              location.replace(`/${memberCenter}`)
             } else {
               this.resMsg = this.$t('login.WORDING_LOGIN_INFAIL_VALIDATION_ISSUE')
             }
