@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import Cookie from 'vue-cookie'
 import uuidv4 from 'uuid/v4'
-import { SITE_DOMAIN, } from '../constants'
+import { SITE_DOMAIN, SITE_DOMAIN_DEV, } from '../constants'
 
 export function consoleLogOnDev ({ msg, }) {
   if (currEnv() === 'dev') {
@@ -38,6 +38,20 @@ export function dateDiffFromNow (date) {
   } else {
     return `剛剛`
   }
+}
+
+export function getImageUrl (url) {
+  const browser = typeof window !== 'undefined'
+  let hostname
+  if (browser) {
+    hostname = location.hostname
+  } else {
+    hostname = process.env.HOST || 'localhost'
+  }
+  if (hostname === 'localhost') {
+    return `http://${SITE_DOMAIN_DEV}${url}`
+  }
+  return url
 }
 
 export function getHost () {
