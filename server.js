@@ -6,6 +6,8 @@ const LRU = require('lru-cache')
 const express = require('express')
 const favicon = require('serve-favicon')
 const compression = require('compression')
+const maxMemUsageLimit = 1000 * 1024 * 1024
+const memwatch = require('memwatch-next')
 const microcache = require('route-cache')
 const requestIp = require('request-ip')
 const resolve = file => path.resolve(__dirname, file)
@@ -24,6 +26,10 @@ const serverInfo =
 
 const app = express()
 const superagent = require('superagent')
+
+const formatMem = (bytes) => {
+  return (bytes / 1024 / 1024).toFixed(2) + ' Mb'
+}
 
 function createRenderer (bundle, options) {
   // https://github.com/vuejs/vue/blob/dev/packages/vue-server-renderer/README.md#why-use-bundlerenderer
@@ -203,7 +209,15 @@ function render (req, res, next) {
     if (err.url) {
       res.redirect(err.url)
     }
-    let status = err.code === 404 ? 404 : 500
+    let status
+    if (err.code === 404) {
+      status = 404
+      isPageNotFound = true
+    } else {
+      status = 500
+      isErrorOccurred = true
+    }
+
     renderer.renderToString(Object.assign({}, context, { url: `/${status}` }), (e, h) => {
       if (!e) {
         res.status(status).send(h)
@@ -217,6 +231,25 @@ function render (req, res, next) {
       }
     })
   }
+
+  res.on('finish', function () {
+    const mem = process.memoryUsage()
+    console.log('MEMORY STAT(heapUsed):', formatMem(mem.heapUsed))
+    if (mem.heapUsed > maxMemUsageLimit) {
+      for (let i = 0; i < 10; i += 1) {
+        console.error('MEMORY WAS RUNNING OUT')
+      } 
+      console.error(`KILLING PROCESS IN 1 SECOND(At ${(new Date).toString()})`)
+      process.exit(1)
+    }
+    if (isPageNotFound || isErrorOccurred) {
+      try {
+        global.gc()
+      } catch (e) {
+        // process.exit(1)
+      }
+    }
+  })
 
   renderer.renderToString(context, (err, html) => {
     if (err) {
@@ -247,3 +280,40 @@ module.exports = {
   ready: readyPromise,
   app: server
 }
+
+memwatch.on('leak', function(info) {
+  const growth = formatMem(info.growth)
+  const mem = process.memoryUsage()
+  console.log('GETING MEMORY LEAK:', [ 'growth ' + growth, 'reason ' + info.reason ].join(', '))
+  console.log('MEMORY STAT(heapUsed):', formatMem(mem.heapUsed))
+})
+memwatch.on('stats', function(stats) {
+  const estBase = formatMem(stats.estimated_base)
+  const currBase = formatMem(stats.current_base)
+  const min = formatMem(stats.min)
+  const max = formatMem(stats.max)
+  console.log('GC STATs:', [
+    'num_full_gc ' + stats.num_full_gc,
+    'num_inc_gc ' + stats.num_inc_gc,
+    'heap_compactions ' + stats.heap_compactions,
+    'usage_trend ' + stats.usage_trend,
+    'estimated_base ' + estBase,
+    'current_base ' + currBase,
+    'min ' + min,
+    'max ' + max
+  ].join(', '))
+  if (stats.current_base > maxMemUsageLimit) {
+    for (let i = 0; i < 10; i += 1) {
+      console.error('MEMORY WAS RUNNING OUT')
+    } 
+    /**
+     * kill this process gracefully
+     */
+    const killTimer = setTimeout(() => {
+      process.exit(1)
+    }, 1000)
+    killTimer.unref()
+    server.close()
+    console.error(`GOING TO KILL PROCESS IN 1 SECOND(At ${(new Date).toString()})`)
+  }
+})

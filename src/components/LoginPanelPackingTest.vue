@@ -8,8 +8,6 @@
   </div>
 </template>
 <script>
-  import FacebookLogin from 'src/components/login/FacebookLogin.vue'
-  import GooglePlusLogin from 'src/components/login/GooglePlusLogin.vue'
   import Login from 'src/components/login/Login.vue'
   import RecoverPassword from 'src/components/login/RecoverPassword.vue'
   import Register from 'src/components/register/Register.vue'
@@ -23,8 +21,6 @@
 
   export default {
     components: {
-      FacebookLogin,
-      GooglePlusLogin,
       Login,
       RecoverPassword,
       Register,
@@ -39,22 +35,6 @@
     methods: {
       goRecoverPwd () {
         this.isGoingRecoverPwd = true
-      },
-      tabChoose (targ) {
-        switch (targ) {
-          case 'login':
-            this.isLoginTabAcitve = true
-            this.isGoingRecoverPwd = false
-            break
-          case 'register':
-            this.isLoginTabAcitve = false
-            this.isGoingRecoverPwd = false
-            break
-          case 'recoverpwd':
-            this.isLoginTabAcitve = false
-            this.isGoingRecoverPwd = false
-            break
-        }
       },
     },
     mounted () {
