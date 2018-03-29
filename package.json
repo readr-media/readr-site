@@ -133,5 +133,6 @@
     "include": [
       "api/**/*.js"
     ]
-  }
+  },
+  "eslintIgnore": [ "api/config.js" ]
 }
