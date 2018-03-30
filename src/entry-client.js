@@ -11,15 +11,15 @@ const bar = Vue.prototype.$bar = new Vue(ProgressBar).$mount()
 document.body.appendChild(bar.$el)
 
 const debug = require('debug')('CLIENT:entry-client')
-let isInitialized = false
+let isInitializedStatus = 0
 
 // a global mixin that calls `asyncData` when a route component's params change
 Vue.mixin({
   beforeRouteEnter (to, from, next) {
     debug('router link enter somewhere.', to, from)
-    debug('isInitialized is true', isInitialized)
-    if (!isInitialized) {
-      isInitialized = true
+    debug('isInitialized is true', isInitializedStatus)
+    if (isInitializedStatus === 1) {
+      isInitializedStatus = 2
       next()
     } else {
       const permission = get(to, [ 'meta', 'permission', ])
@@ -39,8 +39,8 @@ Vue.mixin({
         })
         .catch(() => {
           /** Cookie doesn't exist or fetching the profile in fail. So, go back to route "from". */
-          debug(`Cookie doesn't exist or fetching the profile in fail. So, go back to route "from".`)
-          next(from)
+          debug(`Cookie doesn't exist or fetching the profile in fail. So, go back to route "/login".`)
+          next('/login')
         })
       } else {
         /** Route "to" doesn't have any permission setting. So, go to route "to" without problem. */
@@ -73,6 +73,7 @@ if (window.__INITIAL_STATE__) {
 
 if (store.state.unauthorized) {
   debug('entry-client resolved.')
+  isInitializedStatus = 1
   delete store.state.unauthorized
   router.push(store.state.targ_url)
 }
