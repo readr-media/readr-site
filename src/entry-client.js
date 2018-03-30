@@ -3,6 +3,7 @@ import 'es6-promise/auto'
 import { ROLE_MAP, } from './constants'
 import { createApp, } from './app'
 import { filter, get, } from 'lodash'
+import { getProfile, } from './util/services'
 import ProgressBar from './components/ProgressBar.vue'
 
 // global progress bar
@@ -16,20 +17,37 @@ let isInitialized = false
 Vue.mixin({
   beforeRouteEnter (to, from, next) {
     debug('router link enter somewhere.', to, from)
-    next(vm => {
-      debug('isInitialized is true', isInitialized)
-      if (!isInitialized) {
-        isInitialized = true        
-      } else {
-        const role = get(filter(ROLE_MAP, { key: get(vm, '$store.state.profile.role'), }), [ 0, 'route', ], 'visitor')
-        const permission = get(to, [ 'meta', 'permission', ])
-        debug('role/permission', role, permission)
-        if (permission && (role === 'visitor' || (permission !== role && permission !== 'member'))) {
-          debug('Forbidden to go "to".')
+    debug('isInitialized is true', isInitialized)
+    if (!isInitialized) {
+      isInitialized = true
+      next()
+    } else {
+      const permission = get(to, [ 'meta', 'permission', ])
+      if (permission) {
+        getProfile()
+        .then((profile) => {
+          const role = get(filter(ROLE_MAP, { key: get(profile, 'role'), }), [ 0, 'route', ], 'visitor')
+          if (permission !== 'member' && permission !== role) {
+            /** User doesn't have the right to go to route "to". So, go back to route "from" */
+            debug(`User doesn't have the right to go to route "to". So, go back to route "from"`)
+            next(from)
+          } else {
+            /** User approved to go to route "to". */
+            debug(`User approved to go to route "to".`)
+            next()
+          }
+        })
+        .catch(() => {
+          /** Cookie doesn't exist or fetching the profile in fail. So, go back to route "from". */
+          debug(`Cookie doesn't exist or fetching the profile in fail. So, go back to route "from".`)
           next(from)
-        }
+        })
+      } else {
+        /** Route "to" doesn't have any permission setting. So, go to route "to" without problem. */
+        debug('Route "from" doesnt have any permission setting.')
+        next()
       }
-    })
+    }
   },
   beforeRouteUpdate (to, from, next) {
     debug('router link to somewhere.', to.fullPath)
