@@ -15,7 +15,7 @@ const fs = require('fs')
 const jwtExpress = require('express-jwt')
 // const jwtService = require('./service.js')
 const multer  = require('multer')
-const scrape = require('html-metadata')
+const ogs = require('open-graph-scraper')
 const upload = multer({ dest: 'tmp/', })
 
 const { fetchFromRedis, insertIntoRedis, redisFetching, } = require('./middle/redisHandler')
@@ -325,13 +325,14 @@ router.post('/meta', authVerify, (req, res) => {
     res.status(400).end()
   }
   const url = req.body.url
-  scrape(url).then((metadata) => {
-    res.status(200).send(metadata).end()
-  })
-  .catch((err) => {
-    res.status(500).send(err)
-    console.error(`error during fetch data from : ${url}`)
-    console.error(err)
+  ogs({ url: url, }, (error, results) => {
+    if (!error && results) {
+      res.status(200).send(results.data).end()
+    } else {
+      res.status(500).send(error)
+      console.error(`error during fetch data from : ${req.url}`)
+      console.error(error)
+    }
   })
 })
 
