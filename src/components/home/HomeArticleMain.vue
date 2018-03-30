@@ -25,7 +25,6 @@
 <script>
 import AppShareButton from 'src/components/AppShareButton.vue'
 import PostContent from 'src/components/PostContent.vue'
-import { SITE_DOMAIN_DEV, } from 'src/constants'
 import { dateDiffFromNow, } from 'src/util/comm'
 import { get, } from 'lodash'
 
@@ -56,7 +55,7 @@ export default {
       return dateDiffFromNow(this.articleData.updatedAt)
     },
     shareUrl () {
-      return `${SITE_DOMAIN_DEV}/post/${this.articleData.id}`
+      return `/post/${this.articleData.id}`
     },
   },
   methods: {

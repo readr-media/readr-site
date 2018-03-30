@@ -4,17 +4,21 @@
     <ol class="aside-navigation">
       <div class="aside-navigation__section--white">
         <transition name="fade" mode="out-in">
-          <a :class="`list-item aside-navigation__list-item-drawer`"
-              v-show="isHoverFirstListItem"
-              href="/"
-              @mouseover="isHoverFirstListItem = true"
-              @mouseout="isHoverFirstListItem = false"
-          >
-            <span v-text="wording['hot-talk']"></span>
-          </a>
+          <router-link
+            :to="$route.path === '/hot' ? '/' : '/hot'"
+            :class="`list-item aside-navigation__list-item-drawer`"
+            v-show="isHoverFirstListItem"
+            @mouseover.native="isHoverFirstListItem = true"
+            @mouseout.native="isHoverFirstListItem = false">
+            <span v-text="wording[$route.path === '/hot' ? 'chief-editor-talk' : 'hot-talk']"></span>
+          </router-link>
         </transition>
-        <router-link :class="`list-item aside-navigation__list-item${isCurrentRoute('/') ? '--highlight' : ''}`" to="/" @mouseover.native="isHoverFirstListItem = true" @mouseout.native="isHoverFirstListItem = false">
-          <span v-text="wording['chief-editor-talk']"></span>
+        <router-link
+          :to="$route.path === '/hot' ? '/hot' : '/'"
+          :class="`list-item aside-navigation__list-item${$route.path === '/' || $route.path === '/hot' ? '--highlight' : ''}`"
+          @mouseover.native="isHoverFirstListItem = true"
+          @mouseout.native="isHoverFirstListItem = false">
+          <span v-text="wording[$route.path === '/hot' ? 'hot-talk' : 'chief-editor-talk']"></span>
           <span class="option">
             <span class="option__dot"></span>
             <span class="option__dot"></span>

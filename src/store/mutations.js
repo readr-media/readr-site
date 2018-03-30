@@ -108,6 +108,9 @@ export default {
   SET_PUBLIC_POSTS_HOT: (state, { posts, }) => {
     state['publicPostsHot'] = posts
   },
+  SET_PUBLIC_POST_SINGLE: (state, { posts, }) => {
+    state['publicPostSingle'] = posts
+  },
   SET_PROFILE: (state, { profile, }) => {
     state['profile'] = profile
   },
