@@ -17,7 +17,7 @@ let isInitializedStatus = 0
 Vue.mixin({
   beforeRouteEnter (to, from, next) {
     debug('router link enter somewhere.', to, from)
-    debug('isInitialized is true', isInitializedStatus)
+    debug('isInitializedStatus', isInitializedStatus)
     if (isInitializedStatus === 1) {
       isInitializedStatus = 2
       next()
