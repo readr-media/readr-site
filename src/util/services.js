@@ -1,5 +1,11 @@
-import _ from 'lodash'
+import { camelizeKeys, } from 'humps'
+import { filter, get, } from 'lodash'
+import { getHost, } from './comm'
 import Cookie from 'vue-cookie'
+import superagent from 'superagent'
+
+const debug = require('debug')('CLIENT:services')
+const host = getHost()
 
 export function saveToken (token) {
   process.browser && window && window.localStorage.setItem('csrf', token)
@@ -34,7 +40,7 @@ export class ReadrPerm {
     this.store = store
   }
   permVerify (comp) {
-    return _.filter(_.get(this.store, [ 'state', 'profile', 'scopes', ]), (s) => (s === comp)).length > 0
+    return filter(get(this.store, [ 'state', 'profile', 'scopes', ]), (s) => (s === comp)).length > 0
   }
 }
 const readrPerm = new ReadrPerm()
@@ -53,5 +59,28 @@ export function removeToken () {
     window && Cookie.delete('csrf')
     window && (window.localStorage.removeItem('csrf'))
     resolve()
+  })
+}
+export function getProfile () {
+  return new Promise((resolve, reject) => {
+    debug('Going to get profile.')
+    const token = getToken()
+    if (token) {
+      const url = `${host}/api/profile`
+      superagent
+      .get(url)
+      .set('Authorization', `Bearer ${token}`)
+      .end(function (err, res) {
+        if (err) {
+          debug(err)
+          reject(err)
+        } else {
+          debug({ status: res.status, body: camelizeKeys(res.body), })
+          resolve(camelizeKeys(res.body))
+        }
+      })
+    } else {
+      reject()
+    }
   })
 }
