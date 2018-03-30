@@ -5,16 +5,16 @@
       <thead>
         <tr>
           <th class="postList__checkbox"><input type="checkbox" ref="checkboxSelectAll" @click="$_postList_toggleSelectAll"></th>
-          <th class="postList__nickname"><span @click="$_postList_orderBy('author.nickname')" v-text="$t('post_list.WORDING_POSTLIST_NICKNAME')"></span></th>
+          <th class="postList__nickname"><span @click="$_postList_orderBy('author.nickname')" v-text="$t('POST_LIST.NICKNAME')"></span></th>
           <th class="postList__type"></th>
-          <th class="postList__title"><span @click="$_postList_orderBy('title')" v-text="$t('post_list.WORDING_POSTLIST_TITLE')"></span></th>
-          <th class="postList__status postList--center"><span @click="$_postList_orderBy('active')" v-text="$t('post_list.WORDING_POSTLIST_ACTIVE')"></span></th>
+          <th class="postList__title"><span @click="$_postList_orderBy('title')" v-text="$t('POST_LIST.TITLE')"></span></th>
+          <th class="postList__status postList--center"><span @click="$_postList_orderBy('active')" v-text="$t('POST_LIST.ACTIVE')"></span></th>
           <th class="postList__update postList--center">
             <button
               class="postList__btn postList__btn--multiple"
               :disabled="!canPublishPosts"
               @click="$_postList_publishPosts"
-              v-text="$t('post_list.WORDING_POSTLIST_PUBLISH')">
+              v-text="$t('POST_LIST.PUBLISH')">
             </button>
           </th>
           <th class="postList__delete postList--center">
@@ -22,13 +22,13 @@
               class="postList__btn postList__btn--multiple"
               :disabled="!canDeletePosts"
               @click="$_postList_deletePosts"
-              v-text="$t('post_list.WORDING_POSTLIST_DELETE')">
+              v-text="$t('POST_LIST.DELETE')">
             </button>
           </th>
           <th class="postList__sort postList--center">
             <select name="" id="">
-              <option value="-updated_at" v-text="$t('post_list.WORDING_POSTLIST_UPDATE_AT')"></option>
-              <option value="-created_at" v-text="$t('post_list.WORDING_POSTLIST_PUBLISH_AT')"></option>
+              <option value="-updated_at" v-text="$t('POST_LIST.UPDATE_AT')"></option>
+              <option value="-created_at" v-text="$t('POST_LIST.PUBLISH_AT')"></option>
             </select>
           </th>
         </tr>
@@ -40,8 +40,8 @@
           <td class="postList__type"><div v-if="p.type === postType.NEWS" class="postList__type--news">N</div></td>
           <td class="postList__title" @click="$_showPost(p)" v-text="p.title"></td>
           <td class="postList__status postList--center" v-text="$_postList_getStatus(p)"></td>
-          <td class="postList__update postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_editPost(p.id)" v-text="$t('post_list.WORDING_POSTLIST_UPDATE')"></button></td>
-          <td class="postList__delete postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_deletePost(p.id)" v-text="$t('post_list.WORDING_POSTLIST_DELETE')"></button></td>
+          <td class="postList__update postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_editPost(p.id)" v-text="$t('POST_LIST.UPDATE')"></button></td>
+          <td class="postList__delete postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_deletePost(p.id)" v-text="$t('POST_LIST.DELETE')"></button></td>
           <td class="postList__sort"></td>
         </tr>
       </tbody>
@@ -121,15 +121,15 @@
         const status = _.get(post, [ 'active', ])
         switch (status) {
           case POST_ACTIVE.ACTIVE:
-            return this.wording.WORDING_POSTLIST_ACTIVE_PUBLISH
+            return this.$t('POST_LIST.ACTIVE_PUBLISH')
           case POST_ACTIVE.PENDING:
-            return this.wording.WORDING_POSTLIST_ACTIVE_PENDING
+            return this.$t('POST_LIST.ACTIVE_PENDING')
           case POST_ACTIVE.DRAFT:
-            return this.wording.WORDING_POSTLIST_ACTIVE_DRAFT
+            return this.$t('POST_LIST.ACTIVE_DRAFT')
           case POST_ACTIVE.UNPUBLISH:
-            return this.wording.WORDING_POSTLIST_ACTIVE_UNPUBLISH
+            return this.$t('POST_LIST.ACTIVE_UNPUBLISH')
           default:
-            return this.wording.WORDING_POSTLIST_ACTIVE_DRAFT
+            return this.$t('POST_LIST.ACTIVE_DRAFT')
         }
       },
       $_postList_orderBy (field) {
