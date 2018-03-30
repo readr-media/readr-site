@@ -85,7 +85,7 @@ function (req, res, next) {
           res.json(resData)
         } else {
           res.json(e)
-          console.error(`error during fetch public data from : ${url}`)
+          console.error(`error during fetch public post data from : ${url}`)
           console.error(e)  
         }
       })
@@ -164,5 +164,20 @@ router.get('/videos/count', (req, res, next) => {
       })
   }
 }, insertIntoRedis)
+
+router.get('/posts/hot', (req, res) => {
+  const url = `${apiHost}${req.url}`
+  superagent
+  .get(url)
+  .end((e, r) => {
+    if (!e && r) {
+      res.status(200).json(JSON.parse(r.text))
+    } else {
+      res.status(500).json(e)
+      console.error(`error during fetch public hot post data from : ${url}`)
+      console.error(e)  
+    }
+  })
+})
 
 module.exports = router

@@ -148,6 +148,7 @@ function render (req, res, next) {
 
   let context = {
     title: 'Readr',
+    ogTitle: 'Readr',
     description: 'Readr',
     metaUrl: 'dev.readr.tw',
     metaImage: '/public/og.png',

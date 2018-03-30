@@ -23,6 +23,7 @@ import {
   getFollowingByUser,
   getMembers,
   getMeta,
+  getPost,
   getPosts,
   getPostsCount,
   getProfile,
@@ -164,6 +165,15 @@ export default {
   },
   GET_META: ({ commit, dispatch, state, }, { url, }) => {
     return getMeta(url)
+  },
+  GET_POST: ({ commit, dispatch, state, }, { params, }) => {
+    return getPost({ params, }).then(({ status, body, }) => {
+      if (body.status === 404) {
+        console.log('get single post error')
+      } else if (status === 200) {
+        commit('SET_PUBLIC_POST_SINGLE', { posts: body, })
+      }
+    })
   },
   GET_POSTS: ({ commit, dispatch, state, }, { params, }) => {
     return getPosts({ params, }).then(({ status, body, }) => {

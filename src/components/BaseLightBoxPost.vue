@@ -28,17 +28,6 @@ export default {
     post: {
       type: Object,
     },
-    showLightBox: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  watch: {
-    showLightBox (val) {
-      if (!val) {
-        this.$emit('closeEditor')
-      }
-    },
   },
   computed: {
     isPostEmpty () {

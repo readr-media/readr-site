@@ -103,10 +103,13 @@ export default {
     display flex
     align-items center
     &__thumbnail
-      r = 50px
-      width r
-      height r
-      border-radius r
+      width 60px
+      height 60px
+      img
+        width 100%
+        height 100%
+        border-radius 100%
+        object-fit cover
     &__meta-container
       margin-left 10.5px
     &__nickname

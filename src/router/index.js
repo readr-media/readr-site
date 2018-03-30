@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import pathToRegexp from 'path-to-regexp'
 import { ReadrPerm, } from '../util/services'
 
 Vue.use(Router)
@@ -20,7 +21,6 @@ const Home = () => import('../views/Home.vue')
 const Login = () => import('../views/Login.vue')
 const Member = () => import('../views/Member.vue')
 const PageNotFound = () => import('../views/PageNotFound.vue')
-const Post = () => import('../views/Post.vue')
 const Profile = () => import('../views/Profile.vue')
 const ProjectsList = () => import('../views/ProjectsList.vue')
 const Search = () => import('../views/Search.vue')
@@ -31,9 +31,34 @@ const SetPassword = () => import('../views/SetPassword.vue')
 const router = new Router({
   mode: 'history',
   fallback: false,
-  scrollBehavior: () => ({ y: 0, }),
+  scrollBehavior: (to, from) => {
+    const keepPosition = [
+      {
+        from: '/',
+        to: '/post/:postId',
+      },
+      {
+        from: '/hot',
+        to: '/post/:postId',
+      },
+      {
+        from: '/post/:postId',
+        to: '/',
+      },
+      {
+        from: '/post/:postId',
+        to: '/hot',
+      },
+    ]
+    .map(route =>({ from: pathToRegexp(route.from), to: pathToRegexp(route.to), }))
+    .reduce((acc, cur) => acc || (cur.from.test(from.path) && cur.to.test(to.path)), false)
+
+    if (!keepPosition) {
+      return { y: 0, }
+    }
+  },
   routes: [
-    { path: '/', component: Home, meta: { permission: 'member', }, },
+    { path: '/', component: Home, alias: '/hot', meta: { permission: 'member', }, },
     { path: '/admin', component: Admin, meta: { permission: 'admin', }, },
     { path: '/agreement', component: Agreement, },
     { path: '/editor', component: Editor, meta: { permission: 'editor', }, },
@@ -41,7 +66,7 @@ const router = new Router({
     { path: '/guesteditor', component: GuestEditor, meta: { permission: 'guesteditor', }, },
     { path: '/login', component: Login, },
     { path: '/member', component: Member, meta: { permission: 'member', }, },
-    { path: '/post/:id', component: Post, meta: { permission: 'member', }, },
+    { path: '/post/:postId', component: Home, meta: { permission: 'member', }, },
     { path: '/profile/:id', component: Profile, meta: { permission: 'member', }, },
     { path: '/projects', component: ProjectsList, meta: { permission: 'member', }, },
     { path: '/search/:keyword', component: Search, meta: { permission: 'member', }, },

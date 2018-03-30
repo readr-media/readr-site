@@ -12,6 +12,8 @@
   </section>
 </template>
 <script>
+  import pathToRegexp from 'path-to-regexp'
+
   export default {
     name: 'BaseLightBox',
     components: {
@@ -61,7 +63,7 @@
     mounted () {},
     methods: {
       $_baseLightBox_close () {
-        this.$emit('update:showLightBox', false)
+        pathToRegexp('/post/:postId').test(this.$route.path) ? this.$emit('closeLightBox') : this.$emit('update:showLightBox', false)
       },
     },
   }
@@ -74,7 +76,7 @@
   left 0
   right 0
   bottom 0
-  z-index 999
+  z-index 9999
   display flex
   justify-content center
   align-items center
