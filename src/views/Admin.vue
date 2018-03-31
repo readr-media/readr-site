@@ -7,126 +7,128 @@
       <main class="admin__main">
         <!-- <app-header :sections="sections"></app-header> -->
         <About :profile="profile"></About>
-        <div class="control-bar">
-          <TheControlBar
-            @addAccount="addMember"
-            @addNews="showEditorHandler({ postPanel: 'add', postType: config.type.NEWS })"
-            @addReview="showEditorHandler({ postPanel: 'add', postType: config.type.REVIEW })"
-            @addVideo="showEditorHandler({ postPanel: 'add', postType: config.type.VIDEO })"
-            @editNews="showDraftListHandler(config.type.NEWS)"
-            @editReview="showDraftListHandler(config.type.REVIEW)"
-            @openPanel="openPanel">
-          </TheControlBar>
-        </div>
-        <template v-if="activePanel === 'accounts'">
-          <MembersPanel v-if="$can('memberManage')" @filterChanged="filterChanged"></MembersPanel>
-        </template>
-        <template v-else-if="activePanel === 'records'">
-          <section class="">
-            <app-tab :tabs="tabs" @changeTab="tabHandler">
-              <PostListInTab
-                slot="0"
+        <template v-if="showMain">
+          <div class="control-bar">
+            <TheControlBar
+              @addAccount="addMember"
+              @addNews="showEditorHandler({ postPanel: 'add', postType: config.type.NEWS })"
+              @addReview="showEditorHandler({ postPanel: 'add', postType: config.type.REVIEW })"
+              @addVideo="showEditorHandler({ postPanel: 'add', postType: config.type.VIDEO })"
+              @editNews="showDraftListHandler(config.type.NEWS)"
+              @editReview="showDraftListHandler(config.type.REVIEW)"
+              @openPanel="openPanel">
+            </TheControlBar>
+          </div>
+          <template v-if="activePanel === 'accounts'">
+            <MembersPanel v-if="$can('memberManage')" @filterChanged="filterChanged"></MembersPanel>
+          </template>
+          <template v-else-if="activePanel === 'records'">
+            <section class="">
+              <app-tab :tabs="tabs" @changeTab="tabHandler">
+                <PostListInTab
+                  slot="0"
+                  :posts="posts"
+                  @deletePost="showAlertHandler"
+                  @editPost="showEditorHandler"
+                  @filterChanged="filterChanged">
+                </PostListInTab>
+                <PostListInTab
+                  slot="1"
+                  :posts="posts"
+                  @deletePost="showAlertHandler"
+                  @editPost="showEditorHandler"
+                  @filterChanged="filterChanged">
+                </PostListInTab>
+                <FollowingListInTab
+                  slot="2"
+                  :currentResource="followingResource"
+                  :followingByUser="followingByUser"
+                  @changeResource="updateFollowingList"
+                  @unfollow="unfollow">
+                </FollowingListInTab>
+              </app-tab>
+            </section>
+          </template>
+          <template v-else-if="activePanel === 'posts'">
+            <section class="panel">
+              <PostList
+                :maxResult="20"
                 :posts="posts"
-                @deletePost="showAlertHandler"
+                :sort="currSort"
+                @deletePosts="showAlertHandler"
                 @editPost="showEditorHandler"
-                @filterChanged="filterChanged">
-              </PostListInTab>
-              <PostListInTab
-                slot="1"
+                @filterChanged="filterChanged"
+                @publishPosts="showAlertHandler">
+              </PostList>
+            </section>
+          </template>
+          <template v-else-if="activePanel === 'tags'">
+            <section class="panel">
+              <TagList
+                :maxResult="20"
+                :sort="currSort"
+                :tags="tags"
+                @addTag="addTag"
+                @deleteTags="showAlertHandler"
+                @filterChanged="filterChanged"
+                @updateTagList="updateTagList({})">
+              </TagList>
+            </section>
+          </template>
+          <template v-else-if="activePanel === 'videos'">
+            <section class="panel">
+              <VideoList
+                :maxResult="20"
                 :posts="posts"
-                @deletePost="showAlertHandler"
+                :sort="currSort"
+                @deletePosts="showAlertHandler"
                 @editPost="showEditorHandler"
-                @filterChanged="filterChanged">
-              </PostListInTab>
-              <FollowingListInTab
-                slot="2"
-                :currentResource="followingResource"
-                :followingByUser="followingByUser"
-                @changeResource="updateFollowingList"
-                @unfollow="unfollow">
-              </FollowingListInTab>
-            </app-tab>
-          </section>
+                @filterChanged="filterChanged"
+                @publishPosts="showAlertHandler">
+              </VideoList>
+            </section>
+          </template>
+          <BaseLightBox borderStyle="nonBorder" :showLightBox.sync="showLightBox" :isConversation="true">
+            <MemberAccountEditor
+              action="add"
+              :shouldShow="showLightBox"
+              :title="$t('admin.WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER')"
+              @updated="filterChanged">
+            </MemberAccountEditor>
+          </BaseLightBox>
+          <BaseLightBox :showLightBox.sync="showDraftList">
+            <PostListDetailed
+              :posts="postsDraft"
+              @deletePost="showAlertHandler"
+              @editPost="showEditorHandler">
+            </PostListDetailed>
+          </BaseLightBox>
+          <BaseLightBox :showLightBox.sync="showEditor">
+            <PostPanel
+              :post="post"
+              :panelType="postPanel"
+              :postType="postType"
+              @addPost="addPost"
+              @deletePost="deletePost"
+              @publishPost="publishPost"
+              @updatePost="updatePost">
+            </PostPanel>
+          </BaseLightBox>
+          <BaseLightBox :isAlert="true" :showLightBox.sync="showAlert">
+            <AlertPanel
+              :active="itemsActive"
+              :activeChanged="postActiveChanged"
+              :items="itemsSelected"
+              :needConfirm="needConfirm"
+              :showLightBox="showAlert"
+              :type="alertType"
+              @deletePosts="deletePosts"
+              @deleteTags="deleteTags"
+              @closeAlert="alertHandler(false)"
+              @publishPosts="publishPostHandler">
+            </AlertPanel>
+          </BaseLightBox>        
         </template>
-        <template v-else-if="activePanel === 'posts'">
-          <section class="panel">
-            <PostList
-              :maxResult="20"
-              :posts="posts"
-              :sort="currSort"
-              @deletePosts="showAlertHandler"
-              @editPost="showEditorHandler"
-              @filterChanged="filterChanged"
-              @publishPosts="showAlertHandler">
-            </PostList>
-          </section>
-        </template>
-        <template v-else-if="activePanel === 'tags'">
-          <section class="panel">
-            <TagList
-              :maxResult="20"
-              :sort="currSort"
-              :tags="tags"
-              @addTag="addTag"
-              @deleteTags="showAlertHandler"
-              @filterChanged="filterChanged"
-              @updateTagList="updateTagList({})">
-            </TagList>
-          </section>
-        </template>
-        <template v-else-if="activePanel === 'videos'">
-          <section class="panel">
-            <VideoList
-              :maxResult="20"
-              :posts="posts"
-              :sort="currSort"
-              @deletePosts="showAlertHandler"
-              @editPost="showEditorHandler"
-              @filterChanged="filterChanged"
-              @publishPosts="showAlertHandler">
-            </VideoList>
-          </section>
-        </template>
-        <BaseLightBox borderStyle="nonBorder" :showLightBox.sync="showLightBox" :isConversation="true">
-          <MemberAccountEditor
-            action="add"
-            :shouldShow="showLightBox"
-            :title="$t('admin.WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER')"
-            @updated="filterChanged">
-          </MemberAccountEditor>
-        </BaseLightBox>
-        <BaseLightBox :showLightBox.sync="showDraftList">
-          <PostListDetailed
-            :posts="postsDraft"
-            @deletePost="showAlertHandler"
-            @editPost="showEditorHandler">
-          </PostListDetailed>
-        </BaseLightBox>
-        <BaseLightBox :showLightBox.sync="showEditor">
-          <PostPanel
-            :post="post"
-            :panelType="postPanel"
-            :postType="postType"
-            @addPost="addPost"
-            @deletePost="deletePost"
-            @publishPost="publishPost"
-            @updatePost="updatePost">
-          </PostPanel>
-        </BaseLightBox>
-        <BaseLightBox :isAlert="true" :showLightBox.sync="showAlert">
-          <AlertPanel
-            :active="itemsActive"
-            :activeChanged="postActiveChanged"
-            :items="itemsSelected"
-            :needConfirm="needConfirm"
-            :showLightBox="showAlert"
-            :type="alertType"
-            @deletePosts="deletePosts"
-            @deleteTags="deleteTags"
-            @closeAlert="alertHandler(false)"
-            @publishPosts="publishPostHandler">
-          </AlertPanel>
-        </BaseLightBox>
       </main>
     </div>
   </div>
@@ -155,6 +157,7 @@
   const MAXRESULT = 20
   const DEFAULT_PAGE = 1
   const DEFAULT_SORT = '-updated_at'
+  const debug = require('debug')('CLIENT:admin')
 
   const addPost = (store, params) => {
     return store.dispatch('ADD_POST', { params, })
@@ -324,6 +327,7 @@
         postPanel: 'add',
         postType: POST_TYPE.REVIEW,
         postsSelected: [],
+        showMain: false,
         showAlert: false,
         showDraftList: false,
         showEditor: false,
@@ -364,6 +368,7 @@
     },
     beforeMount () {
       this.loading = true
+      debug('Admin beforeMount')
       this.$can('memberManage') && Promise.all([
         getMembers(this.$store, {}),
       ])
@@ -782,7 +787,9 @@
         .catch(() => this.loading = false)
       },
     },
-    
+    mounted () {
+      this.showMain = true
+    },
   }
 </script>
 <style lang="stylus" scoped>

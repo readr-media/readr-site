@@ -21,12 +21,12 @@
   import SearchTool from 'src/components/search/SearchTool.vue'
 
   const debug = require('debug')('CLIENT:AppHeader')
-  const checkLoginStatus = (store) => {
-    return store.dispatch('CHECK_LOGIN_STATUS', {})
-  }
-  const getProfile = (store) => {
-    return store.dispatch('GET_PROFILE', {})
-  }
+  // const checkLoginStatus = (store) => {
+  //   return store.dispatch('CHECK_LOGIN_STATUS', {})
+  // }
+  // const getProfile = (store) => {
+  //   return store.dispatch('GET_PROFILE', {})
+  // }
   const logout = (store) => {
     return store.dispatch('LOGOUT', {})
   }
@@ -79,12 +79,12 @@
       debug('isLoginPage', this.isLoginPage)
     },
     beforeMount () {
-      checkLoginStatus(this.$store).then(() => {
-        if (this.isLoggedIn) {
-          return getProfile(this.$store)
-        }
-        return
-      })
+      // checkLoginStatus(this.$store).then(() => {
+      //   if (this.isLoggedIn) {
+      //     return getProfile(this.$store)
+      //   }
+      //   return
+      // })
     },
     props: [ 'sections', ],
   }

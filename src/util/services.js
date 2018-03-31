@@ -40,7 +40,7 @@ export class ReadrPerm {
     this.store = store
   }
   permVerify (comp) {
-    return filter(get(this.store, [ 'state', 'profile', 'scopes', ]), (s) => (s === comp)).length > 0
+    return filter(get(this.store, 'state.profile.scopes'), (s) => (s === comp)).length > 0
   }
 }
 const readrPerm = new ReadrPerm()
@@ -61,10 +61,9 @@ export function removeToken () {
     resolve()
   })
 }
-export function getProfile () {
-  return new Promise((resolve, reject) => {
-    debug('Going to get profile.')
-    const token = getToken()
+export function getProfile (cookie) {
+  return new Promise(resolve => {
+    const token = cookie || getToken()
     if (token) {
       const url = `${host}/api/profile`
       superagent
@@ -73,14 +72,14 @@ export function getProfile () {
       .end(function (err, res) {
         if (err) {
           debug(err)
-          reject(err)
+          resolve(err)
         } else {
           debug({ status: res.status, body: camelizeKeys(res.body), })
-          resolve(camelizeKeys(res.body))
+          resolve({ profile: camelizeKeys(res.body), })
         }
       })
     } else {
-      reject()
+      resolve()
     }
   })
 }
