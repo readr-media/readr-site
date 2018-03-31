@@ -1,11 +1,11 @@
 <template>
-  <div class="about" v-if="profile">
+  <div class="about">
     <div class="about__thumbnail">
       <img :src="thumbnail">
     </div>
     <div class="about__name">
       <span class="name" v-text="name"></span>
-      <span class="role" v-text="`（${role}）`" v-if="role"></span>
+      <span class="role" v-text="role"></span>
     </div>
     <div class="about__introduction" v-text="introduction"></div>
     <div class="about__edit" v-if="isCurrUser">
@@ -42,7 +42,8 @@
         return get(this.profile, [ 'nickname', ])
       },
       role () {
-        return get(filter(ROLE_MAP, { key: get(this.profile, [ 'role', ]), }), [ 0, 'value', ])
+        const text = get(filter(ROLE_MAP, { key: get(this.profile, [ 'role', ]), }), [ 0, 'value', ])
+        return text && ` (${text})`
       },
       thumbnail () {
         return get(this.profile, [ 'profileImage', ]) || '/public/icons/exclamation.png'
