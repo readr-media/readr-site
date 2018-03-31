@@ -12,21 +12,21 @@ if (process.browser) {
 }
 
 // route-level code splitting
-const Admin = () => import('../views/Admin.vue')
-const Agreement = () => import('../views/Agreement.vue')
-const Editor = () => import('../views/Editor.vue')
-const Editors = () => import('../views/Editors.vue')
-const GuestEditor = () => import('../views/GuestEditor.vue')
-const Home = () => import('../views/Home.vue')
-const Login = () => import('../views/Login.vue')
-const Member = () => import('../views/Member.vue')
-const PageNotFound = () => import('../views/PageNotFound.vue')
-const Profile = () => import('../views/Profile.vue')
-const ProjectsList = () => import('../views/ProjectsList.vue')
-const Search = () => import('../views/Search.vue')
-const ServerError = () => import('../views/ServerError.vue')
-const SetPassword = () => import('../views/SetPassword.vue')
-// const Videos = () => import('../views/Videos.vue')
+const ManageAdmin = () => import('../views/ManageAdmin.vue')
+const ManageEditor = () => import('../views/ManageEditor.vue')
+const ManageGuestEditor = () => import('../views/ManageGuestEditor.vue')
+const ManageMember = () => import('../views/ManageMember.vue')
+const PublicAgreement = () => import('../views/PublicAgreement.vue')
+const PublicEditors = () => import('../views/PublicEditors.vue')
+const PublicHome = () => import('../views/PublicHome.vue')
+const PublicLogin = () => import('../views/PublicLogin.vue')
+const PublicPageNotFound = () => import('../views/PublicPageNotFound.vue')
+const PublicProfile = () => import('../views/PublicProfile.vue')
+const PublicProjects = () => import('../views/PublicProjects.vue')
+const PublicSearch = () => import('../views/PublicSearch.vue')
+const PublicServerError = () => import('../views/PublicServerError.vue')
+const PublicSetPassword = () => import('../views/PublicSetPassword.vue')
+// const PublicVideos = () => import('../views/PublicVideos.vue')
 
 const router = new Router({
   mode: 'history',
@@ -58,22 +58,22 @@ const router = new Router({
     }
   },
   routes: [
-    { path: '/', component: Home, alias: '/hot', meta: { permission: 'member', }, },
-    { path: '/admin', component: Admin, meta: { permission: 'admin', }, },
-    { path: '/agreement', component: Agreement, },
-    { path: '/editor', component: Editor, meta: { permission: 'editor', }, },
-    { path: '/editors', component: Editors, meta: { permission: 'member', }, },
-    { path: '/guesteditor', component: GuestEditor, meta: { permission: 'guesteditor', }, },
-    { path: '/login', component: Login, },
-    { path: '/member', component: Member, meta: { permission: 'member', }, },
-    { path: '/post/:postId', component: Home, meta: { permission: 'member', }, },
-    { path: '/profile/:id', component: Profile, meta: { permission: 'member', }, },
-    { path: '/projects', component: ProjectsList, meta: { permission: 'member', }, },
-    { path: '/search/:keyword', component: Search, meta: { permission: 'member', }, },
-    { path: '/setup/:type', component: SetPassword, },
-    { path: '/404', component: PageNotFound, },
-    { path: '/500', component: ServerError, },
-    // { path: '/videos', component: Videos },
+    { path: '/', component: PublicHome, alias: '/hot', meta: { permission: 'member', }, },
+    { path: '/admin', component: ManageAdmin, meta: { permission: 'admin', }, },
+    { path: '/agreement', component: PublicAgreement, },
+    { path: '/editor', component: ManageEditor, meta: { permission: 'editor', }, },
+    { path: '/editors', component: PublicEditors, meta: { permission: 'member', }, },
+    { path: '/guesteditor', component: ManageGuestEditor, meta: { permission: 'guesteditor', }, },
+    { path: '/login', component: PublicLogin, },
+    { path: '/member', component: ManageMember, meta: { permission: 'member', }, },
+    { path: '/post/:postId', component: PublicHome, meta: { permission: 'member', }, },
+    { path: '/profile/:id', component: PublicProfile, meta: { permission: 'member', }, },
+    { path: '/projects', component: PublicProjects, meta: { permission: 'member', }, },
+    { path: '/search/:keyword', component: PublicSearch, meta: { permission: 'member', }, },
+    { path: '/setup/:type', component: PublicSetPassword, },
+    { path: '/404', component: PublicPageNotFound, },
+    { path: '/500', component: PublicServerError, },
+    // { path: '/videos', component: PublicVideos },
   ],
 })
 
