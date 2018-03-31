@@ -30,10 +30,10 @@
         <router-link :class="`list-item aside-navigation__list-item${isCurrentRoute('/projects') ? '--highlight' : ''}`" to="/projects"><span v-text="wording['projects']"></span></router-link>
       </div>
       <div class="aside-navigation__external--gray">
-        <a class="list-item aside-navigation__list-item" href="/"><span><img src="/public/icons/fb.png" alt="fb"></span></a>
-        <a class="list-item aside-navigation__list-item" href="/"><span><img src="/public/icons/github.png" alt="github"></span></a>
+        <!-- <a class="list-item aside-navigation__list-item" href="/"><span><img src="/public/icons/fb.png" alt="fb"></span></a> -->
+        <!-- <a class="list-item aside-navigation__list-item" href="/"><span><img src="/public/icons/github.png" alt="github"></span></a> -->
         <a class="list-item aside-navigation__list-item" href="/"><span><img src="/public/icons/info.png" alt="info"></span></a>
-        <a class="list-item aside-navigation__list-item" href="/"><span><img src="/public/icons/mirrormedia.png" alt="info"></span></a>
+        <a class="list-item aside-navigation__list-item" href="https://www.mirrormedia.mg/" target="_blank"><span><img src="/public/icons/mirrormedia.png" alt="info"></span></a>
       </div>
     </ol>
   </nav>
