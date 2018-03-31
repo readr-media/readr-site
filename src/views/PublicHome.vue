@@ -5,10 +5,13 @@
     </BaseLightBox>
     <div class="homepage__container">
       <aside class="homepage__aside">
-        <AppAsideNav/>
+        <AppAsideNav></AppAsideNav>
       </aside>
       <main class="homepage__main">
         <div class="homepage__list-main">
+          <div class="invitation">
+            <Invite></Invite>
+          </div>
           <transition-group name="fade" mode="out-in">
             <HomeArticleMain v-for="post in postsMain" :articleData="post" :key="`${post.id}-latest`"/>
           </transition-group>
@@ -33,16 +36,17 @@
 </template>
 
 <script>
-import { isScrollBarReachBottom, } from '../util/comm'
+import { isScrollBarReachBottom, } from 'src/util/comm'
 import _ from 'lodash'
 import pathToRegexp from 'path-to-regexp'
-import AppAsideNav from '../components/AppAsideNav.vue'
-import AppTitledList from '../components/AppTitledList.vue'
-import HomeProjectAside from '../components/home/HomeProjectAside.vue'
-import HomeArticleMain from '../components/home/HomeArticleMain.vue'
-import HomeArticleAside from '../components/home/HomeArticleAside.vue'
-import BaseLightBox from '../components/BaseLightBox.vue'
-import BaseLightBoxPost from '../components/BaseLightBoxPost.vue'
+import AppAsideNav from 'src/components/AppAsideNav.vue'
+import AppTitledList from 'src/components/AppTitledList.vue'
+import HomeProjectAside from 'src/components/home/HomeProjectAside.vue'
+import HomeArticleMain from 'src/components/home/HomeArticleMain.vue'
+import HomeArticleAside from 'src/components/home/HomeArticleAside.vue'
+import BaseLightBox from 'src/components/BaseLightBox.vue'
+import BaseLightBoxPost from 'src/components/BaseLightBoxPost.vue'
+import Invite from 'src/components/invitation/Invite.vue'
 
 const fetchPost = (store, { id, }) => {
   return store.dispatch('GET_POST', {
@@ -116,6 +120,7 @@ export default {
     HomeArticleAside,
     BaseLightBox,
     BaseLightBoxPost,
+    Invite,
   },
   watch: {
     isReachBottom(isReachBottom) {

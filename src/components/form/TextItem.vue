@@ -2,7 +2,7 @@
   <div class="text-item" :class="{ alert: flag }">
     <input ref="input"
       v-model="currValue"
-      :style="{ width: width }"
+      :style="{ width: width, height: height, border: border, margin, padding, fontSize: fontSize }"
       :disabled="disabled"
       :type="type"
       :placeholder="placeHolder"
@@ -45,7 +45,7 @@
     mounted () {
       this.currValue = this.value
     },
-    props: [ 'alert', 'type', 'placeHolder', 'disabled', 'initValue', 'width', 'value', ],
+    props: [ 'alert', 'type', 'placeHolder', 'disabled', 'initValue', 'width', 'height', 'border', 'margin', 'padding', 'fontSize', ],
     watch: {
       alert: function () {
         this.flag = this.alert.flag
