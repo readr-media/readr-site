@@ -246,4 +246,12 @@ export default {
     'WORDING_SEARCH_FILTER_CONVERSATION' : '對話',
     'WORDING_SEARCH_FILTER_PROJECT' : '議題',
   },
+  'INVITATION': {
+    'TITLE': '將讀＋分享給好友',
+    'BTN_CANCEL': '取消',
+    'BTN_SUBMIT': '送出',
+    'EMAIL_ADDRESS': 'Email Address',
+    'EMAIL_EXAMPLE': 'name@example.com',
+    'SENT': '已送出邀請',
+  },
 }
