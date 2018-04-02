@@ -1,5 +1,6 @@
-const { find, } = require('lodash')
 const { GraphQLClient, } = require('graphql-request')
+const { find, } = require('lodash')
+const { handlerError, } = require('../../comm')
 const Cookies = require('cookies')
 const config = require('../../config')
 const debug = require('debug')('READR:api:comment')
@@ -27,7 +28,8 @@ router.get('/count', (req, res) => {
     res.send(data)
   }).catch(err => {
     debug('err', err)
-    res.status(err.response.status).json(err.response.errors)
+    const err_wrapper = handlerError(err)
+    res.status(err_wrapper.status).json(err_wrapper.text)
   })
 })
 router.get('/me', authVerify, (req, res) => {
