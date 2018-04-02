@@ -7,13 +7,14 @@ import superagent from 'superagent'
 const debug = require('debug')('CLIENT:services')
 const host = getHost()
 
-export function saveToken (token) {
-  process.browser && window && window.localStorage.setItem('csrf', token)
-}
+// export function saveToken (token) {
+//   process.browser && window && window.localStorage.setItem('csrf', token)
+// }
+export function saveToken () {}
 export function getToken () {
   if (process.browser && window) {
     let token = Cookie.get('csrf')
-    token = token || (window && window.localStorage.getItem('csrf'))
+    // token = token || (window && window.localStorage.getItem('csrf'))
     return token
   } else {
     return undefined
