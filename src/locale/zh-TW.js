@@ -246,6 +246,9 @@ export default {
     'WORDING_SEARCH_FILTER_CONVERSATION' : '對話',
     'WORDING_SEARCH_FILTER_PROJECT' : '議題',
   },
+  'ABOUT': {
+    'TAB_TITLE': 'READr關於我們',
+  },
   'INVITATION': {
     'TITLE': '將讀＋分享給好友',
     'BTN_CANCEL': '取消',
