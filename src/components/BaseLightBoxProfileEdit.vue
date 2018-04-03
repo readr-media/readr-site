@@ -33,7 +33,7 @@
     <div class="profile-edit__aside">
       <div class="portrait">
         <div class="portrait__container" @click="profileEditorUploadThumbnail">
-          <img class="portrait__thumbnail" v-show="thumbnail" :src="`http://www.readr.tw/${thumbnail}`" alt="thumbnail">
+          <img class="portrait__thumbnail" v-show="thumbnail" :src="`${PROD_HOST}/${thumbnail}`" alt="thumbnail">
           <div class="portrait__upload"></div>
         </div>
         <div class="portrait__name">{{ staticNickname }}</div>
@@ -45,8 +45,10 @@
 
 <script>
 import { removeToken, } from '../util/services'
+import { PROD_HOST, } from '../../api/config'
 import validator from 'validator'
 import _ from 'lodash'
+
 
 const debug = require('debug')('CLIENT:')
 const updateInfo = (store, profile, action) => {
@@ -97,6 +99,7 @@ export default {
       inputOldPassword: '',
       inputNewPassword: '',
       inputConfirmPassword: '',
+      PROD_HOST,
     }
   },
   computed: {
