@@ -3,7 +3,7 @@
     <div class="home-article-aside__author">
       <div class="author-info">
         <router-link class="author-info__thumbnail" :to="`/profile/${get(articleData, 'author.id')}`">
-          <img :src="articleData.author.profileImage" alt="">
+          <img :src="getImageUrl(articleData.author.profileImage)" alt="">
         </router-link>
         <div class="author-info__meta-container">
           <router-link class="author-info__nickname" :to="`/profile/${get(articleData, 'author.id')}`">
@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { updatedAtYYYYMMDD, } from '../../util/comm'
+import { updatedAtYYYYMMDD, getImageUrl, } from '../../util/comm'
 import _ from 'lodash'
 import AppArticleNav from 'src/components/AppArticleNav.vue'
 
@@ -65,6 +65,7 @@ export default {
   methods: {
     get: _.get,
     updatedAtYYYYMMDD,
+    getImageUrl,
   },
   props: {
     articleData: {

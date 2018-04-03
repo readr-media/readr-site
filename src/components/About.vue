@@ -1,7 +1,7 @@
 <template>
   <div class="about">
     <div class="about__thumbnail">
-      <img v-show="thumbnail" :src="`${PROD_HOST}/${thumbnail}`">
+      <img v-show="thumbnail" :src="getImageUrl(thumbnail)">
     </div>
     <div class="about__name">
       <span class="name" v-text="name"></span>
@@ -19,7 +19,7 @@
 <script>
   import { filter, get, } from 'lodash'
   import { ROLE_MAP, } from 'src/constants'
-  import { PROD_HOST, } from '../../api/config'
+  import { getImageUrl, } from 'src/util/comm'
   import BaseLightBox from 'src/components/BaseLightBox.vue'
   import BaseLightBoxProfileEdit from 'src/components/BaseLightBoxProfileEdit.vue'
 
@@ -54,11 +54,11 @@
       return {
         editText: '(edit)',
         showLightBox: false,
-        PROD_HOST,
       }
     },
     name: 'about',
     methods: {
+      getImageUrl,
       goEdit () {
         debug('isCurrUser', this.isCurrUser)
         this.isCurrUser && (this.showLightBox = true)

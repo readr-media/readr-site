@@ -20,8 +20,8 @@ const resizeOpts = {
     { target: 'mobile@2x', width: 80, },
     { target: 'tablet@2x', width: 270, },
     { target: 'tablet@1x', width: 100, },
-    { target: 'desktop@2x', width: 300, },
-    { target: 'desktop@1x', width: 200, },
+    { target: 'desktop@2x', width: 800, },
+    { target: 'desktop@1x', width: 400, },
   ],
 }
 

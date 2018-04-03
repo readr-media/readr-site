@@ -10,6 +10,10 @@ const schema = require('./schema')
 
 const apiHost = API_PROTOCOL + '://' + API_HOST + ':' + API_PORT
 
+const pickInsensitiveUserInfo = (userData) => {
+  return pick(userData, [ 'id', 'nickname', 'description', 'profile_image', ])
+}
+
 const fetchAndConstructMembers = (req, res) => {
   const url = `${apiHost}${req.url}`
   redisFetching(`member${req.url}`, ({ error, data, }) => {
@@ -41,31 +45,7 @@ const fetchAndConstructMembers = (req, res) => {
   })  
 }
 
-const pickInsensitiveUserInfo = (userData) => {
-  return pick(userData, [ 'id', 'nickname', 'description', 'profile_image', ])
-}
-
-router.get('/profile/:id', (req, res, next) => {
-  const id = req.params.id
-  debug('Going to get member profile.', id)
-  if (!id) { res.status(403).send(`Forbidden.`) }
-  req.url = `/member/${id}`
-  next()
-}, fetchAndConstructMembers)
-
-router.get('/members', publicQueryValidation.validate(schema.members), fetchAndConstructMembers)
-
-router.get('/posts', publicQueryValidation.validate(schema.posts), (req, res, next) => {
-  const activePostQueryString = `{"$in":[${POST_ACTIVE.ACTIVE}]}`
-  if (Object.keys(req.query).length === 0) {
-    req.url += `?active=${activePostQueryString}&type={"$in":[${POST_TYPE.REVIEW}, ${POST_TYPE.NEWS}]}`
-  } else {
-    req.url += `&active=${activePostQueryString}&type={"$in":[${POST_TYPE.REVIEW}, ${POST_TYPE.NEWS}]}`
-  }
-  next()
-},
-fetchFromRedis,
-function (req, res, next) {
+const fetchAndConstructPosts = (req, res, next) => {
   const url = `${apiHost}${req.url}`
   if (res.redis) {
     console.log('fetch data from Redis.', req.url)
@@ -96,8 +76,31 @@ function (req, res, next) {
           console.error(e)
         }
       })
-    }
-}, insertIntoRedis)
+  }
+}
+
+router.get('/profile/:id', (req, res, next) => {
+  const id = req.params.id
+  debug('Going to get member profile.', id)
+  if (!id) { res.status(403).send(`Forbidden.`) }
+  req.url = `/member/${id}`
+  next()
+}, fetchAndConstructMembers)
+
+router.get('/members', publicQueryValidation.validate(schema.members), fetchAndConstructMembers)
+
+router.get('/post/:postId', fetchFromRedis, fetchAndConstructPosts, insertIntoRedis)
+
+router.get('/posts', publicQueryValidation.validate(schema.posts), (req, res, next) => {
+  const activePostQueryString = `{"$in":[${POST_ACTIVE.ACTIVE}]}`
+  if (Object.keys(req.query).length === 0) {
+    req.url += `?active=${activePostQueryString}&type={"$in":[${POST_TYPE.REVIEW}, ${POST_TYPE.NEWS}]}`
+  } else {
+    req.url += `&active=${activePostQueryString}&type={"$in":[${POST_TYPE.REVIEW}, ${POST_TYPE.NEWS}]}`
+  }
+  next()
+},
+fetchFromRedis, fetchAndConstructPosts, insertIntoRedis)
 
 router.get('/videos', publicQueryValidation.validate(schema.videos), (req, res, next) => {
   let url = `/posts?active={"$in":[${POST_ACTIVE.ACTIVE}]}&type={"$in":[${POST_TYPE.VIDEO}, ${POST_TYPE.LIVE}]}`

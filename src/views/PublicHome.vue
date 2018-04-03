@@ -138,13 +138,13 @@ export default {
   },
   computed: {
     postsLatest () {
-      return this.$store.state.publicPosts.items
+      return _.get(this.$store.state.publicPosts, 'items')
     },
     postsHot () {
-      return this.$store.state.publicPostsHot.items
+      return _.get(this.$store.state.publicPostsHot, 'items')
     },
     postSingle () {
-      return this.$store.state.publicPostSingle.items[0]
+      return _.get(this.$store.state.publicPostSingle, 'items[0]', [])
     },
     postsMain () {
       return this.homeRoutePath !== '/hot' ? this.postsLatest : this.postsHot

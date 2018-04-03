@@ -24,16 +24,16 @@
           <span class="form__name">{{ $t('profile_editor.WORDING_PROFILEEDIT_CONFIRMPASSWORD') }}：</span>
           <input class="form__input" type="password" name="confirm_password" v-model="inputConfirmPassword">
         </div>
-        <div class="form__item">
+        <!-- <div class="form__item">
           <span class="form__name">{{ $t('profile_editor.WORDING_PROFILEEDIT_PERSONAL_OPTIONS') }}：</span>
           <div class="form__personal-options"></div>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="profile-edit__aside">
       <div class="portrait">
         <div class="portrait__container" @click="profileEditorUploadThumbnail">
-          <img class="portrait__thumbnail" v-show="thumbnail" :src="`${PROD_HOST}/${thumbnail}`" alt="thumbnail">
+          <img class="portrait__thumbnail" v-show="thumbnail" :src="getImageUrl(thumbnail)" alt="thumbnail">
           <div class="portrait__upload"></div>
         </div>
         <div class="portrait__name">{{ staticNickname }}</div>
@@ -45,7 +45,7 @@
 
 <script>
 import { removeToken, } from '../util/services'
-import { PROD_HOST, } from '../../api/config'
+import { getImageUrl, } from '../util/comm'
 import validator from 'validator'
 import _ from 'lodash'
 
@@ -99,7 +99,6 @@ export default {
       inputOldPassword: '',
       inputNewPassword: '',
       inputConfirmPassword: '',
-      PROD_HOST,
     }
   },
   computed: {
@@ -138,6 +137,7 @@ export default {
     },
   },
   methods: {
+    getImageUrl,
     profileEditorUploadThumbnail () {
       const saveImage = (file) => {
         const fd = new FormData()
