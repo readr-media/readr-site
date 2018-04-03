@@ -47,7 +47,8 @@
         return text && ` (${text})`
       },
       thumbnail () {
-        return get(this.profile, [ 'profileImage', ], '/public/icons/exclamation.png')
+        debug('ll', get(this.profile, [ 'profileImage', ]) || '/public/icons/exclamation.png')
+        return get(this.profile, 'profileImage') || '/public/icons/exclamation.png'
       },
     },
     data () {
