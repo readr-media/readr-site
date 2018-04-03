@@ -119,7 +119,7 @@ export default {
     //   }
     // },
     thumbnail () {
-      return _.get(this.profile, [ 'profileImage', ], '/public/icons/exclamation.png')
+      return _.get(this.profile, [ 'profileImage', ]) || '/public/icons/exclamation.png'
     },
     thumbnailFilePath () {
       return this.thumbnail.substr(this.thumbnail.lastIndexOf('/') + 1)
