@@ -1,29 +1,30 @@
 <template>
-  <section class="alert">
+  <section class="alert" :class="{ error: type === 'error' }">
     <p v-if="needConfirm" class="alert__title"><strong v-text="alertTitle"></strong></p>
     <div v-if="needList" class="alert__list" :class="{ multiple: isMultiple }">
       <template v-if="type === 'post' || type === 'video'">
         <div v-for="i in items" :key="i.id" class="alert__item">
-          <p><strong v-text="`${$t('alert.WORDING_ALERTPANEL_AUTHOR')}：`"></strong><span v-text="$_alertPanel_getPostAuthor(i)"></span></p>
-          <p><strong v-text="`${$t('alert.WORDING_ALERTPANEL_TITLE')}：`"></strong><span v-text="i.title"></span></p>
+          <p><strong v-text="`${$t('ALERT.AUTHOR')}：`"></strong><span v-text="$_alertPanel_getPostAuthor(i)"></span></p>
+          <p><strong v-text="`${$t('ALERT.TITLE')}：`"></strong><span v-text="i.title"></span></p>
         </div>
       </template>
       <template v-if="type === 'tag'">
         <div v-for="i in items" :key="i.id" class="alert__item">
-          <p><strong v-text="`${$t('alert.WORDING_ALERTPANEL_TAG')}：`"></strong><span v-text="i.text"></span></p>
+          <p><strong v-text="`${$t('ALERT.TAG')}：`"></strong><span v-text="i.text"></span></p>
         </div>
       </template>
     </div>
     <div v-if="needConfirm" class="alert__control" :class="{ multiple: isMultiple }">
-      <button class="alert__btn" @click="$_alertPanel_confirm" v-text="$t('alert.WORDING_ALERTPANEL_CONFIRM')"></button>
-      <button class="alert__btn" @click="$_alertPanel_cancel" v-text="$t('alert.WORDING_ALERTPANEL_CANCEL')"></button>
+      <button class="alert__btn" @click="$_alertPanel_confirm" v-text="$t('ALERT.CONFIRM')"></button>
+      <button class="alert__btn" @click="$_alertPanel_cancel" v-text="$t('ALERT.CANCEL')"></button>
     </div>
+    <img v-if="type === 'error'" class="alert__error-img" src="/public/icons/exclamation.png" alt="">
     <p v-if="!needConfirm" class="alert--message"><strong v-text="alertMessage"></strong></p>
   </section>
 </template>
 <script>
   import { POST_ACTIVE, TAG_ACTIVE, } from '../../api/config'
-  import _ from 'lodash'
+  import { get, } from 'lodash'
   export default {
     name: 'AlertPanel',
     props: {
@@ -64,48 +65,50 @@
         switch (this.type) {
           case 'post':
             if (!this.activeChanged) {
-              return `${this.$t('alert.WORDING_ALERTPANEL_POST')}${this.$t('alert.WORDING_ALERTPANEL_UPDATE_SUCCESSFUL')}！`
+              return `${this.$t('ALERT.POST')}${this.$t('ALERT.UPDATE_SUCCESSFUL')}！`
             } else {
               switch (this.active) {
                 case POST_ACTIVE.ACTIVE:
-                  return `${this.$t('alert.WORDING_ALERTPANEL_POST')}${this.$t('alert.WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL')}！`
+                  return `${this.$t('ALERT.POST')}${this.$t('ALERT.PUBLISH_SUCCESSFUL')}！`
                 case POST_ACTIVE.DEACTIVE:
-                  return `${this.$t('alert.WORDING_ALERTPANEL_POST')}${this.$t('alert.WORDING_ALERTPANEL_DELETE_SUCCESSFUL')}！`
+                  return `${this.$t('ALERT.POST')}${this.$t('ALERT.DELETE_SUCCESSFUL')}！`
                 case POST_ACTIVE.DRAFT:
-                  if (!_.get(this.items, [ 0, 'id', ])) {
-                    return `${this.$t('alert.WORDING_ALERTPANEL_POST')}${this.$t('alert.WORDING_ALERTPANEL_ADD_SUCCESSFUL')}！`
+                  if (!get(this.items, [ 0, 'id', ])) {
+                    return `${this.$t('ALERT.POST')}${this.$t('ALERT.ADD_SUCCESSFUL')}！`
                   }
-                  return `${this.$t('alert.WORDING_ALERTPANEL_POST')}${this.$t('alert.WORDING_ALERTPANEL_UPDATE_SUCCESSFUL')}！`
+                  return `${this.$t('ALERT.POST')}${this.$t('ALERT.UPDATE_SUCCESSFUL')}！`
                 case POST_ACTIVE.PENDING:
-                  return `${this.$t('alert.WORDING_ALERTPANEL_POST')}${this.$t('alert.WORDING_ALERTPANEL_PENDING')}！`
+                  return `${this.$t('ALERT.POST')}${this.$t('ALERT.PENDING')}！`
               }
               break
             }
           case 'tag':
             switch (this.active) {
               case TAG_ACTIVE.ACTIVE:
-                return `${this.$t('alert.WORDING_ALERTPANEL_TAG')}${this.$t('alert.WORDING_ALERTPANEL_ADD_SUCCESSFUL')}！` 
+                return `${this.$t('ALERT.TAG')}${this.$t('ALERT.ADD_SUCCESSFUL')}！` 
               case TAG_ACTIVE.DEACTIVE:
-                return `${this.$t('alert.WORDING_ALERTPANEL_TAG')}${this.$t('alert.WORDING_ALERTPANEL_DELETE_SUCCESSFUL')}！`
+                return `${this.$t('ALERT.TAG')}${this.$t('ALERT.DELETE_SUCCESSFUL')}！`
             }
             break
           case 'video':
             if (!this.activeChanged) {
-              return `${this.$t('alert.WORDING_ALERTPANEL_VIDEO')}${this.$t('alert.WORDING_ALERTPANEL_UPDATE_SUCCESSFUL')}！`
+              return `${this.$t('ALERT.VIDEO')}${this.$t('ALERT.UPDATE_SUCCESSFUL')}！`
             } else {
               switch (this.active) {
                 case POST_ACTIVE.ACTIVE:
-                  return `${this.$t('alert.WORDING_ALERTPANEL_VIDEO')}${this.$t('alert.WORDING_ALERTPANEL_PUBLISH_SUCCESSFUL')}！`
+                  return `${this.$t('ALERT.VIDEO')}${this.$t('ALERT.PUBLISH_SUCCESSFUL')}！`
                 case POST_ACTIVE.DEACTIVE:
-                  return `${this.$t('alert.WORDING_ALERTPANEL_VIDEO')}${this.$t('alert.WORDING_ALERTPANEL_DELETE_SUCCESSFUL')}！`
+                  return `${this.$t('ALERT.VIDEO')}${this.$t('ALERT.DELETE_SUCCESSFUL')}！`
                 case POST_ACTIVE.DRAFT:
-                  if (!_.get(this.items, [ 0, 'id', ])) {
-                    return `${this.$t('alert.WORDING_ALERTPANEL_VIDEO')}${this.$t('alert.WORDING_ALERTPANEL_ADD_SUCCESSFUL')}！`
+                  if (!get(this.items, [ 0, 'id', ])) {
+                    return `${this.$t('ALERT.VIDEO')}${this.$t('ALERT.ADD_SUCCESSFUL')}！`
                   }
-                  return `${this.$t('alert.WORDING_ALERTPANEL_VIDEO')}${this.$t('alert.WORDING_ALERTPANEL_UPDATE_SUCCESSFUL')}！`
+                  return `${this.$t('ALERT.VIDEO')}${this.$t('ALERT.UPDATE_SUCCESSFUL')}！`
               }
               break
             }
+          case 'error':
+            return this.$t('ALERT.ERROR')
         }
       },
       alertTitle () {
@@ -114,13 +117,13 @@
           case 'video':
             switch (this.active) {
               case POST_ACTIVE.ACTIVE:
-                return this.$t('alert.WORDING_ALERTPANEL_PUBLISH_CONFIRMATION')
+                return this.$t('ALERT.PUBLISH_CONFIRMATION')
               case POST_ACTIVE.DEACTIVE:
-                return this.$t('alert.WORDING_ALERTPANEL_DELETE_CONFIRMATION')
+                return this.$t('ALERT.DELETE_CONFIRMATION')
             }
             break
           case 'tag':
-            return this.$t('alert.WORDING_ALERTPANEL_DELETE_CONFIRMATION')
+            return this.$t('ALERT.DELETE_CONFIRMATION')
         }
       },
       isMultiple () {
@@ -167,7 +170,7 @@
         }
       },
       $_alertPanel_getPostAuthor (post) {
-        return _.get(post, [ 'author', 'nickname', ]) || _.get(post, [ 'author', ])
+        return get(post, [ 'author', 'nickname', ]) || get(post, [ 'author', ])
       },
     },
   }
@@ -182,6 +185,8 @@
   box-shadow: 1px 1px 2.5px 0 rgba(0, 0, 0, 0.5)
   > p
     margin .8em 25px
+  &.error
+    text-align center
   &__title
     display block
     margin 15px 25px 0
@@ -210,6 +215,11 @@
     outline none
     &:first-of-type
       border-right none
+  &__error
+    &-img
+      width 50px
+      height 50px
+      margin 40px 0 20px
   &--message
     color #4280a2
 </style>
