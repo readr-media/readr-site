@@ -1,7 +1,7 @@
 <template>
   <div class="about">
     <div class="about__thumbnail">
-      <img :src="thumbnail">
+      <img v-show="thumbnail" :src="`http://www.readr.tw/${thumbnail}`">
     </div>
     <div class="about__name">
       <span class="name" v-text="name"></span>
@@ -46,7 +46,7 @@
         return text && ` (${text})`
       },
       thumbnail () {
-        return get(this.profile, [ 'profileImage', ]) || '/public/icons/exclamation.png'
+        return get(this.profile, [ 'profileImage', ], '/public/icons/exclamation.png')
       },
     },
     data () {

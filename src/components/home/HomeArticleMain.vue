@@ -1,12 +1,12 @@
 <template>
   <article class="home-article-main">
-    <div class="home-article-main__share">
+    <!-- <div class="home-article-main__share">
       <AppShareButton :shareUrl="shareUrl" :direction="'down'" :iconColor="'white'" :backgroundColor="'#d3d3d3'"/>
-    </div>
+    </div> -->
     <div class="home-article-main__author">
       <figure class="author-info">
         <router-link class="author-info__thumbnail" :to="`/profile/${get(articleData, 'author.id')}`">
-          <img :src="get(articleData, 'author.profileImage', '/public/icons/star-blue.png')" alt="">
+          <img :src="`http://www.readr.tw/${get(articleData, 'author.profileImage', '/public/icons/star-blue.png')}`" alt="">
         </router-link>
         <figcaption class="author-info__meta">
           <p class="author-info__date" v-text="dateDiffFromNow"></p>

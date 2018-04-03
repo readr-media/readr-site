@@ -33,7 +33,7 @@
     <div class="profile-edit__aside">
       <div class="portrait">
         <div class="portrait__container" @click="profileEditorUploadThumbnail">
-          <img class="portrait__thumbnail" :src="thumbnail" alt="thumbnail">
+          <img class="portrait__thumbnail" v-show="thumbnail" :src="`http://www.readr.tw/${thumbnail}`" alt="thumbnail">
           <div class="portrait__upload"></div>
         </div>
         <div class="portrait__name">{{ staticNickname }}</div>
@@ -117,7 +117,7 @@ export default {
     //   }
     // },
     thumbnail () {
-      return _.get(this.profile, [ 'profileImage', ]) || '/public/icons/exclamation.png'
+      return _.get(this.profile, [ 'profileImage', ], '/public/icons/exclamation.png')
     },
     thumbnailFilePath () {
       return this.thumbnail.substr(this.thumbnail.lastIndexOf('/') + 1)
