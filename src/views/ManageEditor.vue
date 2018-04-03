@@ -345,6 +345,7 @@
     },
     methods: {
       $_editor_addPost (params) {
+        this.alertType = 'post'
         this.itemsSelected = []
         this.itemsSelected.push(params)
         if (params.active === POST_ACTIVE.ACTIVE) {
@@ -355,6 +356,7 @@
           this.needConfirm = true
           this.showAlert = true
         } else {
+          this.loading = true
           addPost(this.$store, params)
             .then(() => {
               this.$_editor_updatePostList({ needUpdateCount: true, })
@@ -363,6 +365,13 @@
               this.postActiveChanged = true
               this.needConfirm = false
               this.showAlert = true
+              this.loading = false
+            })
+            .catch(() => {
+              this.alertType = 'error'
+              this.needConfirm = false
+              this.showAlert = true
+              this.loading = false
             })
         }
       },
@@ -375,7 +384,12 @@
             this.$_editor_updateTagList({ needUpdateCount: true, })
             this.showAlert = true
           })
-          .catch(() => this.loading = false)
+          .catch(() => {
+            this.alertType = 'error'
+            this.needConfirm = false
+            this.showAlert = true
+            this.loading = false
+          })
       },
       $_editor_alertHandler (showAlert) {
         this.showAlert = showAlert
@@ -398,12 +412,22 @@
           this.showDraftList = false
           this.needConfirm = false
         })
+        .catch(() => {
+          this.alertType = 'error'
+          this.needConfirm = false
+          this.showAlert = true
+        })
       },
       $_editor_deleteTags () {
         deleteTags(this.$store, this.itemsSelectedID)
           .then(() => {
             this.$_editor_updateTagList({ needUpdateCount: true, })
             this.needConfirm = false
+          })
+          .catch(() => {
+            this.alertType = 'error'
+            this.needConfirm = false
+            this.showAlert = true
           })
       },
       $_editor_filterHandler ({ sort = this.sort, page = this.page, }) {
@@ -481,6 +505,7 @@
         this.showAlert = true
       },
       $_editor_publishPostHandler () {
+        this.alertType = 'post'
         if (this.isPublishPostInEditor) {
           if (this.postPanel === 'add') {
             addPost(this.$store, this.postForPublishInEditor)
@@ -489,6 +514,11 @@
                 this.showEditor = false
                 this.needConfirm = false
               })
+              .catch(() => {
+                this.alertType = 'error'
+                this.needConfirm = false
+                this.showAlert = true
+              })
           } else {
             updatePost(this.$store, this.postForPublishInEditor)
               .then(() => {
@@ -496,6 +526,11 @@
                 this.showEditor = false
                 this.showDraftList = false
                 this.needConfirm = false
+              })
+              .catch(() => {
+                this.alertType = 'error'
+                this.needConfirm = false
+                this.showAlert = true
               })
           }
         } else {
@@ -506,6 +541,11 @@
             .then(() => {
               this.$_editor_updatePostList({ needUpdateCount: true, })
               this.needConfirm = false
+            })
+            .catch(() => {
+              this.alertType = 'error'
+              this.needConfirm = false
+              this.showAlert = true
             })
         }
       },
@@ -659,6 +699,7 @@
         }
       },
       $_editor_updatePost(params, activeChanged) {
+        this.alertType = 'post'
         this.itemsActive = params.active
         this.postActiveChanged = activeChanged
         updatePost(this.$store, params)
@@ -669,7 +710,11 @@
             this.showAlert = true
             this.needConfirm = false
           })
-          .catch((err) => console.error(err))
+          .catch(() => {
+            this.alertType = 'error'
+            this.needConfirm = false
+            this.showAlert = true
+          })
       },
       $_editor_updatePostList ({ sort, page, needUpdateCount = false, }) {
         this.sort = sort || this.sort

@@ -132,15 +132,11 @@ export function deleteMembers ({ params, }) {
 export function addPost (params) {
   const url = `${host}/api/post`
   return _doPost(url, params)
-    .then(res => res.status)
-    .catch(err => err)
 }
 
 export function addTags (params) {
   const url = `${host}/api/tags`
   return _doPost(url, params)
-    .then(res => res.status)
-    .catch(err => err)
 }
 
 export function addRewardPointsTransactions (params) {
@@ -476,15 +472,11 @@ export function updatePassword ({ params, }) {
 export function updatePost ({ params, }) {
   const url = `${host}/api/post`
   return _doPut(url, params)
-    .then(res => ({ status: res.status, }))
-    .catch(err => err)
 }
 
 export function updateTags ({ params, }) {
   const url = `${host}/api/tags`
   return _doPut(url, params)
-    .then(res => ({ status: res.status, }))
-    .catch(err => err)
 }
 
 export function uploadImage (file, type) {
