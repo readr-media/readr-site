@@ -6,7 +6,7 @@
     <div class="home-article-main__author">
       <figure class="author-info">
         <router-link class="author-info__thumbnail" :to="`/profile/${get(articleData, 'author.id')}`">
-          <img :src="getImageUrl(get(articleData, 'author.profileImage', '/public/icons/star-blue.png'))" alt="">
+          <img :src="getImageUrl(get(articleData, 'author.profileImage', '/public/icons/exclamation.png'))" alt="">
         </router-link>
         <figcaption class="author-info__meta">
           <p class="author-info__date" v-text="dateDiffFromNow"></p>

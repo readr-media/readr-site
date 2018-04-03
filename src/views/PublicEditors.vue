@@ -112,7 +112,7 @@ export default {
     margin-left 40px
     margin-right 40px
     display flex
-    justify-content flex-end
+    justify-content flex-start
     align-items flex-start
   &__list-aside
     background-color white
