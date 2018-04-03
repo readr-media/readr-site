@@ -127,13 +127,16 @@ export default {
         this.loadmoreLatest()
       }
     },
+    '$route' () {
+      this.homeRoutePath = this.isCurrentRoutePath('/post/:postId') ? this.$store.state.route.from.path : this.$store.state.route.path
+    },
   },
   data () {
     return {
       isReachBottom: false,
       currentPageLatest: 1,
       endPage: false,
-      homeRoutePath: '/',
+      homeRoutePath: this.$route.path !== '/hot' ? '/' : '/hot',
     } 
   },
   computed: {
@@ -144,7 +147,7 @@ export default {
       return _.get(this.$store.state.publicPostsHot, 'items')
     },
     postSingle () {
-      return _.get(this.$store.state.publicPostSingle, 'items[0]', [])
+      return _.get(this.$store.state.publicPostSingle, 'items[0]', {})
     },
     postsMain () {
       return this.homeRoutePath !== '/hot' ? this.postsLatest : this.postsHot
@@ -198,11 +201,12 @@ export default {
     },
     isScrollBarReachBottom,
   },
-  beforeRouteEnter (to, from, next) {
-    next(vm => {
-      vm.homeRoutePath = vm.isCurrentRoutePath('/post/:postId') ? from.path : to.path
-    })
-  },
+  // beforeRouteEnter (to, from, next) {
+  //   // console.log('beforeRouteEnter')
+  //   next(vm => {
+  //     vm.homeRoutePath = vm.isCurrentRoutePath('/post/:postId') ? from.path : to.path
+  //   })
+  // },
   beforeMount () {
     Promise.all([
       fetchPosts(this.$store, {
