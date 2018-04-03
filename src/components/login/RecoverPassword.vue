@@ -1,8 +1,13 @@
 <template>
-  <div class="recover-password">
+  <div class="recover-password" :class="{ 'dark': theme === 'dark' }">
     <TextItem class="login__input-pwd" type="text" v-if="!isSentEmail"
       :placeHolder="$t('login.WORDING_EMAIL')"
       :alert.sync="alert.email"
+      :backgroundColor="theme === 'dark' && '#444746'"
+      :border="theme === 'dark' && 'solid 1px #ffffff'"
+      :height="theme === 'dark' && '25px'"
+      :color="theme === 'dark' && '#fff'"
+      :fontSize="theme === 'dark' && '0.9375rem'"      
       :value.sync="formData.email"></TextItem>
     <div class="recover-password__desc">
       <span v-text="desc"></span>
@@ -106,9 +111,24 @@
       },
     },
     mounted () {},
+    props: {
+      theme: {
+        default: () => 'normal',
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>
+  .recover-password.dark
+    color #fff
+    font-size 0.9375rem
+    .recover-password__btn
+      > span
+        color #000
+        background-color #ddcf21
+        &:hover
+          background-color #737373
+
   .recover-password
     div
       margin 15px 0

@@ -1,12 +1,21 @@
 <template>
-  <div class="login" @keyup="keyupHandler">
+  <div class="login" @keyup="keyupHandler" :class="{ 'dark': theme === 'dark' }">
     <TextItem class="login__input-email" type="text"
       :placeHolder="$t('login.WORDING_EMAIL')"
       :alert.sync="alert.mail"
+      :backgroundColor="theme === 'dark' && '#444746'"
+      :border="theme === 'dark' && 'solid 1px #ffffff'"
+      :height="theme === 'dark' && '25px'"
+      :color="theme === 'dark' && '#fff'"
+      :fontSize="theme === 'dark' && '0.9375rem'"
       :value.sync="formData.mail"></TextItem>
     <TextItem class="login__input-pwd" type="password"
       :placeHolder="$t('login.WORDING_PASSWORD')"
       :alert.sync="alert.pwd"
+      :backgroundColor="theme === 'dark' && '#444746'"
+      :border="theme === 'dark' && 'solid 1px #ffffff'"
+      :height="theme === 'dark' && '25px'"
+      :fontSize="theme === 'dark' && '0.9375rem'"
       :value.sync="formData.pwd"></TextItem>
     <div class="login__wrapper">
       <div class="keep-login-alive">
@@ -106,10 +115,39 @@
         return pass
       },
     },
-    mounted () {},
+    props: {
+      theme: {
+        default: () => 'normal',
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>
+  .login.dark
+    .login__btn
+      background-color #ddcf21
+      color #000
+      width 400px
+      height 25px
+      font-size 0.9375rem
+      &:hover
+        background-color #8c8c8c
+
+    .login__wrapper
+      font-family PingFangTC
+      font-size 0.75rem
+      font-weight normal
+      font-style normal
+      font-stretch normal
+      line-height normal
+      letter-spacing normal
+      text-align right
+      color #ffffff
+      .keep-login-alive
+        > input
+          vertical-align middle
+          width 13px
+          height 13px
   .login
     width 100%
     height 100%

@@ -5,6 +5,7 @@ const debug = require('debug')('CLIENT:util:talk')
 
 export function renderComment (target_parent, taget_ele, url) {
   const curr_env = currEnv()
+  debug('process.env.TALK_SERVER', process.env.TALK_SERVER)
   debug('curr_env', curr_env)
   debug('talk url', `${location.protocol}//${curr_env !== 'dev' ? SITE_DOMAIN : SITE_DOMAIN_DEV}${url}`)
 
