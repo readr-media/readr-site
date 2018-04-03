@@ -1,7 +1,7 @@
 <template>
   <div class="about">
     <div class="about__thumbnail">
-      <img :src="thumbnail">
+      <img v-show="thumbnail" :src="`${PROD_HOST}/${thumbnail}`">
     </div>
     <div class="about__name">
       <span class="name" v-text="name"></span>
@@ -19,6 +19,7 @@
 <script>
   import { filter, get, } from 'lodash'
   import { ROLE_MAP, } from 'src/constants'
+  import { PROD_HOST, } from '../../api/config'
   import BaseLightBox from 'src/components/BaseLightBox.vue'
   import BaseLightBoxProfileEdit from 'src/components/BaseLightBoxProfileEdit.vue'
 
@@ -46,13 +47,14 @@
         return text && ` (${text})`
       },
       thumbnail () {
-        return get(this.profile, [ 'profileImage', ]) || '/public/icons/exclamation.png'
+        return get(this.profile, [ 'profileImage', ], '/public/icons/exclamation.png')
       },
     },
     data () {
       return {
         editText: '(edit)',
         showLightBox: false,
+        PROD_HOST,
       }
     },
     name: 'about',
