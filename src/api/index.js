@@ -287,7 +287,7 @@ export function getMeta (targetUrl) {
 }
 
 export function getPost ({ params, }) {
-  let url = `${host}/api/post/${params.id}`
+  let url = `${host}/api/public/post/${params.id}`
   return _doFetch(url, {})
 }
 
