@@ -364,6 +364,9 @@ export default {
   SYNC_AVATAR: ({ commit, dispatch, state, }, { params, }) => {
     return syncAvatar(params)
   },
+  UPDATE_CLIENT_SIDE: ({ commit, dispatch, state, }) => {
+    commit('SET_CLIENT_SIDE')
+  },
   UPDATE_FOLLOWING_BY_USER: ({ commit, dispatch, state, }, { params, }) => {
     if (params.action === 'follow' && params.resource === 'post') {
       commit('ADD_ITEM_TO_FOLLOWING_BY_USER', params.data)

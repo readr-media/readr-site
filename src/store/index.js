@@ -17,6 +17,7 @@ export function createStore () {
         'member': [],
       },
       'followingByUser': [],
+      'isClientSide': false,
       'isLoggedIn': false,
       'invitation_switch_status': false,
       'members': [],

@@ -1,7 +1,7 @@
 <template>
   <section class="controlBar">
     <control-bar-button-box
-      v-if="$can('addPost')"
+      v-if="isClientSide && $can('addPost')"
       class="controlBar__btnBox"
       :amount="3"
       :style="[ viewport <= 767 ? { width: `calc((100% - (${(amountBtn - 1) * 5}px))/ ${amountBtn})` } : {} ]"
@@ -11,7 +11,7 @@
       <button slot="2" class="controlBar--subBtn" @click="$_controlBar_clickHandler('editReview')" v-text="$t('control_bar.WORDING_CONTROLBAR_EDIT_DRAFT')"></button>
     </control-bar-button-box>
     <control-bar-button-box
-      v-if="$can('addPost')"
+      v-if="isClientSide && $can('addPost')"
       class="controlBar__btnBox"
       :amount="3"
       :style="[ viewport <= 767 ? { width: `calc((100% - (${(amountBtn - 1) * 5}px))/ ${amountBtn})` } : {} ]"
@@ -87,7 +87,7 @@
   </section>
 </template>
 <script>
-  import { includes, } from 'lodash'
+  import { get, includes, } from 'lodash'
   import ControlBarButton from './ControlBarButton.vue'
   import ControlBarButtonBox from './ControlBarButtonBox.vue'
 
@@ -105,6 +105,9 @@
       }
     },
     computed: {
+      isClientSide () {
+        return get(this.$store, [ 'state', 'isClientSide', ], false)
+      },
       wordingBtnNews () {
         return this.viewport <= 767 ? this.$t('control_bar.WORDING_CONTROLBAR_NEWS') : this.$t('control_bar.WORDING_CONTROLBAR_ADD_NEWS')
       },

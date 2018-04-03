@@ -71,13 +71,13 @@
       </div>
       <div :class="[ (panelType === 'edit') ? 'advanced' : '' ]" class="postPanel__submit">
         <button
-          v-if="$can('deletePost') && (panelType === 'edit')"
+          v-if="isClientSide && $can('deletePost') && (panelType === 'edit')"
           class="postPanel__btn"
           @click="$_postPanel_deletePost"
           v-text="$t('POST_PANEL.DELETE')">
         </button>
         <button
-          v-if="(panelType === 'edit') && $can('editPostOg') && (post.active !== config.active.DRAFT)"
+          v-if="isClientSide && (panelType === 'edit') && $can('editPostOg') && (post.active !== config.active.DRAFT)"
           class="postPanel__btn"
           :disabled="isEmpty"
           @click="$_postPanel_submitHandler(config.active.DRAFT)"
@@ -90,21 +90,21 @@
           v-text="$t('POST_PANEL.SAVE')">
         </button>
         <button
-          v-if="(panelType === 'add') && $can('addPost')"
+          v-if="isClientSide && (panelType === 'add') && $can('addPost')"
           class="postPanel__btn"
           :disabled="isEmpty"
           @click="$_postPanel_submitHandler(config.active.DRAFT)"
           v-text="$t('POST_PANEL.SAVE_DRAFT')">
         </button>
         <button
-          v-if="!$can('publishPost')"
+          v-if="isClientSide && !$can('publishPost')"
           class="postPanel__btn"
           :disabled="isEmpty"
           @click="$_postPanel_submitHandler(config.active.PENDING)"
           v-text="$t('POST_PANEL.SAVE_PENDING')">
         </button>
         <button
-          v-if="$can('publishPost') && (post.active !== config.active.ACTIVE)"
+          v-if="isClientSide && $can('publishPost') && (post.active !== config.active.ACTIVE)"
           class="postPanel__btn"
           :disabled="isEmpty"
           @click="$_postPanel_submitHandler(config.active.ACTIVE)"
@@ -195,6 +195,9 @@
         return _.isEmpty(_.trim(_.get(this.post, [ 'link', ], '')))
           && _.isEmpty(_.trim(_.get(this.post, [ 'title', ], '')))
           && _.isEmpty(_.trim(_.replace(_.get(this.post, [ 'content', ], ''), /<[^>]*>/g, '')))
+      },
+      isClientSide () {
+        return _.get(this.$store, [ 'state', 'isClientSide', ], false)
       },
       isVideo () {
         return this.postType === POST_TYPE.VIDEO

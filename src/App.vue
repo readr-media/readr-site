@@ -19,6 +19,9 @@
         return SECTIONS_DEFAULT
       },
     },
+    mounted () {
+      this.$store.dispatch('UPDATE_CLIENT_SIDE')
+    },
   }
 </script>
 
