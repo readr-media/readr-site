@@ -9,7 +9,7 @@
           <ProjectsFigure v-for="project in projects" :project="project" :key="project.id"/>
         </div>
         <div class="projects-list__list-aside">
-          <ProjectsFigureProgress/>
+          <!-- <ProjectsFigureProgress/>
           <ProjectsFigureProgress/>
           <AppTitledList :listTitle="$t('project.WORDING_PROJECT_HOT_KEYWORD')">
             <ul class="projects-tags-hot-list-container">
@@ -22,7 +22,7 @@
                 <span class="projects-tags-hot-list-container__tag-count">631</span>
               </li>
             </ul>
-          </AppTitledList>
+          </AppTitledList> -->
         </div>
       </main>
     </div>

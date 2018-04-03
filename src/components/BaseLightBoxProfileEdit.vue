@@ -246,6 +246,8 @@ export default {
       if (!isOldPasswordEmpty() && isConfirmNewPassword()) {
         updatePassword()
       }
+
+      this.$emit('save')
     },
   },
 }

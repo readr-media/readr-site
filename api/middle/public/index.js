@@ -18,7 +18,7 @@ const fetchAndConstructMembers = (req, res) => {
       debug('>>>', req.url)
       const mem = JSON.parse(data)
       res.json({
-        'items': mem['_items'].map((object) => pick(object, [ 'id', 'nickname', 'description', 'profile_image', ])),
+        'items': mem['_items'].map((object) => pickInsensitiveUserInfo(object)),
       })
     } else {
       superagent
@@ -39,6 +39,10 @@ const fetchAndConstructMembers = (req, res) => {
       })
     }
   })  
+}
+
+const pickInsensitiveUserInfo = (userData) => {
+  return pick(userData, [ 'id', 'nickname', 'description', 'profile_image', ])
 }
 
 router.get('/profile/:id', (req, res, next) => {
@@ -73,20 +77,23 @@ function (req, res, next) {
       .timeout(API_TIMEOUT)
       .end((e, r) => {
         if (!e && r) {
-          const dt = JSON.parse(r.text)
-          if (dt['_items'] !== null && dt.constructor === Object) {
-            res.dataString = r.text
+          const resData = JSON.parse(r.text)
+
+          if (resData['_items'] !== null && resData.constructor === Object) {
+            resData['_items'].forEach(post => { post.author = pickInsensitiveUserInfo(post.author) })
+            const dt = JSON.stringify(resData)
+            res.dataString = dt
             /**
              * if data not empty, go next to save data to redis
              */
             next()
           }
-          const resData = JSON.parse(r.text)
+
           res.json(resData)
         } else {
           res.json(e)
           console.error(`error during fetch public post data from : ${url}`)
-          console.error(e)  
+          console.error(e)
         }
       })
     }

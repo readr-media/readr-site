@@ -59,7 +59,8 @@ const router = new Router({
     }
   },
   routes: [
-    { path: '/', component: PublicHome, alias: '/hot', meta: { permission: 'member', }, },
+    { path: '/', component: PublicHome, meta: { permission: 'member', }, },
+    { path: '/hot', component: PublicHome, meta: { permission: 'member', }, },
     { path: '/about', component: PublicAbout, meta: { permission: 'member', }, },
     { path: '/admin', component: ManageAdmin, meta: { permission: 'admin', }, },
     { path: '/agreement', component: PublicAgreement, },

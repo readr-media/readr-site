@@ -12,7 +12,7 @@
       <span class="about__edit__btn" v-text="editText" @click="goEdit"></span>
     </div>
     <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder">
-      <BaseLightBoxProfileEdit :showLightBox="showLightBox" :profile="profile"/>
+      <BaseLightBoxProfileEdit :showLightBox="showLightBox" :profile="profile" @save="showLightBox = false"/>
     </BaseLightBox>
   </div>
 </template>

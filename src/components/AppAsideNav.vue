@@ -26,8 +26,8 @@
           </span>
         </router-link>
         <!-- <router-link :class="`list-item aside-navigation__list-item${isCurrentRoute('/videos') ? '--highlight' : ''}`" to="/videos"><span v-text="wording['celebrities-talk']"></span></router-link> -->
-        <router-link :class="`list-item aside-navigation__list-item${isCurrentRoute('/editors') ? '--highlight' : ''}`" to="/editors"><span v-text="wording['chief-editor-list']"></span></router-link>
-        <router-link :class="`list-item aside-navigation__list-item${isCurrentRoute('/projects') ? '--highlight' : ''}`" to="/projects"><span v-text="wording['projects']"></span></router-link>
+        <router-link :class="`list-item aside-navigation__list-item${isCurrentRoutePath('/editors') ? '--highlight' : ''}`" to="/editors"><span v-text="wording['chief-editor-list']"></span></router-link>
+        <router-link :class="`list-item aside-navigation__list-item${isCurrentRoutePath('/projects') ? '--highlight' : ''}`" to="/projects"><span v-text="wording['projects']"></span></router-link>
       </div>
       <div class="aside-navigation__external--gray">
         <!-- <a class="list-item aside-navigation__list-item" href="/"><span><img src="/public/icons/fb.png" alt="fb"></span></a> -->
@@ -41,6 +41,7 @@
 
 <script>
 import { SECTIONS_DEFAULT, } from '../constants'
+import { isCurrentRoutePath, } from '../util/comm'
 
 export default {
   data () {
@@ -50,9 +51,7 @@ export default {
     }
   },
   methods: {
-    isCurrentRoute (path) {
-      return this.$route.path === path
-    },
+    isCurrentRoutePath,
   },
 }
 </script>
