@@ -33,7 +33,7 @@
     <div class="profile-edit__aside">
       <div class="portrait">
         <div class="portrait__container" @click="profileEditorUploadThumbnail">
-          <img class="portrait__thumbnail" v-show="thumbnail" :src="thumbnail" alt="thumbnail">
+          <img class="portrait__thumbnail" v-show="thumbnail" :src="getImageUrl(thumbnail)" alt="thumbnail">
           <div class="portrait__upload"></div>
         </div>
         <div class="portrait__name">{{ staticNickname }}</div>
@@ -45,6 +45,7 @@
 
 <script>
 import { removeToken, } from '../util/services'
+import { getImageUrl, } from '../util/comm'
 import validator from 'validator'
 import _ from 'lodash'
 
@@ -136,6 +137,7 @@ export default {
     },
   },
   methods: {
+    getImageUrl,
     profileEditorUploadThumbnail () {
       const saveImage = (file) => {
         const fd = new FormData()
