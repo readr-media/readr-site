@@ -29,6 +29,9 @@ export default {
     const userIndex = state.followingByResource[params.resource][resourceIndex].follower.indexOf(params.userId)
     Vue.delete(state.followingByResource[params.resource][resourceIndex].follower, userIndex)
   },
+  SET_CLIENT_SIDE: (state) => {
+    state['isClientSide'] = true
+  },
   SET_COMMENT_COUNT: (state, { count, postId, }) => {
     let commentCount = _.find(_.get(state, [ 'commentCount', ]), { postId, })
     if (!commentCount) {
