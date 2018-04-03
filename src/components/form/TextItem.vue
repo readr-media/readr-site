@@ -5,11 +5,15 @@
       :style="{
           width,
           height,
-          border,
+          borderLeft: border,
+          borderTop: border,
+          borderBottom: border,
+          borderRight: !flag ? border : undefined,
           margin,
           padding,
           fontSize,
           backgroundColor,
+          color,
         }"
       :disabled="disabled"
       :type="type"
@@ -17,8 +21,15 @@
       @focus="focus"
       @focusout="focusout"
       @keyup="keyup">
-    <span class="text-item__alert" @click="doFucus"></span>
-    <span class="text-item__msg" :class="{ long: isTooLong }" v-text="msg" v-if="show"></span>
+    <span class="text-item__alert" @click="doFucus"
+      :style="{
+        height,
+        backgroundColor,
+        borderRight: border,   
+        borderTop: border,
+        borderBottom: border,             
+      }"></span>
+    <span class="text-item__msg" v-text="msg" v-if="show" :class="{ long: isTooLong }"></span>
   </div>
 </template>
 <script>
@@ -66,6 +77,7 @@
         'padding',
         'fontSize',
         'backgroundColor',
+        'color',
       ],
     watch: {
       alert: function () {

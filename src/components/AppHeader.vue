@@ -1,15 +1,13 @@
 <template>
-  <div class="header">
+  <div class="header" v-if="!isLoginPage">
     <div class="header__container">
       <div class="header__container__wrapper">
-        <template v-if="!isLoginPage">
-          <SearchTool></SearchTool>
-          <div class="login-status" v-if="isClientSide">
-            <div class="login-status__nickname login-status__item" v-text="userNickname" v-if="isLoggedIn" @click="goMemberCenter"></div>
-            <a class="login-status__login-btn login-status__item" href="/login" v-text="$t('header.WORDING_HEADER_LOGIN')" v-if="!isLoggedIn"></a>
-            <div class="login-status__logout-btn login-status__item" v-text="$t('header.WORDING_HEADER_LOGOUT')" v-else-if="isLoggedIn" @click="logout"></div>
-          </div>
-        </template>
+        <SearchTool></SearchTool>
+        <div class="login-status" v-if="isClientSide">
+          <div class="login-status__nickname login-status__item" v-text="userNickname" v-if="isLoggedIn" @click="goMemberCenter"></div>
+          <a class="login-status__login-btn login-status__item" href="/login" v-text="$t('header.WORDING_HEADER_LOGIN')" v-if="!isLoggedIn"></a>
+          <div class="login-status__logout-btn login-status__item" v-text="$t('header.WORDING_HEADER_LOGOUT')" v-else-if="isLoggedIn" @click="logout"></div>
+        </div>
       </div>
     </div>
   </div>
