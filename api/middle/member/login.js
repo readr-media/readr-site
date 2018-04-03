@@ -42,6 +42,7 @@ const login = (req, res) => {
         const cookies = new Cookies( req, res, {} )
         cookies.set(config.JWT_SIGNING_COOKIE_NAME, token, {
           httpOnly: false,
+          domain: config.DOMAIN,
           // secure: process.env.NODE_ENV === 'production',
           expires: new Date(Date.now() + (req.body.keepAlive ? 30 : 1) * 24 * 60 * 60 * 1000),
         })
