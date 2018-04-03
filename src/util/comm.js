@@ -1,6 +1,7 @@
 import _ from 'lodash'
 import Cookie from 'vue-cookie'
 import uuidv4 from 'uuid/v4'
+import pathToRegexp from 'path-to-regexp'
 import { SITE_DOMAIN, SITE_DOMAIN_DEV, } from '../constants'
 
 const debug = require('debug')('CLIENT:comm')
@@ -107,4 +108,8 @@ export function getValue (o = {}, p = [], d = '') {
 export function updatedAtYYYYMMDD (isoDate) {
   const date = isoDate.split('T')[0]
   return date.replace(/-/g, '/')
+}
+
+export function isCurrentRoutePath (path) {
+  return pathToRegexp(path).test(this.$route.path)
 }

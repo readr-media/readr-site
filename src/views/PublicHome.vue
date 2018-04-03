@@ -36,9 +36,8 @@
 </template>
 
 <script>
-import { isScrollBarReachBottom, } from 'src/util/comm'
+import { isScrollBarReachBottom, isCurrentRoutePath, } from 'src/util/comm'
 import _ from 'lodash'
-import pathToRegexp from 'path-to-regexp'
 import AppAsideNav from 'src/components/AppAsideNav.vue'
 import AppTitledList from 'src/components/AppTitledList.vue'
 import HomeProjectAside from 'src/components/home/HomeProjectAside.vue'
@@ -134,7 +133,7 @@ export default {
       isReachBottom: false,
       currentPageLatest: 1,
       endPage: false,
-      openLightBoxFrom: '',
+      homeRoutePath: '/',
     } 
   },
   computed: {
@@ -148,37 +147,29 @@ export default {
       return this.$store.state.publicPostSingle.items[0]
     },
     postsMain () {
-      if (this.showLightBox) {
-        return this.openLightBoxFrom !== '/hot' ? this.postsLatest : this.postsHot
-      } else {
-        return this.$route.path !== '/hot' ? this.postsLatest : this.postsHot
-      }
+      return this.homeRoutePath !== '/hot' ? this.postsLatest : this.postsHot
     },
     postsAside () {
       return _.isEqual(this.postsMain, this.postsLatest) ? this.postsHot : this.postsLatest
     },
     postLightBox () {
       if (this.showLightBox) {
-        const findPostInList = this.openLightBoxFrom !== 'hot' ? _.find(this.postsLatest, [ 'id', Number(this.$route.params.postId), ]) : _.find(this.postsHot, [ 'id', Number(this.$route.params.postId), ])
-
-        if (findPostInList) {
-          return findPostInList
-        } else {
-          return this.postSingle
-        }
+        const findPostInList = _.find(this.postsMain, [ 'id', Number(this.$route.params.postId), ])
+        return findPostInList || this.postSingle
       } else {
         return {}
       }
     },
     showLightBox () {
-      return pathToRegexp('/post/:postId').test(this.$route.path)
+      return this.isCurrentRoutePath('/post/:postId')
     },
   },
   name: 'Home',
   methods: {
     closeLightBox () {
-      this.$router.push(this.openLightBoxFrom)
+      this.$router.push(this.homeRoutePath)
     },
+    isCurrentRoutePath,
     loadmoreLatest () {
       fetchPosts(this.$store, {
         mode: 'update',
@@ -208,8 +199,9 @@ export default {
     isScrollBarReachBottom,
   },
   beforeRouteEnter (to, from, next) {
-    // Memorizing url path BEFORE user opening lightbox of a post
-    pathToRegexp('/post/:postId').test(to.path) ? next(vm => { vm.openLightBoxFrom = from.path }) : next()
+    next(vm => {
+      vm.homeRoutePath = vm.isCurrentRoutePath('/post/:postId') ? from.path : to.path
+    })
   },
   beforeMount () {
     Promise.all([
