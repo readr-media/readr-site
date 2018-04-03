@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import Vue from 'vue'
 const { camelize, } = require('humps')
-const debug = require('debug')('READR:STORE:mutations')
+const debug = require('debug')('CLIENT:STORE:mutations')
 
 export default {
   ADD_ITEM_TO_FOLLOWING_BY_USER: (state, data) => {
@@ -135,5 +135,14 @@ export default {
       _.get(state, 'publicPosts.items', []),
       _.get(posts, 'items', [])
     )
+  },
+  /**
+   * invitation
+   */
+  INVITATION_SWITCH_ON: (state) => {
+    state['invitation_switch_status'] = true
+  },
+  INVITATION_SWITCH_OFF: (state) => {
+    state['invitation_switch_status'] = false
   },
 }

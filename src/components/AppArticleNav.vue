@@ -14,9 +14,7 @@
 </template>
 
 <script>
-import { SITE_DOMAIN_DEV, SITE_DOMAIN, } from 'src/constants'
 import { renderComment, } from 'src/util/talk'
-import { currEnv, } from 'src/util/comm'
 import _ from 'lodash'
 import CommentCount from 'src/components/comment/CommentCount.vue'
 
@@ -69,7 +67,7 @@ export default {
   },
   methods: {
     renderComment (ref) {
-      renderComment(this.$el, `${ref}`, `${location.protocol}//${currEnv() !== 'dev' ? SITE_DOMAIN : SITE_DOMAIN_DEV}/post/${this.postId}`)
+      renderComment(this.$el, `${ref}`, `/post/${this.postId}`)
     },
     toogleFollow () {
       if (!this.$store.state.isLoggedIn) {

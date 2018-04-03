@@ -17,7 +17,6 @@
 </template>
 
 <script>
-  import { SITE_DOMAIN_DEV, } from '../../../src/constants'
   import { get, } from 'lodash'
   import { renderComment, } from '../../../src/util/talk'
   import AppShareButton from '../../components/AppShareButton.vue'
@@ -45,13 +44,13 @@
     watch: {
       video () {
         if (window.Coral) {
-          renderComment(this.$el, `.comment`, `${location.protocol}//${SITE_DOMAIN_DEV}/post/${get(this.video, [ 'id', ])}`)
+          renderComment(this.$el, `.comment`, `/post/${get(this.video, [ 'id', ])}`)
         }
       },
     },
     mounted () {
       if (window.Coral) {
-        renderComment(this.$el, `.comment`, `${location.protocol}//${SITE_DOMAIN_DEV}/post/${get(this.video, [ 'id', ])}`)
+        renderComment(this.$el, `.comment`, `/post/${get(this.video, [ 'id', ])}`)
       }
     },
     methods: {

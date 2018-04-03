@@ -252,7 +252,7 @@ export default {
   },
   'INVITATION': {
     'TITLE': '將讀＋分享給好友',
-    'BTN_CANCEL': '取消',
+    'BTN_CANCEL': '關閉',
     'BTN_SUBMIT': '送出',
     'EMAIL_ADDRESS': 'Email Address',
     'EMAIL_EXAMPLE': 'name@example.com',

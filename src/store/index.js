@@ -18,6 +18,7 @@ export function createStore () {
       },
       'followingByUser': [],
       'isLoggedIn': false,
+      'invitation_switch_status': false,
       'members': [],
       'posts': [],
       'postsCount': 0,

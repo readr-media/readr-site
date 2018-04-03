@@ -53,7 +53,7 @@ import {
   verifyRecaptchaToken,
 } from '../api'
 
-const debug = require('debug')('READR:STORE:actions')
+const debug = require('debug')('CLIENT:STORE:actions')
 export default {
   ADD_MEMBER: ({ commit, dispatch, state, }, { params, }) => {
     return addMember(params)
@@ -400,5 +400,14 @@ export default {
   },
   VERIFY_RECAPTCHA_TOKEN: ({ commit, dispatch, state, }, { token, }) => {
     return verifyRecaptchaToken(token)
+  },
+  /**
+   * invitation
+   */
+  INVITATION_SWITCH_ON: ({ commit, dispatch, state, }, { params, }) => {
+    commit('INVITATION_SWITCH_ON', {})
+  },
+  INVITATION_SWITCH_OFF: ({ commit, dispatch, state, }, { params, }) => {
+    commit('INVITATION_SWITCH_OFF', {})
   },
 }
