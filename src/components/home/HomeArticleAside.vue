@@ -16,12 +16,12 @@
     <div class="home-article-aside__content">
       <h1 class="home-article-aside__title" v-text="titleTrim"></h1>
       <div class="editor-writing">
-        <div class="editor-writing__container">
+        <router-link :to="`/post/${articleData.id}`" class="editor-writing__container">
           <p class="editor-writing__paragraph--visible">
             <span v-html="firstParagraph"></span>
           </p>
-        </div>
-        <AppArticleNav :postId="this.articleData.id" :commentCount="commentCount"/>
+        </router-link>
+        <AppArticleNav :postId="articleData.id" :commentCount="commentCount"/>
       </div>
     </div>
   </article>
@@ -30,24 +30,16 @@
 <script>
 import { updatedAtYYYYMMDD, getImageUrl, } from '../../util/comm'
 import _ from 'lodash'
+import sanitizeHtml from 'sanitize-html'
 import AppArticleNav from 'src/components/AppArticleNav.vue'
 
+const dom = require('xmldom').DOMParser
+const seializer  = require('xmldom').XMLSerializer
 export default {
   components: {
     AppArticleNav,
   },
   computed: {
-    articleContent () {
-      const parser = new DOMParser()
-      const html = parser.parseFromString(this.articleData.content, 'text/html')
-      return Array.from(html.querySelectorAll('p'))
-      .filter((node) => {
-        return node.innerHTML !== '<br>'
-      })
-      .map((node) => {
-        return node.innerHTML
-      })
-    },
     commentCount () {
       return _.get(_.find(_.get(this.$store, [ 'state', 'commentCount', ]), { postId: this.articleData.id, }), [ 'count', ], 0)
     },
@@ -56,10 +48,18 @@ export default {
       if (!this.articleData) return ''
       return this.articleData.title.length > limit ? this.articleData.title.slice(0, limit) + ' ......' : this.articleData.title
     },
+    // TODOs: merge these features below to PostContent.vue
+    postContent () {
+      if (!this.articleData.content || this.articleData.content.length === 0) { return }
+      const wrappedContent = sanitizeHtml(this.articleData.content, { allowedTags: false, selfClosing: [ 'img', ], })
+      const doc = new dom().parseFromString(wrappedContent)
+      const postParagraphs = _.map(_.get(doc, 'childNodes'), (p) => (sanitizeHtml(new seializer().serializeToString(p), { allowedTags: [ 'img', ], })))
+      return postParagraphs
+    },
     firstParagraph () {
       const limit = 35
-      if (!this.articleContent[0]) return ''
-      return this.articleContent[0].length > limit ? this.articleContent[0].slice(0, limit) + ' ......' : this.articleContent[0]
+      if (!this.postContent) return ''
+      return !this.isReadMore ? this.postContent[0].slice(0, limit) : this.postContent[0]
     },
   },
   methods: {
@@ -127,9 +127,10 @@ export default {
   .editor-writing
     margin 5px 0 15.5px 0
     &__container 
+      display inline-block
+      min-width 100%
       min-height 58px
-      // overflow hidden
-      // text-overflow: ellipsis;
+      color black
       & > p
         font-size 15px
         font-weight 300
