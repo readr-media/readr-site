@@ -2,17 +2,17 @@
   <div class="post-content">
     <h1 class="post-content__title" v-text="post.title"></h1>
     <div class="editor-writing">
-      <div class="editor-writing__container">
+      <router-link :to="`/post/${post.id}`" class="editor-writing__container">
         <template v-for="(p, i) in postContent">
           <p class="editor-writing__paragraph--visible" v-if="i === 0">
             <span v-html="firstParagraph"></span>
             <span v-if="(p.length > 150 || postContent.length > 1) ? !isReadMore : false">
-              ......<span class="editor-writing__more" @click="toogleReadmore" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span>
+              ......<span class="editor-writing__more" @click="toogleReadmore($event)" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span>
             </span>
           </p>
           <p :class="`editor-writing__paragraph--${isReadMore ? 'visible' : 'invisible'}`" v-else v-html="p"></p>
         </template>
-      </div>
+      </router-link>
     </div>
     <a class="editor-writing-source" v-if="hasSource" :href="post.link" target="_blank">
       <div class="editor-writing-source__content">
@@ -73,7 +73,8 @@
       }
     },
     methods: {
-      toogleReadmore () {
+      toogleReadmore (event) {
+        if (event) event.preventDefault()
         this.isReadMore = true
       },
     },
@@ -93,7 +94,11 @@
       // min-height 105px
       // overflow hidden
       // text-overflow: ellipsis;
-      margin-bottom 15px
+      display inline-block
+      margin-bottom 5px
+      color black
+      min-width 100%
+      min-height 20px
       & > p
         font-size 15px
         font-weight 300

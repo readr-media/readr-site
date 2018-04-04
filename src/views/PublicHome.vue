@@ -13,7 +13,7 @@
             <Invite></Invite>
           </div>
           <transition-group name="fade" mode="out-in">
-            <HomeArticleMain v-for="post in postsMain" :articleData="post" :key="`${post.id}-latest`"/>
+            <HomeArticleMain v-for="post in postsMain" :articleData="post" :key="`${post.id}-main`"/>
           </transition-group>
         </div>
         <div class="homepage__list-aside">
@@ -25,7 +25,7 @@
           <AppTitledList :listTitle="this.$route.path !== '/hot' ? '焦點' : '視角'">
             <ul class="aside-list-container">
               <transition-group name="fade" mode="out-in">
-                <HomeArticleAside v-for="post in postsAside" :articleData="post" :key="`${post.id}-hot`"/>
+                <HomeArticleAside v-for="post in postsAside" :articleData="post" :key="`${post.id}-aside`"/>
               </transition-group> 
             </ul>
           </AppTitledList>
@@ -83,13 +83,30 @@ const fetchFollowing = (store, params) => {
 
 export default {
   asyncData ({ store, route, }) {
+    let reqs = [
+      fetchPosts(store, {
+        mode: 'set',
+        category: 'latest',
+        max_result: 20,
+        page: 1,
+        sort: '-updated_at',
+      }),
+      fetchPosts(store, {
+        mode: 'set',
+        category: 'hot',
+        sort: '-updated_at',
+      }),
+      fetchProjectsList(store, {
+        max_result: 1,
+      }),
+    ]
+
     if (route.params.postId) {
-      return fetchPost(store, {
-        id: route.params.postId,
-      })
-    } else {
-      return new Promise((resolve,) => { resolve() })
+      reqs.push(fetchPost(store, { id: route.params.postId, }))
     }
+
+    return Promise.all(reqs)
+
   },
   metaInfo () {
     if (this.$route.params.postId) {
@@ -127,8 +144,8 @@ export default {
         this.loadmoreLatest()
       }
     },
-    '$route' () {
-      this.homeRoutePath = this.isCurrentRoutePath('/post/:postId') ? this.$store.state.route.from.path : this.$store.state.route.path
+    '$route' (to, from) {
+      this.articlesListMainCategory = this.isCurrentRoutePath('/post/:postId') ? from.path : to.path
     },
   },
   data () {
@@ -136,28 +153,31 @@ export default {
       isReachBottom: false,
       currentPageLatest: 1,
       endPage: false,
-      homeRoutePath: this.$route.path !== '/hot' ? '/' : '/hot',
+      articlesListMainCategory: this.$route.path !== '/hot' ? '/' : '/hot',
     } 
   },
   computed: {
     postsLatest () {
-      return _.get(this.$store.state.publicPosts, 'items')
+      return _.get(this.$store.state.publicPosts, 'items', [])
     },
     postsHot () {
-      return _.get(this.$store.state.publicPostsHot, 'items')
+      return _.get(this.$store.state.publicPostsHot, 'items', [])
+    },
+    postsHome () {
+      return _.unionBy(this.postsLatest, this.postsHot, 'id', [])
     },
     postSingle () {
       return _.get(this.$store.state.publicPostSingle, 'items[0]', {})
     },
     postsMain () {
-      return this.homeRoutePath !== '/hot' ? this.postsLatest : this.postsHot
+      return this.articlesListMainCategory !== '/hot' ? this.postsLatest : this.postsHot
     },
     postsAside () {
-      return _.isEqual(this.postsMain, this.postsLatest) ? this.postsHot : this.postsLatest
+      return this.articlesListMainCategory !== '/hot' ? this.postsHot : this.postsLatest
     },
     postLightBox () {
       if (this.showLightBox) {
-        const findPostInList = _.find(this.postsMain, [ 'id', Number(this.$route.params.postId), ])
+        const findPostInList = _.find(this.postsHome, [ 'id', Number(this.$route.params.postId), ])
         return findPostInList || this.postSingle
       } else {
         return {}
@@ -170,7 +190,7 @@ export default {
   name: 'Home',
   methods: {
     closeLightBox () {
-      this.$router.push(this.homeRoutePath)
+      this.$router.push(this.articlesListMainCategory)
     },
     isCurrentRoutePath,
     loadmoreLatest () {
@@ -201,45 +221,21 @@ export default {
     },
     isScrollBarReachBottom,
   },
-  // beforeRouteEnter (to, from, next) {
-  //   // console.log('beforeRouteEnter')
-  //   next(vm => {
-  //     vm.homeRoutePath = vm.isCurrentRoutePath('/post/:postId') ? from.path : to.path
-  //   })
-  // },
   beforeMount () {
-    Promise.all([
-      fetchPosts(this.$store, {
-        mode: 'set',
-        category: 'latest',
-        max_result: 20,
-        page: this.currentPageLatest,
-        sort: '-updated_at',
-      }),
-      fetchPosts(this.$store, {
-        mode: 'set',
-        category: 'hot',
-        sort: '-updated_at',
-      }),
-      fetchProjectsList(this.$store, {
-        max_result: 1,
-      }),
-    ]).then(() => {
-      if (this.$store.state.isLoggedIn) {
-        const postIdsLatest = this.$store.state.publicPosts.items.map(post => `${post.id}`)
-        const postIdsHot = this.$store.state.publicPostsHot.items.map(post => `${post.id}`)
-        const postIdFeaturedProject = this.$store.state.projectsList.items.map(project => `${project.id}`)
-        const ids = _.uniq(_.concat(postIdsLatest, postIdsHot))
-        fetchFollowing(this.$store, {
-          resource: 'post',
-          ids: ids,
-        })
-        fetchFollowing(this.$store, {
-          resource: 'project',
-          ids: postIdFeaturedProject,
-        })
-      }
-    })
+    if (this.$store.state.isLoggedIn) {
+      const postIdsLatest = this.$store.state.publicPosts.items.map(post => `${post.id}`)
+      const postIdsHot = this.$store.state.publicPostsHot.items.map(post => `${post.id}`)
+      const postIdFeaturedProject = this.$store.state.projectsList.items.map(project => `${project.id}`)
+      const ids = _.uniq(_.concat(postIdsLatest, postIdsHot))
+      fetchFollowing(this.$store, {
+        resource: 'post',
+        ids: ids,
+      })
+      fetchFollowing(this.$store, {
+        resource: 'project',
+        ids: postIdFeaturedProject,
+      })
+    }
   },
   mounted () {
     window.addEventListener('scroll', () => {
