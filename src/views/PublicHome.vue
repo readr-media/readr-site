@@ -38,6 +38,7 @@
 <script>
 import { isScrollBarReachBottom, isCurrentRoutePath, } from 'src/util/comm'
 import _ from 'lodash'
+import { createStore, } from '../store'
 import AppAsideNav from 'src/components/AppAsideNav.vue'
 import AppTitledList from 'src/components/AppTitledList.vue'
 import HomeProjectAside from 'src/components/home/HomeProjectAside.vue'
@@ -106,7 +107,6 @@ export default {
     }
 
     return Promise.all(reqs)
-
   },
   metaInfo () {
     if (this.$route.params.postId) {
@@ -200,41 +200,56 @@ export default {
         max_result: 20,
         page: this.currentPageLatest + 1,
         sort: '-updated_at',
-      }).then((res) => {
-        this.currentPageLatest += 1
-        if (this.$store.state.isLoggedIn) {
-          const ids = res.items.map(post => `${post.id}`)
-          fetchFollowing(this.$store, {
-            mode: 'update',
-            resource: 'post',
-            ids: ids,
-          })
-        }
-      })
-      .catch((res) => {
-        if (res === 'end') {
+      }).then(({ status, res, }) => {
+        if (status === 'end') {
           this.endPage = true
-        } else {
+        } else if (status === 'error') {
           console.log(res)
+        } else {
+          this.currentPageLatest += 1
+          if (this.$store.state.isLoggedIn) {
+            const ids = res.items.map(post => `${post.id}`)
+            fetchFollowing(this.$store, {
+              mode: 'update',
+              resource: 'post',
+              ids: ids,
+            })
+          }
         }
       })
     },
     isScrollBarReachBottom,
   },
+  beforeRouteEnter (to, from, next) {
+    const store = createStore()
+    if ('postId' in to.params) {
+      fetchPost(store, { id: to.params.postId, }).then(({ status, }) => {
+        status === 'error' ? next('/404') : next()
+      })
+    } else {
+      next()
+    }
+  },
   beforeMount () {
     if (this.$store.state.isLoggedIn) {
-      const postIdsLatest = this.$store.state.publicPosts.items.map(post => `${post.id}`)
-      const postIdsHot = this.$store.state.publicPostsHot.items.map(post => `${post.id}`)
-      const postIdFeaturedProject = this.$store.state.projectsList.items.map(project => `${project.id}`)
+      const postIdsLatest = _.get(this.$store.state.publicPosts, 'items', []).map(post => `${post.id}`)
+      const postIdsHot = _.get(this.$store.state.publicPostsHot, 'items', []).map(post => `${post.id}`)
+      const postIdFeaturedProject = _.get(this.$store.state.projectsList, 'items', []).map(project => `${project.id}`)
       const ids = _.uniq(_.concat(postIdsLatest, postIdsHot))
-      fetchFollowing(this.$store, {
-        resource: 'post',
-        ids: ids,
-      })
-      fetchFollowing(this.$store, {
-        resource: 'project',
-        ids: postIdFeaturedProject,
-      })
+
+      if (ids.length !== 0) {
+        fetchFollowing(this.$store, {
+          resource: 'post',
+          ids: ids,
+        })
+      }
+
+      if (postIdFeaturedProject.length !== 0) {
+        fetchFollowing(this.$store, {
+          resource: 'project',
+          ids: postIdFeaturedProject,
+        })
+      }
     }
   },
   mounted () {
