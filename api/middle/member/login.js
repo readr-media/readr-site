@@ -56,8 +56,10 @@ const login = (req, res) => {
           description: get(mem, [ 'description', ]),
           id: get(mem, [ 'id', ]),
           mail: get(mem, [ 'mail', ], req.body.email),
-          role: get(mem, [ 'role', ], req.body.email),
+          role: get(mem, [ 'role', ], 1),
           scopes,
+          profileImage: get(mem, [ 'profileImage', ]),
+          points: get(mem, [ 'points', ]),
         },})
       } else {
         debug('Validated in fail. Please offer correct credentials.')
