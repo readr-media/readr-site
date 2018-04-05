@@ -110,7 +110,7 @@
         return this.currUser === get(this.$route, 'params.id')
       },
       filters () {
-        return map(get(this.$store, 'state.publicPosts.items', []), post => moment(new Date(post.publishedAt)).format('YYYY/MM/DD'))
+        return map(get(this.$store, 'state.publicPosts.items') || [], post => moment(new Date(post.publishedAt)).format('YYYY/MM/DD'))
       },
       posts () {
         if (this.filter === 'all') {
