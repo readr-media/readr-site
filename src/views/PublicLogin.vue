@@ -42,7 +42,7 @@
     methods: {},
     mounted () {
       this.isClientSide = true
-      // this.isLoggedIn && location.replace('/')
+      this.isLoggedIn && this.$router.push('/')
     },
     watch: {
       isLoggedIn: function () {
