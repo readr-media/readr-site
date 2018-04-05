@@ -11,6 +11,14 @@ const router = express.Router()
 const superagent = require('superagent')
 
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
+
+const setupClientCache = (req, res, next) => {
+  res.header("Cache-Control", "no-cache, no-store, must-revalidate")
+  res.header("Pragma", "no-cache")
+  res.header("Expires", "0")
+  next()
+}
+
 const authVerify = jwtExpress({
   secret: config.JWT_SECRET,
   isRevoked: (req, payload, done) => {
@@ -93,7 +101,7 @@ router.post('/set', authVerify, (req, res) => {
 
 })
 
-router.get('*', verifyToken, (req, res) => {
+router.get('*', [ verifyToken, setupClientCache, ], (req, res) => {
   const decoded = req.decoded
   const curr_token = req.url.split('/')[1]
   if (!decoded) { res.status(403).send(`Forbidden.`) }

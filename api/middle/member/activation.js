@@ -11,6 +11,13 @@ const superagent = require('superagent')
 
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
 
+const setupClientCache = (req, res, next) => {
+  res.header("Cache-Control", "no-cache, no-store, must-revalidate")
+  res.header("Pragma", "no-cache")
+  res.header("Expires", "0")
+  next()
+}
+
 const activateMem = (member) => new Promise((resolve) => {
   const url = `${apiHost}/member`
   const payload = {
@@ -73,7 +80,7 @@ const activate = (req, res) => {
   })
 }
 
-router.get('*', (req, res, next) => {
+router.get('*', setupClientCache, (req, res, next) => {
   const decoded = req.decoded
   if (!decoded.type) {
     res.status(403).send(`Invalid activation token.`)
