@@ -114,9 +114,9 @@
       },
       posts () {
         if (this.filter === 'all') {
-          return get(this.$store, 'state.publicPosts.items', [])
+          return get(this.$store, 'state.publicPosts.items') || []
         } else {
-          return filter(get(this.$store, 'state.publicPosts.items', []), post => (moment(new Date(post.publishedAt)).format('YYYY/MM/DD') === this.filter))
+          return filter(get(this.$store, 'state.publicPosts.items') || [], post => (moment(new Date(post.publishedAt)).format('YYYY/MM/DD') === this.filter))
         }
       },
       profileId () {
