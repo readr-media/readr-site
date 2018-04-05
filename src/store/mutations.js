@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import Vue from 'vue'
 const { camelize, } = require('humps')
-const debug = require('debug')('READR:STORE:mutations')
+const debug = require('debug')('CLIENT:STORE:mutations')
 
 export default {
   ADD_ITEM_TO_FOLLOWING_BY_USER: (state, data) => {
@@ -28,6 +28,9 @@ export default {
     const resourceIndex = _.findIndex(state.followingByResource[params.resource], { resourceid: `${params.resourceId}`, })
     const userIndex = state.followingByResource[params.resource][resourceIndex].follower.indexOf(params.userId)
     Vue.delete(state.followingByResource[params.resource][resourceIndex].follower, userIndex)
+  },
+  SET_CLIENT_SIDE: (state) => {
+    state['isClientSide'] = true
   },
   SET_COMMENT_COUNT: (state, { count, postId, }) => {
     let commentCount = _.find(_.get(state, [ 'commentCount', ]), { postId, })
@@ -108,6 +111,9 @@ export default {
   SET_PUBLIC_POSTS_HOT: (state, { posts, }) => {
     state['publicPostsHot'] = posts
   },
+  SET_PUBLIC_POST_SINGLE: (state, { posts, }) => {
+    state['publicPostSingle'] = posts
+  },
   SET_PROFILE: (state, { profile, }) => {
     state['profile'] = profile
   },
@@ -132,5 +138,14 @@ export default {
       _.get(state, 'publicPosts.items', []),
       _.get(posts, 'items', [])
     )
+  },
+  /**
+   * invitation
+   */
+  INVITATION_SWITCH_ON: (state) => {
+    state['invitation_switch_status'] = true
+  },
+  INVITATION_SWITCH_OFF: (state) => {
+    state['invitation_switch_status'] = false
   },
 }

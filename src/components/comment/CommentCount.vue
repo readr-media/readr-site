@@ -2,7 +2,8 @@
   <span v-text="commentAmount"></span>
 </template>
 <script>
-  import { SITE_DOMAIN_DEV, } from 'src/constants'
+  import { SITE_DOMAIN, SITE_DOMAIN_DEV, } from 'src/constants'
+  import { currEnv, } from 'src/util/comm'
   
   const debug = require('debug')('CLIENT:commentCount')
   const getCommentCount = (store, { assetUrl, postId, type, }) => {
@@ -22,7 +23,7 @@
         return new Promise((resolve) => {
           setInterval(() => {
             getCommentCount(this.$store, {
-              assetUrl: `${location.protocol}//${SITE_DOMAIN_DEV}/post/${this.postId}`,
+              assetUrl: `${location.protocol}//${currEnv() !== 'dev' ? SITE_DOMAIN : SITE_DOMAIN_DEV}/post/${this.postId}`,
               postId: this.postId,
               type: this.type,
             })
@@ -33,7 +34,7 @@
     },
     mounted () {
       getCommentCount(this.$store, {
-        assetUrl: `${location.protocol}//${SITE_DOMAIN_DEV}/post/${this.postId}`,
+        assetUrl: `${location.protocol}//${currEnv() !== 'dev' ? SITE_DOMAIN : SITE_DOMAIN_DEV}/post/${this.postId}`,
         postId: this.postId,
         type: this.type,
       })

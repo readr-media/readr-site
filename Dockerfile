@@ -1,6 +1,7 @@
 FROM node:9.2.0-alpine
 
 ENV NODE_SOURCE /usr/src
+
 WORKDIR $NODE_SOURCE
 
 RUN apk update \

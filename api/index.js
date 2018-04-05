@@ -15,7 +15,7 @@ const fs = require('fs')
 const jwtExpress = require('express-jwt')
 // const jwtService = require('./service.js')
 const multer  = require('multer')
-const scrape = require('html-metadata')
+const ogs = require('open-graph-scraper')
 const upload = multer({ dest: 'tmp/', })
 
 const { fetchFromRedis, insertIntoRedis, redisFetching, } = require('./middle/redisHandler')
@@ -50,6 +50,13 @@ const fetchStaticJson = (req, res, next, jsonFileName) => {
       console.error(err)  
     }
   })
+}
+
+const setupClientCache = (req, res, next) => {
+  res.header("Cache-Control", "no-cache, no-store, must-revalidate")
+  res.header("Pragma", "no-cache")
+  res.header("Expires", "0")
+  next()
 }
 
 router.use('/grouped', function(req, res, next) {
@@ -188,7 +195,7 @@ router.get('/posts', authVerify, (req, res) => {
   })
 })
 
-router.get('/profile', [ authVerify, ], (req, res) => {
+router.get('/profile', [ authVerify, setupClientCache, ], (req, res) => {
   debug('req.user')
   debug(req.user)
   const targetProfile = req.user.id
@@ -200,6 +207,9 @@ router.get('/profile', [ authVerify, ], (req, res) => {
     const profile = response[ 0 ][ 'items' ][ 0 ]
     const perms = response[ 1 ]
     const scopes = constructScope(perms, profile.role)
+    res.header("Cache-Control", "no-cache, no-store, must-revalidate")
+    res.header("Pragma", "no-cache")
+    res.header("Expires", "0")
     res.json({
       name: profile.name,
       nickname: profile.nickname,
@@ -218,7 +228,7 @@ router.get('/profile', [ authVerify, ], (req, res) => {
   })
 })
 
-router.get('/status', authVerify, function(req, res) {
+router.get('/status', [ authVerify, setupClientCache, ], function(req, res) {
   res.status(200).send(true)
 })
 
@@ -296,7 +306,7 @@ router.post('/image/:sourceType', authVerify, upload.single('image'), (req, res)
         })
       }))
       .then(() => {
-        res.status(200).send({url: `http://dev.readr.tw${destination}/${origImg}`,})
+        res.status(200).send({url: `${destination}/${origImg}`,})
       })
     })
     .catch((err) => {
@@ -325,13 +335,14 @@ router.post('/meta', authVerify, (req, res) => {
     res.status(400).end()
   }
   const url = req.body.url
-  scrape(url).then((metadata) => {
-    res.status(200).send(metadata).end()
-  })
-  .catch((err) => {
-    res.status(500).send(err)
-    console.error(`error during fetch data from : ${url}`)
-    console.error(err)
+  ogs({ url: url, }, (error, results) => {
+    if (!error && results) {
+      res.status(200).send(results.data).end()
+    } else {
+      res.status(500).send(error)
+      console.error(`error during fetch data from : ${req.url}`)
+      console.error(error)
+    }
   })
 })
 

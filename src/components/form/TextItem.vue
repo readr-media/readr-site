@@ -2,15 +2,34 @@
   <div class="text-item" :class="{ alert: flag }">
     <input ref="input"
       v-model="currValue"
-      :style="{ width: width }"
+      :style="{
+          width,
+          height,
+          borderLeft: border,
+          borderTop: border,
+          borderBottom: border,
+          borderRight: !flag ? border : undefined,
+          margin,
+          padding,
+          fontSize,
+          backgroundColor,
+          color,
+        }"
       :disabled="disabled"
       :type="type"
       :placeholder="placeHolder"
       @focus="focus"
       @focusout="focusout"
       @keyup="keyup">
-    <span class="text-item__alert" @click="doFucus"></span>
-    <span class="text-item__msg" :class="{ long: isTooLong }" v-text="msg" v-if="show"></span>
+    <span class="text-item__alert" @click="doFucus"
+      :style="{
+        height,
+        backgroundColor,
+        borderRight: border,   
+        borderTop: border,
+        borderBottom: border,             
+      }"></span>
+    <span class="text-item__msg" v-text="msg" v-if="show" :class="{ long: isTooLong }"></span>
   </div>
 </template>
 <script>
@@ -45,7 +64,21 @@
     mounted () {
       this.currValue = this.value
     },
-    props: [ 'alert', 'type', 'placeHolder', 'disabled', 'initValue', 'width', 'value', ],
+    props: [
+        'alert',
+        'type',
+        'placeHolder',
+        'disabled',
+        'initValue',
+        'width',
+        'height',
+        'border',
+        'margin',
+        'padding',
+        'fontSize',
+        'backgroundColor',
+        'color',
+      ],
     watch: {
       alert: function () {
         this.flag = this.alert.flag

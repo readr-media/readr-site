@@ -240,8 +240,10 @@
     },
     methods: {
       $_guestEditor_addPost (params) {
+        this.alertType = 'post'
         this.itemsSelected = []
         this.itemsSelected.push(params)
+        this.loading = true
         addPost(this.$store, params)
           .then(() => {
             this.$_guestEditor_updatePostList({ needUpdateCount: true, })
@@ -250,6 +252,13 @@
             this.postActiveChanged = true
             this.needConfirm = false
             this.showAlert = true
+            this.loading = false
+          })
+          .catch(() => {
+            this.alertType = 'error'
+            this.needConfirm = false
+            this.showAlert = true
+            this.loading = false
           })
       },
       $_guestEditor_deletePost () {
@@ -265,6 +274,11 @@
             this.showEditor = false
             this.showDraftList = false
             this.needConfirm = false
+          })
+          .catch(() => {
+            this.alertType = 'error'
+            this.needConfirm = false
+            this.showAlert = true
           })
       },
       $_guestEditor_filterHandler ({ sort = this.sort, page = this.page, }) {
@@ -440,7 +454,11 @@
             this.showAlert = true
             this.needConfirm = false
           })
-          .catch((err) => console.error(err))
+          .catch(() => {
+            this.alertType = 'error'
+            this.needConfirm = false
+            this.showAlert = true
+          })
       },
       $_guestEditor_updatePostList ({ sort, page, needUpdateCount = false, }) {
         this.sort = sort || this.sort

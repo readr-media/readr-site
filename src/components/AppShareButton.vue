@@ -1,9 +1,9 @@
 <template>
   <div :class="`app-share-button${isToogle ? '--toogle' : ''} ${direction}`">
     <button class="app-share-button__share-icon" :style="{ backgroundImage: `url(/public/icons/share-${iconColor}.png)`, backgroundColor: backgroundColor }"  @click="toogleShare"></button>
-    <a class="app-share-button__item--fb" :href="`https://www.facebook.com/share.php?u=${shareUrl}`" target="_blank"></a>
+    <a class="app-share-button__item--fb" :href="`https://www.facebook.com/share.php?u=www.readr.tw${shareUrl}`" target="_blank"></a>
     <a class="app-share-button__item--line" :href="`https://line.me/R/msg/text/?${shareUrl}`" target="_blank"></a>
-    <a class="app-share-button__item--link" :href="`https://${shareUrl}`" target="_blank"></a>
+    <router-link class="app-share-button__item--link" :to="shareUrl"></router-link>
   </div>
 </template>
 

@@ -6,9 +6,9 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link rel="apple-touch-icon" sizes="120x120" href="/public/favicon-120x120.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/public/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
-    <link rel="shortcut icon" sizes="48x48" href="/public/favicon-48x48.png">
+    <link rel="shortcut icon" sizes="48x48" href="/public/favicon.png">
     <meta name="theme-color" content="#f60">
     <link rel="manifest" href="/manifest.json">
     <meta name="description" content="{{ description }}">
@@ -19,7 +19,7 @@
     <meta property="og:site_name" content="Readr" />
     <meta property="og:locale" content="zh_TW" />
     <meta property="og:type" content="article" />
-    <meta property="og:title" content="{{ title }}" />
+    <meta property="og:title" content="{{ ogTitle }}" />
     <meta property="og:description" content="{{ description }}" />
     <meta property="og:url" content="{{ metaUrl }}"/>
     <meta property="og:image" content="{{ metaImage }}">
@@ -84,6 +84,7 @@
       html { box-sizing: border-box; font-size: 16px; font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", -apple-system, sans-serif; }
       button, input, optgroup, select, textarea { font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", -apple-system, sans-serif; }
       button { user-select: none; }
+      img[src=''], img:not([src]) { opacity:0; }
     </style>
     <!-- End common css  -->
     <style>
@@ -95,26 +96,7 @@
     <script src="https://sdk.accountkit.com/en_US/sdk.js"></script>
     {{{ include_recaptcha }}}
     <!-- Facebook SDK code -->
-    <script>
-      window.fbAsyncInit = function() {
-        FB.init({
-          appId            : '143500093073133',
-          autoLogAppEvents : true,
-          xfbml            : true,
-          version          : 'v2.9'
-        });
-        FB.AppEvents.logPageView();
-        {{{ check_fb_status }}}
-      };
-
-      (function(d, s, id){
-          var js, fjs = d.getElementsByTagName(s)[0];
-          if (d.getElementById(id)) {return;}
-          js = d.createElement(s); js.id = id;
-          js.src = "//connect.facebook.net/zh_TW/sdk.js";
-          fjs.parentNode.insertBefore(js, fjs);
-      }(document, 'script', 'facebook-jssdk'));
-    </script>
+    {{{ includ_fbsdk }}}
     <!-- End of Facebook SDK code -->
     {{{ include_gapi }}}
   </head>

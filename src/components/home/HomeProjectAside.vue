@@ -1,6 +1,7 @@
 <template>
   <section class="home-project-aside">
-    <div class="home-project-aside__project-image" :style="{ backgroundImage: `url(${featuredProject.heroImage}` }"></div>
+    <!-- Caveat: url expression in v-bind:style will calling the router when value is undefined -->
+    <div class="home-project-aside__project-image" :style="{ backgroundImage: `url(${featuredProject.heroImage ? featuredProject.heroImage : '/public/icons/readr-logo.png'})` }"></div>
     <div class="home-project-aside__content">
       <h1 class="home-project-aside__project-title" v-text="featuredProject.title"></h1>
       <AppArticleNav :articleType="'project'" :postId="featuredProject.id" :commentCount="featuredProject.commentAmount || 0"/>

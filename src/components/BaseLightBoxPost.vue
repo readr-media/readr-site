@@ -10,34 +10,25 @@
       </section>
     </article>
     <section class="baselightbox-post__comment">
-      <section class="comment-now">
+      <!-- <section class="comment-now">
         <img class="comment-now__user-thumbnail" src="/public/icons/account.png" alt="">
         <input class="comment-now__input" type="text">
       </section>
-      <section class="comment-list"></section>
+      <section class="comment-list"></section> -->
+      <div v-if="post.id" :class="`comment comment-${post.id}`"></div>
     </section>
   </div>
 </template>
 
 <script>
-import { updatedAtYYYYMMDD, } from '../util/comm'
+import { renderComment, } from 'src/util/talk'
+import { updatedAtYYYYMMDD, getImageUrl, } from '../util/comm'
 import _ from 'lodash'
 
 export default {
   props: {
     post: {
       type: Object,
-    },
-    showLightBox: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  watch: {
-    showLightBox (val) {
-      if (!val) {
-        this.$emit('closeEditor')
-      }
     },
   },
   computed: {
@@ -47,9 +38,16 @@ export default {
   },
   methods: {
     updatedAtYYYYMMDD,
-    profileImage (post) {
-      return post.author.profileImage || '/public/icons/exclamation.png'
+    getImageUrl,
+    renderComment (ref) {
+      renderComment(this.$el, `${ref}`, `/post/${this.post.id}`)
     },
+    profileImage (post) {
+      return this.getImageUrl(post.author.profileImage) || '/public/icons/exclamation.png'
+    },
+  },
+  updated () {
+    if (this.post.id) this.renderComment(`.baselightbox-post__comment > .comment.comment-${this.post.id}`)
   },
 }
 </script>

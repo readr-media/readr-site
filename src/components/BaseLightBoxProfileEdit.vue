@@ -24,16 +24,16 @@
           <span class="form__name">{{ $t('profile_editor.WORDING_PROFILEEDIT_CONFIRMPASSWORD') }}：</span>
           <input class="form__input" type="password" name="confirm_password" v-model="inputConfirmPassword">
         </div>
-        <div class="form__item">
+        <!-- <div class="form__item">
           <span class="form__name">{{ $t('profile_editor.WORDING_PROFILEEDIT_PERSONAL_OPTIONS') }}：</span>
           <div class="form__personal-options"></div>
-        </div>
+        </div> -->
       </div>
     </div>
     <div class="profile-edit__aside">
       <div class="portrait">
         <div class="portrait__container" @click="profileEditorUploadThumbnail">
-          <img class="portrait__thumbnail" :src="thumbnail" alt="thumbnail">
+          <img class="portrait__thumbnail" v-show="thumbnail" :src="getImageUrl(thumbnail)" alt="thumbnail">
           <div class="portrait__upload"></div>
         </div>
         <div class="portrait__name">{{ staticNickname }}</div>
@@ -45,9 +45,12 @@
 
 <script>
 import { removeToken, } from '../util/services'
+import { getImageUrl, } from '../util/comm'
 import validator from 'validator'
 import _ from 'lodash'
 
+
+const debug = require('debug')('CLIENT:')
 const updateInfo = (store, profile, action) => {
   return store.dispatch(action, {
     params: profile,
@@ -68,11 +71,15 @@ const logout = (store) => {
 const uploadImage = (store, file) => {
   return store.dispatch('UPLOAD_IMAGE', { file, type: 'member', })
 }
+const syncAvatar = (store, params) => {
+  return store.dispatch('SYNC_AVATAR', { params, })
+}
 const deleteMemberProfileThumbnails = (store, id) => {
   return store.dispatch('DELETE_MEMBER_PROFILE_THUMBNAILS', { id, })
 }
 
 export default {
+  name: 'BaseLightBoxProfileEdit',
   props: {
     profile: {
       type: Object,
@@ -130,6 +137,7 @@ export default {
     },
   },
   methods: {
+    getImageUrl,
     profileEditorUploadThumbnail () {
       const saveImage = (file) => {
         const fd = new FormData()
@@ -142,7 +150,13 @@ export default {
             id: this.profile.id,
             edit_mode: 'edit_profile',
             profile_image: res.body.url,
-          }, 'UPDATE_PROFILE')
+          }, 'UPDATE_PROFILE').then(() => {
+            debug('Going to sync the avatar to talk db.')
+            return syncAvatar(this.$store, {
+              url: res.body.url,
+              id: this.profile.id,
+            })
+          })
         })
         .catch((err) => {
           console.error(err)
@@ -235,6 +249,8 @@ export default {
       if (!isOldPasswordEmpty() && isConfirmNewPassword()) {
         updatePassword()
       }
+
+      this.$emit('save')
     },
   },
 }

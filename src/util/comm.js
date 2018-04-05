@@ -1,17 +1,16 @@
 import _ from 'lodash'
 import Cookie from 'vue-cookie'
 import uuidv4 from 'uuid/v4'
-import { SITE_DOMAIN, } from '../constants'
+import pathToRegexp from 'path-to-regexp'
+import { SITE_DOMAIN, SITE_DOMAIN_DEV, } from '../constants'
 
-export function consoleLogOnDev ({ msg, }) {
-  if (currEnv() === 'dev') {
-    console.log(msg)
-  }
-}
+const debug = require('debug')('CLIENT:comm')
 
 export function currEnv () {
   if (process.env.VUE_ENV === 'client') {
-    if (location.host.indexOf(SITE_DOMAIN) === 0 || location.host.indexOf(`www.${SITE_DOMAIN}`) === 0) {
+    debug('SITE_DOMAIN', SITE_DOMAIN)
+    debug('location.hostname', location.hostname, (location.hostname.indexOf(SITE_DOMAIN) === 0 || location.hostname.indexOf(`www.${SITE_DOMAIN}`) === 0))
+    if (location.hostname.indexOf(SITE_DOMAIN) === 0 || location.hostname.indexOf(`www.${SITE_DOMAIN}`) === 0) {
       return 'prod'
     } else {
       return 'dev'
@@ -38,6 +37,20 @@ export function dateDiffFromNow (date) {
   } else {
     return `剛剛`
   }
+}
+
+export function getImageUrl (url) {
+  const browser = typeof window !== 'undefined'
+  let hostname
+  if (browser) {
+    hostname = location.hostname
+  } else {
+    hostname = process.env.HOST || 'localhost'
+  }
+  if (hostname === 'localhost') {
+    return `http://${SITE_DOMAIN_DEV}${url}`
+  }
+  return url
 }
 
 export function getHost () {
@@ -95,4 +108,8 @@ export function getValue (o = {}, p = [], d = '') {
 export function updatedAtYYYYMMDD (isoDate) {
   const date = isoDate.split('T')[0]
   return date.replace(/-/g, '/')
+}
+
+export function isCurrentRoutePath (path) {
+  return pathToRegexp(path).test(this.$route.path)
 }

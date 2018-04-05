@@ -4,17 +4,21 @@
     <ol class="aside-navigation">
       <div class="aside-navigation__section--white">
         <transition name="fade" mode="out-in">
-          <a :class="`list-item aside-navigation__list-item-drawer`"
-              v-show="isHoverFirstListItem"
-              href="/"
-              @mouseover="isHoverFirstListItem = true"
-              @mouseout="isHoverFirstListItem = false"
-          >
-            <span v-text="wording['hot-talk']"></span>
-          </a>
+          <router-link
+            :to="$route.path === '/hot' ? '/' : '/hot'"
+            :class="`list-item aside-navigation__list-item-drawer`"
+            v-show="isHoverFirstListItem"
+            @mouseover.native="isHoverFirstListItem = true"
+            @mouseout.native="isHoverFirstListItem = false">
+            <span v-text="wording[$route.path === '/hot' ? 'chief-editor-talk' : 'hot-talk']"></span>
+          </router-link>
         </transition>
-        <router-link :class="`list-item aside-navigation__list-item${isCurrentRoute('/') ? '--highlight' : ''}`" to="/" @mouseover.native="isHoverFirstListItem = true" @mouseout.native="isHoverFirstListItem = false">
-          <span v-text="wording['chief-editor-talk']"></span>
+        <router-link
+          :to="$route.path === '/hot' ? '/hot' : '/'"
+          :class="`list-item aside-navigation__list-item${$route.path === '/' || $route.path === '/hot' ? '--highlight' : ''}`"
+          @mouseover.native="isHoverFirstListItem = true"
+          @mouseout.native="isHoverFirstListItem = false">
+          <span v-text="wording[$route.path === '/hot' ? 'hot-talk' : 'chief-editor-talk']"></span>
           <span class="option">
             <span class="option__dot"></span>
             <span class="option__dot"></span>
@@ -22,23 +26,31 @@
           </span>
         </router-link>
         <!-- <router-link :class="`list-item aside-navigation__list-item${isCurrentRoute('/videos') ? '--highlight' : ''}`" to="/videos"><span v-text="wording['celebrities-talk']"></span></router-link> -->
-        <router-link :class="`list-item aside-navigation__list-item${isCurrentRoute('/editors') ? '--highlight' : ''}`" to="/editors"><span v-text="wording['chief-editor-list']"></span></router-link>
-        <router-link :class="`list-item aside-navigation__list-item${isCurrentRoute('/projects') ? '--highlight' : ''}`" to="/projects"><span v-text="wording['projects']"></span></router-link>
+        <router-link :class="`list-item aside-navigation__list-item${isCurrentRoutePath('/editors') ? '--highlight' : ''}`" to="/editors"><span v-text="wording['chief-editor-list']"></span></router-link>
+        <router-link :class="`list-item aside-navigation__list-item${isCurrentRoutePath('/projects') ? '--highlight' : ''}`" to="/projects"><span v-text="wording['projects']"></span></router-link>
       </div>
       <div class="aside-navigation__external--gray">
-        <a class="list-item aside-navigation__list-item" href="/"><span><img src="/public/icons/fb.png" alt="fb"></span></a>
-        <a class="list-item aside-navigation__list-item" href="/"><span><img src="/public/icons/github.png" alt="github"></span></a>
-        <a class="list-item aside-navigation__list-item" href="/"><span><img src="/public/icons/info.png" alt="info"></span></a>
-        <a class="list-item aside-navigation__list-item" href="/"><span><img src="/public/icons/mirrormedia.png" alt="info"></span></a>
+        <!-- <a class="list-item aside-navigation__list-item" href="/"><span><img src="/public/icons/fb.png" alt="fb"></span></a> -->
+        <!-- <a class="list-item aside-navigation__list-item" href="/"><span><img src="/public/icons/github.png" alt="github"></span></a> -->
+        <router-link class="list-item aside-navigation__list-item" to="/about"><span><img src="/public/icons/info.png" alt="info"></span></router-link>
+        <a class="list-item aside-navigation__list-item" href="https://www.mirrormedia.mg/" target="_blank"><span><img src="/public/icons/mirrormedia.png" alt="info"></span></a>
+      </div>
+      <div class="aside-navigation__section--white">
+        <InviteSwitcher class="list-item aside-navigation__list-item"><span slot="icon"><img src="/public/icons/invite.png" alt="info"></span></InviteSwitcher>
       </div>
     </ol>
   </nav>
 </template>
 
 <script>
-import { SECTIONS_DEFAULT, } from '../constants'
+import { SECTIONS_DEFAULT, } from 'src/constants'
+import { isCurrentRoutePath, } from 'src/util/comm'
+import InviteSwitcher from 'src/components/invitation/InviteSwitcher.vue'
 
 export default {
+  components: {
+    InviteSwitcher,
+  },
   data () {
     return {
       wording: SECTIONS_DEFAULT,
@@ -46,9 +58,7 @@ export default {
     }
   },
   methods: {
-    isCurrentRoute (path) {
-      return this.$route.path === path
-    },
+    isCurrentRoutePath,
   },
 }
 </script>

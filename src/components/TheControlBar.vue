@@ -1,7 +1,7 @@
 <template>
   <section class="controlBar">
     <control-bar-button-box
-      v-if="$can('addPost')"
+      v-if="isClientSide && $can('addPost')"
       class="controlBar__btnBox"
       :amount="3"
       :style="[ viewport <= 767 ? { width: `calc((100% - (${(amountBtn - 1) * 5}px))/ ${amountBtn})` } : {} ]"
@@ -11,7 +11,7 @@
       <button slot="2" class="controlBar--subBtn" @click="$_controlBar_clickHandler('editReview')" v-text="$t('control_bar.WORDING_CONTROLBAR_EDIT_DRAFT')"></button>
     </control-bar-button-box>
     <control-bar-button-box
-      v-if="$can('addPost')"
+      v-if="isClientSide && $can('addPost')"
       class="controlBar__btnBox"
       :amount="3"
       :style="[ viewport <= 767 ? { width: `calc((100% - (${(amountBtn - 1) * 5}px))/ ${amountBtn})` } : {} ]"
@@ -26,11 +26,11 @@
       :amount="5"
       :style="[ viewport <= 767 ? { width: `calc((100% - (${(amountBtn - 1) * 5}px))/ ${amountBtn})` } : {} ]"
       @changeBtnAmount="$_controlBar_btnAmountHandler">
-      <button slot="0" class="controlBar--btn" @click="$_controlBar_toggleBtnBox" v-text="$t('control_bar.WORDING_CONTROLBAR_MANAGE')"></button>
-      <button slot="1" class="controlBar--subBtn" :class="[ activePanel === 'record' ? 'active' : '' ]" v-text="$t('control_bar.WORDING_CONTROLBAR_RECORD')" @click="$_controlBar_openPanel($event, 'records')"></button>
-      <button slot="2" class="controlBar--subBtn" :class="[ activePanel === 'posts' ? 'active' : '' ]" v-text="$t('control_bar.WORDING_CONTROLBAR_POST')" @click="$_controlBar_openPanel($event, 'posts')"></button>
+      <button v-if="$can('addPost')" slot="0" class="controlBar--btn" @click="$_controlBar_toggleBtnBox" v-text="$t('control_bar.WORDING_CONTROLBAR_MANAGE')"></button>
+      <button v-if="$can('addPost')" slot="1" class="controlBar--subBtn" :class="[ activePanel === 'record' ? 'active' : '' ]" v-text="$t('control_bar.WORDING_CONTROLBAR_RECORD')" @click="$_controlBar_openPanel($event, 'records')"></button>
+      <button v-if="$can('editOtherPost')" slot="2" class="controlBar--subBtn" :class="[ activePanel === 'posts' ? 'active' : '' ]" v-text="$t('control_bar.WORDING_CONTROLBAR_POST')" @click="$_controlBar_openPanel($event, 'posts')"></button>
       <!-- <button slot="3" class="controlBar--subBtn" :class="[ activePanel === 'video' ? 'active' : '' ]" v-text="$t('control_bar.WORDING_CONTROLBAR_VIDEO')" @click="$_controlBar_openPanel($event, 'videos')"></button> -->
-      <button slot="4" class="controlBar--subBtn" :class="[ activePanel === 'tag' ? 'active' : '' ]" v-text="$t('control_bar.WORDING_CONTROLBAR_TAG')" @click="$_controlBar_openPanel($event, 'tags')"></button>
+      <button v-if="$can('editTag')" slot="4" class="controlBar--subBtn" :class="[ activePanel === 'tag' ? 'active' : '' ]" v-text="$t('control_bar.WORDING_CONTROLBAR_TAG')" @click="$_controlBar_openPanel($event, 'tags')"></button>
     </control-bar-button-box>
     <control-bar-button-box
       v-if="$can('addAccount') && $can('memberManage') && viewport <= 767"
@@ -87,7 +87,7 @@
   </section>
 </template>
 <script>
-  import { includes, } from 'lodash'
+  import { get, includes, } from 'lodash'
   import ControlBarButton from './ControlBarButton.vue'
   import ControlBarButtonBox from './ControlBarButtonBox.vue'
 
@@ -105,11 +105,14 @@
       }
     },
     computed: {
+      isClientSide () {
+        return get(this.$store, [ 'state', 'isClientSide', ], false)
+      },
       wordingBtnNews () {
-        return this.viewport <= 767 ? this.wording.WORDING_CONTROLBAR_NEWS : this.wording.WORDING_CONTROLBAR_ADD_NEWS
+        return this.viewport <= 767 ? this.$t('control_bar.WORDING_CONTROLBAR_NEWS') : this.$t('control_bar.WORDING_CONTROLBAR_ADD_NEWS')
       },
       wordingBtnReview () {
-        return this.viewport <= 767 ? this.wording.WORDING_CONTROLBAR_REVIEW : this.wording.WORDING_CONTROLBAR_ADD_REVIEW
+        return this.viewport <= 767 ? this.$t('control_bar.WORDING_CONTROLBAR_REVIEW') : this.$t('control_bar.WORDING_CONTROLBAR_ADD_REVIEW')
       },
     },
     mounted () {

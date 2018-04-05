@@ -1,115 +1,116 @@
 <template>
   <section class="postPanel">
-    <div class="postPanel__input">
-      <label for="" v-text="`${$t('post_list.WORDING_POSTEDITOR_VIDEO')}${$t('post_list.WORDING_POSTEDITOR_TITLE')}：`"></label>
-      <input v-model="post.title" type="text" class="postPanel__title" :placeholder="$t('post_list.WORDING_POSTEDITOR_INPUT_TITLE')">
-    </div>
-    <text-editor
-      v-if="!isVideo"
-      :content="post.content"
-      :type="postType"
-      @updateContent="$_postPanel_updateContent">
-    </text-editor>
-    <div class="postPanel__input postPanel__link">
-      <label v-if="!isVideo" for="" v-text="`${$t('post_list.WORDING_POSTEDITOR_NEWS')}${$t('post_list.WORDING_POSTEDITOR_LINK')}：`"></label>
-      <label v-if="isVideo" for="" v-text="`${$t('post_list.WORDING_POSTEDITOR_VIDEO')}${$t('post_list.WORDING_POSTEDITOR_LINK')}：`"></label>
-      <input v-model="post.link" type="url" @change="$_postPanel_metaChanged">
-    </div>
-    <div v-if="$can('editPostOg')" class="postPanel__input postPanel--publishDate">
-      <label for="" v-text="`${$t('post_list.WORDING_POSTEDITOR_PUBLISH_DATE')}：`"></label>
-      <no-ssr>
-        <datepicker
-          v-model="post.date"
-          :format="dateFormat"
-          :input-class="'datepicker__input'"
-          :language="'zh'">
-        </datepicker>
-      </no-ssr>
-    </div>
-    <div
-      v-if="$can('editPostOg') && !isVideo"
-      class="postPanel__input">
-      <label for="" v-text="`${$t('post_list.WORDING_POSTEDITOR_TAG')}：`"></label>
-      <div class="postPanel__tags">
-        <div class="postPanel__tags-box" @mousedown.prevent="$_postPanel_focusTagInput">
-          <template>
-            <div v-for="t in tagsSelected" :key="`${t.id}-selected`" class="postPanel__tags-box-selected">
-              <p v-text="t.text"></p>
-              <button @click="$_postPanel_deleteTag(t.id)">Ｘ</button>
-            </div>
-            <input ref="tagsInput" v-model="tagInput" type="text" @blur="$_postPanel_closeTagList" @focus="$_postPanel_showTagList">
-          </template>
-        </div>
-        <div ref="tagsList" class="postPanel__tags-list hidden">
-          <button v-show="tags.length === 0" class="noResult" v-text="$t('post_list.WORDING_POSTEDITOR_NOT_FOUND')"></button>
-          <template>
-            <button v-for="(t) in tags" :key="t.id" @mousedown="$_postPanel_addTag(t.id)" v-text="t.text"></button>
-          </template>
+    <div class="postPanel__container">
+      <div class="postPanel__input">
+        <input v-model="post.title" type="text" class="postPanel__title" :placeholder="$t('POST_PANEL.TITLE_PLACEHOLDER')">
+      </div>
+      <text-editor
+        v-if="!isVideo"
+        :content="post.content"
+        :type="postType"
+        @updateContent="$_postPanel_updateContent">
+      </text-editor>
+      <div class="postPanel__input postPanel__link">
+        <label v-if="!isVideo" for="" v-text="`${$t('POST_PANEL.NEWS')}${$t('POST_PANEL.LINK')}：`"></label>
+        <label v-if="isVideo" for="" v-text="`${$t('POST_PANEL.VIDEO')}${$t('POST_PANEL.LINK')}：`"></label>
+        <input v-model="post.link" type="url" @change="$_postPanel_metaChanged">
+      </div>
+      <div v-if="$can('editPostOg')" class="postPanel__input postPanel--publishDate">
+        <label for="" v-text="`${$t('POST_PANEL.PUBLISH_DATE')}：`"></label>
+        <no-ssr>
+          <datepicker
+            v-model="post.date"
+            :format="dateFormat"
+            :input-class="'datepicker__input'"
+            :language="'zh'">
+          </datepicker>
+        </no-ssr>
+      </div>
+      <div
+        v-if="$can('editPostOg') && !isVideo"
+        class="postPanel__input">
+        <label for="" v-text="`${$t('POST_PANEL.TAG')}：`"></label>
+        <div class="postPanel__tags">
+          <div class="postPanel__tags-box" @mousedown.prevent="$_postPanel_focusTagInput">
+            <template>
+              <div v-for="t in tagsSelected" :key="`${t.id}-selected`" class="postPanel__tags-box-selected">
+                <p v-text="t.text"></p>
+                <button @click="$_postPanel_deleteTag(t.id)">Ｘ</button>
+              </div>
+              <input ref="tagsInput" v-model="tagInput" type="text" @blur="$_postPanel_closeTagList" @focus="$_postPanel_showTagList">
+            </template>
+          </div>
+          <div ref="tagsList" class="postPanel__tags-list hidden">
+            <button v-show="tags.length === 0" class="noResult" v-text="$t('POST_PANEL.NOT_FOUND')"></button>
+            <template>
+              <button v-for="(t) in tags" :key="t.id" @mousedown="$_postPanel_addTag(t.id)" v-text="t.text"></button>
+            </template>
+          </div>
         </div>
       </div>
-    </div>
-    <div v-if="$can('editPostOg')" class="postPanel__input">
-      <label for="" v-text="`${$t('post_list.WORDING_POSTEDITOR_OG_TITLE')}：`"></label>
-      <input v-model="post.ogTitle" type="text">
-    </div>
-    <div v-if="$can('editPostOg')" class="postPanel__input">
-      <label for="" v-text="`${$t('post_list.WORDING_POSTEDITOR_OG_DESCRIPTION')}：`"></label>
-      <input v-model="post.ogDescription" type="text">
-    </div>
-    <div v-if="$can('editPostOg')" class="postPanel__input">
-      <label for="" v-text="`${$t('post_list.WORDING_POSTEDITOR_OG_IMAGE')}：`"></label>
-      <input v-model="post.ogImage" type="text" readonly>
-      <button class="postPanel__btn--img" @click="$_postPanel_addOgImage">
-        <img src="/public/icons/upload.png" :alt="$t('post_list.WORDING_POSTEDITOR_UPLOAD')">
-      </button>
-      <button class="postPanel__btn--img" @click="$_postPanel_deleteOgImage">
-        <img src="/public/icons/delete.png" :alt="$t('post_list.WORDING_POSTEDITOR_DELETE')">
-      </button>
-    </div>
-    <div v-show="post.ogImage && $can('editPostOg')" class="postPanel__ogImg">
-      <img :src="post.ogImage" :alt="post.ogTitle">
-    </div>
-    <div :class="[ (panelType === 'edit') ? 'advanced' : '' ]" class="postPanel__submit">
-      <button
-        v-if="$can('deletePost') && (panelType === 'edit')"
-        class="postPanel__btn"
-        @click="$_postPanel_deletePost"
-        v-text="$t('post_list.WORDING_POSTEDITOR_DELETE')">
-      </button>
-      <button
-        v-if="(panelType === 'edit') && $can('editPostOg') && (post.active !== config.active.DRAFT)"
-        class="postPanel__btn"
-        :disabled="isEmpty"
-        @click="$_postPanel_submitHandler(config.active.DRAFT)"
-        v-text="$t('post_list.WORDING_POSTEDITOR_RETURN_TO_DRAFT')">
-      </button>
-      <button
-        v-if="(panelType === 'edit')"
-        class="postPanel__btn"
-        @click="$_postPanel_submitHandler()"
-        v-text="$t('post_list.WORDING_POSTEDITOR_SAVE')">
-      </button>
-      <button
-        v-if="(panelType === 'add') && $can('addPost')"
-        class="postPanel__btn"
-        :disabled="isEmpty"
-        @click="$_postPanel_submitHandler(config.active.DRAFT)"
-        v-text="$t('post_list.WORDING_POSTEDITOR_SAVE_DRAFT')">
-      </button>
-      <button
-        v-if="!$can('publishPost')"
-        class="postPanel__btn"
-        :disabled="isEmpty"
-        @click="$_postPanel_submitHandler(config.active.PENDING)"
-        v-text="$t('post_list.WORDING_POSTEDITOR_SAVE_PENDING')">
-      </button>
-      <button
-        v-if="$can('publishPost') && (post.active !== config.active.ACTIVE)"
-        class="postPanel__btn"
-        :disabled="isEmpty"
-        @click="$_postPanel_submitHandler(config.active.ACTIVE)"
-        v-text="$t('post_list.WORDING_POSTEDITOR_PUBLISH')">
-      </button>
+      <div v-if="$can('editPostOg')" class="postPanel__input">
+        <label for="" v-text="`${$t('POST_PANEL.OG_TITLE')}：`"></label>
+        <input v-model="post.ogTitle" type="text">
+      </div>
+      <div v-if="$can('editPostOg')" class="postPanel__input">
+        <label for="" v-text="`${$t('POST_PANEL.OG_DESCRIPTION')}：`"></label>
+        <input v-model="post.ogDescription" type="text">
+      </div>
+      <div v-if="$can('editPostOg')" class="postPanel__input">
+        <label for="" v-text="`${$t('POST_PANEL.OG_IMAGE')}：`"></label>
+        <input v-model="post.ogImage" type="text" readonly>
+        <button class="postPanel__btn--img" @click="$_postPanel_addOgImage">
+          <img src="/public/icons/upload.png" :alt="$t('POST_PANEL.UPLOAD')">
+        </button>
+        <button class="postPanel__btn--img" @click="$_postPanel_deleteOgImage">
+          <img src="/public/icons/delete.png" :alt="$t('POST_PANEL.DELETE')">
+        </button>
+      </div>
+      <div v-show="post.ogImage && $can('editPostOg')" class="postPanel__ogImg">
+        <img :src="post.ogImage" :alt="post.ogTitle">
+      </div>
+      <div :class="[ (panelType === 'edit') ? 'advanced' : '' ]" class="postPanel__submit">
+        <button
+          v-if="isClientSide && $can('deletePost') && (panelType === 'edit')"
+          class="postPanel__btn"
+          @click="$_postPanel_deletePost"
+          v-text="$t('POST_PANEL.DELETE')">
+        </button>
+        <button
+          v-if="isClientSide && (panelType === 'edit') && $can('editPostOg') && (post.active !== config.active.DRAFT)"
+          class="postPanel__btn"
+          :disabled="isEmpty"
+          @click="$_postPanel_submitHandler(config.active.DRAFT)"
+          v-text="$t('POST_PANEL.RETURN_TO_DRAFT')">
+        </button>
+        <button
+          v-if="(panelType === 'edit')"
+          class="postPanel__btn"
+          @click="$_postPanel_submitHandler()"
+          v-text="$t('POST_PANEL.SAVE')">
+        </button>
+        <button
+          v-if="isClientSide && (panelType === 'add') && $can('addPost')"
+          class="postPanel__btn"
+          :disabled="isEmpty"
+          @click="$_postPanel_submitHandler(config.active.DRAFT)"
+          v-text="$t('POST_PANEL.SAVE_DRAFT')">
+        </button>
+        <button
+          v-if="isClientSide && !$can('publishPost')"
+          class="postPanel__btn"
+          :disabled="isEmpty"
+          @click="$_postPanel_submitHandler(config.active.PENDING)"
+          v-text="$t('POST_PANEL.SAVE_PENDING')">
+        </button>
+        <button
+          v-if="isClientSide && $can('publishPost') && (post.active !== config.active.ACTIVE)"
+          class="postPanel__btn"
+          :disabled="isEmpty"
+          @click="$_postPanel_submitHandler(config.active.ACTIVE)"
+          v-text="$t('POST_PANEL.PUBLISH')">
+        </button>
+      </div>
     </div>
   </section>
 </template>
@@ -156,7 +157,7 @@
   }
 
   export default {
-    name: 'PostPanelB',
+    name: 'PostPanel',
     components: {
       'alert-panel': AlertPanel,
       'base-light-box': BaseLightBox,
@@ -194,6 +195,9 @@
         return _.isEmpty(_.trim(_.get(this.post, [ 'link', ], '')))
           && _.isEmpty(_.trim(_.get(this.post, [ 'title', ], '')))
           && _.isEmpty(_.trim(_.replace(_.get(this.post, [ 'content', ], ''), /<[^>]*>/g, '')))
+      },
+      isClientSide () {
+        return _.get(this.$store, [ 'state', 'isClientSide', ], false)
       },
       isVideo () {
         return this.postType === POST_TYPE.VIDEO
@@ -337,19 +341,23 @@
         }
 
         if (this.metaChanged) {
-          const link = _.get(this.post, [ 'link', ])
+          let link = _.get(this.post, [ 'link', ])
           params.link_name = ''
           params.link_title = ''
           params.link_description = ''
           params.link_image = ''
           if (validator.isURL(link, { protocols: [ 'http','https', ], }) && !this.isVideo) {
+            link = encodeURI(link)
             getMeta(this.$store, link)
             .then((res) => {
-              params.link_name = _.truncate(_.get(res, [ 'body', 'openGraph', 'siteName', ]), { 'length': 50, })
-              params.link_title = _.get(res, [ 'body', 'openGraph', 'title', ])
-              params.link_description = _.get(res, [ 'body', 'openGraph', 'description', ])
-              params.link_image = _.get(res, [ 'body', 'openGraph', 'image', 'url', ])
+              params.link_name = _.truncate(_.get(res, [ 'body', 'ogSiteName', ]), { 'length': 50, })
+              params.link_title = _.get(res, [ 'body', 'ogTitle', ])
+              params.link_description = _.get(res, [ 'body', 'ogDescription', ])
+              params.link_image = _.get(res, [ 'body', 'ogImage', 'url', ])
               this.$_postPanel_submit(active, params)
+            })
+            .catch((err) => {
+              console.error(`get meta error ${link}`, err)
             })
           } else {
             this.$_postPanel_submit(active, params)
@@ -370,12 +378,16 @@
   display flex
   flex-direction column
   width 90%
-  height 100%
+  height auto
+  max-height calc(100vh - 10px)
   margin 0 auto
   padding 55px 0 35px
   > input 
     width 100%
     height 25px
+  &__container
+    height 100%
+    overflow-y scroll
   &__title
     padding-left 10px
     color #000

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import pathToRegexp from 'path-to-regexp'
 import { ReadrPerm, } from '../util/services'
 
 Vue.use(Router)
@@ -11,40 +12,71 @@ if (process.browser) {
 }
 
 // route-level code splitting
-const Admin = () => import('../views/Admin.vue')
-const Agreement = () => import('../views/Agreement.vue')
-const Editor = () => import('../views/Editor.vue')
-const Editors = () => import('../views/Editors.vue')
-const GuestEditor = () => import('../views/GuestEditor.vue')
-const Home = () => import('../views/Home.vue')
-const Login = () => import('../views/Login.vue')
-const Member = () => import('../views/Member.vue')
-const Post = () => import('../views/Post.vue')
-const Profile = () => import('../views/Profile.vue')
-const ProjectsList = () => import('../views/ProjectsList.vue')
-const Search = () => import('../views/Search.vue')
-const SetPassword = () => import('../views/SetPassword.vue')
-// const Videos = () => import('../views/Videos.vue')
+const ManageAdmin = () => import('../views/ManageAdmin.vue')
+const ManageEditor = () => import('../views/ManageEditor.vue')
+const ManageGuestEditor = () => import('../views/ManageGuestEditor.vue')
+const ManageMember = () => import('../views/ManageMember.vue')
+const PublicAbout = () => import('../views/PublicAbout.vue')
+const PublicAgreement = () => import('../views/PublicAgreement.vue')
+const PublicEditors = () => import('../views/PublicEditors.vue')
+const PublicHome = () => import('../views/PublicHome.vue')
+const PublicLogin = () => import('../views/PublicLogin.vue')
+const PublicPageNotFound = () => import('../views/PublicPageNotFound.vue')
+const PublicProfile = () => import('../views/PublicProfile.vue')
+const PublicProjects = () => import('../views/PublicProjects.vue')
+const PublicSearch = () => import('../views/PublicSearch.vue')
+const PublicServerError = () => import('../views/PublicServerError.vue')
+const PublicSetPassword = () => import('../views/PublicSetPassword.vue')
+// const PublicVideos = () => import('../views/PublicVideos.vue')
 
 const router = new Router({
   mode: 'history',
   fallback: false,
-  scrollBehavior: () => ({ y: 0, }),
+  scrollBehavior: (to, from) => {
+    const keepPosition = [
+      {
+        from: '/',
+        to: '/post/:postId',
+      },
+      {
+        from: '/hot',
+        to: '/post/:postId',
+      },
+      {
+        from: '/post/:postId',
+        to: '/',
+      },
+      {
+        from: '/post/:postId',
+        to: '/hot',
+      },
+    ]
+    .map(route =>({ from: pathToRegexp(route.from), to: pathToRegexp(route.to), }))
+    .reduce((acc, cur) => acc || (cur.from.test(from.path) && cur.to.test(to.path)), false)
+
+    if (!keepPosition) {
+      return { y: 0, }
+    }
+  },
   routes: [
-    { path: '/', component: Home, },
-    { path: '/admin', component: Admin, meta: { permission: 'admin', },},
-    { path: '/agreement', component: Agreement, },
-    { path: '/editor', component: Editor, meta: { permission: 'editor', },},
-    { path: '/editors', component: Editors, },
-    { path: '/guesteditor', component: GuestEditor, meta: { permission: 'guesteditor', },},
-    { path: '/login', component: Login, },
-    { path: '/member', component: Member, meta: { permission: 'member', },},
-    { path: '/post/:id', component: Post, },
-    { path: '/profile/:id', component: Profile, },
-    { path: '/projects', component: ProjectsList, },
-    { path: '/search/:keyword', component: Search, },
-    { path: '/setup/:type', component: SetPassword, },
-    // { path: '/videos', component: Videos },
+    { path: '/', component: PublicHome, meta: { permission: 'member', }, },
+    { path: '/hot', component: PublicHome, meta: { permission: 'member', }, },
+    { path: '/about', component: PublicAbout, meta: { permission: 'member', }, },
+    { path: '/admin', component: ManageAdmin, meta: { permission: 'admin', }, },
+    { path: '/agreement', component: PublicAgreement, },
+    { path: '/editor', component: ManageEditor, meta: { permission: 'editor', }, },
+    { path: '/editors', component: PublicEditors, meta: { permission: 'member', }, },
+    { path: '/guesteditor', component: ManageGuestEditor, meta: { permission: 'guesteditor', }, },
+    { path: '/login', component: PublicLogin, },
+    { path: '/member', component: ManageMember, meta: { permission: 'member', }, },
+    { path: '/post/:postId', component: PublicHome, meta: { permission: 'member', }, },
+    { path: '/profile/:id', component: PublicProfile, meta: { permission: 'member', }, },
+    { path: '/projects', component: PublicProjects, meta: { permission: 'member', }, },
+    { path: '/search/:keyword', component: PublicSearch, meta: { permission: 'member', }, },
+    { path: '/setup/:type', component: PublicSetPassword, },
+    { path: '/404', component: PublicPageNotFound, },
+    { path: '/500', component: PublicServerError, },
+    // { path: '/videos', component: PublicVideos },
   ],
 })
 

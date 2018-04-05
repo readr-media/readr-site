@@ -1,6 +1,7 @@
 import { filter, get, } from 'lodash'
 import { ROLE_MAP, } from './constants'
 import { createApp, } from './app' 
+import { getProfile, } from './util/services'
 
 const debug = require('debug')('READR:entry-server')
 const isDev = process.env.NODE_ENV !== 'production'
@@ -24,12 +25,11 @@ export default context => {
     }
 
     const preRouteInit = cookie ? [
-      store.dispatch('CHECK_LOGIN_STATUS', { params: { cookie, },}),
-      store.dispatch('GET_PROFILE', { params: { cookie, },}),
+      getProfile(cookie),
     ] : [ new Promise((rslv) => rslv()), ]
 
-    Promise.all(preRouteInit).then(() => {
-      const role = get(filter(ROLE_MAP, { key: get(store, [ 'state', 'profile', 'role', ]), }), [ 0, 'route', ], 'visitor')
+    Promise.all(preRouteInit).then((res) => {
+      const role = get(filter(ROLE_MAP, { key: get(res, [ 0, 'profile', 'role', ]), }), [ 0, 'route', ], 'visitor')
       const permission = get(route, [ 'meta', 'permission', ])
       const isInitMember = get(route, [ 'path', ]) === '/initmember'
       debug('role:', role)
@@ -37,10 +37,17 @@ export default context => {
       debug('url', url)
 
       let targUrl
-      if ((permission && permission !== role) || (isInitMember && !initmember)) {
+      if ((permission && (role === 'visitor' || (permission !== role && permission !== 'member'))) || (isInitMember && !initmember)) {
         store.state.unauthorized = true
-        router.push('/')
-        targUrl = '/'
+        if (!cookie) {
+          router.push('/login')
+          targUrl = '/login'
+          store.state.targ_url = '/login'
+        } else {
+          router.push('/')
+          targUrl = '/'
+          store.state.targ_url = '/'
+        }
       } else {
         router.push(url)
         targUrl = url

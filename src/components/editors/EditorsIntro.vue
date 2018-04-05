@@ -1,9 +1,13 @@
 <template>
   <li class="editors-intro-main">
     <figure class="editors-intro-main__profile">
-      <img class="editors-intro-main__thumbnail" :src="editor.profileImage || '/public/icons/exclamation.png'" alt="">
+      <router-link :to="`/profile/${editor.id}`" class="editors-intro-main__thumbnail">
+        <img :src="editor.profileImage || '/public/icons/exclamation.png'" alt="">
+      </router-link>
       <figcaption class="editors-intro-main__meta-container">
-        <p class="editors-intro-main__nickname" v-text="editor.nickname"></p>
+        <router-link :to="`/profile/${editor.id}`" class="editors-intro-main__nickname">
+          <p v-text="editor.nickname"></p>
+        </router-link>
         <img class="editors-intro-main__follow-icon" v-if="editorIsNotCurrentUser" :src="isFollow ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="follow" @click="toogleFollow">
       </figcaption>
     </figure>
@@ -113,11 +117,19 @@ export default {
   &__profile
     display flex
     margin 0
+  &__nickname
+    text-decoration none
+    color #000
   &__thumbnail
     r = 50px
     width r
     height r
     border-radius r
+    img
+      width 100%
+      height 100%
+      object-position center center
+      object-size cover
   &__meta-container
     display flex
     align-items center

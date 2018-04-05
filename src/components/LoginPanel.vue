@@ -32,13 +32,13 @@
   </div>
 </template>
 <script>
-  import { consoleLogOnDev, } from 'src/util/comm'
   import FacebookLogin from 'src/components/login/FacebookLogin.vue'
   import GooglePlusLogin from 'src/components/login/GooglePlusLogin.vue'
   import Login from 'src/components/login/Login.vue'
   import RecoverPassword from 'src/components/login/RecoverPassword.vue'
   import Register from 'src/components/register/Register.vue'
 
+  const debug = require('debug')('CLIENT:LoginPanel')
   const getDisposableToken = (store) => {
     return store.dispatch('DISPOSABLE_TOKEN', {
       type: 'register',
@@ -59,7 +59,7 @@
         isGoingRecoverPwd: false,
       }
     },
-    name: 'login-panel',
+    name: 'LoginPanel',
     methods: {
       goRecoverPwd () {
         this.isGoingRecoverPwd = true
@@ -82,7 +82,7 @@
       },
     },
     mounted () {
-      consoleLogOnDev({ msg: 'login panel', })
+      debug('Login panel mounted.')
     },
     beforeMount () {
       Promise.all([

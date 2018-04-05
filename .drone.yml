@@ -14,7 +14,7 @@ pipeline:
     when:
       event: [push]
   
-  get_config:
+  get_dev_config:
     image: gcr.io/mirrormedia-1470651750304/drone-cloud-sdk:latest
     secrets: [google_credentials]
     commands:
@@ -23,9 +23,8 @@ pipeline:
     - cp default/readr-site/gcskeyfile.json ./gcskeyfile.json
     when:
       event: [push]
-      branch: [master, dev]
-  
-  get_config_stage:
+      branch: [dev]
+  get_prod_config:
     image: gcr.io/mirrormedia-1470651750304/drone-cloud-sdk:latest
     secrets: [google_credentials]
     commands:
@@ -34,8 +33,7 @@ pipeline:
     - cp default/readr-site/gcskeyfile.json ./gcskeyfile.json
     when:
       event: [push]
-      branch: [stage]
-  
+      branch: [master, stage]
   builds:
     image: node:9.2.0-alpine
     commands:
@@ -108,7 +106,7 @@ pipeline:
       event: [push]
     template: >
       {{#success build.status}}
-        *success* ${DRONE_REPO_NAME}:${DRONE_COMMIT_AUTHOR}_${DRONE_BUILD_NUMBER} was well served.
+        *success* ${DRONE_REPO_NAME}:${DRONE_COMMIT_AUTHOR}_${DRONE_COMMIT_BRANCH}_${DRONE_BUILD_NUMBER} was well served.
         Check out our new <https://dev.readr.tw|readr>.
       {{else}}
         Houston, we have a problem. Build <${DRONE_BUILD_LINK}|#{{build.number}}> failed.

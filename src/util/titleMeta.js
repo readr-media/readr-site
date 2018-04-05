@@ -14,12 +14,16 @@ const serverMetaInfoMixin = {
     const metaInfo = getMetaInfo(this)
     if (metaInfo) {
       const title = metaInfo.title
+      const ogTitle = metaInfo.ogTitle
       const description = metaInfo.description
       const metaUrl = metaInfo.metaUrl
       const metaImage = metaInfo.metaImage
       
       if (title) {
         this.$ssrContext.title = `${title} - Readr`
+      }
+      if (ogTitle) {
+        this.$ssrContext.ogTitle = `${ogTitle} - Readr`
       }
       if (description) { 
         this.$ssrContext.description = description 
@@ -39,12 +43,15 @@ const clientMetaInfoMixin = {
     const metaInfo = getMetaInfo(this)
     if (metaInfo) {
       const title = metaInfo.title
+      const ogTitle = metaInfo.ogTitle
       const description = metaInfo.description
       const metaUrl = metaInfo.metaUrl
       const metaImage = metaInfo.metaImage
       if (title) {
         document.title = `${title} - Readr`
-        document.head.querySelector(`meta[property='og:title']`).content = `${title} - Readr`
+      }
+      if (ogTitle) {
+        document.head.querySelector(`meta[property='og:title']`).content = `${ogTitle} - Readr`
       }
       if (description) {
         document.head.querySelector(`meta[name=description]`).content = description

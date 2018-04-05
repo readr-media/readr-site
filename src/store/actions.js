@@ -23,6 +23,7 @@ import {
   getFollowingByUser,
   getMembers,
   getMeta,
+  getPost,
   getPosts,
   getPostsCount,
   getProfile,
@@ -43,6 +44,7 @@ import {
   resetPwdEmail,
   setupBasicProfile,
   search,
+  syncAvatar,
   updateMember,
   updatePassword,
   updatePost,
@@ -51,7 +53,7 @@ import {
   verifyRecaptchaToken,
 } from '../api'
 
-const debug = require('debug')('READR:STORE:actions')
+const debug = require('debug')('CLIENT:STORE:actions')
 export default {
   ADD_MEMBER: ({ commit, dispatch, state, }, { params, }) => {
     return addMember(params)
@@ -164,6 +166,19 @@ export default {
   GET_META: ({ commit, dispatch, state, }, { url, }) => {
     return getMeta(url)
   },
+  GET_POST: ({ commit, dispatch, state, }, { params, }) => {
+    return new Promise((resolve, reject) => {
+      getPost({ params, }).then(({ status, body, }) => {
+        if (status === 200) {
+          commit('SET_PUBLIC_POST_SINGLE', { posts: body, })
+          resolve({ status: 200, })
+        }
+      }).catch((err) => {
+        // reject(err)
+        resolve({ status: 'error', res: err,})
+      })
+    })
+  },
   GET_POSTS: ({ commit, dispatch, state, }, { params, }) => {
     return getPosts({ params, }).then(({ status, body, }) => {
       if (status === 200) {
@@ -215,13 +230,15 @@ export default {
           } else if (params.mode === 'update') {
             commit('UPDATE_PUBLIC_POSTS', { posts: body, })
           }
-          resolve(body)
+          resolve({ status: 200, res: body, })
         } else {
-          reject('end')
+          // reject('end')
+          resolve({ status: 'end', res: {},})
         }
       })
       .catch((res) => {
-        reject(res)
+        // reject(res)
+        resolve({ status: 'error', res: res,})
       })
     }) 
   },
@@ -267,7 +284,8 @@ export default {
         resolve(body)
       })
       .catch((res) => {
-        reject(res)
+        // reject(res)
+        resolve(res)
       })
     }) 
   },
@@ -350,6 +368,12 @@ export default {
         commit('SET_SEARCH', { searchResult, })
       })
   },
+  SYNC_AVATAR: ({ commit, dispatch, state, }, { params, }) => {
+    return syncAvatar(params)
+  },
+  UPDATE_CLIENT_SIDE: ({ commit, dispatch, state, }) => {
+    commit('SET_CLIENT_SIDE')
+  },
   UPDATE_FOLLOWING_BY_USER: ({ commit, dispatch, state, }, { params, }) => {
     if (params.action === 'follow' && params.resource === 'post') {
       commit('ADD_ITEM_TO_FOLLOWING_BY_USER', params.data)
@@ -381,9 +405,19 @@ export default {
     return updateTags({ params, })
   },
   UPLOAD_IMAGE: ({ commit, dispatch, }, { file, type, }) => {
+    debug('Got a action call to upload image.')
     return uploadImage(file, type)
   },
   VERIFY_RECAPTCHA_TOKEN: ({ commit, dispatch, state, }, { token, }) => {
     return verifyRecaptchaToken(token)
+  },
+  /**
+   * invitation
+   */
+  INVITATION_SWITCH_ON: ({ commit, dispatch, state, }, { params, }) => {
+    commit('INVITATION_SWITCH_ON', {})
+  },
+  INVITATION_SWITCH_OFF: ({ commit, dispatch, state, }, { params, }) => {
+    commit('INVITATION_SWITCH_OFF', {})
   },
 }

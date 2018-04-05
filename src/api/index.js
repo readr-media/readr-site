@@ -41,7 +41,7 @@ function _doFetch (url) {
         reject(err)
       } else {
         // resolve(camelizeKeys(res.body))
-        if (res.text === 'not found') {
+        if (res.text === 'not found' || res.status !== 200) {
           reject(res.text)
         } else {
           resolve({ status: res.status, body: camelizeKeys(res.body), })
@@ -132,15 +132,11 @@ export function deleteMembers ({ params, }) {
 export function addPost (params) {
   const url = `${host}/api/post`
   return _doPost(url, params)
-    .then(res => res.status)
-    .catch(err => err)
 }
 
 export function addTags (params) {
   const url = `${host}/api/tags`
   return _doPost(url, params)
-    .then(res => res.status)
-    .catch(err => err)
 }
 
 export function addRewardPointsTransactions (params) {
@@ -290,6 +286,11 @@ export function getMeta (targetUrl) {
     .catch(err => err)
 }
 
+export function getPost ({ params, }) {
+  let url = `${host}/api/public/post/${params.id}`
+  return _doFetch(url, {})
+}
+
 export function getPosts ({ params, }) {
   let url = `${host}/api/posts`
   const query = _buildQuery(params)
@@ -309,7 +310,7 @@ export function getPostsCount ({ params, }) {
 }
 
 export function getPublicPosts ({ params, }) {
-  let url = `${host}/api/public/posts`
+  let url = params.category !== 'hot' ? `${host}/api/public/posts` : `${host}/api/public/posts/hot`
   const query = _buildQuery(params)
   if (query && (query.length > 0)) {
     url = url + `?${query}`
@@ -471,19 +472,16 @@ export function updatePassword ({ params, }) {
 export function updatePost ({ params, }) {
   const url = `${host}/api/post`
   return _doPut(url, params)
-    .then(res => ({ status: res.status, }))
-    .catch(err => err)
 }
 
 export function updateTags ({ params, }) {
   const url = `${host}/api/tags`
   return _doPut(url, params)
-    .then(res => ({ status: res.status, }))
-    .catch(err => err)
 }
 
 export function uploadImage (file, type) {
   let url
+  debug('Goin to send upload req.')
   return new Promise((resolve, reject) => {
     if (type === 'member') {
       url = `${host}/api/image/member`
@@ -568,4 +566,9 @@ export function search (keyword = '', params = {}) {
   debug('keyword', keyword)
   url = `${url}?query=${encodeURIComponent(`"${keyword}"`)}&hitsPerPage=${params.max_results}&page=${params.page - 1}`
   return _doFetch(url)
+}
+
+export function syncAvatar (params) {
+  const url = `${host}/api/member/syncavatar`
+  return _doPost(url, params)
 }

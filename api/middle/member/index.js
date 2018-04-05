@@ -1,5 +1,6 @@
 const { constructScope, fetchPermissions, } = require('../../services/perm')
-const { find, } = require('lodash')
+const { find, get, } = require('lodash')
+const { handlerError, } = require('../../comm')
 const config = require('../../config')
 const debug = require('debug')('READR:api:member')
 const express = require('express')
@@ -69,6 +70,19 @@ const banUserForTalk = (email) => new Promise((resolve) => {
   })
 })
 
+const syncAvatar = (email, url) => new Promise((resolve) => {
+  MongoClient.connect(mongourl, function(err, client) {
+    debug("Connected successfully to server")
+    const db = client.db('talk')
+    const collection = db.collection('users')
+    collection.updateOne({ "profiles.id": { $in: [ email, ], }, }
+      , { $set: { metadata: { avatar: url, }, }, }, function() {
+      client.close()
+      resolve()
+    })
+  })
+})
+
 router.put('/role', (req, res) => {
   debug('Got a req to update user\'s role')
   debug(req.body)
@@ -89,6 +103,23 @@ router.put('/role', (req, res) => {
 router.put('/', (req, res, next) => {
   req.body.nickname && updateUserNameForTalk(req.user.email, req.body.nickname)
   next()
+})
+
+router.post('/syncavatar', (req, res) => {
+  debug('Got a avatar sync req.')
+  debug(req.body)
+  const email = get(req.body, 'id', '')
+  const url = get(req.body, 'url', null)
+  syncAvatar(email, url)
+  .then(() => {
+    res.status(200).send('Sync avatar successfully.')
+  })
+  .catch((err) => {
+    const err_wrapper = handlerError(err, {})
+    res.status(err_wrapper.status).send(err_wrapper.text)
+    console.error(`Error occurred  during snyc avatar : ${req.url}`)
+    console.error(err)
+  })
 })
 
 router.post('*', () => {})

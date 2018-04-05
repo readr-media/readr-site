@@ -22,7 +22,7 @@
         <p v-else-if="p.content" class="postListInTab__descr" v-text="$_postListInTab_getDescr(p.content)"></p>
       </div>
       <div class="postListInTab__control--mobile">
-        <button class="postListInTab__btn" @click="$_postListInTab_editPost(p.id)" v-text="$t('point.WORDING_POSTLIST_EDIT')"></button>
+        <button class="postListInTab__btn" @click="$_postListInTab_editPost(p.id)" v-text="$t('post_list.WORDING_POSTLIST_EDIT')"></button>
         <button class="postListInTab__btn" @click="$_postListInTab_deletePost(p.id)" v-text="$t('post_list.WORDING_POSTLIST_DELETE')"></button>
       </div>
     </div>

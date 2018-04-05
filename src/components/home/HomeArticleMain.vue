@@ -1,17 +1,18 @@
 <template>
   <article class="home-article-main">
-    <div class="home-article-main__share">
+    <!-- <div class="home-article-main__share">
       <AppShareButton :shareUrl="shareUrl" :direction="'down'" :iconColor="'white'" :backgroundColor="'#d3d3d3'"/>
-    </div>
+    </div> -->
     <div class="home-article-main__author">
       <figure class="author-info">
-        <router-link v-if="get(articleData, 'author.id')" class="author-info__thumbnail" :to="`/profile/${get(articleData, 'author.id')}`">
-          <img :src="get(articleData, 'author.profileImage', '/public/icons/star-blue.png')" alt="">
+        <router-link class="author-info__thumbnail" :to="`/profile/${get(articleData, 'author.id')}`">
+          <img :src="getImageUrl(get(articleData, 'author.profileImage', '/public/icons/exclamation.png'))" alt="">
         </router-link>
-        <img v-else class="author-info__thumbnail" :src="get(articleData, 'author.profileImage') || '/public/icons/star-blue.png'" alt="">
         <figcaption class="author-info__meta">
           <p class="author-info__date" v-text="dateDiffFromNow"></p>
-          <p class="author-info__nickname" v-text="articleData.author.nickname"></p>
+          <router-link class="author-info__nickname" :to="`/profile/${get(articleData, 'author.id')}`">
+            <p class="author-info__nickname" v-text="articleData.author.nickname"></p>
+          </router-link>
         </figcaption>
       </figure>
     </div>
@@ -24,8 +25,7 @@
 <script>
 import AppShareButton from 'src/components/AppShareButton.vue'
 import PostContent from 'src/components/PostContent.vue'
-import { SITE_DOMAIN_DEV, } from 'src/constants'
-import { dateDiffFromNow, } from 'src/util/comm'
+import { dateDiffFromNow, getImageUrl, } from 'src/util/comm'
 import { get, } from 'lodash'
 
 export default {
@@ -55,11 +55,12 @@ export default {
       return dateDiffFromNow(this.articleData.updatedAt)
     },
     shareUrl () {
-      return `${SITE_DOMAIN_DEV}/post/${this.articleData.id}`
+      return `/post/${this.articleData.id}`
     },
   },
   methods: {
     get,
+    getImageUrl,
   },
 }
 </script>
@@ -120,13 +121,14 @@ export default {
         object-fit cover
     &__meta
       margin-left 22.5px
-      > p
+      p
         margin 5px 0
     &__date
       font-size 14px
       font-weight 500
     &__nickname
       font-size 18px
+      color #000
     &:before
       content ''
       position absolute
@@ -141,7 +143,7 @@ export default {
   .editor-writing
     margin 10px 0
     &__container 
-      min-height 105px
+      // min-height 105px
       // overflow hidden
       // text-overflow: ellipsis;
       & > p

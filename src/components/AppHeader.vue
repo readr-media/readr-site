@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <div class="header" v-if="!isLoginPage">
     <div class="header__container">
       <div class="header__container__wrapper">
         <SearchTool></SearchTool>
@@ -13,17 +13,18 @@
   </div>
 </template>
 <script>
-  import _ from 'lodash'
+  import { filter, get, } from 'lodash'
   import { ROLE_MAP, } from '../constants'
   import { removeToken, } from '../util/services'
   import SearchTool from 'src/components/search/SearchTool.vue'
 
-  const checkLoginStatus = (store) => {
-    return store.dispatch('CHECK_LOGIN_STATUS', {})
-  }
-  const getProfile = (store) => {
-    return store.dispatch('GET_PROFILE', {})
-  }
+  const debug = require('debug')('CLIENT:AppHeader')
+  // const checkLoginStatus = (store) => {
+  //   return store.dispatch('CHECK_LOGIN_STATUS', {})
+  // }
+  // const getProfile = (store) => {
+  //   return store.dispatch('GET_PROFILE', {})
+  // }
   const logout = (store) => {
     return store.dispatch('LOGOUT', {})
   }
@@ -33,17 +34,17 @@
       SearchTool,
     },
     computed: {
-      currUrl () {
-        return _.get(this.$router, [ 'fullpath', ])
-      },
       currentUser () {
-        return _.get(this.$store, [ 'state', 'profile', ], {})
+        return get(this.$store, [ 'state', 'profile', ], {})
       },
       isLoggedIn () {
-        return _.get(this.$store, [ 'state', 'isLoggedIn', ])
+        return get(this.$store, [ 'state', 'isLoggedIn', ])
+      },
+      isLoginPage () {
+        return /\/login/.test(get(this.$route, 'fullPath'))
       },
       userNickname () {
-        return this.isLoggedIn && _.get(this.currentUser, [ 'nickname', ], _.get(this.currentUser, [ 'name', ], this.$t('header.WORIDNG_HEADER_MEMBER_CENTRE')))
+        return this.isLoggedIn && get(this.currentUser, [ 'nickname', ], get(this.currentUser, [ 'name', ], this.$t('header.WORIDNG_HEADER_MEMBER_CENTRE')))
       },
     },
     data () {
@@ -54,7 +55,7 @@
     name: 'AppHeader',
     methods: {
       goMemberCenter () {
-        const memberCenter = _.get(_.filter(ROLE_MAP, { key: _.get(this.$store, [ 'state', 'profile', 'role', ]), }), [ 0, 'route', ], 'member')
+        const memberCenter = get(filter(ROLE_MAP, { key: get(this.$store, [ 'state', 'profile', 'role', ]), }), [ 0, 'route', ], 'member')
         /**
          * use location.replace instead of router.push to server-side render page
          */
@@ -66,21 +67,22 @@
             /**
               * use location.replace instead of router.push to server-side render page
               */
-            location && location.replace('/')
+            location && location.replace('/login')
           })
         })
       },
     },
     mounted () {
       this.isClientSide = true
+      debug('isLoginPage', this.isLoginPage)
     },
     beforeMount () {
-      checkLoginStatus(this.$store).then(() => {
-        if (this.isLoggedIn) {
-          return getProfile(this.$store)
-        }
-        return
-      })
+      // checkLoginStatus(this.$store).then(() => {
+      //   if (this.isLoggedIn) {
+      //     return getProfile(this.$store)
+      //   }
+      //   return
+      // })
     },
     props: [ 'sections', ],
   }

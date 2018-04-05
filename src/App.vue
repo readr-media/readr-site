@@ -19,6 +19,9 @@
         return SECTIONS_DEFAULT
       },
     },
+    mounted () {
+      this.$store.dispatch('UPDATE_CLIENT_SIDE')
+    },
   }
 </script>
 
@@ -75,8 +78,17 @@ button
     margin 0 auto
     padding 25px 0
     overflow hidden
+  &__aside
+    position absolute
+    width 75px
+    height 100%
+    
+    // position fixed
+    top 60px
   &__controlBar
     margin-top 40px
+  &__tab
+    background-color #fff
   &__record
     margin-top 30px
     background-color #fff

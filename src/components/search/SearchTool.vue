@@ -2,6 +2,7 @@
   <div class="search">
     <input class="search__input" type="text" ref="searchInput"
       :placeholder="$t('header.WORIDNG_HEADER_MEMBER_SEARCH')"
+      v-model="currentSearchVal"
       @keyup="setCurrVal"
       @change="checkIsChanged">
     <span class="search__icon" @click="goSearch"></span>
@@ -16,7 +17,7 @@
     data () {
       return {
         currentSearchVal: get(this.$refs, 'searchInput.value'),
-        isChanged: true,
+        isChanged: false,
         // searchVal: get(this.$route, [ 'params', 'keyword' ]),
       }
     },
@@ -26,25 +27,26 @@
       },
     },
     methods: {
-      checkIsChanged () {
+      checkIsChanged (e) {
         debug('Change Detected.', this.searchVal, this.currentSearchVal)
-        if (this.searchVal !== this.currentSearchVal) {
-          this.isChanged = true
-        } else {
-          this.isChanged = false
-        }
+        debug('enter?', e.keyCode)
+        this.isChanged = true
       },
       goSearch () {
-        debug('this.isChanged', this.isChanged)
         debug('this.currentSearch', this.currentSearchVal)
         debug('this.searchVal', this.searchVal)
         if (this.searchVal !== this.currentSearchVal && this.currentSearchVal) {
           this.$router.push('/search/' + this.currentSearchVal)
+          debug('Go search!')
         }
       },
-      setCurrVal () {
+      setCurrVal (e) {
         debug('Abt to change current search words to:', get(this.$refs, 'searchInput.value'))
-        this.currentSearchVal = get(this.$refs, 'searchInput.value')
+        debug('isChanged', this.isChanged)
+        if (e.keyCode === 13 && this.isChanged) {
+          this.goSearch()
+        }
+        this.isChanged = false
       },
     },
   }

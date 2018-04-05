@@ -1,134 +1,154 @@
 <template>
-  <div class="editor">
-    <div class="editor__container">
-      <aside class="editor__aside">
+  <div class="admin">
+    <div class="admin__container">
+      <aside class="admin__aside">
         <AppAsideNav/>
       </aside>
-      <main class="main-container">
-        <app-about :profile="profile"></app-about>
-        <control-bar
-          @addNews="$_editor_showEditor({ postPanel: 'add', postType: config.type.NEWS })"
-          @addReview="$_editor_showEditor({ postPanel: 'add', postType: config.type.REVIEW })"
-          @addVideo="$_editor_showEditor({ postPanel: 'add', postType: config.type.VIDEO })"
-          @editNews="$_editor_showDraftList(config.type.NEWS)"
-          @editReview="$_editor_showDraftList(config.type.REVIEW)"
-          @openPanel="$_editor_openPanel">
-        </control-bar>
-        <template v-if="activePanel === 'records'">
-          <section class="editor__record">
-            <app-tab :tabs="tabs" @changeTab="$_editor_tabHandler">
-              <post-list-tab
-                slot="0"
+      <main class="admin__main">
+        <!-- <app-header :sections="sections"></app-header> -->
+        <About :profile="profile"></About>
+        <template v-if="showMain">
+          <div class="control-bar">
+            <TheControlBar
+              @addAccount="addMember"
+              @addNews="showEditorHandler({ postPanel: 'add', postType: config.type.NEWS })"
+              @addReview="showEditorHandler({ postPanel: 'add', postType: config.type.REVIEW })"
+              @addVideo="showEditorHandler({ postPanel: 'add', postType: config.type.VIDEO })"
+              @editNews="showDraftListHandler(config.type.NEWS)"
+              @editReview="showDraftListHandler(config.type.REVIEW)"
+              @openPanel="openPanel">
+            </TheControlBar>
+          </div>
+          <template v-if="activePanel === 'accounts'">
+            <MembersPanel v-if="$can('memberManage')" @filterChanged="filterChanged"></MembersPanel>
+          </template>
+          <template v-else-if="activePanel === 'records'">
+            <section class="">
+              <app-tab :tabs="tabs" @changeTab="tabHandler">
+                <PostListInTab
+                  slot="0"
+                  :posts="posts"
+                  @deletePost="showAlertHandler"
+                  @editPost="showEditorHandler"
+                  @filterChanged="filterChanged">
+                </PostListInTab>
+                <PostListInTab
+                  slot="1"
+                  :posts="posts"
+                  @deletePost="showAlertHandler"
+                  @editPost="showEditorHandler"
+                  @filterChanged="filterChanged">
+                </PostListInTab>
+                <FollowingListInTab
+                  slot="2"
+                  :currentResource="followingResource"
+                  :followingByUser="followingByUser"
+                  @changeResource="updateFollowingList"
+                  @unfollow="unfollow">
+                </FollowingListInTab>
+              </app-tab>
+            </section>
+          </template>
+          <template v-else-if="activePanel === 'posts'">
+            <section class="panel">
+              <PostList
+                :maxResult="20"
                 :posts="posts"
-                @deletePost="$_editor_showAlert"
-                @editPost="$_editor_showEditor"
-                @filterChanged="$_editor_filterHandler">
-              </post-list-tab>
-              <post-list-tab
-                slot="1"
+                :sort="currSort"
+                @deletePosts="showAlertHandler"
+                @editPost="showEditorHandler"
+                @filterChanged="filterChanged"
+                @publishPosts="showAlertHandler">
+              </PostList>
+            </section>
+          </template>
+          <template v-else-if="activePanel === 'tags'">
+            <section class="panel">
+              <TagList
+                :maxResult="20"
+                :sort="currSort"
+                :tags="tags"
+                @addTag="addTag"
+                @deleteTags="showAlertHandler"
+                @filterChanged="filterChanged"
+                @updateTagList="updateTagList({})">
+              </TagList>
+            </section>
+          </template>
+          <template v-else-if="activePanel === 'videos'">
+            <section class="panel">
+              <VideoList
+                :maxResult="20"
                 :posts="posts"
-                @deletePost="$_editor_showAlert"
-                @editPost="$_editor_showEditor"
-                @filterChanged="$_editor_filterHandler">
-              </post-list-tab>
-              <following-list-tab
-                slot="2"
-                :currentResource="followingResource"
-                :followingByUser="followingByUser"
-                @changeResource="$_editor_updateFollowingList"
-                @unfollow="$_editor_unfollow">
-              </following-list-tab>
-            </app-tab>
-          </section>
-        </template>
-        <template v-else-if="activePanel === 'posts'">
-          <section class="main-panel">
-            <post-list
-              :maxResult="20"
-              :posts="posts"
-              :sort="sort"
-              @deletePosts="$_editor_showAlert"
-              @editPost="$_editor_showEditor"
-              @filterChanged="$_editor_filterHandler"
-              @publishPosts="$_editor_showAlert">
-            </post-list>
-          </section>
-        </template>
-        <template v-else-if="activePanel === 'tags'">
-          <section class="main-panel">
-            <tag-list
-              :maxResult="20"
-              :sort="sort"
-              :tags="tags"
-              @addTag="$_editor_addTag"
-              @deleteTags="$_editor_showAlert"
-              @filterChanged="$_editor_filterHandler"
-              @updateTagList="$_editor_updateTagList({})">
-            </tag-list>
-          </section>
-        </template>
-        <template v-else-if="activePanel === 'videos'">
-          <section class="main-panel">
-            <video-list
-              :maxResult="20"
-              :posts="posts"
-              :sort="sort"
-              @deletePosts="$_editor_showAlert"
-              @editPost="$_editor_showEditor"
-              @filterChanged="$_editor_filterHandler"
-              @publishPosts="$_editor_showAlert">
-            </video-list>
-          </section>
+                :sort="currSort"
+                @deletePosts="showAlertHandler"
+                @editPost="showEditorHandler"
+                @filterChanged="filterChanged"
+                @publishPosts="showAlertHandler">
+              </VideoList>
+            </section>
+          </template>
+          <BaseLightBox borderStyle="nonBorder" :showLightBox.sync="showLightBox" :isConversation="true">
+            <MemberAccountEditor
+              action="add"
+              :shouldShow="showLightBox"
+              :title="$t('admin.WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER')"
+              @updated="filterChanged">
+            </MemberAccountEditor>
+          </BaseLightBox>
+          <BaseLightBox :showLightBox.sync="showDraftList">
+            <PostListDetailed
+              :posts="postsDraft"
+              @deletePost="showAlertHandler"
+              @editPost="showEditorHandler">
+            </PostListDetailed>
+          </BaseLightBox>
+          <BaseLightBox :showLightBox.sync="showEditor">
+            <PostPanel
+              :post="post"
+              :panelType="postPanel"
+              :postType="postType"
+              @addPost="addPost"
+              @deletePost="deletePost"
+              @publishPost="publishPost"
+              @updatePost="updatePost">
+            </PostPanel>
+          </BaseLightBox>
+          <BaseLightBox :isAlert="true" :showLightBox.sync="showAlert">
+            <AlertPanel
+              :active="itemsActive"
+              :activeChanged="postActiveChanged"
+              :items="itemsSelected"
+              :needConfirm="needConfirm"
+              :showLightBox="showAlert"
+              :type="alertType"
+              @deletePosts="deletePosts"
+              @deleteTags="deleteTags"
+              @closeAlert="alertHandler(false)"
+              @publishPosts="publishPostHandler">
+            </AlertPanel>
+          </BaseLightBox>        
         </template>
       </main>
     </div>
-    <base-light-box :showLightBox.sync="showDraftList">
-      <post-list-detailed
-        :posts="postsDraft"
-        @deletePost="$_editor_showAlert"
-        @editPost="$_editor_showEditor">
-      </post-list-detailed>
-    </base-light-box>
-    <base-light-box :showLightBox.sync="showEditor">
-      <post-panel
-        v-if="showEditor"
-        :post="post"
-        :panelType="postPanel"
-        :postType="postType"
-        @addPost="$_editor_addPost"
-        @deletePost="$_editor_deletePost"
-        @publishPost="$_editor_publishPost"
-        @updatePost="$_editor_updatePost">
-      </post-panel>
-    </base-light-box>
-    <base-light-box :isAlert="true" :showLightBox.sync="showAlert">
-      <alert-panel
-        :active="itemsActive"
-        :activeChanged="postActiveChanged"
-        :items="itemsSelected"
-        :needConfirm="needConfirm"
-        :showLightBox="showAlert"
-        :type="alertType"
-        @deletePosts="$_editor_deletePosts"
-        @deleteTags="$_editor_deleteTags"
-        @closeAlert="$_editor_alertHandler(false)"
-        @publishPosts="$_editor_publishPostHandler">
-      </alert-panel>
-    </base-light-box>
   </div>
 </template>
 <script>
   import { POST_ACTIVE, POST_TYPE, TAG_ACTIVE, } from '../../api/config'
+  import { SECTIONS_DEFAULT, } from '../constants'
   import _ from 'lodash'
   import About from '../components/About.vue'
-  import AlertPanelB from '../components/AlertPanel.vue'
+  import AlertPanel from '../components/AlertPanel.vue'
   import AppAsideNav from '../components/AppAsideNav.vue'
+  import AppHeader from '../components/AppHeader.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
   import FollowingListInTab from '../components/FollowingListInTab.vue'
+  import MemberAccountEditor from '../components/admin/MemberAccountEditor.vue'
+  import MembersPanel from '../components/admin/MembersPanel.vue'
   import PostList from '../components/PostList.vue'
   import PostListDetailed from '../components/PostListDetailed.vue'
   import PostListInTab from '../components/PostListInTab.vue'
-  import PostPanelB from '../components/PostPanel.vue'
+  import PostPanel from '../components/PostPanel.vue'
   import Tab from '../components/Tab.vue'
   import TagList from '../components/TagList.vue'
   import TheControlBar from '../components/TheControlBar.vue'
@@ -137,6 +157,7 @@
   const MAXRESULT = 20
   const DEFAULT_PAGE = 1
   const DEFAULT_SORT = '-updated_at'
+  const debug = require('debug')('CLIENT:admin')
 
   const addPost = (store, params) => {
     return store.dispatch('ADD_POST', { params, })
@@ -234,6 +255,16 @@
     return store.dispatch('GET_TAGS_COUNT')
   }
 
+  const getMembers = (store, { page, sort, }) => {
+    return store.dispatch('GET_MEMBERS', {
+      params: {
+        max_result: MAXRESULT,
+        page: page || DEFAULT_PAGE,
+        sort: sort || DEFAULT_SORT,
+      },
+    })
+  }
+
   const publishPosts = (store, params) => {
     return store.dispatch('PUBLISH_POSTS', { params, })
   }
@@ -254,46 +285,53 @@
   }
 
   export default {
-    name: 'AppEditor',
+    name: 'admin-page',
     components: {
-      'alert-panel': AlertPanelB,
-      'app-about': About,
+      'app-header': AppHeader,
       'app-tab': Tab,
-      'base-light-box': BaseLightBox,
-      'control-bar': TheControlBar,
-      'following-list-tab': FollowingListInTab,
-      'post-list': PostList,
-      'post-list-detailed': PostListDetailed,
-      'post-list-tab': PostListInTab,
-      'post-panel': PostPanelB,
-      'tag-list': TagList,
-      'video-list': VideoList,
+      About,
+      AlertPanel,
       AppAsideNav,
+      BaseLightBox,
+      FollowingListInTab,
+      MemberAccountEditor,
+      MembersPanel,
+      PostList,
+      PostListDetailed,
+      PostListInTab,
+      PostPanel,
+      TagList,
+      TheControlBar,
+      VideoList,
     },
     data () {
       return {
-        activePanel: 'records',
+        activePanel: 'accounts',
         activeTab: 'reviews',
         alertType: 'post',
         config: {
           type: POST_TYPE,
         },
+        currPage: DEFAULT_PAGE,
+        currPagePostsDraft: DEFAULT_PAGE,
+        currSort: DEFAULT_SORT,
         followingResource: 'member',
         isPublishPostInEditor: false,
         itemsActive: undefined,
         itemsSelected: [],
-        loading: true,
+        loading: false,
         needConfirm: false,
-        page: DEFAULT_PAGE,
         post: {},
         postActiveChanged: false,
         postForPublishInEditor: {},
         postPanel: 'add',
         postType: POST_TYPE.REVIEW,
-        sort: DEFAULT_SORT,
+        postsSelected: [],
+        showMain: false,
         showAlert: false,
         showDraftList: false,
         showEditor: false,
+        showLightBox: false,
         tabs: [
           this.$t('tab.WORDING_TAB_REVIEW_RECORD'),
           this.$t('tab.WORDING_TAB_NEWS_RECORD'),
@@ -321,30 +359,28 @@
       profile () {
         return _.get(this.$store, [ 'state', 'profile', ], {})
       },
+      sections () {
+        return SECTIONS_DEFAULT
+      },
       tags () {
         return _.get(this.$store, [ 'state', 'tags', ], [])
       },
     },
     beforeMount () {
-      Promise.all([
-        getPostsByUser(this.$store, {
-          where: {
-            author: _.get(this.profile, [ 'id', ]),
-            type: POST_TYPE.REVIEW,
-          },
-        }),
-        getPostsCount(this.$store, {
-          where: {
-            author: _.get(this.profile, [ 'id', ]),
-            type: POST_TYPE.REVIEW,
-          },
-        }),
+      this.loading = true
+      debug('Admin beforeMount')
+      this.$can('memberManage') && Promise.all([
+        getMembers(this.$store, {}),
       ])
       .then(() => this.loading = false)
       .catch(() => this.loading = false)
     },
     methods: {
-      $_editor_addPost (params) {
+      addMember () {
+        this.showLightBox = true
+      },
+      addPost (params) {
+        this.alertType = 'post'
         this.itemsSelected = []
         this.itemsSelected.push(params)
         if (params.active === POST_ACTIVE.ACTIVE) {
@@ -355,72 +391,101 @@
           this.needConfirm = true
           this.showAlert = true
         } else {
+          this.loading = true
           addPost(this.$store, params)
             .then(() => {
-              this.$_editor_updatePostList({ needUpdateCount: true, })
+              this.updatePostList({ needUpdateCount: true, })
               this.showEditor = false
               this.itemsActive = params.active
               this.postActiveChanged = true
               this.needConfirm = false
               this.showAlert = true
+              this.loading = false
+            })
+            .catch(() => {
+              this.alertType = 'error'
+              this.needConfirm = false
+              this.showAlert = true
+              this.loading = false
             })
         }
       },
-      $_editor_addTag (tagName) {
+      addTag (tagName) {
         this.itemsActive = TAG_ACTIVE.ACTIVE
         this.needConfirm = false
         this.loading = true
         addTags(this.$store, tagName)
-          .then(() => {
-            this.$_editor_updateTagList({ needUpdateCount: true, })
-            this.showAlert = true
-          })
-          .catch(() => this.loading = false)
+        .then(() => {
+          this.updateTagList({ needUpdateCount: true, })
+          this.showAlert = true
+        })
+        .catch(() => {
+          this.alertType = 'error'
+          this.needConfirm = false
+          this.showAlert = true
+          this.loading = false
+        })
       },
-      $_editor_alertHandler (showAlert) {
+      alertHandler (showAlert) {
         this.showAlert = showAlert
       },
-      $_editor_deletePost () {
+      deletePost () {
         this.itemsActive = POST_ACTIVE.DEACTIVE
         this.postActiveChanged = true
         this.needConfirm = true
         this.showAlert = true
       },
-      $_editor_deletePosts () {
+      deletePosts () {
         deletePosts(this.$store, {
           params: {
             ids: this.itemsSelectedID,
             updated_by: _.get(this.$store.state, [ 'profile', 'id', ]),
           },
         }).then(() => {
-          this.$_editor_updatePostList({ needUpdateCount: true, })
+          this.updatePostList({ needUpdateCount: true, })
           this.showEditor = false
           this.showDraftList = false
           this.needConfirm = false
         })
+        .catch(() => {
+          this.alertType = 'error'
+          this.needConfirm = false
+          this.showAlert = true
+        })
       },
-      $_editor_deleteTags () {
+      deleteTags () {
         deleteTags(this.$store, this.itemsSelectedID)
           .then(() => {
-            this.$_editor_updateTagList({ needUpdateCount: true, })
+            this.updateTagList({ needUpdateCount: true, })
             this.needConfirm = false
           })
+          .catch(() => {
+            this.alertType = 'error'
+            this.needConfirm = false
+            this.showAlert = true
+          })
       },
-      $_editor_filterHandler ({ sort = this.sort, page = this.page, }) {
+      filterChanged (filter = {}) {
+        this.currPage = filter.page || this.currPage
+        this.currSort = filter.sort || this.currSort
+        
         switch (this.activePanel) {
+          case 'accounts':
+            return getMembers(this.$store, { page: this.currPage, sort: this.currSort, })
           case 'records':
           case 'posts':
           case 'videos':
-            return this.$_editor_updatePostList({ sort: sort, page: page, })
+            return this.updatePostList({ page: this.currPage, sort: this.currSort, })
           case 'tags':
-            return this.$_editor_updateTagList({ sort: sort, page: page, })
+            return this.updateTagList({ page: this.currPage, sort: this.currSort, })
+          
         }
       },
-      $_editor_openPanel (panel) {
+      openPanel (panel) {
         this.loading = true
         this.activePanel = panel
-        this.sort = DEFAULT_SORT
-        this.page = DEFAULT_PAGE
+        this.currSort = DEFAULT_SORT
+        this.currPage = DEFAULT_PAGE
         switch (this.activePanel) {
           case 'records':
             this.alertType = 'post'
@@ -472,7 +537,7 @@
             break
         }
       },
-      $_editor_publishPost (params) {
+      publishPost (params) {
         this.postForPublishInEditor = params
         this.isPublishPostInEditor = true
         this.itemsActive = params.active
@@ -480,22 +545,33 @@
         this.needConfirm = true
         this.showAlert = true
       },
-      $_editor_publishPostHandler () {
+      publishPostHandler () {
+        this.alertType = 'post'
         if (this.isPublishPostInEditor) {
           if (this.postPanel === 'add') {
             addPost(this.$store, this.postForPublishInEditor)
               .then(() => {
-                this.$_editor_updatePostList({ needUpdateCount: true, })
+                this.updatePostList({ needUpdateCount: true, })
                 this.showEditor = false
                 this.needConfirm = false
+              })
+              .catch(() => {
+                this.alertType = 'error'
+                this.needConfirm = false
+                this.showAlert = true
               })
           } else {
             updatePost(this.$store, this.postForPublishInEditor)
               .then(() => {
-                this.$_editor_updatePostList({ needUpdateCount: false, })
+                this.updatePostList({ needUpdateCount: false, })
                 this.showEditor = false
                 this.showDraftList = false
                 this.needConfirm = false
+              })
+              .catch(() => {
+                this.alertType = 'error'
+                this.needConfirm = false
+                this.showAlert = true
               })
           }
         } else {
@@ -504,12 +580,17 @@
           params.ids = this.itemsSelectedID
           publishPosts(this.$store, params)
             .then(() => {
-              this.$_editor_updatePostList({ needUpdateCount: true, })
+              this.updatePostList({ needUpdateCount: true, })
               this.needConfirm = false
+            })
+            .catch(() => {
+              this.alertType = 'error'
+              this.needConfirm = false
+              this.showAlert = true
             })
         }
       },
-      $_editor_showAlert (ids, itemsActive) {
+      showAlertHandler (ids, itemsActive) {
         this.itemsSelected = []
         switch (this.alertType) {
           case 'post':
@@ -531,7 +612,7 @@
         this.needConfirm = true
         this.showAlert = true
       },
-      $_editor_showDraftList (type) {
+      showDraftListHandler (type) {
         this.loading = true
         switch (type) {
           case POST_TYPE.REVIEW:
@@ -582,7 +663,7 @@
             break
         }
       },
-      $_editor_showEditor ({ postPanel, id, postType, }) {
+      showEditorHandler ({ postPanel, id, postType, }) {
         this.itemsSelected = []
         this.alertType = 'post'
 
@@ -601,7 +682,7 @@
         this.postPanel = postPanel
         this.showEditor = true
       },
-      $_editor_tabHandler (tab) {
+      tabHandler (tab) {
         this.loading = true
         switch (tab) {
           case 0:
@@ -638,15 +719,15 @@
               break
         }
       },
-      $_editor_unfollow (resource, object) {
+      unfollow (resource, object) {
         const subject = _.get(this.profile, [ 'id', ]) 
         const objectID = object.toString()
         unfollow(this.$store, resource, subject, objectID) 
         .then(() => {
-          setTimeout(() => this.$_editor_updateFollowingList(), 1000)
+          setTimeout(() => this.updateFollowingList(), 1000)
         }) 
       },
-      $_editor_updateFollowingList (resource = this.followingResource) {
+      updateFollowingList (resource = this.followingResource) {
         this.followingResource = resource
         this.page = DEFAULT_PAGE
         switch (resource) {
@@ -658,20 +739,25 @@
             getFollowing(this.$store, { subject: _.get(this.profile, [ 'id', ]), resource: resource, })
         }
       },
-      $_editor_updatePost(params, activeChanged) {
+      updatePost(params, activeChanged) {
+        this.alertType = 'post'
         this.itemsActive = params.active
         this.postActiveChanged = activeChanged
         updatePost(this.$store, params)
           .then(() => {
-            this.$_editor_updatePostList({})
+            this.updatePostList({})
             this.showEditor = false
             this.showDraftList = false
             this.showAlert = true
             this.needConfirm = false
           })
-          .catch((err) => console.error(err))
+          .catch(() => {
+            this.alertType = 'error'
+            this.needConfirm = false
+            this.showAlert = true
+          })
       },
-      $_editor_updatePostList ({ sort, page, needUpdateCount = false, }) {
+      updatePostList ({ sort, page, needUpdateCount = false, }) {
         this.sort = sort || this.sort
         this.page = page || this.sort
         switch (this.activePanel) {
@@ -731,7 +817,7 @@
             break
         }
       },
-      $_editor_updateTagList ({ sort, page, needUpdateCount = false, }) {
+      updateTagList ({ sort, page, needUpdateCount = false, }) {
         this.sort = sort || this.sort
         this.page = page || this.sort
         if (needUpdateCount) {
@@ -746,31 +832,42 @@
         .catch(() => this.loading = false)
       },
     },
+    mounted () {
+      this.showMain = true
+    },
   }
 </script>
 <style lang="stylus" scoped>
-  .editor
+  .admin
+    background-color #e6e6e6
     width 100%
     min-height 100vh
     &__container
-      padding-top 37px
+      max-width 1200px
+      margin auto
+      padding 25px 0
+      display flex
     &__aside
-      display none
       width 75px
       height 100%
       position sticky
       // position fixed
       top 60px
-    &__record
-      background-color #fff
-
+    &__main
+      margin-left 93.5px
+    .control-bar
+      width 100%
+      margin 0 auto
+    .panel
+      width 100%
+      padding 22px 84px 33px
+      border 5px solid #d8ca21
+      margin 0 auto
+      background-color white
   @media (min-width 950px)
-    .editor
-      &__container
-        max-width 1200px
-        margin auto
-        padding 60px 0
-        display flex
-      &__aside
-        display block
+    .admin
+      .control-bar
+        max-width 950px
+      .panel
+        max-width 950px
 </style>

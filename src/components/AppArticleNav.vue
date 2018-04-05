@@ -3,7 +3,7 @@
     <nav class="article-nav__nav-btns">
       <span class="comment-icon" @click="renderComment(`.article-nav__comment > .comment.comment-${postId}`)">
         <img class="comment-icon__thumbnail" src="/public/icons/comment-blue.png" alt="comment">
-        <!-- <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="postId" :type="'publicPostsHot'"></CommentCount> -->
+        <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="postId" :type="'publicPostsHot'"></CommentCount>
       </span>
       <img class="follow-icon" :src="isFollow ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="follow" @click="toogleFollow">
     </nav>
@@ -14,7 +14,6 @@
 </template>
 
 <script>
-import { SITE_DOMAIN_DEV, } from 'src/constants'
 import { renderComment, } from 'src/util/talk'
 import _ from 'lodash'
 import CommentCount from 'src/components/comment/CommentCount.vue'
@@ -68,7 +67,7 @@ export default {
   },
   methods: {
     renderComment (ref) {
-      renderComment(this.$el, `${ref}`, `${location.protocol}//${SITE_DOMAIN_DEV}/post/${this.postId}`)
+      renderComment(this.$el, `${ref}`, `/post/${this.postId}`)
     },
     toogleFollow () {
       if (!this.$store.state.isLoggedIn) {

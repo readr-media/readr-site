@@ -1,24 +1,25 @@
 <template>
-  <div class="about" v-if="profile">
+  <div class="about">
     <div class="about__thumbnail">
-      <img :src="thumbnail">
+      <img v-show="thumbnail" :src="getImageUrl(thumbnail)">
     </div>
     <div class="about__name">
       <span class="name" v-text="name"></span>
-      <span class="role" v-text="`（${role}）`" v-if="role"></span>
+      <span class="role" v-text="role"></span>
     </div>
     <div class="about__introduction" v-text="introduction"></div>
     <div class="about__edit" v-if="isCurrUser">
       <span class="about__edit__btn" v-text="editText" @click="goEdit"></span>
     </div>
     <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder">
-      <BaseLightBoxProfileEdit :showLightBox="showLightBox" :profile="profile"/>
+      <BaseLightBoxProfileEdit :showLightBox="showLightBox" :profile="profile" @save="showLightBox = false"/>
     </BaseLightBox>
   </div>
 </template>
 <script>
   import { filter, get, } from 'lodash'
   import { ROLE_MAP, } from 'src/constants'
+  import { getImageUrl, } from 'src/util/comm'
   import BaseLightBox from 'src/components/BaseLightBox.vue'
   import BaseLightBoxProfileEdit from 'src/components/BaseLightBoxProfileEdit.vue'
 
@@ -42,10 +43,12 @@
         return get(this.profile, [ 'nickname', ])
       },
       role () {
-        return get(filter(ROLE_MAP, { key: get(this.profile, [ 'role', ]), }), [ 0, 'value', ])
+        const text = get(filter(ROLE_MAP, { key: get(this.profile, [ 'role', ]), }), [ 0, 'value', ])
+        return text && ` (${text})`
       },
       thumbnail () {
-        return get(this.profile, [ 'profileImage', ]) || '/public/icons/exclamation.png'
+        debug('ll', get(this.profile, [ 'profileImage', ]) || '/public/icons/exclamation.png')
+        return get(this.profile, 'profileImage') || '/public/icons/exclamation.png'
       },
     },
     data () {
@@ -56,6 +59,7 @@
     },
     name: 'about',
     methods: {
+      getImageUrl,
       goEdit () {
         debug('isCurrUser', this.isCurrUser)
         this.isCurrUser && (this.showLightBox = true)

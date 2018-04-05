@@ -6,11 +6,15 @@ const LRU = require('lru-cache')
 const express = require('express')
 const favicon = require('serve-favicon')
 const compression = require('compression')
+const maxMemUsageLimit = 1000 * 1024 * 1024
+const memwatch = require('memwatch-next')
 const microcache = require('route-cache')
 const requestIp = require('request-ip')
 const resolve = file => path.resolve(__dirname, file)
+const useragent = require('express-useragent')
 const uuidv4 = require('uuid/v4')
 const { PAGE_CACHE_EXCLUDING, GOOGLE_CLIENT_ID, TALK_SERVER } = require('./api/config')
+const { SERVER_PROTOCOL_MOBILE, SERVER_HOST_MOBILE, SERVER_PORT_MOBILE } = require('./api/config')
 const { createBundleRenderer } = require('vue-server-renderer')
 
 const debug = require('debug')('READR:server')
@@ -22,6 +26,10 @@ const serverInfo =
 
 const app = express()
 const superagent = require('superagent')
+
+const formatMem = (bytes) => {
+  return (bytes / 1024 / 1024).toFixed(2) + ' Mb'
+}
 
 function createRenderer (bundle, options) {
   // https://github.com/vuejs/vue/blob/dev/packages/vue-server-renderer/README.md#why-use-bundlerenderer
@@ -38,6 +46,7 @@ function createRenderer (bundle, options) {
   }))
 }
 
+app.use(useragent.express())
 app.use(requestIp.mw())
 app.set('views', path.join(__dirname, 'src/views'))
 app.set('view engine', 'ejs')
@@ -75,7 +84,7 @@ const serve = (path, cache) => express.static(resolve(path), {
 })
 
 app.use(compression({ threshold: 0 }))
-app.use(favicon('./public/favicon-48x48.png'))
+app.use(favicon('./public/favicon.png'))
 app.use('/distribution', serve('./distribution', true))
 app.use('/public', serve('./public', true))
 app.use('/manifest.json', serve('./manifest.json', true))
@@ -103,9 +112,6 @@ function render (req, res, next) {
   if (req.url.indexOf('/api/') === 0) {
     next()
     return
-  } else if (req.url.indexOf('/404') === 0) {
-    res.status(404).send('404 | Page Not Found')
-    return
   }
 
   const s = Date.now()
@@ -114,13 +120,24 @@ function render (req, res, next) {
 
   const curr_host = _.get(req, 'headers.host') || ''
   const targ_exp = /(dev)|(localhost)/
+  const targ_localhost_exp = /(localhost)/
   const targ_exp_login = /(\/login)/
   debug('Current client host:', curr_host, !curr_host.match(targ_exp))
   debug('Requested page:', req.url, req.url.match(targ_exp_login))
+  debug('isMobile', req.useragent.isMobile)
+  debug('isTablet', req.useragent.isTablet)
 
-  if (_.filter(PAGE_CACHE_EXCLUDING, (p) => (req.url.indexOf(p) > -1)).length === 0) {
-    !curr_host.match(targ_exp) && res.setHeader('Cache-Control', 'public, max-age=3600')  
+  if ((req.useragent.isMobile || req.useragent.isTablet) && !curr_host.match(targ_localhost_exp)) {
+    if (SERVER_PROTOCOL_MOBILE && SERVER_HOST_MOBILE) {
+      res.redirect(302, `${SERVER_PROTOCOL_MOBILE}://${SERVER_HOST_MOBILE}${SERVER_PORT_MOBILE ? ':' + SERVER_PORT_MOBILE : ''}${req.url}`)
+      return
+    }
   }
+
+  // if (_.filter(PAGE_CACHE_EXCLUDING, (p) => (req.url.indexOf(p) > -1)).length === 0) {
+  //   !curr_host.match(targ_exp) && res.setHeader('Cache-Control', 'public, max-age=3600')  
+  // }
+  res.setHeader('Cache-Control', 'public, max-age=3600')  
   res.setHeader("Content-Type", "text/html")
   res.setHeader("Server", serverInfo)
 
@@ -130,37 +147,42 @@ function render (req, res, next) {
     cookies.set('readrid', uuidv4(), { httpOnly: false, expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) })
   }
 
-  const handleError = err => {
-    if (err.url) {
-      res.redirect(err.url)
-    } else if(err.code === 404) {
-      res.status(404).send('404 | Page Not Found')
-    } else {
-      // Render Error Page or Redirect
-      res.status(500).send('500 | Internal Server Error')
-      console.error(`error during render : ${req.url}`)
-      console.error(err.stack)
-    }
-  }
-
-  const context = {
+  let context = {
     title: 'Readr',
+    ogTitle: 'Readr',
     description: 'Readr',
     metaUrl: 'dev.readr.tw',
     metaImage: '/public/og.png',
     url: req.url,
     cookie: cookies.get('csrf'),
     initmember: cookies.get('initmember'),
-    check_fb_status: req.url.match(targ_exp_login)
-      ? `FB.getLoginStatus(function(response) {
-          if (response.status === 'connected') {
-            window.fbStatus = {
-              status: 'connected',
-              uid: response.authResponse.userID
-            };
-          }
-        })`
-      : '',
+    includ_fbsdk: req.url.match(targ_exp_login) ? `
+      <script>
+        window.fbAsyncInit = function() {
+          FB.init({
+            appId            : '143500093073133',
+            autoLogAppEvents : true,
+            xfbml            : true,
+            version          : 'v2.9'
+          });
+          FB.AppEvents.logPageView();
+          FB.getLoginStatus(function(response) {
+            if (response.status === 'connected') {
+              window.fbStatus = {
+                status: 'connected',
+                uid: response.authResponse.userID
+              };
+            }
+          })
+        };
+        (function(d, s, id){
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {return;}
+            js = d.createElement(s); js.id = id;
+            js.src = "//connect.facebook.net/zh_TW/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
+      </script>`: '',
     include_gapi: req.url.match(targ_exp_login) ? `
       <script src="https://apis.google.com/js/api.js"></script>
       <script>
@@ -185,10 +207,57 @@ function render (req, res, next) {
       include_recaptcha: req.url.match(targ_exp_login) ? `<script src='https://www.google.com/recaptcha/api.js'></script>` : '',
     TALK_SERVER
   }
+  const handleError = err => {
+    if (err.url) {
+      res.redirect(err.url)
+    }
+    let status
+    if (err.code === 404) {
+      status = 404
+      isPageNotFound = true
+    } else {
+      status = 500
+      isErrorOccurred = true
+    }
+
+    renderer.renderToString(Object.assign({}, context, { url: `/${status}` }), (e, h) => {
+      if (!e) {
+        res.status(status).send(h)
+        if (!isProd) {
+          console.log(`whole request: ${Date.now() - s}ms`)
+        }        
+      } else {
+        res.status(500).send('500 | Internal Server Error')
+        console.error(`Error occurred  during render : ${req.url}`)
+        console.error(e.stack)        
+      }
+    })
+  }
+
+  res.on('finish', function () {
+    const mem = process.memoryUsage()
+    console.log('MEMORY STAT(heapUsed):', formatMem(mem.heapUsed))
+    if (mem.heapUsed > maxMemUsageLimit) {
+      for (let i = 0; i < 10; i += 1) {
+        console.error('MEMORY WAS RUNNING OUT')
+      } 
+      console.error(`KILLING PROCESS IN 1 SECOND(At ${(new Date).toString()})`)
+      process.exit(1)
+    }
+    if (isPageNotFound || isErrorOccurred) {
+      try {
+        global.gc()
+      } catch (e) {
+        // process.exit(1)
+      }
+    }
+  })
+
   renderer.renderToString(context, (err, html) => {
     if (err) {
       return handleError(err)
     }
+    
     res.send(html)
     if (!isProd) {
       console.log(`whole request: ${Date.now() - s}ms`)
@@ -199,25 +268,6 @@ function render (req, res, next) {
 app.get('*', isProd ? render : (req, res, next) => {
   readyPromise.then(() => render(req, res, next))
 })
-// .put('*', (req, res, next) => {
-//   if (req.url.indexOf('/api/') === 0) {
-//     next()
-//     return
-//   }
-//   res.status(403).send('Forbidden')
-// }).post('*', (req, res, next) => {
-//   if (req.url.indexOf('/api/') === 0) {
-//     next()
-//     return
-//   }
-//   res.status(403).send('Forbidden')
-// }).delete('*', (req, res, next) => {
-//   if (req.url.indexOf('/api/') === 0) {
-//     next()
-//     return
-//   }
-//   res.status(403).send('Forbidden')
-// })
 
 app.use('/api', require('./api/index'))
 
@@ -232,3 +282,40 @@ module.exports = {
   ready: readyPromise,
   app: server
 }
+
+memwatch.on('leak', function(info) {
+  const growth = formatMem(info.growth)
+  const mem = process.memoryUsage()
+  console.log('GETING MEMORY LEAK:', [ 'growth ' + growth, 'reason ' + info.reason ].join(', '))
+  console.log('MEMORY STAT(heapUsed):', formatMem(mem.heapUsed))
+})
+memwatch.on('stats', function(stats) {
+  const estBase = formatMem(stats.estimated_base)
+  const currBase = formatMem(stats.current_base)
+  const min = formatMem(stats.min)
+  const max = formatMem(stats.max)
+  console.log('GC STATs:', [
+    'num_full_gc ' + stats.num_full_gc,
+    'num_inc_gc ' + stats.num_inc_gc,
+    'heap_compactions ' + stats.heap_compactions,
+    'usage_trend ' + stats.usage_trend,
+    'estimated_base ' + estBase,
+    'current_base ' + currBase,
+    'min ' + min,
+    'max ' + max
+  ].join(', '))
+  if (stats.current_base > maxMemUsageLimit) {
+    for (let i = 0; i < 10; i += 1) {
+      console.error('MEMORY WAS RUNNING OUT')
+    } 
+    /**
+     * kill this process gracefully
+     */
+    const killTimer = setTimeout(() => {
+      process.exit(1)
+    }, 1000)
+    killTimer.unref()
+    server.close()
+    console.error(`GOING TO KILL PROCESS IN 1 SECOND(At ${(new Date).toString()})`)
+  }
+})
