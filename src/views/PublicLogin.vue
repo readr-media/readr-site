@@ -42,11 +42,11 @@
     methods: {},
     mounted () {
       this.isClientSide = true
-      this.isLoggedIn && location.replace('/')
+      // this.isLoggedIn && location.replace('/')
     },
     watch: {
       isLoggedIn: function () {
-        this.isLoggedIn && location.replace('/')
+        // this.isLoggedIn && location.replace('/')
       },
     },
   }

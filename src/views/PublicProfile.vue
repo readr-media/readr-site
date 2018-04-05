@@ -4,7 +4,7 @@
       <AppAsideNav></AppAsideNav>
     </aside>
     <main class="profile__main">
-      <About :profile="profile"></About>
+      <About :profile="profile || {}"></About>
       <Tab :tabs="tabs" @changeTab="tabHandler">
         <template slot="0">
           <div class="profile__main__review">
