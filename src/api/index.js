@@ -41,7 +41,7 @@ function _doFetch (url) {
         reject(err)
       } else {
         // resolve(camelizeKeys(res.body))
-        if (res.text === 'not found') {
+        if (res.text === 'not found' || res.status !== 200) {
           reject(res.text)
         } else {
           resolve({ status: res.status, body: camelizeKeys(res.body), })

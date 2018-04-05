@@ -73,7 +73,7 @@ const fetchAndConstructPosts = (req, res, next) => {
 
           res.json(resData)
         } else {
-          res.json(e)
+          res.status(r.status).json(e)
           console.error(`error during fetch public post data from : ${url}`)
           console.error(e)
         }
