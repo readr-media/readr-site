@@ -26,11 +26,11 @@
       :amount="5"
       :style="[ viewport <= 767 ? { width: `calc((100% - (${(amountBtn - 1) * 5}px))/ ${amountBtn})` } : {} ]"
       @changeBtnAmount="$_controlBar_btnAmountHandler">
-      <button slot="0" class="controlBar--btn" @click="$_controlBar_toggleBtnBox" v-text="$t('control_bar.WORDING_CONTROLBAR_MANAGE')"></button>
-      <button slot="1" class="controlBar--subBtn" :class="[ activePanel === 'record' ? 'active' : '' ]" v-text="$t('control_bar.WORDING_CONTROLBAR_RECORD')" @click="$_controlBar_openPanel($event, 'records')"></button>
-      <button slot="2" class="controlBar--subBtn" :class="[ activePanel === 'posts' ? 'active' : '' ]" v-text="$t('control_bar.WORDING_CONTROLBAR_POST')" @click="$_controlBar_openPanel($event, 'posts')"></button>
+      <button v-if="$can('addPost')" slot="0" class="controlBar--btn" @click="$_controlBar_toggleBtnBox" v-text="$t('control_bar.WORDING_CONTROLBAR_MANAGE')"></button>
+      <button v-if="$can('addPost')" slot="1" class="controlBar--subBtn" :class="[ activePanel === 'record' ? 'active' : '' ]" v-text="$t('control_bar.WORDING_CONTROLBAR_RECORD')" @click="$_controlBar_openPanel($event, 'records')"></button>
+      <button v-if="$can('editOtherPost')" slot="2" class="controlBar--subBtn" :class="[ activePanel === 'posts' ? 'active' : '' ]" v-text="$t('control_bar.WORDING_CONTROLBAR_POST')" @click="$_controlBar_openPanel($event, 'posts')"></button>
       <!-- <button slot="3" class="controlBar--subBtn" :class="[ activePanel === 'video' ? 'active' : '' ]" v-text="$t('control_bar.WORDING_CONTROLBAR_VIDEO')" @click="$_controlBar_openPanel($event, 'videos')"></button> -->
-      <button slot="4" class="controlBar--subBtn" :class="[ activePanel === 'tag' ? 'active' : '' ]" v-text="$t('control_bar.WORDING_CONTROLBAR_TAG')" @click="$_controlBar_openPanel($event, 'tags')"></button>
+      <button v-if="$can('editTag')" slot="4" class="controlBar--subBtn" :class="[ activePanel === 'tag' ? 'active' : '' ]" v-text="$t('control_bar.WORDING_CONTROLBAR_TAG')" @click="$_controlBar_openPanel($event, 'tags')"></button>
     </control-bar-button-box>
     <control-bar-button-box
       v-if="$can('addAccount') && $can('memberManage') && viewport <= 767"
