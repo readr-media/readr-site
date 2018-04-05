@@ -90,6 +90,7 @@ export default {
     state['postsDraftCount'] = meta.total
   },
   SET_PUBLIC_POSTS: (state, { posts, }) => {
+    debug('public posts', posts)
     state['publicPosts'] = posts
   },
   SET_PUBLIC_MEMBER: (state, { member, }) => {

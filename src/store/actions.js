@@ -233,6 +233,11 @@ export default {
           resolve({ status: 200, res: body, })
         } else {
           // reject('end')
+          if (body.items === null) {
+            if (params.mode === 'set') {
+              commit('SET_PUBLIC_POSTS', { posts: [], })
+            }
+          }
           resolve({ status: 'end', res: {},})
         }
       })
