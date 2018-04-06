@@ -3,7 +3,7 @@
     <div class="home-article-aside__author">
       <div class="author-info">
         <router-link class="author-info__thumbnail" :to="get(articleData, 'author.id') ? `/profile/${get(articleData, 'author.id')}` : '#'">
-          <img :src="articleData.author_profileImage || getImageUrl(articleData.author.profileImage || '/public/icons/exclamation.png')" alt="">
+          <img :src="articleData.author_profileImage || getImageUrl(get(articleData, 'author.profileImage') || '/public/icons/exclamation.png')" alt="">
         </router-link>
         <div class="author-info__meta-container">
           <router-link class="author-info__nickname" :to="`/profile/${get(articleData, 'author')}`">
@@ -28,8 +28,8 @@
 </template>
 
 <script>
-import { updatedAtYYYYMMDD, getImageUrl, } from '../../util/comm'
-import _ from 'lodash'
+import { find, get, map, } from 'lodash'
+import { updatedAtYYYYMMDD, getImageUrl, } from 'src/util/comm'
 import sanitizeHtml from 'sanitize-html'
 import AppArticleNav from 'src/components/AppArticleNav.vue'
 
@@ -41,7 +41,7 @@ export default {
   },
   computed: {
     commentCount () {
-      return _.get(_.find(_.get(this.$store, [ 'state', 'commentCount', ]), { postId: this.articleData.id, }), [ 'count', ], 0)
+      return get(find(get(this.$store, [ 'state', 'commentCount', ]), { postId: this.articleData.id, }), [ 'count', ], 0)
     },
     titleTrim () {
       const limit = 18
@@ -53,7 +53,7 @@ export default {
       if (!this.articleData.content || this.articleData.content.length === 0) { return }
       const wrappedContent = sanitizeHtml(this.articleData.content, { allowedTags: false, selfClosing: [ 'img', ], })
       const doc = new dom().parseFromString(wrappedContent)
-      const postParagraphs = _.map(_.get(doc, 'childNodes'), (p) => (sanitizeHtml(new seializer().serializeToString(p), { allowedTags: [ 'img', ], })))
+      const postParagraphs = map(get(doc, 'childNodes'), (p) => (sanitizeHtml(new seializer().serializeToString(p), { allowedTags: [ 'img', ], })))
       return postParagraphs
     },
     firstParagraph () {
@@ -63,7 +63,7 @@ export default {
     },
   },
   methods: {
-    get: _.get,
+    get,
     updatedAtYYYYMMDD,
     getImageUrl,
   },

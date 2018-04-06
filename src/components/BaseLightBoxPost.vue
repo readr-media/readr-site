@@ -23,7 +23,7 @@
 <script>
 import { renderComment, } from 'src/util/talk'
 import { updatedAtYYYYMMDD, getImageUrl, } from '../util/comm'
-import _ from 'lodash'
+import { get, isEmpty, } from 'lodash'
 
 export default {
   props: {
@@ -33,7 +33,7 @@ export default {
   },
   computed: {
     isPostEmpty () {
-      return _.isEmpty(this.post)
+      return isEmpty(this.post)
     },
   },
   methods: {
@@ -43,7 +43,7 @@ export default {
       renderComment(this.$el, `${ref}`, `/post/${this.post.id}`, this.$store.state.setting.TALK_SERVER)
     },
     profileImage (post) {
-      return this.getImageUrl(post.author.profileImage) || '/public/icons/exclamation.png'
+      return this.getImageUrl(get(post, 'author.profileImage')) || '/public/icons/exclamation.png'
     },
   },
   updated () {
