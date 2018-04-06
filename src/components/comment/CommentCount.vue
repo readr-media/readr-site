@@ -33,12 +33,14 @@
       },
     },
     mounted () {
-      getCommentCount(this.$store, {
-        assetUrl: `${location.protocol}//${currEnv() !== 'dev' ? SITE_DOMAIN : SITE_DOMAIN_DEV}/post/${this.postId}`,
-        postId: this.postId,
-        type: this.type,
-      })
-      this.seUpfetchCommentCountInterval()
+      if (this.postId) {
+        getCommentCount(this.$store, {
+          assetUrl: `${location.protocol}//${currEnv() !== 'dev' ? SITE_DOMAIN : SITE_DOMAIN_DEV}/post/${this.postId}`,
+          postId: this.postId,
+          type: this.type,
+        })
+        this.seUpfetchCommentCountInterval()
+      }
     },
     props: {
       commentAmount: {
