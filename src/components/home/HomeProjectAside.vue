@@ -1,26 +1,34 @@
 <template>
   <section class="home-project-aside">
     <!-- Caveat: url expression in v-bind:style will calling the router when value is undefined -->
-    <div class="home-project-aside__project-image" :style="{ backgroundImage: `url(${featuredProject.heroImage ? featuredProject.heroImage : '/public/icons/readr-logo.png'})` }"></div>
-    <div class="home-project-aside__content">
-      <h1 class="home-project-aside__project-title" v-text="featuredProject.title"></h1>
-      <AppArticleNav :articleType="'project'" :postId="featuredProject.id" :commentCount="featuredProject.commentAmount || 0"/>
-    </div>
+    <template v-for="project in projectsDone">
+      <div class="home-project-aside__project-image" :style="{ backgroundImage: `url(${project.heroImage ? project.heroImage : '/public/icons/readr-logo.png'})` }"></div>
+      <div class="home-project-aside__content">
+        <h1 class="home-project-aside__project-title" v-text="project.title"></h1>
+        <AppArticleNav :articleType="'project'" :postId="project.id" :commentCount="project.commentAmount || 0"/>
+      </div>
+    </template>
   </section>
 </template>
 
 <script>
 import AppArticleNav from 'src/components/AppArticleNav.vue'
-import _ from 'lodash'
+import { get, } from 'lodash'
 
 export default {
   components: {
     AppArticleNav,
   },
   computed: {
-    featuredProject () {
-      return _.get(this.$store, 'state.projectsList.items[0]', {})
+    // featuredProject () {
+    //   return get(this.$store, 'state.projectsList.items[0]', {})
+    // },
+    projectsDone () {
+      return get(this.$store, [ 'state', 'publicProjects', 'done', ], [])
     },
+    // projectsInProgress () {
+    //   return get(this.$store, [ 'state', 'publicProjects', 'inProgress', ], [])
+    // },
   },
 }
 </script>

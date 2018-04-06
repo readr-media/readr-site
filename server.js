@@ -231,10 +231,8 @@ function render (req, res, next) {
     } else {
       status = 500
       isErrorOccurred = true
-      res.status(500).send('500 | Internal Server Error' + JSON.stringify(err || {}))
       console.error(`Error occurred  during render : ${req.url}`)
-      console.error(e.stack) 
-      return
+      console.error(err) 
     }
 
     renderer.renderToString(Object.assign({}, context, { url: `/${status}`, error: err }), (e, h) => {

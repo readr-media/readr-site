@@ -19,7 +19,7 @@
         <div class="homepage__list-aside">
           <AppTitledList :listTitle="'議題'">
             <ul class="aside-list-container">
-              <HomeProjectAside/>
+              <HomeProjectAside />
             </ul>
           </AppTitledList>
           <AppTitledList :listTitle="this.$route.path !== '/hot' ? '焦點' : '視角'">
@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import { PROJECT_STATUS, } from '../../api/config'
 import { isScrollBarReachBottom, isCurrentRoutePath, } from 'src/util/comm'
 import _ from 'lodash'
 import { createStore, } from '../store'
@@ -50,6 +51,13 @@ import Invite from 'src/components/invitation/Invite.vue'
 
 const debug = require('debug')('CLIENT:Home')
 
+const MAXRESULT_POSTS = 10
+const MAXRESULT_PROJECTS = 2
+// const MAXRESULT_VIDEOS = 1
+const DEFAULT_PAGE = 1
+const DEFAULT_SORT = '-updated_at'
+const DEFAULT_CATEGORY = 'latest'
+
 const fetchPost = (store, { id, }) => {
   return store.dispatch('GET_POST', {
     params: {
@@ -57,7 +65,14 @@ const fetchPost = (store, { id, }) => {
     },
   })
 }
-const fetchPosts = (store, { mode, category, max_result, page, sort, where, }) => {
+
+const fetchPosts = (store, {
+  max_result = MAXRESULT_POSTS,
+  mode = 'set',
+  category = DEFAULT_CATEGORY,
+  page = DEFAULT_PAGE,
+  sort = DEFAULT_SORT,
+} = {}) => {
   return store.dispatch('GET_PUBLIC_POSTS', {
     params: {
       mode: mode,
@@ -65,14 +80,19 @@ const fetchPosts = (store, { mode, category, max_result, page, sort, where, }) =
       max_result: max_result,
       page: page,
       sort: sort,
-      where: where,
     },
   })
 }
-const fetchProjectsList = (store, { max_result, }) => {
-  return store.dispatch('GET_PROJECTS_LIST', {
+const fetchProjectsList = (store, {
+  max_result = MAXRESULT_PROJECTS,
+  status,
+} = {}) => {
+  return store.dispatch('GET_PUBLIC_PROJECTS', {
     params: {
       max_result: max_result,
+      where: {
+        status: status,
+      },
     },
   })
 }
@@ -88,21 +108,10 @@ export default {
   asyncData ({ store, route, }) {
     debug('Starting to fetch data by asyncData.')
     let reqs = [ 
-      fetchPosts(store, { 
-        mode: 'set', 
-        category: 'latest', 
-        max_result: 20, 
-        page: 1, 
-        sort: '-updated_at', 
-      }), 
-      fetchPosts(store, { 
-        mode: 'set', 
-        category: 'hot', 
-        sort: '-updated_at', 
-      }), 
-      fetchProjectsList(store, { 
-        max_result: 1, 
-      }), 
+      fetchPosts(store),
+      fetchPosts(store, { category: 'hot', }),
+      fetchProjectsList(store, { max_result: 5, status: PROJECT_STATUS.WIP, }),
+      // fetchProjectsList(store, { max_result: 2, status: PROJECT_STATUS.DONE, }),
     ] 
     if (route.params.postId) {
       reqs.push(fetchPost(store, { id: route.params.postId, })) 
