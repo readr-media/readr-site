@@ -36,7 +36,11 @@ router.post('/', (req, res) => {
             nickname: req.body.nickname,
           }).then(() => {
             const cookies = new Cookies( req, res, {} )
-            cookies.set('setup', '', { httpOnly: false, expires: new Date(Date.now() - 1000), })  
+            cookies.set('setup', '', {
+              httpOnly: false,
+              domain: config.DOMAIN,
+              expires: new Date(Date.now() - 1000),
+            })  
             res.status(200).end()
           })
         } else {

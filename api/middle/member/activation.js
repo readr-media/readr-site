@@ -70,7 +70,11 @@ const activate = (req, res) => {
             type: 'init',
           })
           const cookies = new Cookies( req, res, {} )
-          cookies.set('setup', tokenForActivation, { httpOnly: false, expires: new Date(Date.now() + 24 * 60 * 60 * 1000), })      
+          cookies.set('setup', tokenForActivation, {
+            httpOnly: false,
+            domain: config.DOMAIN,
+            expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+          })
           res.redirect(302, '/setup/init')
         }
       } else {
