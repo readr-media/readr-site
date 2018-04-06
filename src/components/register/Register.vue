@@ -39,7 +39,7 @@
   import TextItem from 'src/components/form/TextItem.vue'
   import Spinner from 'src/components/Spinner.vue'
   import validator from 'validator'
-  import config from 'api/config'
+  import { GOOGLE_RECAPTCHA_SITE_KEY, } from 'api/config'
   import { get, } from 'lodash'
 
   const debug = require('debug')('CLIENT:Register')
@@ -170,7 +170,7 @@
     mounted () {
       if (window.grecaptcha) {
         this.recaptcha = window.grecaptcha.render('g-recaptcha', {
-          'sitekey': config.GOOGLE_RECAPTCHA_SITE_KEY,
+          'sitekey': this.$store.state.GOOGLE_RECAPTCHA_SITE_KEY || GOOGLE_RECAPTCHA_SITE_KEY,
           'callback': (res) => {
             this.recaptchaToken = res
           },

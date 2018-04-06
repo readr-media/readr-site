@@ -40,14 +40,14 @@ export default {
     updatedAtYYYYMMDD,
     getImageUrl,
     renderComment (ref) {
-      renderComment(this.$el, `${ref}`, `/post/${this.post.id}`)
+      renderComment(this.$el, `${ref}`, `/post/${this.post.id}`, this.$store.state.setting.TALK_SERVER)
     },
     profileImage (post) {
       return this.getImageUrl(post.author.profileImage) || '/public/icons/exclamation.png'
     },
   },
   updated () {
-    if (this.post.id) this.renderComment(`.baselightbox-post__comment > .comment.comment-${this.post.id}`)
+    if (this.post.id) this.renderComment(`.baselightbox-post__comment > .comment.comment-${this.post.id}`, this.$store.state.setting.TALK_SERVER)
   },
 }
 </script>

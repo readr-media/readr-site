@@ -60,7 +60,7 @@
         document.querySelector(`.videosList__item-comment.video-${id}`).classList.toggle('hidden')
         const rendered = document.querySelector(`.videosList__item-comment.video-${id} iframe`)
         if (!rendered && window.Coral) {
-          renderComment(this.$el, `.videosList__item-comment.video-${id} > .comment`, `/post/${id}`)
+          renderComment(this.$el, `.videosList__item-comment.video-${id} > .comment`, `/post/${id}`, this.$store.state.setting.TALK_SERVER)
         }
       },
       get,

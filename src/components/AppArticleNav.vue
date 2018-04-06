@@ -67,7 +67,7 @@ export default {
   },
   methods: {
     renderComment (ref) {
-      renderComment(this.$el, `${ref}`, `/post/${this.postId}`)
+      renderComment(this.$el, `${ref}`, `/post/${this.postId}`, this.$store.state.setting.TALK_SERVER)
     },
     toogleFollow () {
       if (!this.$store.state.isLoggedIn) {

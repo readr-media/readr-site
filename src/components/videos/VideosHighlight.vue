@@ -44,13 +44,13 @@
     watch: {
       video () {
         if (window.Coral) {
-          renderComment(this.$el, `.comment`, `/post/${get(this.video, [ 'id', ])}`)
+          renderComment(this.$el, `.comment`, `/post/${get(this.video, [ 'id', ])}`, this.$store.state.setting.TALK_SERVER)
         }
       },
     },
     mounted () {
       if (window.Coral) {
-        renderComment(this.$el, `.comment`, `/post/${get(this.video, [ 'id', ])}`)
+        renderComment(this.$el, `.comment`, `/post/${get(this.video, [ 'id', ])}`, this.$store.state.setting.TALK_SERVER)
       }
     },
     methods: {
