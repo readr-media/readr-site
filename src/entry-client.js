@@ -29,11 +29,11 @@ Vue.mixin({
     debug('router link enter somewhere.', to, from)
     debug('permission', permission)
     debug('cookie', cookie)
-    debug(get(store, 'state.profile.role'))
-    debug(get(store, 'state.isLoggedIn'))
     Promise.all([
       ...preRouteInit,
     ]).then(() => {
+      debug(get(store, 'state.profile.role'))
+      debug(get(store, 'state.isLoggedIn'))
       if (permission) {
         next(vm => { 
           if (cookie) {
@@ -52,6 +52,7 @@ Vue.mixin({
         }) 
       } else {
         /** Route "to" doesn't have any permission setting. So, go to route "to" without problem. */
+        debug(`Route "to" doesn't have any permission setting. So, go to route "to" without problem.`)
         next()
       }
     })

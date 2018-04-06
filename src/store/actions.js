@@ -1,6 +1,6 @@
 /*eslint no-unused-vars: 0*/
 import _ from 'lodash'
-import { POST_ACTIVE, POST_TYPE, } from '../../api/config'
+import { POST_ACTIVE, POST_TYPE, PROJECT_STATUS, } from '../../api/config'
 import { ROLE_MAP, } from '../../src/constants'
 import {
   addMember,
@@ -246,6 +246,35 @@ export default {
         resolve({ status: 'error', res: res,})
       })
     }) 
+  },
+  GET_PUBLIC_PROJECTS: ({ commit, dispatch, state, }, { params, }) => {
+    const projectStatus = _.get(params, [ 'where', 'status', ])
+    return getPublicProjectsList({ params, })
+      .then(({ status, body, }) => {
+        if (status === 200) {
+          let orig
+          switch (projectStatus) {
+            case PROJECT_STATUS.WIP:
+              if (params.page > 1) {
+                orig = _.values(_.get(state, [ 'publicProjects', 'inProgress', ], []))
+                body.items =  _.concat(orig, body.items)
+              }
+              return commit('SET_PUBLIC_PROJECTS', { status: 'inProgress', publicProjects: body.items, })
+            case PROJECT_STATUS.DONE:
+              if (params.page > 1) {
+                orig = _.values(_.get(state, [ 'publicProjects', 'done', ], []))
+                body.items =  _.concat(orig, body.items)
+              }
+              return commit('SET_PUBLIC_PROJECTS', { status: 'done', publicProjects: body.items, })
+            default:
+              if (params.page > 1) {
+                orig = _.values(_.get(state, [ 'publicProjects', 'normal', ], []))
+                body.items =  _.concat(orig, body.items)
+              }
+              return commit('SET_PUBLIC_PROJECTS', { status: 'normal', publicProjects: body.items, })
+          }
+        }
+      })
   },
   GET_PUBLIC_VIDEOS: ({ commit, dispatch, state, }, { params, }) => {
     const orig = _.values(_.get(state, [ 'publicVideos', ]))

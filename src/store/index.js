@@ -32,6 +32,7 @@ export function createStore () {
       'publicPostSingle': [],
       'publicMember': {},
       'publicMembers': {},
+      'publicProjects': {},
       'publicVideos': {},
       'publicVideosCount': 0,
       'rewardPointsTransactions': [],
