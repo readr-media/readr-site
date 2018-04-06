@@ -3,11 +3,11 @@
     <div class="home-article-aside__author">
       <div class="author-info">
         <router-link class="author-info__thumbnail" :to="get(articleData, 'author.id') ? `/profile/${get(articleData, 'author.id')}` : '#'">
-          <img :src="articleData.author_profileImage || getImageUrl(get(articleData, 'author.profileImage') || '/public/icons/exclamation.png')" alt="">
+          <img :src="get(articleData, 'author_profileImage') || getImageUrl(get(articleData, 'author.profileImage') || '/public/icons/exclamation.png')" alt="">
         </router-link>
         <div class="author-info__meta-container">
           <router-link class="author-info__nickname" :to="`/profile/${get(articleData, 'author')}`">
-            <p class="author-info__nickname" v-text="articleData.author_nickname || articleData.author.nickname"></p>
+            <p class="author-info__nickname" v-text="get(articleData, 'author_nickname') || get(articleData, 'author.nickname')"></p>
           </router-link>
           <p class="author-info__date" v-text="updatedAtYYYYMMDD(articleData.updatedAt)"></p>
         </div>

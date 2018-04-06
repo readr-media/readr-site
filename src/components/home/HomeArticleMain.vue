@@ -11,7 +11,7 @@
         <figcaption class="author-info__meta">
           <p class="author-info__date" v-text="dateDiffFromNow"></p>
           <router-link class="author-info__nickname" :to="`/profile/${get(articleData, 'author.id')}`">
-            <p class="author-info__nickname" v-text="articleData.author.nickname"></p>
+            <p class="author-info__nickname" v-text="get(articleData, 'author.nickname')"></p>
           </router-link>
         </figcaption>
       </figure>

@@ -4,7 +4,7 @@
       <img class="baselightbox-post__author-thumbnail" :src="!isPostEmpty ? profileImage(post) : ''">
       <section class="article-content">
         <h2 class="article-content__date" v-text="!isPostEmpty ? updatedAtYYYYMMDD(post.updatedAt) : ''"></h2>
-        <h2 class="article-content__author-nickname" v-text="!isPostEmpty ? post.author.nickname : ''"></h2>
+        <h2 class="article-content__author-nickname" v-text="!isPostEmpty ? get(post, 'author.nickname') : ''"></h2>
         <h1 class="article-content__title" v-text="!isPostEmpty ? post.title : ''"></h1>
         <div class="article-content__paragraph-container" v-html="!isPostEmpty ? post.content : ''"></div>
       </section>
@@ -37,14 +37,15 @@ export default {
     },
   },
   methods: {
-    updatedAtYYYYMMDD,
+    get,
     getImageUrl,
-    renderComment (ref) {
-      renderComment(this.$el, `${ref}`, `/post/${this.post.id}`, this.$store.state.setting.TALK_SERVER)
-    },
     profileImage (post) {
       return this.getImageUrl(get(post, 'author.profileImage')) || '/public/icons/exclamation.png'
     },
+    renderComment (ref) {
+      renderComment(this.$el, `${ref}`, `/post/${this.post.id}`, this.$store.state.setting.TALK_SERVER)
+    },
+    updatedAtYYYYMMDD,
   },
   updated () {
     if (this.post.id) this.renderComment(`.baselightbox-post__comment > .comment.comment-${this.post.id}`, this.$store.state.setting.TALK_SERVER)
