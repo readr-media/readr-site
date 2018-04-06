@@ -48,6 +48,8 @@ import BaseLightBox from 'src/components/BaseLightBox.vue'
 import BaseLightBoxPost from 'src/components/BaseLightBoxPost.vue'
 import Invite from 'src/components/invitation/Invite.vue'
 
+const debug = require('debug')('CLIENT:Home')
+
 const fetchPost = (store, { id, }) => {
   return store.dispatch('GET_POST', {
     params: {
@@ -84,11 +86,28 @@ const fetchFollowing = (store, params) => {
 
 export default {
   asyncData ({ store, route, }) {
+    debug('Starting to fetch data by asyncData.')
+    let reqs = [ 
+      fetchPosts(store, { 
+        mode: 'set', 
+        category: 'latest', 
+        max_result: 20, 
+        page: 1, 
+        sort: '-updated_at', 
+      }), 
+      fetchPosts(store, { 
+        mode: 'set', 
+        category: 'hot', 
+        sort: '-updated_at', 
+      }), 
+      fetchProjectsList(store, { 
+        max_result: 1, 
+      }), 
+    ] 
     if (route.params.postId) {
-      return fetchPost(store, { id: route.params.postId, })
-    } else {
-      return new Promise((resolve) => { resolve() })
+      reqs.push(fetchPost(store, { id: route.params.postId, })) 
     }
+    return Promise.all(reqs)
   },
   metaInfo () {
     if (this.$route.params.postId) {
@@ -213,44 +232,26 @@ export default {
     }
   },
   beforeMount () {
-    Promise.all([
-      fetchPosts(this.$store, {
-        mode: 'set',
-        category: 'latest',
-        max_result: 20,
-        page: 1,
-        sort: '-updated_at',
-      }),
-      fetchPosts(this.$store, {
-        mode: 'set',
-        category: 'hot',
-        sort: '-updated_at',
-      }),
-      fetchProjectsList(this.$store, {
-        max_result: 1,
-      }),
-    ]).then(() => {
-      if (this.$store.state.isLoggedIn) {
-        const postIdsLatest = _.get(this.$store.state.publicPosts, 'items', []).map(post => `${post.id}`)
-        const postIdsHot = _.get(this.$store.state.publicPostsHot, 'items', []).map(post => `${post.id}`)
-        const postIdFeaturedProject = _.get(this.$store.state.projectsList, 'items', []).map(project => `${project.id}`)
-        const ids = _.uniq(_.concat(postIdsLatest, postIdsHot))
-  
-        if (ids.length !== 0) {
-          fetchFollowing(this.$store, {
-            resource: 'post',
-            ids: ids,
-          })
-        }
-  
-        if (postIdFeaturedProject.length !== 0) {
-          fetchFollowing(this.$store, {
-            resource: 'project',
-            ids: postIdFeaturedProject,
-          })
-        }
+    if (this.$store.state.isLoggedIn) { 
+      const postIdsLatest = _.get(this.$store.state.publicPosts, 'items', []).map(post => `${post.id}`) 
+      const postIdsHot = _.get(this.$store.state.publicPostsHot, 'items', []).map(post => `${post.id}`) 
+      const postIdFeaturedProject = _.get(this.$store.state.projectsList, 'items', []).map(project => `${project.id}`) 
+      const ids = _.uniq(_.concat(postIdsLatest, postIdsHot)) 
+ 
+      if (ids.length !== 0) { 
+        fetchFollowing(this.$store, { 
+          resource: 'post', 
+          ids: ids, 
+        }) 
+      } 
+ 
+      if (postIdFeaturedProject.length !== 0) { 
+        fetchFollowing(this.$store, { 
+          resource: 'project', 
+          ids: postIdFeaturedProject, 
+        })
       }
-    })
+    }
   },
   mounted () {
     window.addEventListener('scroll', () => {
