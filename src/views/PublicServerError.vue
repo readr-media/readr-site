@@ -1,5 +1,5 @@
 <template>
-  <div class="server-error">
+  <div class="error-container">
     <div v-text="error"></div>
   </div>
 </template>
@@ -17,7 +17,7 @@
   }
 </script>
 <style lang="stylus" scoped>
-  .server-error
+  .error-container
     height 100vh
     width 100vw
     background-image url('/public/500.jpg')
