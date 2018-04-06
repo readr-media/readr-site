@@ -63,7 +63,8 @@
       },
       logout () {
         logout(this.$store).then(() => {
-          return removeToken().then(() => {
+          const domain = get(this.$store, 'state.setting.DOMAIN')
+          return removeToken(domain).then(() => {
             /**
               * use location.replace instead of router.push to server-side render page
               */
