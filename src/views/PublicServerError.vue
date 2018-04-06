@@ -1,9 +1,17 @@
 <template>
-  <div class="server-error"></div>
+  <div class="server-error">
+    <div v-text="error"></div>
+  </div>
 </template>
 <script>
+  import { get, } from 'lodash'
   export default {
     name: 'ServerError',
+    data () {
+      return {
+        error: get(this.$store, 'state.error'),
+      }
+    },
     methods: {},
     mounted () {},
   }
@@ -16,4 +24,6 @@
     background-position center center
     background-size cover
     background-repeat no-repeat
+    > div
+      display none
 </style>

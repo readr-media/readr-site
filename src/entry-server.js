@@ -16,7 +16,7 @@ export default context => {
     const s = isDev && Date.now()
     const { app, i18n, router, store, } = createApp()
 
-    const { url, cookie, initmember, setting, } = context
+    const { url, cookie, initmember, setting, error, } = context
     const { route, } = router.resolve(url)
     const { fullPath, } = route
 
@@ -52,7 +52,8 @@ export default context => {
         router.push(url)
         targUrl = url
       }
-      store.state.setting = setting
+      setting && (store.state.setting = setting)
+      error && (store.state.error = error)
 
       // wait until router has resolved possible async hooks
       router.onReady(() => {
