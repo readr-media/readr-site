@@ -40,7 +40,7 @@
     name: 'PostContent',
     computed: {
       commentCount () {
-        return get(find(get(this.$store, 'state.commentCount'), { postId: this.post.id, }), 'count', 0)
+        return get(find(get(this.$store, 'state.commentCount'), { postId: this.post.id, }), 'count') || 0
       },
       firstParagraph () {
         const limit = 150
