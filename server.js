@@ -229,7 +229,7 @@ function render (req, res, next) {
       isErrorOccurred = true
     }
 
-    renderer.renderToString(Object.assign({}, context, { url: `/${status}` }), (e, h) => {
+    renderer.renderToString(Object.assign({}, context, { url: `/${status}`, error: err }), (e, h) => {
       if (!e) {
         res.status(status).send(h)
         if (!isProd) {
