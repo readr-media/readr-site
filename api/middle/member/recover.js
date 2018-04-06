@@ -85,7 +85,11 @@ router.post('/set', authVerify, (req, res) => {
     if (!err && response) {
       debug('reset pwd successfully.')
       const cookies = new Cookies( req, res, {} )
-      cookies.set('setup', '', { httpOnly: false, expires: new Date(Date.now() - 1000), })  
+      cookies.set('setup', '', {
+        httpOnly: false,
+        domain: config.DOMAIN,
+        expires: new Date(Date.now() - 1000),
+      })
       /**
        * Revoke the token
        */
@@ -112,7 +116,11 @@ router.get('*', [ verifyToken, setupClientCache, ], (req, res) => {
     type: 'reset',
   })
   const cookies = new Cookies( req, res, {} )
-  cookies.set('setup', token, { httpOnly: false, expires: new Date(Date.now() + 24 * 60 * 60 * 1000), })      
+  cookies.set('setup', token, {
+    httpOnly: false,
+    domain: config.DOMAIN,
+    expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+  })
   res.redirect(302, '/setup/reset')
   /**
    * Revoke the token
