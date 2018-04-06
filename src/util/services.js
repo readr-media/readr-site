@@ -55,10 +55,17 @@ ReadrPerm.install = (Vue) => {
   Vue.prototype.$can = (comp) => readrPerm.permVerify(comp)
 }
 export default ReadrPerm
-export function removeToken () {
+export function removeToken (domain) {
   return new Promise((resolve) => {
-    window && Cookie.delete('csrf')
-    window && (window.localStorage.removeItem('csrf'))
+    debug('domain', domain)
+    if (window) {
+      if (domain) {
+        Cookie.delete('csrf', { domain, })
+      } else {
+        Cookie.delete('csrf')
+      }
+    }
+    // window && (window.localStorage.removeItem('csrf'))
     resolve()
   })
 }
