@@ -9,7 +9,7 @@
     name: 'ServerError',
     data () {
       return {
-        error: get(this.$store, 'state.error'),
+        error: JSON.stringify(get(this.$store, 'state.error') || {}),
       }
     },
     methods: {},
