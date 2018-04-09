@@ -9,7 +9,7 @@
       </aside>
       <main class="homepage__main">
         <div class="homepage__list-main">
-          <div class="invitation">
+          <div class="invitation" v-if="isClientSide && currEnv === 'dev'">
             <Invite></Invite>
           </div>
           <transition-group name="fade" mode="out-in">
@@ -37,7 +37,7 @@
 
 <script>
 import { PROJECT_STATUS, } from '../../api/config'
-import { isScrollBarReachBottom, isCurrentRoutePath, } from 'src/util/comm'
+import { currEnv, isScrollBarReachBottom, isCurrentRoutePath, } from 'src/util/comm'
 import _ from 'lodash'
 import { createStore, } from '../store'
 import AppAsideNav from 'src/components/AppAsideNav.vue'
@@ -167,6 +167,10 @@ export default {
     } 
   },
   computed: {
+    currEnv,
+    isClientSide () {
+      return _.get(this.$store, 'state.isClientSide', false)
+    },
     postsLatest () {
       return _.get(this.$store.state.publicPosts, 'items', [])
     },
