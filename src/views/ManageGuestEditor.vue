@@ -311,10 +311,11 @@
       $_guestEditor_showAlert (ids, itemsActive) {
         this.itemsSelected = []
 
+        const unionPosts = _.unionBy(this.posts, this.postsDraft, 'id')
         this.postActiveChanged = true
         this.isPublishPostInEditor = false
         this.itemsActive = itemsActive
-        this.itemsSelected = _.filter(this.posts, (o) => {
+        this.itemsSelected = _.filter(unionPosts, (o) => {
           return _.includes(ids, o.id)
         })
 
