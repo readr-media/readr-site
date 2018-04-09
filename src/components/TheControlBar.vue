@@ -156,7 +156,7 @@
 <style lang="stylus" scoped>
 .controlBar
   display flex
-  margin-bottom 30px
+  margin-top 35px
 
   button
     outline none

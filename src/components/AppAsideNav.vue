@@ -1,6 +1,6 @@
 <template>
   <nav class="app-aside-nav">
-    <router-link to="/"><img class="app-aside-nav__logo" src="/public/icons/readr-logo-dark.svg" alt=""></router-link>
+    <router-link to="/"><img class="app-aside-nav__logo" :src="[ isBackstage ? '/public/icons/readr-logo-backstage.svg' : '/public/icons/readr-logo-dark.svg' ]" alt=""></router-link>
     <ol class="aside-navigation">
       <div class="aside-navigation__section--white">
         <transition name="fade" mode="out-in">
@@ -49,20 +49,24 @@ import { get, } from 'lodash'
 import InviteSwitcher from 'src/components/invitation/InviteSwitcher.vue'
 
 export default {
+  name: 'AppAsideNav',
   components: {
     InviteSwitcher,
-  },
-  computed: {
-    currEnv,
-    isClientSide () {
-      return get(this.$store, 'state.isClientSide', false)
-    },
   },
   data () {
     return {
       wording: SECTIONS_DEFAULT,
       isHoverFirstListItem: false,
     }
+  },
+  computed: {
+    currEnv,
+    isBackstage () {
+      return [ 'admin', 'editor', 'guesteditor', 'member', ].includes(this.$route.fullPath.split('/')[1])
+    },
+    isClientSide () {
+      return get(this.$store, 'state.isClientSide', false)
+    },
   },
   methods: {
     isCurrentRoutePath,

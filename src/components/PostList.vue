@@ -1,5 +1,5 @@
 <template>
-  <div class="postList-container">
+  <div>
     <PaginationNav :totalPages="totalPages" @pageChanged="$_postList_pageChanged"></PaginationNav>
     <table class="postList">
       <thead>

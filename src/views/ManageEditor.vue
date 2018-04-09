@@ -1,87 +1,77 @@
 <template>
-  <div class="editor">
-    <div class="editor__container">
-      <aside class="editor__aside">
-        <AppAsideNav/>
-      </aside>
-      <main class="main-container">
-        <app-about :profile="profile"></app-about>
-        <control-bar
-          @addNews="$_editor_showEditor({ postPanel: 'add', postType: config.type.NEWS })"
-          @addReview="$_editor_showEditor({ postPanel: 'add', postType: config.type.REVIEW })"
-          @addVideo="$_editor_showEditor({ postPanel: 'add', postType: config.type.VIDEO })"
-          @editNews="$_editor_showDraftList(config.type.NEWS)"
-          @editReview="$_editor_showDraftList(config.type.REVIEW)"
-          @openPanel="$_editor_openPanel">
-        </control-bar>
-        <template v-if="activePanel === 'records'">
-          <section class="editor__record">
-            <app-tab :tabs="tabs" @changeTab="$_editor_tabHandler">
-              <post-list-tab
-                slot="0"
-                :posts="posts"
-                @deletePost="$_editor_showAlert"
-                @editPost="$_editor_showEditor"
-                @filterChanged="$_editor_filterHandler">
-              </post-list-tab>
-              <post-list-tab
-                slot="1"
-                :posts="posts"
-                @deletePost="$_editor_showAlert"
-                @editPost="$_editor_showEditor"
-                @filterChanged="$_editor_filterHandler">
-              </post-list-tab>
-              <following-list-tab
-                slot="2"
-                :currentResource="followingResource"
-                :followingByUser="followingByUser"
-                @changeResource="$_editor_updateFollowingList"
-                @unfollow="$_editor_unfollow">
-              </following-list-tab>
-            </app-tab>
-          </section>
-        </template>
-        <template v-else-if="activePanel === 'posts'">
-          <section class="main-panel">
-            <post-list
-              :maxResult="20"
-              :posts="posts"
-              :sort="sort"
-              @deletePosts="$_editor_showAlert"
-              @editPost="$_editor_showEditor"
-              @filterChanged="$_editor_filterHandler"
-              @publishPosts="$_editor_showAlert">
-            </post-list>
-          </section>
-        </template>
-        <template v-else-if="activePanel === 'tags'">
-          <section class="main-panel">
-            <tag-list
-              :maxResult="20"
-              :sort="sort"
-              :tags="tags"
-              @addTag="$_editor_addTag"
-              @deleteTags="$_editor_showAlert"
-              @filterChanged="$_editor_filterHandler"
-              @updateTagList="$_editor_updateTagList({})">
-            </tag-list>
-          </section>
-        </template>
-        <template v-else-if="activePanel === 'videos'">
-          <section class="main-panel">
-            <video-list
-              :maxResult="20"
-              :posts="posts"
-              :sort="sort"
-              @deletePosts="$_editor_showAlert"
-              @editPost="$_editor_showEditor"
-              @filterChanged="$_editor_filterHandler"
-              @publishPosts="$_editor_showAlert">
-            </video-list>
-          </section>
-        </template>
-      </main>
-    </div>
+  <div class="backstage editor">
+    <AppAsideNav class="backstage__aside" />
+    <main class="backstage-container">
+      <app-about :profile="profile"></app-about>
+      <control-bar
+        @addNews="$_editor_showEditor({ postPanel: 'add', postType: config.type.NEWS })"
+        @addReview="$_editor_showEditor({ postPanel: 'add', postType: config.type.REVIEW })"
+        @addVideo="$_editor_showEditor({ postPanel: 'add', postType: config.type.VIDEO })"
+        @editNews="$_editor_showDraftList(config.type.NEWS)"
+        @editReview="$_editor_showDraftList(config.type.REVIEW)"
+        @openPanel="$_editor_openPanel">
+      </control-bar>
+      <template v-if="activePanel === 'records'">
+        <app-tab class="backstage__tab" :tabs="tabs" @changeTab="$_editor_tabHandler">
+          <post-list-tab
+            slot="0"
+            :posts="posts"
+            @deletePost="$_editor_showAlert"
+            @editPost="$_editor_showEditor"
+            @filterChanged="$_editor_filterHandler">
+          </post-list-tab>
+          <post-list-tab
+            slot="1"
+            :posts="posts"
+            @deletePost="$_editor_showAlert"
+            @editPost="$_editor_showEditor"
+            @filterChanged="$_editor_filterHandler">
+          </post-list-tab>
+          <following-list-tab
+            slot="2"
+            :currentResource="followingResource"
+            :followingByUser="followingByUser"
+            @changeResource="$_editor_updateFollowingList"
+            @unfollow="$_editor_unfollow">
+          </following-list-tab>
+        </app-tab>
+      </template>
+      <template v-else-if="activePanel === 'posts'">
+        <post-list
+          class="backstage__panel"
+          :maxResult="20"
+          :posts="posts"
+          :sort="sort"
+          @deletePosts="$_editor_showAlert"
+          @editPost="$_editor_showEditor"
+          @filterChanged="$_editor_filterHandler"
+          @publishPosts="$_editor_showAlert">
+        </post-list>
+      </template>
+      <template v-else-if="activePanel === 'tags'">
+        <tag-list
+          class="backstage__panel"
+          :maxResult="20"
+          :sort="sort"
+          :tags="tags"
+          @addTag="$_editor_addTag"
+          @deleteTags="$_editor_showAlert"
+          @filterChanged="$_editor_filterHandler"
+          @updateTagList="$_editor_updateTagList({})">
+        </tag-list>
+      </template>
+      <!-- <template v-else-if="activePanel === 'videos'">
+        <video-list
+          :maxResult="20"
+          :posts="posts"
+          :sort="sort"
+          @deletePosts="$_editor_showAlert"
+          @editPost="$_editor_showEditor"
+          @filterChanged="$_editor_filterHandler"
+          @publishPosts="$_editor_showAlert">
+        </video-list>
+      </template> -->
+    </main>
     <base-light-box :showLightBox.sync="showDraftList">
       <post-list-detailed
         :posts="postsDraft"

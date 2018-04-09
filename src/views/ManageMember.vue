@@ -1,8 +1,6 @@
 <template>
   <div class="backstage member">
-    <aside class="backstage__aside">
-      <aside-nav></aside-nav>
-    </aside>
+    <aside-nav class="backstage__aside"></aside-nav>
     <main class="backstage-container">
       <app-about :profile="profile"></app-about>
       <app-tab class="backstage__tab" :tabs="tabs">

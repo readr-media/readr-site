@@ -172,6 +172,7 @@
 .tagList
   table
     width 100%
+    margin-top 20px
     text-align left
     border-collapse collapse
     thead
