@@ -36,7 +36,7 @@
         <a class="list-item aside-navigation__list-item" href="https://www.mirrormedia.mg/" target="_blank"><span><img src="/public/icons/mirrormedia.png" alt="info"></span></a>
       </div>
       <div class="aside-navigation__section--white">
-        <InviteSwitcher class="list-item aside-navigation__list-item"><span slot="icon"><img src="/public/icons/invite.png" alt="info"></span></InviteSwitcher>
+        <InviteSwitcher class="list-item aside-navigation__list-item" v-if="isClientSide && currEnv === 'dev'"><span slot="icon"><img src="/public/icons/invite.png" alt="info"></span></InviteSwitcher>
       </div>
     </ol>
   </nav>
@@ -44,12 +44,19 @@
 
 <script>
 import { SECTIONS_DEFAULT, } from 'src/constants'
-import { isCurrentRoutePath, } from 'src/util/comm'
+import { currEnv, isCurrentRoutePath, } from 'src/util/comm'
+import { get, } from 'lodash'
 import InviteSwitcher from 'src/components/invitation/InviteSwitcher.vue'
 
 export default {
   components: {
     InviteSwitcher,
+  },
+  computed: {
+    currEnv,
+    isClientSide () {
+      return get(this.$store, 'state.isClientSide', false)
+    },
   },
   data () {
     return {
