@@ -10,7 +10,7 @@ const constructScope = (perms, role) => (
   map(filter(config.SCOPES, (comp) => (
     get(comp, [ 'perm', 'length', ], 0) === filter(comp.perm, (perm) => (
       find(perms, (p) => (
-        perm === p.object && p.role === role
+        (typeof(p) === 'object' && perm === p.object && p.role === role) || (typeof(p) === 'string' && perm === p)
       ))
     )).length && (comp.role 
       && typeof(comp.role) === 'object' 
