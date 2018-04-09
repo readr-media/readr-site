@@ -3,11 +3,11 @@
     <div class="home-article-aside__author">
       <div class="author-info">
         <router-link class="author-info__thumbnail" :to="get(articleData, 'author.id') ? `/profile/${get(articleData, 'author.id')}` : '#'">
-          <img :src="get(articleData, 'author_profileImage') || getImageUrl(get(articleData, 'author.profileImage') || '/public/icons/exclamation.png')" alt="">
+          <img :src="authorThumbnailImg" alt="" v-if="isClientSide">
         </router-link>
         <div class="author-info__meta-container">
           <router-link class="author-info__nickname" :to="`/profile/${get(articleData, 'author')}`">
-            <p class="author-info__nickname" v-text="get(articleData, 'author_nickname') || get(articleData, 'author.nickname')"></p>
+            <p class="author-info__nickname" v-text="authorNickname"></p>
           </router-link>
           <p class="author-info__date" v-text="updatedAtYYYYMMDD(articleData.updatedAt)"></p>
         </div>
@@ -29,7 +29,7 @@
 
 <script>
 import { find, get, map, } from 'lodash'
-import { updatedAtYYYYMMDD, getImageUrl, } from 'src/util/comm'
+import { updatedAtYYYYMMDD, isClientSide, getArticleAuthorNickname, getArticleAuthorThumbnailImg, } from 'src/util/comm'
 import sanitizeHtml from 'sanitize-html'
 import AppArticleNav from 'src/components/AppArticleNav.vue'
 
@@ -61,11 +61,17 @@ export default {
       if (!this.postContent) return ''
       return !this.isReadMore ? this.postContent[0].slice(0, limit) : this.postContent[0]
     },
+    isClientSide,
+    authorNickname () {
+      return getArticleAuthorNickname(this.articleData)
+    },
+    authorThumbnailImg () {
+      return getArticleAuthorThumbnailImg(this.articleData)
+    },
   },
   methods: {
     get,
     updatedAtYYYYMMDD,
-    getImageUrl,
   },
   props: {
     articleData: {
