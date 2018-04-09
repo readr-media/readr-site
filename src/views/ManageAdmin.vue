@@ -1,136 +1,123 @@
 <template>
-  <div class="admin">
-    <div class="admin__container">
-      <aside class="admin__aside">
-        <AppAsideNav/>
-      </aside>
-      <main class="admin__main">
-        <!-- <app-header :sections="sections"></app-header> -->
-        <About :profile="profile"></About>
-        <template v-if="showMain">
-          <div class="control-bar">
-            <TheControlBar
-              @addAccount="addMember"
-              @addNews="showEditorHandler({ postPanel: 'add', postType: config.type.NEWS })"
-              @addReview="showEditorHandler({ postPanel: 'add', postType: config.type.REVIEW })"
-              @addVideo="showEditorHandler({ postPanel: 'add', postType: config.type.VIDEO })"
-              @editNews="showDraftListHandler(config.type.NEWS)"
-              @editReview="showDraftListHandler(config.type.REVIEW)"
-              @openPanel="openPanel">
-            </TheControlBar>
-          </div>
-          <template v-if="activePanel === 'accounts'">
-            <MembersPanel v-if="$can('memberManage')" @filterChanged="filterChanged"></MembersPanel>
-          </template>
-          <template v-else-if="activePanel === 'records'">
-            <section class="">
-              <app-tab :tabs="tabs" @changeTab="tabHandler">
-                <PostListInTab
-                  slot="0"
-                  :posts="posts"
-                  @deletePost="showAlertHandler"
-                  @editPost="showEditorHandler"
-                  @filterChanged="filterChanged">
-                </PostListInTab>
-                <PostListInTab
-                  slot="1"
-                  :posts="posts"
-                  @deletePost="showAlertHandler"
-                  @editPost="showEditorHandler"
-                  @filterChanged="filterChanged">
-                </PostListInTab>
-                <FollowingListInTab
-                  slot="2"
-                  :currentResource="followingResource"
-                  :followingByUser="followingByUser"
-                  @changeResource="updateFollowingList"
-                  @unfollow="unfollow">
-                </FollowingListInTab>
-              </app-tab>
-            </section>
-          </template>
-          <template v-else-if="activePanel === 'posts'">
-            <section class="panel">
-              <PostList
-                :maxResult="20"
-                :posts="posts"
-                :sort="currSort"
-                @deletePosts="showAlertHandler"
-                @editPost="showEditorHandler"
-                @filterChanged="filterChanged"
-                @publishPosts="showAlertHandler">
-              </PostList>
-            </section>
-          </template>
-          <template v-else-if="activePanel === 'tags'">
-            <section class="panel">
-              <TagList
-                :maxResult="20"
-                :sort="currSort"
-                :tags="tags"
-                @addTag="addTag"
-                @deleteTags="showAlertHandler"
-                @filterChanged="filterChanged"
-                @updateTagList="updateTagList({})">
-              </TagList>
-            </section>
-          </template>
-          <template v-else-if="activePanel === 'videos'">
-            <section class="panel">
-              <VideoList
-                :maxResult="20"
-                :posts="posts"
-                :sort="currSort"
-                @deletePosts="showAlertHandler"
-                @editPost="showEditorHandler"
-                @filterChanged="filterChanged"
-                @publishPosts="showAlertHandler">
-              </VideoList>
-            </section>
-          </template>
-          <BaseLightBox borderStyle="nonBorder" :showLightBox.sync="showLightBox" :isConversation="true">
-            <MemberAccountEditor
-              action="add"
-              :shouldShow="showLightBox"
-              :title="$t('admin.WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER')"
-              @updated="filterChanged">
-            </MemberAccountEditor>
-          </BaseLightBox>
-          <BaseLightBox :showLightBox.sync="showDraftList">
-            <PostListDetailed
-              :posts="postsDraft"
-              @deletePost="showAlertHandler"
-              @editPost="showEditorHandler">
-            </PostListDetailed>
-          </BaseLightBox>
-          <BaseLightBox :showLightBox.sync="showEditor">
-            <PostPanel
-              :post="post"
-              :panelType="postPanel"
-              :postType="postType"
-              @addPost="addPost"
-              @deletePost="deletePost"
-              @publishPost="publishPost"
-              @updatePost="updatePost">
-            </PostPanel>
-          </BaseLightBox>
-          <BaseLightBox :isAlert="true" :showLightBox.sync="showAlert">
-            <AlertPanel
-              :active="itemsActive"
-              :activeChanged="postActiveChanged"
-              :items="itemsSelected"
-              :needConfirm="needConfirm"
-              :showLightBox="showAlert"
-              :type="alertType"
-              @deletePosts="deletePosts"
-              @deleteTags="deleteTags"
-              @closeAlert="alertHandler(false)"
-              @publishPosts="publishPostHandler">
-            </AlertPanel>
-          </BaseLightBox>        
+  <div class="backstage admin">
+    <AppAsideNav class="backstage__aside" />
+    <main class="backstage-container">
+      <About :profile="profile"></About>
+      <template v-if="showMain">
+        <TheControlBar
+          @addAccount="addMember"
+          @addNews="showEditorHandler({ postPanel: 'add', postType: config.type.NEWS })"
+          @addReview="showEditorHandler({ postPanel: 'add', postType: config.type.REVIEW })"
+          @addVideo="showEditorHandler({ postPanel: 'add', postType: config.type.VIDEO })"
+          @editNews="showDraftListHandler(config.type.NEWS)"
+          @editReview="showDraftListHandler(config.type.REVIEW)"
+          @openPanel="openPanel">
+        </TheControlBar>
+        <template v-if="activePanel === 'accounts'">
+          <MembersPanel v-if="$can('memberManage')" @filterChanged="filterChanged"></MembersPanel>
         </template>
-      </main>
-    </div>
+        <template v-else-if="activePanel === 'records'">
+          <app-tab class="backstage__tab" :tabs="tabs" @changeTab="tabHandler">
+            <PostListInTab
+              slot="0"
+              :posts="posts"
+              @deletePost="showAlertHandler"
+              @editPost="showEditorHandler"
+              @filterChanged="filterChanged">
+            </PostListInTab>
+            <PostListInTab
+              slot="1"
+              :posts="posts"
+              @deletePost="showAlertHandler"
+              @editPost="showEditorHandler"
+              @filterChanged="filterChanged">
+            </PostListInTab>
+            <FollowingListInTab
+              slot="2"
+              :currentResource="followingResource"
+              :followingByUser="followingByUser"
+              @changeResource="updateFollowingList"
+              @unfollow="unfollow">
+            </FollowingListInTab>
+          </app-tab>
+        </template>
+        <template v-else-if="activePanel === 'posts'">
+          <PostList
+            class="backstage__panel"
+            :maxResult="20"
+            :posts="posts"
+            :sort="currSort"
+            @deletePosts="showAlertHandler"
+            @editPost="showEditorHandler"
+            @filterChanged="filterChanged"
+            @publishPosts="showAlertHandler">
+          </PostList>
+        </template>
+        <template v-else-if="activePanel === 'tags'">
+          <TagList
+            class="backstage__panel"
+            :maxResult="20"
+            :sort="currSort"
+            :tags="tags"
+            @addTag="addTag"
+            @deleteTags="showAlertHandler"
+            @filterChanged="filterChanged"
+            @updateTagList="updateTagList({})">
+          </TagList>
+        </template>
+        <!-- <template v-else-if="activePanel === 'videos'">
+          <VideoList
+            :maxResult="20"
+            :posts="posts"
+            :sort="currSort"
+            @deletePosts="showAlertHandler"
+            @editPost="showEditorHandler"
+            @filterChanged="filterChanged"
+            @publishPosts="showAlertHandler">
+          </VideoList>
+        </template> -->
+        <BaseLightBox borderStyle="nonBorder" :showLightBox.sync="showLightBox" :isConversation="true">
+          <MemberAccountEditor
+            action="add"
+            :shouldShow="showLightBox"
+            :title="$t('admin.WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER')"
+            @updated="filterChanged">
+          </MemberAccountEditor>
+        </BaseLightBox>
+        <BaseLightBox :showLightBox.sync="showDraftList">
+          <PostListDetailed
+            :posts="postsDraft"
+            @deletePost="showAlertHandler"
+            @editPost="showEditorHandler">
+          </PostListDetailed>
+        </BaseLightBox>
+        <BaseLightBox :showLightBox.sync="showEditor">
+          <PostPanel
+            :post="post"
+            :panelType="postPanel"
+            :postType="postType"
+            @addPost="addPost"
+            @deletePost="deletePost"
+            @publishPost="publishPost"
+            @updatePost="updatePost">
+          </PostPanel>
+        </BaseLightBox>
+        <BaseLightBox :isAlert="true" :showLightBox.sync="showAlert">
+          <AlertPanel
+            :active="itemsActive"
+            :activeChanged="postActiveChanged"
+            :items="itemsSelected"
+            :needConfirm="needConfirm"
+            :showLightBox="showAlert"
+            :type="alertType"
+            @deletePosts="deletePosts"
+            @deleteTags="deleteTags"
+            @closeAlert="alertHandler(false)"
+            @publishPosts="publishPostHandler">
+          </AlertPanel>
+        </BaseLightBox>        
+      </template>
+    </main>
   </div>
 </template>
 <script>
@@ -839,36 +826,36 @@
   }
 </script>
 <style lang="stylus" scoped>
-  .admin
-    background-color #e6e6e6
-    width 100%
-    min-height 100vh
-    &__container
-      max-width 1200px
-      margin auto
-      padding 25px 0
-      display flex
-    &__aside
-      width 75px
-      height 100%
-      position sticky
-      // position fixed
-      top 60px
-    &__main
-      margin-left 93.5px
-    .control-bar
-      width 100%
-      margin 0 auto
-    .panel
-      width 100%
-      padding 22px 84px 33px
-      border 5px solid #d8ca21
-      margin 0 auto
-      background-color white
-  @media (min-width 950px)
-    .admin
-      .control-bar
-        max-width 950px
-      .panel
-        max-width 950px
+  // .admin
+  //   background-color #e6e6e6
+  //   width 100%
+  //   min-height 100vh
+  //   &__container
+  //     max-width 1200px
+  //     margin auto
+  //     padding 25px 0
+  //     display flex
+  //   &__aside
+  //     width 75px
+  //     height 100%
+  //     position sticky
+  //     // position fixed
+  //     top 60px
+  //   &__main
+  //     margin-left 93.5px
+  //   .control-bar
+  //     width 100%
+  //     margin 0 auto
+  //   .panel
+  //     width 100%
+  //     padding 22px 84px 33px
+  //     border 5px solid #d8ca21
+  //     margin 0 auto
+  //     background-color white
+  // @media (min-width 950px)
+  //   .admin
+  //     .control-bar
+  //       max-width 950px
+  //     .panel
+  //       max-width 950px
 </style>

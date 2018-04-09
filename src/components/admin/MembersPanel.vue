@@ -204,7 +204,7 @@
 <style lang="stylus" scoped>
   .member-panel
     width 100%
-    margin 30px auto
+    margin 10px auto
     border solid 5px #d8ca21
     padding 23.5px 75px 45px
     background-color white

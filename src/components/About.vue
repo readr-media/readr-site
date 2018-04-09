@@ -73,7 +73,7 @@
   .about
     width 100%
     min-height 100px
-    margin 40px auto
+    margin 0 auto
     padding-left 130px
     position relative
     color #000

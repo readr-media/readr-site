@@ -1,48 +1,41 @@
 <template>
-  <div class="guestEditor">
-    <!-- <app-header :sections="sections"></app-header> -->
-    <div class="guestEditor__container">
-      <aside class="guestEditor__aside">
-        <AppAsideNav/>
-      </aside>
-      <main class="main-container">
-        <app-about :profile="profile"></app-about>
-        <control-bar
-          @addNews="$_guestEditor_showEditor({ postPanel: 'add', postType: config.type.NEWS })"
-          @addReview="$_guestEditor_showEditor({ postPanel: 'add', postType: config.type.REVIEW })"
-          @editNews="$_guestEditor_showDraftList(config.type.NEWS)"
-          @editReview="$_guestEditor_showDraftList(config.type.REVIEW)"
-          @openPanel="$_guestEditor_openPanel">
-        </control-bar>
-        <template v-if="activePanel === 'records'">
-          <section class="guestEditor__record">
-            <app-tab :tabs="tabs" @changeTab="$_guestEditor_tabHandler">
-              <post-list-tab
-                slot="0"
-                :posts="posts"
-                @deletePost="$_guestEditor_showAlert"
-                @editPost="$_guestEditor_showEditor"
-                @filterChanged="$_guestEditor_filterHandler">
-              </post-list-tab>
-              <post-list-tab
-                slot="1"
-                :posts="posts"
-                @deletePost="$_guestEditor_showAlert"
-                @editPost="$_guestEditor_showEditor"
-                @filterChanged="$_guestEditor_filterHandler">
-              </post-list-tab>
-              <following-list-tab
-                slot="2"
-                :currentResource="followingResource"
-                :followingByUser="followingByUser"
-                @changeResource="$_guestEditor_updateFollowingList"
-                @unfollow="$_guestEditor_unfollow">
-              </following-list-tab>
-            </app-tab>
-          </section>
-        </template>
-      </main>
-    </div>
+  <div class="backstage guestEditor">
+    <AppAsideNav class="backstage__aside" />
+    <main class="backstage-container">
+      <app-about :profile="profile"></app-about>
+      <control-bar
+        @addNews="$_guestEditor_showEditor({ postPanel: 'add', postType: config.type.NEWS })"
+        @addReview="$_guestEditor_showEditor({ postPanel: 'add', postType: config.type.REVIEW })"
+        @editNews="$_guestEditor_showDraftList(config.type.NEWS)"
+        @editReview="$_guestEditor_showDraftList(config.type.REVIEW)"
+        @openPanel="$_guestEditor_openPanel">
+      </control-bar>
+      <template v-if="activePanel === 'records'">
+        <app-tab class="backstage__tab" :tabs="tabs" @changeTab="$_guestEditor_tabHandler">
+          <post-list-tab
+            slot="0"
+            :posts="posts"
+            @deletePost="$_guestEditor_showAlert"
+            @editPost="$_guestEditor_showEditor"
+            @filterChanged="$_guestEditor_filterHandler">
+          </post-list-tab>
+          <post-list-tab
+            slot="1"
+            :posts="posts"
+            @deletePost="$_guestEditor_showAlert"
+            @editPost="$_guestEditor_showEditor"
+            @filterChanged="$_guestEditor_filterHandler">
+          </post-list-tab>
+          <following-list-tab
+            slot="2"
+            :currentResource="followingResource"
+            :followingByUser="followingByUser"
+            @changeResource="$_guestEditor_updateFollowingList"
+            @unfollow="$_guestEditor_unfollow">
+          </following-list-tab>
+        </app-tab>
+      </template>
+    </main>
     <base-light-box :showLightBox.sync="showDraftList">
       <post-list-detailed
         :posts="postsDraft"

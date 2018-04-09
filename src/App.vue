@@ -70,7 +70,8 @@ button
 
 .backstage
   width 100%
-  height 100vh
+  min-height 100vh
+  padding 35px 0 0 65px
   overflow hidden
   &-container
     width 950px
@@ -79,19 +80,25 @@ button
     padding 25px 0
     overflow hidden
   &__aside
-    position absolute
-    width 75px
-    height 100%
-    
-    // position fixed
-    top 60px
+    position fixed
+    top 3px
+    left 15px
+    z-index 1000
+    width 50px
+    height auto
+    .app-aside-nav__logo
+      width 50px !important
+      height auto !important
   &__controlBar
     margin-top 40px
   &__tab
-    background-color #fff
-  &__record
     margin-top 30px
     background-color #fff
+  &__panel
+    margin-top 10px
+    padding 20px 5%
+    border 5px solid #d8ca21
+    background #fff
   
 
 @media (min-width 768px)
