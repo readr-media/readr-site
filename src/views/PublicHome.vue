@@ -211,7 +211,7 @@ export default {
       fetchPosts(this.$store, {
         mode: 'update',
         category: 'latest',
-        max_result: 20,
+        max_result: 10,
         page: this.currentPageLatest + 1,
         sort: '-updated_at',
       }).then(({ status, res, }) => {
