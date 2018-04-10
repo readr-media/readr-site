@@ -37,7 +37,11 @@
                 <p v-text="t.text"></p>
                 <button @click="$_postPanel_deleteTag(t.id)">Ｘ</button>
               </div>
-              <input ref="tagsInput" v-model="tagInput" type="text" @blur="$_postPanel_closeTagList" @focus="$_postPanel_showTagList">
+              <div v-for="t in tagsNeedAdd" class="postPanel__tags-box-new">
+                <p v-text="t"></p>
+                <button @click="$_postPanel_deleteNewTag(t)">Ｘ</button>
+              </div>
+              <input ref="tagsInput" v-model="tagInput" type="text" @blur="$_postPanel_closeTagList" @focus="$_postPanel_showTagList" @keyup.enter="$_postPanel_tagHandler">
             </template>
           </div>
           <div ref="tagsList" class="postPanel__tags-list hidden">
@@ -130,6 +134,15 @@
   const MAXRESULT = 20
   const DEFAULT_PAGE = 1
 
+  const addTags = (store, text = '') => {
+    return store.dispatch('ADD_TAGS', {
+      params: {
+        text: text,
+        updated_by: _.get(store, [ 'state', 'profile', 'id', ]),
+      },
+    })
+  }
+
   const getMeta = (store, url) => {
     return store.dispatch('GET_META', { url, })
   }
@@ -186,7 +199,9 @@
         },
         dateFormat: 'yyyy/MM/d',
         metaChanged: false,
+        postParams: {},
         tagInput: '',
+        tagsNeedAdd: [],
         tagsSelected: [],
       }
     },
@@ -218,6 +233,8 @@
     },
     watch: {
       post () {
+        this.postParams = {}
+        this.tagsNeedAdd = []
         this.tagsSelected = []
         const tags = _.get(this.post, [ 'tags', ]) || []
         tags.forEach((tag) => {
@@ -263,8 +280,26 @@
         this.tagInput = ''
         this.$refs.tagsList.classList.add('hidden')
       },
+      $_postPanel_addNewTag (active) {
+        Promise.all(this.tagsNeedAdd.map((tag) => {
+          return addTags(this.$store, tag)
+        }))
+        .then((value) => {
+          const ids = _.map(value, (t) => {
+            return _.get(t, [ 'body', 'tagId', ])
+          })
+          const unionTag = _.union(this.tagsSelectedID, ids)
+          this.$_postPanel_submit(active, unionTag)
+        })
+        .catch(() => {
+          this.$_postPanel_submit(active, this.tagsSelectedID)
+        })
+      },
       $_postPanel_closeTagList () {
         this.$refs.tagsList.classList.add('hidden')
+      },
+      $_postPanel_deleteNewTag (tag) {
+        this.tagsNeedAdd = _.xor(this.tagsNeedAdd, [ tag, ])
       },
       $_postPanel_deleteOgImage () {
         this.post.ogImage = ''
@@ -288,83 +323,109 @@
       $_postPanel_showTagList () {
         this.$refs.tagsList.classList.remove('hidden')
       },
-      $_postPanel_submit (active, params) {
+      $_postPanel_submit (active, unionTag) {
         switch (this.panelType) {
           case 'add':
-            params.active = active
-            params.author = _.get(this.$store.state, [ 'profile', 'id', ])
-            params.type = this.postType
+            this.postParams.active = active
+            this.postParams.author = _.get(this.$store.state, [ 'profile', 'id', ])
+            this.postParams.type = this.postType
 
             if (this.$can('editPostOg')) {
-              params.tags = this.tagsSelectedID
+              this.postParams.tags = unionTag
             }
 
-            this.$emit('addPost', params)
+            this.$emit('addPost', this.postParams)
             break
           case 'edit': {
             let activeChanged = false
             
-            params.author = _.get(this.post, [ 'author', 'id', ])
-            params.tags = this.tagsSelectedID
+            this.postParams.author = _.get(this.post, [ 'author', 'id', ])
+            this.postParams.tags = unionTag
 
             if (active) {
-              params.active = active
+              this.postParams.active = active
               activeChanged = true
             }
 
             if (activeChanged) {
-              switch (params.active) {
+              switch (this.postParams.active) {
                 case POST_ACTIVE.ACTIVE:
-                  this.$emit('publishPost', params)
+                  this.$emit('publishPost', this.postParams)
                   break
                 default:
-                  this.$emit('updatePost', params, activeChanged)
+                  this.$emit('updatePost', this.postParams, activeChanged)
               }
             } else {
-              this.$emit('updatePost', params, activeChanged)
+              this.$emit('updatePost', this.postParams, activeChanged)
             }
           }
         }
       },
       $_postPanel_submitHandler (active) {
-        const params = _.omit(
+        this.postParams = _.omit(
           _.mapKeys(Object.assign({}, this.post), (value, key) => _.snakeCase(key)),
           [ 'author', 'comment_amount', 'created_at', 'like_amount', 'tags', 'updated_at', ]
         )
-        params.updated_by = _.get(this.$store.state, [ 'profile', 'id', ])
+        this.postParams.updated_by = _.get(this.$store.state, [ 'profile', 'id', ])
         
         if (this.$can('editPostOg')) {
-          params.og_title = _.get(this.post, [ 'ogTitle', ]) || _.get(this.post, [ 'title', ]) || ''
+          this.postParams.og_title = _.get(this.post, [ 'ogTitle', ]) || _.get(this.post, [ 'title', ]) || ''
         }
 
         if (Date.parse(_.get(this.post, [ 'date', ]))) {
-          params.published_at = _.get(this.post, [ 'date', ])
+          this.postParams.published_at = _.get(this.post, [ 'date', ])
         }
 
         if (this.metaChanged) {
           let link = _.get(this.post, [ 'link', ])
-          params.link_name = ''
-          params.link_title = ''
-          params.link_description = ''
-          params.link_image = ''
+          this.postParams.link_name = ''
+          this.postParams.link_title = ''
+          this.postParams.link_description = ''
+          this.postParams.link_image = ''
           if (validator.isURL(link, { protocols: [ 'http','https', ], }) && !this.isVideo) {
             link = encodeURI(link)
             getMeta(this.$store, link)
             .then((res) => {
-              params.link_name = _.truncate(_.get(res, [ 'body', 'ogSiteName', ]), { 'length': 50, })
-              params.link_title = _.get(res, [ 'body', 'ogTitle', ])
-              params.link_description = _.get(res, [ 'body', 'ogDescription', ])
-              params.link_image = _.get(res, [ 'body', 'ogImage', 'url', ])
-              this.$_postPanel_submit(active, params)
+              this.postParams.link_name = _.truncate(_.get(res, [ 'body', 'ogSiteName', ]), { 'length': 50, })
+              this.postParams.link_title = _.get(res, [ 'body', 'ogTitle', ])
+              this.postParams.link_description = _.get(res, [ 'body', 'ogDescription', ])
+              this.postParams.link_image = _.get(res, [ 'body', 'ogImage', 'url', ])
+              
+              if (this.tagsNeedAdd.length !== 0) {
+                this.$_postPanel_addNewTag(active)
+              } else {
+                this.$_postPanel_submit(active)
+              }
             })
             .catch((err) => {
               console.error(`get meta error ${link}`, err)
             })
           } else {
-            this.$_postPanel_submit(active, params)
+            if (this.tagsNeedAdd.length !== 0) {
+              this.$_postPanel_addNewTag(active)
+            } else {
+              this.$_postPanel_submit(active)
+            }
           }
         } else {
-          this.$_postPanel_submit(active, params)
+          if (this.tagsNeedAdd.length !== 0) {
+            this.$_postPanel_addNewTag(active)
+          } else {
+            this.$_postPanel_submit(active)
+          }
+        }
+      },
+      $_postPanel_tagHandler () {
+        if (this.tagInput) {
+          const hasTag = _.find(this.tags, { 'text': this.tagInput, })
+          if (hasTag) {
+            this.$_postPanel_addTag(hasTag.id)
+          } else {
+            this.tagsNeedAdd.push(this.tagInput)
+            this.tagsNeedAdd = _.uniq(this.tagsNeedAdd)
+            this.tagInput = ''
+            this.$refs.tagsList.classList.add('hidden')
+          }
         }
       },
       $_postPanel_updateContent (content) {
@@ -433,7 +494,7 @@
         margin-left 10px
         border none
         outline none
-      &-selected
+      &-selected, &-new
         display inline-block
         > p
           display inline-block
@@ -453,6 +514,7 @@
           border 1px solid rgba(128, 128, 128, .4)
           border-radius 50%
           outline none
+      
     &-list
       position absolute
       top 100%

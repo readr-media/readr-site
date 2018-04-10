@@ -451,7 +451,8 @@ router.route('*')
     .send(req.body)
     .end((err, response) => {
       if (!err && response) {
-        res.status(200).end()
+        const resData = JSON.parse(response.text)
+        res.status(200).json(resData).end()
       } else {
         console.error('error occurred when handling a req: ', req.url)
         console.error(err)
