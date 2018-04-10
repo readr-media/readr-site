@@ -7,7 +7,7 @@
       </span>
       <span class="follow-icon" @click="toogleFollow">
         <img class="follow-icon__thumbnail" :src="isFollow ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="follow">
-        <span class="follow-icon__hint">追蹤</span>
+        <span class="follow-icon__hint" v-text="$t('follow.WORDING_FOLLOW_LIST_FOLLOW')"></span>
       </span>
     </nav>
     <div :class="`article-nav__comment`">
