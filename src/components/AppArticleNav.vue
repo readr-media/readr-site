@@ -5,7 +5,10 @@
         <img class="comment-icon__thumbnail" src="/public/icons/comment-blue.png" alt="comment">
         <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="postId" :type="'publicPostsHot'"></CommentCount>
       </span>
-      <img class="follow-icon" :src="isFollow ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="follow" @click="toogleFollow">
+      <span class="follow-icon" @click="toogleFollow">
+        <img class="follow-icon__thumbnail" :src="isFollow ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="follow">
+        <span class="follow-icon__hint">追蹤</span>
+      </span>
     </nav>
     <div :class="`article-nav__comment`">
       <div :class="`comment comment-${postId}`"></div>
@@ -128,9 +131,16 @@ $icon-size
     font-size 14px
     color #11b8c9
 .follow-icon
-  @extends $icon-size
-  margin-left 4.5px
   cursor pointer
+  &__thumbnail
+    @extends $icon-size
+    margin-left 4.5px
+    cursor pointer
+  &__hint
+    position relative
+    // right 5px
+    font-size 12px
+    color #11b8c9
 .donate-icon
   width 20px
   height 25px
