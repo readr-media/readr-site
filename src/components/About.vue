@@ -89,7 +89,7 @@
       > img
         width 100%
         height 100%
-        object-fit contain
+        object-fit cover
         object-position center center
         // box-shadow inset 0 0 0 10px #fff
     &__name

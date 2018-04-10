@@ -354,6 +354,7 @@ $plus-sign
     @extends $portrait-container-size
     border-radius 50%
     overflow hidden
+    object-fit cover
   &__upload
     r = 38px
     position absolute

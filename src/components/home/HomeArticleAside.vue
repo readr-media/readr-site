@@ -2,11 +2,11 @@
   <article class="home-article-aside">
     <div class="home-article-aside__author">
       <div class="author-info">
-        <router-link class="author-info__thumbnail" :to="get(articleData, 'author.id') ? `/profile/${get(articleData, 'author.id')}` : '#'">
+        <router-link class="author-info__thumbnail" :to="authorPublicProfileUrl">
           <img :src="authorThumbnailImg" alt="" v-if="isClientSide">
         </router-link>
         <div class="author-info__meta-container">
-          <router-link class="author-info__nickname" :to="`/profile/${get(articleData, 'author')}`">
+          <router-link class="author-info__nickname" :to="authorPublicProfileUrl">
             <p class="author-info__nickname" v-text="authorNickname"></p>
           </router-link>
           <p class="author-info__date" v-text="updatedAtYYYYMMDD(articleData.updatedAt)"></p>
@@ -62,6 +62,12 @@ export default {
       return !this.isReadMore ? this.postContent[0].slice(0, limit) : this.postContent[0]
     },
     isClientSide,
+    authorId () {
+      return get(this.articleData, 'author')
+    },
+    authorPublicProfileUrl () {
+      return this.authorId ? `/profile/${this.authorId}` : '#'
+    },
     authorNickname () {
       return getArticleAuthorNickname(this.articleData)
     },
