@@ -17,12 +17,12 @@
           </transition-group>
         </div>
         <div class="homepage__list-aside">
-          <AppTitledList :listTitle="'議題'">
+          <AppTitledList :listTitle="sections['projects']">
             <ul class="aside-list-container">
               <HomeProjectAside />
             </ul>
           </AppTitledList>
-          <AppTitledList :listTitle="this.$route.path !== '/hot' ? '焦點' : '視角'">
+          <AppTitledList :listTitle="this.$route.path !== '/hot' ? sections['hot-talk'] : sections['chief-editor-talk']">
             <ul class="aside-list-container">
               <transition-group name="fade" mode="out-in">
                 <HomeArticleAside v-for="post in postsAside" :articleData="post" :key="`${post.id}-aside`"/>
@@ -36,6 +36,7 @@
 </template>
 
 <script>
+import { SECTIONS_DEFAULT, } from '../constants'
 import { PROJECT_STATUS, } from '../../api/config'
 import { currEnv, isScrollBarReachBottom, isCurrentRoutePath, } from 'src/util/comm'
 import _ from 'lodash'
@@ -160,6 +161,7 @@ export default {
   },
   data () {
     return {
+      sections: SECTIONS_DEFAULT,
       isReachBottom: false,
       currentPageLatest: 1,
       endPage: false,
