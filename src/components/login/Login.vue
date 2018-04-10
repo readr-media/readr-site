@@ -1,7 +1,7 @@
 <template>
   <div class="login" @keyup="keyupHandler" :class="{ 'dark': theme === 'dark' }">
     <TextItem class="login__input-email" type="text"
-      :placeHolder="$t('login.WORDING_EMAIL')"
+      :placeHolder="$t('login.WORDING_EMAIL_PLACEHOLDER')"
       :alert.sync="alert.mail"
       :backgroundColor="theme === 'dark' && '#444746'"
       :border="theme === 'dark' && 'solid 1px #ffffff'"
@@ -15,6 +15,7 @@
       :backgroundColor="theme === 'dark' && '#444746'"
       :border="theme === 'dark' && 'solid 1px #ffffff'"
       :height="theme === 'dark' && '25px'"
+      :color="theme === 'dark' && '#fff'"
       :fontSize="theme === 'dark' && '0.9375rem'"
       :value.sync="formData.pwd"></TextItem>
     <div class="login__wrapper">

@@ -1,6 +1,7 @@
 export default {
   'login': {
     'WORDING_EMAIL' : '信箱',
+    'WORDING_EMAIL_PLACEHOLDER' : 'name@example.com',
     'WORDING_FORGET_PASSWORD' : '忘記密碼？',
     'WORDING_KEEP_ALIVE' : '保持登入',
     'WORDING_LOGIN' : '登入',
