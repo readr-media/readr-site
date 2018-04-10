@@ -387,8 +387,8 @@
     width 100%
     height 25px
   &__container
-    height 100%
-    overflow-y scroll
+    height auto
+    overflow-y auto
   &__title
     padding-left 10px
     color #000
