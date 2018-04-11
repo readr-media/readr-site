@@ -129,7 +129,17 @@
       },
     },
     mounted () {},
-    props: [ 'post', 'modifier', ],
+    props: {
+      post: {
+        type: Object,
+        required: true,
+      },
+      modifier: {
+        type: String,
+        require: true,
+        default: 'main',
+      },
+    },
   }
 </script>
 <style lang="stylus">
