@@ -100,7 +100,7 @@
     methods: {
       addItem () {
         if (this.isProcessing) { return }
-        this.activeItemsCount += 1
+        this.inviteableCount += 1
       },
       find,
       goInvite () {
@@ -141,7 +141,9 @@
         return pass
       },
     },
-    mounted () {},
+    mounted () {
+      this.inviteableCount = this.quota > 3 ? 3 : this.quota
+    },
     watch: {
       isOn: function () {
         if (this.isOn === true) {
@@ -149,6 +151,10 @@
         }
       },
       quota: function () {
+        debug('this.quota changed')
+        debug('this.quota changed')
+        debug('this.quota changed')
+        debug('this.quota changed', this.quota)
         this.inviteableCount = this.quota > 3 ? 3 : this.quota
       },
     },
