@@ -61,7 +61,7 @@ router.post('/', (req, res, next) => {
     sendInvitationEmail({
       id: email_item.email,
       email: email_item.email,
-      inviter: get(req, 'user.username', get(req, 'user.email')),
+      inviter: get(req, 'user.nickname', get(req, 'user.mail')),
       role: 1,
       type: 'init',
     }).then(({ error, response, }) => {
