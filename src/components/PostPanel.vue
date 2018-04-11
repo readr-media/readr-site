@@ -203,7 +203,6 @@
         tagInput: '',
         tagsNeedAdd: [],
         tagsSelected: [],
-        test: undefined,
       }
     },
     computed: {
@@ -324,7 +323,7 @@
       $_postPanel_showTagList () {
         this.$refs.tagsList.classList.remove('hidden')
       },
-      $_postPanel_submit (active, unionTag) {
+      $_postPanel_submit (active, unionTag = this.tagsSelectedID) {
         switch (this.panelType) {
           case 'add':
             this.postParams.active = active
@@ -342,7 +341,6 @@
             
             this.postParams.author = _.get(this.post, [ 'author', 'id', ])
             this.postParams.tags = unionTag
-
             if (active) {
               this.postParams.active = active
               activeChanged = true
