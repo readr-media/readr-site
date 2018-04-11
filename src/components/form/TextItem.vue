@@ -29,10 +29,11 @@
         borderTop: border,
         borderBottom: border,             
       }"></span>
-    <span class="text-item__msg" v-text="msg" v-if="show" :class="{ long: isTooLong }"></span>
+    <span class="text-item__msg" v-text="msg" v-if="show" :class="{ long: isTooLong, bottom: alertPosition && alertPosition === 'bottom', }"></span>
   </div>
 </template>
 <script>
+  import validator from 'validator'
   export default {
     data () {
       return {
@@ -66,6 +67,7 @@
     },
     props: [
         'alert',
+        'alertPosition',        
         'type',
         'placeHolder',
         'disabled',
@@ -90,7 +92,7 @@
         this.$refs['input'].value = this.initValue
       },
       currValue: function () {
-        this.$emit('update:value', this.currValue)
+        this.$emit('update:value', validator.trim(this.currValue || '') || undefined)
       },
     },
   }
@@ -199,6 +201,12 @@
         left -17.5px
         top 7.5px
         display block
+      &.bottom
+        right 0
+        left auto
+        top 100%
+        &::before, &::after
+          content none
 
 
 </style>
