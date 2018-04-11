@@ -70,7 +70,7 @@
     },
     computed: {
       activeItemsCount () {
-        return this.quota > 3 ? 3 : this.quota
+        return this.inviteableCount
       },
       inputBackgroundColor () {
         return this.isProcessing ? '#f6f6f6' : undefined
@@ -89,6 +89,7 @@
     },
     data () {
       return {
+        inviteableCount: 0,
         emails: {},
         emailAlert: {},
         emailsStatus: {},
@@ -146,6 +147,9 @@
         if (this.isOn === true) {
           this.isSent = false
         }
+      },
+      quota: function () {
+        this.inviteableCount = this.quota > 3 ? 3 : this.quota
       },
     },
   }
