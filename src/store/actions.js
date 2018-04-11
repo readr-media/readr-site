@@ -18,6 +18,7 @@ import {
   deleteTags,
   fetchCommentCount,
   fetchMeComments,
+  fetchInvitationQuota,
   getDisposableToken,
   getFollowingByResource,
   getFollowingByUser,
@@ -36,6 +37,7 @@ import {
   getTags,
   getTagsCount,
   getRewardPointsTransactions,
+  invite,
   login,
   publishAction,
   publishPosts,
@@ -111,6 +113,11 @@ export default {
   FETCH_COMMENTS_ME: ({ commit, dispatch, state, }) => {
     return fetchMeComments().then((comments) => {
       commit('SET_COMMENTS_ME', { comments, })
+    })
+  },
+  FETCH_INVITATIONO_QUOTA: ({ commit, dispatch, state, }) => {
+    return fetchInvitationQuota().then((quota) => {
+      commit('SET_INVITATION_QUOTA', { quota, })
     })
   },
   GET_FOLLOWING_BY_RESOURCE: ({ commit, dispatch, state, }, params) => {
@@ -364,6 +371,9 @@ export default {
       commit('SET_PROFILE', { profile: {},})
       resolve()
     })
+  },
+  INVITE: ({ commit, dispatch, state, }, { params, }) => {
+    return invite(params)
   },
   PUBLISH_ACTION: ({ commit, dispatch, state, }, { params, }) => {
     return new Promise((resolve, reject) => {

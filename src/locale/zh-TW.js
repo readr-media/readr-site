@@ -257,6 +257,7 @@ export default {
     'BTN_SUBMIT': '送出',
     'EMAIL_ADDRESS': 'Email Address',
     'EMAIL_EXAMPLE': 'name@example.com',
+    'EMAIL_VALIDATE_IN_FAIL': '請輸入有效的電子信箱（Email）',
     'SENT': '已送出邀請',
   },
   'PACKING_TEST': {

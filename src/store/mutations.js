@@ -129,6 +129,9 @@ export default {
   SET_REWARD_POINTS_TRANSACTIONS: (state, { transactions, }) => {
     state['rewardPointsTransactions'] = transactions
   },
+  SET_INVITATION_QUOTA: (state, { quota, }) => {
+    state['invitation_quota'] = quota
+  },
   UPDATED_PROFILE: (state, { profile, }) => {
     // Update the entry when user saving the profile value which has been edited
     Object.entries(profile).forEach((entry) => {

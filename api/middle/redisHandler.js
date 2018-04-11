@@ -82,7 +82,7 @@ const redisFetching = (key, callback) => {
       redisPoolRead.ttl(decodeURIComponent(key), (err, dt) => {
         if (!err && dt) {
           debug('Ttl:', dt)
-          if (dt <= -1) {
+          if (dt === -1) {
             redisPoolWrite.del(decodeURIComponent(key), (e) => {
               if (e) {
                 console.error('REDIS: deleting key ', decodeURIComponent(key), 'from redis in fail ', e)
@@ -125,6 +125,32 @@ const redisWriting = (key, data, callback, timeout) => {
     }
   })
 }
+
+const redisFetchCmd = (cmd, key, field, callback) => {
+  const timeoutHandler = new TimeoutHandler(callback)
+  const onFinished = (error, data) => {
+    timeoutHandler.isResponded = true
+    timeoutHandler.destroy()
+    if (timeoutHandler.timeout <= 0) { return }
+    callback && callback({ error, data, })
+  }
+  redisPoolRead.send_command(cmd, [ key, ...field, ], function (err, data) {
+    onFinished(err, data)
+  })
+}
+const redisWriteCmd = (cmd, key, value, callback) => {
+  const timeoutHandler = new TimeoutHandler(callback)
+  const onFinished = (error, data) => {
+    timeoutHandler.isResponded = true
+    timeoutHandler.destroy()
+    if (timeoutHandler.timeout <= 0) { return }
+    callback && callback({ error, data, })
+  }
+  redisPoolWrite.send_command(cmd, [ key, ...value, ], function (err, data) {
+    onFinished(err, data)
+  })
+}
+
 const insertIntoRedis = (req, res) => {
   redisWriting(req.url, res.dataString, () => {
     // next()
@@ -140,10 +166,42 @@ const fetchFromRedis = (req, res, next) => {
     }
   })
 }
+const fetchFromRedisCmd = (req, res, next) => {
+  const cmd = req.redis_get.cmd
+  const key = req.redis_get.key
+  const field = req.redis_get.field || []
+  debug(`Goin to get(${cmd}) data from redis.`, key, field)
+  redisFetchCmd(cmd, key, field, ({ error, data, }) => {
+    if (!error) {
+      res.redis = data
+      next()
+    } else {
+      console.error(`Error occurred during fetching(${cmd}) data from redis.`)
+      console.error(error)
+      next(error)
+    }
+  })
+}
+const insertIntoRedisSadd = (req) => {
+  const key = req.sadd.key
+  const value = req.sadd.value
+  debug('Abt to SADD data to redis.', key, value)
+  redisWriteCmd('SADD', key, value, ({ error, }) => {
+    if (!error) {
+      // next()
+    } else {
+      // next(error)
+    }    
+  })
+}
 
 module.exports = {
   fetchFromRedis,
+  fetchFromRedisCmd,
   insertIntoRedis,
+  insertIntoRedisSadd,
+  redisFetchCmd,
   redisFetching,
   redisWriting,
+  redisWriteCmd,
 }
