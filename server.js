@@ -238,11 +238,13 @@ function render (req, res, next) {
 
     renderer.renderToString(Object.assign({}, context, { url: `/${status}`, error: err.message }), (e, h) => {
       if (!e) {
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')  
         res.status(status).send(h)
         if (!isProd) {
           console.log(`whole request: ${Date.now() - s}ms`)
         }        
       } else {
+        res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')  
         res.status(500).send('500 | Internal Server Error')
         console.error(`Error occurred  during render : ${req.url}`)
         console.error(e.stack)        

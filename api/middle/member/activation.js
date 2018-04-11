@@ -67,7 +67,7 @@ const activate = (req, res) => {
           const tokenForActivation = jwtService.generateActivateAccountJwt({
             id: decoded.id,
             role: decoded.role || 1,
-            type: 'init',
+            type: decoded.type, // this type should be 'init'
           })
           const cookies = new Cookies( req, res, {} )
           cookies.set('setup', tokenForActivation, {

@@ -18,13 +18,15 @@
         :alert.sync="alert[ 'pwd-check' ]"
         :value.sync="formData[ 'pwd-check' ]"></TextItem>
       <div class="profile__save" @click="setPwd">
-        <span v-text="$t('login.WORDING_BTN_SAVE')"></span>
+        <span v-text="$t('login.WORDING_BTN_SAVE')" v-if="!shouldShowSpinner"></span>
+        <Spinner :show="shouldShowSpinner"></Spinner>
       </div>
     </div>
   </div>
 </template>
 <script>
   import TextItem from 'src/components/form/TextItem.vue'
+  import Spinner from 'src/components/Spinner.vue'
   import validator from 'validator'
 
   const debug = require('debug')('CLIENT:TextItem')
@@ -34,23 +36,27 @@
 
   export default {
     components: {
+      Spinner,
       TextItem,
     },
     data () {
       return {
         alert: {},
         formData: {},
+        shouldShowSpinner: false,
       }
     },
     name: 'InitBasicProfile',
     methods: {
       setPwd () {
+        this.shouldShowSpinner = true
         if (this.validate()) {
           setupBasicProfile(this.$store, {
             nickname: this.formData.nickname,
             password: this.formData.pwd,
           }).then((res) => {
             if (res.status === 200) {
+              this.shouldShowSpinner = false
               location.replace('/login')
             } else {
               console.log(res)

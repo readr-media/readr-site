@@ -9,7 +9,7 @@
       </aside>
       <main class="homepage__main">
         <div class="homepage__list-main">
-          <div class="invitation" v-if="isClientSide && currEnv === 'dev'">
+          <div class="invitation">
             <Invite></Invite>
           </div>
           <transition-group name="fade" mode="out-in">
@@ -112,7 +112,7 @@ export default {
       fetchPosts(store),
       fetchPosts(store, { category: 'hot', }),
       fetchProjectsList(store, { max_result: 5, status: PROJECT_STATUS.WIP, }),
-      // fetchProjectsList(store, { max_result: 2, status: PROJECT_STATUS.DONE, }),
+      fetchProjectsList(store, { max_result: 2, status: PROJECT_STATUS.DONE, }),
     ] 
     if (route.params.postId) {
       reqs.push(fetchPost(store, { id: route.params.postId, })) 

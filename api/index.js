@@ -6,6 +6,7 @@ const { camelizeKeys, } = require('humps')
 const { authorize, constructScope, fetchPermissions, } = require('./services/perm')
 const { initBucket, makeFilePublic, uploadFileToBucket, deleteFilesInFolder, publishAction, } = require('./gcs.js')
 const { processImage, } = require('./sharp.js')
+const { setupClientCache, } = require('./middle/comm')
 const { verifyToken, } = require('./middle/member/comm')
 const bodyParser = require('body-parser')
 const config = require('./config')
@@ -50,13 +51,6 @@ const fetchStaticJson = (req, res, next, jsonFileName) => {
       console.error(err)  
     }
   })
-}
-
-const setupClientCache = (req, res, next) => {
-  res.header("Cache-Control", "no-cache, no-store, must-revalidate")
-  res.header("Pragma", "no-cache")
-  res.header("Expires", "0")
-  next()
 }
 
 router.use('/grouped', function(req, res, next) {
@@ -128,6 +122,7 @@ const fetchPromise = (url) => {
 router.use('/activate', verifyToken, require('./middle/member/activation'))
 router.use('/following', require('./middle/following'))
 router.use('/initmember', authVerify, require('./middle/member/initMember'))
+router.use('/invitation', authVerify, require('./middle/member/invitation'))
 router.use('/member', [ authVerify, authorize, ], require('./middle/member'))
 router.use('/comment', require('./middle/comment'))
 router.use('/register', authVerify, require('./middle/member/register'))

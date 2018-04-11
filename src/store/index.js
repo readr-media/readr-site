@@ -20,6 +20,7 @@ export function createStore () {
       'isClientSide': false,
       'isLoggedIn': false,
       'invitation_switch_status': false,
+      'invitation_quota': 0,
       'members': [],
       'posts': [],
       'postsCount': 0,

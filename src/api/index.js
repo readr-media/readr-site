@@ -3,6 +3,7 @@ import { getHost, } from '../util/comm'
 import { getToken, getSetupToken, saveToken, } from '../util/services'
 import _ from 'lodash'
 import qs from 'qs'
+import validator from 'validator'
 
 const debug = require('debug')('CLIENT:src:api')
 const superagent = require('superagent')
@@ -399,6 +400,25 @@ export function logout () {
   return new Promise((resolve) => {
     window && (window.localStorage.removeItem('csrf'))
     resolve()
+  })
+}
+
+export function invite (params) {
+  const url = `${host}/api/invitation`
+  return _doPost(url, params)
+}
+
+export function fetchInvitationQuota () {
+  const url = `${host}/api/invitation/quota`
+  return _doFetchStrict(url, {}).then((res) => {
+    if (_.get(res, 'status') === 200) {
+      const quota = typeof(_.get(res, 'body.quota')) === 'string'
+        ? validator.toInt(_.get(res, 'body.quota'))
+        : _.get(res, 'body.quota', 0)
+      return quota
+    } else {
+      return 0
+    }
   })
 }
 
