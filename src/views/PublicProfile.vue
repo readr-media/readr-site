@@ -16,7 +16,7 @@
             </div>
             <div class="profile__main__review__container">
               <div class="item" v-for="post in posts" :key="post.id">
-                <PostContent :post="post"></PostContent>
+                <PostContent :modifier="'main'" :post="post"></PostContent>
               </div>
             </div>
           </div>
