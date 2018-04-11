@@ -24,7 +24,7 @@
           <p class="editor-writing-source__cite" v-if="post.linkName">{{ $t('homepage.WORDING_HOME_POST_SOURCE') }}{{ post.linkName }}</p>
         </div>
       </div>
-      <img class="editor-writing-source__figure" :src="post.linkImage" alt="source-fig">
+      <div class="editor-writing-source__figure" v-if="post.linkImage" :style="{ backgroundImage: `url(${post.linkImage})`, backgroundSize: ogImageSize, }"></div>
     </a>
     <AppArticleNav :postId="this.post.id" :commentCount="commentCount"></AppArticleNav>
   </div>
@@ -114,6 +114,7 @@
     data () {
       return {
         isReadMoreClicked: false,
+        ogImageSize: '',
       }
     },
     methods: {
@@ -127,6 +128,24 @@
       shouldShowReadMoreButton (index) {
         return this.isArticleMain && !this.isReadMoreClicked && (!this.isStopLastParagraphBeforeTruncate || this.isStopParagraphWordCountExceedLimit) && this.isLastParagraphAfterTruncate(index)
       },
+      fetchOgImage () {
+        const img = new Image()
+        img.src = this.post.linkImage
+        return new Promise((resolve, reject) => {
+          if (!this.post.linkImage) {
+            reject()
+          } else {
+            img.onload = function () {
+              resolve({ width: this.width, height: this.height, })
+            }
+          }
+        })
+      },
+    },
+    beforeMount () {
+      this.fetchOgImage().then(({ width, height, }) => {
+        this.ogImageSize = width < height ? 'contain' : 'cover'
+      })
     },
     mounted () {},
     props: {
@@ -136,7 +155,6 @@
       },
       modifier: {
         type: String,
-        require: true,
         default: 'main',
       },
     },
@@ -216,6 +234,9 @@
           align-self center
           width 150px
           height 78.5px
+          background-repeat no-repeat
+          background-position center center
+          background-color #444746
         &__cite
           font-size 14px
           font-weight 300
