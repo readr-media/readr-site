@@ -17,7 +17,7 @@
       </figure>
     </div>
     <div class="home-article-main__content">
-      <PostContent :post="articleData"></PostContent>
+      <PostContent :modifier="'main'" :post="articleData"></PostContent>
     </div>
   </article>
 </template>

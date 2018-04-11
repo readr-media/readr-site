@@ -1,5 +1,5 @@
 <template>
-  <div class="post-content">
+  <div :class="`post-content__${modifier}`">
     <h1 class="post-content__title" v-text="post.title"></h1>
     <div class="editor-writing">
       <router-link :to="`/post/${post.id}`" class="editor-writing__container">
@@ -16,7 +16,7 @@
         </template>
       </router-link>
     </div>
-    <a class="editor-writing-source" v-if="hasSource" :href="post.link" target="_blank">
+    <a class="editor-writing-source" v-if="isArticleMain && hasSource" :href="post.link" target="_blank">
       <div class="editor-writing-source__content">
         <h1 class="editor-writing-source__title" v-text="linkTitleTrim"></h1>
         <div class="editor-writing-source__description">
@@ -33,7 +33,7 @@
   import { find, get, map, } from 'lodash'
   import AppArticleNav from 'src/components/AppArticleNav.vue'
   import sanitizeHtml from 'sanitize-html'
-  import truncate from 'truncate'
+  import truncate from 'html-truncate'
 
   const dom = require('xmldom').DOMParser
   const seializer  = require('xmldom').XMLSerializer
@@ -53,6 +53,9 @@
       linkDescriptionTrim () {
         return truncate(this.post.linkDescription, 45)
       },
+      isArticleMain () {
+        return this.modifier === 'main'
+      },
       postContent () {
         if (!this.post.content || this.post.content.length === 0) { return [] }
         const wrappedContent = sanitizeHtml(this.post.content, { allowedTags: false, selfClosing: [ 'img', ], })
@@ -67,7 +70,7 @@
           return this.postContent.map((paragraph, index) => {
             if (!this.isReadMoreClicked && index === this.shouldContentStopAtIndex && this.isStopParagraphWordCountExceedLimit) {
               const wordCountBeforeStop = this.postContentWordCount.reduce((acc, curr, currIndex) => currIndex < this.shouldContentStopAtIndex ? acc + curr : acc, 0)
-              return truncate(paragraph, this.showContentWordLimit - wordCountBeforeStop, { ellipsis: null, })
+              return truncate(paragraph, this.showContentWordLimit - wordCountBeforeStop, { ellipsis: this.isArticleMain ? null : '...', })
             }
             return paragraph
           })
@@ -108,7 +111,7 @@
     data () {
       return {
         isReadMoreClicked: false,
-        showContentWordLimit: 150,
+        showContentWordLimit: this.isArticleMain ? 150 : 50,
       }
     },
     methods: {
@@ -120,90 +123,129 @@
         return index === this.shouldContentStopAtIndex
       },      
       shouldShowReadMoreButton (index) {
-        return !this.isReadMoreClicked && (!this.isStopLastParagraphBeforeTruncate || this.isStopParagraphWordCountExceedLimit) && this.isLastParagraphAfterTruncate(index)
+        return this.isArticleMain && !this.isReadMoreClicked && (!this.isStopLastParagraphBeforeTruncate || this.isStopParagraphWordCountExceedLimit) && this.isLastParagraphAfterTruncate(index)
       },
     },
     mounted () {},
-    props: [ 'post', ],
+    props: [ 'post', 'modifier', ],
   }
 </script>
 <style lang="stylus">
   .post-content
-    &__title
-      font-size 18px
-      font-weight 600
-      margin 0
-  .editor-writing
-    margin 10px 0
-    &__container 
-      // min-height 105px
-      // overflow hidden
-      // text-overflow: ellipsis;
-      display inline-block
-      margin-bottom 5px
-      color black
-      min-width 100%
-      min-height 20px
-      & > p
-        font-size 15px
-        font-weight 300
-        text-align justify
-        line-height 1.4
-        margin 0
-        // text-overflow: ellipsis;
-      p > br
-        display none
-      p > img, p img
-        width 100%
-        margin 20px 0
-      p + p
-        margin-top 6px
-    &__more
-      font-weight 500
-      color #a7a7a7
-      cursor pointer
-      &:hover
-        border-bottom 1px solid currentColor
-    &__paragraph
-      &--visible
-        display block
-      &--invisible
-        display none
+    &__main
+      .post-content
+        &__title
+          font-size 18px
+          font-weight 600
+          margin 0
+      .editor-writing
+        margin 10px 0
+        &__container 
+          // min-height 105px
+          // overflow hidden
+          // text-overflow: ellipsis;
+          display inline-block
+          margin-bottom 5px
+          color black
+          min-width 100%
+          min-height 20px
+          & > p
+            font-size 15px
+            font-weight 300
+            text-align justify
+            line-height 1.4
+            margin 0
+            // text-overflow: ellipsis;
+          p > br
+            display none
+          p > img, p img
+            width 100%
+            margin 20px 0
+          p + p
+            margin-top 6px
+        &__more
+          font-weight 500
+          color #a7a7a7
+          cursor pointer
+          &:hover
+            border-bottom 1px solid currentColor
+        &__paragraph
+          &--visible
+            display block
+          &--invisible
+            display none
+      .editor-writing-source
+        height 102px
+        border solid 0.5px #d3d3d3
+        padding 8px 15px 5px 19.5px
+        display flex
+        justify-content space-between
+        margin-bottom 7.5px
+        &__content
+          width 350.5px
+          position relative
+        &__title
+          font-size 14px
+          font-weight 500
+          color #808080
+          margin 0
+        &__description
+          & > p
+            font-size 14px
+            font-weight 300
+            color #808080
+            line-height 1.4
+            margin 5px 0 0 0
+            text-align justify
+        &__figure
+          margin 0
+          display flex
+          align-self center
+          width 150px
+          height 78.5px
+        &__cite
+          font-size 14px
+          font-weight 300
+          color #808080
+          align-self flex-end
+          position absolute
+          bottom 0
 
-  .editor-writing-source
-    height 102px
-    border solid 0.5px #d3d3d3
-    padding 8px 15px 5px 19.5px
-    display flex
-    justify-content space-between
-    margin-bottom 7.5px
-    &__content
-      width 350.5px
-      position relative
-    &__title
-      font-size 14px
-      font-weight 500
-      color #808080
-      margin 0
-    &__description
-      & > p
-        font-size 14px
-        font-weight 300
-        color #808080
-        line-height 1.4
-        margin 5px 0 0 0
-        text-align justify
-    &__figure
-      margin 0
-      display flex
-      align-self center
-      width 150px
-      height 78.5px
-    &__cite
-      font-size 14px
-      font-weight 300
-      color #808080
-      align-self flex-end
-      position absolute
-      bottom 0
+    &__aside
+      .post-content
+        &__title
+          font-size 15px
+          font-weight 500
+          text-align justify
+      .editor-writing
+        margin 5px 0 15.5px 0
+        &__container 
+          display inline-block
+          min-width 100%
+          min-height 58px
+          color black
+          & > p
+            font-size 15px
+            font-weight 300
+            text-align justify
+            line-height 1.4
+            margin 0
+            // text-overflow: ellipsis;
+          p > br
+            display none
+          p > img
+            width 100%
+          p + p
+            margin-top 6px
+        &__more
+          font-weight 500
+          color #4280a2
+          cursor pointer
+          &:hover
+            border-bottom 1px solid currentColor
+        &__paragraph
+          &--visible
+            display block
+          &--invisible
+            display none
 </style>
