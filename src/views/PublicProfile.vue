@@ -5,7 +5,7 @@
     </aside>
     <main class="profile__main">
       <About :profile="profile || {}"></About>
-      <Tab :tabs="tabs" @changeTab="tabHandler">
+      <Tab class="profile__tab" :tabs="tabs" @changeTab="tabHandler">
         <template slot="0">
           <div class="profile__main__review">
             <div class="profile__main__review__filter">
@@ -192,14 +192,14 @@
     width 100%
     background-color #fff
     display flex
-    padding 25px 0
+    padding 35px 0
     &__aside
       width 75px
       height 100%
       position sticky
       top 60px
     &__main
-      padding-left 93.5px
+      padding 25px 0 0 93.5px
       width 100%
       &__review
         padding 0 100px
@@ -254,6 +254,8 @@
         &__container
           > .item
             margin 35px auto
+    &__tab
+      margin-top 35px
   @media (min-width 950px)
     .profile
       &__main

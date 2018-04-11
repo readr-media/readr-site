@@ -19,7 +19,7 @@
         <label for="" v-text="`${$t('POST_PANEL.PUBLISH_DATE')}：`"></label>
         <no-ssr>
           <datepicker
-            v-model="post.date"
+            v-model="post.publishedAt"
             :format="dateFormat"
             :input-class="'datepicker__input'"
             :language="'zh'">
@@ -37,7 +37,7 @@
                 <p v-text="t.text"></p>
                 <button @click="$_postPanel_deleteTag(t.id)">Ｘ</button>
               </div>
-              <div v-for="t in tagsNeedAdd" class="postPanel__tags-box-new">
+              <div v-for="t in tagsNeedAdd" :key="t" class="postPanel__tags-box-new">
                 <p v-text="t"></p>
                 <button @click="$_postPanel_deleteNewTag(t)">Ｘ</button>
               </div>
@@ -203,6 +203,7 @@
         tagInput: '',
         tagsNeedAdd: [],
         tagsSelected: [],
+        test: undefined,
       }
     },
     computed: {
@@ -362,6 +363,7 @@
         }
       },
       $_postPanel_submitHandler (active) {
+        const postActive = active || _.get(this.post, [ 'active', ])
         this.postParams = _.omit(
           _.mapKeys(Object.assign({}, this.post), (value, key) => _.snakeCase(key)),
           [ 'author', 'comment_amount', 'created_at', 'like_amount', 'tags', 'updated_at', ]
@@ -372,8 +374,10 @@
           this.postParams.og_title = _.get(this.post, [ 'ogTitle', ]) || _.get(this.post, [ 'title', ]) || ''
         }
 
-        if (Date.parse(_.get(this.post, [ 'date', ]))) {
-          this.postParams.published_at = _.get(this.post, [ 'date', ])
+        if (Date.parse(_.get(this.post, [ 'publishedAt', ]))) {
+          this.postParams.published_at = _.get(this.post, [ 'publishedAt', ])
+        } else if (postActive === POST_ACTIVE.ACTIVE && !this.postParams.published_at) {
+          this.postParams.published_at = new Date(Date.now())
         }
 
         if (this.metaChanged) {
