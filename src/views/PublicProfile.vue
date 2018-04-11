@@ -190,17 +190,19 @@
   .profile
     min-height 100vh
     width 100%
-    background-color #fff
+    background-color #e6e6e6
     display flex
-    padding 35px 0
+    padding 35px 0 35px 75px
     &__aside
+      position absolute
+      top 60px
+      left 0
       width 75px
       height 100%
-      position sticky
-      top 60px
     &__main
-      padding 25px 0 0 93.5px
-      width 100%
+      width 950px
+      padding 25px 0 0 0
+      margin 0 auto
       &__review
         padding 0 100px
         &__filter
@@ -256,12 +258,7 @@
             margin 35px auto
     &__tab
       margin-top 35px
-  @media (min-width 950px)
-    .profile
-      &__main
-        max-width 950px
-  @media (min-width 1200px)
-    .profile
-      max-width 1200px
+      background-color #fff
+
 
 </style>
