@@ -14,53 +14,21 @@
       </div>
     </div>
     <div class="home-article-aside__content">
-      <h1 class="home-article-aside__title" v-text="titleTrim"></h1>
-      <div class="editor-writing">
-        <router-link :to="`/post/${articleData.id}`" class="editor-writing__container">
-          <p class="editor-writing__paragraph--visible">
-            <span v-html="firstParagraph"></span>
-          </p>
-        </router-link>
-        <AppArticleNav :postId="articleData.id" :commentCount="commentCount"/>
-      </div>
+      <PostContent :modifier="'aside'" :post="articleData"></PostContent>
     </div>
   </article>
 </template>
 
 <script>
-import { find, get, map, } from 'lodash'
+import { get, } from 'lodash'
 import { updatedAtYYYYMMDD, isClientSide, getArticleAuthorNickname, getArticleAuthorThumbnailImg, } from 'src/util/comm'
-import sanitizeHtml from 'sanitize-html'
-import AppArticleNav from 'src/components/AppArticleNav.vue'
+import PostContent from 'src/components/PostContent.vue'
 
-const dom = require('xmldom').DOMParser
-const seializer  = require('xmldom').XMLSerializer
 export default {
   components: {
-    AppArticleNav,
+    PostContent,
   },
   computed: {
-    commentCount () {
-      return get(find(get(this.$store, [ 'state', 'commentCount', ]), { postId: this.articleData.id, }), [ 'count', ], 0)
-    },
-    titleTrim () {
-      const limit = 18
-      if (!this.articleData) return ''
-      return this.articleData.title.length > limit ? this.articleData.title.slice(0, limit) + ' ......' : this.articleData.title
-    },
-    // TODOs: merge these features below to PostContent.vue
-    postContent () {
-      if (!this.articleData.content || this.articleData.content.length === 0) { return }
-      const wrappedContent = sanitizeHtml(this.articleData.content, { allowedTags: false, selfClosing: [ 'img', ], })
-      const doc = new dom().parseFromString(wrappedContent)
-      const postParagraphs = map(get(doc, 'childNodes'), (p) => (sanitizeHtml(new seializer().serializeToString(p), { allowedTags: [ 'img', ], })))
-      return postParagraphs
-    },
-    firstParagraph () {
-      const limit = 35
-      if (!this.postContent) return ''
-      return !this.isReadMore ? this.postContent[0].slice(0, limit) : this.postContent[0]
-    },
     isClientSide,
     authorId () {
       return get(this.articleData, 'author')
@@ -103,10 +71,6 @@ export default {
   border-bottom .5px solid #979797
   // &__author
   //   display flex
-  &__title
-    font-size 15px
-    font-weight 500
-    text-align justify
   &__content
     display flex
     flex-direction column
@@ -135,37 +99,5 @@ export default {
       font-size 14px
       font-weight 500
       color #808080
-
-  .editor-writing
-    margin 5px 0 15.5px 0
-    &__container 
-      display inline-block
-      min-width 100%
-      min-height 58px
-      color black
-      & > p
-        font-size 15px
-        font-weight 300
-        text-align justify
-        line-height 1.4
-        margin 0
-        // text-overflow: ellipsis;
-      p > br
-        display none
-      p > img
-        width 100%
-      p + p
-        margin-top 6px
-    &__more
-      font-weight 500
-      color #4280a2
-      cursor pointer
-      &:hover
-        border-bottom 1px solid currentColor
-    &__paragraph
-      &--visible
-        display block
-      &--invisible
-        display none
 </style>
 
