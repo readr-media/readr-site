@@ -56,7 +56,7 @@ const MAXRESULT_POSTS = 10
 const MAXRESULT_PROJECTS = 2
 // const MAXRESULT_VIDEOS = 1
 const DEFAULT_PAGE = 1
-const DEFAULT_SORT = '-updated_at'
+const DEFAULT_SORT = '-published_at'
 const DEFAULT_CATEGORY = 'latest'
 
 const fetchPost = (store, { id, }) => {
@@ -215,7 +215,7 @@ export default {
         category: 'latest',
         max_result: MAXRESULT_POSTS,
         page: this.currentPageLatest + 1,
-        sort: '-updated_at',
+        sort: '-published_at',
       }).then(({ status, res, }) => {
         if (status === 'end') {
           this.endPage = true
