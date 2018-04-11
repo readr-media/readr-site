@@ -56,6 +56,9 @@
       isArticleMain () {
         return this.modifier === 'main'
       },
+      showContentWordLimit () {
+        return this.isArticleMain ? 150 : 50
+      },
       postContent () {
         if (!this.post.content || this.post.content.length === 0) { return [] }
         const wrappedContent = sanitizeHtml(this.post.content, { allowedTags: false, selfClosing: [ 'img', ], })
@@ -111,7 +114,6 @@
     data () {
       return {
         isReadMoreClicked: false,
-        showContentWordLimit: this.isArticleMain ? 150 : 50,
       }
     },
     methods: {
