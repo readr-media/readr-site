@@ -33,7 +33,7 @@
   import { find, get, map, } from 'lodash'
   import AppArticleNav from 'src/components/AppArticleNav.vue'
   import sanitizeHtml from 'sanitize-html'
-  import truncate from 'truncate'
+  import truncate from 'html-truncate'
 
   const dom = require('xmldom').DOMParser
   const seializer  = require('xmldom').XMLSerializer
