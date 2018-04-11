@@ -44,7 +44,7 @@ export default {
     background-size cover
     background-position center center
   &__content
-    padding 0 20px
+    padding 0 30px
   &__project-title
     font-size 15px
     text-align justify

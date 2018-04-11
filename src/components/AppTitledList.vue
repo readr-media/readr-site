@@ -26,7 +26,7 @@ export default {
   &__title
     display flex
     align-items center
-    padding 0 15px
+    padding 0 30px
     .plus
       length = 18px
       display inline-block

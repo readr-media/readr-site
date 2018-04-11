@@ -150,8 +150,9 @@
           font-size 18px
           font-weight 600
           margin 0
+          line-height 1.5
       .editor-writing
-        margin 10px 0
+        margin 18px 0
         &__container 
           // min-height 105px
           // overflow hidden
@@ -163,9 +164,9 @@
           min-height 20px
           & > p
             font-size 15px
-            font-weight 300
+            font-weight 400
             text-align justify
-            line-height 1.4
+            line-height 1.5
             margin 0
             // text-overflow: ellipsis;
           p > br
@@ -192,7 +193,7 @@
         padding 8px 15px 5px 19.5px
         display flex
         justify-content space-between
-        margin-bottom 7.5px
+        margin-bottom 15.5px
         &__content
           width 350.5px
           position relative
@@ -229,8 +230,10 @@
           font-size 15px
           font-weight 500
           text-align justify
+          line-height 1.5
+          margin 1em 0
       .editor-writing
-        margin 5px 0 15.5px 0
+        margin 5px 0 12.5px 0
         &__container 
           display inline-block
           min-width 100%
@@ -238,7 +241,7 @@
           color black
           & > p
             font-size 15px
-            font-weight 300
+            font-weight 400
             text-align justify
             line-height 1.4
             margin 0

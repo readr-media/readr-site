@@ -129,7 +129,10 @@ $icon-size
     position relative
     right 5px
     font-size 14px
+    -webkit-font-smoothing antialiased
+    -moz-font-smoothing antialiased
     color #11b8c9
+    font-weight 600
 .follow-icon
   cursor pointer
   &__thumbnail
@@ -139,8 +142,12 @@ $icon-size
   &__hint
     position relative
     // right 5px
+    bottom 2px
     font-size 12px
+    -webkit-font-smoothing antialiased
+    -moz-font-smoothing antialiased
     color #11b8c9
+    font-weight 600
 .donate-icon
   width 20px
   height 25px
