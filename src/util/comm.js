@@ -101,6 +101,16 @@ export function isScrollBarReachBottom () {
   return getDocHeight() <= getScrollXY()[1] + window.innerHeight
 }
 
+export function isElementReachInView (selector, offset = 0) {
+  const ele = this.$el.querySelector(selector)
+  if (!ele) {
+    return false
+  } else {
+    const bottom = ele.getBoundingClientRect().bottom
+    return bottom <= window.innerHeight * offset
+  }
+}
+
 export function setReadrCookie () {
   const uuid = uuidv4()
   Cookie.set('mmid', uuid, { expires: (10 * 365 * 24) + 'h', })

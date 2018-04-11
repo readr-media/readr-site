@@ -38,7 +38,7 @@
 <script>
 import { SECTIONS_DEFAULT, } from '../constants'
 import { PROJECT_STATUS, } from '../../api/config'
-import { currEnv, isScrollBarReachBottom, isCurrentRoutePath, } from 'src/util/comm'
+import { currEnv, isScrollBarReachBottom, isElementReachInView, isCurrentRoutePath, } from 'src/util/comm'
 import _ from 'lodash'
 import { createStore, } from '../store'
 import AppAsideNav from 'src/components/AppAsideNav.vue'
@@ -213,7 +213,7 @@ export default {
       fetchPosts(this.$store, {
         mode: 'update',
         category: 'latest',
-        max_result: 10,
+        max_result: MAXRESULT_POSTS,
         page: this.currentPageLatest + 1,
         sort: '-updated_at',
       }).then(({ status, res, }) => {
@@ -235,6 +235,7 @@ export default {
       })
     },
     isScrollBarReachBottom,
+    isElementReachInView,
   },
   beforeRouteEnter (to, from, next) {
     const store = createStore()
@@ -270,7 +271,7 @@ export default {
   },
   mounted () {
     window.addEventListener('scroll', () => {
-      this.isReachBottom = this.isScrollBarReachBottom()
+      this.isReachBottom = this.isElementReachInView('.homepage__list-main', 0.5) || this.isScrollBarReachBottom()
     })
   },
 }
