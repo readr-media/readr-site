@@ -50,7 +50,7 @@ import BaseLightBox from 'src/components/BaseLightBox.vue'
 import BaseLightBoxPost from 'src/components/BaseLightBoxPost.vue'
 import Invite from 'src/components/invitation/Invite.vue'
 
-const debug = require('debug')('CLIENT:Home')
+// const debug = require('debug')('CLIENT:Home')
 
 const MAXRESULT_POSTS = 10
 const MAXRESULT_PROJECTS = 2
@@ -106,39 +106,40 @@ const fetchFollowing = (store, params) => {
 }
 
 export default {
-  asyncData ({ store, route, }) {
-    debug('Starting to fetch data by asyncData.')
-    let reqs = [ 
-      fetchPosts(store),
-      fetchPosts(store, { category: 'hot', }),
-      fetchProjectsList(store, { max_result: 5, status: PROJECT_STATUS.WIP, }),
-      fetchProjectsList(store, { max_result: 2, status: PROJECT_STATUS.DONE, }),
-    ] 
-    if (route.params.postId) {
-      reqs.push(fetchPost(store, { id: route.params.postId, })) 
-    }
-    return Promise.all(reqs)
-  },
-  metaInfo () {
-    if (this.$route.params.postId) {
-      return {
-        ogTitle: this.postSingle.ogTitle,
-        description: this.postSingle.ogDescription,
-        metaUrl: this.$route.path,
-        metaImage: this.postSingle.ogImage,
-      }
-    } else {
-      if (this.$route.path === '/') {
-        return {
-          ogTitle: '視角',
-        }
-      } else if (this.$route.path === '/hot') {
-        return {
-          ogTitle: '焦點',
-        }
-      }
-    }
-  },
+  // Uncomment this when v1.0 is released
+  // asyncData ({ store, route, }) {
+  //   debug('Starting to fetch data by asyncData.')
+  //   let reqs = [ 
+  //     fetchPosts(store),
+  //     fetchPosts(store, { category: 'hot', }),
+  //     fetchProjectsList(store, { max_result: 5, status: PROJECT_STATUS.WIP, }),
+  //     fetchProjectsList(store, { max_result: 2, status: PROJECT_STATUS.DONE, }),
+  //   ] 
+  //   if (route.params.postId) {
+  //     reqs.push(fetchPost(store, { id: route.params.postId, })) 
+  //   }
+  //   return Promise.all(reqs)
+  // },
+  // metaInfo () {
+  //   if (this.$route.params.postId) {
+  //     return {
+  //       ogTitle: this.postSingle.ogTitle,
+  //       description: this.postSingle.ogDescription,
+  //       metaUrl: this.$route.path,
+  //       metaImage: this.postSingle.ogImage,
+  //     }
+  //   } else {
+  //     if (this.$route.path === '/') {
+  //       return {
+  //         ogTitle: '視角',
+  //       }
+  //     } else if (this.$route.path === '/hot') {
+  //       return {
+  //         ogTitle: '焦點',
+  //       }
+  //     }
+  //   }
+  // },
   components: {
     AppAsideNav,
     AppTitledList,
@@ -248,26 +249,59 @@ export default {
     }
   },
   beforeMount () {
-    if (this.$store.state.isLoggedIn) { 
-      const postIdsLatest = _.get(this.$store.state.publicPosts, 'items', []).map(post => `${post.id}`) 
-      const postIdsHot = _.get(this.$store.state.publicPostsHot, 'items', []).map(post => `${post.id}`) 
-      const postIdFeaturedProject = _.get(this.$store.state.projectsList, 'items', []).map(project => `${project.id}`) 
-      const ids = _.uniq(_.concat(postIdsLatest, postIdsHot)) 
- 
-      if (ids.length !== 0) { 
-        fetchFollowing(this.$store, { 
-          resource: 'post', 
-          ids: ids, 
-        }) 
-      } 
- 
-      if (postIdFeaturedProject.length !== 0) { 
-        fetchFollowing(this.$store, { 
-          resource: 'project', 
-          ids: postIdFeaturedProject, 
-        })
-      }
+    // Beta version code
+    let reqs = [ 
+      fetchPosts(this.$store),
+      fetchPosts(this.$store, { category: 'hot', }),
+      fetchProjectsList(this.$store, { max_result: 5, status: PROJECT_STATUS.WIP, }),
+      fetchProjectsList(this.$store, { max_result: 2, status: PROJECT_STATUS.DONE, }),
+    ]
+    if (this.$route.params.postId) {
+      reqs.push(fetchPost(this.$store, { id: this.$route.params.postId, })) 
     }
+    Promise.all(reqs).then(() => {
+      if (this.$store.state.isLoggedIn) {
+        const postIdsLatest = _.get(this.$store.state.publicPosts, 'items', []).map(post => `${post.id}`) 
+        const postIdsHot = _.get(this.$store.state.publicPostsHot, 'items', []).map(post => `${post.id}`) 
+        const postIdFeaturedProject = _.get(this.$store.state.projectsList, 'items', []).map(project => `${project.id}`) 
+        const ids = _.uniq(_.concat(postIdsLatest, postIdsHot)) 
+   
+        if (ids.length !== 0) { 
+          fetchFollowing(this.$store, { 
+            resource: 'post', 
+            ids: ids, 
+          }) 
+        } 
+   
+        if (postIdFeaturedProject.length !== 0) { 
+          fetchFollowing(this.$store, { 
+            resource: 'project', 
+            ids: postIdFeaturedProject, 
+          })
+        }
+      }
+    })
+    // Uncomment this when v1.0 is released
+    // if (this.$store.state.isLoggedIn) {
+    //   const postIdsLatest = _.get(this.$store.state.publicPosts, 'items', []).map(post => `${post.id}`) 
+    //   const postIdsHot = _.get(this.$store.state.publicPostsHot, 'items', []).map(post => `${post.id}`) 
+    //   const postIdFeaturedProject = _.get(this.$store.state.projectsList, 'items', []).map(project => `${project.id}`) 
+    //   const ids = _.uniq(_.concat(postIdsLatest, postIdsHot)) 
+  
+    //   if (ids.length !== 0) { 
+    //     fetchFollowing(this.$store, { 
+    //       resource: 'post', 
+    //       ids: ids, 
+    //     }) 
+    //   } 
+  
+    //   if (postIdFeaturedProject.length !== 0) { 
+    //     fetchFollowing(this.$store, { 
+    //       resource: 'project', 
+    //       ids: postIdFeaturedProject, 
+    //     })
+    //   }
+    // }
   },
   mounted () {
     window.addEventListener('scroll', () => {

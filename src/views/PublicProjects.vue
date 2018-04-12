@@ -58,9 +58,10 @@ const fetchFollowing = (store, params) => {
 
 export default {
   name: 'ProjectsList',
-  asyncData ({ store, }) {
-    return fetchProjectsList(store, {})
-  },
+  // Uncomment this when v1.0 is released
+  // asyncData ({ store, }) {
+  //   return fetchProjectsList(store, {})
+  // },
   components: {
     AppAsideNav,
     AppTitledList,
@@ -73,11 +74,24 @@ export default {
     },
   },
   beforeMount () {
-    const postIdFeaturedProject = this.$store.state.projectsList.items.map(project => `${project.id}`)
-    fetchFollowing(this.$store, {
-      resource: 'project',
-      ids: postIdFeaturedProject,
+    // Beta version code
+    fetchProjectsList(this.$store, {}).then(() => {
+      if (this.$store.state.isLoggedIn) {
+        const postIdFeaturedProject = this.$store.state.projectsList.items.map(project => `${project.id}`)
+        fetchFollowing(this.$store, {
+          resource: 'project',
+          ids: postIdFeaturedProject,
+        })
+      }
     })
+    // Uncomment this when v1.0 is released
+    // if (this.$store.state.isLoggedIn) {
+    //   const postIdFeaturedProject = this.$store.state.projectsList.items.map(project => `${project.id}`)
+    //   fetchFollowing(this.$store, {
+    //     resource: 'project',
+    //     ids: postIdFeaturedProject,
+    //   })
+    // }
   },
 }
 </script>

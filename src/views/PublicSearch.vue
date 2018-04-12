@@ -50,9 +50,10 @@
 
   export default {
     name: 'Search',
-    asyncData ({ store, route, }) {
-      return fetchData(store, route)
-    },
+    // Uncomment this when v1.0 is released
+    // asyncData ({ store, route, }) {
+    //   return fetchData(store, route)
+    // },
     components: {
       AppAsideNav,
       HomeArticleMain,
@@ -74,6 +75,10 @@
         debug('Filter changes to:', key)
         this.currFilter = key
       },
+    },
+    beforeMount () {
+      // Beta version code
+      fetchData(this.$store, this.$route)
     },
     mounted () {
       debug('Mounted')

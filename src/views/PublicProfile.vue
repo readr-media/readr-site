@@ -80,26 +80,27 @@
       PostContent,
       Tab,
     },
-    asyncData ({ store, route, }) {
-      debug('profileId', get(route, 'params.id'))
-      return Promise.all([
-        getPosts(store, {
-          where: {
-            author: get(route, 'params.id'),
-            type: POST_TYPE.REVIEW,
-          },
-        }),
-        getPostsCount(store, {
-          where: {
-            author: get(route, 'params.id'),
-            type: POST_TYPE.REVIEW,
-          },
-        }),
-        getMemberPublic(store, {
-          id: get(route, 'params.id'),
-        }),
-      ])
-    },
+    // Uncomment this when v1.0 is released
+    // asyncData ({ store, route, }) {
+    //   debug('profileId', get(route, 'params.id'))
+    //   return Promise.all([
+    //     getPosts(store, {
+    //       where: {
+    //         author: get(route, 'params.id'),
+    //         type: POST_TYPE.REVIEW,
+    //       },
+    //     }),
+    //     getPostsCount(store, {
+    //       where: {
+    //         author: get(route, 'params.id'),
+    //         type: POST_TYPE.REVIEW,
+    //       },
+    //     }),
+    //     getMemberPublic(store, {
+    //       id: get(route, 'params.id'),
+    //     }),
+    //   ])
+    // },
     computed: {
       currUser () {
         return get(this.$store, 'state.profile.id')
@@ -173,6 +174,26 @@
             break
         }
       },
+    },
+    beforeMount () {
+      // Beta version code
+      Promise.all([
+        getPosts(this.$store, {
+          where: {
+            author: get(this.$route, 'params.id'),
+            type: POST_TYPE.REVIEW,
+          },
+        }),
+        getPostsCount(this.$store, {
+          where: {
+            author: get(this.$route, 'params.id'),
+            type: POST_TYPE.REVIEW,
+          },
+        }),
+        getMemberPublic(this.$store, {
+          id: get(this.$route, 'params.id'),
+        }),
+      ])
     },
     mounted () {
       debug(`/profile/${this.$route.params.id}`)
