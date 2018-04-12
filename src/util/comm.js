@@ -122,6 +122,7 @@ export function getValue (o = {}, p = [], d = '') {
 }
 
 export function updatedAtYYYYMMDD (isoDate) {
+  if (!isoDate) return isoDate
   const date = isoDate.split('T')[0]
   return date.replace(/-/g, '/')
 }
