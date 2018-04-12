@@ -14,7 +14,7 @@ const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API
 
 router.post('/', (req, res, next) => {
   debug('Got a invite call.')
-  // debug(req.user)
+  debug(req.user)
   const emails = map(get(req.body, 'emails'), email => ({ email, status: 0, })) || []
   const url = `${apiHost}/member`
   const process = emails.length ? map(emails, (email_item) => new Promise(resolve => {
@@ -55,13 +55,14 @@ router.post('/', (req, res, next) => {
   debug('Goin to send email.')
   debug(res.emails)
   debug('res.emails.length ?', res.emails.length)
+  debug('inviter', get(req, 'user.email', get(req, 'user.email')))
   debug(filter(res.emails, { status: 1, }))
   const process = res.emails.length ? map(filter(res.emails, { status: 1, }), (email_item, index) => new Promise(resolve => {
     debug('Abt to send invitation to', email_item.email)
     sendInvitationEmail({
       id: email_item.email,
       email: email_item.email,
-      inviter: get(req, 'user.nickname', get(req, 'user.mail')),
+      inviter: get(req, 'user.nickname', get(req, 'user.email')),
       role: 1,
       type: 'init',
     }).then(({ error, response, }) => {
@@ -125,6 +126,7 @@ router.get('/quota', setupClientCache, (req, res, next) => {
 
   let quota = get(res, 'score', 0) - (invited_count - get(res, 'downline', 0))
   quota = get(res, 'downline', 0) === 0 ? get(res, 'score', 0) - invited_count : quota
+  quota = quota < 0 ? 0 : quota
   debug('quota', quota)
   res.send({ quota, })
 })

@@ -32,7 +32,7 @@
         </div>      
       </template>
       <template v-else>
-        <div class="invite__sent">
+        <div class="invite__sent" @click="switchOnInvite">
           <div class="invite__icon"></div>
           <span v-text="$t('INVITATION.SENT')" v-if="isSent"></span>
           <span v-text="$t('INVITATION.TITLE')" v-else></span>
@@ -50,6 +50,11 @@
   const debug = require('debug')('CLIENT:Invite')
   const turnOffInvitation = (store, { params, }) => {
     return store.dispatch('INVITATION_SWITCH_OFF', {
+      params,
+    })
+  }
+  const turnOnInvitation = (store, { params, }) => {
+    return store.dispatch('INVITATION_SWITCH_ON', {
       params,
     })
   }
@@ -121,6 +126,9 @@
         } else {
           this.isProcessing = false
         }
+      },
+      switchOnInvite () {
+        turnOnInvitation(this.$store, {})
       },
       switchOffInvite () {
         turnOffInvitation(this.$store, {})
@@ -278,4 +286,5 @@
       letter-spacing normal
       text-align center
       color #000000
+      cursor pointer
 </style>
