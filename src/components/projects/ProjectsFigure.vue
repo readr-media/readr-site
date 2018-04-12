@@ -1,5 +1,5 @@
 <template>
-  <figure class="projects-figure">
+  <a :href="projectUrl" target="_blank" class="projects-figure">
     <div class="projects-figure__img" :style="{ 'backgroundImage': `url(${project.heroImage})` }"></div>
     <figcaption class="projects-figcaption">
       <div class="projects-figcaption__share">
@@ -10,11 +10,12 @@
       <p class="projects-figcaption__description" v-text="project.description"></p>
       <AppArticleNav :articleType="'project'" :postId="project.id" :commentCount="project.commentAmount || 0"/>
     </figcaption>
-  </figure>
+  </a>
 </template>
 
 <script>
 import { updatedAtYYYYMMDD, } from '../../util/comm'
+import { SITE_DOMAIN, } from 'src/constants'
 import AppShareButton from 'src/components/AppShareButton.vue'
 import AppArticleNav from 'src/components/AppArticleNav.vue'
 
@@ -29,6 +30,11 @@ export default {
     AppShareButton,
     AppArticleNav,
   },
+  computed: {
+    projectUrl () {
+      return this.project.slug ? `http://${SITE_DOMAIN}/project/${this.project.slug}` : '/'
+    },
+  },
   methods: {
     updatedAtYYYYMMDD,
   },
@@ -41,6 +47,7 @@ export default {
   height inherit
   margin 0
   background-color white
+  color black
   & + &
     margin-top 10px
   &__img
