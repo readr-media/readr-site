@@ -86,6 +86,29 @@ const sendInvitationEmail = ({ id, email, role, type, inviter, }) => {
     })  
   })
 }
+const sendInitializingSuccessEmail = ({ email, }) => {
+  return new Promise(resolve => {
+    sendEmail({
+      email,
+      subject: 'READr 計畫給先行者的一封信',
+      cb: (e, r) => resolve({ error: e, response: r, }),
+      content: `<p>親愛的朋友您好，</p><br>
+      <p>我是簡信昌，READr （音同：reader）計畫的主要發起人，是一個從網路業工程師轉入新聞媒體業的二年級生。<br>
+      我投身開源社群多年，也是零時政府（g0v）的參與者，但在 2014 年 g0v 因為太陽花運動而爆紅時，看到媒體荒<br>
+      謬地編造這個公民科技組織的故事，心中便種下了改變的念頭。在偶然的機會下，一路從報導者到鏡傳媒，踏入了新聞<br>媒體圈。</p>
+      <p>在這兩年多來，看著圈內的大家為了爭取讀者的眼球煞費苦心，整體廣告市場卻越來越差。許多優秀的新聞人才慢<br>
+      慢離開了這個領域，我開始思考，為什麼在網路發達的這個時代，新聞在某種程度上卻越來越邊緣？</p>
+      <p>在思考與實作的過程中，我心中媒體樣貌也漸漸成形。READr 計畫來自鏡週刊程式設計中心團隊，過去一年多，<br>
+      我們嘗試做了不少<a href="https://www.mirrormedia.mg/story/2017visual-review/">數位專題</a>，<br>
+      與其他新聞團隊不同的是，是由記者、設計師、工程師同時貢獻各自的專長所產出，而非單獨由一方主導。</p>
+      <p>我們發現，其他同事常常帶來不同的問題意識與觀點，讓專題的面向變得更多元。有時候是工程師提出的網頁呈現<br>
+      恰好切中新聞核心、有時候是設計師提到視覺互動的方法，產製過程中少了「新聞」的框架制肘，反而讓新聞變得更有<br>
+      趣了。不過，誰說新聞只能有一種面貌呢？</p>
+      <p></p>
+      <p>READr 簡信昌 敬上</p>`,
+    })  
+  })
+}
 
 const fetchMem = (member) => new Promise((resolve) => {
   superagent
@@ -136,5 +159,6 @@ module.exports = {
   sendActivationMail,
   sendRecoverPwdEmail,
   sendInvitationEmail,
+  sendInitializingSuccessEmail,
   verifyToken,
 }
