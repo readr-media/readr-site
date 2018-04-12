@@ -47,12 +47,13 @@ const fetchFollowing = (store, params) => {
 
 export default {
   name: 'Editors',
-  asyncData ({ store, i18n, }) {
-    const targ_key = _.find(ROLE_MAP, { value: i18n.t('editors.WORDING_EDITORS_GUESTEDITOR'), }).key
-    return getMembersPublic(store, {
-      role: targ_key,
-    })
-  },
+  // Uncomment this when v1.0 is released
+  // asyncData ({ store, i18n, }) {
+  //   const targ_key = _.find(ROLE_MAP, { value: i18n.t('editors.WORDING_EDITORS_GUESTEDITOR'), }).key
+  //   return getMembersPublic(store, {
+  //     role: targ_key,
+  //   })
+  // },
   components: {
     AppAsideNav,
     AppTitledList,
@@ -72,7 +73,12 @@ export default {
     },
   },
   beforeMount () {
+    // Beta version code
+    const targ_key = _.find(ROLE_MAP, { value: this.$t('editors.WORDING_EDITORS_GUESTEDITOR'), }).key
     Promise.all([
+      getMembersPublic(this.$store, {
+        role: targ_key,
+      }),
       getMembersPublic(this.$store, {
         custom_editor: true,
       }),
@@ -87,6 +93,22 @@ export default {
         })
       }
     })
+    // Uncomment this when v1.0 is released
+    // Promise.all([
+    //   getMembersPublic(this.$store, {
+    //     custom_editor: true,
+    //   }),
+    // ]).then(() => {
+    //   if (this.$store.state.isLoggedIn) {
+    //     const customEditorsIds = this.$store.state.customEditors.items.map(editor => editor.id)
+    //     const asideListMembersIds = this.$store.state.publicMembers[this.asideListRoleValue].items.map(member => member.id)
+    //     const ids = _.uniq(_.concat(customEditorsIds, asideListMembersIds))
+    //     fetchFollowing(this.$store, {
+    //       resource: 'member',
+    //       ids: ids,
+    //     })
+    //   }
+    // })
   },
 }
 </script>
