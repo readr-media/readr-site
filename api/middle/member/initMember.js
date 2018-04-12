@@ -1,4 +1,5 @@
 const { buildUserForTalk, updateUserForTalk, } = require('../talk')
+const { sendInitializingSuccessEmail, } = require('./comm')
 const { get, } = require('lodash')
 const Cookies = require('cookies')
 const config = require('../../config')
@@ -9,7 +10,7 @@ const superagent = require('superagent')
 
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
 
-const update_default_data = (req) => {
+const update_default_data = (req, res, next) => {
   const avatar_default = 'https://www.readr.tw/public/icons/exclamation.png'
   const id = get(req, 'user.id')
   const nickname = get(req, 'body.nickname')
@@ -21,6 +22,17 @@ const update_default_data = (req) => {
     role,
   }).then(() => {
     debug('Update talk data for member successfully.')
+    next()
+  })
+}
+
+const send_email_for_initializing_successfully = (req) => {
+  sendInitializingSuccessEmail({ email: get(req, 'user.id'), }).then(({ error, }) => {
+    if (!error) {
+      debug('Sending email to notify member about initializing completion successfully.')
+    } else {
+      debug('Sending email to notify member about initializing completion in fail.', get(req, 'user.id'))
+    }
   })
 }
 
@@ -72,6 +84,6 @@ router.post('/', (req, res, next) => {
       res.status(500).json(err)
     }
   })
-}, update_default_data)
+}, update_default_data, send_email_for_initializing_successfully)
 
 module.exports = router
