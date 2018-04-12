@@ -334,20 +334,29 @@ router.post('/meta', authVerify, (req, res) => {
 
   superagent
   .get(url)
+  .set('Accept', 'application/json, text/plain, */*')
   .set('User-Agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36')
   .end((err, response) => {
     if (!err && response) {
       const dom = new JSDOM(response.text)
-      const ogTitle = dom.window.document.querySelector('meta[property="og:title"]').getAttribute("content") || ' '
-      const ogDescription = dom.window.document.querySelector('meta[property="og:description"]').getAttribute("content") || ' '
-      const ogImage = dom.window.document.querySelector('meta[property="og:image"]').getAttribute("content") || ' '
-      const ogSiteName = dom.window.document.querySelector('meta[property="og:site_name"]').getAttribute("content") || ' '
-      const og = {
-        ogTitle: ogTitle,
-        ogDescription: ogDescription,
-        ogImage: ogImage,
-        ogSiteName: ogSiteName,
+      const og = {}
+
+      if (dom.window.document.querySelector('meta[property="og:title"]')) {
+        og.ogTitle = dom.window.document.querySelector('meta[property="og:title"]').getAttribute("content") || ' '
       }
+
+      if (dom.window.document.querySelector('meta[property="og:description"]')) {
+        og.ogDescription = dom.window.document.querySelector('meta[property="og:description"]').getAttribute("content") || ' '
+      }
+
+      if (dom.window.document.querySelector('meta[property="og:image"]')) {
+        og.ogImage = dom.window.document.querySelector('meta[property="og:image"]').getAttribute("content") || ' '
+      }
+
+      if (dom.window.document.querySelector('meta[property="og:site_name"]')) {
+        og.ogSiteName = dom.window.document.querySelector('meta[property="og:site_name"]').getAttribute("content") || ' '
+      }
+      
       res.status(200).send(og).end()
     } else {
       res.status(500).send(err)
