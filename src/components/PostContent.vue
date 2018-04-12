@@ -130,11 +130,11 @@
       },
       fetchOgImage () {
         const img = new Image()
-        img.src = this.post.linkImage
         return new Promise((resolve, reject) => {
           if (!this.post.linkImage) {
             reject()
           } else {
+            img.src = this.post.linkImage
             img.onload = function () {
               resolve({ width: this.width, height: this.height, })
             }
@@ -145,7 +145,7 @@
     beforeMount () {
       this.fetchOgImage().then(({ width, height, }) => {
         this.ogImageSize = width < height ? 'contain' : 'cover'
-      })
+      }).catch(() => { this.ogImageSize = '' })
     },
     mounted () {},
     props: {
