@@ -1,11 +1,11 @@
 <template>
   <div class="article-nav">
     <nav class="article-nav__nav-btns">
-      <span class="comment-icon" @click="renderComment(`.article-nav__comment > .comment.comment-${postId}`)">
+      <span class="comment-icon" @click="renderComment(`.article-nav__comment > .comment.comment-${postId}`, $event)">
         <img class="comment-icon__thumbnail" src="/public/icons/comment-blue.png" alt="comment">
         <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="postId" :type="'publicPostsHot'"></CommentCount>
       </span>
-      <span class="follow-icon" @click="toogleFollow">
+      <span class="follow-icon" @click="toogleFollow($event)">
         <img class="follow-icon__thumbnail" :src="isFollow ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="follow">
         <span class="follow-icon__hint" v-text="$t('follow.WORDING_FOLLOW_LIST_FOLLOW')"></span>
       </span>
@@ -69,10 +69,12 @@ export default {
     },
   },
   methods: {
-    renderComment (ref) {
+    renderComment (ref, event) {
+      if (event) event.preventDefault()
       renderComment(this.$el, `${ref}`, `/post/${this.postId}`, this.$store.state.setting.TALK_SERVER)
     },
-    toogleFollow () {
+    toogleFollow (event) {
+      if (event) event.preventDefault()
       if (!this.$store.state.isLoggedIn) {
         alert('please login first')
       } else {
