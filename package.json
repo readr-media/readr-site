@@ -38,6 +38,7 @@
     "html-truncate": "^1.2.2",
     "humps": "^2.0.1",
     "joi": "^13.1.2",
+    "jsdom": "^11.7.0",
     "jsonwebtoken": "^8.1.0",
     "kc-scroll": "^0.2.71",
     "lodash": "^4.17.4",

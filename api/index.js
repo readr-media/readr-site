@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const { API_DEADLINE, API_HOST, API_PORT, API_PROTOCOL, API_TIMEOUT, } = require('./config')
 const { GCP_FILE_BUCKET, GOOGLE_RECAPTCHA_SECRET, GCS_IMG_MEMBER_PATH, GCS_IMG_POST_PATH, } = require('./config')
+const { JSDOM, } = require("jsdom")
 const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT, } = require('./config')
 const { camelizeKeys, } = require('humps')
 const { authorize, constructScope, fetchPermissions, } = require('./services/perm')
@@ -16,7 +17,7 @@ const fs = require('fs')
 const jwtExpress = require('express-jwt')
 // const jwtService = require('./service.js')
 const multer  = require('multer')
-const ogs = require('open-graph-scraper')
+// const ogs = require('open-graph-scraper')
 const upload = multer({ dest: 'tmp/', })
 
 const { fetchFromRedis, insertIntoRedis, redisFetching, } = require('./middle/redisHandler')
@@ -330,13 +331,28 @@ router.post('/meta', authVerify, (req, res) => {
     res.status(400).end()
   }
   const url = req.body.url
-  ogs({ url: url, }, (error, results) => {
-    if (!error && results) {
-      res.status(200).send(results.data).end()
+
+  superagent
+  .get(url)
+  .set('User-Agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36')
+  .end((err, response) => {
+    if (!err && response) {
+      const dom = new JSDOM(response.text)
+      const ogTitle = dom.window.document.querySelector('meta[property="og:title"]').getAttribute("content") || ' '
+      const ogDescription = dom.window.document.querySelector('meta[property="og:description"]').getAttribute("content") || ' '
+      const ogImage = dom.window.document.querySelector('meta[property="og:image"]').getAttribute("content") || ' '
+      const ogSiteName = dom.window.document.querySelector('meta[property="og:site_name"]').getAttribute("content") || ' '
+      const og = {
+        ogTitle: ogTitle,
+        ogDescription: ogDescription,
+        ogImage: ogImage,
+        ogSiteName: ogSiteName,
+      }
+      res.status(200).send(og).end()
     } else {
-      res.status(500).send(error)
+      res.status(500).send(err)
       console.error(`error during fetch data from : ${req.url}`)
-      console.error(error)
+      console.error(err)
     }
   })
 })

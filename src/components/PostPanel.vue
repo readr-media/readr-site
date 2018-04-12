@@ -391,7 +391,7 @@
               this.postParams.link_name = _.truncate(_.get(res, [ 'body', 'ogSiteName', ]), { 'length': 50, })
               this.postParams.link_title = _.get(res, [ 'body', 'ogTitle', ])
               this.postParams.link_description = _.get(res, [ 'body', 'ogDescription', ])
-              this.postParams.link_image = _.get(res, [ 'body', 'ogImage', 'url', ])
+              this.postParams.link_image = _.get(res, [ 'body', 'ogImage', ])
               
               if (this.tagsNeedAdd.length !== 0) {
                 this.$_postPanel_addNewTag(active)
