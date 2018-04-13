@@ -8,7 +8,7 @@
           <p class="editor-writing__paragraph--visible" v-if="i <= shouldContentStopAtIndex" :key="`${post.id}-${i}`">
             <span v-html="p"></span>
             <span v-if="shouldShowReadMoreButton(i)">
-              ......<span class="editor-writing__more" @click="toogleReadmore($event)" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span>
+              <span class="editor-writing__more" @click="toogleReadmore($event)" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span>
             </span>
           </p>
           <!-- rest of the post content -->
@@ -74,10 +74,15 @@
         if (this.postContentWordCountTotal <= this.showContentWordLimit){
           return this.postContent
         } else {
+          const ellipsis = '......'
           return this.postContent.map((paragraph, index) => {
-            if (!this.isReadMoreClicked && index === this.shouldContentStopAtIndex && this.isStopParagraphWordCountExceedLimit) {
-              const wordCountBeforeStop = this.postContentWordCount.reduce((acc, curr, currIndex) => currIndex < this.shouldContentStopAtIndex ? acc + curr : acc, 0)
-              return truncate(paragraph, this.showContentWordLimit - wordCountBeforeStop, { ellipsis: this.isArticleMain ? null : '...', })
+            if (!this.isReadMoreClicked && index === this.shouldContentStopAtIndex) {
+              if (this.isStopParagraphWordCountExceedLimit) {
+                const wordCountBeforeStop = this.postContentWordCount.reduce((acc, curr, currIndex) => currIndex < this.shouldContentStopAtIndex ? acc + curr : acc, 0)
+                return truncate(paragraph, this.showContentWordLimit - wordCountBeforeStop, { ellipsis: ellipsis, })
+              } else if (!this.isStopLastParagraphBeforeTruncate) {
+                return paragraph + ellipsis
+              }
             }
             return paragraph
           })
