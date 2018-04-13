@@ -5,8 +5,8 @@
     </aside>
     <main class="profile__main">
       <About :profile="profile || {}"></About>
-      <Tab class="profile__tab" :tabs="tabs" @changeTab="tabHandler">
-        <template slot="0">
+      <Tab class="profile__tab" :tabs="tabs">
+        <template slot="0" v-if="postsReview.length !== 0">
           <div class="profile__main__review">
             <div class="profile__main__review__filter">
               <select @change="filterChanged">
@@ -15,7 +15,22 @@
               </select>
             </div>
             <div class="profile__main__review__container">
-              <div class="item" v-for="post in posts" :key="post.id">
+              <div class="item" v-for="post in postsReview" :key="post.id">
+                <PostContent :modifier="'main'" :post="post"></PostContent>
+              </div>
+            </div>
+          </div>
+        </template>
+        <template :slot="postsReview.length !== 0 ? 1 : 0" v-if="postsNews.length !== 0">
+          <div class="profile__main__review">
+            <div class="profile__main__review__filter">
+              <select @change="filterChanged">
+                <option v-text="$t('profile.WORDING_PROFILE_FILTER_ALL')" value="all"></option>
+                <option v-for="item in filters" v-text="item" :value="item"></option>
+              </select>
+            </div>
+            <div class="profile__main__review__container">
+              <div class="item" v-for="post in postsNews" :key="post.id">
                 <PostContent :modifier="'main'" :post="post"></PostContent>
               </div>
             </div>
@@ -126,6 +141,19 @@
         debug('posts', posts)
         return posts
       },
+      postsReview () {
+        return this.posts.filter(post => post.type === POST_TYPE.REVIEW )
+      },
+      postsNews () {
+        return this.posts.filter(post => post.type === POST_TYPE.NEWS )
+      },
+      tabs () {
+        let tabs = []
+        if (this.postsReview.length !== 0) tabs.push(this.$t('tab.WORDING_TAB_REVIEW_RECORD'))
+        if (this.postsNews.length !== 0) tabs.push(this.$t('tab.WORDING_TAB_NEWS_RECORD'))
+        tabs.push(this.$t('tab.WORDING_TAB_FOLLOW_RECORD'))
+        return tabs
+      },
       profileId () {
         return get(this.$route, 'params.id')
       },
@@ -137,10 +165,11 @@
     data () {
       return {
         filter: 'all',
-        tabs: [
-          this.$t('tab.WORDING_TAB_REVIEW_RECORD'),
-          this.$t('tab.WORDING_TAB_FOLLOW_RECORD'),
-        ],
+        // tabs: [
+        //   this.$t('tab.WORDING_TAB_REVIEW_RECORD'),
+        //   this.$t('tab.WORDING_TAB_NEWS_RECORD'),
+        //   this.$t('tab.WORDING_TAB_FOLLOW_RECORD'),
+        // ],
       }
     },
     methods: {
@@ -154,26 +183,42 @@
           this.$router.push(`/${route}`)
         }
       },
-      tabHandler (tab) {
-        switch (tab) {
-          case 0: 
-            Promise.all([
-              getPosts(this.$store, {
-                where: {
-                  author: this.profileId,
-                  type: POST_TYPE.REVIEW,
-                },
-              }),
-              getPostsCount(this.$store, {
-                where: {
-                  author: this.profileId,
-                  type: POST_TYPE.REVIEW,
-                },
-              }),              
-            ])
-            break
-        }
-      },
+      // tabHandler (tab) {
+      //   switch (tab) {
+      //     case 0: 
+      //       Promise.all([
+      //         getPosts(this.$store, {
+      //           where: {
+      //             author: this.profileId,
+      //             type: POST_TYPE.REVIEW,
+      //           },
+      //         }),
+      //         getPostsCount(this.$store, {
+      //           where: {
+      //             author: this.profileId,
+      //             type: POST_TYPE.REVIEW,
+      //           },
+      //         }),              
+      //       ])
+      //       break
+      //     case 1: 
+      //       Promise.all([
+      //         getPosts(this.$store, {
+      //           where: {
+      //             author: this.profileId,
+      //             type: POST_TYPE.NEWS,
+      //           },
+      //         }),
+      //         getPostsCount(this.$store, {
+      //           where: {
+      //             author: this.profileId,
+      //             type: POST_TYPE.NEWS,
+      //           },
+      //         }),              
+      //       ])
+      //       break
+      //   }
+      // },
     },
     beforeMount () {
       // Beta version code
@@ -181,13 +226,13 @@
         getPosts(this.$store, {
           where: {
             author: get(this.$route, 'params.id'),
-            type: POST_TYPE.REVIEW,
+            type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ],
           },
         }),
         getPostsCount(this.$store, {
           where: {
             author: get(this.$route, 'params.id'),
-            type: POST_TYPE.REVIEW,
+            type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ],
           },
         }),
         getMemberPublic(this.$store, {

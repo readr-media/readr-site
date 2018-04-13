@@ -36,6 +36,7 @@
         <a class="list-item aside-navigation__list-item" href="https://www.mirrormedia.mg/" target="_blank"><span><img src="/public/icons/mirrormedia.png" alt="info"></span></a>
       </div>
       <div class="aside-navigation__section--white">
+        <router-link :to="`/profile/${ANNOUNCEMENT_ACCOUNT_ID}`" class="list-item aside-navigation__list-item"><span><img src="/public/icons/announcement.png" alt="info"></span></router-link>
         <InviteSwitcher class="list-item aside-navigation__list-item"><span slot="icon"><img src="/public/icons/invite.png" alt="info"></span></InviteSwitcher>
       </div>
     </ol>
@@ -43,7 +44,7 @@
 </template>
 
 <script>
-import { SECTIONS_DEFAULT, } from 'src/constants'
+import { SECTIONS_DEFAULT, ANNOUNCEMENT_ACCOUNT_ID, } from 'src/constants'
 import { currEnv, isCurrentRoutePath, } from 'src/util/comm'
 import { get, } from 'lodash'
 import InviteSwitcher from 'src/components/invitation/InviteSwitcher.vue'
@@ -57,6 +58,7 @@ export default {
     return {
       wording: SECTIONS_DEFAULT,
       isHoverFirstListItem: false,
+      ANNOUNCEMENT_ACCOUNT_ID,
     }
   },
   computed: {
