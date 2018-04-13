@@ -34,6 +34,7 @@
   import AppArticleNav from 'src/components/AppArticleNav.vue'
   import sanitizeHtml from 'sanitize-html'
   import truncate from 'html-truncate'
+  import { POST_TYPE, } from '../../api/config'
 
   const dom = require('xmldom').DOMParser
   const seializer  = require('xmldom').XMLSerializer
@@ -55,6 +56,9 @@
       },
       isArticleMain () {
         return this.modifier === 'main'
+      },
+      isNews () {
+        return get(this.post, 'type', POST_TYPE.REVIEW) === POST_TYPE.NEWS
       },
       showContentWordLimit () {
         return this.isArticleMain ? 150 : 50
@@ -126,7 +130,7 @@
         return index === this.shouldContentStopAtIndex
       },      
       shouldShowReadMoreButton (index) {
-        return this.isArticleMain && !this.isReadMoreClicked && (!this.isStopLastParagraphBeforeTruncate || this.isStopParagraphWordCountExceedLimit) && this.isLastParagraphAfterTruncate(index)
+        return (this.isArticleMain && !this.isNews) && !this.isReadMoreClicked && (!this.isStopLastParagraphBeforeTruncate || this.isStopParagraphWordCountExceedLimit) && this.isLastParagraphAfterTruncate(index)
       },
       fetchOgImage () {
         const img = new Image()
