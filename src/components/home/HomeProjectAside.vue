@@ -44,6 +44,9 @@ export default {
 .home-project-aside
   &__container
     color black
+    & + &
+      display inline-block
+      margin-top 17px
   &__project-image
     width 100%
     height 236.4px

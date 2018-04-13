@@ -24,6 +24,38 @@ export const SECTIONS_DEFAULT = {
   'projects': '議題',
 }
 
+export const MM_SITE_DOMAIN = 'mirrormedia.mg'
+
+export const OLD_PROJECTS_SLUGS = [
+  'burkinafasogallery',
+  'burkinafaso',
+  'allenlien',
+  'taiwan_diplomatic_relations',
+  'legendhou-painting',
+  'legendhou-gallery',
+  'legendhou',
+  'airquality',
+  'valentines_day',
+  'transport-industry',
+  'transport-industry-mrt',
+  'lottery',
+  'mining',
+  'hot-sugar',
+  '20170801aboriginal',
+  'universiade2017-chenshihchieh',
+  'universiade2017-chenchieh',
+  'universiade2017-chenyenyu',
+  'universiade2017-kungyun',
+  'universiade2017',
+  'whitecollar',
+  'real-name',
+  'poetry',
+  'rent-king',
+  'rent-house',
+  'political-contribution',
+  'fertility',
+]
+
 // Image upload max size 30 MB
 export const IMAGE_UPLOAD_MAX_SIZE = 31457280
 

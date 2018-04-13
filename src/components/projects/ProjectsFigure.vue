@@ -15,7 +15,7 @@
 
 <script>
 import { updatedAtYYYYMMDD, } from '../../util/comm'
-import { SITE_DOMAIN, } from 'src/constants'
+import { SITE_DOMAIN, MM_SITE_DOMAIN, OLD_PROJECTS_SLUGS,  } from 'src/constants'
 import AppShareButton from 'src/components/AppShareButton.vue'
 import AppArticleNav from 'src/components/AppArticleNav.vue'
 
@@ -32,7 +32,10 @@ export default {
   },
   computed: {
     projectUrl () {
-      return this.project.slug ? `http://${SITE_DOMAIN}/project/${this.project.slug}` : '/'
+      if (this.project.slug) {
+        return OLD_PROJECTS_SLUGS.includes(this.project.slug) ? `http://${MM_SITE_DOMAIN}/projects/${this.project.slug}` : `http://${SITE_DOMAIN}/project/${this.project.slug}`
+      }
+      return '/'
     },
   },
   methods: {
