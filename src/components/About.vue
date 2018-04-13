@@ -34,6 +34,7 @@
         const currUser = get(this.$store, 'state.profile.id')
         debug('currUser', currUser)
         debug('profile', get(this.profile, 'id'))
+        if (!currUser) return false
         return currUser === get(this.profile, 'id')
       },
       introduction () {

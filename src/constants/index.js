@@ -2,6 +2,7 @@ import projectList from './projectList'
 export const PROJECTS = projectList
 
 export const SITE_DOMAIN = 'readr.tw'
+export const ANNOUNCEMENT_ACCOUNT_ID = 'readr@readr.tw'
 export const SITE_DOMAIN_DEV = 'dev.readr.tw'
 
 export const ROLE_MAP = [
