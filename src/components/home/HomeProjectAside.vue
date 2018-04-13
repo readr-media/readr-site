@@ -16,7 +16,7 @@
 <script>
 import AppArticleNav from 'src/components/AppArticleNav.vue'
 import { get, } from 'lodash'
-import { SITE_DOMAIN, } from 'src/constants'
+import { getProjectUrl, } from 'src/util/comm'
 
 export default {
   components: {
@@ -30,7 +30,12 @@ export default {
       return get(this.$store, [ 'state', 'publicProjects', 'done', ], [])
     },
     projectsUrl () {
-      return this.projectsDone.map(project => project.slug ? `http://${SITE_DOMAIN}/project/${project.slug}` : '/')
+      return this.projectsDone.map(project => {
+        if (project.slug) {
+          return getProjectUrl(project.slug)
+        }
+        return '/'
+      })
     },
     // projectsInProgress () {
     //   return get(this.$store, [ 'state', 'publicProjects', 'inProgress', ], [])
@@ -44,6 +49,7 @@ export default {
 .home-project-aside
   &__container
     color black
+    width 100%
     & + &
       display inline-block
       margin-top 17px
