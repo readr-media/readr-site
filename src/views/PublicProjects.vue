@@ -102,6 +102,7 @@ export default {
   min-height 100vh
   &__container
     max-width 1200px
+    width 100%
     margin auto
     padding 25px 0
     display flex
