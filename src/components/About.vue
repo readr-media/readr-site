@@ -11,7 +11,7 @@
     <div class="about__edit" v-if="isCurrUser">
       <span class="about__edit__btn" v-text="editText" @click="goEdit"></span>
     </div>
-    <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder">
+    <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder" v-if="isCurrUser">
       <BaseLightBoxProfileEdit :showLightBox="showLightBox" :profile="profile" @save="showLightBox = false"/>
     </BaseLightBox>
   </div>
@@ -34,7 +34,6 @@
         const currUser = get(this.$store, 'state.profile.id')
         debug('currUser', currUser)
         debug('profile', get(this.profile, 'id'))
-        if (!currUser) return false
         return currUser === get(this.profile, 'id')
       },
       introduction () {
@@ -67,7 +66,12 @@
       },
     },
     mounted () {},
-    props: [ 'profile', ],
+    props: {
+      profile: {
+        type: Object,
+        default: {},
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>
