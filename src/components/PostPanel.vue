@@ -388,8 +388,8 @@
             link = encodeURI(link)
             getMeta(this.$store, link)
             .then((res) => {
-              this.postParams.link_name = _.truncate(_.get(res, [ 'body', 'ogSiteName', ]), { 'length': 50, })
-              this.postParams.link_title = _.get(res, [ 'body', 'ogTitle', ])
+              this.postParams.link_name = _.truncate(_.get(res, [ 'body', 'ogSiteName', ]), { 'length': 40, })
+              this.postParams.link_title = _.truncate(_.get(res, [ 'body', 'ogTitle', ]), { 'length': 200, })
               this.postParams.link_description = _.truncate(_.get(res, [ 'body', 'ogDescription', ]), { 'length': 250, })
               this.postParams.link_image = _.get(res, [ 'body', 'ogImage', ])
               
