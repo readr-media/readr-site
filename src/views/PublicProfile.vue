@@ -4,7 +4,7 @@
       <AppAsideNav></AppAsideNav>
     </aside>
     <main class="profile__main">
-      <About :profile="profile || {}"></About>
+      <About v-if="profile" :profile="profile"></About>
       <Tab class="profile__tab" :tabs="tabs">
         <template slot="0" v-if="postsReview.length !== 0">
           <div class="profile__main__review">
@@ -160,6 +160,7 @@
       profile () {
         const profile = get(this.$store, 'state.publicMember', {})
         return get(profile, 'id') === get(this.$route, 'params.id') && profile
+        // return profile
       },
     },
     data () {
