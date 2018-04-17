@@ -1,43 +1,38 @@
 <template>
   <div class="profile">
-    <aside class="profile__aside">
-      <AppAsideNav></AppAsideNav>
-    </aside>
-    <main class="profile__main">
-      <About v-if="profile" :profile="profile"></About>
-      <Tab class="profile__tab" :tabs="tabs">
-        <template slot="0" v-if="postsReview.length !== 0">
-          <div class="profile__main__review">
-            <div class="profile__main__review__filter">
-              <select @change="filterChanged">
-                <option v-text="$t('profile.WORDING_PROFILE_FILTER_ALL')" value="all"></option>
-                <option v-for="item in filters" v-text="item" :value="item"></option>
-              </select>
-            </div>
-            <div class="profile__main__review__container">
-              <div class="item" v-for="post in postsReview" :key="post.id">
-                <PostContent :modifier="'main'" :post="post"></PostContent>
-              </div>
+    <About v-if="profile" :profile="profile"></About>
+    <Tab class="profile__tab" :tabs="tabs">
+      <template slot="0" v-if="postsReview.length !== 0">
+        <div class="profile__main__review">
+          <div class="profile__main__review__filter">
+            <select @change="filterChanged">
+              <option v-text="$t('profile.WORDING_PROFILE_FILTER_ALL')" value="all"></option>
+              <option v-for="item in filters" v-text="item" :value="item"></option>
+            </select>
+          </div>
+          <div class="profile__main__review__container">
+            <div class="item" v-for="post in postsReview" :key="post.id">
+              <PostContent :modifier="'main'" :post="post"></PostContent>
             </div>
           </div>
-        </template>
-        <template :slot="postsReview.length !== 0 ? 1 : 0" v-if="postsNews.length !== 0">
-          <div class="profile__main__review">
-            <div class="profile__main__review__filter">
-              <select @change="filterChanged">
-                <option v-text="$t('profile.WORDING_PROFILE_FILTER_ALL')" value="all"></option>
-                <option v-for="item in filters" v-text="item" :value="item"></option>
-              </select>
-            </div>
-            <div class="profile__main__review__container">
-              <div class="item" v-for="post in postsNews" :key="post.id">
-                <PostContent :modifier="'main'" :post="post"></PostContent>
-              </div>
+        </div>
+      </template>
+      <template :slot="postsReview.length !== 0 ? 1 : 0" v-if="postsNews.length !== 0">
+        <div class="profile__main__review">
+          <div class="profile__main__review__filter">
+            <select @change="filterChanged">
+              <option v-text="$t('profile.WORDING_PROFILE_FILTER_ALL')" value="all"></option>
+              <option v-for="item in filters" v-text="item" :value="item"></option>
+            </select>
+          </div>
+          <div class="profile__main__review__container">
+            <div class="item" v-for="post in postsNews" :key="post.id">
+              <PostContent :modifier="'main'" :post="post"></PostContent>
             </div>
           </div>
-        </template>
-      </Tab>
-    </main>
+        </div>
+      </template>
+    </Tab>
   </div>
 </template>
 <script>
@@ -45,7 +40,6 @@
   import { ROLE_MAP, } from 'src/constants'
   import { find, filter, get, map, } from 'lodash'
   import About from 'src/components/About.vue'
-  import AppAsideNav from 'src/components/AppAsideNav.vue'
   import PostContent from 'src/components/PostContent.vue'
   import Tab from 'src/components/Tab.vue'
   import moment from 'moment'
@@ -91,7 +85,6 @@
     name: 'Profile',
     components: {
       About,
-      AppAsideNav,
       PostContent,
       Tab,
     },
@@ -255,21 +248,9 @@
 </script>
 <style lang="stylus" scoped>
   .profile
-    min-height 100vh
-    width 100%
-    background-color #e6e6e6
-    display flex
-    padding 35px 0 35px 75px
-    &__aside
-      position absolute
-      top 60px
-      left 0
-      width 75px
-      height 100%
+    width 950px
+    margin 0 auto
     &__main
-      width 950px
-      padding 25px 0 0 0
-      margin 0 auto
       &__review
         padding 0 100px
         &__filter

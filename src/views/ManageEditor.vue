@@ -1,7 +1,6 @@
 <template>
   <div class="backstage editor">
-    <AppAsideNav class="backstage__aside" />
-    <main class="backstage-container">
+    <div class="backstage-container">
       <app-about :profile="profile"></app-about>
       <control-bar
         @addNews="$_editor_showEditor({ postPanel: 'add', postType: config.type.NEWS })"
@@ -71,7 +70,7 @@
           @publishPosts="$_editor_showAlert">
         </video-list>
       </template> -->
-    </main>
+    </div>
     <base-light-box :showLightBox.sync="showDraftList">
       <post-list-detailed
         :posts="postsDraft"
@@ -112,7 +111,6 @@
   import _ from 'lodash'
   import About from '../components/About.vue'
   import AlertPanelB from '../components/AlertPanel.vue'
-  import AppAsideNav from '../components/AppAsideNav.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
   import FollowingListInTab from '../components/FollowingListInTab.vue'
   import PostList from '../components/PostList.vue'
@@ -258,7 +256,6 @@
       'post-panel': PostPanelB,
       'tag-list': TagList,
       'video-list': VideoList,
-      AppAsideNav,
     },
     data () {
       return {
@@ -786,27 +783,6 @@
 </script>
 <style lang="stylus" scoped>
   .editor
-    width 100%
-    min-height 100vh
-    &__container
-      padding-top 37px
-    &__aside
-      display none
-      width 75px
-      height 100%
-      position sticky
-      // position fixed
-      top 60px
     &__record
       background-color #fff
-
-  @media (min-width 950px)
-    .editor
-      &__container
-        max-width 1200px
-        margin auto
-        padding 60px 0
-        display flex
-      &__aside
-        display block
 </style>

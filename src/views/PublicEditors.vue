@@ -1,26 +1,20 @@
 <template>
   <div class="editors">
     <div class="editors__container">
-      <aside class="editors__aside">
-        <AppAsideNav/>
-      </aside>
-      <main class="editors__main">
-        <AppTitledList :listTitle="$t('editors.WORDING_EDITORS_CURRENT_GUESTEDITOR')">
-          <ul class="editors-list-container">
-            <EditorsIntro class="editors-intro-main" v-for="customEditor in customEditors" :key="customEditor.id" :editor="customEditor"/>
-          </ul>
-        </AppTitledList>
-        <ul class="editors__list-aside">
-          <EditorsIntro class="editors-intro-aside" v-for="member in asideListMembers" :key="member.id" :editor="member" :trimDescription="true"/>
+      <AppTitledList :listTitle="$t('editors.WORDING_EDITORS_CURRENT_GUESTEDITOR')">
+        <ul class="editors-list-container">
+          <EditorsIntro class="editors-intro-main" v-for="customEditor in customEditors" :key="customEditor.id" :editor="customEditor"/>
         </ul>
-      </main>
+      </AppTitledList>
+      <ul class="editors__list-aside">
+        <EditorsIntro class="editors-intro-aside" v-for="member in asideListMembers" :key="member.id" :editor="member" :trimDescription="true"/>
+      </ul>
     </div>
   </div>
 </template>
 
 <script>
 import { ROLE_MAP, } from '../constants'
-import AppAsideNav from '../components/AppAsideNav.vue'
 import AppTitledList from '../components/AppTitledList.vue'
 import EditorsIntro from '../components/editors/EditorsIntro.vue'
 import _ from 'lodash'
@@ -55,7 +49,6 @@ export default {
   //   })
   // },
   components: {
-    AppAsideNav,
     AppTitledList,
     EditorsIntro,
   },
@@ -115,24 +108,7 @@ export default {
 
 <style lang="stylus" scoped>
 .editors
-  background-color #e6e6e6
-  min-height 100vh
   &__container
-    max-width 1200px
-    margin auto
-    padding 60px 0
-    display flex
-  &__aside
-    width 75px
-    height 100%
-    position sticky
-    // position fixed
-    top 60px
-    z-index 999
-  &__main
-    flex 1
-    margin-left 40px
-    margin-right 40px
     display flex
     justify-content flex-start
     align-items flex-start

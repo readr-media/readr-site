@@ -1,33 +1,23 @@
 <template>
   <div class="agreement">
-    <!-- <app-header></app-header> -->
     <div class="agreement__container">
-      <aside class="agreement__aside">
-        <AppAsideNav/>
-      </aside>
-      <main class="agreement__main">
-        <div class="terms">
-          <Tab :tabs="tabs">
-            <div slot="0" v-html="agreementContent" class="terms__member"></div>
-            <div slot="1">NA</div>
-            <div slot="2">NA</div>
-          </Tab>
-        </div>
-      </main>
+      <div class="terms">
+        <Tab :tabs="tabs">
+          <div slot="0" v-html="agreementContent" class="terms__member"></div>
+          <div slot="1">NA</div>
+          <div slot="2">NA</div>
+        </Tab>
+      </div>
     </div>
   </div>
 </template>
 <script>
   import { AGREEMENT_CONTENT, } from '../constants/agreement'
-  // import AppHeader from '../components/AppHeader.vue'
   import Tab from '../components/Tab.vue'
-  import AppAsideNav from '../components/AppAsideNav.vue'
 
   export default {
     components: {
-      // 'app-header': AppHeader,
       Tab,
-      AppAsideNav,
     },
     data () {
       return {
@@ -50,27 +40,12 @@
 </script>
 <style lang="stylus">
   .agreement
-    width 100%
-    background-color #e6e6e6
-    min-height 100vh
+    margin 0 auto
     &__container
-      max-width 1200px
       width 100%
-      margin auto
-      padding 25px 0
-      display flex
-    &__aside
-      width 75px
-      height 100%
-      position sticky
-      // position fixed
-      top 60px
-    &__main
-      margin-left 93.5px
-      width 100%
+      padding-top 22.5px
     .terms
       width 100%
-      margin 32px auto
       background-color white
       &__member
         h3

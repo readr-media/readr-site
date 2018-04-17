@@ -3,7 +3,7 @@
     <div class="projects-figure__img" :style="{ 'backgroundImage': `url(${project.heroImage})` }"></div>
     <figcaption class="projects-figcaption">
       <div class="projects-figcaption__share">
-        <AppShareButton :shareUrl="'www.google.com.tw'" :direction="'down'"/>
+        <!-- <AppShareButton :shareUrl="'www.google.com.tw'" :direction="'down'"/> -->
       </div>
       <p class="projects-figcaption__date" v-text="updatedAtYYYYMMDD(project.updatedAt)"></p>
       <h1 class="projects-figcaption__title" v-text="project.title"></h1>

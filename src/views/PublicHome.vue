@@ -4,33 +4,28 @@
       <BaseLightBoxPost :showLightBox="showLightBox" :post="postLightBox"/>
     </BaseLightBox>
     <div class="homepage__container">
-      <aside class="homepage__aside">
-        <AppAsideNav></AppAsideNav>
-      </aside>
-      <main class="homepage__main">
-        <div class="homepage__list-main">
-          <div class="invitation">
-            <Invite></Invite>
-          </div>
-          <transition-group name="fade" mode="out-in">
-            <HomeArticleMain v-for="post in postsMain" :articleData="post" :key="`${post.id}-main`"/>
-          </transition-group>
+      <div class="homepage__list-main">
+        <div class="invitation">
+          <Invite></Invite>
         </div>
-        <div class="homepage__list-aside">
-          <AppTitledList :listTitle="sections['projects']">
-            <ul class="aside-list-container">
-              <HomeProjectAside />
-            </ul>
-          </AppTitledList>
-          <AppTitledList :listTitle="this.$route.path !== '/hot' ? sections['hot-talk'] : sections['chief-editor-talk']">
-            <ul class="aside-list-container">
-              <transition-group name="fade" mode="out-in">
-                <HomeArticleAside v-for="post in postsAside" :articleData="post" :key="`${post.id}-aside`"/>
-              </transition-group> 
-            </ul>
-          </AppTitledList>
-        </div>
-      </main>
+        <transition-group name="fade" mode="out-in">
+          <HomeArticleMain v-for="post in postsMain" :articleData="post" :key="`${post.id}-main`"/>
+        </transition-group>
+      </div>
+      <div class="homepage__list-aside">
+        <AppTitledList :listTitle="sections['projects']">
+          <ul class="aside-list-container">
+            <HomeProjectAside />
+          </ul>
+        </AppTitledList>
+        <AppTitledList :listTitle="this.$route.path !== '/hot' ? sections['hot-talk'] : sections['chief-editor-talk']">
+          <ul class="aside-list-container">
+            <transition-group name="fade" mode="out-in">
+              <HomeArticleAside v-for="post in postsAside" :articleData="post" :key="`${post.id}-aside`"/>
+            </transition-group> 
+          </ul>
+        </AppTitledList>
+      </div>
     </div>
   </div>   
 </template>
@@ -41,7 +36,6 @@ import { PROJECT_STATUS, } from '../../api/config'
 import { currEnv, isScrollBarReachBottom, isElementReachInView, isCurrentRoutePath, } from 'src/util/comm'
 import _ from 'lodash'
 import { createStore, } from '../store'
-import AppAsideNav from 'src/components/AppAsideNav.vue'
 import AppTitledList from 'src/components/AppTitledList.vue'
 import HomeProjectAside from 'src/components/home/HomeProjectAside.vue'
 import HomeArticleMain from 'src/components/home/HomeArticleMain.vue'
@@ -141,7 +135,6 @@ export default {
   //   }
   // },
   components: {
-    AppAsideNav,
     AppTitledList,
     HomeProjectAside,
     HomeArticleMain,
@@ -313,24 +306,7 @@ export default {
 
 <style lang="stylus" scoped>
 .homepage
-  background-color #e6e6e6
-  min-height 100vh
   &__container
-    max-width 1200px
-    margin auto
-    padding 25px 0
-    display flex
-  &__aside
-    width 75px
-    height 100%
-    position sticky
-    // position fixed
-    top 60px
-    z-index 999
-  &__main
-    flex 1
-    margin-left 30px
-    margin-right 30px
     display flex
     justify-content flex-end
     align-items flex-start

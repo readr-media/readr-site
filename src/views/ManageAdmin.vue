@@ -1,7 +1,6 @@
 <template>
   <div class="backstage admin">
-    <AppAsideNav class="backstage__aside" />
-    <main class="backstage-container">
+    <div class="backstage-container">
       <About :profile="profile"></About>
       <template v-if="showMain">
         <TheControlBar
@@ -117,7 +116,7 @@
           </AlertPanel>
         </BaseLightBox>        
       </template>
-    </main>
+    </div>
   </div>
 </template>
 <script>
@@ -126,7 +125,6 @@
   import _ from 'lodash'
   import About from '../components/About.vue'
   import AlertPanel from '../components/AlertPanel.vue'
-  import AppAsideNav from '../components/AppAsideNav.vue'
   import AppHeader from '../components/AppHeader.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
   import FollowingListInTab from '../components/FollowingListInTab.vue'
@@ -278,7 +276,6 @@
       'app-tab': Tab,
       About,
       AlertPanel,
-      AppAsideNav,
       BaseLightBox,
       FollowingListInTab,
       MemberAccountEditor,
@@ -825,37 +822,3 @@
     },
   }
 </script>
-<style lang="stylus" scoped>
-  // .admin
-  //   background-color #e6e6e6
-  //   width 100%
-  //   min-height 100vh
-  //   &__container
-  //     max-width 1200px
-  //     margin auto
-  //     padding 25px 0
-  //     display flex
-  //   &__aside
-  //     width 75px
-  //     height 100%
-  //     position sticky
-  //     // position fixed
-  //     top 60px
-  //   &__main
-  //     margin-left 93.5px
-  //   .control-bar
-  //     width 100%
-  //     margin 0 auto
-  //   .panel
-  //     width 100%
-  //     padding 22px 84px 33px
-  //     border 5px solid #d8ca21
-  //     margin 0 auto
-  //     background-color white
-  // @media (min-width 950px)
-  //   .admin
-  //     .control-bar
-  //       max-width 950px
-  //     .panel
-  //       max-width 950px
-</style>

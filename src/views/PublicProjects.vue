@@ -1,36 +1,30 @@
 <template>
   <div class="projects-list">
     <div class="projects-list__container">
-      <aside class="projects-list__aside">
-        <AppAsideNav/>
-      </aside>
-      <main class="projects-list__main">
-        <div class="projects-list__list-main">
-          <ProjectsFigure v-for="project in projects" :project="project" :key="project.id"/>
-        </div>
-        <div class="projects-list__list-aside">
-          <!-- <ProjectsFigureProgress/>
-          <ProjectsFigureProgress/>
-          <AppTitledList :listTitle="$t('project.WORDING_PROJECT_HOT_KEYWORD')">
-            <ul class="projects-tags-hot-list-container">
-              <li class="projects-tags-hot-list-container__list">
-                <span class="projects-tags-hot-list-container__tag-name">原住民傳統領域</span>
-                <span class="projects-tags-hot-list-container__tag-count">7631</span>
-              </li>
-              <li class="projects-tags-hot-list-container__list">
-                <span class="projects-tags-hot-list-container__tag-name">農舍</span>
-                <span class="projects-tags-hot-list-container__tag-count">631</span>
-              </li>
-            </ul>
-          </AppTitledList> -->
-        </div>
-      </main>
+      <div class="projects-list__list-main">
+        <ProjectsFigure v-for="project in projects" :project="project" :key="project.id"/>
+      </div>
+      <div class="projects-list__list-aside">
+        <!-- <ProjectsFigureProgress/>
+        <ProjectsFigureProgress/>
+        <AppTitledList :listTitle="$t('project.WORDING_PROJECT_HOT_KEYWORD')">
+          <ul class="projects-tags-hot-list-container">
+            <li class="projects-tags-hot-list-container__list">
+              <span class="projects-tags-hot-list-container__tag-name">原住民傳統領域</span>
+              <span class="projects-tags-hot-list-container__tag-count">7631</span>
+            </li>
+            <li class="projects-tags-hot-list-container__list">
+              <span class="projects-tags-hot-list-container__tag-name">農舍</span>
+              <span class="projects-tags-hot-list-container__tag-count">631</span>
+            </li>
+          </ul>
+        </AppTitledList> -->
+      </div>
     </div>
   </div>
 </template>
 
 <script>
-import AppAsideNav from '../components/AppAsideNav.vue'
 import AppTitledList from '../components/AppTitledList.vue'
 import ProjectsFigure from '../components/projects/ProjectsFigure.vue'
 import ProjectsFigureProgress from '../components/projects/ProjectsFigureProgress.vue'
@@ -63,7 +57,6 @@ export default {
   //   return fetchProjectsList(store, {})
   // },
   components: {
-    AppAsideNav,
     AppTitledList,
     ProjectsFigure,
     ProjectsFigureProgress,
@@ -98,25 +91,7 @@ export default {
 
 <style lang="stylus" scoped>
 .projects-list
-  background-color #e6e6e6
-  min-height 100vh
   &__container
-    max-width 1200px
-    width 100%
-    margin auto
-    padding 25px 0
-    display flex
-  &__aside
-    width 75px
-    height 100%
-    position sticky
-    // position fixed
-    top 60px
-    z-index 999
-  &__main
-    flex 1
-    margin-left 40px
-    margin-right 40px
     display flex
   &__list-main
     display flex
