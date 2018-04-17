@@ -30,12 +30,13 @@ const login = (req, res) => {
         const mem = get(response, [ 'body', 'member', ], {})
         const scopes = constructScope(get(response, [ 'body', 'permissions', ]), get(mem, [ 'role', ], 1))
         const token = jwtService.generateJwt({
-          id: get(mem, [ 'id', ], req.body.id),
-          email: get(mem, [ 'mail', ], req.body.email),
-          name: get(mem, [ 'name', ]),
-          nickname: get(mem, [ 'nickname', ]),
-          role: get(mem, [ 'role', ], 1),
-          talk_id: get(mem, [ 'talk_id', ], ''),
+          id: get(mem, 'id', req.body.id),
+          memuuid: get(mem, 'uuid'),
+          email: get(mem, 'mail', req.body.email),
+          name: get(mem, 'name'),
+          nickname: get(mem, 'nickname'),
+          role: get(mem, 'role', 1),
+          talk_id: get(mem, 'talk_id', ''),
           keepAlive: req.body.keepAlive,
           scopes,
         })
@@ -45,22 +46,23 @@ const login = (req, res) => {
           httpOnly: false,
           domain: config.DOMAIN,
           // secure: process.env.NODE_ENV === 'production',
-          expires: new Date(Date.now() + (req.body.keepAlive ? 30 : 1) * 24 * 60 * 60 * 1000),
+          expires: new Date(Date.now() + (req.body.keepAlive ? 14 : 1) * 24 * 60 * 60 * 1000),
         })
         /**
          * Revoke the token
          */
         redisWriting(tokenShouldBeBanned, 'logged', null, 24 * 60 * 60 * 1000)
         res.status(200).send({ token, profile: {
-          name: get(mem, [ 'name', ]),
-          nickname: get(mem, [ 'nickname', ]),
-          description: get(mem, [ 'description', ]),
-          id: get(mem, [ 'id', ]),
-          mail: get(mem, [ 'mail', ], req.body.email),
-          role: get(mem, [ 'role', ], 1),
+          name: get(mem, 'name'),
+          nickname: get(mem, 'nickname'),
+          description: get(mem, 'description'),
+          id: get(mem, 'id'),
+          uuid: get(mem, 'uuid'),
+          mail: get(mem, 'mail', req.body.email),
+          role: get(mem, 'role', 1),
           scopes,
-          profileImage: get(mem, [ 'profileImage', ]),
-          points: get(mem, [ 'points', ]),
+          profileImage: get(mem, 'profileImage'),
+          points: get(mem, 'points'),
         },})
       } else {
         debug('Validated in fail. Please offer correct credentials.')
