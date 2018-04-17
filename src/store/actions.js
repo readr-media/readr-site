@@ -23,6 +23,7 @@ import {
   getFollowingByResource,
   getFollowingByUser,
   getMembers,
+  getMembersCount,
   getMeta,
   getPost,
   getPosts,
@@ -148,6 +149,14 @@ export default {
         } else {
           commit('SET_MEMBERS', { members: body, })
         }
+      }
+    })
+  },
+  GET_MEMBERS_COUNT: ({ commit, dispatch, state, }, { params, }) => {
+    return getMembersCount({ params, }).then(({ status, body, }) => {
+      if (status === 200) {
+        debug(`Member's count recieved.`, body)
+        commit('SET_MEMBERS_COUNT', { count: _.get(body, 'meta.total', 0), })
       }
     })
   },

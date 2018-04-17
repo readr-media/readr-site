@@ -251,6 +251,11 @@ export function getMembers ({ params, }) {
   return _doFetchStrict(url, {})
 }
 
+export function getMembersCount () {
+  let url = `${host}/api/members/count`
+  return _doFetchStrict(url, {})
+}
+
 export function getPublicMember ({ params, }) {
   let url = `${host}/api/public/profile/${params.id}`
   // url = `${url}/profile/${params.id}`

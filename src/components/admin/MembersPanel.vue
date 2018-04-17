@@ -1,7 +1,7 @@
 <template>
   <div class="member-panel">
     <div class="member-panel__pagination">
-      <PaginationNav :totalPages="10" @pageChanged="pageChanged"></PaginationNav>
+      <PaginationNav :totalPages="totalPages" :currPage.sync="curr_page"></PaginationNav>
     </div>
     <div class="member-panel__items">
       <div class="member-panel__items__item">
@@ -59,7 +59,8 @@
   import BaseLightBox from '../BaseLightBox.vue'
   import MemberAccountEditor from './MemberAccountEditor.vue'
   import PaginationNav from '../PaginationNav.vue'
-
+  const MAXRESULT = 20
+  const debug = require('debug')('CLIENT:MembersPanel')
   const getCustomEditors = (store) => {
     return store.dispatch('GET_MEMBERS', {
       params: {
@@ -95,18 +96,22 @@
         return roles
       },
       title () {},
+      totalPages () {
+        return (Math.floor(_.get(this.$store, 'state.membersCount') / MAXRESULT)) + 1
+      },
     },
     data () {
       return {
         action: 'update',
         currOrder: '',
+        curr_page: 1,
         isAllSelected: false,
         editorTitle: '',
         showLightBox: false,
         targMember: null,
       }
     },
-    name: 'member-panel',
+    name: 'MembersPanel',
     methods: {
       closeLightBox () {
         this.showLightBox = false
@@ -132,11 +137,11 @@
         this.$emit('filterChanged', { sort: event.target.value, })
       },
       getValue,
-      pageChanged (index) {
-        this.$refs[ 'selectAll' ].checked = false
-        this.toggoleSelectAll()
-        this.$emit('filterChanged', { page: index, })
-      },
+      // pageChanged (index) {
+      //   this.$refs[ 'selectAll' ].checked = false
+      //   this.toggoleSelectAll()
+      //   this.$emit('filterChanged', { page: index, })
+      // },
       toogleCustomEditor (index, event) {
         const exceedMaxCustomEditor = () => {
           return (this.$store.state.customEditors.items ? this.$store.state.customEditors.items.length : 0) + 1 > CUSTOM_EDITOR_LIMIT
@@ -198,6 +203,14 @@
     },
     mounted () {
       getCustomEditors(this.$store)
+    },
+    watch: {
+      curr_page: function () {
+        debug('Mutation detected: currPage', this.curr_page)
+        this.$refs[ 'selectAll' ].checked = false
+        this.toggoleSelectAll()
+        this.$emit('filterChanged', { page: this.curr_page, })
+      },
     },
   }
 </script>

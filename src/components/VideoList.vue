@@ -1,6 +1,6 @@
 <template>
   <div class="videoList-container">
-    <PaginationNav :totalPages="totalPages" @pageChanged="$_videoList_pageChanged"></PaginationNav>
+    <PaginationNav :totalPages="totalPages" :currPage.sync="currPage"></PaginationNav>
     <table class="videoList">
       <thead>
         <tr>
@@ -80,6 +80,7 @@
     data () {
       return {
         checkedIems: [],
+        currPage: 1,
         order: '',
         post: {},
         postType: POST_TYPE,
@@ -130,9 +131,6 @@
         }
         this.$emit('filterChanged', { sort: order, })
       },
-      $_videoList_pageChanged (index) {
-        this.$emit('filterChanged', { page: index, })
-      },
       $_videoList_publishPosts () {
         const items = _.filter(this.checkedIems, (item) => {
           const post = _.find(this.posts, { id: item, })
@@ -161,6 +159,11 @@
           })
           this.checkedIems = _.uniq(this.checkedIems)
         }
+      },
+    },
+    watch: {
+      currPage () {
+        this.$emit('filterChanged', { page: this.currPage, })
       },
     },
   }

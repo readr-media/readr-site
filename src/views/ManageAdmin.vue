@@ -250,6 +250,12 @@
     })
   }
 
+  const getMembersCount = (store, params = {}) => {
+    return store.dispatch('GET_MEMBERS_COUNT', {
+      params,
+    })
+  }
+
   const publishPosts = (store, params) => {
     return store.dispatch('PUBLISH_POSTS', { params, })
   }
@@ -355,6 +361,7 @@
       debug('Admin beforeMount')
       this.$can('memberManage') && Promise.all([
         getMembers(this.$store, {}),
+        getMembersCount(this.$store),
       ])
       .then(() => this.loading = false)
       .catch(() => this.loading = false)
@@ -455,7 +462,10 @@
         
         switch (this.activePanel) {
           case 'accounts':
-            return getMembers(this.$store, { page: this.currPage, sort: this.currSort, })
+            return Promise.all([
+              getMembers(this.$store, { page: this.currPage, sort: this.currSort, }),
+              getMembersCount(this.$store),
+            ])
           case 'records':
           case 'posts':
           case 'videos':
