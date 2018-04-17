@@ -1,6 +1,6 @@
 <template>
   <div>
-    <PaginationNav :totalPages="totalPages" @pageChanged="$_postList_pageChanged"></PaginationNav>
+    <PaginationNav :totalPages="totalPages" :currPage.sync="currPage"></PaginationNav>
     <table class="postList">
       <thead>
         <tr>
@@ -82,6 +82,7 @@
     data () {
       return {
         checkedIems: [],
+        currPage: 1,
         order: '',
         post: {},
         postType: POST_TYPE,
@@ -141,9 +142,6 @@
         }
         this.$emit('filterChanged', { sort: order, })
       },
-      $_postList_pageChanged (index) {
-        this.$emit('filterChanged', { page: index, })
-      },
       $_postList_publishPosts () {
         const items = _.filter(this.checkedIems, (item) => {
           const post = _.find(this.posts, { id: item, })
@@ -176,6 +174,11 @@
       $_showPost (post) {
         this.showLightBox = true
         this.post = post
+      },
+    },
+    watch: {
+      currPage: function () {
+        this.$emit('filterChanged', { page: this.currPage, })
       },
     },
   }

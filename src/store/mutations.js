@@ -77,6 +77,9 @@ export default {
   SET_MEMBERS: (state, { members, }) => {
     state['members'] = members
   },
+  SET_MEMBERS_COUNT: (state, { count, }) => {
+    state['membersCount'] = count
+  },
   SET_POSTS: (state, { posts, }) => {
     state['posts'] = posts.items
   },

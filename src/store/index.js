@@ -22,6 +22,7 @@ export function createStore () {
       'invitation_switch_status': false,
       'invitation_quota': 0,
       'members': [],
+      'membersCount': 0,
       'posts': [],
       'postsCount': 0,
       'postsDraft': [],
