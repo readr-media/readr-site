@@ -1,22 +1,34 @@
 <template>
   <div id="app">
     <app-header :sections="sections"></app-header>
-    <transition name="fade" mode="out-in">
-      <router-view class="view"></router-view>
-    </transition>
+    <div :class="`app__container${ isLoginPage ? '--wide' : ''}`">
+      <aside class="app__aside" v-if="!isLoginPage">
+        <AppAsideNav/>
+      </aside>
+      <main class="app__main">
+        <transition name="fade" mode="out-in">
+          <router-view class="view"></router-view>
+        </transition>
+      </main>
+    </div>
   </div>
 </template>
 
 <script>
   import { SECTIONS_DEFAULT, } from './constants'
   import AppHeader from './components/AppHeader.vue'
+  import AppAsideNav from 'src/components/AppAsideNav.vue'
   export default {
     components: {
       'app-header': AppHeader,
+      AppAsideNav,
     },
     computed: {
       sections () {
         return SECTIONS_DEFAULT
+      },
+      isLoginPage () {
+        return this.$route.path === '/login'
       },
     },
     mounted () {
@@ -26,6 +38,39 @@
 </script>
 
 <style lang="stylus">
+#app
+  background-color #e6e6e6
+  min-height 100vh
+
+$container
+  max-width 1200px
+  margin auto
+  padding calc(35px + 22.5px) 0
+  display flex
+.app
+  &__container
+    @extends $container
+    &--wide
+      @extends $container
+      max-width 100vw
+      padding 0
+      > .app__main
+        margin-left 0
+  &__aside
+    width 75px
+    height 100%
+    position sticky
+    // position fixed
+    top 57.5px
+    z-index 999
+  &__main
+    flex 1
+    margin-left 30px
+    // margin-right 30px
+    display flex
+    justify-content flex-start
+    align-items flex-start
+
 a
   text-decoration none
 
@@ -35,10 +80,10 @@ button
     cursor not-allowed
 .view
   // max-width 800px
-  margin 0 auto
+  // margin 0 auto
   position relative
   background-color #fff
-  padding-top 35px
+  // padding-top 35px
   &.locked
     width 100%
     height 100vh
@@ -71,13 +116,13 @@ button
 .backstage
   width 100%
   min-height 100vh
-  padding 35px 0 0 65px
+  // padding 35px 0 0 65px
   overflow hidden
   &-container
     width 950px
     height 100%
     margin 0 auto
-    padding 25px 0
+    // padding 25px 0
     overflow hidden
   &__aside
     position fixed

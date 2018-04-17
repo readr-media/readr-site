@@ -1,7 +1,6 @@
 <template>
   <div class="backstage member">
-    <aside-nav class="backstage__aside"></aside-nav>
-    <main class="backstage-container">
+    <div class="backstage-container">
       <app-about :profile="profile"></app-about>
       <app-tab class="backstage__tab" :tabs="tabs">
         <following-list-tab
@@ -12,13 +11,12 @@
           @unfollow="$_member_unfollow">
         </following-list-tab>
       </app-tab>
-    </main>
+    </div>
   </div>
 </template>
 <script>
   import { get, } from 'lodash'
   import About from '../components/About.vue'
-  import AppAsideNav from '../components/AppAsideNav.vue'
   import FollowingListInTab from '../components/FollowingListInTab.vue'
   import Tab from '../components/Tab.vue'
 
@@ -50,7 +48,6 @@
     components: {
       'app-about': About,
       'app-tab': Tab,
-      'aside-nav': AppAsideNav,
       'following-list-tab': FollowingListInTab,
     },
     data () {

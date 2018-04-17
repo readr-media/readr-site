@@ -1,20 +1,14 @@
 <template>
   <div class="videos">
     <div class="videos__container">
-      <aside class="videos__aside">
-        <app-aside-nav></app-aside-nav>
-      </aside>
-      <main class="videos__main">
-        <videos-highlight :video="highlightVideo"></videos-highlight>
-        <videos-list ref="videosList" :hasMore="hasMore" :videos="videoList" @loadMore="$_videos_loadMore" @play="$_videos_changeHighlight"></videos-list>
-      </main>
+      <videos-highlight :video="highlightVideo"></videos-highlight>
+      <videos-list ref="videosList" :hasMore="hasMore" :videos="videoList" @loadMore="$_videos_loadMore" @play="$_videos_changeHighlight"></videos-list>
     </div>
   </div>
 </template>
 
 <script>
   import { filter, find, get, xor, } from 'lodash'
-  import AppAsideNav from '../components/AppAsideNav.vue'
   import VideosHighlight from '../components/videos/VideosHighlight.vue'
   import VideosList from '../components/videos/VideosList.vue'
 
@@ -49,7 +43,6 @@
       ])
     },
     components: {
-      AppAsideNav,
       VideosHighlight,
       VideosList,
     },
@@ -115,35 +108,13 @@
 </script>
 
 <style lang="stylus" scoped>
-  .videos
-    width 100%
-    min-height 100vh
-    &__container
-      padding-top 37px
-    &__aside
-      display none
-      position sticky
-      top 60px
-      width 75px
-      height 100%
   @media (min-width 950px)
     .videos
       &__container
-        max-width 1200px
-        height 100%
-        margin auto
-        padding 60px 0
-        display flex
-      &__aside
-        display block
-      &__main
         display flex
         justify-content space-between
         align-items flex-start
         width 100%
-        margin-left 40px
-      
-    
 </style>
 
 

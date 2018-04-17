@@ -1,25 +1,19 @@
 <template>
   <div class="search">
     <div class="search__container">
-      <aside class="search__container__aside">
-        <AppAsideNav></AppAsideNav>
-      </aside>
-      <main class="search__container__main">
-        <SearchFilter @searchChange="searchChange"></SearchFilter>
-        <div v-if="currFilter === 'post'">
-          <HomeArticleMain v-for="(post, k) in items" :articleData="post" :key="`post-${k}`"></HomeArticleMain>
-        </div>
-        <div v-else-if="currFilter === 'conversation'"></div>
-        <div v-else>
-          <ProjectsFigure v-for="project in items" :project="project" :key="project.id"></ProjectsFigure>
-        </div>
-      </main>
+      <SearchFilter @searchChange="searchChange"></SearchFilter>
+      <div v-if="currFilter === 'post'">
+        <HomeArticleMain v-for="(post, k) in items" :articleData="post" :key="`post-${k}`"></HomeArticleMain>
+      </div>
+      <div v-else-if="currFilter === 'conversation'"></div>
+      <div v-else>
+        <ProjectsFigure v-for="project in items" :project="project" :key="project.id"></ProjectsFigure>
+      </div>
     </div>
   </div>
 </template>
 <script>
   import { filter, get, } from 'lodash'
-  import AppAsideNav from 'src/components/AppAsideNav.vue'
   import HomeArticleMain from 'src/components/home/HomeArticleMain.vue'
   import ProjectsFigure from 'src/components/projects/ProjectsFigure.vue'
   import SearchFilter from 'src/components/search/SearchFilter.vue'
@@ -55,7 +49,6 @@
     //   return fetchData(store, route)
     // },
     components: {
-      AppAsideNav,
       HomeArticleMain,
       ProjectsFigure,
       SearchFilter,
@@ -87,22 +80,10 @@
 </script>
 <style lang="stylus" scoped>
   .search
-    min-height 100vh
     &__container
-      max-width 1200px
-      margin auto
-      padding 25px 0
+      margin-left 40px
       display flex
-      &__aside
-        width 75px
-        height 100%
-        position sticky
-        top 60px
-        z-index 999
-      &__main
-        margin-left 40px
-        display flex
-        flex-direction column
-        justify-content flex-start
-        align-items flex-start
+      flex-direction column
+      justify-content flex-start
+      align-items flex-start
 </style>

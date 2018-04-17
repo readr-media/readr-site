@@ -1,9 +1,10 @@
 <template>
   <nav class="app-aside-nav">
-    <router-link to="/"><img class="app-aside-nav__logo" :src="[ isBackstage ? '/public/icons/readr-logo-backstage.svg' : '/public/icons/readr-logo-dark.svg' ]" alt=""></router-link>
+    <!-- <router-link to="/"><img class="app-aside-nav__logo" :src="[ isBackstage ? '/public/icons/readr-logo-backstage.svg' : '/public/icons/readr-logo-dark.svg' ]" alt=""></router-link> -->
+    <router-link to="/"><img class="app-aside-nav__logo" src="/public/icons/readr-logo-dark.svg" alt=""></router-link>
     <ol class="aside-navigation">
       <div class="aside-navigation__section--white">
-        <transition name="fade" mode="out-in">
+        <!-- <transition name="fade" mode="out-in"> -->
           <router-link
             :to="$route.path === '/hot' ? '/' : '/hot'"
             :class="`list-item aside-navigation__list-item-drawer`"
@@ -12,7 +13,7 @@
             @mouseout.native="isHoverFirstListItem = false">
             <span v-text="wording[$route.path === '/hot' ? 'chief-editor-talk' : 'hot-talk']"></span>
           </router-link>
-        </transition>
+        <!-- </transition> -->
         <router-link
           :to="$route.path === '/hot' ? '/hot' : '/'"
           :class="`list-item aside-navigation__list-item${$route.path === '/' || $route.path === '/hot' ? '--highlight' : ''}`"
@@ -98,6 +99,7 @@ $aside-navigation__list-item
   list-style-type none
   flex 1 1 auto
   font-size 18px
+  -webkit-font-smoothing: antialiased
   width 50px
   height 50px
   padding 0 7px
@@ -162,7 +164,10 @@ $aside-navigation__list-item-drawer
           border-top none !important
   &__list-item-drawer
     @extends $aside-navigation__list-item-drawer
-
+    & + .list-item
+      & > span
+        border-top none !important
+    
 .list-item
   position relative
   // transition opacity .25s

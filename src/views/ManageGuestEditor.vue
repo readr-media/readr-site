@@ -1,7 +1,6 @@
 <template>
   <div class="backstage guestEditor">
-    <AppAsideNav class="backstage__aside" />
-    <main class="backstage-container">
+    <div class="backstage-container">
       <app-about :profile="profile"></app-about>
       <control-bar
         @addNews="$_guestEditor_showEditor({ postPanel: 'add', postType: config.type.NEWS })"
@@ -35,7 +34,7 @@
           </following-list-tab>
         </app-tab>
       </template>
-    </main>
+    </div>
     <base-light-box :showLightBox.sync="showDraftList">
       <post-list-detailed
         :posts="postsDraft"
@@ -72,7 +71,6 @@
   import _ from 'lodash'
   import About from '../components/About.vue'
   import AlertPanel from '../components/AlertPanel.vue'
-  import AppAsideNav from '../components/AppAsideNav.vue'
   import AppHeader from '../components/AppHeader.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
   import FollowingListInTab from '../components/FollowingListInTab.vue'
@@ -156,7 +154,6 @@
       'post-list-detailed': PostListDetailed,
       'post-list-tab': PostListInTab,
       'post-panel': PostPanel,
-      AppAsideNav,
     },
     data () {
       return {
@@ -488,20 +485,6 @@
 </script>
 <style lang="stylus" scoped>
   .guestEditor
-    background-color #e6e6e6
-    width 100%
-    min-height 100vh
-    &__container
-      max-width 1200px
-      margin auto
-      padding 25px 0
-      display flex
-    &__aside
-      width 75px
-      height 100%
-      position sticky
-      // position fixed
-      top 60px
     &__record
       background-color #fff
 </style>

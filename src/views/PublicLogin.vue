@@ -14,13 +14,11 @@
   // import LoginPanel from '../components/LoginPanel.vue'
   import LoginPanelPackingTest from '../components/LoginPanelPackingTest.vue'
   import AppHeader from '../components/AppHeader.vue'
-  import AppAsideNav from '../components/AppAsideNav.vue'
   
   export default {
     components: {
       'app-header': AppHeader,
       LoginPanelPackingTest,
-      AppAsideNav,
     },
     computed: {
       isLoggedIn () {
