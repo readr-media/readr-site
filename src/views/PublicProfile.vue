@@ -15,6 +15,7 @@
               <div class="datetime"><span v-text="dateDiffFromNow(get(post, 'publishedAt'))"></span></div>
               <PostContent :modifier="'main'" :post="post"></PostContent>
             </div>
+            <div class="spinner"><Spinner :show="shouldShowSpinner" :height="'100px'"></Spinner></div>
           </div>
         </div>
       </template>
@@ -31,6 +32,7 @@
               <div class="datetime"><span v-text="dateDiffFromNow(get(post, 'publishedAt'))"></span></div>
               <PostContent :modifier="'main'" :post="post"></PostContent>
             </div>
+            <div class="spinner"><Spinner :show="shouldShowSpinner" :height="'100px'"></Spinner></div>
           </div>
         </div>
       </template>
@@ -45,9 +47,10 @@
   import About from 'src/components/About.vue'
   import PostContent from 'src/components/PostContent.vue'
   import Tab from 'src/components/Tab.vue'
+  import Spinner from 'src/components/Spinner.vue'
 
   const debug = require('debug')('CLIENT:Profile')
-  const MAXRESULT = 5
+  const MAXRESULT = 10
   const DEFAULT_PAGE = 1
   const DEFAULT_SORT = '-updated_at'
   const POST_FILTER = [
@@ -100,6 +103,7 @@
       About,
       PostContent,
       Tab,
+      Spinner,
     },
     // Uncomment this when v1.0 is released
     // asyncData ({ store, route, }) {
@@ -132,7 +136,7 @@
       isCurrUser () {
         debug('currUser', this.currUser)
         debug('targUser', get(this.$route, 'params.id'))
-        return this.currUser === get(this.$route, 'params.id')
+        return get(this.$store, 'state.profile.uuid') === get(this.$route, 'params.id') || get(this.$store, 'state.profile.id') === get(this.$route, 'params.id')
       },
       postsReview () {
         return get(this.$store, 'state.publicPostReview.items') || []
@@ -166,13 +170,20 @@
           follow: DEFAULT_PAGE,
         },
         filter: 'all',
+        isLoadMoreEnd: {
+          review: false,
+          news: false,
+          follow: false,
+        },
         isReachBottom: false,
+        shouldShowSpinner: false,
       }
     },
     methods: {
       dateDiffFromNow,
       get,
       loadmore () {
+        this.shouldShowSpinner = true
         debug(`this.tabs[ this.curr_tab ]`, this.tabs[ this.curr_tab ], this.currTabKey)
         /**
          * dont loadmore follow for now
@@ -189,10 +200,13 @@
             },
           }),
         ]).then((res) => {
+          this.shouldShowSpinner = false
           debug('Loadmore done. Status', get(res, [ 0, 'status', ]), get(res, [ 0, 'res', ]))
           if (get(res, [ 0, 'status', ]) === 200) {
             get(this.curr_page, this.currTabKey)
               && (this.curr_page[ this.currTabKey ] += 1)
+          } else if (get(res, [ 0, 'status', ]) === 'end') {
+            this.isLoadMoreEnd[ this.currTabKey ] = true
           }
         })
       },
@@ -261,7 +275,7 @@
       },
       isReachBottom () {
         debug('Mutation detected: isReachBottom', this.isReachBottom)
-        if (!this.isReachBottom) { return }
+        if (!this.isReachBottom || this.isLoadMoreEnd[ this.currTabKey ]) { return }
         this.loadmore()
       },
     },
@@ -323,8 +337,12 @@
             z-index 2
             font-size 0.875rem
         &__container
-          > .item
+          .item
             margin 35px auto
+          .spinner
+            height 80px
+            width 100%
+            text-align center            
     &__tab
       margin-top 35px
       background-color #fff
