@@ -92,9 +92,9 @@ export default {
   SET_POSTS_DRAFT_COUNT: (state, { meta, }) => {
     state['postsDraftCount'] = meta.total
   },
-  SET_PUBLIC_POSTS: (state, { posts, }) => {
+  SET_PUBLIC_POSTS: (state, { posts, outputStateTarget, }) => {
     debug('public posts', posts)
-    state['publicPosts'] = posts
+    state[ outputStateTarget ] = posts
   },
   SET_PUBLIC_MEMBER: (state, { member, }) => {
     state['publicMember'] = _.get(member, [ 'items', 0, ])
@@ -114,9 +114,6 @@ export default {
   },
   SET_PROJECTS_LIST: (state, { projectsList, }) => {
     state['projectsList'] = projectsList
-  },
-  SET_PUBLIC_POSTS_HOT: (state, { posts, }) => {
-    state['publicPostsHot'] = posts
   },
   SET_PUBLIC_POST_SINGLE: (state, { posts, }) => {
     state['publicPostSingle'] = posts
@@ -143,9 +140,9 @@ export default {
       state['profile'][profileKey] = profileValue
     })
   },
-  UPDATE_PUBLIC_POSTS: (state, { posts, }) => {
-    state['publicPosts']['items'] = _.concat(
-      _.get(state, 'publicPosts.items', []),
+  UPDATE_PUBLIC_POSTS: (state, { posts, outputStateTarget, }) => {
+    state[ outputStateTarget ]['items'] = _.concat(
+      _.get(state, `${outputStateTarget}.items`, []),
       _.get(posts, 'items', [])
     )
   },
