@@ -2,7 +2,7 @@
   <div :class="[ { 'baselightbox-post--review': !isNews }, { 'baselightbox-post--news': isNews } ]">
     <!-- template for post type is news -->
     <template v-if="isNews">
-      <img class="baselightbox-post__leading-image" v-if="post.ogImage" :src="getImageUrl(post.ogImage)" @load="setLeadingImageOrientation(getImageUrl(post.ogImage), $event)">
+      <img class="baselightbox-post__leading-image" v-if="post.ogImage && isClientSide" :src="getImageUrl(post.ogImage)" @load="setLeadingImageOrientation(getImageUrl(post.ogImage), $event)">
       <div class="baselightbox-post__article-container">
         <article class="baselightbox-post__article">
           <section class="author-info">
@@ -18,7 +18,7 @@
             <h1 v-text="!isPostEmpty ? post.title : ''"></h1>
             <template v-for="p in postContent">
               <figure v-if="isImg(p)">
-                <img :src="getImgSrc(p)" alt="post-content-img" @load="setContentImageOrientation(getImgSrc(p), $event)">
+                <img v-if="isClientSide" :src="getImgSrc(p)" alt="post-content-img" @load="setContentImageOrientation(getImgSrc(p), $event)">
                 <!-- <figcaption>
                   我需要一個圖說
                 </figcaption> -->
