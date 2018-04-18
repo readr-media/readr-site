@@ -70,7 +70,8 @@ export function getArticleAuthorThumbnailImg (articleData) {
   return getImageUrl(_.get(articleData, 'authorProfileImage') || (_.get(articleData, 'author.profileImage') || _.get(articleData, 'profileImage') || '/public/icons/exclamation.png'))
 }
 
-export function isScrollBarReachBottom () {
+export function isScrollBarReachBottom (ratio = 0) {
+  const vh = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
   function getScrollXY () {
     var scrOfX = 0, scrOfY = 0
     if ( typeof ( window.pageYOffset ) == 'number' ) {
@@ -98,7 +99,7 @@ export function isScrollBarReachBottom () {
     )
   }
 
-  return getDocHeight() <= getScrollXY()[1] + window.innerHeight
+  return getDocHeight() <= getScrollXY()[1] + window.innerHeight + (vh * ratio)
 }
 
 export function isElementReachInView (selector, offset = 0) {
