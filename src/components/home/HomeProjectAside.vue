@@ -1,9 +1,8 @@
 <template>
   <section class="home-project-aside">
-    <!-- Caveat: url expression in v-bind:style will calling the router when value is undefined -->
     <template v-for="(project, i) in projectsDone">
       <a :href="projectsUrl[i]" target="_blank" class="home-project-aside__container">
-        <div class="home-project-aside__project-image" :style="{ backgroundImage: `url(${project.heroImage ? project.heroImage : '/public/icons/readr-logo.png'})` }"></div>
+        <img class="home-project-aside__project-image" :src="project.heroImage ? project.heroImage : '/public/icons/readr-logo.png'">
         <div class="home-project-aside__content">
           <h1 class="home-project-aside__project-title" v-text="project.title"></h1>
           <AppArticleNav :articleType="'project'" :postId="project.id" :commentCount="project.commentAmount || 0"/>
@@ -54,12 +53,10 @@ export default {
       display inline-block
       margin-top 17px
   &__project-image
-    width 100%
+    width 385px
     height 236.4px
     margin-top 5px
-    background-repeat no-repeat
-    background-size cover
-    background-position center center
+    object-fit cover
   &__content
     padding 0 30px
   &__project-title

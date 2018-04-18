@@ -1,6 +1,6 @@
 <template>
   <a :href="projectUrl" target="_blank" class="projects-figure">
-    <div class="projects-figure__img" :style="{ 'backgroundImage': `url(${project.heroImage})` }"></div>
+    <img class="projects-figure__img" :src="project.heroImage">
     <figcaption class="projects-figcaption">
       <div class="projects-figcaption__share">
         <!-- <AppShareButton :shareUrl="'www.google.com.tw'" :direction="'down'"/> -->
@@ -55,8 +55,7 @@ export default {
   &__img
     width 650px
     height 341.5px
-    background-size cover
-    background-position center center
+    object-fit cover
   &__comment
     margin-top 20px
 

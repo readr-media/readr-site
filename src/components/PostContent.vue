@@ -24,13 +24,14 @@
           <p class="editor-writing-source__cite" v-if="post.linkName">{{ $t('homepage.WORDING_HOME_POST_SOURCE') }}{{ post.linkName }}</p>
         </div>
       </div>
-      <div class="editor-writing-source__figure" v-if="post.linkImage" :style="{ backgroundImage: `url(${post.linkImage})`, backgroundSize: ogImageSize, }"></div>
+      <img class="editor-writing-source__figure" v-if="post.linkImage" :src="post.linkImage" @load="setOgImageOrientation(post.linkImage, $event)">
     </a>
     <AppArticleNav :postId="this.post.id" :commentCount="commentCount"></AppArticleNav>
   </div>
 </template>
 <script>
   import { find, get, map, } from 'lodash'
+  import { onImageLoaded, } from 'src/util/comm'
   import AppArticleNav from 'src/components/AppArticleNav.vue'
   import sanitizeHtml from 'sanitize-html'
   import truncate from 'html-truncate'
@@ -123,7 +124,6 @@
     data () {
       return {
         isReadMoreClicked: false,
-        ogImageSize: '',
       }
     },
     methods: {
@@ -137,24 +137,11 @@
       shouldShowReadMoreButton (index) {
         return (this.isArticleMain && !this.isNews) && !this.isReadMoreClicked && (!this.isStopLastParagraphBeforeTruncate || this.isStopParagraphWordCountExceedLimit) && this.isLastParagraphAfterTruncate(index)
       },
-      fetchOgImage () {
-        const img = new Image()
-        return new Promise((resolve, reject) => {
-          if (!this.post.linkImage) {
-            reject()
-          } else {
-            img.src = this.post.linkImage
-            img.onload = function () {
-              resolve({ width: this.width, height: this.height, })
-            }
-          }
-        })
+      setOgImageOrientation (src, event) {
+        onImageLoaded(src).then(({ width, height, }) => {
+          width < height ? event.target.style.objectFit = 'contain' : event.target.style.objectFit = 'cover'
+        }).catch(() => { event.target.style.objectFit = 'cover' })
       },
-    },
-    beforeMount () {
-      this.fetchOgImage().then(({ width, height, }) => {
-        this.ogImageSize = width < height ? 'contain' : 'cover'
-      }).catch(() => { this.ogImageSize = '' })
     },
     mounted () {},
     props: {
@@ -243,8 +230,6 @@
           align-self center
           width 150px
           height 78.5px
-          background-repeat no-repeat
-          background-position center center
           background-color #444746
         &__cite
           font-size 14px
