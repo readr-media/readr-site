@@ -1,17 +1,18 @@
 <template>
   <div class="profile">
     <About v-if="profile" :profile="profile"></About>
-    <Tab class="profile__tab" :tabs="tabs">
+    <Tab class="profile__tab" :tabs="map(tabs, t => t.name)" :tabCurrIndex.sync="curr_tab">
       <template slot="0" v-if="postsReview.length !== 0">
         <div class="profile__main__review">
-          <div class="profile__main__review__filter">
-            <select @change="filterChanged">
-              <option v-text="$t('profile.WORDING_PROFILE_FILTER_ALL')" value="all"></option>
-              <option v-for="item in filters" v-text="item" :value="item"></option>
+          <!--div class="profile__main__review__filter">
+            <select v-model="filter">
+              <option v-text="$t('PROFILE.FILTER_ALL')" value="all"></option>
+              <option v-for="item in POST_FILTER" v-text="$t(`PROFILE.${item.name}`)" :value="item.code" :selected="item === filter"></option>
             </select>
-          </div>
+          </div-->
           <div class="profile__main__review__container">
             <div class="item" v-for="post in postsReview" :key="post.id">
+              <div class="datetime"><span v-text="dateDiffFromNow(get(post, 'publishedAt'))"></span></div>
               <PostContent :modifier="'main'" :post="post"></PostContent>
             </div>
           </div>
@@ -19,14 +20,15 @@
       </template>
       <template :slot="postsReview.length !== 0 ? 1 : 0" v-if="postsNews.length !== 0">
         <div class="profile__main__review">
-          <div class="profile__main__review__filter">
-            <select @change="filterChanged">
-              <option v-text="$t('profile.WORDING_PROFILE_FILTER_ALL')" value="all"></option>
-              <option v-for="item in filters" v-text="item" :value="item"></option>
+          <!--div class="profile__main__review__filter">
+            <select v-model="filter">
+              <option v-text="$t('PROFILE.FILTER_ALL')" value="all"></option>
+              <option v-for="item in POST_FILTER" v-text="$t(`PROFILE.${item.name}`)" :value="item.code" :selected="item === filter"></option>
             </select>
-          </div>
+          </div-->
           <div class="profile__main__review__container">
             <div class="item" v-for="post in postsNews" :key="post.id">
+              <div class="datetime"><span v-text="dateDiffFromNow(get(post, 'publishedAt'))"></span></div>
               <PostContent :modifier="'main'" :post="post"></PostContent>
             </div>
           </div>
@@ -38,21 +40,31 @@
 <script>
   import { POST_TYPE, } from 'api/config'
   import { ROLE_MAP, } from 'src/constants'
-  import { find, filter, get, map, } from 'lodash'
+  import { find, get, map, } from 'lodash'
+  import { dateDiffFromNow, isScrollBarReachBottom, isElementReachInView, } from 'src/util/comm'
   import About from 'src/components/About.vue'
   import PostContent from 'src/components/PostContent.vue'
   import Tab from 'src/components/Tab.vue'
-  import moment from 'moment'
 
   const debug = require('debug')('CLIENT:Profile')
-  const MAXRESULT = 20
+  const MAXRESULT = 5
   const DEFAULT_PAGE = 1
   const DEFAULT_SORT = '-updated_at'
+  const POST_FILTER = [
+    { code: 0, name: 'FILTER_1D', },
+    { code: 1, name: 'FILTER_1W', },
+    { code: 2, name: 'FILTER_1M', },
+    { code: 3, name: 'FILTER_3M', },
+    { code: 4, name: 'FILTER_6M', },
+    { code: 5, name: 'FILTER_1Y', },
+    { code: 5, name: 'FILTER_1YPLUS', },
+  ]
 
   const getPosts = (store, {
     mode = 'set',
     category = 'latest',
     maxResult = MAXRESULT,
+    outputStateTarget,
     page = DEFAULT_PAGE,
     sort = DEFAULT_SORT,
     where = {},
@@ -66,6 +78,7 @@
         sort,
         where,
       },
+      outputStateTarget,
     })
   }
 
@@ -75,11 +88,11 @@
     })
   }
 
-  const getPostsCount = (store, params = {}) => {
-    return store.dispatch('GET_POSTS_COUNT', {
-      params: params,
-    })
-  }
+  // const getPostsCount = (store, params = {}) => {
+  //   return store.dispatch('GET_POSTS_COUNT', {
+  //     params: params,
+  //   })
+  // }
 
   export default {
     name: 'Profile',
@@ -111,40 +124,27 @@
     // },
     computed: {
       currUser () {
-        return get(this.$store, 'state.profile.id')
+        return get(this.$store, 'state.profile.uuid')
+      },
+      currTabKey () {
+        return get(this.tabs, [ this.curr_tab, 'key', ], 'follow')
       },
       isCurrUser () {
         debug('currUser', this.currUser)
         debug('targUser', get(this.$route, 'params.id'))
         return this.currUser === get(this.$route, 'params.id')
       },
-      filters () {
-        debug('state.publicPosts.items', get(this.$store, 'state.publicPosts.items'))
-        debug('filters', map(get(this.$store, 'state.publicPosts.items') || [], post => moment(new Date(post.publishedAt)).format('YYYY/MM/DD')))
-        return map(get(this.$store, 'state.publicPosts.items') || [], post => moment(new Date(post.publishedAt)).format('YYYY/MM/DD'))
-      },
-      posts () {
-        debug('state.publicPosts.items', get(this.$store, 'state.publicPosts.items'))
-        let posts
-        if (this.filter === 'all') {
-          posts = get(this.$store, 'state.publicPosts.items') || []
-        } else {
-          posts = filter(get(this.$store, 'state.publicPosts.items') || [], post => (moment(new Date(post.publishedAt)).format('YYYY/MM/DD') === this.filter))
-        }
-        debug('posts', posts)
-        return posts
-      },
       postsReview () {
-        return this.posts.filter(post => post.type === POST_TYPE.REVIEW )
+        return get(this.$store, 'state.publicPostReview.items') || []
       },
       postsNews () {
-        return this.posts.filter(post => post.type === POST_TYPE.NEWS )
+        return get(this.$store, 'state.publicPostNews.items') || []
       },
       tabs () {
         let tabs = []
-        if (this.postsReview.length !== 0) tabs.push(this.$t('tab.WORDING_TAB_REVIEW_RECORD'))
-        if (this.postsNews.length !== 0) tabs.push(this.$t('tab.WORDING_TAB_NEWS_RECORD'))
-        tabs.push(this.$t('tab.WORDING_TAB_FOLLOW_RECORD'))
+        if (this.postsReview.length !== 0) tabs.push({ key: 'review', name: this.$t('tab.WORDING_TAB_REVIEW_RECORD'), })
+        if (this.postsNews.length !== 0) tabs.push({ key: 'news', name: this.$t('tab.WORDING_TAB_NEWS_RECORD'), })
+        tabs.push({ key: 'follow', name: this.$t('tab.WORDING_TAB_FOLLOW_RECORD'), })
         return tabs
       },
       profileId () {
@@ -158,18 +158,47 @@
     },
     data () {
       return {
+        POST_FILTER,
+        curr_tab: 0,
+        curr_page: {
+          review: DEFAULT_PAGE,
+          news: DEFAULT_PAGE,
+          follow: DEFAULT_PAGE,
+        },
         filter: 'all',
-        // tabs: [
-        //   this.$t('tab.WORDING_TAB_REVIEW_RECORD'),
-        //   this.$t('tab.WORDING_TAB_NEWS_RECORD'),
-        //   this.$t('tab.WORDING_TAB_FOLLOW_RECORD'),
-        // ],
+        isReachBottom: false,
       }
     },
     methods: {
-      filterChanged (event) {
-        this.filter = event.target.value
+      dateDiffFromNow,
+      get,
+      loadmore () {
+        debug(`this.tabs[ this.curr_tab ]`, this.tabs[ this.curr_tab ], this.currTabKey)
+        /**
+         * dont loadmore follow for now
+         */
+        if (get(this.tabs, [ this.curr_tab, 'key', ], 1) === 'follow') { return }
+        return Promise.all([
+          getPosts(this.$store, {
+            mode: 'update',
+            page: get(this.curr_page, this.currTabKey, 1) + 1,
+            outputStateTarget: this.currTabKey === 'review' ? 'publicPostReview' : 'publicPostNews',
+            where: {
+              author: get(this.$route, 'params.id'),
+              type: [ this.currTabKey === 'review' ? POST_TYPE.REVIEW : POST_TYPE.NEWS, ],
+            },
+          }),
+        ]).then((res) => {
+          debug('Loadmore done. Status', get(res, [ 0, 'status', ]), get(res, [ 0, 'res', ]))
+          if (get(res, [ 0, 'status', ]) === 200) {
+            get(this.curr_page, this.currTabKey)
+              && (this.curr_page[ this.currTabKey ] += 1)
+          }
+        })
       },
+      isElementReachInView,
+      isScrollBarReachBottom,
+      map,
       routeToMemCenter () {
         if (this.isCurrUser) {
           const route = get(find(ROLE_MAP, (r) => (r.key === get(this.$store, 'state.profile.role'))), 'route')
@@ -177,71 +206,63 @@
           this.$router.push(`/${route}`)
         }
       },
-      // tabHandler (tab) {
-      //   switch (tab) {
-      //     case 0: 
-      //       Promise.all([
-      //         getPosts(this.$store, {
-      //           where: {
-      //             author: this.profileId,
-      //             type: POST_TYPE.REVIEW,
-      //           },
-      //         }),
-      //         getPostsCount(this.$store, {
-      //           where: {
-      //             author: this.profileId,
-      //             type: POST_TYPE.REVIEW,
-      //           },
-      //         }),              
-      //       ])
-      //       break
-      //     case 1: 
-      //       Promise.all([
-      //         getPosts(this.$store, {
-      //           where: {
-      //             author: this.profileId,
-      //             type: POST_TYPE.NEWS,
-      //           },
-      //         }),
-      //         getPostsCount(this.$store, {
-      //           where: {
-      //             author: this.profileId,
-      //             type: POST_TYPE.NEWS,
-      //           },
-      //         }),              
-      //       ])
-      //       break
-      //   }
-      // },
     },
     beforeMount () {
       // Beta version code
       Promise.all([
         getPosts(this.$store, {
+          outputStateTarget: 'publicPostReview',
           where: {
             author: get(this.$route, 'params.id'),
-            type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ],
+            type: [ POST_TYPE.REVIEW, ],
           },
         }),
-        getPostsCount(this.$store, {
+        getPosts(this.$store, {
+          outputStateTarget: 'publicPostNews',
           where: {
             author: get(this.$route, 'params.id'),
-            type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ],
+            type: [ POST_TYPE.NEWS, ],
           },
         }),
+        // getPostsCount(this.$store, {
+        //   where: {
+        //     author: get(this.$route, 'params.id'),
+        //     type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ],
+        //   },
+        // }),
         getMemberPublic(this.$store, {
           id: get(this.$route, 'params.id'),
         }),
       ])
     },
     mounted () {
-      debug(`/profile/${this.$route.params.id}`)
+       debug(`/profile/${this.$route.params.id}`)
+      
+      /**
+       * check if current user is belone to this profile. If yes, redirect it to member center.
+       */
       this.routeToMemCenter()
+
+      window.addEventListener('scroll', () => {
+        this.isReachBottom = this.isElementReachInView('.profile > .tab', 0.5) || this.isScrollBarReachBottom()
+      })
     },
     watch: {
-      currUser: function () {
+      currUser () {
         debug('currUser changed', this.currUser)
         this.routeToMemCenter()
+      },
+      curr_tab () {
+        debug('Mutation detected: curr_tab', this.curr_tab)
+        this.filter = 'all'
+      },
+      filter () {
+        debug('Mutation detected: filter', this.filter)
+      },
+      isReachBottom () {
+        debug('Mutation detected: isReachBottom', this.isReachBottom)
+        if (!this.isReachBottom) { return }
+        this.loadmore()
       },
     },
   }

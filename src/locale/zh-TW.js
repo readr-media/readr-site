@@ -76,8 +76,15 @@ export default {
     'WORDING_AGREEMENT_IPR' : '著作權、智慧財產權政策',
     'WORDING_AGREEMENT_PRIVACY' : '隱私權政策',
   },
-  'profile': {
-    'WORDING_PROFILE_FILTER_ALL' : '所有',
+  'PROFILE': {
+    'FILTER_ALL' : '所有',
+    'FILTER_1D' : '一日內',
+    'FILTER_1W' : '一週內',
+    'FILTER_1M' : '一個月內',
+    'FILTER_3M' : '三個月內',
+    'FILTER_6M' : '六個月內',
+    'FILTER_1Y' : '一年內',
+    'FILTER_1YPLUS' : '一年以上',
   },
   'profile_editor': {
     'WORDING_PROFILEEDIT_NICKNAME' : '暱稱',

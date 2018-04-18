@@ -32,6 +32,8 @@ export function createStore () {
       'publicPosts': [],
       'publicPostsHot': [],
       'publicPostSingle': [],
+      'publicPostReview': [],
+      'publicPostNews': [],
       'publicMember': {},
       'publicMembers': {},
       'publicProjects': {},

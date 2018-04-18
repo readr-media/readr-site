@@ -27,6 +27,7 @@
     watch: {
       activeItem (val) {
         this.$emit('changeTab', val)
+        this.$emit('update:tabCurrIndex', val)
       },
     },
     mounted () {},

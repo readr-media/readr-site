@@ -232,26 +232,26 @@ export default {
       }
     })
   },
-  GET_PUBLIC_POSTS: ({ commit, dispatch, state, }, { params, }) => {
+  GET_PUBLIC_POSTS: ({ commit, dispatch, state, }, { params, outputStateTarget = 'publicPosts', }) => {
     return new Promise((resolve, reject) => {
       getPublicPosts({ params, })
       .then(({ status, body, }) => {
         if (status === 200 && body.items) {
           if (params.mode === 'set') {
             if (params.category === 'latest') {
-              commit('SET_PUBLIC_POSTS', { posts: body, })
+              commit('SET_PUBLIC_POSTS', { posts: body, outputStateTarget, })
             } else if (params.category === 'hot') {
-              commit('SET_PUBLIC_POSTS_HOT', { posts: body, })
+              commit('SET_PUBLIC_POSTS', { posts: body, outputStateTarget: 'publicPostsHot', })
             }
           } else if (params.mode === 'update') {
-            commit('UPDATE_PUBLIC_POSTS', { posts: body, })
+            commit('UPDATE_PUBLIC_POSTS', { posts: body, outputStateTarget, })
           }
           resolve({ status: 200, res: body, })
         } else {
           // reject('end')
           if (body.items === null) {
             if (params.mode === 'set') {
-              commit('SET_PUBLIC_POSTS', { posts: [], })
+              commit('SET_PUBLIC_POSTS', { posts: [], outputStateTarget, })
             }
           }
           resolve({ status: 'end', res: {},})
