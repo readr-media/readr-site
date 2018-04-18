@@ -150,3 +150,19 @@ export function isDescendant (child, { parent = document.body, }) {
   }
   return false
 }
+  
+export function onImageLoaded(url) {
+  var image = new Image()
+  image.src = url
+
+  return new Promise((resolve, reject) => {
+    if (!url) reject()
+    if (image.complete) {
+      resolve(image)
+    } else {
+      image.onload = function () {
+        resolve(image)
+      }
+    }
+  })
+}
