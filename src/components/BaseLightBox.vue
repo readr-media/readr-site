@@ -14,6 +14,8 @@
 <script>
   import pathToRegexp from 'path-to-regexp'
 
+  const debug = require('debug')('CLIENT:BaseLightBox')
+
   export default {
     name: 'BaseLightBox',
     components: {
@@ -53,14 +55,17 @@
     },
     watch: {
       showLightBox (val) {
+        debug('val', val)
         if (val) {
-          document.querySelector('.view').classList.add('locked')
+          document.body.classList.add('locked')
         } else {
-          document.querySelector('.view').classList.remove('locked')
+          document.body.classList.remove('locked')
         }
       },
     },
-    mounted () {},
+    mounted () {
+      this.showLightBox && document.body.classList.add('locked')
+    },
     methods: {
       $_baseLightBox_close () {
         pathToRegexp('/post/:postId').test(this.$route.path) ? this.$emit('closeLightBox') : this.$emit('update:showLightBox', false)

@@ -1,6 +1,6 @@
 <template>
   <div class="homepage">
-    <BaseLightBox v-show="showLightBox" @closeLightBox="closeLightBox">
+    <BaseLightBox v-show="showLightBox" :showLightBox="showLightBox" @closeLightBox="closeLightBox">
       <BaseLightBoxPost :showLightBox="showLightBox" :post="postLightBox"/>
     </BaseLightBox>
     <div class="homepage__container">
