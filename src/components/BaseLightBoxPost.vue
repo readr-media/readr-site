@@ -125,7 +125,7 @@ export default {
     },
   },
   updated () {
-    if (this.post.id) this.renderComment(`.baselightbox-post__comment > .comment.comment-${this.post.id}`, this.$store.state.setting.TALK_SERVER)
+    if (this.post.id && !this.isNews) this.renderComment(`.baselightbox-post__comment > .comment.comment-${this.post.id}`, this.$store.state.setting.TALK_SERVER)
   },
 }
 </script>
