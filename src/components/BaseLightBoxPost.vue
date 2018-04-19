@@ -6,12 +6,12 @@
       <div class="baselightbox-post__article-container">
         <article class="baselightbox-post__article">
           <section class="author-info">
-            <router-link :to="`/profile/wonderwomen@wonderwomen.com`">
+            <router-link :to="`/profile/${authorId}`">
               <img class="author-info__thumbnail" :src="authorThumbnailImg" v-if="isClientSide">
             </router-link>
             <div class="author-info__meta">
               <p class="author-info__date" v-text="!isPostEmpty ? updatedAtYYYYMMDD(post.updatedAt) : ''"></p>
-              <router-link class="author-info__author-nickname" :to="`/profile/wonderwomen@wonderwomen.com`" v-text="authorNickname"></router-link>
+              <router-link class="author-info__author-nickname" :to="`/profile/${authorId}`" v-text="authorNickname"></router-link>
             </div>
           </section>
           <section class="article-content">
@@ -52,9 +52,9 @@
 
 <script>
 import { renderComment, } from 'src/util/talk'
-import { updatedAtYYYYMMDD, isClientSide, getArticleAuthorNickname, getArticleAuthorThumbnailImg, getImageUrl, onImageLoaded, } from '../util/comm'
+import { updatedAtYYYYMMDD, isClientSide, getArticleAuthorId, getArticleAuthorNickname, getArticleAuthorThumbnailImg, getImageUrl, onImageLoaded, } from '../util/comm'
 import { POST_TYPE, } from '../../api/config'
-import { get, map, isEmpty, } from 'lodash'
+import { get, find,  map, isEmpty, } from 'lodash'
 import sanitizeHtml from 'sanitize-html'
 import AppArticleNav from 'src/components/AppArticleNav.vue'
 
@@ -77,6 +77,9 @@ export default {
     isClientSide,
     isNews () {
       return get(this.post, 'type', POST_TYPE.REVIEW) === POST_TYPE.NEWS
+    },
+    authorId () {
+      return getArticleAuthorId(this.post)
     },
     authorNickname () {
       return getArticleAuthorNickname(this.post)
