@@ -116,8 +116,7 @@ export default {
     background-color white
     list-style none
     padding 16px 0
-    margin 0
-    margin-left 35px
+    margin 28px 0 0 35px
 
 .editors-list-container
   margin 0
