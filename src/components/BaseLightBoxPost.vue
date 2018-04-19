@@ -91,7 +91,7 @@ export default {
       if (!this.post.content || this.post.content.length === 0) { return [] }
       const wrappedContent = sanitizeHtml(this.post.content, { allowedTags: false, selfClosing: [ 'img', ], })
       const doc = new dom().parseFromString(wrappedContent)
-      let postParagraphs = map(get(doc, 'childNodes'), (p) => (sanitizeHtml(new seializer().serializeToString(p), { allowedTags: [ 'img', 'strong', ], })))
+      let postParagraphs = map(get(doc, 'childNodes'), (p) => (sanitizeHtml(new seializer().serializeToString(p), { allowedTags: [ 'img', 'strong', 'a', ], })))
       return postParagraphs
     },
     commentCount () {
