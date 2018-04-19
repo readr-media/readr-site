@@ -91,7 +91,7 @@ export default {
       if (!this.post.content || this.post.content.length === 0) { return [] }
       const wrappedContent = sanitizeHtml(this.post.content, { allowedTags: false, selfClosing: [ 'img', ], })
       const doc = new dom().parseFromString(wrappedContent)
-      let postParagraphs = map(get(doc, 'childNodes'), (p) => (sanitizeHtml(new seializer().serializeToString(p), { allowedTags: [ 'img', ], })))
+      let postParagraphs = map(get(doc, 'childNodes'), (p) => (sanitizeHtml(new seializer().serializeToString(p), { allowedTags: [ 'img', 'strong', 'a', ], })))
       return postParagraphs
     },
     commentCount () {
@@ -183,7 +183,7 @@ export default {
           & > img
             width 100%
 
-  font-family = 'Songti TC'
+  font-family = 'Songti TC', 'SimSun'
   &--news
     width 1029px
     height 90vh
