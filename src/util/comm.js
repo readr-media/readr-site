@@ -62,6 +62,10 @@ export function getHost () {
   }
 }
 
+export function getArticleAuthorId (articleData) {
+  return _.get(articleData, 'author.id') || _.get(articleData, 'author')
+}
+
 export function getArticleAuthorNickname (articleData) {
   return _.get(articleData, 'authorNickname') || _.get(articleData, 'author.nickname') || _.get(articleData, 'nickname')
 }
