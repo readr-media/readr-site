@@ -80,6 +80,9 @@ export default {
   SET_MEMBERS_COUNT: (state, { count, }) => {
     state['membersCount'] = count
   },
+  SET_NOTIFICATION: (state, { items, }) => {
+    state['notification'] = items
+  },
   SET_POSTS: (state, { posts, }) => {
     state['posts'] = posts.items
   },

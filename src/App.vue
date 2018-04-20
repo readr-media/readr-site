@@ -15,8 +15,8 @@
 </template>
 
 <script>
-  import { SECTIONS_DEFAULT, } from './constants'
-  import AppHeader from './components/AppHeader.vue'
+  import { SECTIONS_DEFAULT, } from 'src/constants'
+  import AppHeader from 'src/components/header/AppHeader.vue'
   import AppAsideNav from 'src/components/AppAsideNav.vue'
   export default {
     components: {

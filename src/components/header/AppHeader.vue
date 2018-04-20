@@ -4,9 +4,14 @@
       <div class="header__container__wrapper">
         <SearchTool></SearchTool>
         <div class="login-status" v-if="isClientSide">
-          <div class="login-status__nickname login-status__item" v-text="userNickname" v-if="isLoggedIn" @click="goMemberCenter"></div>
-          <a class="login-status__login-btn login-status__item" href="/login" v-text="$t('header.WORDING_HEADER_LOGIN')" v-if="!isLoggedIn"></a>
-          <div class="login-status__logout-btn login-status__item" v-text="$t('header.WORDING_HEADER_LOGOUT')" v-else-if="isLoggedIn" @click="logout"></div>
+          <template v-if="!isLoggedIn">
+            <a class="login-status__login-btn login-status__item" href="/login" v-text="$t('header.WORDING_HEADER_LOGIN')"></a>
+          </template>
+          <template v-else-if="isLoggedIn">
+            <div class="login-status__nickname login-status__item" v-text="userNickname" @click="goMemberCenter"></div>
+            <Notification class="login-status__icon"></Notification>
+            <div class="login-status__logout-btn login-status__item" v-text="$t('header.WORDING_HEADER_LOGOUT')" @click="logout"></div>
+          </template>
         </div>
       </div>
     </div>
@@ -14,23 +19,19 @@
 </template>
 <script>
   import { filter, get, } from 'lodash'
-  import { ROLE_MAP, } from '../constants'
-  import { removeToken, } from '../util/services'
+  import { ROLE_MAP, } from 'src/constants'
+  import { removeToken, } from 'src/util/services'
+  import Notification from 'src/components/header/Notification.vue'
   import SearchTool from 'src/components/search/SearchTool.vue'
 
   const debug = require('debug')('CLIENT:AppHeader')
-  // const checkLoginStatus = (store) => {
-  //   return store.dispatch('CHECK_LOGIN_STATUS', {})
-  // }
-  // const getProfile = (store) => {
-  //   return store.dispatch('GET_PROFILE', {})
-  // }
   const logout = (store) => {
     return store.dispatch('LOGOUT', {})
   }
 
   export default {
     components: {
+      Notification,
       SearchTool,
     },
     computed: {
@@ -77,14 +78,7 @@
       this.isClientSide = true
       debug('isLoginPage', this.isLoginPage)
     },
-    beforeMount () {
-      // checkLoginStatus(this.$store).then(() => {
-      //   if (this.isLoggedIn) {
-      //     return getProfile(this.$store)
-      //   }
-      //   return
-      // })
-    },
+    beforeMount () {},
     props: [ 'sections', ],
   }
 </script>
@@ -162,13 +156,13 @@
             cursor pointer
           &__item
             position relative
-            padding 0 16.5px
+            padding-left 16.5px
             height 100%
             display flex
             justify-content center
             align-items center
-            &:last-child
-              padding-right 0
+            // &:last-child
+            //   padding-right 0
             &::after
               content ''
               position absolute
@@ -181,21 +175,21 @@
               display block
             
           &__nickname
-            padding-right 38px
+            // padding-right 38px
             color #ddcf21
-            &::before
-              content ''
-              width 28px
-              height 30px
-              display block
-              position absolute
-              background-color transparent
-              background-image url(/public/icons/account.png)
-              background-position center center
-              background-repeat no-repeat
-              background-size contain
-              bottom 0
-              right 10px
+            // &::before
+            //   content ''
+            //   width 28px
+            //   height 30px
+            //   display block
+            //   position absolute
+            //   background-color transparent
+            //   background-image url(/public/icons/account.png)
+            //   background-position center center
+            //   background-repeat no-repeat
+            //   background-size contain
+            //   bottom 0
+            //   right 10px
             cursor pointer
   
   @media (max-width 768px)

@@ -1,4 +1,4 @@
-import AppHeader from 'src/components/AppHeader.vue'
+import AppHeader from 'src/components/header/AppHeader.vue'
 // import Vue from 'vue'
 import { WORDING_HEADER_LOGIN, WORDING_HEADER_LOGOUT, WORIDNG_HEADER_MEMBER_CENTRE, } from 'src/constants'
 import { mount, } from 'avoriaz'

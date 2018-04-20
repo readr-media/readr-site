@@ -6,7 +6,7 @@
   </div>
 </template>
 <script>
-  import AppHeader from 'src/components/AppHeader.vue'
+  import AppHeader from 'src/components/header/AppHeader.vue'
   import InitBasicProfile from 'src/components/register/InitBasicProfile.vue'
   import ResetPwd from 'src/components/login/ResetPwd.vue'
   import { get, } from 'lodash'

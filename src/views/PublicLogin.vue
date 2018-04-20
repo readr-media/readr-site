@@ -9,11 +9,11 @@
   </div>
 </template>
 <script>
-  import { SECTIONS_DEFAULT, } from '../constants'
+  import { SECTIONS_DEFAULT, } from 'src/constants'
   import { get, } from 'lodash'
   // import LoginPanel from '../components/LoginPanel.vue'
-  import LoginPanelPackingTest from '../components/LoginPanelPackingTest.vue'
-  import AppHeader from '../components/AppHeader.vue'
+  import LoginPanelPackingTest from 'src/components/LoginPanelPackingTest.vue'
+  import AppHeader from 'src/components/header/AppHeader.vue'
   
   export default {
     components: {

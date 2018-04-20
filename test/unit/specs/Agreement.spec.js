@@ -1,5 +1,5 @@
 import Agreement from 'src/views/Agreement.vue'
-import AppHeader from 'src/components/AppHeader.vue'
+import AppHeader from 'src/components/header/AppHeader.vue'
 import Tab from 'src/components/Tab.vue'
 // import sinon from 'sinon'
 import { mount, } from 'avoriaz'

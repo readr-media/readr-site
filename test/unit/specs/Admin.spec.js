@@ -1,7 +1,7 @@
 import About from 'src/components/About.vue'
 import Admin from 'src/views/Admin.vue'
 import BaseLightBox from 'src/components/BaseLightBox.vue'
-import AppHeader from 'src/components/AppHeader.vue'
+import AppHeader from 'src/components/header/AppHeader.vue'
 import MembersPanel from 'src/components/admin/MembersPanel.vue'
 // import MemberAccountEditor from 'src/components/admin/MemberAccountEditor.vue'
 import TheBaseControlBar from 'src/components/TheBaseControlBar.vue'
