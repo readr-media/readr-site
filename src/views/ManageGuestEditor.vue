@@ -71,7 +71,7 @@
   import _ from 'lodash'
   import About from '../components/About.vue'
   import AlertPanel from '../components/AlertPanel.vue'
-  import AppHeader from '../components/AppHeader.vue'
+  import AppHeader from '../components/header/AppHeader.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
   import FollowingListInTab from '../components/FollowingListInTab.vue'
   import PaginationNav from '../components/PaginationNav.vue'

@@ -124,6 +124,7 @@ router.use('/activate', verifyToken, require('./middle/member/activation'))
 router.use('/following', require('./middle/following'))
 router.use('/initmember', authVerify, require('./middle/member/initMember'))
 router.use('/invitation', authVerify, require('./middle/member/invitation'))
+router.use('/member/notification', authVerify, require('./middle/member/notification'))
 router.use('/member', [ authVerify, authorize, ], require('./middle/member'))
 router.use('/comment', require('./middle/comment'))
 router.use('/register', authVerify, require('./middle/member/register'))
@@ -280,7 +281,7 @@ router.post('/image/:sourceType', authVerify, upload.single('image'), (req, res)
   
   processImage(file, req.params.sourceType)
     .then((images) => {
-      const origImg = req.params.sourceType === 'member' ? _.trim(images[images.length - 1], 'tmp/') : _.trim(images[0], 'tmp/')
+      const origImg = _.trim(images[0], 'tmp/')
       Promise.all(images.map((path) => {
         const fileName = _.trim(path, 'tmp/')
         return uploadFileToBucket(bucket, path, {
@@ -300,6 +301,7 @@ router.post('/image/:sourceType', authVerify, upload.single('image'), (req, res)
         })
       }))
       .then(() => {
+        debug(`${destination}/${origImg}`)
         res.status(200).send({url: `${destination}/${origImg}`,})
       })
     })

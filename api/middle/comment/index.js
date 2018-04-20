@@ -12,6 +12,7 @@ const router = express.Router()
 // const authVerify = jwtExpress({ secret: config.JWT_SECRET, })
 
 router.get('/count', fetchFromRedis, (req, res, next) => {
+  res.header("Cache-Control", "public, max-age=3600")
   if (res.redis) {
     console.error('fetch data from Redis.', req.url)
     const resData = JSON.parse(res.redis)

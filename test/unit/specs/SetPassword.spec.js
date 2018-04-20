@@ -1,5 +1,5 @@
 import SetPassword from 'src/views/SetPassword.vue'
-import AppHeader from 'src/components/AppHeader.vue'
+import AppHeader from 'src/components/header/AppHeader.vue'
 import InitBasicProfile from 'src/components/register/InitBasicProfile.vue'
 import { mount, } from 'avoriaz'
 

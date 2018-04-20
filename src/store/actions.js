@@ -25,6 +25,7 @@ import {
   getMembers,
   getMembersCount,
   getMeta,
+  getNotification,
   getPost,
   getPosts,
   getPostsCount,
@@ -49,6 +50,7 @@ import {
   search,
   syncAvatar,
   updateMember,
+  updateNotificationStatus,
   updatePassword,
   updatePost,
   updateTags,
@@ -176,6 +178,13 @@ export default {
         } else if (params.role) {
           commit('SET_PUBLIC_MEMBERS', { members: body, role: _.find(ROLE_MAP, { key: params.role, }).value, })
         }
+      }
+    })
+  },
+  GET_NOTIFICATION: ({ commit, dispatch, state, }, { id, }) => {
+    return getNotification(id).then(({ status, body, }) => {
+      if (status === 200) {
+        commit('SET_NOTIFICATION', { items: _.get(body, 'items', []), })
       }
     })
   },
@@ -443,6 +452,9 @@ export default {
   },
   UPDATE_MEMBER: ({ commit, dispatch, state, }, { params, type, }) => {
     return updateMember({ params, type, })
+  },
+  UPDATE_NOTIFICATION_STATUS: ({ commit, dispatch, state, }, { params, }) => {
+    return updateNotificationStatus({ params, })
   },
   UPDATE_PROFILE: ({ commit, dispatch, state, }, { params, }) => {
     commit('UPDATED_PROFILE', { profile: params, })

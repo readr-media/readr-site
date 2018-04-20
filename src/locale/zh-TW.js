@@ -277,4 +277,24 @@ export default {
       <div>最重要的就是你的參與。</div>
     `,
   },
+  'NOTIFICATION': {
+    'TITLE': '通知',
+    'READ_ALL': '全部標為已讀',
+    'UNREAD_ALL': '全部標為未讀',
+    'REPLY_AS_WELL': '也回應了',
+    'REPLY_TO_YOU': '回覆了你',
+    'REPLY': '回覆了',
+    'WHOS': '的',
+    'WHOS_COMMENT': '中的留言',
+    'AT': '在',
+    'AT_WHOS': '在他的',
+    'MEMO': '記者筆記',
+    'POST_TYPE': {
+      '0': '評論',
+      '1': '新聞',
+      '2': '影片',
+      '4': '直播',
+    },
+    'PUBLISH': '發表了新的',
+  },
 }
