@@ -6,7 +6,7 @@
       :class="{ show: isBoxActive }"
       :notificationItems="notificationItems"
       :notReadYetCount="notReadYetCount"
-      :isBoxActive="isBoxActive"></NotificationDropbox>
+      :isBoxActive.sync="isBoxActive"></NotificationDropbox>
   </div>
 </template>
 <script>
