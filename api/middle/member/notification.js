@@ -12,7 +12,16 @@ const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API
 router.get('/:id?', (req, res, next) => {
   debug('Got a notification data call.')
   debug(req.user)
+  const user_id_from_url = get(req, 'params.id')
   const user_id = get(req, 'user.id')
+  debug(user_id_from_url, user_id)
+  if (user_id !== user_id_from_url) {
+    res.header("Cache-Control", "no-cache, no-store, must-revalidate")
+    res.header("Pragma", "no-cache")
+    res.header("Expires", "0")    
+    res.status(403).send(`Forbidden.`)
+    return
+  }
   req.redis_get = {
     cmd: 'LRANGE',
     key: `notify_${user_id}`,
