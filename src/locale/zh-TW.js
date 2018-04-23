@@ -266,6 +266,7 @@ export default {
     'REPLY_AS_WELL': '也回應了',
     'REPLY_TO_YOU': '回覆了你',
     'REPLY': '回覆了',
+    'GIVE_FEEDBACK_TO_YOUR_PUBLISH': '回應了您所發佈的',
     'WHOS': '的',
     'WHOS_COMMENT': '中的留言',
     'AT': '在',

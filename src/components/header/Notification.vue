@@ -22,6 +22,9 @@
       NotificationDropbox,
     },
     computed: {
+      currPath () {
+        return get(this.$route, 'fullPath')
+      },
       currUser () {
         return get(this.$store, 'state.profile.id')
       },
@@ -59,6 +62,11 @@
     mounted () {
       this.$el.ondragstart = function () { return false }
       this.$el.onselectstart = function () { return false }
+    },
+    watch: {
+      currPath () {
+        this.updateNotification()
+      },
     },
   }
 </script>

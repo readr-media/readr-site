@@ -48,6 +48,11 @@
       <span class="comment--action" v-text="$t('NOTIFICATION.PUBLISH')"></span>
       <span class="comment--post-type" v-text="$t(`NOTIFICATION.POST_TYPE.${get(item, 'post_type')}`)"></span>    
     </template>
+    <template v-else-if="get(item, 'event_type') === 'post_reply'">
+      <span class="comment--commenter" v-text="get(item, 'nickname')"></span>
+      <span class="comment--string" v-text="$t('NOTIFICATION.GIVE_FEEDBACK_TO_YOUR_PUBLISH')"></span>   
+      <span class="comment--post-type" v-text="$t(`NOTIFICATION.POST_TYPE.${get(item, 'post_type')}`)"></span>  
+    </template>
   </div>
 </template>
 <script>
