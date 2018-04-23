@@ -10,7 +10,7 @@
   </div>
 </template>
 <script>
-  import { filter, get, map, } from 'lodash'
+  import { filter, get, map, throttle, } from 'lodash'
   import NotificationDropbox from 'src/components/header/NotificationDropbox.vue'
   const debug = require('debug')('CLIENT:Notification')
   const fetchNotification = (store, { id, }) => {
@@ -46,9 +46,9 @@
       },
       updateNotification () {
         debug('Got event updateNotification.')
-        Promise.all([
+        throttle(() => Promise.all([
           fetchNotification(this.$store, { id: this.currUser, }),
-        ])        
+        ]), 100, { leading: false, })()      
       },
     },
     beforeMount () {

@@ -62,6 +62,7 @@
           if ([ ...ids, ].length === 1) {
             debug(`/${get(this.notificationItems, [ ids, 'object_type', ])}/${get(this.notificationItems, [ ids, 'object_id', ])}`)
             this.$emit('update:isBoxActive', false)
+            this.$emit('updateNotification')
             this.$router.push(`/${get(this.notificationItems, [ ids, 'object_type', ])}/${get(this.notificationItems, [ ids, 'object_id', ])}`)
           } else {
            this.$emit('updateNotification') 

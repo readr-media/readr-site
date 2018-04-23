@@ -18,7 +18,7 @@
     <template v-else-if="get(item, 'event_type') === 'comment_reply_author'">
       <span class="comment--owner" v-text="get(item, 'object_name')"></span>
       <span class="comment--action" v-text="$t('NOTIFICATION.REPLY_TO_YOU')"></span>
-      <span class="comment--string" v-text="$t('NOTIFICATION.AT_WHOSAT')"></span>
+      <span class="comment--string" v-text="$t('NOTIFICATION.AT_WHOS')"></span>
       <span class="comment--post-type" v-text="$t(`NOTIFICATION.POST_TYPE.${get(item, 'post_type')}`)"></span>    
       <span class="comment--string" v-text="$t('NOTIFICATION.WHOS_COMMENT')"></span>
     </template>
