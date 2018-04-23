@@ -4,15 +4,18 @@
       <div class="postPanel__input">
         <input v-model="post.title" type="text" class="postPanel__title" :placeholder="$t('POST_PANEL.TITLE_PLACEHOLDER')">
       </div>
-      <text-editor
-        v-if="!isVideo"
+      <quill-editor-review
+        v-if="postType === config.type.REVIEW"
         :content="post.content"
-        :type="postType"
         @updateContent="$_postPanel_updateContent">
-      </text-editor>
+      </quill-editor-review>
+      <quill-editor-news
+        v-if="postType === config.type.NEWS"
+        :content="post.content"
+        @updateContent="$_postPanel_updateContent">
+      </quill-editor-news>
       <div class="postPanel__input postPanel__link">
-        <label v-if="!isVideo" for="" v-text="`${$t('POST_PANEL.NEWS')}${$t('POST_PANEL.LINK')}：`"></label>
-        <label v-if="isVideo" for="" v-text="`${$t('POST_PANEL.VIDEO')}${$t('POST_PANEL.LINK')}：`"></label>
+        <label for="" v-text="`${$t('POST_PANEL.NEWS')}${$t('POST_PANEL.LINK')}：`"></label>
         <input v-model="post.link" type="url" @change="$_postPanel_metaChanged">
       </div>
       <div v-if="$can('editPostOg')" class="postPanel__input postPanel--publishDate">
@@ -27,7 +30,7 @@
         </no-ssr>
       </div>
       <div
-        v-if="$can('editPostOg') && !isVideo"
+        v-if="$can('editPostOg')"
         class="postPanel__input">
         <label for="" v-text="`${$t('POST_PANEL.TAG')}：`"></label>
         <div class="postPanel__tags">
@@ -122,15 +125,15 @@
   import { 
     IMAGE_UPLOAD_MAX_SIZE,
   } from '../constants'
-  import { POST_ACTIVE, POST_TYPE, } from '../../api/config'
   import _ from 'lodash'
   import AlertPanel from './AlertPanel.vue'
   import BaseLightBox from './BaseLightBox.vue'
   import Datepicker from 'vuejs-datepicker'
-  import TextEditor from './TextEditor.vue'
   import NoSSR from 'vue-no-ssr'
+  import QuillEditorNews from './QuillEditorNews.vue'
+  import QuillEditorReview from './QuillEditorReview.vue'
   import validator from 'validator'
-  
+
   const MAXRESULT = 20
   const DEFAULT_PAGE = 1
 
@@ -175,8 +178,9 @@
       'alert-panel': AlertPanel,
       'base-light-box': BaseLightBox,
       'datepicker': Datepicker,
-      'text-editor': TextEditor,
       'no-ssr': NoSSR,
+      'quill-editor-news': QuillEditorNews,
+      'quill-editor-review': QuillEditorReview,
     },
     props: {
       post: {
@@ -195,7 +199,8 @@
     data () {
       return {
         config: {
-          active: POST_ACTIVE,
+          active: this.$store.state.setting.POST_ACTIVE,
+          type: this.$store.state.setting.POST_TYPE,
         },
         dateFormat: 'yyyy/MM/d',
         metaChanged: false,
@@ -213,9 +218,6 @@
       },
       isClientSide () {
         return _.get(this.$store, [ 'state', 'isClientSide', ], false)
-      },
-      isVideo () {
-        return this.postType === POST_TYPE.VIDEO
       },
       tags () {
         let tags = _.get(this.$store, [ 'state', 'tags', ], []) || []
@@ -348,7 +350,7 @@
 
             if (activeChanged) {
               switch (this.postParams.active) {
-                case POST_ACTIVE.ACTIVE:
+                case this.$store.state.setting.POST_ACTIVE.ACTIVE:
                   this.$emit('publishPost', this.postParams)
                   break
                 default:
@@ -374,7 +376,7 @@
 
         if (Date.parse(_.get(this.post, [ 'publishedAt', ]))) {
           this.postParams.published_at = _.get(this.post, [ 'publishedAt', ])
-        } else if (postActive === POST_ACTIVE.ACTIVE && !this.postParams.published_at) {
+        } else if (postActive === this.$store.state.setting.POST_ACTIVE.ACTIVE && !this.postParams.published_at) {
           this.postParams.published_at = new Date(Date.now())
         }
 
@@ -384,7 +386,7 @@
           this.postParams.link_title = ''
           this.postParams.link_description = ''
           this.postParams.link_image = ''
-          if (validator.isURL(link, { protocols: [ 'http','https', ], }) && !this.isVideo) {
+          if (validator.isURL(link, { protocols: [ 'http','https', ], })) {
             link = encodeURI(link)
             getMeta(this.$store, link)
             .then((res) => {
