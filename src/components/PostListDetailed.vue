@@ -57,6 +57,7 @@
 
 .postListDetailed
   width 90%
+  max-height calc(100vh - 10px)
   height 100%
   margin 0 auto
   overflow-x hidden
