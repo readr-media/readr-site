@@ -1,6 +1,7 @@
 <template>
   <div class="notification" tabIndex="0" @focusout="closeBox" @focus="openBox">
-    <div class="notification__light" v-show="notReadYetCount !== 0"><span v-text="notReadYetCount"></span></div>
+    <div class="notification__light" :class="{ off: !isBoxActive }" v-if="notReadYetCount !== 0"><span v-text="notReadYetCount"></span></div>
+    <div class="notification__light bell" v-else></div>
     <NotificationDropbox class="notification__dropbox"
       @updateNotification="updateNotification"
       :class="{ show: isBoxActive }"
@@ -108,21 +109,32 @@
       justify-content center
       align-items center
       z-index 3
+      &.bell
+        background-color transparent
+        background-image url(/public/icons/bellwithshadow.png)
+        background-position center center
+        background-size contain
+        background-repeat no-repeat
+        &:after
+          content none
+      &.off
+        &:after
+          content none       
+      &:after
+        content ''
+        background-color #d0021b
+        width 2px
+        position absolute
+        top 18px
+        height 15px
+        z-index 1
     > .notification__dropbox
-      top calc(100% + 17px)
+      top calc(100% + 24px)
       margin-right -50px
       z-index 2
       cursor default
       display none
       &.show
         display block
-      &:before
-        content ''
-        background-color #d0021b
-        width 2px
-        position absolute
-        top -18px
-        right 54px
-        height 18px
-        z-index 1
+
 </style>
