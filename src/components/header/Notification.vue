@@ -10,7 +10,7 @@
   </div>
 </template>
 <script>
-  import { filter, get, map, } from 'lodash'
+  import { filter, get, map, throttle, } from 'lodash'
   import NotificationDropbox from 'src/components/header/NotificationDropbox.vue'
   const debug = require('debug')('CLIENT:Notification')
   const fetchNotification = (store, { id, }) => {
@@ -22,6 +22,9 @@
       NotificationDropbox,
     },
     computed: {
+      currPath () {
+        return get(this.$route, 'fullPath')
+      },
       currUser () {
         return get(this.$store, 'state.profile.id')
       },
@@ -46,9 +49,9 @@
       },
       updateNotification () {
         debug('Got event updateNotification.')
-        Promise.all([
+        throttle(() => Promise.all([
           fetchNotification(this.$store, { id: this.currUser, }),
-        ])        
+        ]), 100, { leading: false, })()      
       },
     },
     beforeMount () {
@@ -59,6 +62,11 @@
     mounted () {
       this.$el.ondragstart = function () { return false }
       this.$el.onselectstart = function () { return false }
+    },
+    watch: {
+      currPath () {
+        this.updateNotification()
+      },
     },
   }
 </script>
