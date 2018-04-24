@@ -9,13 +9,16 @@
           <template v-for="(p, i) in postContentProcessed">
             <!-- post content for initial display -->
             <p class="editor-writing__paragraph--visible" v-if="i <= shouldContentStopAtIndex" :key="`${post.id}-${i}`">
-              <span v-html="p"></span>
+              <span v-if="isImg(p)" class="figure">
+                <img v-if="isClientSide" :src="getImgSrc(p)" alt="post-content-img" @load="setContentImageOrientation(getImgSrc(p), $event)">
+              </span>
+              <span v-else v-html="p"></span>
               <span v-if="shouldShowReadMoreButton(i)">
                 <span class="editor-writing__more" @click="toogleReadmore($event)" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span>
               </span>
             </p>
             <!-- rest of the post content -->
-            <p :class="`editor-writing__paragraph--${isReadMoreClicked ? 'visible' : 'invisible'}`" v-else v-html="p" :key="`${post.id}-${i}`"></p>
+            <!-- <p :class="`editor-writing__paragraph--${isReadMoreClicked ? 'visible' : 'invisible'}`" v-else v-html="p" :key="`${post.id}-${i}`"></p> -->
           </template>
           <p class="editor-writing__more--news" v-text="$t('homepage.WORDING_HOME_POST_MORE_NEWS')"></p>
         </router-link>
@@ -29,7 +32,11 @@
           <template v-for="(p, i) in postContentProcessed">
             <!-- post content for initial display -->
             <p class="editor-writing__paragraph--visible" v-if="i <= shouldContentStopAtIndex" :key="`${post.id}-${i}`">
-              <span v-html="p"></span>
+              <!-- <span v-html="p"></span> -->
+              <span v-if="isImg(p)" class="figure">
+                <img v-if="isClientSide" :src="getImgSrc(p)" alt="post-content-img" @load="setContentImageOrientation(getImgSrc(p), $event)">
+              </span>
+              <span v-else v-html="p"></span>
               <span v-if="shouldShowReadMoreButton(i)">
                 <span class="editor-writing__more" @click="toogleReadmore($event)" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span>
               </span>
@@ -54,7 +61,7 @@
   </div>
 </template>
 <script>
-  import { find, get, map, } from 'lodash'
+  import { find, get, map, some, findIndex, } from 'lodash'
   import { onImageLoaded, getImageUrl, isClientSide, } from 'src/util/comm'
   import AppArticleNav from 'src/components/AppArticleNav.vue'
   import sanitizeHtml from 'sanitize-html'
@@ -85,14 +92,24 @@
       isNews () {
         return get(this.post, 'type', POST_TYPE.REVIEW) === POST_TYPE.NEWS
       },
+      hasCustomContentBreak () {
+        return some(get(this.contentDOM, 'childNodes'), [ 'tagName', this.customContentBreakTagName, ])
+      },
+      shouldCustomBreakAtIndex () {
+        const originalIndex = findIndex(get(this.contentDOM, 'childNodes'), [ 'tagName', this.customContentBreakTagName, ])
+        if (this.hasCustomContentBreak) return originalIndex - 1 < 0 ? 0 : originalIndex - 1
+      },
       showContentWordLimit () {
         return this.isArticleMain ? 150 : 50
       },
+      contentDOM () {
+        const wrappedContent = sanitizeHtml(this.post.content, { allowedTags: false, selfClosing: [ 'img', this.customContentBreakTagName, ], })
+        const doc = new dom().parseFromString(wrappedContent)
+        return doc
+      },
       postContent () {
         if (!this.post.content || this.post.content.length === 0) { return [] }
-        const wrappedContent = sanitizeHtml(this.post.content, { allowedTags: false, selfClosing: [ 'img', ], })
-        const doc = new dom().parseFromString(wrappedContent)
-        const postParagraphs = map(get(doc, 'childNodes'), (p) => (sanitizeHtml(new seializer().serializeToString(p), { allowedTags: [ 'img', 'strong', ], })))
+        const postParagraphs = map(get(this.contentDOM, 'childNodes'), (p) => (sanitizeHtml(new seializer().serializeToString(p), { allowedTags: [ 'img', 'strong', 'h1', 'h2', 'figcaption', ], })))
         return postParagraphs
       },
       postContentProcessed () {
@@ -120,9 +137,10 @@
         return this.postContentWordCount.reduce((acc, curr) => acc + curr, 0)
       },
       shouldContentStopAtIndex () {
+        if (this.hasCustomContentBreak) return this.shouldCustomBreakAtIndex
+        if (this.postContentWordCountTotal <= this.showContentWordLimit) return this.postContent.length
         let count = 0
         let index = 0
-        if (this.postContentWordCountTotal <= this.showContentWordLimit) return this.postContent.length
         while (count + this.postContent[index].length <= this.showContentWordLimit) {
           const currentParagraph = this.postContent[index]
           const currentParagraphWordLength = currentParagraph.length
@@ -148,6 +166,7 @@
     data () {
       return {
         isReadMoreClicked: false,
+        customContentBreakTagName: 'hr',
       }
     },
     methods: {
@@ -170,6 +189,19 @@
         onImageLoaded(src).then(({ width, height, }) => {
           width < height ? event.target.style.objectFit = 'contain' : event.target.style.objectFit = 'cover'
         }).catch(() => { event.target.style.objectFit = 'cover' })
+      },
+      setContentImageOrientation (src, event) {
+        onImageLoaded(src).then(({ width, height, }) => {
+          width < height ? event.target.classList.add('portrait') : event.target.classList.add('landscape')
+        }).catch(() => { event.target.classList.add('landscape') })
+      },
+      isImg (content) {
+        const regexp = /<img([\w\W]+?)\/>/
+        return regexp.test(content)
+      },
+      getImgSrc (content) {
+        const regexp = /<img.*?src=['"](.*?)['"]/
+        return getImageUrl(regexp.exec(content)[1])
       },
       isClientSide,
       getImageUrl,
@@ -218,6 +250,35 @@
           p
             color #4a4a4a
             font-family font-family
+          h1
+            font-family font-family
+            font-size 35px
+            line-height 1.5
+            margin 16.5px 0 21px 0
+          h2
+            font-family font-family
+            font-size 25px
+            line-height 1.5
+            font-weight bold
+            margin 23.5px 0 15px 0
+          .figure
+            margin 41px 0 0px 0
+            display flex
+            flex-direction column
+            align-items center
+          figcaption
+            font-family font-family
+            font-size 14px
+            line-height 1.71
+            letter-spacing 0.5px
+            color #808080
+            margin-top 4.5px
+            text-align center
+            margin-bottom 28px
+          .landscape
+            width 100%
+          .portrait
+            width 50%
         &__container 
           // min-height 105px
           // overflow hidden
@@ -238,7 +299,8 @@
             display none
           p > img, p img
             width 100%
-            margin 20px 0
+            object-fit contain
+            // margin 20px 0
           p + p
             margin-top 6px
         &__more
@@ -303,6 +365,23 @@
           margin 1em 0
       .editor-writing
         margin 5px 0 12.5px 0
+        .figure
+          margin 41px 0 0px 0
+          display flex
+          flex-direction column
+          align-items center
+        figcaption
+          font-size 14px
+          line-height 1.71
+          letter-spacing 0.5px
+          color #808080
+          margin-top 4.5px
+          text-align center
+          margin-bottom 28px
+        .landscape
+          width 100%
+        .portrait
+          width 50%
         &__container 
           display inline-block
           min-width 100%

@@ -19,9 +19,6 @@
             <template v-for="p in postContent">
               <figure v-if="isImg(p)">
                 <img v-if="isClientSide" :src="getImgSrc(p)" alt="post-content-img" @load="setContentImageOrientation(getImgSrc(p), $event)">
-                <!-- <figcaption>
-                  我需要一個圖說
-                </figcaption> -->
               </figure>
               <p v-else v-html="p"></p>
             </template>
@@ -91,7 +88,7 @@ export default {
       if (!this.post.content || this.post.content.length === 0) { return [] }
       const wrappedContent = sanitizeHtml(this.post.content, { allowedTags: false, selfClosing: [ 'img', ], })
       const doc = new dom().parseFromString(wrappedContent)
-      let postParagraphs = map(get(doc, 'childNodes'), (p) => (sanitizeHtml(new seializer().serializeToString(p), { allowedTags: [ 'img', 'strong', 'a', ], })))
+      let postParagraphs = map(get(doc, 'childNodes'), (p) => (sanitizeHtml(new seializer().serializeToString(p), { allowedTags: [ 'img', 'strong', 'a', 'h1', 'h2', 'figcaption', ], })))
       return postParagraphs
     },
     commentCount () {
@@ -224,18 +221,18 @@ export default {
         font-weight 500
         color black
     .article-content
-      > h1
+      h1
         font-family font-family
         font-size 35px
         line-height 1.5
         margin 16.5px 0 21px 0
-      > h2
+      h2
         font-family font-family
         font-size 25px
         line-height 1.5
         font-weight bold
         margin 23.5px 0 15px 0
-      > p
+      p
         font-family font-family
         font-size 15px
         letter-spacing 0.5px
@@ -243,18 +240,20 @@ export default {
         text-align justify
       p + p
         margin 26px 0 0 0
-      > figure
-        margin 41px 0 28px 0
+      figure
+        margin 41px 0 0px 0
         display flex
         flex-direction column
         align-items center
-        figcaption
-          font-family font-family
-          font-size 14px
-          line-height 1.71
-          letter-spacing 0.5px
-          color #808080
-          margin-top 4.5px
+      figcaption
+        font-family font-family
+        font-size 14px
+        line-height 1.71
+        letter-spacing 0.5px
+        color #808080
+        margin-top 4.5px
+        margin-bottom 28px
+        text-align center
       .landscape
         width 100%
       .portrait
