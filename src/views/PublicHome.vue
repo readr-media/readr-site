@@ -256,8 +256,8 @@ export default {
       if (this.$store.state.isLoggedIn) {
         const postIdsLatest = _.get(this.$store.state.publicPosts, 'items', []).map(post => `${post.id}`) 
         const postIdsHot = _.get(this.$store.state.publicPostsHot, 'items', []).map(post => `${post.id}`) 
-        const postIdFeaturedProject = _.get(this.$store.state.projectsList, 'items', []).map(project => `${project.id}`) 
-        const ids = _.uniq(_.concat(postIdsLatest, postIdsHot)) 
+        const postIdFeaturedProject = _.concat(_.get(this.$store, 'state.publicProjects.done', []), _.get(this.$store, 'state.publicProjects.inProgress', [])).map(project => `${project.id}`)
+        const ids = _.uniq(_.concat(postIdsLatest, postIdsHot))
    
         if (ids.length !== 0) { 
           fetchFollowing(this.$store, { 

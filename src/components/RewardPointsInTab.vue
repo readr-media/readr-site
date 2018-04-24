@@ -12,11 +12,11 @@
 import PostListInTab from './PostListInTab.vue'
 import _ from 'lodash'
 
-const fetchProjectsList = (store, params) => {
-  return store.dispatch('GET_PROJECTS_LIST', {
-    params: params,
-  })
-}
+// const fetchProjectsList = (store, params) => {
+//   return store.dispatch('GET_PROJECTS_LIST', {
+//     params: params,
+//   })
+// }
 
 const fetchRewardPointsTransactions = (store, params) => {
   return store.dispatch('GET_REWARD_POINTS_TRANSACTIONS', {
@@ -58,7 +58,7 @@ export default {
     fetchRewardPointsTransactions(this.$store, {
       id: this.userId,
     })
-    fetchProjectsList(this.$store, {})
+    // fetchProjectsList(this.$store, {})
   },
 }
 </script>
