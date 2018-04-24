@@ -196,7 +196,6 @@
           type: this.$store.state.setting.POST_TYPE,
         },
         date: new Date(Date.now()).toString(),
-        dateFormat: 'yyyy/MM/d',
         metaChanged: false,
         postParams: {},
         tagInput: '',
@@ -370,7 +369,7 @@
         }
 
         if (Date.parse(this.date)) {
-          this.postParams.published_at = this.date
+          this.postParams.published_at = new Date(this.date)
         } else if (postActive === this.$store.state.setting.POST_ACTIVE.ACTIVE && !this.postParams.published_at) {
           this.postParams.published_at = new Date(Date.now())
         }
