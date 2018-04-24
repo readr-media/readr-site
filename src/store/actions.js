@@ -273,33 +273,46 @@ export default {
     }) 
   },
   GET_PUBLIC_PROJECTS: ({ commit, dispatch, state, }, { params, }) => {
-    const projectStatus = _.get(params, [ 'where', 'status', ])
-    return getPublicProjectsList({ params, })
-      .then(({ status, body, }) => {
-        if (status === 200) {
-          let orig
-          switch (projectStatus) {
-            case PROJECT_STATUS.WIP:
-              if (params.page > 1) {
-                orig = _.values(_.get(state, [ 'publicProjects', 'inProgress', ], []))
-                body.items =  _.concat(orig, body.items)
-              }
-              return commit('SET_PUBLIC_PROJECTS', { status: 'inProgress', publicProjects: body.items, })
-            case PROJECT_STATUS.DONE:
-              if (params.page > 1) {
-                orig = _.values(_.get(state, [ 'publicProjects', 'done', ], []))
-                body.items =  _.concat(orig, body.items)
-              }
-              return commit('SET_PUBLIC_PROJECTS', { status: 'done', publicProjects: body.items, })
-            default:
-              if (params.page > 1) {
-                orig = _.values(_.get(state, [ 'publicProjects', 'normal', ], []))
-                body.items =  _.concat(orig, body.items)
-              }
-              return commit('SET_PUBLIC_PROJECTS', { status: 'normal', publicProjects: body.items, })
+    const setPublicProject = (body) => {
+      const projectStatus = _.get(params, [ 'where', 'status', ])
+      let orig
+      switch (projectStatus) {
+        case PROJECT_STATUS.WIP:
+          if (params.page > 1) {
+            orig = _.values(_.get(state, [ 'publicProjects', 'inProgress', ], []))
+            body.items =  _.concat(orig, body.items)
           }
+          return commit('SET_PUBLIC_PROJECTS', { status: 'inProgress', publicProjects: body.items, })
+        case PROJECT_STATUS.DONE:
+          if (params.page > 1) {
+            orig = _.values(_.get(state, [ 'publicProjects', 'done', ], []))
+            body.items =  _.concat(orig, body.items)
+          }
+          return commit('SET_PUBLIC_PROJECTS', { status: 'done', publicProjects: body.items, })
+        default:
+          if (params.page > 1) {
+            orig = _.values(_.get(state, [ 'publicProjects', 'normal', ], []))
+            body.items =  _.concat(orig, body.items)
+          }
+          return commit('SET_PUBLIC_PROJECTS', { status: 'normal', publicProjects: body.items, })
+      }
+    }
+    return new Promise((resolve) => {
+      getPublicProjectsList({ params, })
+      .then(({ status, body, }) => {
+        const isItemsEmpty = body.items.length === 0
+        if (isItemsEmpty) {
+          setPublicProject(body)
+          resolve({ status: 'end', res: {},})
+        } else if (status === 200) {
+          setPublicProject(body)
+          resolve({ status: 200, res: body, })
         }
       })
+      .catch((res) => {
+        resolve({ status: 'error', res: res,})
+      })
+    })
   },
   GET_PUBLIC_VIDEOS: ({ commit, dispatch, state, }, { params, }) => {
     const orig = _.values(_.get(state, [ 'publicVideos', ]))
@@ -333,21 +346,21 @@ export default {
       })
     })
   },
-  GET_PROJECTS_LIST: ({ commit, dispatch, state, }, { params, }) => {
-    return new Promise((resolve, reject) => {
-      getPublicProjectsList({ params, })
-      .then(({ status, body, }) => {
-        if (status === 200) {
-          commit('SET_PROJECTS_LIST', { projectsList: body, })
-        }
-        resolve(body)
-      })
-      .catch((res) => {
-        // reject(res)
-        resolve(res)
-      })
-    }) 
-  },
+  // GET_PROJECTS_LIST: ({ commit, dispatch, state, }, { params, }) => {
+  //   return new Promise((resolve, reject) => {
+  //     getPublicProjectsList({ params, })
+  //     .then(({ status, body, }) => {
+  //       if (status === 200) {
+  //         commit('SET_PROJECTS_LIST', { projectsList: body, })
+  //       }
+  //       resolve(body)
+  //     })
+  //     .catch((res) => {
+  //       // reject(res)
+  //       resolve(res)
+  //     })
+  //   }) 
+  // },
   GET_PROFILE: ({ commit, dispatch, state, }, { params, }) => {
     return getProfile({ params, }).then(({ status, body, }) => {
       if (status === 200) {

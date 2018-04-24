@@ -28,11 +28,16 @@
 import AppTitledList from '../components/AppTitledList.vue'
 import ProjectsFigure from '../components/projects/ProjectsFigure.vue'
 import ProjectsFigureProgress from '../components/projects/ProjectsFigureProgress.vue'
+import { isScrollBarReachBottom, isElementReachInView, } from 'src/util/comm'
 import _ from 'lodash'
 
 // const debug = require('debug')('CLIENT:ProjectsList')
+
+const MAXRESULT = 5
+
 const fetchProjectsList = (store, params) => {
-  return store.dispatch('GET_PROJECTS_LIST', {
+  // return store.dispatch('GET_PROJECTS_LIST', {
+  return store.dispatch('GET_PUBLIC_PROJECTS', {
     params: params,
   })
 }
@@ -61,16 +66,57 @@ export default {
     ProjectsFigure,
     ProjectsFigureProgress,
   },
+  watch: {
+    isReachBottom(isReachBottom) {
+      if (isReachBottom && !this.endPage) {
+        this.loadmore()
+      }
+    },
+  },
+  data () {
+    return {
+      isReachBottom: false,
+      currentPage: 1,
+      endPage: false,
+    }
+  },
   computed: {
     projects () {
-      return _.get(this.$store, 'state.projectsList.items', [])
+      return _.get(this.$store, 'state.publicProjects.normal', [])
     },
+  },
+  methods: {
+    loadmore () {
+      fetchProjectsList(this.$store, {
+        max_result: MAXRESULT,
+        page: this.currentPage + 1,
+      })
+      .then(({ status, res, }) => {
+        if (status === 'end') {
+          this.endPage = true
+        } else if (status === 'error') {
+          console.log(res)
+        } else {
+          this.currentPage += 1
+          if (this.$store.state.isLoggedIn) {
+            const ids = res.items.map(project => `${project.id}`)
+            fetchFollowing(this.$store, {
+              mode: 'update',
+              resource: 'project',
+              ids: ids,
+            })
+          }
+        }
+      })
+    },
+    isScrollBarReachBottom,
+    isElementReachInView,
   },
   beforeMount () {
     // Beta version code
-    fetchProjectsList(this.$store, {}).then(() => {
+    fetchProjectsList(this.$store, { max_result: MAXRESULT, page: this.currentPage, }).then(() => {
       if (this.$store.state.isLoggedIn) {
-        const postIdFeaturedProject = this.$store.state.projectsList.items.map(project => `${project.id}`)
+        const postIdFeaturedProject = _.get(this.$store, 'state.publicProjects.normal', []).map(project => `${project.id}`)
         fetchFollowing(this.$store, {
           resource: 'project',
           ids: postIdFeaturedProject,
@@ -85,6 +131,11 @@ export default {
     //     ids: postIdFeaturedProject,
     //   })
     // }
+  },
+  mounted () {
+    window.addEventListener('scroll', () => {
+      this.isReachBottom = this.isScrollBarReachBottom()
+    })
   },
 }
 </script>
