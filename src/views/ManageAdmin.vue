@@ -541,6 +541,7 @@
       },
       publishPostHandler () {
         this.alertType = 'post'
+        this.loading = true
         if (this.isPublishPostInEditor) {
           if (this.postPanel === 'add') {
             addPost(this.$store, this.postForPublishInEditor)
@@ -548,11 +549,13 @@
                 this.updatePostList({ needUpdateCount: true, })
                 this.showEditor = false
                 this.needConfirm = false
+                this.loading = false
               })
               .catch(() => {
                 this.alertType = 'error'
                 this.needConfirm = false
                 this.showAlert = true
+                this.loading = false
               })
           } else {
             updatePost(this.$store, this.postForPublishInEditor)
@@ -561,11 +564,13 @@
                 this.showEditor = false
                 this.showDraftList = false
                 this.needConfirm = false
+                this.loading = false
               })
               .catch(() => {
                 this.alertType = 'error'
                 this.needConfirm = false
                 this.showAlert = true
+                this.loading = false
               })
           }
         } else {
@@ -576,11 +581,13 @@
             .then(() => {
               this.updatePostList({ needUpdateCount: true, })
               this.needConfirm = false
+              this.loading = false
             })
             .catch(() => {
               this.alertType = 'error'
               this.needConfirm = false
               this.showAlert = true
+              this.loading = false
             })
         }
       },
