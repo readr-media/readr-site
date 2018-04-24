@@ -20,14 +20,11 @@
       </div>
       <div v-if="$can('editPostOg')" class="postPanel__input postPanel--publishDate">
         <label for="" v-text="`${$t('POST_PANEL.PUBLISH_DATE')}：`"></label>
-        <no-ssr>
-          <datepicker
-            v-model="post.publishedAt"
-            :format="dateFormat"
-            :input-class="'datepicker__input'"
-            :language="'zh'">
-          </datepicker>
-        </no-ssr>
+        <datetime-picker
+          v-model="date"
+          input-format="YYYY/MM/DD HH:mm"
+          type="datetime">
+        </datetime-picker>
       </div>
       <div
         v-if="$can('editPostOg')"
@@ -50,7 +47,7 @@
           <div ref="tagsList" class="postPanel__tags-list hidden">
             <button v-show="tags.length === 0" class="noResult" v-text="$t('POST_PANEL.NOT_FOUND')"></button>
             <template>
-              <button v-for="(t) in tags" :key="t.id" @mousedown="$_postPanel_addTag(t.id)" v-text="t.text"></button>
+              <button v-for="t in tags" :key="t.tagId" @mousedown="$_postPanel_addTag(t.id)" v-text="t.text"></button>
             </template>
           </div>
         </div>
@@ -122,14 +119,11 @@
   </section>
 </template>
 <script>
-  import { 
-    IMAGE_UPLOAD_MAX_SIZE,
-  } from '../constants'
+  import { Datetime, } from 'vue-datetime'
+  import { IMAGE_UPLOAD_MAX_SIZE, } from '../constants'
   import _ from 'lodash'
   import AlertPanel from './AlertPanel.vue'
   import BaseLightBox from './BaseLightBox.vue'
-  import Datepicker from 'vuejs-datepicker'
-  import NoSSR from 'vue-no-ssr'
   import QuillEditorNews from './QuillEditorNews.vue'
   import QuillEditorReview from './QuillEditorReview.vue'
   import validator from 'validator'
@@ -177,8 +171,7 @@
     components: {
       'alert-panel': AlertPanel,
       'base-light-box': BaseLightBox,
-      'datepicker': Datepicker,
-      'no-ssr': NoSSR,
+      'datetime-picker': Datetime,
       'quill-editor-news': QuillEditorNews,
       'quill-editor-review': QuillEditorReview,
     },
@@ -202,6 +195,7 @@
           active: this.$store.state.setting.POST_ACTIVE,
           type: this.$store.state.setting.POST_TYPE,
         },
+        date: new Date(Date.now()).toString(),
         dateFormat: 'yyyy/MM/d',
         metaChanged: false,
         postParams: {},
@@ -238,6 +232,7 @@
         this.postParams = {}
         this.tagsNeedAdd = []
         this.tagsSelected = []
+        this.date = _.get(this.post, [ 'publishedAt', ]) || new Date(Date.now()).toString()
         const tags = _.get(this.post, [ 'tags', ]) || []
         tags.forEach((tag) => {
           this.tagsSelected.push(tag)
@@ -374,8 +369,8 @@
           this.postParams.og_title = _.get(this.post, [ 'ogTitle', ]) || _.get(this.post, [ 'title', ]) || ''
         }
 
-        if (Date.parse(_.get(this.post, [ 'publishedAt', ]))) {
-          this.postParams.published_at = _.get(this.post, [ 'publishedAt', ])
+        if (Date.parse(this.date)) {
+          this.postParams.published_at = this.date
         } else if (postActive === this.$store.state.setting.POST_ACTIVE.ACTIVE && !this.postParams.published_at) {
           this.postParams.published_at = new Date(Date.now())
         }
@@ -557,7 +552,13 @@
     margin-top 26px
     .vdp-datepicker
       flex 1
-      
+    >>> div
+      flex 1
+    >>> input
+      width 100%
+      height 25px
+      padding-left 10px
+      color #808080
   &__submit
     display flex
     justify-content space-between

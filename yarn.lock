@@ -5946,6 +5946,10 @@ module-deps@^4.0.8:
     through2 "^2.0.0"
     xtend "^4.0.0"
 
+moment@^2.11.1:
+  version "2.22.1"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.1.tgz#529a2e9bf973f259c9643d237fda84de3a26e8ad"
+
 moment@^2.21.0:
   version "2.21.0"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.21.0.tgz#2a114b51d2a6ec9e6d83cf803f838a878d8a023a"
@@ -9244,6 +9248,12 @@ vue-cookie@^1.1.4:
   dependencies:
     tiny-cookie "^1.0"
 
+vue-datetime@0.7.1:
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/vue-datetime/-/vue-datetime-0.7.1.tgz#f6786b74774b1dc961152391d70216de3629df05"
+  dependencies:
+    moment "^2.11.1"
+
 vue-eslint-parser@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/vue-eslint-parser/-/vue-eslint-parser-2.0.3.tgz#c268c96c6d94cfe3d938a5f7593959b0ca3360d1"
@@ -9280,10 +9290,6 @@ vue-loader@^14.2.0:
     vue-hot-reload-api "^2.2.0"
     vue-style-loader "^4.0.1"
     vue-template-es2015-compiler "^1.6.0"
-
-vue-no-ssr@^0.2.2:
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/vue-no-ssr/-/vue-no-ssr-0.2.2.tgz#e1a0ef0ba39fc54972edd71a2ae11a7988312b19"
 
 vue-quill-editor@^3.0.4:
   version "3.0.5"
@@ -9330,10 +9336,6 @@ vue-template-es2015-compiler@^1.6.0:
 vue@^2.5.13:
   version "2.5.16"
   resolved "https://registry.yarnpkg.com/vue/-/vue-2.5.16.tgz#07edb75e8412aaeed871ebafa99f4672584a0085"
-
-vuejs-datepicker@^0.9.22:
-  version "0.9.29"
-  resolved "https://registry.yarnpkg.com/vuejs-datepicker/-/vuejs-datepicker-0.9.29.tgz#b17e504a9ae699f590b2fbe07237d5309012083b"
 
 vuex-router-sync@^5.0.0:
   version "5.0.0"
