@@ -6,11 +6,6 @@ import { ReadrPerm, } from '../util/services'
 Vue.use(Router)
 Vue.use(ReadrPerm)
 
-if (process.browser) {
-  const VueQuillEditor = require('vue-quill-editor/dist/ssr')
-  Vue.use(VueQuillEditor)
-}
-
 // route-level code splitting
 const ManageAdmin = () => import('../views/ManageAdmin.vue')
 const ManageEditor = () => import('../views/ManageEditor.vue')

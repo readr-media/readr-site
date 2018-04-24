@@ -9,7 +9,13 @@ import * as filters from './util/filters'
 import ZHTW from 'src/locale/zh-TW'
 import EN from 'src/locale/en'
 import VueI18n from 'vue-i18n'
+
 Vue.use(VueI18n)
+
+if (process.browser) {
+  const VueQuillEditor = require('vue-quill-editor/dist/ssr')
+  Vue.use(VueQuillEditor)
+}
 
 // mixin for handling title
 Vue.mixin(titleMetaMixin)

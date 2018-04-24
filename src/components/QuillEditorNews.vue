@@ -1,5 +1,5 @@
 <template>
-  <section class="editor news" :class="{ readmore: $can('editPostOg') }">
+  <section class="editor news">
     <div class="editor__heading">
       <div class="editor__heading-text" v-text="$t('POST_EDITOR.EDITOR')"></div>
       <div class="editor__heading-switch" @click="$_quillEditor_toggleHtml">&lt; / &gt;</div>
@@ -19,6 +19,7 @@
       <span class="ql-formats">
         <button class="ql-link"></button>
         <button class="ql-video"></button>
+        <button v-show="$can('editPostOg')" class="ql-hr"></button>
       </span>
     </div>
     <div
@@ -52,12 +53,13 @@ export default {
   data () {
     return {
       editorOption: {
-        formats: [ 'bold', 'header', 'italic', 'blockquote', 'code-block', 'link', 'image', 'video', ],
+        formats: [ 'bold', 'header', 'italic', 'blockquote', 'code-block', 'link', 'image', 'video', 'hr', 'figcaption', ],
         modules: {
           toolbar: {
             container: '#toolbar',
             handlers: {
               'image': this.$_quillEditor_imageHandler,
+              'hr': this.$_quillEditor_customHrHandler,
             },
           },
           clipboard: {
@@ -67,13 +69,49 @@ export default {
       },
     }
   },
+  mounted () {
+    /*global Quill*/
+    const Block = Quill.import('blots/block')
+    const BlockEmbed = Quill.import('blots/block/embed')
+    class Hr extends BlockEmbed {
+      static create(value) {
+        const node = super.create(value)
+        return node
+      }
+    }
+    Hr.blotName = 'hr'
+    Hr.tagName = 'hr'
+    Quill.register({ 'formats/hr': Hr, })
+
+    class Figcaption extends Block {
+      static create(value) {
+        const node = super.create(value)
+        node.innerText = `請在此輸入圖說`
+        return node
+      }
+      static value(node) {
+        return node.innerText
+      }
+    }
+    Figcaption.blotName = 'figcaption'
+    Figcaption.tagName = 'figcaption'
+    Quill.register({ 'formats/figcaption': Figcaption, })
+
+  },
   methods: {
+    $_quillEditor_customHrHandler () {
+      if (this.$can('editPostOg')) {
+        const range = this.quillEditorNews.getSelection()
+        this.quillEditorNews.insertEmbed(range.index, 'hr', 'null')
+      }
+    },
     $_quillEditor_imageHandler () {
       this.$refs.uploadImg.click()
     },
     $_quillEditor_insertToEditor (url) {
       const range = this.quillEditorNews.getSelection()
       this.quillEditorNews.insertEmbed(range.index, 'image', url)
+      this.quillEditorNews.insertEmbed(range.index + 1, 'figcaption', 'null')
     },
     $_quillEditor_onEditorChange (event) {
       if (event.html) {
@@ -105,11 +143,18 @@ export default {
   .editor
     position relative
     margin-top 15px
-    >>> .ql-readmore
-      display none
-      width 100px
+    >>> .ql-hr
+      width 54px
       &:after
-        content '繼續閱讀'
+        content 'More'
+    >>> hr
+      height 0px
+      margin-top 5px
+      margin-bottom 5px
+    >>> figcaption
+      color #b3b3b1
+      font-size .75rem
+      font-weight 400
     > input
       display none
     &.showHtml
@@ -118,9 +163,6 @@ export default {
       .editor__quill
         width 50%
       .editor__html
-        display block
-    &.readmore
-      >>> .ql-readmore
         display block
     &__heading
       display flex
@@ -142,6 +184,7 @@ export default {
         
     &__quill
       height 380px
+      font-size 1rem
       overflow-y auto
       >>> img
         max-width 50%
