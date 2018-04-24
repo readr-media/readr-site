@@ -39,15 +39,16 @@ export default context => {
       let targUrl
       if ((permission && (role === 'visitor' || (permission !== role && permission !== 'member'))) || (isInitMember && !initmember)) {
         store.state.unauthorized = true
-        if (!cookie) {
-          router.push('/login')
-          targUrl = '/login'
-          store.state.targ_url = '/login'
-        } else {
-          router.push('/')
-          targUrl = '/'
-          store.state.targ_url = '/'
-        }
+        // if (!cookie) {
+        //   router.push('/login')
+        //   targUrl = '/login'
+        //   store.state.targ_url = '/login'
+        // } else {
+        //   router.push('/')
+        //   targUrl = '/'
+        //   store.state.targ_url = '/'
+        // }
+        return reject({ code: 403, })
       } else {
         router.push(url)
         targUrl = url
