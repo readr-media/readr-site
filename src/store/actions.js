@@ -346,21 +346,6 @@ export default {
       })
     })
   },
-  // GET_PROJECTS_LIST: ({ commit, dispatch, state, }, { params, }) => {
-  //   return new Promise((resolve, reject) => {
-  //     getPublicProjectsList({ params, })
-  //     .then(({ status, body, }) => {
-  //       if (status === 200) {
-  //         commit('SET_PROJECTS_LIST', { projectsList: body, })
-  //       }
-  //       resolve(body)
-  //     })
-  //     .catch((res) => {
-  //       // reject(res)
-  //       resolve(res)
-  //     })
-  //   }) 
-  // },
   GET_PROFILE: ({ commit, dispatch, state, }, { params, }) => {
     return getProfile({ params, }).then(({ status, body, }) => {
       if (status === 200) {

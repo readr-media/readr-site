@@ -36,7 +36,6 @@ import _ from 'lodash'
 const MAXRESULT = 5
 
 const fetchProjectsList = (store, params) => {
-  // return store.dispatch('GET_PROJECTS_LIST', {
   return store.dispatch('GET_PUBLIC_PROJECTS', {
     params: params,
   })
