@@ -385,7 +385,9 @@
           this.postParams.link_description = ''
           this.postParams.link_image = ''
           if (validator.isURL(link, { protocols: [ 'http','https', ], })) {
-            link = encodeURI(link)
+            if (link.match(/[\u3400-\u9FBF]/)) {
+              link = encodeURI(link)
+            }
             getMeta(this.$store, link)
             .then((res) => {
               this.postParams.link_name = _.truncate(_.get(res, [ 'body', 'ogSiteName', ]), { 'length': 40, })

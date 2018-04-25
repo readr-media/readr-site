@@ -17,7 +17,6 @@ const fs = require('fs')
 const jwtExpress = require('express-jwt')
 // const jwtService = require('./service.js')
 const multer  = require('multer')
-// const ogs = require('open-graph-scraper')
 const upload = multer({ dest: 'tmp/', })
 
 const { fetchFromRedis, insertIntoRedis, redisFetching, } = require('./middle/redisHandler')
@@ -165,7 +164,7 @@ router.all('/points/:id', [ authVerify, authorize, ], function(req, res, next) {
  */
 
 router.get('/posts', authVerify, (req, res) => {
-  if (req.user.role !== 9 && req.user.role !== 3) {
+  if (req.user.role !== config.ROLE_MAP.ADMIN && req.user.role !== config.ROLE_MAP.EDITOR) {
     if (!req.query.author) {
       return res.status(403).send('Forbidden. No right to access.').end()
     } else {
@@ -254,10 +253,10 @@ router.post('/verify-recaptcha-token', (req, res) => {
 router.post('/login', authVerify, require('./middle/member/login'))
 
 router.post('/post', authVerify, (req, res) => {
-  if (req.body.active === 1 && req.user.role === 2) {
+  if (req.body.active === config.POST_ACTIVE.ACTIVE && req.user.role !== config.ROLE_MAP.ADMIN && req.user.role !== config.ROLE_MAP.EDITOR) {
     return res.status(403).send('Forbidden. No right to access.').end()
   }
-  if ((req.body.og_description || req.body.og_image || req.body.og_title || req.body.published_at) && req.user.role === 2) {
+  if ((req.body.og_description || req.body.og_image || req.body.og_title || req.body.published_at) && req.user.role !== config.ROLE_MAP.ADMIN && req.user.role !== config.ROLE_MAP.EDITOR) {
     return res.status(403).send('Forbidden. No right to access.').end()
   }
   if (req.body.author !== req.user.id) {
@@ -384,7 +383,7 @@ router.put('/post', authVerify, (req, res) => {
   if (!req.body.author) {
     return res.status(403).send('Forbidden. No right to access.').end()
   }
-  if (req.body.author !== req.user.id && req.user.role !== 9 && req.user.role !== 3) {
+  if (req.body.author !== req.user.id && req.user.role !== config.ROLE_MAP.ADMIN && req.user.role !== config.ROLE_MAP.EDITOR) {
     return res.status(403).send('Forbidden. No right to access.').end()
   }
   const url = `${apiHost}${req.url}`
