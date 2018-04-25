@@ -243,6 +243,8 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     // const store = createStore()
+    debug('Hook: beforeRouteEnter', 'postId' in to.params)
+    debug(to)
     if ('postId' in to.params) {
       next(vm => {
         fetchPost(vm.$store, { id: to.params.postId, }).then(({ status, }) => {
