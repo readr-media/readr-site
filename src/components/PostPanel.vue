@@ -23,6 +23,7 @@
         <datetime-picker
           v-model="date"
           input-format="YYYY/MM/DD HH:mm"
+          :placeholder="`${$t('POST_PANEL.DATETIME_PLACEHOLDER')}`"
           type="datetime">
         </datetime-picker>
       </div>
@@ -195,7 +196,7 @@
           active: this.$store.state.setting.POST_ACTIVE,
           type: this.$store.state.setting.POST_TYPE,
         },
-        date: new Date(Date.now()).toString(),
+        date: '',
         metaChanged: false,
         postParams: {},
         tagInput: '',
@@ -231,7 +232,7 @@
         this.postParams = {}
         this.tagsNeedAdd = []
         this.tagsSelected = []
-        this.date = _.get(this.post, [ 'publishedAt', ]) || new Date(Date.now()).toString()
+        this.date = _.get(this.post, [ 'publishedAt', ]) || ''
         const tags = _.get(this.post, [ 'tags', ]) || []
         tags.forEach((tag) => {
           this.tagsSelected.push(tag)
@@ -368,10 +369,10 @@
           this.postParams.og_title = _.get(this.post, [ 'ogTitle', ]) || _.get(this.post, [ 'title', ]) || ''
         }
 
-        if (Date.parse(this.date)) {
-          this.postParams.published_at = new Date(this.date)
-        } else if (postActive === this.$store.state.setting.POST_ACTIVE.ACTIVE && !this.postParams.published_at) {
+        if (postActive === this.$store.state.setting.POST_ACTIVE.ACTIVE && !this.date) {
           this.postParams.published_at = new Date(Date.now())
+        } else if (this.date) {
+          this.postParams.published_at = new Date(this.date)
         }
 
         if (this.metaChanged) {
