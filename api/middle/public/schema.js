@@ -10,6 +10,12 @@ module.exports = {
   posts: Joi.object().keys({
     active: Joi.string().valid(activePostQueryString),
   }),
+  projects: Joi.object().keys({
+    active: Joi.any().forbidden(),
+    max_result: Joi.number(),
+    page: Joi.number().min(1),
+    sort: Joi.string(),
+  }),
   videos: Joi.object().keys({
     active: Joi.any().forbidden(),
     max_result: Joi.number(),

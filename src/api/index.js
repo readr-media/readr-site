@@ -11,7 +11,20 @@ const host = getHost()
 
 function _buildQuery (params = {}) {
   let query = {}
-  const whitelist = [ 'where', 'max_result', 'page', 'sort', 'sorting', 'ids', 'custom_editor', 'updated_by', 'keyword', 'stats', 'role', ]
+  const whitelist = [
+    'where',
+    'max_result',
+    'page',
+    'sort',
+    'sorting',
+    'ids',
+    'custom_editor',
+    'updated_by',
+    'keyword',
+    'stats',
+    'role',
+    'publish_status',
+  ]
   whitelist.forEach((ele) => {
     if (params.hasOwnProperty(ele)) {
       if (ele === 'where') {
@@ -330,7 +343,7 @@ export function getPublicPosts ({ params, }) {
 }
 
 export function getPublicProjectsList ({ params, }) {
-  let url = `${host}/api/project/list`
+  let url = `${host}/api/public/projects`
   const query = _buildQuery(params)
   if (query && (query.length > 0)) {
     url = url + `?${query}`
