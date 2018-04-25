@@ -193,7 +193,10 @@ export default {
     },
     postLightBox () {
       if (this.showLightBox) {
+        debug('Going to show lightbox of content for post', _.get(this.$route, 'params.postId'))
         const findPostInList = _.find(this.postsHome, [ 'id', Number(this.$route.params.postId), ])
+        debug('findPostInList', findPostInList)
+        debug('this.postSingle', this.postSingle)
         return findPostInList || this.postSingle
       } else {
         return {}
