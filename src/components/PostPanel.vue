@@ -111,9 +111,9 @@
         <button
           v-if="isClientSide && $can('publishPost') && (post.active !== config.active.ACTIVE)"
           class="postPanel__btn"
-          :disabled="isEmpty"
+          :disabled="isEmpty || loading"
           @click="$_postPanel_submitHandler(config.active.ACTIVE)"
-          v-text="$t('POST_PANEL.PUBLISH')">
+          v-text="loading ? $t('POST_PANEL.IN_SAVE') : $t('POST_PANEL.PUBLISH')">
         </button>
       </div>
     </div>
@@ -197,6 +197,7 @@
           type: this.$store.state.setting.POST_TYPE,
         },
         date: '',
+        loading: false,
         metaChanged: false,
         postParams: {},
         tagInput: '',
@@ -356,8 +357,10 @@
             }
           }
         }
+        this.loading = false
       },
       $_postPanel_submitHandler (active) {
+        this.loading = true
         const postActive = active || _.get(this.post, [ 'active', ])
         this.postParams = _.omit(
           _.mapKeys(Object.assign({}, this.post), (value, key) => _.snakeCase(key)),
