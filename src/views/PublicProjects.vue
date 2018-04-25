@@ -28,16 +28,20 @@
 import AppTitledList from '../components/AppTitledList.vue'
 import ProjectsFigure from '../components/projects/ProjectsFigure.vue'
 import ProjectsFigureProgress from '../components/projects/ProjectsFigureProgress.vue'
+import { PROJECT_PUBLISH_STATUS, } from '../../api/config'
 import { isScrollBarReachBottom, isElementReachInView, } from 'src/util/comm'
 import _ from 'lodash'
 
 // const debug = require('debug')('CLIENT:ProjectsList')
 
 const MAXRESULT = 5
-
 const fetchProjectsList = (store, params) => {
   return store.dispatch('GET_PUBLIC_PROJECTS', {
-    params: params,
+    params: Object.assign(params, {
+      where: {
+        publish_status: PROJECT_PUBLISH_STATUS.DRAFT,
+      },
+    }),
   })
 }
 const fetchFollowing = (store, params) => {

@@ -32,7 +32,7 @@
 
 <script>
 import { SECTIONS_DEFAULT, } from '../constants'
-import { PROJECT_STATUS, } from '../../api/config'
+import { PROJECT_STATUS, PROJECT_PUBLISH_STATUS, } from '../../api/config'
 import { currEnv, isScrollBarReachBottom, isElementReachInView, isCurrentRoutePath, } from 'src/util/comm'
 import _ from 'lodash'
 // import { createStore, } from '../store'
@@ -87,6 +87,7 @@ const fetchProjectsList = (store, {
       max_result: max_result,
       where: {
         status: status,
+        publish_status: PROJECT_PUBLISH_STATUS.DRAFT,
       },
     },
   })
