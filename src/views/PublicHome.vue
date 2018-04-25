@@ -35,7 +35,7 @@ import { SECTIONS_DEFAULT, } from '../constants'
 import { PROJECT_STATUS, } from '../../api/config'
 import { currEnv, isScrollBarReachBottom, isElementReachInView, isCurrentRoutePath, } from 'src/util/comm'
 import _ from 'lodash'
-import { createStore, } from '../store'
+// import { createStore, } from '../store'
 import AppTitledList from 'src/components/AppTitledList.vue'
 import HomeProjectAside from 'src/components/home/HomeProjectAside.vue'
 import HomeArticleMain from 'src/components/home/HomeArticleMain.vue'
@@ -44,7 +44,7 @@ import BaseLightBox from 'src/components/BaseLightBox.vue'
 import BaseLightBoxPost from 'src/components/BaseLightBoxPost.vue'
 import Invite from 'src/components/invitation/Invite.vue'
 
-// const debug = require('debug')('CLIENT:Home')
+const debug = require('debug')('CLIENT:Home')
 
 const MAXRESULT_POSTS = 10
 const MAXRESULT_PROJECTS = 2
@@ -152,6 +152,12 @@ export default {
     '$route' (to, from) {
       this.articlesListMainCategory = this.isCurrentRoutePath('/post/:postId') ? from.path : to.path
     },
+    postLightBox () {
+      debug('Mutation detected: postLightBox', this.postLightBox)
+    },
+    postSingle () {
+      debug('Mutation detected: postSingle', this.postSingle)
+    },
   },
   data () {
     return {
@@ -232,10 +238,17 @@ export default {
     isElementReachInView,
   },
   beforeRouteEnter (to, from, next) {
-    const store = createStore()
+    // const store = createStore()
     if ('postId' in to.params) {
-      fetchPost(store, { id: to.params.postId, }).then(({ status, }) => {
-        status === 'error' ? next('/404') : next()
+      next(vm => {
+        fetchPost(vm.$store, { id: to.params.postId, }).then(({ status, }) => {
+          if (status === 'error') {
+            const e = new Error()
+            e.massage = 'Page Not Found'
+            e.code = '404'
+            throw e  
+          }
+        })
       })
     } else {
       next()
