@@ -35,7 +35,7 @@ import { SECTIONS_DEFAULT, } from '../constants'
 import { PROJECT_STATUS, PROJECT_PUBLISH_STATUS, } from '../../api/config'
 import { currEnv, isScrollBarReachBottom, isElementReachInView, isCurrentRoutePath, } from 'src/util/comm'
 import _ from 'lodash'
-// import { createStore, } from '../store'
+import { createStore, } from '../store'
 import AppTitledList from 'src/components/AppTitledList.vue'
 import HomeProjectAside from 'src/components/home/HomeProjectAside.vue'
 import HomeArticleMain from 'src/components/home/HomeArticleMain.vue'
@@ -97,6 +97,26 @@ const fetchFollowing = (store, params) => {
     return store.dispatch('GET_FOLLOWING_BY_USER', params)
   } else {
     return store.dispatch('GET_FOLLOWING_BY_RESOURCE', params)
+  }
+}
+const pageJump = ({ store, to, next, }) => {
+  if ('postId' in to.params && to.params.postId) {
+    fetchPost(store, { id: to.params.postId, }).then(({ status, }) => {
+      if (status === 'error') {
+        if (process.browser) {
+          // next('/404')
+        } else {
+          const e = new Error()
+          e.massage = 'Page Not Found'
+          e.code = '404'
+          throw e  
+        }
+      } else {
+        next()
+      }
+    })
+  } else {
+    next()
   }
 }
 
@@ -242,23 +262,14 @@ export default {
     isElementReachInView,
   },
   beforeRouteEnter (to, from, next) {
-    // const store = createStore()
+    const store = createStore()
     debug('Hook: beforeRouteEnter', 'postId' in to.params)
     debug(to)
-    if ('postId' in to.params) {
-      next(vm => {
-        fetchPost(vm.$store, { id: to.params.postId, }).then(({ status, }) => {
-          if (status === 'error') {
-            const e = new Error()
-            e.massage = 'Page Not Found'
-            e.code = '404'
-            throw e  
-          }
-        })
-      })
-    } else {
-      next()
-    }
+    pageJump({ store, to, next, })
+  },
+  beforeRouteUpdate (to, from, next) {
+    debug('Hook: beforeRouteUpdate', 'postId' in to.params)
+    pageJump({ store: this.$store, to, next, })
   },
   beforeMount () {
     // Beta version code

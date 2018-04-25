@@ -54,7 +54,7 @@ const router = new Router({
     }
   },
   routes: [
-    { path: '/', component: PublicHome, meta: { permission: 'member', }, },
+    { path: '/post/:postId?', component: PublicHome, meta: { permission: 'member', }, alias: '/', },
     { path: '/hot', component: PublicHome, meta: { permission: 'member', }, },
     { path: '/about', component: PublicAbout, meta: { permission: 'member', }, },
     { path: '/admin', component: ManageAdmin, meta: { permission: 'admin', }, },
