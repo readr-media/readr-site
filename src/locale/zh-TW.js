@@ -158,6 +158,7 @@ export default {
     'EDITOR' : '編輯器',
   },
   'POST_PANEL': {
+    'DATETIME_PLACEHOLDER': '請選擇發布時間',
     'DELETE' : '刪除',
     'EDITOR' : '編輯器',
     'LINK' : '連結',
