@@ -1,13 +1,15 @@
 <template>
   <section class="home-project-aside">
     <template v-for="(project, i) in projectsDone">
-      <a :href="projectsUrl[i]" target="_blank" class="home-project-aside__container">
-        <img class="home-project-aside__project-image" :src="project.heroImage ? project.heroImage : '/public/icons/readr-logo.png'">
+      <div class="home-project-aside__container">
+        <a :href="projectsUrl[i]" target="_blank"><img class="home-project-aside__project-image" :src="project.heroImage ? project.heroImage : '/public/icons/readr-logo.png'"></a>
         <div class="home-project-aside__content">
-          <h1 class="home-project-aside__project-title" v-text="project.title"></h1>
+          <a :href="projectsUrl[i]" target="_blank"><h1 class="home-project-aside__project-title" v-text="project.title"></h1></a>
+        </div>
+        <div class="home-project-aside__comment">
           <AppArticleNav :articleType="'project'" :postId="project.id" :commentCount="project.commentAmount || 0"/>
         </div>
-      </a>
+      </div>
     </template>
   </section>
 </template>
@@ -47,31 +49,52 @@ export default {
 <style lang="stylus" scoped>
 .home-project-aside
   &__container
-    color black
+    position relative
+    display flex
+    justify-content space-between
+    flex-wrap wrap
     width 100%
-    & + &
-      display inline-block
-      margin-top 17px
+    padding 15px
+    color black
+    &:not(:first-of-type)
+      margin-top -25px
+    > a
+      font-size 0
+    
   &__project-image
-    width 385px
-    height 236.4px
-    margin-top 5px
+    width 120px
+    height 120px
+    
     object-fit cover
   &__content
-    padding 0 30px
+    flex 1
+    display flex
+    flex-direction column
+    
+    justify-content space-between
+    margin-left 20px
+    padding-bottom 25px
+    
   &__project-title
-    font-size 15px
+    color #000
+    font-size 1.125rem
     text-align justify
-    margin 8.1px 0 6px 0
+    margin 2px 0 0 
   &__comment
-    margin-top 20px
+    position relative
+    top -15px
+    width 100%
 
 $icon-size
   width 25px
   height 25px
 .article-nav
-  margin-top 10px
+  
+  width 100%
   min-height 25px
+  margin 0 auto
+>>> .article-nav__nav-btns
+  padding-left 140px
 
 .comment-icon
   cursor pointer

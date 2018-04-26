@@ -1,38 +1,62 @@
 <template>
   <figure class="projects-figure-progress">
-    <div class="projects-figure-progress__img" :style="{ 'backgroundImage': `url(https://www.mirrormedia.mg/projects/20170801aboriginal/ogimage.jpg)` }"></div>
-    <figcaption class="projects-figure-progress__figcaption">這議題有點讚</figcaption>
+    <h2 v-text="projectName"></h2>
     <nav class="projects-figure-progress__nav">
-      <button class="projects-figure-progress__button">66%</button>
-      <button class="projects-figure-progress__button"><img src="/public/icons/encoruage-white.png" alt=""></button>
+      <button class="projects-figure-progress__button" v-text="`${projectProgress}%`"></button>
+      <!-- <button class="projects-figure-progress__button"><img src="/public/icons/encoruage-white.png" alt=""></button> -->
     </nav>
   </figure>
 </template>
 
+<script>
+
+import { get, } from 'lodash'
+
+export default {
+  name: 'ProjectsFigureProgress',
+  props: {
+    project: {
+      type: Object,
+      default: {},
+    },
+  },
+  computed: {
+    projectName () {
+      return get(this.project, [ 'title', ])
+    },
+    projectProgress () {
+      return get(this.project, [ 'progress', ])
+    },
+  },
+}
+
+</script>
+
 <style lang="stylus" scoped>
 .projects-figure-progress
-  margin 0
   display flex
-  width 355px
+  max-height 75px
+  margin 0
   background-color white
-  &__img
-    width 75px
-    height 75px
-    background-size cover
-    background-position center center
-  &__figcaption
-    padding 14.5px
-    width calc(355px - 75px - 37px)
-    font-size 15px
+  border-bottom 1px solid #d3d3d3
+  overflow hidden
+  h2
+    flex 1
+    
+    margin 0
+    padding-left 15px
+    font-size 1.5rem
+    font-weight 400
+    line-height 74px
   &__nav
     display flex
     flex-direction column
     justify-content space-between
   &__button
     width 37px
-    height 37px
+    height 74px
     border none
-    background-color #ddcf21
+    background-color #11b8c9
     display flex
     justify-content center
     align-items center
