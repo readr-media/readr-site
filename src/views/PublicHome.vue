@@ -88,7 +88,7 @@ const fetchProjectsList = (store, {
       max_result: max_result,
       where: {
         status: status,
-        publish_status: PROJECT_PUBLISH_STATUS.DRAFT,
+        publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
       },
       sort: DEFAULT_PROJECT_SORT,
     },
@@ -106,7 +106,7 @@ const pageJump = ({ store, to, next, }) => {
     fetchPost(store, { id: to.params.postId, }).then(({ status, }) => {
       if (status === 'error') {
         if (process.browser) {
-          // next('/404')
+          next('/404')
         } else {
           const e = new Error()
           e.massage = 'Page Not Found'
