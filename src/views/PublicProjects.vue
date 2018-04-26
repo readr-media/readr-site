@@ -5,9 +5,14 @@
         <ProjectsFigure v-for="project in projects" :project="project" :key="project.id"/>
       </div>
       <div class="projects-list__list-aside">
-        <!-- <ProjectsFigureProgress/>
-        <ProjectsFigureProgress/>
-        <AppTitledList :listTitle="$t('project.WORDING_PROJECT_HOT_KEYWORD')">
+        <AppTitledList v-if="hasProjectsInProgress" class="projects-list__project-container" :listTitle="sections['projects-in-progress']">
+          <template v-for="project in projectsInProgress">
+            <ProjectsFigureProgress :project="project"></ProjectsFigureProgress>
+          </template>
+        </AppTitledList>
+        <!-- <ProjectsFigureProgress/> -->
+        <!-- <ProjectsFigureProgress/> -->
+        <!-- <AppTitledList :listTitle="$t('project.WORDING_PROJECT_HOT_KEYWORD')">
           <ul class="projects-tags-hot-list-container">
             <li class="projects-tags-hot-list-container__list">
               <span class="projects-tags-hot-list-container__tag-name">原住民傳統領域</span>
@@ -28,7 +33,8 @@
 import AppTitledList from '../components/AppTitledList.vue'
 import ProjectsFigure from '../components/projects/ProjectsFigure.vue'
 import ProjectsFigureProgress from '../components/projects/ProjectsFigureProgress.vue'
-import { PROJECT_STATUS, PROJECT_PUBLISH_STATUS, } from '../../api/config'
+import { SECTIONS_DEFAULT, } from '../constants'
+import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, } from '../../api/config'
 import { isScrollBarReachBottom, isElementReachInView, } from 'src/util/comm'
 import _ from 'lodash'
 
@@ -37,14 +43,19 @@ import _ from 'lodash'
 const MAXRESULT = 5
 const DEFAULT_PAGE = 1
 const DEFAULT_SORT = 'project_order,-updated_at'
-const fetchProjectsList = (store, { page, }) => {
+
+const fetchProjectsList = (store, {
+  max_result = MAXRESULT,
+  page = DEFAULT_PAGE,
+  status,
+} = {}) => {
   return store.dispatch('GET_PUBLIC_PROJECTS', {
     params: {
-      page: page || DEFAULT_PAGE,
-      max_result: MAXRESULT,
+      max_result: max_result,
+      page: page,
       where: {
+        status: status,
         publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
-        status: PROJECT_STATUS.DONE,
       },
       sort: DEFAULT_SORT,
     },
@@ -84,14 +95,21 @@ export default {
   },
   data () {
     return {
-      isReachBottom: false,
       currentPage: 1,
       endPage: false,
+      isReachBottom: false,
+      sections: SECTIONS_DEFAULT,
     }
   },
   computed: {
+    hasProjectsInProgress () {
+      return this.projectsInProgress.length > 0
+    },
     projects () {
-      return [ ..._.get(this.$store, 'state.publicProjects.normal', []), ..._.get(this.$store, 'state.publicProjects.done', []), ]
+      return _.get(this.$store, 'state.publicProjects.done', [])
+    },
+    projectsInProgress () {
+      return _.get(this.$store, [ 'state', 'publicProjects', 'inProgress', ], [])
     },
   },
   methods: {
@@ -122,9 +140,12 @@ export default {
   },
   beforeMount () {
     // Beta version code
-    fetchProjectsList(this.$store, {}).then(() => {
+    Promise.all([
+      fetchProjectsList(this.$store, { status: PROJECT_STATUS.DONE, }),
+      fetchProjectsList(this.$store, { max_result: 3, status: PROJECT_STATUS.WIP, }),
+    ]).then(() => {
       if (this.$store.state.isLoggedIn) {
-        const postIdFeaturedProject = _.get(this.$store, 'state.publicProjects.normal', []).map(project => `${project.id}`)
+        const postIdFeaturedProject = _.get(this.$store, 'state.publicProjects.done', []).map(project => `${project.id}`)
         fetchFollowing(this.$store, {
           resource: 'project',
           ids: postIdFeaturedProject,
@@ -168,6 +189,9 @@ export default {
         margin-top 10px
     section
       margin-top 16.5px
+  &__project-container
+    >>> .app-titled-list__content
+      padding 0
 
 .projects-tags-hot-list-container
   margin 15px 0 0 0

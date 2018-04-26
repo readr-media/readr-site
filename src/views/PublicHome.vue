@@ -13,6 +13,11 @@
         </transition-group>
       </div>
       <div class="homepage__list-aside">
+        <AppTitledList v-if="hasProjectsInProgress" class="homepage__project-container" :listTitle="sections['projects-in-progress']">
+          <template v-for="project in projectsInProgress">
+            <ProjectsFigureProgress :project="project"></ProjectsFigureProgress>
+          </template>
+        </AppTitledList>
         <AppTitledList :listTitle="sections['projects']">
           <ul class="aside-list-container">
             <HomeProjectAside />
@@ -43,6 +48,7 @@ import HomeArticleAside from 'src/components/home/HomeArticleAside.vue'
 import BaseLightBox from 'src/components/BaseLightBox.vue'
 import BaseLightBoxPost from 'src/components/BaseLightBoxPost.vue'
 import Invite from 'src/components/invitation/Invite.vue'
+import ProjectsFigureProgress from 'src/components/projects/ProjectsFigureProgress.vue'
 
 const debug = require('debug')('CLIENT:Home')
 
@@ -165,6 +171,7 @@ export default {
     BaseLightBox,
     BaseLightBoxPost,
     Invite,
+    ProjectsFigureProgress,
   },
   watch: {
     isReachBottom(isReachBottom) {
@@ -196,6 +203,9 @@ export default {
     isClientSide () {
       return _.get(this.$store, 'state.isClientSide', false)
     },
+    hasProjectsInProgress () {
+      return this.projectsInProgress.length > 0
+    },
     postsLatest () {
       return _.get(this.$store.state.publicPosts, 'items', [])
     },
@@ -224,6 +234,9 @@ export default {
       } else {
         return {}
       }
+    },
+    projectsInProgress () {
+      return _.get(this.$store, [ 'state', 'publicProjects', 'inProgress', ], [])
     },
     showLightBox () {
       return this.isCurrentRoutePath('/post/:postId')
@@ -278,7 +291,7 @@ export default {
     let reqs = [ 
       fetchPosts(this.$store),
       fetchPosts(this.$store, { category: 'hot', }),
-      fetchProjectsList(this.$store, { max_result: 5, status: PROJECT_STATUS.WIP, }),
+      fetchProjectsList(this.$store, { max_result: 3, status: PROJECT_STATUS.WIP, }),
       fetchProjectsList(this.$store, { max_result: 2, status: PROJECT_STATUS.DONE, }),
     ]
     if (this.$route.params.postId) {
@@ -352,4 +365,7 @@ export default {
     section
       &:nth-child(2)
         margin-top 10px
+  &__project-container
+    >>> .app-titled-list__content
+      padding 0
 </style>

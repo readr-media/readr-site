@@ -28,6 +28,7 @@ export const SECTIONS_DEFAULT = {
   'hot-talk': '焦點',
   'chief-editor-list': '客座',
   'projects': '議題',
+  'projects-in-progress': '進行中議題',
 }
 
 export const MM_SITE_DOMAIN = 'mirrormedia.mg'
