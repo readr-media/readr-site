@@ -15,7 +15,7 @@ module.exports = {
     max_result: Joi.number(),
     page: Joi.number().min(1),
     publish_status: Joi.object().keys({
-      '$in': Joi.array().items(Joi.number().min(1).max(1)),
+      '$in': Joi.array().items(Joi.number().min(2).max(2)),
     }),
     sort: Joi.string(),
   }),

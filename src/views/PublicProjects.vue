@@ -28,7 +28,7 @@
 import AppTitledList from '../components/AppTitledList.vue'
 import ProjectsFigure from '../components/projects/ProjectsFigure.vue'
 import ProjectsFigureProgress from '../components/projects/ProjectsFigureProgress.vue'
-import { PROJECT_PUBLISH_STATUS, } from '../../api/config'
+import { PROJECT_STATUS, PROJECT_PUBLISH_STATUS, } from '../../api/config'
 import { isScrollBarReachBottom, isElementReachInView, } from 'src/util/comm'
 import _ from 'lodash'
 
@@ -43,7 +43,8 @@ const fetchProjectsList = (store, { page, }) => {
       page: page || DEFAULT_PAGE,
       max_result: MAXRESULT,
       where: {
-        publish_status: PROJECT_PUBLISH_STATUS.DRAFT,
+        publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
+        status: PROJECT_STATUS.DONE,
       },
       sort: DEFAULT_SORT,
     },
@@ -90,7 +91,7 @@ export default {
   },
   computed: {
     projects () {
-      return _.get(this.$store, 'state.publicProjects.normal', [])
+      return [ ..._.get(this.$store, 'state.publicProjects.normal', []), ..._.get(this.$store, 'state.publicProjects.done', []), ]
     },
   },
   methods: {
