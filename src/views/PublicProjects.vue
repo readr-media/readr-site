@@ -35,13 +35,18 @@ import _ from 'lodash'
 // const debug = require('debug')('CLIENT:ProjectsList')
 
 const MAXRESULT = 5
-const fetchProjectsList = (store, params) => {
+const DEFAULT_PAGE = 1
+const DEFAULT_SORT = 'project_order,-updated_at'
+const fetchProjectsList = (store, { page, }) => {
   return store.dispatch('GET_PUBLIC_PROJECTS', {
-    params: Object.assign(params, {
+    params: {
+      page: page || DEFAULT_PAGE,
+      max_result: MAXRESULT,
       where: {
         publish_status: PROJECT_PUBLISH_STATUS.DRAFT,
       },
-    }),
+      sort: DEFAULT_SORT,
+    },
   })
 }
 const fetchFollowing = (store, params) => {
@@ -91,7 +96,6 @@ export default {
   methods: {
     loadmore () {
       fetchProjectsList(this.$store, {
-        max_result: MAXRESULT,
         page: this.currentPage + 1,
       })
       .then(({ status, res, }) => {
@@ -117,7 +121,7 @@ export default {
   },
   beforeMount () {
     // Beta version code
-    fetchProjectsList(this.$store, { max_result: MAXRESULT, page: this.currentPage, }).then(() => {
+    fetchProjectsList(this.$store, {}).then(() => {
       if (this.$store.state.isLoggedIn) {
         const postIdFeaturedProject = _.get(this.$store, 'state.publicProjects.normal', []).map(project => `${project.id}`)
         fetchFollowing(this.$store, {
