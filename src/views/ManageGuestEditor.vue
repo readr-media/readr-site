@@ -54,8 +54,8 @@
     </base-light-box>
     <base-light-box :isAlert="true" :showLightBox.sync="showAlert">
       <alert-panel
-        :active="itemsActive"
-        :activeChanged="postActiveChanged"
+        :status="itemsStatus"
+        :statusChanged="postStatusChanged"
         :items="itemsSelected"
         :needConfirm="needConfirm"
         :showLightBox="showAlert"
@@ -67,7 +67,7 @@
   </div>
 </template>
 <script>
-  import { POST_ACTIVE, POST_TYPE, } from '../../api/config'
+  import { POST_PUBLISH_STATUS, POST_TYPE, } from '../../api/config'
   import _ from 'lodash'
   import About from '../components/About.vue'
   import AlertPanel from '../components/AlertPanel.vue'
@@ -165,13 +165,13 @@
         },
         followingResource: 'member',
         isPublishPostInEditor: false,
-        itemsActive: undefined,
+        itemsStatus: undefined,
         itemsSelected: [],
         loading: false,
         needConfirm: false,
         page: DEFAULT_PAGE,
         post: {},
-        postActiveChanged: false,
+        postStatusChanged: false,
         postPanel: 'add',
         postType: POST_TYPE.REVIEW,
         sort: DEFAULT_SORT,
@@ -238,8 +238,8 @@
           .then(() => {
             this.$_guestEditor_updatePostList({ needUpdateCount: true, })
             this.showEditor = false
-            this.itemsActive = params.active
-            this.postActiveChanged = true
+            this.itemsStatus = params.publish_status
+            this.postStatusChanged = true
             this.needConfirm = false
             this.showAlert = true
             this.loading = false
@@ -251,9 +251,12 @@
             this.loading = false
           })
       },
+      $_guestEditor_alertHandler (showAlert) {
+        this.showAlert = showAlert
+      },
       $_guestEditor_deletePost () {
-        this.itemsActive = POST_ACTIVE.DEACTIVE
-        this.postActiveChanged = true
+        this.itemsStatus = POST_PUBLISH_STATUS.DELETED
+        this.postStatusChanged = true
         this.needConfirm = true
         this.showAlert = true
       },
@@ -298,13 +301,13 @@
             break
         }
       },
-      $_guestEditor_showAlert (ids, itemsActive) {
+      $_guestEditor_showAlert (ids, itemsStatus) {
         this.itemsSelected = []
 
         const unionPosts = _.unionBy(this.posts, this.postsDraft, 'id')
-        this.postActiveChanged = true
+        this.postStatusChanged = true
         this.isPublishPostInEditor = false
-        this.itemsActive = itemsActive
+        this.itemsStatus = itemsStatus
         this.itemsSelected = _.filter(unionPosts, (o) => {
           return _.includes(ids, o.id)
         })
@@ -320,14 +323,14 @@
               getPostsByUser(this.$store, {
                 where: {
                   author: _.get(this.profile, [ 'id', ]),
-                  active: POST_ACTIVE.DRAFT,
+                  publish_status: POST_PUBLISH_STATUS.DRAFT,
                   type: POST_TYPE.REVIEW,
                 },
               }),
               getPostsCount(this.$store, {
                 where: {
                   author: _.get(this.profile, [ 'id', ]),
-                  active: POST_ACTIVE.DRAFT,
+                  publish_status: POST_PUBLISH_STATUS.DRAFT,
                   type: POST_TYPE.REVIEW,
                 },
               }),
@@ -343,14 +346,14 @@
               getPostsByUser(this.$store, {
                 where: {
                   author: _.get(this.profile, [ 'id', ]),
-                  active: POST_ACTIVE.DRAFT,
+                  publish_status: POST_PUBLISH_STATUS.DRAFT,
                   type: POST_TYPE.NEWS,
                 },
               }),
               getPostsCount(this.$store, {
                 where: {
                   author: _.get(this.profile, [ 'id', ]),
-                  active: POST_ACTIVE.DRAFT,
+                  publish_status: POST_PUBLISH_STATUS.DRAFT,
                   type: POST_TYPE.NEWS,
                 },
               }),
@@ -434,9 +437,9 @@
             getFollowing(this.$store, { subject: _.get(this.profile, [ 'id', ]), resource: resource, })
         }
       },
-      $_guestEditor_updatePost(params, activeChanged) {
-        this.itemsActive = params.active
-        this.postActiveChanged = activeChanged
+      $_guestEditor_updatePost(params, statusChanged) {
+        this.itemsStatus = params.publish_status
+        this.postStatusChanged = statusChanged
         updatePost(this.$store, params)
           .then(() => {
             this.$_guestEditor_updatePostList({})

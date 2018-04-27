@@ -23,15 +23,15 @@
   </section>
 </template>
 <script>
-  import { POST_ACTIVE, TAG_ACTIVE, } from '../../api/config'
+  import { POST_PUBLISH_STATUS, TAG_ACTIVE, } from '../../api/config'
   import { get, } from 'lodash'
   export default {
     name: 'AlertPanel',
     props: {
-      active: {
+      status: {
         type: Number,
       },
-      activeChanged: {
+      statusChanged: {
         type: Boolean,
         default: false,
       },
@@ -55,7 +55,7 @@
     data () {
       return {
         config: {
-          post: POST_ACTIVE,
+          post: POST_PUBLISH_STATUS,
           tag: TAG_ACTIVE,
         },
       }
@@ -64,49 +64,32 @@
       alertMessage () {
         switch (this.type) {
           case 'post':
-            if (!this.activeChanged) {
+            if (!this.statusChanged) {
               return `${this.$t('ALERT.POST')}${this.$t('ALERT.UPDATE_SUCCESSFUL')}！`
             } else {
-              switch (this.active) {
-                case POST_ACTIVE.ACTIVE:
+              switch (this.status) {
+                case POST_PUBLISH_STATUS.PUBLISHED:
                   return `${this.$t('ALERT.POST')}${this.$t('ALERT.PUBLISH_SUCCESSFUL')}！`
-                case POST_ACTIVE.DEACTIVE:
+                case POST_PUBLISH_STATUS.DELETED:
                   return `${this.$t('ALERT.POST')}${this.$t('ALERT.DELETE_SUCCESSFUL')}！`
-                case POST_ACTIVE.DRAFT:
+                case POST_PUBLISH_STATUS.DRAFT:
                   if (!get(this.items, [ 0, 'id', ])) {
                     return `${this.$t('ALERT.POST')}${this.$t('ALERT.ADD_SUCCESSFUL')}！`
                   }
                   return `${this.$t('ALERT.POST')}${this.$t('ALERT.UPDATE_SUCCESSFUL')}！`
-                case POST_ACTIVE.PENDING:
+                case POST_PUBLISH_STATUS.PENDING:
                   return `${this.$t('ALERT.POST')}${this.$t('ALERT.PENDING')}！`
               }
               break
             }
           case 'tag':
-            switch (this.active) {
+            switch (this.status) {
               case TAG_ACTIVE.ACTIVE:
                 return `${this.$t('ALERT.TAG')}${this.$t('ALERT.ADD_SUCCESSFUL')}！` 
               case TAG_ACTIVE.DEACTIVE:
                 return `${this.$t('ALERT.TAG')}${this.$t('ALERT.DELETE_SUCCESSFUL')}！`
             }
             break
-          case 'video':
-            if (!this.activeChanged) {
-              return `${this.$t('ALERT.VIDEO')}${this.$t('ALERT.UPDATE_SUCCESSFUL')}！`
-            } else {
-              switch (this.active) {
-                case POST_ACTIVE.ACTIVE:
-                  return `${this.$t('ALERT.VIDEO')}${this.$t('ALERT.PUBLISH_SUCCESSFUL')}！`
-                case POST_ACTIVE.DEACTIVE:
-                  return `${this.$t('ALERT.VIDEO')}${this.$t('ALERT.DELETE_SUCCESSFUL')}！`
-                case POST_ACTIVE.DRAFT:
-                  if (!get(this.items, [ 0, 'id', ])) {
-                    return `${this.$t('ALERT.VIDEO')}${this.$t('ALERT.ADD_SUCCESSFUL')}！`
-                  }
-                  return `${this.$t('ALERT.VIDEO')}${this.$t('ALERT.UPDATE_SUCCESSFUL')}！`
-              }
-              break
-            }
           case 'error':
             return this.$t('ALERT.ERROR')
         }
@@ -115,10 +98,10 @@
         switch (this.type) {
           case 'post':
           case 'video':
-            switch (this.active) {
-              case POST_ACTIVE.ACTIVE:
+            switch (this.status) {
+              case POST_PUBLISH_STATUS.PUBLISHED:
                 return this.$t('ALERT.PUBLISH_CONFIRMATION')
-              case POST_ACTIVE.DEACTIVE:
+              case POST_PUBLISH_STATUS.DELETED:
                 return this.$t('ALERT.DELETE_CONFIRMATION')
             }
             break
@@ -132,7 +115,7 @@
       needList () {
         switch (this.type) {
           case 'tag':
-            return this.active !== TAG_ACTIVE.ACTIVE
+            return this.status !== TAG_ACTIVE.ACTIVE
           default:
             return true
         }
@@ -155,11 +138,11 @@
         switch (this.type) {
           case 'post':
           case 'video':
-            switch (this.active) {
-              case POST_ACTIVE.ACTIVE:
+            switch (this.status) {
+              case POST_PUBLISH_STATUS.PUBLISHED:
                 this.$emit('publishPosts')
                 break
-              case POST_ACTIVE.DEACTIVE:
+              case POST_PUBLISH_STATUS.DELETED:
                 this.$emit('deletePosts')
                 break
             }

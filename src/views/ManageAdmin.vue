@@ -64,17 +64,6 @@
             @updateTagList="updateTagList({})">
           </TagList>
         </template>
-        <!-- <template v-else-if="activePanel === 'videos'">
-          <VideoList
-            :maxResult="20"
-            :posts="posts"
-            :sort="currSort"
-            @deletePosts="showAlertHandler"
-            @editPost="showEditorHandler"
-            @filterChanged="filterChanged"
-            @publishPosts="showAlertHandler">
-          </VideoList>
-        </template> -->
         <BaseLightBox borderStyle="nonBorder" :showLightBox.sync="showLightBox" :isConversation="true">
           <MemberAccountEditor
             action="add"
@@ -103,8 +92,8 @@
         </BaseLightBox>
         <BaseLightBox :isAlert="true" :showLightBox.sync="showAlert">
           <AlertPanel
-            :active="itemsActive"
-            :activeChanged="postActiveChanged"
+            :status="itemsStatus"
+            :statusChanged="postStatusChanged"
             :items="itemsSelected"
             :needConfirm="needConfirm"
             :showLightBox="showAlert"
@@ -120,7 +109,7 @@
   </div>
 </template>
 <script>
-  import { POST_ACTIVE, POST_TYPE, TAG_ACTIVE, } from '../../api/config'
+  import { POST_PUBLISH_STATUS, POST_TYPE, TAG_ACTIVE, } from '../../api/config'
   import { SECTIONS_DEFAULT, } from '../constants'
   import _ from 'lodash'
   import About from '../components/About.vue'
@@ -307,12 +296,12 @@
         currSort: DEFAULT_SORT,
         followingResource: 'member',
         isPublishPostInEditor: false,
-        itemsActive: undefined,
+        itemsStatus: undefined,
         itemsSelected: [],
         loading: false,
         needConfirm: false,
         post: {},
-        postActiveChanged: false,
+        postStatusChanged: false,
         postForPublishInEditor: {},
         postPanel: 'add',
         postType: POST_TYPE.REVIEW,
@@ -374,11 +363,11 @@
         this.alertType = 'post'
         this.itemsSelected = []
         this.itemsSelected.push(params)
-        if (params.active === POST_ACTIVE.ACTIVE) {
+        if (params.publish_status === POST_PUBLISH_STATUS.PUBLISHED) {
           this.postForPublishInEditor = params
           this.isPublishPostInEditor = true
-          this.itemsActive = params.active
-          this.postActiveChanged = true
+          this.itemsStatus = params.publish_status
+          this.postStatusChanged = true
           this.needConfirm = true
           this.showAlert = true
         } else {
@@ -387,8 +376,8 @@
             .then(() => {
               this.updatePostList({ needUpdateCount: true, })
               this.showEditor = false
-              this.itemsActive = params.active
-              this.postActiveChanged = true
+              this.itemsStatus = params.publish_status
+              this.postStatusChanged = true
               this.needConfirm = false
               this.showAlert = true
               this.loading = false
@@ -402,7 +391,7 @@
         }
       },
       addTag (tagName) {
-        this.itemsActive = TAG_ACTIVE.ACTIVE
+        this.itemsStatus = TAG_ACTIVE.ACTIVE
         this.needConfirm = false
         this.loading = true
         addTags(this.$store, tagName)
@@ -421,8 +410,8 @@
         this.showAlert = showAlert
       },
       deletePost () {
-        this.itemsActive = POST_ACTIVE.DEACTIVE
-        this.postActiveChanged = true
+        this.itemsStatus = POST_PUBLISH_STATUS.DELETED
+        this.postStatusChanged = true
         this.needConfirm = true
         this.showAlert = true
       },
@@ -498,10 +487,10 @@
             this.alertType = 'post'
             Promise.all([
               getPosts(this.$store, {
-                where: { active: [ POST_ACTIVE.ACTIVE, POST_ACTIVE.PENDING, ], type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ], },
+                where: { publish_status: [ POST_PUBLISH_STATUS.UNPUBLISHED, POST_PUBLISH_STATUS.PUBLISHED, POST_PUBLISH_STATUS.SCHEDULING, POST_PUBLISH_STATUS.PENDING, ], type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ], },
               }),
               getPostsCount(this.$store, {
-                where: { active: [ POST_ACTIVE.ACTIVE, POST_ACTIVE.PENDING, ], type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ], },
+                where: { publish_status: [ POST_PUBLISH_STATUS.UNPUBLISHED, POST_PUBLISH_STATUS.PUBLISHED, POST_PUBLISH_STATUS.SCHEDULING, POST_PUBLISH_STATUS.PENDING, ], type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ], },
               }),
             ])
             .then(() => this.loading = false)
@@ -534,8 +523,8 @@
       publishPost (params) {
         this.postForPublishInEditor = params
         this.isPublishPostInEditor = true
-        this.itemsActive = params.active
-        this.postActiveChanged = true
+        this.itemsStatus = params.publish_status
+        this.postStatusChanged = true
         this.needConfirm = true
         this.showAlert = true
       },
@@ -591,21 +580,20 @@
             })
         }
       },
-      showAlertHandler (ids, itemsActive) {
+      showAlertHandler (ids, itemsStatus) {
         this.itemsSelected = []
         const unionPosts = _.unionBy(this.posts, this.postsDraft, 'id')
         switch (this.alertType) {
           case 'post':
-          case 'video':
-            this.postActiveChanged = true
+            this.postStatusChanged = true
             this.isPublishPostInEditor = false
-            this.itemsActive = itemsActive
+            this.itemsStatus = itemsStatus
             this.itemsSelected = _.filter(unionPosts, (o) => {
               return _.includes(ids, o.id)
             })
             break
           case 'tag':
-            this.itemsActive = TAG_ACTIVE.DEACTIVE
+            this.itemsStatus = TAG_ACTIVE.DEACTIVE
             this.itemsSelected = _.filter(this.tags, (o) => {
               return _.includes(ids, o.id)
             })
@@ -622,14 +610,14 @@
               getPostsByUser(this.$store, {
                 where: {
                   author: _.get(this.profile, [ 'id', ]),
-                  active: POST_ACTIVE.DRAFT,
+                  publish_status: POST_PUBLISH_STATUS.DRAFT,
                   type: POST_TYPE.REVIEW,
                 },
               }),
               getPostsCount(this.$store, {
                 where: {
                   author: _.get(this.profile, [ 'id', ]),
-                  active: POST_ACTIVE.DRAFT,
+                  publish_status: POST_PUBLISH_STATUS.DRAFT,
                   type: POST_TYPE.REVIEW,
                 },
               }),
@@ -645,14 +633,14 @@
               getPostsByUser(this.$store, {
                 where: {
                   author: _.get(this.profile, [ 'id', ]),
-                  active: POST_ACTIVE.DRAFT,
+                  publish_status: POST_PUBLISH_STATUS.DRAFT,
                   type: POST_TYPE.NEWS,
                 },
               }),
               getPostsCount(this.$store, {
                 where: {
                   author: _.get(this.profile, [ 'id', ]),
-                  active: POST_ACTIVE.DRAFT,
+                  publish_status: POST_PUBLISH_STATUS.DRAFT,
                   type: POST_TYPE.NEWS,
                 },
               }),
@@ -741,10 +729,10 @@
             getFollowing(this.$store, { subject: _.get(this.profile, [ 'id', ]), resource: resource, })
         }
       },
-      updatePost(params, activeChanged) {
+      updatePost(params, statusChanged) {
         this.alertType = 'post'
-        this.itemsActive = params.active
-        this.postActiveChanged = activeChanged
+        this.itemsStatus = params.publish_status
+        this.postStatusChanged = statusChanged
         updatePost(this.$store, params)
           .then(() => {
             this.updatePostList({})
@@ -792,13 +780,13 @@
           case 'posts':
             if (needUpdateCount) {
               getPostsCount(this.$store, {
-                where: { active: [ POST_ACTIVE.ACTIVE, POST_ACTIVE.PENDING, ], type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ], },
+                where: { publish_status: [ POST_PUBLISH_STATUS.UNPUBLISHED, POST_PUBLISH_STATUS.PUBLISHED, POST_PUBLISH_STATUS.SCHEDULING, POST_PUBLISH_STATUS.PENDING, ], type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ], },
               })
             }
             getPosts(this.$store, {
               page: this.page,
               sort: this.sort,
-              where: { active: [ POST_ACTIVE.ACTIVE, POST_ACTIVE.PENDING, ], type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ], },
+              where: { publish_status: [ POST_PUBLISH_STATUS.UNPUBLISHED, POST_PUBLISH_STATUS.PUBLISHED, POST_PUBLISH_STATUS.SCHEDULING, POST_PUBLISH_STATUS.PENDING, ], type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ], },
             })
             .then(() => this.loading = false)
             .catch(() => this.loading = false)
@@ -821,7 +809,7 @@
       },
       updateTagList ({ sort, page, needUpdateCount = false, }) {
         this.sort = sort || this.sort
-        this.page = page || this.sort
+        this.page = page || this.page
         if (needUpdateCount) {
           getTagsCount(this.$store)
         }

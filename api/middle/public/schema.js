@@ -1,6 +1,6 @@
 const config = require('../../config')
 const Joi = require('joi')
-const activePostQueryString = `{"$in":[${config.POST_ACTIVE.ACTIVE}]}`
+const publishStatusPostQueryString = `{"$in":[${config.POST_PUBLISH_STATUS.PUBLISHED}]}`
 
 module.exports = {
   members: Joi.object().keys({
@@ -8,7 +8,10 @@ module.exports = {
     role: Joi.number().valid(config.ROLE_MAP.GUESTEDITOR),
   }).or('custom_editor', 'role'),
   posts: Joi.object().keys({
-    active: Joi.string().valid(activePostQueryString),
+    max_result: Joi.number(),
+    page: Joi.number().min(1),
+    publish_status: Joi.string().valid(publishStatusPostQueryString),
+    sort: Joi.string(),
   }),
   projects: Joi.object().keys({
     active: Joi.any().forbidden(),

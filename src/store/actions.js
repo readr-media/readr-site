@@ -1,6 +1,6 @@
 /*eslint no-unused-vars: 0*/
 import _ from 'lodash'
-import { POST_ACTIVE, POST_TYPE, PROJECT_STATUS, } from '../../api/config'
+import { POST_PUBLISH_STATUS, POST_TYPE, PROJECT_STATUS, } from '../../api/config'
 import { ROLE_MAP, } from '../../src/constants'
 import {
   addMember,
@@ -214,7 +214,7 @@ export default {
   GET_POSTS_COUNT: ({ commit, dispatch, state, }, { params, }) => {
     return getPostsCount({ params, }).then(({ status, body, }) => {
       if (status === 200) {
-        if (params.where && params.where.active === POST_ACTIVE.DRAFT) {
+        if (params.publish_status && params.where.publish_status === POST_PUBLISH_STATUS.DRAFT) {
           commit('SET_POSTS_DRAFT_COUNT', { meta: body.meta, })
         } else {
           commit('SET_POSTS_COUNT', { meta: body.meta, })
@@ -226,13 +226,13 @@ export default {
     return getPosts({ params, }).then(({ status, body, }) => {
       if (status === 200) {
         if (params.where && params.where.type === POST_TYPE.NEWS) {
-          if (params.where.active && params.where.active === POST_ACTIVE.DRAFT) {
+          if (params.where.publish_status && params.where.publish_status === POST_PUBLISH_STATUS.DRAFT) {
             commit('SET_POSTS_DRAFT', { posts: body, })
           } else {
             commit('SET_POSTS', { posts: body, })
           }
         } else if (params.where && params.where.type === POST_TYPE.REVIEW) {
-          if (params.where.active && params.where.active === POST_ACTIVE.DRAFT) {
+          if (params.where.publish_status && params.where.publish_status === POST_PUBLISH_STATUS.DRAFT) {
             commit('SET_POSTS_DRAFT', { posts: body, })
           } else {
             commit('SET_POSTS', { posts: body, })

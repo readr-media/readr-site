@@ -214,7 +214,6 @@ function render (req, res, next) {
     include_recaptcha: req.url.match(targ_exp_login) ? `<script src='https://www.google.com/recaptcha/api.js'></script>` : '',
     setting: { 
       TALK_SERVER: config.TALK_SERVER, 
-      POST_ACTIVE: config.POST_ACTIVE, 
       POST_TYPE: config.POST_TYPE, 
       PROJECT_STATUS: config.PROJECT_STATUS, 
       TAG_ACTIVE: config.TAG_ACTIVE, 
