@@ -1,26 +1,26 @@
 <template>
   <section class="postListDetailed">
     <div class="postListDetailed__heading">
-      <h1 v-text="$t('post_list.WORDING_POSTLIST_DRAFT_RECORD')"></h1>
+      <h1 v-text="$t('POST_LIST.DRAFT_RECORD')"></h1>
     </div>
     <div v-for="p in posts" :key="p.id" class="postListDetailed__post">
       <div class="postListDetailed__post--titleBox">
         <h2 v-text="p.title"></h2>
         <div class="postListDetailed__control--desktop">
-          <button @click="$_postListDetailed_editPost(p.id)" v-text="$t('post_list.WORDING_POSTLIST_EDIT')"></button>
-          <button @click="$_postListDetailed_deletePost(p.id)" v-text="$t('post_list.WORDING_POSTLIST_DELETE')"></button>
+          <button @click="$_postListDetailed_editPost(p.id)" v-text="$t('POST_LIST.EDIT')"></button>
+          <button @click="$_postListDetailed_deletePost(p.id)" v-text="$t('POST_LIST.DELETE')"></button>
         </div>
       </div>
       <p class="postListDetailed__post--descr" v-text="$_postListDetailed_getDescr(p.content)"></p>
       <div class="postListDetailed__control--mobile">
-        <button @click="$_postListDetailed_editPost(p.id)" v-text="$t('post_list.WORDING_POSTLIST_EDIT')"></button>
-        <button @click="$_postListDetailed_deletePost(p.id)" v-text="$t('post_list.WORDING_POSTLIST_DELETE')"></button>
+        <button @click="$_postListDetailed_editPost(p.id)" v-text="$t('POST_LIST.EDIT')"></button>
+        <button @click="$_postListDetailed_deletePost(p.id)" v-text="$t('POST_LIST.DELETE')"></button>
       </div>
     </div>
   </section>
 </template>
 <script>
-  import { POST_ACTIVE, } from '../../api/config'
+  import { POST_PUBLISH_STATUS, } from '../../api/config'
 
   export default {
     name: 'PostListDetailed',
@@ -32,7 +32,7 @@
     },
     methods: {
       $_postListDetailed_deletePost (id) {
-        this.$emit('deletePost', [ id, ], POST_ACTIVE.DEACTIVE)
+        this.$emit('deletePost', [ id, ], POST_PUBLISH_STATUS.DELETED)
       },
       $_postListDetailed_editPost (id) {
         this.$emit('editPost', { postPanel: 'edit', id: id, })

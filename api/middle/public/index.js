@@ -1,6 +1,6 @@
 const { fetchFromRedis, redisFetching, redisWriting, insertIntoRedis, } = require('../redisHandler')
 const { mapKeys, pick, } = require('lodash')
-const { API_PROTOCOL, API_HOST, API_PORT, API_TIMEOUT, POST_ACTIVE, POST_TYPE, } = require('../../config')
+const { API_PROTOCOL, API_HOST, API_PORT, API_TIMEOUT, POST_PUBLISH_STATUS, POST_TYPE, } = require('../../config')
 const debug = require('debug')('READR:api:public')
 const express = require('express')
 const router = express.Router()
@@ -94,15 +94,36 @@ router.get('/members', publicQueryValidation.validate(schema.members), fetchAndC
 router.get('/post/:postId', fetchFromRedis, fetchAndConstructPosts, insertIntoRedis)
 
 router.get('/posts', publicQueryValidation.validate(schema.posts), (req, res, next) => {
-  const activePostQueryString = `{"$in":[${POST_ACTIVE.ACTIVE}]}`
+  const publishStatusPostQueryString = `{"$in":[${POST_PUBLISH_STATUS.PUBLISHED}]}`
+  const whitelist = [ 'max_result', 'page', 'sort', ]
   if (Object.keys(req.query).length === 0) {
-    req.url += `?active=${activePostQueryString}&type={"$in":[${POST_TYPE.REVIEW}, ${POST_TYPE.NEWS}]}`
+    req.url += `?publish_status=${publishStatusPostQueryString}&type={"$in":[${POST_TYPE.REVIEW}, ${POST_TYPE.NEWS}]}`
   } else {
-    req.url += `&active=${activePostQueryString}&type={"$in":[${POST_TYPE.REVIEW}, ${POST_TYPE.NEWS}]}`
+    req.url = `/posts?publish_status=${publishStatusPostQueryString}&type={"$in":[${POST_TYPE.REVIEW}, ${POST_TYPE.NEWS}]}`
+    whitelist.forEach((key) => {
+      if (req.query.hasOwnProperty(key)) {
+        req.url += `&${key}=${req.query[key]}`
+      }
+    })
   }
   next()
 },
 fetchFromRedis, fetchAndConstructPosts, insertIntoRedis)
+
+router.get('/posts/hot', (req, res) => {
+  const url = `${apiHost}${req.url}`
+  superagent
+  .get(url)
+  .end((e, r) => {
+    if (!e && r) {
+      res.status(200).json(JSON.parse(r.text))
+    } else {
+      res.status(500).json(e)
+      console.error(`error during fetch public hot post data from : ${url}`)
+      console.error(e)  
+    }
+  })
+})
 
 router.get('/projects', publicQueryValidation.validate(schema.projects), (req, res, next) => {
   let url = '/project/list?'
@@ -143,7 +164,7 @@ router.get('/projects', publicQueryValidation.validate(schema.projects), (req, r
 }, insertIntoRedis)
 
 router.get('/videos', publicQueryValidation.validate(schema.videos), (req, res, next) => {
-  let url = `/posts?active={"$in":[${POST_ACTIVE.ACTIVE}]}&type={"$in":[${POST_TYPE.VIDEO}, ${POST_TYPE.LIVE}]}`
+  let url = `/posts?publish_status={"$in":[${POST_PUBLISH_STATUS.PUBLISHED}]}&type={"$in":[${POST_TYPE.VIDEO}, ${POST_TYPE.LIVE}]}`
   mapKeys(req.query, (value, key) => {
     url = `${url}&${key}=${value}`
   })
@@ -181,7 +202,7 @@ router.get('/videos', publicQueryValidation.validate(schema.videos), (req, res, 
 }, insertIntoRedis)
 
 router.get('/videos/count', (req, res, next) => {
-  const url = `/posts/count?active={"$in":[${POST_ACTIVE.ACTIVE}]}&type={"$in":[${POST_TYPE.VIDEO}, ${POST_TYPE.LIVE}]}`
+  const url = `/posts/count?publish_status={"$in":[${POST_PUBLISH_STATUS.PUBLISHED}]}&type={"$in":[${POST_TYPE.VIDEO}, ${POST_TYPE.LIVE}]}`
   req.url = url
   next()
 }, fetchFromRedis, (req, res, next) => {
@@ -214,20 +235,5 @@ router.get('/videos/count', (req, res, next) => {
       })
   }
 }, insertIntoRedis)
-
-router.get('/posts/hot', (req, res) => {
-  const url = `${apiHost}${req.url}`
-  superagent
-  .get(url)
-  .end((e, r) => {
-    if (!e && r) {
-      res.status(200).json(JSON.parse(r.text))
-    } else {
-      res.status(500).json(e)
-      console.error(`error during fetch public hot post data from : ${url}`)
-      console.error(e)  
-    }
-  })
-})
 
 module.exports = router

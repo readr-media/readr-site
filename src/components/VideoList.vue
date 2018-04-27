@@ -5,15 +5,15 @@
       <thead>
         <tr>
           <th class="videoList__checkbox"><input type="checkbox" ref="checkboxSelectAll" @click="$_videoList_toggleSelectAll"></th>
-          <th class="videoList__title"><span @click="$_videoList_orderBy('title')" v-text="$t('post_list.WORDING_POSTLIST_TITLE')"></span></th>
-          <th class="videoList__link"><span @click="$_videoList_orderBy('link')" v-text="`${$t('post_list.WORDING_POSTLIST_VIDEO')}${$t('post_list.WORDING_POSTLIST_LINK')}`"></span></th>
-          <th class="videoList__status videoList--center"><span @click="$_videoList_orderBy('active')" v-text="$t('post_list.WORDING_POSTLIST_ACTIVE')"></span></th>
+          <th class="videoList__title"><span @click="$_videoList_orderBy('title')" v-text="$t('POST_LIST.TITLE')"></span></th>
+          <th class="videoList__link"><span @click="$_videoList_orderBy('link')" v-text="`${$t('POST_LIST.VIDEO')}${$t('POST_LIST.LINK')}`"></span></th>
+          <th class="videoList__status videoList--center"><span @click="$_videoList_orderBy('active')" v-text="$t('POST_LIST.PUBLISH_STATUS')"></span></th>
           <th class="videoList__update videoList--center">
             <button
               class="videoList__btn videoList__btn--multiple"
               :disabled="!canPublishPosts"
               @click="$_videoList_publishPosts"
-              v-text="$t('post_list.WORDING_POSTLIST_PUBLISH')">
+              v-text="$t('POST_LIST.PUBLISH_STATUS_PUBLISHED')">
             </button>
           </th>
           <th class="videoList__delete videoList--center">
@@ -21,13 +21,13 @@
               class="videoList__btn videoList__btn--multiple"
               :disabled="!canDeletePosts"
               @click="$_videoList_deletePosts"
-              v-text="$t('post_list.WORDING_POSTLIST_DELETE')">
+              v-text="$t('POST_LIST.DELETE')">
             </button>
           </th>
           <th class="videoList__sort videoList--center">
             <select name="" id="">
-              <option value="-updated_at" v-text="$t('post_list.WORDING_POSTLIST_UPDATE_AT')"></option>
-              <option value="-created_at" v-text="$t('post_list.WORDING_POSTLIST_PUBLISH_AT')"></option>
+              <option value="-updated_at" v-text="$t('POST_LIST.UPDATE_AT')"></option>
+              <option value="-created_at" v-text="$t('POST_LIST.PUBLISH_AT')"></option>
             </select>
           </th>
         </tr>
@@ -38,8 +38,8 @@
           <td class="videoList__title" v-text="p.title"></td>
           <td class="videoList__link" v-text="p.link"></td>
           <td class="videoList__status videoList--center" v-text="$_videoList_getStatus(p)"></td>
-          <td class="videoList__update videoList--center"><button class="videoList__btn videoList__btn--single" @click="$_videoList_editPost(p.id)" v-text="$t('post_list.WORDING_POSTLIST_UPDATE')"></button></td>
-          <td class="videoList__delete videoList--center"><button class="videoList__btn videoList__btn--single" @click="$_videoList_deletePost(p.id)" v-text="$t('post_list.WORDING_POSTLIST_DELETE')"></button></td>
+          <td class="videoList__update videoList--center"><button class="videoList__btn videoList__btn--single" @click="$_videoList_editPost(p.id)" v-text="$t('POST_LIST.UPDATE')"></button></td>
+          <td class="videoList__delete videoList--center"><button class="videoList__btn videoList__btn--single" @click="$_videoList_deletePost(p.id)" v-text="$t('POST_LIST.DELETE')"></button></td>
           <td class="videoList__sort"></td>
         </tr>
       </tbody>
@@ -50,7 +50,7 @@
   </div>
 </template>
 <script>
-  import { POST_ACTIVE, POST_TYPE, } from '../../api/config'
+  import { POST_PUBLISH_STATUS, POST_TYPE, } from '../../api/config'
   import _ from 'lodash'
   import BaseLightBox from './BaseLightBox.vue'
   import BaseLightBoxPost from './BaseLightBoxPost.vue'
@@ -94,7 +94,7 @@
       canPublishPosts () {
         const items = _.filter(this.checkedIems, (item) => {
           const post = _.find(this.posts, { id: item, })
-          return _.get(post, [ 'active', ]) !== POST_ACTIVE.ACTIVE
+          return _.get(post, [ 'active', ]) !== POST_PUBLISH_STATUS.ACTIVE
         })
         return items.length > 0
       },
@@ -105,21 +105,21 @@
     mounted () {},
     methods: {
       $_videoList_deletePost (id) {
-        this.$emit('deletePosts', [ id, ], POST_ACTIVE.DEACTIVE)
+        this.$emit('deletePosts', [ id, ], POST_PUBLISH_STATUS.DELETED)
       },
       $_videoList_deletePosts () {
-        this.$emit('deletePosts', this.checkedIems, POST_ACTIVE.DEACTIVE)
+        this.$emit('deletePosts', this.checkedIems, POST_PUBLISH_STATUS.DELETED)
       },
       $_videoList_editPost (id) {
         this.$emit('editPost', { postPanel: 'edit', id: id, })
       },
       $_videoList_getStatus (post) {
-        const status = _.get(post, [ 'active', ])
+        const status = _.get(post, [ 'publishStatus', ])
         switch (status) {
-          case POST_ACTIVE.ACTIVE:
-            return this.wording.WORDING_POSTLIST_ACTIVE_PUBLISH
+          case POST_PUBLISH_STATUS.PUBLISHED:
+            return this.$t('POST_LIST.PUBLISH_STATUS_PUBLISHED')
           default:
-            return this.wording.WORDING_POSTLIST_ACTIVE_DRAFT
+            return this.$t('POST_LIST.PUBLISH_STATUS_DRAFT')
         }
       },
       $_videoList_orderBy (field) {
@@ -134,9 +134,9 @@
       $_videoList_publishPosts () {
         const items = _.filter(this.checkedIems, (item) => {
           const post = _.find(this.posts, { id: item, })
-          return _.get(post, [ 'active', ]) !== POST_ACTIVE.ACTIVE
+          return _.get(post, [ 'publishStatus', ]) !== POST_PUBLISH_STATUS.PUBLISHED
         })
-        this.$emit('publishPosts', items, POST_ACTIVE.ACTIVE)
+        this.$emit('publishPosts', items, POST_PUBLISH_STATUS.PUBLISHED)
       },
       $_videoList_toggleHandler (event, id) {
         if (event.target.checked) {

@@ -82,10 +82,10 @@
           v-text="$t('POST_PANEL.DELETE')">
         </button>
         <button
-          v-if="isClientSide && (panelType === 'edit') && $can('editPostOg') && (post.active !== config.active.DRAFT)"
+          v-if="isClientSide && (panelType === 'edit') && $can('editPostOg') && (post.publishStatus !== config.publishStatus.DRAFT)"
           class="postPanel__btn"
           :disabled="isEmpty"
-          @click="$_postPanel_submitHandler(config.active.DRAFT)"
+          @click="$_postPanel_submitHandler(config.publishStatus.DRAFT)"
           v-text="$t('POST_PANEL.RETURN_TO_DRAFT')">
         </button>
         <button
@@ -98,21 +98,21 @@
           v-if="isClientSide && (panelType === 'add') && $can('addPost')"
           class="postPanel__btn"
           :disabled="isEmpty"
-          @click="$_postPanel_submitHandler(config.active.DRAFT)"
+          @click="$_postPanel_submitHandler(config.publishStatus.DRAFT)"
           v-text="$t('POST_PANEL.SAVE_DRAFT')">
         </button>
         <button
           v-if="isClientSide && !$can('publishPost')"
           class="postPanel__btn"
           :disabled="isEmpty"
-          @click="$_postPanel_submitHandler(config.active.PENDING)"
+          @click="$_postPanel_submitHandler(config.publishStatus.PENDING)"
           v-text="$t('POST_PANEL.SAVE_PENDING')">
         </button>
         <button
-          v-if="isClientSide && $can('publishPost') && (post.active !== config.active.ACTIVE)"
+          v-if="isClientSide && $can('publishPost') && (post.publishStatus !== config.publishStatus.PUBLISHED)"
           class="postPanel__btn"
           :disabled="isEmpty || loading"
-          @click="$_postPanel_submitHandler(config.active.ACTIVE)"
+          @click="$_postPanel_submitHandler(config.publishStatus.PUBLISHED)"
           v-text="loading ? $t('POST_PANEL.IN_SAVE') : $t('POST_PANEL.PUBLISH')">
         </button>
       </div>
@@ -122,6 +122,7 @@
 <script>
   import { Datetime, } from 'vue-datetime'
   import { IMAGE_UPLOAD_MAX_SIZE, } from '../constants'
+  import { POST_PUBLISH_STATUS, POST_TYPE, } from '../../api/config'
   import _ from 'lodash'
   import AlertPanel from './AlertPanel.vue'
   import BaseLightBox from './BaseLightBox.vue'
@@ -193,8 +194,8 @@
     data () {
       return {
         config: {
-          active: this.$store.state.setting.POST_ACTIVE,
-          type: this.$store.state.setting.POST_TYPE,
+          publishStatus: POST_PUBLISH_STATUS,
+          type: POST_TYPE,
         },
         date: '',
         loading: false,
@@ -278,7 +279,7 @@
         this.tagInput = ''
         this.$refs.tagsList.classList.add('hidden')
       },
-      $_postPanel_addNewTag (active) {
+      $_postPanel_addNewTag (publishStatus) {
         Promise.all(this.tagsNeedAdd.map((tag) => {
           return addTags(this.$store, tag)
         }))
@@ -287,10 +288,10 @@
             return _.get(t, [ 'body', 'tagId', ])
           })
           const unionTag = _.union(this.tagsSelectedID, ids)
-          this.$_postPanel_submit(active, unionTag)
+          this.$_postPanel_submit(publishStatus, unionTag)
         })
         .catch(() => {
-          this.$_postPanel_submit(active, this.tagsSelectedID)
+          this.$_postPanel_submit(publishStatus, this.tagsSelectedID)
         })
       },
       $_postPanel_closeTagList () {
@@ -321,10 +322,10 @@
       $_postPanel_showTagList () {
         this.$refs.tagsList.classList.remove('hidden')
       },
-      $_postPanel_submit (active, unionTag = this.tagsSelectedID) {
+      $_postPanel_submit (publishStatus, unionTag = this.tagsSelectedID) {
         switch (this.panelType) {
           case 'add':
-            this.postParams.active = active
+            this.postParams.publish_status = publishStatus
             this.postParams.author = _.get(this.$store.state, [ 'profile', 'id', ])
             this.postParams.type = this.postType
 
@@ -335,33 +336,33 @@
             this.$emit('addPost', this.postParams)
             break
           case 'edit': {
-            let activeChanged = false
+            let statusChanged = false
             
             this.postParams.author = _.get(this.post, [ 'author', 'id', ])
             this.postParams.tags = unionTag
-            if (active) {
-              this.postParams.active = active
-              activeChanged = true
+            if (publishStatus) {
+              this.postParams.publish_status = publishStatus
+              statusChanged = true
             }
 
-            if (activeChanged) {
-              switch (this.postParams.active) {
-                case this.$store.state.setting.POST_ACTIVE.ACTIVE:
+            if (statusChanged) {
+              switch (this.postParams.publish_status) {
+                case POST_PUBLISH_STATUS.PUBLISHED:
                   this.$emit('publishPost', this.postParams)
                   break
                 default:
-                  this.$emit('updatePost', this.postParams, activeChanged)
+                  this.$emit('updatePost', this.postParams, statusChanged)
               }
             } else {
-              this.$emit('updatePost', this.postParams, activeChanged)
+              this.$emit('updatePost', this.postParams, statusChanged)
             }
           }
         }
         this.loading = false
       },
-      $_postPanel_submitHandler (active) {
+      $_postPanel_submitHandler (status) {
         this.loading = true
-        const postActive = active || _.get(this.post, [ 'active', ])
+        const publishStatus = status || _.get(this.post, [ 'publishStatus', ])
         this.postParams = _.omit(
           _.mapKeys(Object.assign({}, this.post), (value, key) => _.snakeCase(key)),
           [ 'author', 'comment_amount', 'created_at', 'like_amount', 'tags', 'updated_at', ]
@@ -372,7 +373,7 @@
           this.postParams.og_title = _.get(this.post, [ 'ogTitle', ]) || _.get(this.post, [ 'title', ]) || ''
         }
 
-        if (postActive === this.$store.state.setting.POST_ACTIVE.ACTIVE && !this.date) {
+        if (publishStatus === POST_PUBLISH_STATUS.PUBLISHED && !this.date) {
           this.postParams.published_at = new Date(Date.now())
         } else if (this.date) {
           this.postParams.published_at = new Date(this.date)
@@ -396,9 +397,9 @@
               this.postParams.link_image = _.get(res, [ 'body', 'ogImage', ])
               
               if (this.tagsNeedAdd.length !== 0) {
-                this.$_postPanel_addNewTag(active)
+                this.$_postPanel_addNewTag(publishStatus)
               } else {
-                this.$_postPanel_submit(active)
+                this.$_postPanel_submit(publishStatus)
               }
             })
             .catch((err) => {
@@ -406,16 +407,16 @@
             })
           } else {
             if (this.tagsNeedAdd.length !== 0) {
-              this.$_postPanel_addNewTag(active)
+              this.$_postPanel_addNewTag(publishStatus)
             } else {
-              this.$_postPanel_submit(active)
+              this.$_postPanel_submit(publishStatus)
             }
           }
         } else {
           if (this.tagsNeedAdd.length !== 0) {
-            this.$_postPanel_addNewTag(active)
+            this.$_postPanel_addNewTag(publishStatus)
           } else {
-            this.$_postPanel_submit(active)
+            this.$_postPanel_submit(publishStatus)
           }
         }
       },

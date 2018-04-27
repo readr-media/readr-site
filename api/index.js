@@ -253,7 +253,7 @@ router.post('/verify-recaptcha-token', (req, res) => {
 router.post('/login', authVerify, require('./middle/member/login'))
 
 router.post('/post', authVerify, (req, res) => {
-  if (req.body.active === config.POST_ACTIVE.ACTIVE && req.user.role !== config.ROLE_MAP.ADMIN && req.user.role !== config.ROLE_MAP.EDITOR) {
+  if (req.body.publish_status === config.POST_PUBLISH_STATUS.PUBLISHED && req.user.role !== config.ROLE_MAP.ADMIN && req.user.role !== config.ROLE_MAP.EDITOR) {
     return res.status(403).send('Forbidden. No right to access.').end()
   }
   if ((req.body.og_description || req.body.og_image || req.body.og_title || req.body.published_at) && req.user.role !== config.ROLE_MAP.ADMIN && req.user.role !== config.ROLE_MAP.EDITOR) {
