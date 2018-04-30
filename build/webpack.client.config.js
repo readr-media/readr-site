@@ -48,7 +48,7 @@ const config = merge(base, {
   ]
 })
 
-// if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === 'production') {
   config.plugins.push(
     // auto generate service worker
     new SWPrecachePlugin({
@@ -69,6 +69,6 @@ const config = merge(base, {
       ]
     })
   )
-// }
+}
 
 module.exports = config
