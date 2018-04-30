@@ -7,7 +7,7 @@
           <th class="videoList__checkbox"><input type="checkbox" ref="checkboxSelectAll" @click="$_videoList_toggleSelectAll"></th>
           <th class="videoList__title"><span @click="$_videoList_orderBy('title')" v-text="$t('POST_LIST.TITLE')"></span></th>
           <th class="videoList__link"><span @click="$_videoList_orderBy('link')" v-text="`${$t('POST_LIST.VIDEO')}${$t('POST_LIST.LINK')}`"></span></th>
-          <th class="videoList__status videoList--center"><span @click="$_videoList_orderBy('active')" v-text="$t('POST_LIST.PUBLISH_STATUS')"></span></th>
+          <th class="videoList__status videoList--center"><span @click="$_videoList_orderBy('publish_status')" v-text="$t('POST_LIST.PUBLISH_STATUS')"></span></th>
           <th class="videoList__update videoList--center">
             <button
               class="videoList__btn videoList__btn--multiple"
@@ -94,7 +94,7 @@
       canPublishPosts () {
         const items = _.filter(this.checkedIems, (item) => {
           const post = _.find(this.posts, { id: item, })
-          return _.get(post, [ 'active', ]) !== POST_PUBLISH_STATUS.ACTIVE
+          return _.get(post, [ 'publishStatus', ]) !== POST_PUBLISH_STATUS.PUBLISHED
         })
         return items.length > 0
       },
