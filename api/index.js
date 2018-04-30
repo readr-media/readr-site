@@ -131,6 +131,16 @@ router.use('/recoverpwd', require('./middle/member/recover'))
 router.use('/public', require('./middle/public'))
 router.use('/search', require('./middle/search'))
 router.use('/token', require('./middle/services/token'))
+router.use('/trace', (req, res, next) => {
+  if  (config.GCP_PROJECT_ID && config.GCP_KEYFILE && config.GCP_STACKDRIVER_LOG_NAME) {
+    next()
+  } else {
+    /**
+     * have to setup config GCP_PROJECT_ID, GCP_KEYFILE and GCP_STACKDRIVER_LOG_NAME to activate tracing.
+     */
+    res.status(404).send('Not found.').end()
+  }
+}, require('./middle/gcLogger'))
 
 /**
  * 

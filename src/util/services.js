@@ -3,6 +3,10 @@ import { filter, get, } from 'lodash'
 import { getHost, } from './comm'
 import Cookie from 'vue-cookie'
 import superagent from 'superagent'
+import moment from 'moment'
+import sanitizeHtml from 'sanitize-html'
+import truncate from 'html-truncate'
+import uuidv4 from 'uuid/v4'
 
 const debug = require('debug')('CLIENT:services')
 const host = getHost()
@@ -90,4 +94,98 @@ export function getProfile (cookie) {
       resolve()
     }
   })
+}
+function logTraceXHR (params) {
+  return new Promise(resolve => {
+    const token = getToken()
+    if (token) {
+      const url = `${host}/api/trace`
+      superagent
+      .post(url)
+      .set('Authorization', `Bearer ${token}`)
+      .send(params)
+      .end(function (err, res) {
+        if (err) {
+          debug(err)
+          resolve(err)
+        } else {
+          debug({ status: res.status, body: camelizeKeys(res.body), })
+          resolve({ status: res.status, body: camelizeKeys(res.body), })
+        }
+      })
+    } else {
+      resolve()
+    }    
+  })
+}
+function isAlinkDescendant (child) {
+  let node = child.parentNode
+  while (node !== null && node !== undefined) {
+    if (node.tagName === 'A') {
+      return { isAlink: true, href: node.href, }
+    }
+    node = node.parentNode
+  }
+  return { isAlink: false, href: '', }
+}
+function constructLog ({ category, description, eventType, sub, target, useragent, }) {
+ return new Promise(resolve => {
+    debug('useragent', useragent)
+    const innerText = target.innerText ? sanitizeHtml(target.innerText, { allowedTags: [ '', ], }) : ''
+    const isAlinkCheck = target.tagName === 'A' ? { isAlink: true, href: target.href, } : isAlinkDescendant(target)
+    const dt = Date.now()
+    if (!window.mmThisRuntimeClientId) {
+      window.mmThisRuntimeClientId = uuidv4()
+      window.mmThisRuntimeDatetimeStart = moment(dt).format('YYYY.MM.DD HH:mm:ss')
+    }
+    resolve({
+      'useragent': useragent,
+      'category': category,
+      'client-id': sub,
+      'current-runtime-id': window.mmThisRuntimeClientId,
+      'current-runtime-start': window.mmThisRuntimeDatetimeStart,
+      'curr-url': window.location.href,
+      'datetime': moment(Date.now()).format('YYYY.MM.DD HH:mm:ss'),
+      'description': description,
+      'event-type': eventType,
+      'redirect-to': isAlinkCheck.href,
+      'referrer': document.referrer,
+      'target-tag-name': target.tagName,
+      'target-tag-class': target.className,
+      'target-tag-id': target.id,
+      'target-text': truncate(innerText, 100),
+      'target-window-size': {
+        width: document.documentElement.clientWidth || document.body.clientWidth,
+        height: document.documentElement.clientWidth || document.body.clientWidth,
+      },  
+    })
+ })
+}
+export function logTrace ({ category, description, eventType, sub, target, useragent, }) {
+  if (!sub || !eventType || !target || !description || !category || !useragent) { return }
+  constructLog({
+    category,
+    description,
+    eventType,
+    sub,
+    target,
+    useragent,
+  })
+    .then(log => {
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        debug('send log status to sw.')
+        navigator.serviceWorker.controller.postMessage({
+          url: '/api/trace',
+          params: log,
+          action: 'trace',
+        });
+        return { status: 200, body: null, }
+      } else {
+        debug('Log')
+        return logTraceXHR(log)
+      }
+    })
+    .then(res => {
+      debug('res from logTracing:', res)
+    })
 }

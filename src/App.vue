@@ -16,23 +16,58 @@
 
 <script>
   import { SECTIONS_DEFAULT, } from 'src/constants'
+  import { get, } from 'lodash'
+  import { logTrace, } from 'src/util/services'
   import AppHeader from 'src/components/header/AppHeader.vue'
   import AppAsideNav from 'src/components/AppAsideNav.vue'
+  import Tap from 'tap.js'
+  
+  // const debug = require('debug')('CLIENT:App')
+
   export default {
     components: {
       'app-header': AppHeader,
       AppAsideNav,
     },
     computed: {
-      sections () {
-        return SECTIONS_DEFAULT
+      currUser () {
+        return get(this.$store, 'state.profile.id')
       },
       isLoginPage () {
         return this.$route.path === '/login'
       },
+      sections () {
+        return SECTIONS_DEFAULT
+      },
+      useragent () {
+        return get(this.$store, 'state.useragent')
+      },
+    },
+    data () {
+      return {
+        doc: {},
+        globalTapevent: {},        
+      }
+    },
+    methods: {
+      launchLogger () {
+        this.globalTapevent = new Tap(this.doc)
+        this.doc.addEventListener('tap', (event) => {
+          logTrace({
+            category: 'whole-site',
+            description: 'ele clicked',
+            eventType: 'click',
+            sub: this.currUser,
+            target: event.target,
+            useragent: this.useragent,
+          })
+        })
+      },            
     },
     mounted () {
+      this.doc = document
       this.$store.dispatch('UPDATE_CLIENT_SIDE')
+      this.launchLogger()
     },
   }
 </script>
