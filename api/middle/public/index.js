@@ -95,7 +95,7 @@ router.get('/post/:postId', fetchFromRedis, fetchAndConstructPosts, insertIntoRe
 
 router.get('/posts', publicQueryValidation.validate(schema.posts), (req, res, next) => {
   const publishStatusPostQueryString = `{"$in":[${POST_PUBLISH_STATUS.PUBLISHED}]}`
-  const whitelist = [ 'max_result', 'page', 'sort', ]
+  const whitelist = [ 'author', 'max_result', 'page', 'sort', ]
   if (Object.keys(req.query).length === 0) {
     req.url += `?publish_status=${publishStatusPostQueryString}&type={"$in":[${POST_TYPE.REVIEW}, ${POST_TYPE.NEWS}]}`
   } else {
