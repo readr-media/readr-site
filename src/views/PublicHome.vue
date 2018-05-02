@@ -9,7 +9,7 @@
           <Invite></Invite>
         </div>
         <transition-group name="fade" mode="out-in">
-          <HomeArticleMain v-for="post in postsMain" :articleData="post" :key="`${post.id}-main`"/>
+          <PostItem v-for="post in postsMain" :post="post" :key="`${post.id}-main`"></PostItem>
         </transition-group>
       </div>
       <div class="homepage__list-aside">
@@ -42,11 +42,11 @@ import _ from 'lodash'
 import { createStore, } from '../store'
 import AppTitledList from 'src/components/AppTitledList.vue'
 import HomeProjectAside from 'src/components/home/HomeProjectAside.vue'
-import HomeArticleMain from 'src/components/home/HomeArticleMain.vue'
 import HomeArticleAside from 'src/components/home/HomeArticleAside.vue'
 import BaseLightBox from 'src/components/BaseLightBox.vue'
 import BaseLightBoxPost from 'src/components/BaseLightBoxPost.vue'
 import Invite from 'src/components/invitation/Invite.vue'
+import PostItem from 'src/components/post/PostItem.vue'
 import ProjectsFigureProgress from 'src/components/projects/ProjectsFigureProgress.vue'
 
 const debug = require('debug')('CLIENT:Home')
@@ -165,12 +165,12 @@ export default {
   components: {
     AppTitledList,
     HomeProjectAside,
-    HomeArticleMain,
     HomeArticleAside,
     BaseLightBox,
     BaseLightBoxPost,
     Invite,
     ProjectsFigureProgress,
+    PostItem,
   },
   watch: {
     isReachBottom(isReachBottom) {
@@ -355,8 +355,10 @@ export default {
     align-items flex-start
   &__list-main
     max-width 650px
+    width 650px
   &__list-aside
     margin-left 35px
+    flex 1
     .aside-list-container
       margin 0
       padding 0

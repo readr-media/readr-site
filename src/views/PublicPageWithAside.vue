@@ -2,7 +2,7 @@
   <div class="public-page">
     <div class="public-page__container">
       <div class="public-page__main">
-        memo
+        <PostList></PostList>
       </div>
       <div class="public-page__aside">
         <AppTitledList v-if="hasProjectsInProgress"
@@ -12,26 +12,27 @@
             <ProjectsFigureProgress :project="project"></ProjectsFigureProgress>
           </template>
         </AppTitledList>
-        <AppTitledList v-if="hasProjectsInProgress"
+        <AppTitledList 
+          v-if="hasProjectsDone"
           class="public-page__aside-container"
-          :listTitle="$t('SECTIONS.PROJECTS_IN_PROGRESS')">
-          <template v-for="project in projectsInProgress">
-            <ProjectsFigureProgress :project="project"></ProjectsFigureProgress>
-          </template>
-        </AppTitledList>   
+          :listTitle="$t('SECTIONS.PROJECTS')">
+          <HomeProjectAside></HomeProjectAside>
+        </AppTitledList>
       </div>
     </div>  
   </div>
 </template>
 <script>
 import AppTitledList from 'src/components/AppTitledList.vue'
+import HomeProjectAside from 'src/components/home/HomeProjectAside.vue'
+import PostList from 'src/components/post/PostList.vue'
 import ProjectsFigureProgress from 'src/components/projects/ProjectsFigureProgress.vue'
 import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, } from 'api/config'
 import { get, } from 'lodash'
 
 const MAXRESULT = 5
 const DEFAULT_PAGE = 1
-const DEFAULT_SORT = 'project_order,-updated_at'
+const DEFAULT_SORT = '-updated_at'
 
 const fetchProjectsList = (store, {
   max_result = MAXRESULT,
@@ -55,20 +56,28 @@ export default {
   name: 'PublicPageWithAside',
   components: {
     AppTitledList,
+    HomeProjectAside,
+    PostList,
     ProjectsFigureProgress,
   },
   computed: {
     hasProjectsInProgress () {
       return this.projectsInProgress.length > 0
     },    
+    hasProjectsDone () {
+      return this.projectsDone.length > 0      
+    },
     projectsInProgress () {
       return get(this.$store, 'state.publicProjects.inProgress', [])
+    },
+    projectsDone () {
+      return get(this.$store, 'state.publicProjects.done', [])
     },
   },
   methods: {},
   beforeMount () {
     Promise.all([
-      fetchProjectsList(this.$store, { status: PROJECT_STATUS.DONE, }),
+      fetchProjectsList(this.$store, { max_result: 2, status: PROJECT_STATUS.DONE, }),
       fetchProjectsList(this.$store, { max_result: 3, status: PROJECT_STATUS.WIP, }),
     ]).then(() => {
       // if (this.$store.state.isLoggedIn) {
@@ -99,7 +108,9 @@ export default {
     flex-direction column
     justify-content flex-start
     align-items flex-start
+    flex 1
     &-container
+      width 100%
       >>> .app-titled-list__content
         padding 0
 </style>

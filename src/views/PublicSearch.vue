@@ -3,7 +3,7 @@
     <div class="search__container">
       <SearchFilter @searchChange="searchChange"></SearchFilter>
       <div v-if="currFilter === 'post'">
-        <HomeArticleMain v-for="(post, k) in items" :articleData="post" :key="`post-${k}`"></HomeArticleMain>
+        <PostItem v-for="(post, k) in items" :post="post" :key="`post-${k}`"></PostItem>
       </div>
       <div v-else-if="currFilter === 'conversation'"></div>
       <div v-else>
@@ -14,7 +14,7 @@
 </template>
 <script>
   import { filter, get, } from 'lodash'
-  import HomeArticleMain from 'src/components/home/HomeArticleMain.vue'
+  import PostItem from 'src/components/post/PostItem.vue'
   import ProjectsFigure from 'src/components/projects/ProjectsFigure.vue'
   import SearchFilter from 'src/components/search/SearchFilter.vue'
 
@@ -49,7 +49,7 @@
     //   return fetchData(store, route)
     // },
     components: {
-      HomeArticleMain,
+      PostItem,
       ProjectsFigure,
       SearchFilter,
     },

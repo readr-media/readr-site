@@ -61,12 +61,12 @@
   </div>
 </template>
 <script>
+  import { POST_TYPE, } from 'api/config'
   import { find, get, map, some, findIndex, } from 'lodash'
   import { onImageLoaded, getImageUrl, isClientSide, } from 'src/util/comm'
   import AppArticleNav from 'src/components/AppArticleNav.vue'
   import sanitizeHtml from 'sanitize-html'
   import truncate from 'html-truncate'
-  import { POST_TYPE, } from '../../api/config'
 
   const dom = require('xmldom').DOMParser
   const seializer  = require('xmldom').XMLSerializer
