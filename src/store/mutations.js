@@ -80,6 +80,9 @@ export default {
   SET_MEMBERS_COUNT: (state, { count, }) => {
     state['membersCount'] = count
   },
+  SET_MEMOS: (state, { items, }) => {
+    state['memos'] = items
+  },
   SET_NOTIFICATION: (state, { items, }) => {
     state['notification'] = items
   },
@@ -148,6 +151,9 @@ export default {
       _.get(state, `${outputStateTarget}.items`, []),
       _.get(posts, 'items', [])
     )
+  },
+  UPDATE_MEMOS: (state, { items, }) => {
+    state['memos'] = _.concat(_.get(state, `memos`, []), items)
   },
   /**
    * invitation

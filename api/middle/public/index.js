@@ -5,7 +5,7 @@ const debug = require('debug')('READR:api:public')
 const express = require('express')
 const router = express.Router()
 const superagent = require('superagent')
-const publicQueryValidation = require('./validate')
+const publicQueryValidation = require('../../services/validate')
 const schema = require('./schema')
 
 const apiHost = API_PROTOCOL + '://' + API_HOST + ':' + API_PORT
