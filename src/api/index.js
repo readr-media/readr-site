@@ -24,6 +24,7 @@ function _buildQuery (params = {}) {
     'stats',
     'role',
     'publish_status',
+    'project_id',
   ]
   whitelist.forEach((ele) => {
     if (params.hasOwnProperty(ele)) {
@@ -35,7 +36,7 @@ function _buildQuery (params = {}) {
         Object.keys(where).forEach((key) => {
           query[key] = JSON.stringify(where[key])
         })
-      } else if (ele === 'ids') {
+      } else if (ele === 'ids' || ele === 'project_id') {
         query[ele] = JSON.stringify(params[ele])
       } else {
         query[ele] = params[ele]
@@ -270,8 +271,12 @@ export function getMembersCount () {
 }
 
 export function getMemos ({ params, }) {
-  const id = _.get(params, 'id')
-  const url = `${host}/api/memo/${id}`
+  let url = `${host}/api/memos`
+  const query = _buildQuery(params)
+  debug('params', params)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }  
   return _doFetchStrict(url, {})
 }
 

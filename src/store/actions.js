@@ -189,8 +189,20 @@ export default {
       }
     })
   },
-  GET_MEMOS: ({ commit, dispatch, state, }, { params, }) => {
-    return getMemos({ params, })
+  GET_MEMOS: ({ commit, dispatch, state, }, { params, mode, }) => {
+    return getMemos({ params, }).then(({ status, body, }) => {
+      if (status === 200) {
+        if (mode == 'set') {
+          commit('SET_MEMOS', { items: _.get(body, 'items', []), })
+        } else if (mode === 'update') {
+          if (_.get(body, 'items', []).length === 0) {
+            return { status: 'end', }
+          }
+          commit('UPDATE_MEMOS', { items: _.get(body, 'items', []), })          
+        }
+        return { status, }
+      }
+    })
   },
   GET_META: ({ commit, dispatch, state, }, { url, }) => {
     return getMeta(url)

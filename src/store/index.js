@@ -23,6 +23,7 @@ export function createStore () {
       'invitation_quota': 0,
       'members': [],
       'membersCount': 0,
+      'memos': [],
       'notification': [],
       'posts': [],
       'postsCount': 0,
