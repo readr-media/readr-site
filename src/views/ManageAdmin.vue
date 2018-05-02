@@ -110,7 +110,6 @@
 </template>
 <script>
   import { POST_PUBLISH_STATUS, POST_TYPE, TAG_ACTIVE, } from '../../api/config'
-  import { SECTIONS_DEFAULT, } from '../constants'
   import _ from 'lodash'
   import About from '../components/About.vue'
   import AlertPanel from '../components/AlertPanel.vue'
@@ -337,9 +336,6 @@
       },
       profile () {
         return _.get(this.$store, [ 'state', 'profile', ], {})
-      },
-      sections () {
-        return SECTIONS_DEFAULT
       },
       tags () {
         return _.get(this.$store, [ 'state', 'tags', ], [])
