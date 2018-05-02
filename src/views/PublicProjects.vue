@@ -38,7 +38,7 @@ import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, } from '../../api/config'
 import { isScrollBarReachBottom, isElementReachInView, } from 'src/util/comm'
 import _ from 'lodash'
 
-// const debug = require('debug')('CLIENT:ProjectsList')
+const debug = require('debug')('CLIENT:ProjectsList')
 
 const MAXRESULT = 5
 const DEFAULT_PAGE = 1
@@ -114,15 +114,14 @@ export default {
   },
   methods: {
     loadmore () {
+      const origCount = _.get(this.projects, [ 'length', ], 0)
       fetchProjectsList(this.$store, {
         status: PROJECT_STATUS.DONE,
         page: this.currentPage + 1,
       })
-      .then(({ status, res, }) => {
-        if (status === 'end') {
+      .then(({ res, }) => {
+        if (_.get(this.projects, [ 'length', ], 0) <= origCount) {
           this.endPage = true
-        } else if (status === 'error') {
-          console.log(res)
         } else {
           this.currentPage += 1
           if (this.$store.state.isLoggedIn) {
@@ -134,6 +133,10 @@ export default {
             })
           }
         }
+      })
+      .catch(({ status, res, }) => {
+        debug('error while loadmore, status: ', status)
+        debug('error while loadmore, res: ', res)
       })
     },
     isScrollBarReachBottom,

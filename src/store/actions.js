@@ -241,6 +241,7 @@ export default {
       }
     })
   },
+  // Todos: sync the logic design the same as GET_PUBLIC_PROJECTS
   GET_PUBLIC_POSTS: ({ commit, dispatch, state, }, { params, outputStateTarget = 'publicPosts', }) => {
     return new Promise((resolve, reject) => {
       getPublicPosts({ params, })
@@ -297,20 +298,16 @@ export default {
           return commit('SET_PUBLIC_PROJECTS', { status: 'normal', publicProjects: body.items, })
       }
     }
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       getPublicProjectsList({ params, })
       .then(({ status, body, }) => {
-        const isItemsEmpty = body.items.length === 0
-        if (isItemsEmpty) {
-          setPublicProject(body)
-          resolve({ status: 'end', res: {},})
-        } else if (status === 200) {
+        if (status === 200) {
           setPublicProject(body)
           resolve({ status: 200, res: body, })
         }
       })
       .catch((res) => {
-        resolve({ status: 'error', res: res,})
+        reject({ status: status, res: res,})
       })
     })
   },
