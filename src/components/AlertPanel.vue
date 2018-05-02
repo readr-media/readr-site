@@ -153,7 +153,7 @@
         }
       },
       $_alertPanel_getPostAuthor (post) {
-        return get(post, [ 'author', 'nickname', ]) || get(post, [ 'author', ])
+        return get(post, [ 'author', 'nickname', ]) || get(this.$store, [ 'state', 'profile', 'nickname', ])
       },
     },
   }
