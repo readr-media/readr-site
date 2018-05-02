@@ -115,6 +115,7 @@ export default {
   methods: {
     loadmore () {
       fetchProjectsList(this.$store, {
+        status: PROJECT_STATUS.DONE,
         page: this.currentPage + 1,
       })
       .then(({ status, res, }) => {
