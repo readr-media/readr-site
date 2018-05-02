@@ -22,7 +22,7 @@ router.post('/', (req, res, next) => {
     .post(url)
     .send({
       register_mode: 'ordinary',
-      id: email_item.email,
+      // id: email_item.email,
       mail: email_item.email,
       active: 0,
       role: 1,
@@ -83,7 +83,7 @@ router.post('/', (req, res, next) => {
     debug(res.emails)
     res.send({ emails: res.emails, })
     
-    const user_id = get(req, 'user.id')
+    const user_id = get(req, 'user.email')
     req.sadd = {
       key: `invited-${user_id}`,
       value: map(filter(res.emails, { status: 1, }), (email_item) => (email_item.email)),
@@ -98,7 +98,7 @@ router.post('/', (req, res, next) => {
 
 router.get('/quota', setupClientCache, (req, res, next) => {
   debug('Got a call for quota')
-  const user_id = get(req, 'user.id')
+  const user_id = get(req, 'user.email')
   req.redis_get = {
     cmd: 'HMGET',
     key: `invite-${user_id}`,
@@ -113,7 +113,7 @@ router.get('/quota', setupClientCache, (req, res, next) => {
   res.downline = validator.toInt(get(res, [ 'redis', 3, ], '0') || '0')
   res.score =  validator.toInt(get(res, [ 'redis', 0, ], '0') || '0')
 
-  const user_id = get(req, 'user.id')
+  const user_id = get(req, 'user.email')
   req.redis_get = {
     cmd: 'SCARD',
     key: `invited-${user_id}`,
