@@ -11,7 +11,7 @@
             v-show="isHoverFirstListItem"
             @mouseover.native="isHoverFirstListItem = true"
             @mouseout.native="isHoverFirstListItem = false">
-            <span v-text="wording[$route.path === '/hot' ? 'chief-editor-talk' : 'hot-talk']"></span>
+            <span v-text="$t(`SECTIONS.${$route.path === '/hot' ? 'CHIEF_EDITOR_TALK' : 'HOT_TALK'}`)"></span>
           </router-link>
         <!-- </transition> -->
         <router-link
@@ -19,7 +19,7 @@
           :class="`list-item aside-navigation__list-item${$route.path === '/' || $route.path === '/hot' ? '--highlight' : ''}`"
           @mouseover.native="isHoverFirstListItem = true"
           @mouseout.native="isHoverFirstListItem = false">
-          <span v-text="wording[$route.path === '/hot' ? 'hot-talk' : 'chief-editor-talk']"></span>
+          <span v-text="$t(`SECTIONS.${$route.path === '/hot' ? 'HOT_TALK' : 'CHIEF_EDITOR_TALK'}`)"></span>
           <span class="option">
             <span class="option__dot"></span>
             <span class="option__dot"></span>
@@ -27,8 +27,8 @@
           </span>
         </router-link>
         <!-- <router-link :class="`list-item aside-navigation__list-item${isCurrentRoute('/videos') ? '--highlight' : ''}`" to="/videos"><span v-text="wording['celebrities-talk']"></span></router-link> -->
-        <router-link :class="`list-item aside-navigation__list-item${isCurrentRoutePath('/editors') ? '--highlight' : ''}`" to="/editors"><span v-text="wording['chief-editor-list']"></span></router-link>
-        <router-link :class="`list-item aside-navigation__list-item${isCurrentRoutePath('/projects') ? '--highlight' : ''}`" to="/projects"><span v-text="wording['projects']"></span></router-link>
+        <router-link :class="`list-item aside-navigation__list-item${isCurrentRoutePath('/editors') ? '--highlight' : ''}`" to="/editors"><span v-text="$t('SECTIONS.CHIEF_EDITOR_LIST')"></span></router-link>
+        <router-link :class="`list-item aside-navigation__list-item${isCurrentRoutePath('/projects') ? '--highlight' : ''}`" to="/projects"><span v-text="$t('SECTIONS.PROJECTS')"></span></router-link>
       </div>
       <div class="aside-navigation__external--gray">
         <!-- <a class="list-item aside-navigation__list-item" href="/"><span><img src="/public/icons/fb.png" alt="fb"></span></a> -->
@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import { SECTIONS_DEFAULT, ANNOUNCEMENT_ACCOUNT_ID, } from 'src/constants'
+import { ANNOUNCEMENT_ACCOUNT_ID, } from 'src/constants'
 import { currEnv, isCurrentRoutePath, } from 'src/util/comm'
 import { get, } from 'lodash'
 import InviteSwitcher from 'src/components/invitation/InviteSwitcher.vue'
@@ -57,7 +57,6 @@ export default {
   },
   data () {
     return {
-      wording: SECTIONS_DEFAULT,
       isHoverFirstListItem: false,
       ANNOUNCEMENT_ACCOUNT_ID,
     }

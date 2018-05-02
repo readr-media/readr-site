@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <app-header :sections="sections"></app-header>
+    <app-header></app-header>
     <div :class="`app__container${ isLoginPage ? '--wide' : ''}`">
       <aside class="app__aside" v-if="!isLoginPage">
         <AppAsideNav/>
@@ -15,7 +15,6 @@
 </template>
 
 <script>
-  import { SECTIONS_DEFAULT, } from 'src/constants'
   import { get, } from 'lodash'
   import { logTrace, } from 'src/util/services'
   import AppHeader from 'src/components/header/AppHeader.vue'
@@ -35,9 +34,6 @@
       },
       isLoginPage () {
         return this.$route.path === '/login'
-      },
-      sections () {
-        return SECTIONS_DEFAULT
       },
       useragent () {
         return get(this.$store, 'state.useragent')

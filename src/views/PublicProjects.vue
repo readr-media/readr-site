@@ -5,7 +5,7 @@
         <ProjectsFigure v-for="project in projects" :project="project" :key="project.id"/>
       </div>
       <div class="projects-list__list-aside">
-        <AppTitledList v-if="hasProjectsInProgress" class="projects-list__project-container" :listTitle="sections['projects-in-progress']">
+        <AppTitledList v-if="hasProjectsInProgress" class="projects-list__project-container" :listTitle="$t('SECTIONS.PROJECTS_IN_PROGRESS')">
           <template v-for="project in projectsInProgress">
             <ProjectsFigureProgress :project="project"></ProjectsFigureProgress>
           </template>
@@ -33,7 +33,6 @@
 import AppTitledList from '../components/AppTitledList.vue'
 import ProjectsFigure from '../components/projects/ProjectsFigure.vue'
 import ProjectsFigureProgress from '../components/projects/ProjectsFigureProgress.vue'
-import { SECTIONS_DEFAULT, } from '../constants'
 import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, } from '../../api/config'
 import { isScrollBarReachBottom, isElementReachInView, } from 'src/util/comm'
 import _ from 'lodash'
@@ -98,7 +97,6 @@ export default {
       currentPage: 1,
       endPage: false,
       isReachBottom: false,
-      sections: SECTIONS_DEFAULT,
     }
   },
   computed: {

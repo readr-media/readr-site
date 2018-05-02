@@ -17,19 +17,14 @@ export const ROLE_MAP = [
   { key: 1, value: '會員', route: 'member', },
 ]
 
-export const SECTIONS_DEFAULT = {
-  // 'chief-editor-talk': '總編評論',
-  // 'celebrities-talk': '名人聊新聞',
-  // 'hot-talk': '熱門評論',
-  // 'chief-editor-list': '總編列表',
-  // 'projects': '新聞專題'
-  'chief-editor-talk': '視角',
-  'celebrities-talk': '對話',
-  'hot-talk': '焦點',
-  'chief-editor-list': '客座',
-  'projects': '議題',
-  'projects-in-progress': '進行中議題',
-}
+export const SECTIONS_DEFAULT = [
+  'CHIEF_EDITOR_TALK',
+  'CELEBRITIES_TALK',
+  'HOT_TALK',
+  'CHIEF_EDITOR_LIST',
+  'PROJECTS',
+  'PROJECTS_IN_PROGRESS',
+]
 
 export const MM_SITE_DOMAIN = 'mirrormedia.mg'
 

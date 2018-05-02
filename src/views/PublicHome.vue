@@ -13,17 +13,17 @@
         </transition-group>
       </div>
       <div class="homepage__list-aside">
-        <AppTitledList v-if="hasProjectsInProgress" class="homepage__project-container" :listTitle="sections['projects-in-progress']">
+        <AppTitledList v-if="hasProjectsInProgress" class="homepage__project-container" :listTitle="$t('SECTIONS.PROJECTS_IN_PROGRESS')">
           <template v-for="project in projectsInProgress">
             <ProjectsFigureProgress :project="project"></ProjectsFigureProgress>
           </template>
         </AppTitledList>
-        <AppTitledList :listTitle="sections['projects']">
+        <AppTitledList :listTitle="$t('SECTIONS.PROJECTS')">
           <ul class="aside-list-container">
             <HomeProjectAside />
           </ul>
         </AppTitledList>
-        <AppTitledList :listTitle="this.$route.path !== '/hot' ? sections['hot-talk'] : sections['chief-editor-talk']">
+        <AppTitledList :listTitle="this.$route.path !== '/hot' ? $t('SECTIONS.HOT_TALK') : $t('SECTIONS.CHIEF_EDITOR_TALK')">
           <ul class="aside-list-container">
             <transition-group name="fade" mode="out-in">
               <HomeArticleAside v-for="post in postsAside" :articleData="post" :key="`${post.id}-aside`"/>
@@ -36,7 +36,6 @@
 </template>
 
 <script>
-import { SECTIONS_DEFAULT, } from '../constants'
 import { PROJECT_STATUS, PROJECT_PUBLISH_STATUS, } from '../../api/config'
 import { currEnv, isScrollBarReachBottom, isElementReachInView, isCurrentRoutePath, } from 'src/util/comm'
 import _ from 'lodash'
@@ -191,7 +190,6 @@ export default {
   },
   data () {
     return {
-      sections: SECTIONS_DEFAULT,
       isReachBottom: false,
       currentPageLatest: 1,
       endPage: false,

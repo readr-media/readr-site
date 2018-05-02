@@ -9,7 +9,6 @@
   </div>
 </template>
 <script>
-  import { SECTIONS_DEFAULT, } from 'src/constants'
   import { get, } from 'lodash'
   // import LoginPanel from '../components/LoginPanel.vue'
   import LoginPanelPackingTest from 'src/components/LoginPanelPackingTest.vue'
@@ -26,9 +25,6 @@
       },
       isPackingTest () {
         return true
-      },
-      sections () {
-        return SECTIONS_DEFAULT
       },
     },
     data () {

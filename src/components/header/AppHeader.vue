@@ -79,7 +79,6 @@
       debug('isLoginPage', this.isLoginPage)
     },
     beforeMount () {},
-    props: [ 'sections', ],
   }
 </script>
 <style lang="stylus" scoped>
