@@ -22,7 +22,7 @@
 <script>
 import { get, } from 'lodash'
 import { updatedAtYYYYMMDD, isClientSide, getArticleAuthorNickname, getArticleAuthorThumbnailImg, } from 'src/util/comm'
-import PostContent from 'src/components/PostContent.vue'
+import PostContent from 'src/components/post/PostContent.vue'
 
 export default {
   components: {

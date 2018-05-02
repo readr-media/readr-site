@@ -24,6 +24,7 @@ import {
   getFollowingByUser,
   getMembers,
   getMembersCount,
+  getMemos,
   getMeta,
   getNotification,
   getPost,
@@ -187,6 +188,9 @@ export default {
         commit('SET_NOTIFICATION', { items: _.get(body, 'items', []), })
       }
     })
+  },
+  GET_MEMOS: ({ commit, dispatch, state, }, { params, }) => {
+    return getMemos({ params, })
   },
   GET_META: ({ commit, dispatch, state, }, { url, }) => {
     return getMeta(url)

@@ -14,8 +14,9 @@ router.get('/:id?', (req, res, next) => {
   debug(req.user)
   const user_id_from_url = get(req, 'params.id')
   const user_id = get(req, 'user.id')
-  debug(user_id_from_url, user_id)
-  if (user_id !== user_id_from_url) {
+  const user_email = get(req, 'user.email')
+  debug(user_id_from_url, user_id, user_email)
+  if (user_id != user_id_from_url) {
     res.header("Cache-Control", "no-cache, no-store, must-revalidate")
     res.header("Pragma", "no-cache")
     res.header("Expires", "0")    
@@ -24,7 +25,7 @@ router.get('/:id?', (req, res, next) => {
   }
   req.redis_get = {
     cmd: 'LRANGE',
-    key: `notify_${user_id}`,
+    key: `notify_${user_email}`,
     field: [ 0, 49, ],
   }
   next()
@@ -38,7 +39,7 @@ router.put('/ack', (req, res) => {
   debug('Gor a notification ack updating call.')
   debug(req.body)
   
-  const user_id = get(req, 'user.id')
+  const user_id = get(req, 'user.email')
   const url = `${apiHost}/notify/read`
   debug('url', url)
   debug('params', Object.assign({}, req.body, { member_id: user_id, }))

@@ -18,6 +18,7 @@ const sendRegisterReq = (req, res) => {
   const tokenShouldBeBanned = req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer' && req.headers.authorization.split(' ')[1]
   delete req.body.idToken
   delete req.body.email
+  // delete req.body.id
 
   const url = `${apiHost}/register`
 
@@ -26,7 +27,7 @@ const sendRegisterReq = (req, res) => {
   .send(req.body)
   .end((err, resp) => {
     if (!err && resp) {
-      sendActivationMail({ id: req.body.id, email: req.body.mail, type: 'member', }, (e, response, tokenForActivation) => {
+      sendActivationMail({ id: req.body.mail, email: req.body.mail, type: 'member', }, (e, response, tokenForActivation) => {
         if (!e && response) {
           res.status(200).send({ token: tokenForActivation, })
           /**
@@ -100,6 +101,7 @@ const preRigister = (req, res, next) => {
 router.post('/', preRigister, sendRegisterReq)
 router.post('/admin', (req, res, next) => {
   const url = `${apiHost}/member`
+  delete req.body.id
   superagent
     .post(url)
     .send(req.body)
@@ -114,7 +116,7 @@ router.post('/admin', (req, res, next) => {
       }
     })
 }, (req, res) => {
-  sendActivationMail({ id: req.body.id, email: req.body.mail, role: req.body.role, type: 'init', }, (e, response) => {
+  sendActivationMail({ id: req.body.mail, email: req.body.mail, role: req.body.role, type: 'init', }, (e, response) => {
     if (!e && response) {
       debug('A member added by Admin')
       debug(req.body)

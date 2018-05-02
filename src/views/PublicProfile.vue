@@ -45,7 +45,7 @@
   import { find, get, map, } from 'lodash'
   import { dateDiffFromNow, isScrollBarReachBottom, isElementReachInView, } from 'src/util/comm'
   import About from 'src/components/About.vue'
-  import PostContent from 'src/components/PostContent.vue'
+  import PostContent from 'src/components/post/PostContent.vue'
   import Tab from 'src/components/Tab.vue'
   import Spinner from 'src/components/Spinner.vue'
 
