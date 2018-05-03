@@ -1,5 +1,6 @@
 const { fetchFromRedis, redisFetching, redisWriting, insertIntoRedis, } = require('../redisHandler')
 const { mapKeys, pick, } = require('lodash')
+const { handlerError, } = require('../../comm')
 const { API_PROTOCOL, API_HOST, API_PORT, API_TIMEOUT, POST_PUBLISH_STATUS, POST_TYPE, } = require('../../config')
 const debug = require('debug')('READR:api:public')
 const express = require('express')
@@ -163,7 +164,8 @@ router.get('/projects', publicQueryValidation.validate(schema.projects), (req, r
           const resData = JSON.parse(r.text)
           res.json(resData)
         } else {
-          res.json(e)
+          const err_wrapper = handlerError(e, r)
+          res.status(err_wrapper.status).json(err_wrapper.text)
           console.error(`error during fetch public data from : ${url}`)
           console.error(e)  
         }
