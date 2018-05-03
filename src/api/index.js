@@ -270,6 +270,11 @@ export function getMembersCount () {
   return _doFetchStrict(url, {})
 }
 
+export function getMemo ({ params, }) {
+  let url = `${host}/api/memo/${_.get(params, 'memoId')}`
+  return _doFetchStrict(url, {})
+}
+
 export function getMemos ({ params, }) {
   let url = `${host}/api/memos`
   const query = _buildQuery(params)

@@ -73,7 +73,7 @@ export default {
     },
     isClientSide,
     isNews () {
-      return get(this.post, 'type', POST_TYPE.REVIEW) === POST_TYPE.NEWS
+      return get(this.post, 'type') === 'memo' || get(this.post, 'type', POST_TYPE.REVIEW) === POST_TYPE.NEWS
     },
     authorId () {
       return getArticleAuthorId(this.post)

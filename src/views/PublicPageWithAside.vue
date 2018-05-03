@@ -2,6 +2,7 @@
   <div class="public-page">
     <div class="public-page__container">
       <div class="public-page__main">
+        <Leading></Leading>
         <PostList></PostList>
       </div>
       <div class="public-page__aside">
@@ -25,6 +26,7 @@
 <script>
 import AppTitledList from 'src/components/AppTitledList.vue'
 import HomeProjectAside from 'src/components/home/HomeProjectAside.vue'
+import Leading from 'src/components/leading/Leading.vue'
 import PostList from 'src/components/post/PostList.vue'
 import ProjectsFigureProgress from 'src/components/projects/ProjectsFigureProgress.vue'
 import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, } from 'api/config'
@@ -57,6 +59,7 @@ export default {
   components: {
     AppTitledList,
     HomeProjectAside,
+    Leading,
     PostList,
     ProjectsFigureProgress,
   },

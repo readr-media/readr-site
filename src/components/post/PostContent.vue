@@ -5,7 +5,7 @@
       <img class="post-content__leading-image" v-if="post.ogImage && isClientSide" :src="getImageUrl(post.ogImage)" alt="" @load="setLeadingImageOrientation(getImageUrl(post.ogImage), $event)">
       <h1 class="post-content__title--news" v-text="post.title"></h1>
       <div class="editor-writing--news">
-        <router-link :to="`/post/${post.id}`" class="editor-writing__container">
+        <router-link :to="targetUrl" class="editor-writing__container">
           <template v-for="(p, i) in postContentProcessed">
             <!-- post content for initial display -->
             <p class="editor-writing__paragraph--visible" v-if="i <= shouldContentStopAtIndex" :key="`${post.id}-${i}`">
@@ -28,7 +28,7 @@
     <template v-if="!isNews || modifier !== 'main'">
       <h1 class="post-content__title" v-text="post.title"></h1>
       <div class="editor-writing">
-        <router-link :to="`/post/${post.id}`" class="editor-writing__container">
+        <router-link :to="targetUrl" class="editor-writing__container">
           <template v-for="(p, i) in postContentProcessed">
             <!-- post content for initial display -->
             <p class="editor-writing__paragraph--visible" v-if="i <= shouldContentStopAtIndex" :key="`${post.id}-${i}`">
@@ -158,6 +158,14 @@
         const stopParagraph = this.postContent[this.shouldContentStopAtIndex]
         const stopParagraphWordLength = stopParagraph.length
         return stopParagraphWordLength > this.showContentWordLimit
+      },
+      targetUrl () {
+        switch (this.post.type) {
+          case 'memo':
+            return `/memo/${get(this.$route, 'params.id')}/${get(this.post, 'id')}`
+          default:
+            return `/post/${get(this.post, 'id')}`
+        }
       },
     },
     components: {
