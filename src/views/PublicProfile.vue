@@ -128,7 +128,7 @@
     // },
     computed: {
       currUser () {
-        return get(this.$store, 'state.profile.uuid')
+        return get(this.$store, 'state.profile.id')
       },
       currTabKey () {
         return get(this.tabs, [ this.curr_tab, 'key', ], 'follow')
@@ -136,7 +136,7 @@
       isCurrUser () {
         debug('currUser', this.currUser)
         debug('targUser', get(this.$route, 'params.id'))
-        return get(this.$store, 'state.profile.uuid') === get(this.$route, 'params.id') || get(this.$store, 'state.profile.id') === get(this.$route, 'params.id')
+        return get(this.$store, 'state.profile.id') == (get(this.$route, 'params.id'))
       },
       postsReview () {
         return get(this.$store, 'state.publicPostReview.items') || []
@@ -156,8 +156,7 @@
       },
       profile () {
         const profile = get(this.$store, 'state.publicMember', {})
-        return get(profile, 'id') === get(this.$route, 'params.id') && profile
-        // return profile
+        return get(profile, 'id') == get(this.$route, 'params.id') && profile
       },
     },
     data () {
@@ -195,7 +194,7 @@
             page: get(this.curr_page, this.currTabKey, 1) + 1,
             outputStateTarget: this.currTabKey === 'review' ? 'publicPostReview' : 'publicPostNews',
             where: {
-              author: get(this.$route, 'params.id'),
+              author: Number(get(this.$route, 'params.id')),
               type: [ this.currTabKey === 'review' ? POST_TYPE.REVIEW : POST_TYPE.NEWS, ],
             },
           }),
@@ -227,14 +226,14 @@
         getPosts(this.$store, {
           outputStateTarget: 'publicPostReview',
           where: {
-            author: get(this.$route, 'params.id'),
+            author: Number(get(this.$route, 'params.id')),
             type: [ POST_TYPE.REVIEW, ],
           },
         }),
         getPosts(this.$store, {
           outputStateTarget: 'publicPostNews',
           where: {
-            author: get(this.$route, 'params.id'),
+            author: Number(get(this.$route, 'params.id')),
             type: [ POST_TYPE.NEWS, ],
           },
         }),
@@ -245,7 +244,7 @@
         //   },
         // }),
         getMemberPublic(this.$store, {
-          id: get(this.$route, 'params.id'),
+          id: Number(get(this.$route, 'params.id')),
         }),
       ])
     },

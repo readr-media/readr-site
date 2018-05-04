@@ -1,4 +1,5 @@
 const { fetchMem, sendRecoverPwdEmail, verifyToken, } = require('./comm')
+const { handlerError, } = require('../../comm')
 const { redisFetching, redisWriting, } = require('../redisHandler')
 const { get, } = require('lodash')
 const Cookies = require('cookies')
@@ -41,32 +42,31 @@ router.post('/', authVerify, (req, res) => {
   const account = req.body && req.body.email
   // const url = `${apiHost}/member/${account}`
   if (!account) { res.status(400).end() }
-  fetchMem({ id: account, }).then(({ err, res: response, }) => {
-    if (!err) {
-      /**
-       * About to send gen token and go reset process.
-       */
-      debug('account')
-      debug(response.body)
-      sendRecoverPwdEmail({
-        email: account,
-      }, (e, r) => {
-        debug('Sending done.')
-        if (!e) {
-          res.status(200).end()
-        } else {
-          res.status(r.status).json(e)
-          console.error(`Error occurred during sending reset email.`)
-          console.error(e)
-        }
-      })
-    } else {
-      debug('response.status:', response.status)
-      debug(err)
-      res.status(response.status).send(err)
-      console.error('Got error from request to api:')
-      console.error(err)
-    }
+  fetchMem({ id: account, })
+  .then(({ res: response, }) => {
+    /**
+     * About to send gen token and go reset process.
+     */
+    debug('account')
+    debug(response.body)
+    sendRecoverPwdEmail({
+      email: account,
+    }, (e, r) => {
+      debug('Sending done.')
+      if (!e) {
+        res.status(200).end()
+      } else {
+        res.status(r.status).json(e)
+        console.error(`Error occurred during sending reset email.`)
+        console.error(e)
+      }
+    })
+  })
+  .catch(({ err, res: response, }) => {
+    const err_wrapper = handlerError(err, response)
+    res.status(err_wrapper.status).send(err_wrapper.text)
+    console.error(`Error occurred during Sending acks to Pub/sub center`)
+    console.error(err)
   })
 })
 
@@ -75,32 +75,44 @@ router.post('/set', authVerify, (req, res) => {
   debug(req.body)
   if (get(req, [ 'user', 'type', ]) !== 'reset') { res.status(403).send(`Forbidden.`) }
   const id = req.user.id
-  superagent
-  .put(`${apiHost}/member/password`)
-  .send({
-    id,
-    password: req.body.password,
+  fetchMem({ id, })
+  .then(({ res: data, }) => {
+    const member = get(data, [ 'body', '_items', 0, ])
+    debug('Got mem:')
+    debug(member)
+    superagent
+    .put(`${apiHost}/member/password`)
+    .send({
+      id: `${get(member, 'id')}`,
+      password: req.body.password,
+    })
+    .end((err, response) => {
+      if (!err && response) {
+        debug('reset pwd successfully.')
+        const cookies = new Cookies( req, res, {} )
+        cookies.set('setup', '', {
+          httpOnly: false,
+          domain: config.DOMAIN,
+          expires: new Date(Date.now() - 1000),
+        })
+        /**
+         * Revoke the token
+         */
+        const tokenShouldBeBanned = req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer' && req.headers.authorization.split(' ')[1]
+        redisWriting(tokenShouldBeBanned, 'setuppwd-ed', null, 24 * 60 * 60 * 1000)        
+        res.status(response.status).end()
+      } else {
+        res.status(response.status).json(err)
+        console.error('Error occurred during reseting pwd.')
+        console.error(err)
+      }
+    })
   })
-  .end((err, response) => {
-    if (!err && response) {
-      debug('reset pwd successfully.')
-      const cookies = new Cookies( req, res, {} )
-      cookies.set('setup', '', {
-        httpOnly: false,
-        domain: config.DOMAIN,
-        expires: new Date(Date.now() - 1000),
-      })
-      /**
-       * Revoke the token
-       */
-      const tokenShouldBeBanned = req.headers.authorization && req.headers.authorization.split(' ')[0] === 'Bearer' && req.headers.authorization.split(' ')[1]
-      redisWriting(tokenShouldBeBanned, 'setuppwd-ed', null, 24 * 60 * 60 * 1000)        
-      res.status(response.status).end()
-    } else {
-      res.status(response.status).json(err)
-      console.error('Error occurred during reseting pwd.')
-      console.error(err)
-    }
+  .catch(({ err, res: response, }) => {
+    const err_wrapper = handlerError(err, response)
+    res.status(err_wrapper.status).send(err_wrapper.text)
+    console.error(`Error occurred during reseting pwd.`)
+    console.error(err)
   })
 
 })
