@@ -457,6 +457,7 @@ router.route('*')
                * if endpoint is not /members, go next to save data to redis
                */
               if (req.url.indexOf('/members') === -1
+                && req.url.indexOf('/points') === -1
                 && req.url.indexOf('/post') === -1
                 && req.url.indexOf('/posts') === -1
                 && req.url.indexOf('/tags') === -1
