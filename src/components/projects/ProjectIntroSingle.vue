@@ -1,6 +1,6 @@
 <template>
   <div class="project-single-intro">
-    <div class="project-single-intro__progress-bar" :style="{ width: `${currProgress}%` }">
+    <div class="project-single-intro__progress-bar" :style="{ width: `${targProgress}%` }">
       <div class="current-progress"><span v-text="`${currProgress}%`"></span></div>
     </div>
     <div class="project-single-intro__container">
@@ -21,7 +21,7 @@ export default {
     AppArticleNav,
   },
   computed: {
-    currProgress () {
+    targProgress () {
       return get(this.project, 'progress', 0)
     },
     desc () {
@@ -31,8 +31,25 @@ export default {
       return get(this.$store, 'state.publicProjectSingle')
     },
   },
-  methods: {},
-  mounted () {},
+  data () {
+    return {
+      currProgress: 0,
+    }
+  },
+  methods: {
+    runProgress () {
+      const interval = setInterval(() => {
+        this.currProgress += Math.round(this.targProgress / 100)
+        if (this.currProgress >= this.targProgress) {
+          this.currProgress = this.targProgress
+          clearInterval(interval)
+        }
+      }, 10)
+    },
+  },
+  mounted () {
+    this.runProgress()
+  },
   props: {
     projId: {
       type: Number,
@@ -62,7 +79,7 @@ export default {
     top 0
     left 0
     background-color #ddcf21
-    transition width 1s
+    transition width 1.5s
     .current-progress
       width 28px
       height 28px
