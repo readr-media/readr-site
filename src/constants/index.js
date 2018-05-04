@@ -2,13 +2,9 @@ import projectList from './projectList'
 export const PROJECTS = projectList
 
 export const SITE_DOMAIN = 'readr.tw'
-
-/**
- * revise to use uuid as follows in the future: 
- *  export const ANNOUNCEMENT_ACCOUNT_ID = e5a71711-421a-11e8-9c56-42010a8c0116
- */
-export const ANNOUNCEMENT_ACCOUNT_ID = 'readr@readr.tw'
 export const SITE_DOMAIN_DEV = 'dev.readr.tw'
+
+export const ANNOUNCEMENT_ACCOUNT_ID = 'readr@readr.tw'
 
 export const ROLE_MAP = [
   { key: 9, value: '管理員', route: 'admin', },

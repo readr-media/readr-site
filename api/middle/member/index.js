@@ -36,7 +36,8 @@ router.put('/', (req, res, next) => {
 router.post('/syncavatar', (req, res) => {
   debug('Got a avatar sync req.')
   debug(req.body)
-  const email = get(req.body, 'id', '')
+  debug(req.user)
+  const email = get(req.user, 'email', '')
   const url = get(req.body, 'url', null)
   syncAvatar(email, url)
   .then(() => {
