@@ -75,30 +75,26 @@ export default {
           /**
            * make sure the project id is legal.
            */
-          if (/^\/memo\/[A-Za-z0-9(\-)]*(\/[A-Za-z0-9(\-)]*)?$/.test(get(this.$route, 'fullPath', ''))) {
-            jobs.push(fetchProjectSingle(this.$store, Number(get(this.$route, 'params.id'))).then((proj) => {
-              const pub_status = get(proj, 'publishStatus', 1)
-              debug('PROJECT PUBLISH YET?', pub_status, pub_status === PROJECT_PUBLISH_STATUS.PUBLISHED, proj)
-              if (pub_status === PROJECT_PUBLISH_STATUS.PUBLISHED) {
-                return Promise.all([
-                  fetchMemos(this.$store, {
-                    mode: this.currPage === 1 ? 'set' : 'update',
-                    proj_ids: [ Number(get(this.$route, 'params.id')), ],
-                    page: this.currPage,
-                  }).then(() => { this.currPage += 1 }),
-                  get(this.$route, 'params.subItem')
-                    ? fetchMemoSingle(this.$store, get(this.$route, 'params.subItem'))
-                    : Promise.resolve(),
-                ])
-              } else {
-                /**
-                * Forbidden.
-                */
-                this.$router.push('/')
-                return
-              }
-            }))
-          }
+          jobs.push(fetchProjectSingle(this.$store, Number(get(this.$route, 'params.id'))).then((proj) => {
+            if (proj) {
+              return Promise.all([
+                fetchMemos(this.$store, {
+                  mode: this.currPage === 1 ? 'set' : 'update',
+                  proj_ids: [ Number(get(this.$route, 'params.id')), ],
+                  page: this.currPage,
+                }).then(() => { this.currPage += 1 }),
+                get(this.$route, 'params.subItem')
+                  ? fetchMemoSingle(this.$store, get(this.$route, 'params.subItem'))
+                  : Promise.resolve(),
+              ])
+            } else {
+              /**
+              * Forbidden.
+              */
+              this.$router.push('/')
+              return
+            }
+          }))
           break
       }
       return jobs
@@ -127,6 +123,9 @@ export default {
     route () {
       return this.$route.fullPath.split('/')[ 1 ]
     },
+    showLightBox () {
+      return typeof(get(this.$route, 'params.subItem')) === 'string'
+    },    
     targState () {
       let targ_state
       switch (this.route) {
@@ -144,13 +143,11 @@ export default {
       currPage: DEFAULT_PAGE,
       isReachBottom: false,
       isLoadMoreEnd: false,
-      showLightBox: false,
     }
   },
   methods: {
     closeLightBox () {
       debug('Go Back!')
-      this.showLightBox = false
       this.$router.back()
     },    
     loadmore () {
@@ -183,10 +180,6 @@ export default {
       //     ids: postIdFeaturedProject,
       //   })
       // }
-    }).then(() => {
-      if (get(this.$route, 'params.subItem')) {
-        this.showLightBox = true
-      }
     })
   },   
   mounted () {
@@ -202,9 +195,6 @@ export default {
     },
     '$route' (to, from) {
       debug('Mutation detected: $route', to, from)
-      if (get(to, 'params.subItem')) {
-        this.showLightBox = true
-      }
     },
   },
 }
