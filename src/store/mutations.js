@@ -91,7 +91,7 @@ export default {
     state['notification'] = items
   },
   SET_POINT_HISTORIES: (state, { histories, }) => {
-    state['pointHistories'] = histories.items
+    state['pointHistories'] = histories.items || []
   },
   SET_POSTS: (state, { posts, }) => {
     state['posts'] = posts.items
