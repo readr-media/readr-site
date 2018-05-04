@@ -18,9 +18,13 @@ import _ from 'lodash'
 //   })
 // }
 
-const fetchRewardPointsTransactions = (store, params) => {
-  return store.dispatch('GET_REWARD_POINTS_TRANSACTIONS', {
-    params: params,
+const fetchPointHistories = (store, { objectIds, objectType, } = {}) => {
+  return store.dispatch('GET_POINT_HISTORIES', {
+    params: {
+      memberId: _.get(store, [ 'state', 'profile', 'id', ]),
+      objectType: objectType,
+      objectIds: objectIds,
+    },
   })
 }
 
@@ -37,7 +41,7 @@ export default {
   },
   computed: {
     transactionJoinProjects () {
-      return _.forEach(_.get(this.$store.state, 'rewardPointsTransactions.items', []), transaction => {
+      return _.forEach(_.get(this.$store.state, 'pointHistories', []), transaction => {
         const id = transaction.objectId
         const found = _.find(this.projects, [ 'id', id, ])
         const active = found ? found.active : 3
@@ -55,9 +59,7 @@ export default {
     },
   },
   beforeMount () {
-    fetchRewardPointsTransactions(this.$store, {
-      id: this.userId,
-    })
+    fetchPointHistories(this.$store)
     // fetchProjectsList(this.$store, {})
   },
 }

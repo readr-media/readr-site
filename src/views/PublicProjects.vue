@@ -33,7 +33,7 @@
 import AppTitledList from '../components/AppTitledList.vue'
 import ProjectsFigure from '../components/projects/ProjectsFigure.vue'
 import ProjectsFigureProgress from '../components/projects/ProjectsFigureProgress.vue'
-import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, } from '../../api/config'
+import { POINT_OBJECT_TYPE, PROJECT_PUBLISH_STATUS, PROJECT_STATUS, } from '../../api/config'
 import { isScrollBarReachBottom, isElementReachInView, } from 'src/util/comm'
 import _ from 'lodash'
 
@@ -42,6 +42,16 @@ const debug = require('debug')('CLIENT:ProjectsList')
 const MAXRESULT = 5
 const DEFAULT_PAGE = 1
 const DEFAULT_SORT = 'project_order,-updated_at'
+
+const fetchPointHistories = (store, { objectIds, objectType, }) => {
+  return store.dispatch('GET_POINT_HISTORIES', {
+    params: {
+      memberId: _.get(store, [ 'state', 'profile', 'id', ]),
+      objectType: objectType,
+      objectIds: objectIds,
+    },
+  })
+}
 
 const fetchProjectsList = (store, {
   max_result = MAXRESULT,
@@ -148,10 +158,16 @@ export default {
     ]).then(() => {
       if (this.$store.state.isLoggedIn) {
         const postIdFeaturedProject = _.get(this.$store, 'state.publicProjects.done', []).map(project => `${project.id}`)
+        const projectInProgressIds = _.get(this.$store, 'state.publicProjects.inProgress', []).map(project => project.id)
+
         fetchFollowing(this.$store, {
           resource: 'project',
           ids: postIdFeaturedProject,
         })
+
+        if (projectInProgressIds.length !== 0) {
+          fetchPointHistories(this.$store, { objectType: POINT_OBJECT_TYPE.PROJECT_MEMO, objectIds: projectInProgressIds, })
+        }
       }
     })
     // Uncomment this when v1.0 is released

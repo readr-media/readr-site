@@ -25,21 +25,23 @@ function _buildQuery (params = {}) {
     'role',
     'publish_status',
     'project_id',
+    'object_ids',
   ]
+  const snakeCaseParams = _.mapKeys(params, (value, key) => _.snakeCase(key))
   whitelist.forEach((ele) => {
-    if (params.hasOwnProperty(ele)) {
+    if (snakeCaseParams.hasOwnProperty(ele)) {
       if (ele === 'where') {
-        const where = _.mapValues(params[ele], (value) => {
+        const where = _.mapValues(snakeCaseParams[ele], (value) => {
           value = Array.isArray(value) ? value : [ value, ]
           return { '$in': value, }
         })
         Object.keys(where).forEach((key) => {
           query[key] = JSON.stringify(where[key])
         })
-      } else if (ele === 'ids' || ele === 'project_id') {
-        query[ele] = JSON.stringify(params[ele])
+      } else if (ele === 'ids' || ele === 'project_id' || ele === 'object_ids') {
+        query[ele] = JSON.stringify(snakeCaseParams[ele])
       } else {
-        query[ele] = params[ele]
+        query[ele] = snakeCaseParams[ele]
       }
     }
   })
@@ -386,8 +388,15 @@ export function getTagsCount () {
   return _doFetchStrict(url, {})
 }
 
-export function getRewardPointsTransactions ({ params, }) {
-  const url = `${host}/api/points/${params.id}`
+export function getPointHistories ({ params, }) {
+  let url = `${host}/api/points/${params.memberId}`
+  const query = _buildQuery(params)
+  if (params.objectType) {
+    url = `${host}/api/points/${params.memberId}/${params.objectType}`
+  }
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }
   return _doFetchStrict(url, {})
 }
 

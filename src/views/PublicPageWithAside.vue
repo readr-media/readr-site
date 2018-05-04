@@ -29,12 +29,22 @@ import HomeProjectAside from 'src/components/home/HomeProjectAside.vue'
 import Leading from 'src/components/leading/Leading.vue'
 import PostList from 'src/components/post/PostList.vue'
 import ProjectsFigureProgress from 'src/components/projects/ProjectsFigureProgress.vue'
-import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, } from 'api/config'
+import { POINT_OBJECT_TYPE, PROJECT_PUBLISH_STATUS, PROJECT_STATUS, } from 'api/config'
 import { get, } from 'lodash'
 
 const MAXRESULT = 5
 const DEFAULT_PAGE = 1
 const DEFAULT_SORT = '-updated_at'
+
+const fetchPointHistories = (store, { objectIds, objectType, }) => {
+  return store.dispatch('GET_POINT_HISTORIES', {
+    params: {
+      memberId: get(store, [ 'state', 'profile', 'id', ]),
+      objectType: objectType,
+      objectIds: objectIds,
+    },
+  })
+}
 
 const fetchProjectsList = (store, {
   max_result = MAXRESULT,
@@ -83,6 +93,11 @@ export default {
       fetchProjectsList(this.$store, { max_result: 2, status: PROJECT_STATUS.DONE, }),
       fetchProjectsList(this.$store, { max_result: 3, status: PROJECT_STATUS.WIP, }),
     ]).then(() => {
+      const projectInProgressIds = get(this.$store, 'state.publicProjects.inProgress', []).map(project => project.id)
+      
+      if (projectInProgressIds.length !== 0) {
+        fetchPointHistories(this.$store, { objectType: POINT_OBJECT_TYPE.PROJECT_MEMO, objectIds: projectInProgressIds, })
+      }
       // if (this.$store.state.isLoggedIn) {
       //   const postIdFeaturedProject = _.get(this.$store, 'state.publicProjects.done', []).map(project => `${project.id}`)
       //   fetchFollowing(this.$store, {
