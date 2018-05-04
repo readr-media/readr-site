@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { PROJECT_STATUS, PROJECT_PUBLISH_STATUS, } from '../../api/config'
+import { POINT_OBJECT_TYPE, PROJECT_STATUS, PROJECT_PUBLISH_STATUS, } from '../../api/config'
 import { currEnv, isScrollBarReachBottom, isElementReachInView, isCurrentRoutePath, } from 'src/util/comm'
 import _ from 'lodash'
 import { createStore, } from '../store'
@@ -99,6 +99,17 @@ const fetchProjectsList = (store, {
     },
   })
 }
+
+const fetchPointHistories = (store, { objectIds, objectType, }) => {
+  return store.dispatch('GET_POINT_HISTORIES', {
+    params: {
+      memberId: _.get(store, [ 'state', 'profile', 'id', ]),
+      objectType: objectType,
+      objectIds: objectIds,
+    },
+  })
+}
+
 const fetchFollowing = (store, params) => {
   if (params.subject) {
     return store.dispatch('GET_FOLLOWING_BY_USER', params)
@@ -301,7 +312,7 @@ export default {
         const postIdsHot = _.get(this.$store.state.publicPostsHot, 'items', []).map(post => `${post.id}`) 
         const postIdFeaturedProject = _.concat(_.get(this.$store, 'state.publicProjects.done', []), _.get(this.$store, 'state.publicProjects.inProgress', [])).map(project => `${project.id}`)
         const ids = _.uniq(_.concat(postIdsLatest, postIdsHot))
-   
+        const projectInProgressIds = _.get(this.$store, 'state.publicProjects.inProgress', []).map(project => project.id)
         if (ids.length !== 0) { 
           fetchFollowing(this.$store, { 
             resource: 'post', 
@@ -314,6 +325,10 @@ export default {
             resource: 'project', 
             ids: postIdFeaturedProject, 
           })
+        }
+
+        if (projectInProgressIds.length !== 0) {
+          fetchPointHistories(this.$store, { objectType: POINT_OBJECT_TYPE.PROJECT_MEMO, objectIds: projectInProgressIds, })
         }
       }
     })

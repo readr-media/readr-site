@@ -26,6 +26,7 @@ export function createStore () {
       'memos': [],
       'memoSingle': {},
       'notification': [],
+      'pointHistories': [],
       'posts': [],
       'postsCount': 0,
       'postsDraft': [],
@@ -43,7 +44,6 @@ export function createStore () {
       'publicProjectSingle': {},
       'publicVideos': {},
       'publicVideosCount': 0,
-      'rewardPointsTransactions': [],
       'register-token': '',
       'searchResult': {
         'items': [],
