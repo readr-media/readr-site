@@ -84,10 +84,10 @@ export function getProfile (cookie) {
       .end(function (err, res) {
         if (err) {
           debug(err)
-          resolve(err)
+          resolve({ status: res.status, err, })
         } else {
           debug({ status: res.status, body: camelizeKeys(res.body), })
-          resolve({ profile: camelizeKeys(res.body), })
+          resolve({ profile: camelizeKeys(res.body), status: res.status, })
         }
       })
     } else {

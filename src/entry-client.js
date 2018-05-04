@@ -3,7 +3,7 @@ import 'es6-promise/auto'
 import { ROLE_MAP, } from './constants'
 import { createApp, } from './app'
 import { filter, get, } from 'lodash'
-import { getToken, } from './util/services'
+import { getToken, removeToken, } from './util/services'
 import ProgressBar from './components/ProgressBar.vue'
 // import(/* webpackChunkName: "trace-worker" */ './trace-worker.js')
 
@@ -56,6 +56,9 @@ Vue.mixin({
         debug(`Route "to" doesn't have any permission setting. So, go to route "to" without problem.`)
         next()
       }
+    }).catch(({ err, res, }) => {
+      debug(err, res)
+      removeToken().then(() => location.replace('/login'))
     })
   },
   beforeRouteUpdate (to, from, next) {
