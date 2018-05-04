@@ -226,17 +226,14 @@ function render (req, res, next) {
     if (err.url) {
       res.redirect(err.url)
     }
-    let status
-    if (err.code === 404) {
-      status = 404
+    let status = err.code || 500
+    if (status === 404) {
       isPageNotFound = true
-    } else if (err.code === 403) {
-      status = 403
+    } else if (status === 403) {
       isUnauthorized = true
       res.status(status).send(`<script>location.replace('/login')</script>`)
       return
     } else {
-      status = 500
       isErrorOccurred = true
       console.error(`Error occurred  during render : ${req.url}`)
       console.error(err) 

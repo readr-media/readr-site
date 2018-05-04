@@ -75,7 +75,7 @@ function _doFetchStrict (url, { cookie, }) {
       .set('Authorization', `Bearer ${cookie || getToken()}`)
       .end(function (err, res) {
         if (err) {
-          reject(err)
+          reject({ err, res, })
         } else {
           // resolve(camelizeKeys(res.body))
           resolve({ status: res.status, body: camelizeKeys(res.body), })

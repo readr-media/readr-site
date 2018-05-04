@@ -79,6 +79,7 @@ export default {
   CHECK_LOGIN_STATUS: ({ commit, dispatch, state, }, { params, }) => {
     return checkLoginStatus({ params, }).then(({ status, body, }) => {
       commit('SET_LOGGEIN_STATUS', { status, body, })
+      return { status, body, }
     })
   },
   CHECK_PASSWORD: ({ commit, dispatch, state, }, { params, }) => {
@@ -399,6 +400,7 @@ export default {
       if (status === 200) {
         commit('SET_PROFILE', { profile: body, })
       }
+      return { status, body, }
     })
   },
   GET_TAGS: ({ commit, dispatch, state, }, { params, }) => {

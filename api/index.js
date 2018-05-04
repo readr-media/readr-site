@@ -206,6 +206,16 @@ router.get('/profile', [ authVerify, setupClientCache, ], (req, res) => {
   debug('req.user')
   debug(req.user)
   const targetProfile = req.user.id
+
+  /**
+   * 'cause there's some logged-user's cookie token constructed with id which is in old type,
+   * we have to redirect them to login again.
+   */
+  if (typeof(targetProfile) === 'string') {
+    res.status(401).json({ message: 'Should Authorized Again.', })
+    return
+  }
+
   const url = `/member/${targetProfile}`
   Promise.all([
     fetchPromise(url, req),
