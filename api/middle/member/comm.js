@@ -131,13 +131,17 @@ const sendInitializingSuccessEmail = ({ email, }) => {
   })
 }
 
-const fetchMem = (member) => new Promise((resolve) => {
+const fetchMem = (member) => new Promise((resolve, reject) => {
   superagent
   .get(`${apiHost}/member/${member.id}`)
   .end((err, res) => {
     debug('err')
     debug(err)
-    resolve({ err, res, })
+    if (!err) {
+      resolve({ res, })      
+    } else {
+      reject({ err, res, })
+    }
   })
 })
 

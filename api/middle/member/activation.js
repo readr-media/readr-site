@@ -1,5 +1,6 @@
 const { buildUserForTalk, } = require('../talk')
 const { fetchMem, } = require('./comm')
+const { handlerError, } = require('../../comm')
 const _ = require('lodash')
 const Cookies = require('cookies')
 const config = require('../../config')
@@ -38,49 +39,50 @@ const activate = (req, res) => {
   debug('req.url', req.url)
   const decoded = req.decoded
 
-  fetchMem(decoded).then(({ err, res: data, }) => {
+  fetchMem(decoded)
+  .then(({ res: data, }) => {
     debug('Fecth member data sucessfully.')
     const member = _.get(data, [ 'body', '_items', 0, ])
-    if (err) {
-      console.log(data.status)
-      console.log(err)
-      res.status(data.status).json(err)
-    } else {
-      debug('data', _.get(data, [ 'body', '_items', 0, 'active', ]))
-      debug('decoded.type', decoded.type)
-      if (_.get(member, [ 'active', ]) === 0) {
-        if (decoded.type !== 'init') {
-          debug('About to send req to activate mem')
-          activateMem(member).then(({ err: e, res: r, }) => {
-            if (!e && r) {
-              buildUserForTalk(member).then(() => {
-                res.redirect(302, '/login')
-              })
-            } else {
-              console.log(r.status)
-              console.log(e)
-              res.status(r.status).json(e)
-            }
-          })
-        } else {
-          debug('Redirect user to fill in basic info.')
-          const tokenForActivation = jwtService.generateActivateAccountJwt({
-            id: decoded.id,
-            role: decoded.role || 1,
-            type: decoded.type, // this type should be 'init'
-          })
-          const cookies = new Cookies( req, res, {} )
-          cookies.set('setup', tokenForActivation, {
-            httpOnly: false,
-            domain: config.DOMAIN,
-            expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-          })
-          res.redirect(302, '/setup/init')
-        }
+    debug('data', _.get(data, [ 'body', '_items', 0, 'active', ]))
+    debug('decoded.type', decoded.type)
+    if (_.get(member, [ 'active', ]) === 0) {
+      if (decoded.type !== 'init') {
+        debug('About to send req to activate mem')
+        activateMem(member).then(({ err: e, res: r, }) => {
+          if (!e && r) {
+            buildUserForTalk(member).then(() => {
+              res.redirect(302, '/login')
+            })
+          } else {
+            console.log(r.status)
+            console.log(e)
+            res.status(r.status).json(e)
+          }
+        })
       } else {
-        res.redirect(302, '/')
+        debug('Redirect user to fill in basic info.')
+        const tokenForActivation = jwtService.generateActivateAccountJwt({
+          id: decoded.id,
+          role: decoded.role || 1,
+          type: decoded.type, // this type should be 'init'
+        })
+        const cookies = new Cookies( req, res, {} )
+        cookies.set('setup', tokenForActivation, {
+          httpOnly: false,
+          domain: config.DOMAIN,
+          expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
+        })
+        res.redirect(302, '/setup/init')
       }
+    } else {
+      res.redirect(302, '/')
     }
+  })
+  .catch(({ err, res: response, }) => {
+    const err_wrapper = handlerError(err, response)
+    res.status(err_wrapper.status).send(err_wrapper.text)
+    console.error(`Error occurred during Sending acks to Pub/sub center`)
+    console.error(err)
   })
 }
 

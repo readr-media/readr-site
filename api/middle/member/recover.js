@@ -1,4 +1,5 @@
 const { fetchMem, sendRecoverPwdEmail, verifyToken, } = require('./comm')
+const { handlerError, } = require('../../comm')
 const { redisFetching, redisWriting, } = require('../redisHandler')
 const { get, } = require('lodash')
 const Cookies = require('cookies')
@@ -41,32 +42,31 @@ router.post('/', authVerify, (req, res) => {
   const account = req.body && req.body.email
   // const url = `${apiHost}/member/${account}`
   if (!account) { res.status(400).end() }
-  fetchMem({ id: account, }).then(({ err, res: response, }) => {
-    if (!err) {
-      /**
-       * About to send gen token and go reset process.
-       */
-      debug('account')
-      debug(response.body)
-      sendRecoverPwdEmail({
-        email: account,
-      }, (e, r) => {
-        debug('Sending done.')
-        if (!e) {
-          res.status(200).end()
-        } else {
-          res.status(r.status).json(e)
-          console.error(`Error occurred during sending reset email.`)
-          console.error(e)
-        }
-      })
-    } else {
-      debug('response.status:', response.status)
-      debug(err)
-      res.status(response.status).send(err)
-      console.error('Got error from request to api:')
-      console.error(err)
-    }
+  fetchMem({ id: account, })
+  .then(({ res: response, }) => {
+    /**
+     * About to send gen token and go reset process.
+     */
+    debug('account')
+    debug(response.body)
+    sendRecoverPwdEmail({
+      email: account,
+    }, (e, r) => {
+      debug('Sending done.')
+      if (!e) {
+        res.status(200).end()
+      } else {
+        res.status(r.status).json(e)
+        console.error(`Error occurred during sending reset email.`)
+        console.error(e)
+      }
+    })
+  })
+  .catch(({ err, res: response, }) => {
+    const err_wrapper = handlerError(err, response)
+    res.status(err_wrapper.status).send(err_wrapper.text)
+    console.error(`Error occurred during Sending acks to Pub/sub center`)
+    console.error(err)
   })
 })
 

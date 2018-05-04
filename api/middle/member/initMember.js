@@ -1,4 +1,6 @@
 const { buildUserForTalk, updateUserForTalk, } = require('../talk')
+const { fetchMem, } = require('./comm')
+const { handlerError, } = require('../../comm')
 const { sendInitializingSuccessEmail, } = require('./comm')
 const { get, } = require('lodash')
 const Cookies = require('cookies')
@@ -38,51 +40,71 @@ const send_email_for_initializing_successfully = (req) => {
 
 router.post('/', (req, res, next) => {
   if (get(req, [ 'user', 'type', ]) !== 'init') { res.status(403).send(`Forbidden.`) }
+  debug('Got a call to init mem.')
+  debug(req.user)
   const id = req.user.id
   const role = req.user.role
-  superagent
-  .put(`${apiHost}/member/password`)
-  .send({
-    id,
-    password: req.body.password,
+  fetchMem({ id, })
+  .then(({ res: data, }) => {
+    const member = get(data, [ 'body', '_items', 0, ])
+    debug('Got mem:')
+    debug(member)
+    superagent
+    .put(`${apiHost}/member/password`)
+    .send({
+      id: `${get(member, 'id')}`,
+      password: req.body.password,
+    })
+    .end((err, response) => {
+      if (!err && response) {
+        superagent
+        .put(`${apiHost}/member`)
+        .send({
+          id: get(member, 'id'),
+          nickname: req.body.nickname,
+          role,
+          active: 1,
+        })
+        .end((e, r) => {
+          if (!e && r) {
+            buildUserForTalk({
+              id: get(member, 'id'),
+              mail: get(member, 'mail'),
+              nickname: req.body.nickname,
+            }).then(() => {
+              const cookies = new Cookies( req, res, {} )
+              cookies.set('setup', '', {
+                httpOnly: false,
+                domain: config.DOMAIN,
+                expires: new Date(Date.now() - 1000),
+              })  
+              res.status(200).end()
+  
+              /**
+               * Go update nickname and default avatar_img to talk server
+               */
+              next()
+            })
+          } else {
+            const err_wrapper = handlerError(e, r)
+            res.status(err_wrapper.status).send(err_wrapper.text)
+            console.error(`Error occurred during initing mem.`)
+            console.error(e)
+          }
+        })
+      } else {
+        const err_wrapper = handlerError(err, response)
+        res.status(err_wrapper.status).send(err_wrapper.text)
+        console.error(`Error occurred during initing mem.`)
+        console.error(err)
+      }
+    })
   })
-  .end((err, response) => {
-    if (!err && response) {
-      superagent
-      .put(`${apiHost}/member`)
-      .send({
-        id,
-        nickname: req.body.nickname,
-        role,
-        active: 1,
-      })
-      .end((e, r) => {
-        if (!e && r) {
-          buildUserForTalk({
-            id,
-            mail: id,
-            nickname: req.body.nickname,
-          }).then(() => {
-            const cookies = new Cookies( req, res, {} )
-            cookies.set('setup', '', {
-              httpOnly: false,
-              domain: config.DOMAIN,
-              expires: new Date(Date.now() - 1000),
-            })  
-            res.status(200).end()
-
-            /**
-             * Go update nickname and default avatar_img to talk server
-             */
-            next()
-          })
-        } else {
-          res.status(r.status).json(e)
-        }
-      })
-    } else {
-      res.status(500).json(err)
-    }
+  .catch(({ err, res: response, }) => {
+    const err_wrapper = handlerError(err, response)
+    res.status(err_wrapper.status).send(err_wrapper.text)
+    console.error(`Error occurred during initing mem.`)
+    console.error(err)
   })
 }, update_default_data, send_email_for_initializing_successfully)
 
