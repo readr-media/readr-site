@@ -91,6 +91,7 @@ export default {
               /**
               * Forbidden.
               */
+              this.isLoadMoreEnd = true
               this.$router.push('/')
               return
             }
@@ -98,6 +99,25 @@ export default {
           break
       }
       return jobs
+    },
+    jobsLoadmore () {
+      const jobs = []
+      switch (this.route) {
+        case 'memo':
+          jobs.push(fetchMemos(this.$store, {
+            mode: 'update',
+            proj_ids: [ Number(get(this.$route, 'params.id')), ],
+            page: this.currPage,
+          }).then(res => {
+            this.currPage += 1
+            debug('Loadmore done. Status', get(res, 'status'))                  
+            if (get(res, 'status') === 'end') {
+              this.isLoadMoreEnd = true
+            }                  
+          }))
+          break
+      }
+      return jobs      
     },
     posts () {
       return get(this.$store, `state.${this.targState}`)
@@ -152,14 +172,8 @@ export default {
     },    
     loadmore () {
       // this.shouldShowSpinner = true
-      return Promise.all(this.jobs).then((res) => {
-        this.shouldShowSpinner = false
-        debug('Loadmore done. Status', get(res, [ 0, 'status', ]), get(res, [ 0, 'res', ]))
-        if (get(res, [ 0, 'status', ]) === 200) {
-          this.currPage += 1
-        } else if (get(res, [ 0, 'status', ]) === 'end') {
-          this.isLoadMoreEnd = true
-        }
+      return Promise.all(this.jobsLoadmore).then(() => {
+        // this.shouldShowSpinner = false
       })
     },
     isElementReachInView,
