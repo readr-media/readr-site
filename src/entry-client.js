@@ -12,6 +12,7 @@ const bar = Vue.prototype.$bar = new Vue(ProgressBar).$mount()
 document.body.appendChild(bar.$el)
 
 const debug = require('debug')('CLIENT:entry-client')
+const { app, i18n, router, store, } = createApp()
 
 // a global mixin that calls `asyncData` when a route component's params change
 Vue.mixin({
@@ -58,7 +59,8 @@ Vue.mixin({
       }
     }).catch(({ err, res, }) => {
       debug(err, res)
-      removeToken().then(() => next('/login'))
+      const domain = get(store, 'state.setting.DOMAIN')
+      removeToken(domain).then(() => next('/login'))
     })
   },
   beforeRouteUpdate (to, from, next) {
@@ -74,8 +76,6 @@ Vue.mixin({
     }
   },
 })
-
-const { app, i18n, router, store, } = createApp()
 
 // prime the store with server-initialized state.
 // the state is determined during SSR and inlined in the page markup.
