@@ -58,7 +58,7 @@ Vue.mixin({
       }
     }).catch(({ err, res, }) => {
       debug(err, res)
-      removeToken().then(() => location.replace('/login'))
+      removeToken().then(() => next('/login'))
     })
   },
   beforeRouteUpdate (to, from, next) {
