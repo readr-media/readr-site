@@ -52,7 +52,7 @@
   const debug = require('debug')('CLIENT:Profile')
   const MAXRESULT = 10
   const DEFAULT_PAGE = 1
-  const DEFAULT_SORT = '-updated_at'
+  const DEFAULT_SORT = '-published_at,-updated_at'
   const POST_FILTER = [
     { code: 0, name: 'FILTER_1D', },
     { code: 1, name: 'FILTER_1W', },
