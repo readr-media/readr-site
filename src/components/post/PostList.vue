@@ -179,12 +179,6 @@ export default {
     isElementReachInView,
     isScrollBarReachBottom, 
   },
-  beforeRouteEnter (to, from, next) {
-    next()
-  },  
-  beforeRouteUpdate (to, from, next) {
-    next()
-  },
   beforeMount () {
     Promise.all(this.jobs).then(() => {
       // if (this.$store.state.isLoggedIn) {
@@ -209,6 +203,8 @@ export default {
     },
     '$route' (to, from) {
       debug('Mutation detected: $route', to, from)
+      this.currPage = DEFAULT_PAGE,
+      Promise.all(this.jobs)
     },
   },
 }

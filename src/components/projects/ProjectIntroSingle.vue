@@ -42,7 +42,8 @@ export default {
     runProgress () {
       debug('this.targProgress', this.targProgress)
       const interval = setInterval(() => {
-        this.currProgress += Math.round(this.targProgress / 100)
+        this.currProgress += Math.ceil(this.targProgress / 100)
+        debug('this.currProgress', this.currProgress)
         debug('this.targProgress', this.targProgress)
         if (this.currProgress >= this.targProgress) {
           this.currProgress = this.targProgress
