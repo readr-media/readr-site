@@ -220,6 +220,34 @@
         }
       },
     },
+    beforeRouteUpdate (to, from, next) {
+      // Beta version code
+      Promise.all([
+        getPosts(this.$store, {
+          outputStateTarget: 'publicPostReview',
+          where: {
+            author: Number(get(to, 'params.id')),
+            type: [ POST_TYPE.REVIEW, ],
+          },
+        }),
+        getPosts(this.$store, {
+          outputStateTarget: 'publicPostNews',
+          where: {
+            author: Number(get(to, 'params.id')),
+            type: [ POST_TYPE.NEWS, ],
+          },
+        }),
+        // getPostsCount(this.$store, {
+        //   where: {
+        //     author: get(to, 'params.id'),
+        //     type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ],
+        //   },
+        // }),
+        getMemberPublic(this.$store, {
+          id: Number(get(to, 'params.id')),
+        }),
+      ]).then(() => next())      
+    },
     beforeMount () {
       // Beta version code
       Promise.all([
