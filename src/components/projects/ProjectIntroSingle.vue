@@ -14,6 +14,7 @@
 <script>
 import AppArticleNav from 'src/components/AppArticleNav.vue'
 import { get, } from 'lodash'
+const debug = require('debug')('CLIENT:ProjectIntroSingle')
 
 export default {
   name: 'ProjectIntroSingle',
@@ -34,12 +35,15 @@ export default {
   data () {
     return {
       currProgress: 0,
+      isProgressRun: false,
     }
   },
   methods: {
     runProgress () {
+      debug('this.targProgress', this.targProgress)
       const interval = setInterval(() => {
         this.currProgress += Math.round(this.targProgress / 100)
+        debug('this.targProgress', this.targProgress)
         if (this.currProgress >= this.targProgress) {
           this.currProgress = this.targProgress
           clearInterval(interval)
@@ -47,12 +51,18 @@ export default {
       }, 10)
     },
   },
-  mounted () {
-    this.runProgress()
-  },
+  mounted () {},
   props: {
     projId: {
       type: Number,
+    },
+  },
+  watch: {
+    targProgress () {
+      if (!this.isProgressRun) {
+        this.isProgressRun = true
+        this.runProgress()
+      }
     },
   },
 }
