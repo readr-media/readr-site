@@ -103,7 +103,7 @@ export default {
   'PROJECT': {
     'DEDUCTING': '扣除中',
     'DISCUSS': '加入討論',
-    'ENCOURAGE': '鼓勵一下',
+    'ENCOURAGE': '參與專題製作',
     'HOT_KEYWORD': '熱門關鍵字',
     'JOIN_CONFIRM': '確認加入',
     'JOIN_CONTENT_1': '快來開放編輯室參與新聞製作',
