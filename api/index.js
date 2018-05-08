@@ -360,9 +360,10 @@ router.post('/meta', authVerify, (req, res) => {
     if (!err && response) {
       const dom = new JSDOM(response.text)
       const og = {}
-
       if (dom.window.document.querySelector('meta[property="og:title"]')) {
         og.ogTitle = dom.window.document.querySelector('meta[property="og:title"]').getAttribute("content") || ' '
+      } else if (dom.window.document.querySelector('title')) {
+        og.ogTitle = dom.window.document.querySelector('title').innerHTML || ' '
       }
 
       if (dom.window.document.querySelector('meta[property="og:description"]')) {
