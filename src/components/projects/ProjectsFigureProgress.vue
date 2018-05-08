@@ -11,7 +11,7 @@
         <div class="projects-figure-progress__alert" v-text="$t('PROJECT.DISCUSS')"></div>
       </div>
       <div v-else class="projects-figure-progress__btn-container">
-        <button class="projects-figure-progress__button button--encoruage" @click="$_projectsFigureProgress_openLightBox"><img src="/public/icons/encoruage-white.png" :alt="$t('PROJECT.ENCOURAGE')"></button>
+        <button class="projects-figure-progress__button button--encoruage" @click="$_projectsFigureProgress_openLightBox"><img src="/public/icons/participate-white.png" :alt="$t('PROJECT.ENCOURAGE')"></button>
         <div class="projects-figure-progress__alert" v-text="$t('PROJECT.ENCOURAGE')"></div>
       </div>
     </div>
@@ -155,7 +155,7 @@ export default {
     display none
     position absolute
     top 50%
-    left -66px
+    right 40px
     transform translateY(-50%)
     padding .2em .5em
     color #000
@@ -163,6 +163,7 @@ export default {
     background #fff
     border 1px solid #d3d3d3
     user-select none
+    white-space nowrap
     &::before
       content ''
       position absolute
