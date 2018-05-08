@@ -64,6 +64,9 @@ export default {
     PostItem,    
   },
   computed: {
+    curr_project () {
+      return get(this.$route, 'params.id')
+    },
     jobs () {
       const jobs = []
 
@@ -203,6 +206,9 @@ export default {
     },
     '$route' (to, from) {
       debug('Mutation detected: $route', to, from)
+    },
+    curr_project () {
+      debug('Mutation detected: curr_project')
       this.currPage = DEFAULT_PAGE,
       Promise.all(this.jobs)
     },
