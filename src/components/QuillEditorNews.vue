@@ -1,5 +1,5 @@
 <template>
-  <section class="editor news">
+  <section class="editor news" :class="{ disabled: disabled }">
     <div class="editor__heading">
       <div class="editor__heading-text" v-text="$t('POST_EDITOR.EDITOR')"></div>
       <div class="editor__heading-switch" @click="$_quillEditor_toggleHtml">&lt; / &gt;</div>
@@ -25,6 +25,7 @@
     <div
       ref="quillEditorNews"
       :content="content"
+      :disabled="disabled"
       class="editor__quill"
       v-quill:quillEditorNews="editorOption"
       @change="$_quillEditor_onEditorChange($event)">
@@ -48,6 +49,9 @@ export default {
   props: {
     content: {
       default: '',
+    },
+    disabled: {
+      type: Boolean,
     },
   },
   data () {
@@ -143,6 +147,7 @@ export default {
   .editor
     position relative
     margin-top 15px
+    transition background-color .5s linear
     >>> .ql-hr
       width 54px
       &:after
@@ -164,6 +169,10 @@ export default {
         width 50%
       .editor__html
         display block
+    &.input--error
+      background-color #ffe5e5
+    &.disabled
+      background-color rgba(0, 0, 0, .3)
     &__heading
       display flex
       height 20px

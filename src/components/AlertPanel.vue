@@ -6,6 +6,7 @@
         <div v-for="i in items" :key="i.id" class="alert__item">
           <p><strong v-text="`${$t('ALERT.AUTHOR')}：`"></strong><span v-text="$_alertPanel_getPostAuthor(i)"></span></p>
           <p><strong v-text="`${$t('ALERT.TITLE')}：`"></strong><span v-text="i.title"></span></p>
+          <p v-if="status === config.post.SCHEDULING || status === config.post.PUBLISHED"><strong v-text="`${$t('ALERT.PUBLISH_DATE')}：`"></strong><span v-text="moment(i.published_at).format('YYYY-MM-DD HH:MM')"></span></p>
         </div>
       </template>
       <template v-if="type === 'tag'">
@@ -25,6 +26,8 @@
 <script>
   import { POST_PUBLISH_STATUS, TAG_ACTIVE, } from '../../api/config'
   import { get, } from 'lodash'
+  import moment from 'moment'
+
   export default {
     name: 'AlertPanel',
     props: {
@@ -32,6 +35,10 @@
         type: Number,
       },
       statusChanged: {
+        type: Boolean,
+        default: false,
+      },
+      isReturnToDraft: {
         type: Boolean,
         default: false,
       },
@@ -70,15 +77,22 @@
               switch (this.status) {
                 case POST_PUBLISH_STATUS.PUBLISHED:
                   return `${this.$t('ALERT.POST')}${this.$t('ALERT.PUBLISH_SUCCESSFUL')}！`
+                case POST_PUBLISH_STATUS.UNPUBLISHED:
+                  return `${this.$t('ALERT.POST')}${this.$t('ALERT.UNPUBLISHED')}！`
                 case POST_PUBLISH_STATUS.DELETED:
                   return `${this.$t('ALERT.POST')}${this.$t('ALERT.DELETE_SUCCESSFUL')}！`
                 case POST_PUBLISH_STATUS.DRAFT:
+                  if (this.isReturnToDraft) {
+                    return `${this.$t('ALERT.POST')}${this.$t('ALERT.RETURNED')}！`
+                  }
                   if (!get(this.items, [ 0, 'id', ])) {
                     return `${this.$t('ALERT.POST')}${this.$t('ALERT.ADD_SUCCESSFUL')}！`
                   }
                   return `${this.$t('ALERT.POST')}${this.$t('ALERT.UPDATE_SUCCESSFUL')}！`
                 case POST_PUBLISH_STATUS.PENDING:
                   return `${this.$t('ALERT.POST')}${this.$t('ALERT.PENDING')}！`
+                case POST_PUBLISH_STATUS.SCHEDULING:
+                  return `${this.$t('ALERT.POST')}${this.$t('ALERT.SCHEDULED')}！`
               }
               break
             }
@@ -101,8 +115,12 @@
             switch (this.status) {
               case POST_PUBLISH_STATUS.PUBLISHED:
                 return this.$t('ALERT.PUBLISH_CONFIRMATION')
+              case POST_PUBLISH_STATUS.UNPUBLISHED:
+                return this.$t('ALERT.UNPUBLISH_CONFIRMATION')
               case POST_PUBLISH_STATUS.DELETED:
                 return this.$t('ALERT.DELETE_CONFIRMATION')
+              case POST_PUBLISH_STATUS.DRAFT:
+                return this.$t('ALERT.RETURN_DRAFT_CONFIRMATION')
             }
             break
           case 'tag':
@@ -139,11 +157,18 @@
           case 'post':
           case 'video':
             switch (this.status) {
+              case POST_PUBLISH_STATUS.SCHEDULING:
               case POST_PUBLISH_STATUS.PUBLISHED:
                 this.$emit('publishPosts')
                 break
+              case POST_PUBLISH_STATUS.UNPUBLISHED:
+                this.$emit('unpublishPosts', POST_PUBLISH_STATUS.UNPUBLISHED)
+                break
               case POST_PUBLISH_STATUS.DELETED:
                 this.$emit('deletePosts')
+                break
+              case POST_PUBLISH_STATUS.DRAFT:
+                this.$emit('returnToDraftPosts', POST_PUBLISH_STATUS.DRAFT)
                 break
             }
             break
@@ -155,6 +180,7 @@
       $_alertPanel_getPostAuthor (post) {
         return get(post, [ 'author', 'nickname', ]) || get(this.$store, [ 'state', 'profile', 'nickname', ])
       },
+      moment,
     },
   }
 </script>

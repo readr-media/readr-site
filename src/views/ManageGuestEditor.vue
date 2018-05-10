@@ -44,12 +44,11 @@
     </base-light-box>
     <base-light-box :showLightBox.sync="showEditor">
       <post-panel
-        :post="post"
-        :panelType="postPanel"
-        :postType="postType"
-        @addPost="$_guestEditor_addPost"
-        @deletePost="$_guestEditor_deletePost"
-        @updatePost="$_guestEditor_updatePost">
+        :action="postPanel"
+        :editorType="postType"
+        :initialPost="post"
+        @closeEditor="showEditor = false"
+        @updateList="$_guestEditor_updatePostList">
       </post-panel>
     </base-light-box>
     <base-light-box :isAlert="true" :showLightBox.sync="showAlert">
@@ -86,9 +85,6 @@
   const DEFAULT_PAGE = 1
   const DEFAULT_SORT = '-updated_at'
 
-  const addPost = (store, params) => {
-    return store.dispatch('ADD_POST', { params, })
-  }
 
   const deletePost = (store, id) => {
     return store.dispatch('DELETE_POST', { id: id, })
@@ -133,10 +129,6 @@
         object: object,
       },
     })
-  }
-
-  const updatePost = (store, params) => {
-    return store.dispatch('UPDATE_POST', { params, })
   }
 
   export default {
@@ -229,36 +221,8 @@
       .catch(() => this.loading = false)
     },
     methods: {
-      $_guestEditor_addPost (params) {
-        this.alertType = 'post'
-        this.itemsSelected = []
-        this.itemsSelected.push(params)
-        this.loading = true
-        addPost(this.$store, params)
-          .then(() => {
-            this.$_guestEditor_updatePostList({ needUpdateCount: true, })
-            this.showEditor = false
-            this.itemsStatus = params.publish_status
-            this.postStatusChanged = true
-            this.needConfirm = false
-            this.showAlert = true
-            this.loading = false
-          })
-          .catch(() => {
-            this.alertType = 'error'
-            this.needConfirm = false
-            this.showAlert = true
-            this.loading = false
-          })
-      },
       $_guestEditor_alertHandler (showAlert) {
         this.showAlert = showAlert
-      },
-      $_guestEditor_deletePost () {
-        this.itemsStatus = POST_PUBLISH_STATUS.DELETED
-        this.postStatusChanged = true
-        this.needConfirm = true
-        this.showAlert = true
       },
       $_guestEditor_deletePosts () {
         deletePost(this.$store, this.itemsSelectedID)
@@ -436,23 +400,6 @@
           default:
             getFollowing(this.$store, { subject: _.get(this.profile, [ 'id', ]), resource: resource, })
         }
-      },
-      $_guestEditor_updatePost(params, statusChanged) {
-        this.itemsStatus = params.publish_status
-        this.postStatusChanged = statusChanged
-        updatePost(this.$store, params)
-          .then(() => {
-            this.$_guestEditor_updatePostList({})
-            this.showEditor = false
-            this.showDraftList = false
-            this.showAlert = true
-            this.needConfirm = false
-          })
-          .catch(() => {
-            this.alertType = 'error'
-            this.needConfirm = false
-            this.showAlert = true
-          })
       },
       $_guestEditor_updatePostList ({ sort, page, needUpdateCount = false, }) {
         this.sort = sort || this.sort
