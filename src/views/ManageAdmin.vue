@@ -81,13 +81,11 @@
         </BaseLightBox>
         <BaseLightBox :showLightBox.sync="showEditor">
           <PostPanel
-            :post="post"
-            :panelType="postPanel"
-            :postType="postType"
-            @addPost="addPost"
-            @deletePost="deletePost"
-            @publishPost="publishPost"
-            @updatePost="updatePost">
+            :action="postPanel"
+            :editorType="postType"
+            :initialPost="post"
+            @closeEditor="showEditor = false"
+            @updateList="updatePostList">
           </PostPanel>
         </BaseLightBox>
         <BaseLightBox :isAlert="true" :showLightBox.sync="showAlert">
@@ -131,11 +129,7 @@
   const DEFAULT_PAGE = 1
   const DEFAULT_SORT = '-updated_at'
   const debug = require('debug')('CLIENT:admin')
-
-  const addPost = (store, params) => {
-    return store.dispatch('ADD_POST', { params, })
-  }
-
+  
   const addTags = (store, text = '') => {
     return store.dispatch('ADD_TAGS', {
       params: {
@@ -244,9 +238,9 @@
     })
   }
 
-  const publishPosts = (store, params) => {
-    return store.dispatch('PUBLISH_POSTS', { params, })
-  }
+  const publishPosts = (store, params) => { 
+    return store.dispatch('PUBLISH_POSTS', { params, }) 
+  } 
 
   const unfollow = (store, resource, subject, object) => {
     return store.dispatch('PUBLISH_ACTION', {
@@ -257,10 +251,6 @@
         object: object,
       },
     })
-  }
-
-  const updatePost = (store, params) => {
-    return store.dispatch('UPDATE_POST', { params, })
   }
 
   export default {
@@ -355,37 +345,6 @@
       addMember () {
         this.showLightBox = true
       },
-      addPost (params) {
-        this.alertType = 'post'
-        this.itemsSelected = []
-        this.itemsSelected.push(params)
-        if (params.publish_status === POST_PUBLISH_STATUS.PUBLISHED) {
-          this.postForPublishInEditor = params
-          this.isPublishPostInEditor = true
-          this.itemsStatus = params.publish_status
-          this.postStatusChanged = true
-          this.needConfirm = true
-          this.showAlert = true
-        } else {
-          this.loading = true
-          addPost(this.$store, params)
-            .then(() => {
-              this.updatePostList({ needUpdateCount: true, })
-              this.showEditor = false
-              this.itemsStatus = params.publish_status
-              this.postStatusChanged = true
-              this.needConfirm = false
-              this.showAlert = true
-              this.loading = false
-            })
-            .catch(() => {
-              this.alertType = 'error'
-              this.needConfirm = false
-              this.showAlert = true
-              this.loading = false
-            })
-        }
-      },
       addTag (tagName) {
         this.itemsStatus = TAG_ACTIVE.ACTIVE
         this.needConfirm = false
@@ -404,12 +363,6 @@
       },
       alertHandler (showAlert) {
         this.showAlert = showAlert
-      },
-      deletePost () {
-        this.itemsStatus = POST_PUBLISH_STATUS.DELETED
-        this.postStatusChanged = true
-        this.needConfirm = true
-        this.showAlert = true
       },
       deletePosts () {
         deletePosts(this.$store, {
@@ -516,65 +469,24 @@
             break
         }
       },
-      publishPost (params) {
-        this.postForPublishInEditor = params
-        this.isPublishPostInEditor = true
-        this.itemsStatus = params.publish_status
-        this.postStatusChanged = true
-        this.needConfirm = true
-        this.showAlert = true
-      },
       publishPostHandler () {
         this.alertType = 'post'
         this.loading = true
-        if (this.isPublishPostInEditor) {
-          if (this.postPanel === 'add') {
-            addPost(this.$store, this.postForPublishInEditor)
-              .then(() => {
-                this.updatePostList({ needUpdateCount: true, })
-                this.showEditor = false
-                this.needConfirm = false
-                this.loading = false
-              })
-              .catch(() => {
-                this.alertType = 'error'
-                this.needConfirm = false
-                this.showAlert = true
-                this.loading = false
-              })
-          } else {
-            updatePost(this.$store, this.postForPublishInEditor)
-              .then(() => {
-                this.updatePostList({ needUpdateCount: false, })
-                this.showEditor = false
-                this.showDraftList = false
-                this.needConfirm = false
-                this.loading = false
-              })
-              .catch(() => {
-                this.alertType = 'error'
-                this.needConfirm = false
-                this.showAlert = true
-                this.loading = false
-              })
-          }
-        } else {
-          const params = {}
-          params.updated_by = _.get(this.$store.state, [ 'profile', 'id', ])
-          params.ids = this.itemsSelectedID
-          publishPosts(this.$store, params)
-            .then(() => {
-              this.updatePostList({ needUpdateCount: true, })
-              this.needConfirm = false
-              this.loading = false
-            })
-            .catch(() => {
-              this.alertType = 'error'
-              this.needConfirm = false
-              this.showAlert = true
-              this.loading = false
-            })
-        }
+        const params = {}
+        params.updated_by = _.get(this.$store.state, [ 'profile', 'id', ])
+        params.ids = this.itemsSelectedID
+        publishPosts(this.$store, params)
+          .then(() => {
+            this.updatePostList({ needUpdateCount: true, })
+            this.needConfirm = false
+            this.loading = false
+          })
+          .catch(() => {
+            this.alertType = 'error'
+            this.needConfirm = false
+            this.showAlert = true
+            this.loading = false
+          })
       },
       showAlertHandler (ids, itemsStatus) {
         this.itemsSelected = []
@@ -725,27 +637,9 @@
             getFollowing(this.$store, { subject: _.get(this.profile, [ 'id', ]), resource: resource, })
         }
       },
-      updatePost(params, statusChanged) {
-        this.alertType = 'post'
-        this.itemsStatus = params.publish_status
-        this.postStatusChanged = statusChanged
-        updatePost(this.$store, params)
-          .then(() => {
-            this.updatePostList({})
-            this.showEditor = false
-            this.showDraftList = false
-            this.showAlert = true
-            this.needConfirm = false
-          })
-          .catch(() => {
-            this.alertType = 'error'
-            this.needConfirm = false
-            this.showAlert = true
-          })
-      },
-      updatePostList ({ sort, page, needUpdateCount = false, }) {
+      updatePostList ({ sort, page, needUpdateCount = false, } = {}) {
         this.sort = sort || this.sort
-        this.page = page || this.sort
+        this.page = page || this.page
         switch (this.activePanel) {
           case 'records':
             switch (this.activeTab) {

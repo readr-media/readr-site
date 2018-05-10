@@ -1,9 +1,10 @@
 <template>
-  <section class="editor review">
+  <section class="editor review" :class="{ disabled: disabled }">
     <div class="editor__heading" v-text="$t('POST_EDITOR.EDITOR')"></div>
     <div
       ref="quillEditor"
       :content="content"
+      :disabled="disabled"
       class="editor__quill"
       v-quill:quillEditor="editorOption"
       @change="$_quillEditor_onEditorChange($event)">
@@ -22,6 +23,9 @@ export default {
     content: {
       default: '',
     },
+    disabled: {
+      type: Boolean,
+    },
   },
   data () {
     return {
@@ -38,9 +42,7 @@ export default {
   },
   methods: {
     $_quillEditor_onEditorChange(event) {
-      if (event.html) {
-        this.$emit('updateContent', event.html)
-      }
+      this.$emit('updateContent', event.html)
     },
   },
 }
@@ -49,6 +51,11 @@ export default {
 <style lang="stylus" scoped>
   .editor
     margin-top 15px
+    transition background-color .5s linear
+    &.input--error
+      background-color #ffe5e5
+    &.disabled
+      background-color rgba(0, 0, 0, .3)
     &__heading
       height 20px
       padding-left 10px
@@ -58,6 +65,7 @@ export default {
       background-color #000
     &__quill
       height 380px
+      font-size .9375rem
       overflow-y auto
-
+      
 </style>

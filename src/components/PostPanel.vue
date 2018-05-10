@@ -1,167 +1,179 @@
 <template>
-  <section class="postPanel">
-    <div class="postPanel__container">
-      <div class="postPanel__input">
-        <input v-model="post.title" type="text" class="postPanel__title" :placeholder="$t('POST_PANEL.TITLE_PLACEHOLDER')">
+  <section class="post-panel">
+    <div class="post-panel-container">
+      <div class="input input--title" :class="{ 'input--error': includes(errors, 'title') }">
+        <input v-model="post.title" type="text" :disabled="loading" :placeholder="$t('POST_PANEL.TITLE_PLACEHOLDER')">
+        <p v-if="includes(errors, 'title')">請輸入標題</p>
       </div>
       <quill-editor-review
-        v-if="postType === config.type.REVIEW"
+        v-if="isReview"
+        :class="{ 'input--error': includes(errors, 'content') }"
         :content="post.content"
+        :disabled="loading"
         @updateContent="$_postPanel_updateContent">
       </quill-editor-review>
       <quill-editor-news
-        v-if="postType === config.type.NEWS"
+        v-if="!isReview"
+        :class="{ 'input--error': includes(errors, 'content') }"
         :content="post.content"
+        :disabled="loading"
         @updateContent="$_postPanel_updateContent">
       </quill-editor-news>
-      <div class="postPanel__input postPanel__link">
-        <label for="" v-text="`${$t('POST_PANEL.NEWS')}${$t('POST_PANEL.LINK')}：`"></label>
-        <input v-model="post.link" type="url" @change="$_postPanel_metaChanged">
+      <p v-if="includes(errors, 'content')">請輸入內容</p>
+      <div class="input input--link" :class="{ 'input--error': includes(errors, 'link') }">
+        <label v-text="`${$t('POST_PANEL.NEWS')}${$t('POST_PANEL.LINK')}：`"></label>
+        <input v-model="post.link" type="url" :disabled="loading" @change="$_postPanel_linkChanged">
+        <p v-if="includes(errors, 'link')">請輸入新聞連結</p>
       </div>
-      <div v-if="$can('editPostOg')" class="postPanel__input postPanel--publishDate">
-        <label for="" v-text="`${$t('POST_PANEL.PUBLISH_DATE')}：`"></label>
+      <div v-if="$can('editPostOg')" class="input input--date">
+        <label v-text="`${$t('POST_PANEL.PUBLISH_DATE')}：`"></label>
         <datetime-picker
-          v-model="date"
+          v-model="publishedDate"
           input-format="YYYY/MM/DD HH:mm"
+          :disabled="loading"
           :placeholder="`${$t('POST_PANEL.DATETIME_PLACEHOLDER')}`"
           type="datetime">
         </datetime-picker>
       </div>
-      <div
-        v-if="$can('editPostOg')"
-        class="postPanel__input">
-        <label for="" v-text="`${$t('POST_PANEL.TAG')}：`"></label>
-        <div class="postPanel__tags">
-          <div class="postPanel__tags-box" @mousedown.prevent="$_postPanel_focusTagInput">
-            <template>
-              <div v-for="t in tagsSelected" :key="`${t.id}-selected`" class="postPanel__tags-box-selected">
-                <p v-text="t.text"></p>
-                <button @click="$_postPanel_deleteTag(t.id)">Ｘ</button>
-              </div>
-              <div v-for="t in tagsNeedAdd" :key="t" class="postPanel__tags-box-new">
-                <p v-text="t"></p>
-                <button @click="$_postPanel_deleteNewTag(t)">Ｘ</button>
-              </div>
-              <input ref="tagsInput" v-model="tagInput" type="text" @blur="$_postPanel_closeTagList" @focus="$_postPanel_showTagList" @keyup.enter="$_postPanel_tagHandler">
-            </template>
-          </div>
-          <div ref="tagsList" class="postPanel__tags-list hidden">
-            <button v-show="tags.length === 0" class="noResult" v-text="$t('POST_PANEL.NOT_FOUND')"></button>
-            <template>
-              <button v-for="t in tags" :key="t.tagId" @mousedown="$_postPanel_addTag(t.id)" v-text="t.text"></button>
-            </template>
-          </div>
-        </div>
+      <div v-if="$can('editPostOg')" class="input input--tag">
+        <label v-text="`${$t('POST_PANEL.TAG')}：`"></label>
+        <post-panel-tag
+          :disabled="loading"
+          :tagsNeedAdd="tagsNeedAdd"
+          :tagsSelected="tagsSelected"
+          :tagsSelectedID="tagsSelectedID"
+          @addToNeedAdd="$_postPanel_addTagToNeedAdd"
+          @addToSelected="$_postPanel_addTagToSelected"
+          @deselectNewTag="$_postPanel_deselectNewTag"
+          @deselectTag="$_postPanel_deselectTag">
+        </post-panel-tag>
       </div>
-      <div v-if="$can('editPostOg')" class="postPanel__input">
-        <label for="" v-text="`${$t('POST_PANEL.OG_TITLE')}：`"></label>
-        <input v-model="post.ogTitle" type="text">
-      </div>
-      <div v-if="$can('editPostOg')" class="postPanel__input">
-        <label for="" v-text="`${$t('POST_PANEL.OG_DESCRIPTION')}：`"></label>
-        <input v-model="post.ogDescription" type="text">
-      </div>
-      <div v-if="$can('editPostOg')" class="postPanel__input">
-        <label for="" v-text="`${$t('POST_PANEL.OG_IMAGE')}：`"></label>
-        <input v-model="post.ogImage" type="text" readonly>
-        <button class="postPanel__btn--img" @click="$_postPanel_addOgImage">
+      <!-- <div v-if="$can('editPostOg')" class="input" :class="{ 'input--error': includes(errors, 'ogTitle') }">
+        <label v-text="`${$t('POST_PANEL.OG_TITLE')}：`"></label>
+        <input v-model="post.ogTitle" type="text" :disabled="loading">
+        <p v-if="includes(errors, 'ogTitle')">請輸入分享標題</p>
+      </div> -->
+      <!-- <div v-if="$can('editPostOg')" class="input input--descr" :class="{ 'input--error': includes(errors, 'ogDescr') }">
+        <label v-text="`${$t('POST_PANEL.OG_DESCRIPTION')}：`"></label>
+        <textarea rows="3" :disabled="loading"></textarea>
+        <p v-if="includes(errors, 'ogTitle')">請輸入分享說明</p>
+      </div> -->
+      <!-- <div v-if="$can('editPostOg')" class="input input--og-img">
+        <label v-text="`${$t('POST_PANEL.OG_IMAGE')}：`"></label>
+        <input v-model="post.ogImage" type="text" :disabled="loading" readonly>
+        <button v-show="!loading" class="button button--img" :disabled="loading" @click="$_postPanel_addOgImage">
           <img src="/public/icons/upload.png" :alt="$t('POST_PANEL.UPLOAD')">
         </button>
-        <button class="postPanel__btn--img" @click="$_postPanel_deleteOgImage">
+        <button v-show="!loading" class="button button--img" :disabled="loading" @click="$_postPanel_deleteOgImage">
           <img src="/public/icons/delete.png" :alt="$t('POST_PANEL.DELETE')">
         </button>
-      </div>
-      <div v-show="post.ogImage && $can('editPostOg')" class="postPanel__ogImg">
+        <input ref="uploadImg" class="input--hidden" type="file" accept="image/*" @change="$_postPanel_uploadImg">
+      </div> -->
+      <!-- <div v-if="post.ogImage && $can('editPostOg')" class="post-panel__og-img">
         <img :src="post.ogImage" :alt="post.ogTitle">
-      </div>
-      <div :class="[ (panelType === 'edit') ? 'advanced' : '' ]" class="postPanel__submit">
-        <button
-          v-if="isClientSide && $can('deletePost') && (panelType === 'edit')"
-          class="postPanel__btn"
-          @click="$_postPanel_deletePost"
-          v-text="$t('POST_PANEL.DELETE')">
-        </button>
-        <button
-          v-if="isClientSide && (panelType === 'edit') && $can('editPostOg') && (post.publishStatus !== config.publishStatus.DRAFT)"
-          class="postPanel__btn"
-          :disabled="isEmpty"
-          @click="$_postPanel_submitHandler(config.publishStatus.DRAFT)"
-          v-text="$t('POST_PANEL.RETURN_TO_DRAFT')">
-        </button>
-        <button
-          v-if="(panelType === 'edit')"
-          class="postPanel__btn"
-          @click="$_postPanel_submitHandler()"
-          v-text="$t('POST_PANEL.SAVE')">
-        </button>
-        <button
-          v-if="isClientSide && (panelType === 'add') && $can('addPost')"
-          class="postPanel__btn"
-          :disabled="isEmpty"
-          @click="$_postPanel_submitHandler(config.publishStatus.DRAFT)"
-          v-text="$t('POST_PANEL.SAVE_DRAFT')">
-        </button>
-        <button
-          v-if="isClientSide && !$can('publishPost')"
-          class="postPanel__btn"
-          :disabled="isEmpty"
-          @click="$_postPanel_submitHandler(config.publishStatus.PENDING)"
-          v-text="$t('POST_PANEL.SAVE_PENDING')">
-        </button>
-        <button
-          v-if="isClientSide && $can('publishPost') && (post.publishStatus !== config.publishStatus.PUBLISHED)"
-          class="postPanel__btn"
-          :disabled="isEmpty || loading"
-          @click="$_postPanel_submitHandler(config.publishStatus.PUBLISHED)"
-          v-text="loading ? $t('POST_PANEL.IN_SAVE') : $t('POST_PANEL.PUBLISH')">
-        </button>
+      </div> -->
+      <div class="post-panel__action">
+        <template v-if="isClientSide && !loading">
+          <button
+            v-if="$can('deletePost') && (action === 'edit') && (post.publishStatus !== config.publishStatus.PUBLISHED && post.publishStatus !== config.publishStatus.SCHEDULING)"
+            class="button"
+            @click="$_postPanel_showAlert(config.publishStatus.DELETED)"
+            v-text="$t('POST_PANEL.DELETE')">
+          </button>
+          <button
+            v-if="(action === 'edit') && $can('editPostOg') && (post.publishStatus !== config.publishStatus.DRAFT)"
+            class="button"
+            @click="$_postPanel_validation(config.publishStatus.DRAFT)"
+            v-text="$t('POST_PANEL.RETURN_TO_DRAFT')">
+          </button>
+          <button
+            v-if="$can('publishPost') && (action === 'edit') && (post.publishStatus === config.publishStatus.PUBLISHED || post.publishStatus === config.publishStatus.SCHEDULING) "
+            class="button"
+            @click="$_postPanel_validation(config.publishStatus.UNPUBLISHED)"
+            v-text="$t('POST_PANEL.UNPUBLISH')">
+          </button>
+          <button
+            v-if="(action === 'edit')"
+            class="button"
+            @click="$_postPanel_validation()"
+            v-text="$t('POST_PANEL.SAVE')">
+          </button>
+          <button
+            v-if="(action === 'add') && $can('addPost')"
+            class="button"
+            @click="$_postPanel_validation(config.publishStatus.DRAFT)"
+            v-text="$t('POST_PANEL.SAVE_DRAFT')">
+          </button>
+          <button
+            v-if="!$can('publishPost')"
+            class="button"
+            @click="$_postPanel_validation(config.publishStatus.PENDING)"
+            v-text="$t('POST_PANEL.SAVE_PENDING')">
+          </button>
+          <button
+            v-if="$can('publishPost') && (post.publishStatus !== config.publishStatus.PUBLISHED && post.publishStatus !== config.publishStatus.SCHEDULING)"
+            class="button"
+            @click="$_postPanel_validation(config.publishStatus.PUBLISHED)"
+            v-text="$t('POST_PANEL.PUBLISH')">
+          </button>
+        </template>
+        
+        <p v-if="loading" v-text="$t('POST_PANEL.IN_SAVE')"></p>
       </div>
     </div>
+    <base-light-box :isAlert="true" :showLightBox.sync="showAlert">
+      <alert-panel
+        :status="post.publish_status"
+        :statusChanged="postStatusChanged"
+        :isReturnToDraft="isReturnToDraft"
+        :items="itemForAlert"
+        :needConfirm="needConfirm"
+        :showLightBox="showAlert"
+        :type="'post'"
+        @closeAlert="showAlert = false"
+        @deletePosts="$_postPanel_deletePost"
+        @publishPosts="$_postPanel_publish"
+        @returnToDraftPosts="$_postPanel_updatePostConfirmed"
+        @unpublishPosts="$_postPanel_updatePostConfirmed">
+      </alert-panel>
+    </base-light-box>
   </section>
 </template>
 <script>
   import { Datetime, } from 'vue-datetime'
   import { IMAGE_UPLOAD_MAX_SIZE, } from '../constants'
   import { POST_PUBLISH_STATUS, POST_TYPE, } from '../../api/config'
-  import _ from 'lodash'
+  import { find, get, identity, includes, map, mapKeys, pickBy, snakeCase, truncate, union, xor, } from 'lodash'
   import AlertPanel from './AlertPanel.vue'
   import BaseLightBox from './BaseLightBox.vue'
+  import PostPanelTag from './PostPanelTag.vue'
   import QuillEditorNews from './QuillEditorNews.vue'
   import QuillEditorReview from './QuillEditorReview.vue'
   import validator from 'validator'
 
-  const MAXRESULT = 20
-  const DEFAULT_PAGE = 1
+  const addPost = (store, params) => {
+    return store.dispatch('ADD_POST', { params, })
+  }
 
   const addTags = (store, text = '') => {
     return store.dispatch('ADD_TAGS', {
       params: {
         text: text,
-        updated_by: _.get(store, [ 'state', 'profile', 'id', ]),
+        updated_by: get(store, [ 'state', 'profile', 'id', ]),
       },
     })
+  }
+
+  const deletePost = (store, id) => {
+    return store.dispatch('DELETE_POST', { id: id, })
   }
 
   const getMeta = (store, url) => {
     return store.dispatch('GET_META', { url, })
   }
 
-  const getTags = (store, {
-    max_result = MAXRESULT,
-    page = DEFAULT_PAGE,
-    sorting = '-update_at',
-    keyword = '',
-    stats = false,
-  }) => {
-    return store.dispatch('GET_TAGS', {
-      params: {
-        max_result: max_result,
-        page: page,
-        sorting: sorting,
-        keyword: keyword,
-        stats: stats,
-      },
-    })
+  const updatePost = (store, params) => {
+    return store.dispatch('UPDATE_POST', { params, })
   }
 
   const uploadImage = (store, file) => {
@@ -169,470 +181,466 @@
   }
 
   export default {
-    name: 'PostPanel',
+    name: 'PostPanelR',
     components: {
       'alert-panel': AlertPanel,
       'base-light-box': BaseLightBox,
       'datetime-picker': Datetime,
+      'post-panel-tag': PostPanelTag,
       'quill-editor-news': QuillEditorNews,
       'quill-editor-review': QuillEditorReview,
     },
     props: {
-      post: {
-        type: Object,
-        default: {},
-      },
-      panelType: {
+      action: {
         type: String,
-        required: true,
+        dafault: 'add',
       },
-      postType: {
+      editorType: {
         type: Number,
         required: true,
+      },
+      initialPost: {
+        type: Object,
+        default: () => {},
       },
     },
     data () {
       return {
         config: {
           publishStatus: POST_PUBLISH_STATUS,
-          type: POST_TYPE,
         },
-        date: '',
+        errors: [],
+        isReturnToDraft: false,
+        linkChanged: false,
         loading: false,
-        metaChanged: false,
-        postParams: {},
-        tagInput: '',
+        needConfirm: false,
+        post: this.initialPost,
+        postStatusChanged: false,
+        publishedDate: '',
+        showAlert: false,
         tagsNeedAdd: [],
         tagsSelected: [],
       }
     },
     computed: {
-      isEmpty () {
-        return _.isEmpty(_.trim(_.get(this.post, [ 'link', ], '')))
-          && _.isEmpty(_.trim(_.get(this.post, [ 'title', ], '')))
-          && _.isEmpty(_.trim(_.replace(_.get(this.post, [ 'content', ], ''), /<[^>]*>/g, '')))
+      itemForAlert () {
+        return [ this.post, ]
       },
       isClientSide () {
-        return _.get(this.$store, [ 'state', 'isClientSide', ], false)
+        return get(this.$store, 'state.isClientSide', false)
       },
-      tags () {
-        let tags = _.get(this.$store, [ 'state', 'tags', ], []) || []
-        return _.filter(tags, (tag) => {
-          return !_.includes(this.tagsSelectedID, tag.id)
-        })
+      isReview () {
+        return this.editorType === POST_TYPE.REVIEW
       },
       tagsSelectedID () {
-        const items = []
-        _.forEach(this.tagsSelected, (item) => {
-          items.push(Number(item.id))
-        })
-        return items
+        return map(this.tagsSelected, tag => tag.id)
       },
     },
     watch: {
-      post () {
-        this.postParams = {}
-        this.tagsNeedAdd = []
+      initialPost () {
+        this.post = this.initialPost
+        this.publishedDate = get(this.post, [ 'publishedAt', ]) || ''
+        this.linkChanged = false
+        this.isReturnToDraft = false
+        this.showAlert = false
+        this.needConfirm = false
+        this.postStatusChanged = false
         this.tagsSelected = []
-        this.date = _.get(this.post, [ 'publishedAt', ]) || ''
-        const tags = _.get(this.post, [ 'tags', ]) || []
+        const tags = get(this.post, [ 'tags', ]) || []
         tags.forEach((tag) => {
+          tag.id = Number(tag.id)
           this.tagsSelected.push(tag)
         })
       },
-      tagInput () {
-        this.$_postPanel_getTags()
+      showAlert (value) {
+        if (!value) {
+          this.post = this.initialPost
+          this.publishedDate = get(this.post, [ 'publishedAt', ]) || ''
+          this.linkChanged = false
+          this.isReturnToDraft = false
+          this.needConfirm = false
+          this.postStatusChanged = false
+          this.tagsSelected = []
+          const tags = get(this.post, [ 'tags', ]) || []
+          tags.forEach((tag) => {
+            tag.id = Number(tag.id)
+            this.tagsSelected.push(tag)
+          })
+          this.loading = false
+        }
       },
-    },
-    beforeMount () {
-      getTags(this.$store, { stats: true, })
-      const tags = _.get(this.post, [ 'tags', ]) || []
-      tags.forEach((tag) => {
-        this.tagsSelected.push(tag)
-      })
     },
     methods: {
       $_postPanel_addOgImage () {
-        const input = document.createElement('input')
-        input.setAttribute('type', 'file')
-        input.setAttribute('accept', 'image/*')
-        input.click()
-        input.onchange = () => {
-          const file = input.files[0]
-          if (/^image\//.test(file.type) && file.size <= IMAGE_UPLOAD_MAX_SIZE) {
-            const fd = new FormData()
-            fd.append('image', file)
-            uploadImage(this.$store, fd)
-              .then((res) => {
-                this.$set(this.post, 'ogImage', res.body.url)
-              })
-              .catch((err) => {
-                console.error(err)
-              })
-          }
-        }
+        this.$refs.uploadImg.click()
       },
-      $_postPanel_addTag (id) {
-        this.$refs.tagsInput.focus()
-        this.tagsSelected.push(_.find(this.tags, { id: id, }))
-        this.tagsSelected = _.uniq(this.tagsSelected)
-        this.tagInput = ''
-        this.$refs.tagsList.classList.add('hidden')
+      $_postPanel_addTagToNeedAdd (tag) {
+        this.tagsNeedAdd.push(tag)
       },
-      $_postPanel_addNewTag (publishStatus) {
-        Promise.all(this.tagsNeedAdd.map((tag) => {
-          return addTags(this.$store, tag)
-        }))
-        .then((value) => {
-          const ids = _.map(value, (t) => {
-            return _.get(t, [ 'body', 'tagId', ])
-          })
-          const unionTag = _.union(this.tagsSelectedID, ids)
-          this.$_postPanel_submit(publishStatus, unionTag)
-        })
-        .catch(() => {
-          this.$_postPanel_submit(publishStatus, this.tagsSelectedID)
-        })
-      },
-      $_postPanel_closeTagList () {
-        this.$refs.tagsList.classList.add('hidden')
-      },
-      $_postPanel_deleteNewTag (tag) {
-        this.tagsNeedAdd = _.xor(this.tagsNeedAdd, [ tag, ])
+      $_postPanel_addTagToSelected (tag) {
+        this.tagsSelected.push(tag)
       },
       $_postPanel_deleteOgImage () {
         this.post.ogImage = ''
       },
       $_postPanel_deletePost () {
-        this.$emit('deletePost')
+        deletePost(this.$store, this.post.id)
+        .then(() => {
+          this.needConfirm = false
+          this.loading = false
+          this.$emit('closeEditor')
+          this.$emit('updateList', { needUpdateCount: true, })
+        })
+        .catch(() => {
+          this.alertType = 'error'
+          this.needConfirm = false
+          this.showAlert = true
+          this.loading = false
+        })
       },
-      $_postPanel_deleteTag (id) {
-        const tag = [ _.find(this.tagsSelected, { id: id, }), ]
-        this.tagsSelected = _.xor(this.tagsSelected, tag)
+      $_postPanel_deselectNewTag (tag) {
+        this.tagsNeedAdd = xor(this.tagsNeedAdd, [ tag, ])
       },
-      $_postPanel_focusTagInput () {
-        this.$refs.tagsInput.focus()
+      $_postPanel_deselectTag (id) {
+        const tag = [ find(this.tagsSelected, { id: id, }), ]
+        this.tagsSelected = xor(this.tagsSelected, tag)
       },
-      $_postPanel_getTags () {
-        getTags(this.$store, { keyword: this.tagInput, })
+      $_postPanel_linkChanged () {
+        this.linkChanged = true
       },
-      $_postPanel_metaChanged () {
-        this.metaChanged = true
-      },
-      $_postPanel_showTagList () {
-        this.$refs.tagsList.classList.remove('hidden')
-      },
-      $_postPanel_submit (publishStatus, unionTag = this.tagsSelectedID) {
-        switch (this.panelType) {
-          case 'add':
-            this.postParams.publish_status = publishStatus
-            this.postParams.author = _.get(this.$store.state, [ 'profile', 'id', ])
-            this.postParams.type = this.postType
-
-            if (this.$can('editPostOg')) {
-              this.postParams.tags = unionTag
-            }
-
-            this.$emit('addPost', this.postParams)
-            break
-          case 'edit': {
-            let statusChanged = false
-            
-            this.postParams.author = _.get(this.post, [ 'author', 'id', ])
-            this.postParams.tags = unionTag
-            if (publishStatus) {
-              this.postParams.publish_status = publishStatus
-              statusChanged = true
-            }
-
-            if (statusChanged) {
-              switch (this.postParams.publish_status) {
-                case POST_PUBLISH_STATUS.PUBLISHED:
-                  this.$emit('publishPost', this.postParams)
-                  break
-                default:
-                  this.$emit('updatePost', this.postParams, statusChanged)
-              }
-            } else {
-              this.$emit('updatePost', this.postParams, statusChanged)
-            }
-          }
+      $_postPanel_publish () {
+        if (this.action === 'add') {
+          addPost(this.$store, this.post)
+            .then(() => {
+              this.needConfirm = false
+              this.loading = false
+              this.$emit('closeEditor')
+              this.$emit('updateList', { needUpdateCount: true, })
+            })
+            .catch(() => {
+              this.alertType = 'error'
+              this.needConfirm = false
+              this.showAlert = true
+              this.loading = false
+            })
+        } else if (this.action === 'edit') {
+          updatePost(this.$store, this.post)
+            .then(() => {
+                this.needConfirm = false
+                this.loading = false
+                this.$emit('closeEditor')
+                this.$emit('updateList')
+              })
+              .catch(() => {
+                this.alertType = 'error'
+                this.needConfirm = false
+                this.showAlert = true
+                this.loading = false
+              })
         }
-        this.loading = false
       },
-      $_postPanel_submitHandler (status) {
+      $_postPanel_showAlert (publishStatus) {
         this.loading = true
-        const publishStatus = status || _.get(this.post, [ 'publishStatus', ])
-        this.postParams = _.omit(
-          _.mapKeys(Object.assign({}, this.post), (value, key) => _.snakeCase(key)),
-          [ 'author', 'comment_amount', 'created_at', 'like_amount', 'tags', 'updated_at', ]
-        )
-        this.postParams.updated_by = _.get(this.$store.state, [ 'profile', 'id', ])
-        
-        if (this.$can('editPostOg')) {
-          this.postParams.og_title = _.get(this.post, [ 'ogTitle', ]) || _.get(this.post, [ 'title', ]) || ''
-        }
-
-        if (publishStatus === POST_PUBLISH_STATUS.PUBLISHED && !this.date) {
-          this.postParams.published_at = new Date(Date.now())
-        } else if (this.date) {
-          this.postParams.published_at = new Date(this.date)
-        }
-
-        if (this.metaChanged) {
-          let link = _.get(this.post, [ 'link', ])
-          this.postParams.link_name = ''
-          this.postParams.link_title = ''
-          this.postParams.link_description = ''
-          this.postParams.link_image = ''
-          if (validator.isURL(link, { protocols: [ 'http','https', ], })) {
-            if (link.match(/[\u3400-\u9FBF]/)) {
-              link = encodeURI(link)
-            }
-            getMeta(this.$store, link)
-            .then((res) => {
-              this.postParams.link_name = _.truncate(_.get(res, [ 'body', 'ogSiteName', ]), { 'length': 40, })
-              this.postParams.link_title = _.truncate(_.get(res, [ 'body', 'ogTitle', ]), { 'length': 200, })
-              this.postParams.link_description = _.truncate(_.get(res, [ 'body', 'ogDescription', ]), { 'length': 250, })
-              this.postParams.link_image = _.get(res, [ 'body', 'ogImage', ])
-              
-              if (this.tagsNeedAdd.length !== 0) {
-                this.$_postPanel_addNewTag(publishStatus)
-              } else {
-                this.$_postPanel_submit(publishStatus)
-              }
-            })
-            .catch((err) => {
-              console.error(`get meta error ${link}`, err)
-            })
-          } else {
-            if (this.tagsNeedAdd.length !== 0) {
-              this.$_postPanel_addNewTag(publishStatus)
-            } else {
-              this.$_postPanel_submit(publishStatus)
-            }
-          }
-        } else {
-          if (this.tagsNeedAdd.length !== 0) {
-            this.$_postPanel_addNewTag(publishStatus)
-          } else {
-            this.$_postPanel_submit(publishStatus)
-          }
-        }
+        this.post.publish_status = publishStatus
+        this.postStatusChanged = true
+        this.needConfirm = true
+        this.showAlert = true
       },
-      $_postPanel_tagHandler () {
-        if (this.tagInput) {
-          const hasTag = _.find(this.tags, { 'text': this.tagInput, })
-          if (hasTag) {
-            this.$_postPanel_addTag(hasTag.id)
-          } else {
-            this.tagsNeedAdd.push(this.tagInput)
-            this.tagsNeedAdd = _.uniq(this.tagsNeedAdd)
-            this.tagInput = ''
-            this.$refs.tagsList.classList.add('hidden')
-          }
+      $_postPanel_submit (publishStatus) {
+        if (this.action === 'edit') {
+          this.post = pickBy(mapKeys(this.post, (value, key) => snakeCase(key)), identity())
         }
+
+        if (this.action === 'edit' && publishStatus === POST_PUBLISH_STATUS.DRAFT) {
+          this.isReturnToDraft = true
+        }
+
+        this.post.publish_status = get(this.post, 'publish_status')
+
+        if (publishStatus || publishStatus === POST_PUBLISH_STATUS.UNPUBLISHED) {
+          this.postStatusChanged = true
+          this.post.publish_status = publishStatus
+        }
+
+        this.post.updated_by = get(this.$store.state, 'profile.id')
+        
+
+        const promiseLink = new Promise((resolve) => {
+          if (this.linkChanged) {
+            let link = get(this.post, 'link')
+            this.post.link_name = ''
+            this.post.link_title = ''
+            this.post.link_description = ''
+            this.post.link_image = ''
+            if (validator.isURL(link, { protocols: [ 'http','https', ], })) {
+              if (link.match(/[\u3400-\u9FBF]/)) {
+                link = encodeURI(link)
+              }
+              getMeta(this.$store, link)
+                .then((res) => {
+                  this.post.link_name = truncate(get(res, 'body.ogSiteName'), { 'length': 40, }) || ''
+                  this.post.link_title = truncate(get(res, 'body.ogTitle'), { 'length': 200, }) || ''
+                  this.post.link_description = truncate(get(res, 'body.ogDescription'), { 'length': 250, }) || ''
+                  this.post.link_image = get(res, 'body.ogImage') || ''
+                  resolve()
+                })
+            } else { 
+              resolve()
+            }
+          } else {
+            resolve()
+          }
+        })
+
+        const promiseTagsNeedAdd = new Promise((resolve) => {
+          if (this.tagsNeedAdd.length !== 0) {
+            Promise.all(this.tagsNeedAdd.map(tag => addTags(this.$store, tag)))
+            .then((value) => {
+              const ids = map(value, t => get(t, 'body.tagId'))
+              const unionTag = union(this.tagsSelectedID, ids)
+              return resolve(unionTag)
+            })
+            .catch(() => resolve(this.tagsSelectedID))
+          } else {
+            resolve(this.tagsSelectedID)
+          }
+        })
+
+        Promise.all([ promiseLink, promiseTagsNeedAdd, ])
+        .then((value) => {
+          const unionTag = value[1]
+          const now = new Date(Date.now())
+
+          if (unionTag && unionTag.length !== 0) {
+            this.post.tags = unionTag
+          }
+
+          if (publishStatus === POST_PUBLISH_STATUS.PUBLISHED && !this.publishedDate) {
+            this.post.published_at = now
+          } else if (this.publishedDate) {
+            this.post.published_at = new Date(this.publishedDate)
+            const minComparedWithNow = (this.post.published_at.getTime() - now.getTime()) / 60000
+            if (publishStatus === POST_PUBLISH_STATUS.PUBLISHED && minComparedWithNow > 1) {
+              this.post.publish_status = POST_PUBLISH_STATUS.SCHEDULING
+            }
+          }
+
+          if (this.action === 'add') {
+            this.post.author = get(this.$store.state, 'profile.id')
+            this.post.type = this.editorType
+            if (this.post.publish_status === POST_PUBLISH_STATUS.SCHEDULING || this.post.publish_status === POST_PUBLISH_STATUS.PUBLISHED) {
+              this.needConfirm = true
+              this.showAlert = true
+            } else {
+              addPost(this.$store, this.post)
+                .then(() => {
+                  this.showAlert = true
+                  this.loading = false
+                  this.$emit('closeEditor')
+                  this.$emit('updateList', { needUpdateCount: true, })
+                })
+                .catch(() => {
+                  this.alertType = 'error'
+                  this.needConfirm = false
+                  this.showAlert = true
+                  this.loading = false
+                })
+            }
+          } else if (this.action === 'edit') {
+            this.post.author = get(this.post, 'author.id')
+            if (this.post.publish_status === POST_PUBLISH_STATUS.SCHEDULING ||
+              this.post.publish_status === POST_PUBLISH_STATUS.PUBLISHED ||
+              this.post.publish_status === POST_PUBLISH_STATUS.UNPUBLISHED ||
+              (this.post.publish_status === POST_PUBLISH_STATUS.DRAFT && this.isReturnToDraft))
+            {
+              this.needConfirm = true
+              this.showAlert = true
+            } else {
+              updatePost(this.$store, this.post)
+                .then(() => {
+                  this.showAlert = true
+                  this.loading = false
+                  this.$emit('closeEditor')
+                  this.$emit('updateList')
+                })
+                .catch(() => {
+                  this.alertType = 'error'
+                  this.needConfirm = false
+                  this.showAlert = true
+                  this.loading = false
+                })
+            }
+          }
+        })
+      },
+      $_postPanel_updatePostConfirmed () {
+        updatePost(this.$store, this.post)
+          .then(() => {
+            this.needConfirm = false
+            this.loading = false
+            this.$emit('closeEditor')
+            this.$emit('updateList')
+          })
+          .catch(() => {
+            this.alertType = 'error'
+            this.needConfirm = false
+            this.showAlert = true
+            this.loading = false
+          })
       },
       $_postPanel_updateContent (content) {
         this.$set(this.post, 'content', content)
       },
+      $_postPanel_uploadImg () {
+        const file = this.$refs.uploadImg.files[0]
+        if (/^image\//.test(file.type) && file.size <= IMAGE_UPLOAD_MAX_SIZE) {
+          const fd = new FormData()
+          fd.append('image', file)
+          uploadImage(this.$store, fd)
+            .then((res) => {
+              this.$set(this.post, 'ogImage', res.body.url)
+            })
+            .catch((err) => {
+              console.error(err)
+            })
+        }
+      },
+      $_postPanel_validation (publishStatus) {
+        this.errors = []
+        this.loading = true
+        if (!this.post.title) {
+          this.errors.push('title')
+        }
+
+        if ((publishStatus === POST_PUBLISH_STATUS.PUBLISHED || publishStatus === POST_PUBLISH_STATUS.PENDING) && !this.post.content) {
+          this.errors.push('content')
+        }
+
+        if (this.isReview && (publishStatus === POST_PUBLISH_STATUS.PUBLISHED || publishStatus === POST_PUBLISH_STATUS.PENDING) && !this.post.link) {
+          this.errors.push('link')
+        }
+
+        if (this.errors.length === 0) {
+          this.$_postPanel_submit(publishStatus)
+        } else {
+          this.loading = false
+        }
+      },
+      includes,
     },
   }
 </script>
 <style lang="stylus" scoped>
 
-.postPanel
-  display flex
-  flex-direction column
-  width 90%
-  height auto
-  max-height calc(100vh - 10px)
-  margin 0 auto
-  padding 55px 0 35px
-  > input 
-    width 100%
-    height 25px
-  &__container
-    height auto
-    overflow-y auto
-  &__title
-    padding-left 10px
-    color #000
-    font-size 18px
-    font-weight 600
-    &::placeholder
-      color #808080
-      font-size 14px
-      font-weight 400
-  &__input
-    display flex
-    width 100%
-    &:not(:first-of-type)
-      margin-top 10px
-    label
-      line-height 25px
-    input
-      flex 1
-      padding-left 10px
-      width 440px
-      height 25px
-      color #808080
-    button
-      width 25px
-      height 25px
-      img
-        width 100%
-        height auto
-  &__tags
-    flex 1
-    display flex
+.post-panel
+  width 900px
+  padding 30px 0 20px
+  
+  input
     position relative
-    flex-wrap wrap
-    padding-left 10px
-    border 1px solid rgba(128, 128, 128, .4)
-    &-box
-      width 100%
-      > input 
-        width auto
-        height 25px
-        padding 0
-        margin-left 10px
-        border none
-        outline none
-      &-selected, &-new
-        display inline-block
-        > p
-          display inline-block
-          height 25px
-          margin 0
-          color #4280a2
-          font-size 14px
-          line-height 25px
-        > button
-          display inline-block
-          width 18px
-          height 18px
-          padding 0
-          margin-right 10px
-          font-size 8px
-          background-color transparent
-          border 1px solid rgba(128, 128, 128, .4)
-          border-radius 50%
-          outline none
-      
-    &-list
-      position absolute
-      top 100%
-      left -1px
-      width calc(100% + 2px)
-      max-height 175px
-      background-color #fff
-      border 1px solid rgba(128, 128, 128, .4)
-      border-top 1px solid rgba(128, 128, 128, .2)
-      overflow-y scroll
-      &.hidden
-        display none
-      > button
-        display block
-        width 100%
-        max-width 100%
-        font-size 14px
-        text-align left
-        background-color transparent
-        border none
-        outline none
-        overflow hidden
-        &:hover
-          background-color rgba(66, 128, 162, .3)
-        &.noResult
-          cursor default
-          &:hover
-            background-color transparent
-  &__ogImg
+    padding .2em .5em
+    line-height 1
+    outline none
+    border 1px solid #d3d3d3
+    transition background-color .5s linear
+    &:disabled
+      background-color rgba(0, 0, 0, .3)
+    
+  textarea
+    padding .5em
+    line-height 1.3
+    min-height 80px
+    border 1px solid #d3d3d3
+    outline none
+    transition background-color .5s linear
+    &:disabled
+      background-color rgba(0, 0, 0, .3)
+  &-container
+    max-width 715px
+    max-height calc(100vh - 60px)
+    margin 0 auto
+    padding-right 15px
+    overflow-y auto
+    > p
+      margin .2em 0
+      color #ff0000
+      font-size .75rem
+      text-align right
+  &__action
+    display flex
+    justify-content space-between
+    margin-top 25px
+    > p
+      flex 1
+      margin 0
+      text-align center
+  &__og-img
     padding-left 80px
     margin-top 10px
     img
       width 180px
       height auto
-  &--publishDate
-    margin-top 26px
-    .vdp-datepicker
-      flex 1
-    >>> div
+
+.input
+  display flex
+  align-items center
+  flex-wrap wrap
+  width 100%
+  input, textarea
+    flex 1
+  > p
+    width 100%
+    margin .2em 0
+    color #ff0000
+    font-size .75rem
+    text-align right
+    
+  & + .input
+    margin-top 10px
+  &--title
+    input
+      font-size 1.125rem
+      font-weight 600
+  &--link
+    margin 10px auto 25px
+  &--date
+    > div
       flex 1
     >>> input
       width 100%
-      height 25px
-      padding-left 10px
-      color #808080
-  &__submit
-    display flex
-    justify-content space-between
-    width 100%
-    margin-top 20px
-    &.advanced
-      .postPanel__btn
-        width calc((100% - 20px) / 3)
-  &__btn
-    display inline-flex
-    justify-content center
-    align-items center
-    width calc((100% - 20px) / 2)
+      padding .2em .5em
+      transition background-color .5s linear
+      &:disabled
+        background-color rgba(0, 0, 0, .3)
+  &--descr
+    align-items flex-start
+    // input
+    //   min-height 80px
+  &--hidden
+    display none
+  &--error
+    input
+      border-color #ff0000
+      background-color #ffe5e5
+  
+
+.button
+  flex 1
+  padding .2em 0
+  background-color #fff
+  border 1px solid #d3d3d3
+  outline none
+  & + .button
+    margin-left 15px
+  &.button--img
+    flex 0 1 auto
+    width 25px
     height 25px
-    margin 0
-    font-size 14px
-    font-weight 300
-    border 1px solid #d3d3d3
-    user-select none
-    &.dark
-      color #fff
-      background-color #808080
-    &--img
-      padding 0
-      margin 0 5px
-      background none
-      border none
-      cursor pointer
-      outline none
-      user-select none
-      &:first-of-type
-        margin-left 10px
-
-.alert
-  width 325px
-  color #000
-  font-size 15px
-  background #fff
-  box-shadow: 1px 1px 2.5px 0 rgba(0, 0, 0, 0.5)
-  > p
-    margin .5em 25px
-  &__control
-    display flex
-    justify-content space-between
-    margin-top 30px
-  &__title
-    display block
-    margin 15px 25px 0
-    color #4280a2
-  &__btn
-    flex 1
-    height 30px
-    background transparent
-    border .5px solid #d3d3d3
-    border-collapse collapse
-    outline none
-    &:first-of-type
-      border-right none
-
-@media (min-width 950px)
-  .postPanel
-    width 900px
-    padding 30px 100px
-    &__submit
-      &.advanced
-        .postPanel__btn
-          width 160px
-    &__btn
-      width 340px
-      height 30px
+    margin 0 0 0 10px
+    padding 0
+    border none
+    img
+      width 100%
+      height auto
+  
 </style>

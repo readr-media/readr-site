@@ -130,7 +130,7 @@
   },
   "pre-commit": [
     "lint"
-  ],  
+  ],
   "nyc": {
     "exclude": [
       "api/config.js"
