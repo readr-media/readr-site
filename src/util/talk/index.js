@@ -1,14 +1,18 @@
 import { SITE_DOMAIN_DEV, SITE_DOMAIN, } from 'src/constants'
-import { TALK_SERVER, } from 'api/config.js'
 import { currEnv, } from 'src/util/comm'
 const debug = require('debug')('CLIENT:util:talk')
 
 export function renderComment (target_parent, taget_ele, url, talk_server) {
-  debug('process.env.TALK_SERVER', process.env.TALK_SERVER)
   debug('talk_server', talk_server)
+
+  /**
+   * talk_server is required.
+   */
+  if (!talk_server) { return }
+  
   const asset_url = getAssetUrl(url)
   Coral && Coral.Talk.render(target_parent.querySelector(taget_ele), {
-    talk: talk_server || TALK_SERVER,
+    talk: talk_server,
     asset_url,
   })
 }
