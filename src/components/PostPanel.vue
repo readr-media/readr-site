@@ -54,6 +54,7 @@
           @deselectTag="$_postPanel_deselectTag">
         </post-panel-tag>
       </div>
+
       <!-- <div v-if="$can('editPostOg')" class="input" :class="{ 'input--error': includes(errors, 'ogTitle') }">
         <label v-text="`${$t('POST_PANEL.OG_TITLE')}：`"></label>
         <input v-model="post.ogTitle" type="text" :disabled="loading">
@@ -78,6 +79,7 @@
       <!-- <div v-if="post.ogImage && $can('editPostOg')" class="post-panel__og-img">
         <img :src="post.ogImage" :alt="post.ogTitle">
       </div> -->
+
       <div class="post-panel__action">
         <template v-if="isClientSide && !loading">
           <button
@@ -244,8 +246,8 @@
       },
     },
     watch: {
-      initialPost () {
-        this.post = this.initialPost
+      initialPost (value) {
+        this.post = Object.assign({}, value)
         this.publishedDate = get(this.post, [ 'publishedAt', ]) || ''
         this.alertType = 'post'
         this.linkChanged = false
