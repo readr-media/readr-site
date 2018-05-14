@@ -401,9 +401,9 @@
             getFollowing(this.$store, { subject: _.get(this.profile, [ 'id', ]), resource: resource, })
         }
       },
-      $_guestEditor_updatePostList ({ sort, page, needUpdateCount = false, }) {
+      $_guestEditor_updatePostList ({ sort, page, needUpdateCount = false, } = {}) {
         this.sort = sort || this.sort
-        this.page = page || this.sort
+        this.page = page || this.page
         
         switch (this.activeTab) {
           case 'reviews':

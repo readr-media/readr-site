@@ -174,6 +174,7 @@ export default {
     'EDITOR' : '編輯器',
   },
   'POST_PANEL': {
+    'CONTENT': '內容',
     'DATETIME_PLACEHOLDER': '請選擇發布時間',
     'DELETE' : '刪除',
     'EDITOR' : '編輯器',
@@ -195,6 +196,7 @@ export default {
     'TITLE_PLACEHOLDER' : '輸入標題',
     'UNPUBLISH': '下架',
     'UPLOAD' : '上傳',
+    'VALIDATION_MSG': '請輸入',
     'VIDEO' : '影片',
   },
   'point': {
