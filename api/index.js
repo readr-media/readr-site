@@ -1,5 +1,7 @@
 const _ = require('lodash')
 const { API_DEADLINE, API_HOST, API_PORT, API_PROTOCOL, API_TIMEOUT, } = require('./config')
+const { FB, } = require('fb')
+const { FB_CLIENT_ID, FB_CLIENT_SECRET, } = require('./config')
 const { GCP_FILE_BUCKET, GOOGLE_RECAPTCHA_SECRET, GCS_IMG_MEMBER_PATH, GCS_IMG_POST_PATH, } = require('./config')
 const { JSDOM, } = require("jsdom")
 const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT, } = require('./config')
@@ -348,42 +350,63 @@ router.post('/deleteMemberProfileThumbnails', authVerify, (req, res) => {
 
 router.post('/meta', authVerify, (req, res) => {
   if (!req.body.url) {
-    res.status(400).end()
+    return res.status(400).end()
   }
   const url = req.body.url
+  const og = {}
 
-  superagent
-  .get(url)
-  .set('Accept', 'application/json, text/plain, */*')
-  .set('User-Agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36')
-  .end((err, response) => {
-    if (!err && response) {
-      const dom = new JSDOM(response.text)
-      const og = {}
-      if (dom.window.document.querySelector('meta[property="og:title"]')) {
-        og.ogTitle = dom.window.document.querySelector('meta[property="og:title"]').getAttribute("content") || ' '
-      } else if (dom.window.document.querySelector('title')) {
-        og.ogTitle = dom.window.document.querySelector('title').innerHTML || ' '
-      }
+  const getMetaByHtml = () => {
+    superagent
+      .get(url)
+      .set('Accept', 'application/json, text/plain, */*')
+      .set('User-Agent', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36')
+      .end((err, response) => {
+        if (!err && response) {
+          const dom = new JSDOM(response.text)
+          if (dom.window.document.querySelector('meta[property="og:title"]')) {
+            og.ogTitle = dom.window.document.querySelector('meta[property="og:title"]').getAttribute("content") || ' '
+          } else if (dom.window.document.querySelector('title')) {
+            og.ogTitle = dom.window.document.querySelector('title').innerHTML || ' '
+          }
+          if (dom.window.document.querySelector('meta[property="og:description"]')) {
+            og.ogDescription = dom.window.document.querySelector('meta[property="og:description"]').getAttribute("content") || ' '
+          }
+          if (dom.window.document.querySelector('meta[property="og:image"]')) {
+            og.ogImage = dom.window.document.querySelector('meta[property="og:image"]').getAttribute("content") || ' '
+          }
+          if (dom.window.document.querySelector('meta[property="og:site_name"]')) {
+            og.ogSiteName = dom.window.document.querySelector('meta[property="og:site_name"]').getAttribute("content") || ' '
+          }
+          return res.status(200).send(og).end()
+        } else {
+          console.error(`error during fetch data from : ${req.url}`)
+          console.error(err)
+          return res.status(500).send(err)
+        }
+      })
+  }
 
-      if (dom.window.document.querySelector('meta[property="og:description"]')) {
-        og.ogDescription = dom.window.document.querySelector('meta[property="og:description"]').getAttribute("content") || ' '
+  FB.api('oauth/access_token', {
+    client_id: FB_CLIENT_ID,
+    client_secret: FB_CLIENT_SECRET,
+    grant_type: 'client_credentials',
+  }, (resp) => {
+      if(!resp || resp.error) {
+        getMetaByHtml()
+      } else {
+        FB.setAccessToken(resp.access_token)
+        FB.api('', { id: req.body.url, fields: 'og_object{title,description,image, site_name}', }, (response) => {
+          if(!response || response.error) {
+            getMetaByHtml()
+          } else {
+            og.ogTitle = _.get(response, 'og_object.title')
+            og.ogDescription = _.get(response, 'og_object.description')
+            og.ogImage = _.get(response, 'og_object.image[0].url')
+            og.ogSiteName = _.get(response, 'og_object.site_name')
+            return res.status(200).send(og).end()
+          }
+        })
       }
-
-      if (dom.window.document.querySelector('meta[property="og:image"]')) {
-        og.ogImage = dom.window.document.querySelector('meta[property="og:image"]').getAttribute("content") || ' '
-      }
-
-      if (dom.window.document.querySelector('meta[property="og:site_name"]')) {
-        og.ogSiteName = dom.window.document.querySelector('meta[property="og:site_name"]').getAttribute("content") || ' '
-      }
-      
-      res.status(200).send(og).end()
-    } else {
-      res.status(500).send(err)
-      console.error(`error during fetch data from : ${req.url}`)
-      console.error(err)
-    }
   })
 })
 
