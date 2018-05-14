@@ -3,7 +3,7 @@
     <div class="post-panel-container">
       <div class="input input--title" :class="{ 'input--error': includes(errors, 'title') }">
         <input v-model="post.title" type="text" :disabled="loading" :placeholder="$t('POST_PANEL.TITLE_PLACEHOLDER')">
-        <p v-if="includes(errors, 'title')">請輸入標題</p>
+        <p v-if="includes(errors, 'title')" v-text="`${$t('POST_PANEL.VALIDATION_MSG')}${$t('POST_PANEL.TITLE')}`"></p>
       </div>
       <quill-editor-review
         v-if="isReview"
@@ -19,11 +19,17 @@
         :disabled="loading"
         @updateContent="$_postPanel_updateContent">
       </quill-editor-news>
-      <p v-if="includes(errors, 'content')">請輸入內容</p>
+      <p v-if="includes(errors, 'content')" v-text="`${$t('POST_PANEL.VALIDATION_MSG')}${$t('POST_PANEL.CONTENT')}`"></p>
       <div class="input input--link" :class="{ 'input--error': includes(errors, 'link') }">
         <label v-text="`${$t('POST_PANEL.NEWS')}${$t('POST_PANEL.LINK')}：`"></label>
         <input v-model="post.link" type="url" :disabled="loading" @change="$_postPanel_linkChanged">
-        <p v-if="includes(errors, 'link')">請輸入新聞連結</p>
+        <p v-if="includes(errors, 'link')" v-text="`${$t('POST_PANEL.VALIDATION_MSG')}${$t('POST_PANEL.NEWS')}${$t('POST_PANEL.LINK')}`"></p>
+      </div>
+      <div v-if="$can('editPostOg') && (action === 'edit')" class="post-panel__link-meta">
+        <p :class="{ active: post.linkTitle }">Title</p>
+        <p :class="{ active: post.linkDescription }">Description</p>
+        <p :class="{ active: post.linkImage }">Image</p>
+        <p :class="{ active: post.linkName }">Site Name</p>
       </div>
       <div v-if="$can('editPostOg')" class="input input--date">
         <label v-text="`${$t('POST_PANEL.PUBLISH_DATE')}：`"></label>
@@ -129,7 +135,7 @@
         :items="itemForAlert"
         :needConfirm="needConfirm"
         :showLightBox="showAlert"
-        :type="'post'"
+        :type="alertType"
         @closeAlert="showAlert = false"
         @deletePosts="$_postPanel_deletePost"
         @publishPosts="$_postPanel_publish"
@@ -181,7 +187,7 @@
   }
 
   export default {
-    name: 'PostPanelR',
+    name: 'PostPanel',
     components: {
       'alert-panel': AlertPanel,
       'base-light-box': BaseLightBox,
@@ -206,6 +212,7 @@
     },
     data () {
       return {
+        alertType: 'post',
         config: {
           publishStatus: POST_PUBLISH_STATUS,
         },
@@ -240,12 +247,14 @@
       initialPost () {
         this.post = this.initialPost
         this.publishedDate = get(this.post, [ 'publishedAt', ]) || ''
+        this.alertType = 'post'
         this.linkChanged = false
         this.isReturnToDraft = false
         this.showAlert = false
         this.needConfirm = false
         this.postStatusChanged = false
         this.tagsSelected = []
+        this.tagsNeedAdd = []
         const tags = get(this.post, [ 'tags', ]) || []
         tags.forEach((tag) => {
           tag.id = Number(tag.id)
@@ -256,11 +265,13 @@
         if (!value) {
           this.post = this.initialPost
           this.publishedDate = get(this.post, [ 'publishedAt', ]) || ''
+          this.alertType = 'post'
           this.linkChanged = false
           this.isReturnToDraft = false
           this.needConfirm = false
           this.postStatusChanged = false
           this.tagsSelected = []
+          this.tagsNeedAdd = []
           const tags = get(this.post, [ 'tags', ]) || []
           tags.forEach((tag) => {
             tag.id = Number(tag.id)
@@ -574,6 +585,21 @@
       flex 1
       margin 0
       text-align center
+  &__link-meta
+    margin 0 0 25px
+    text-align right
+    p
+      display inline-block
+      min-width 60px
+      margin 0
+      color #d3d3d3
+      text-align center
+      font-size .75rem
+      user-select none
+      &.active
+        color #000
+    p + p
+      margin 0 0 0 .5em
   &__og-img
     padding-left 80px
     margin-top 10px
@@ -597,12 +623,14 @@
     
   & + .input
     margin-top 10px
+    &.input--date
+      margin-top 25px
   &--title
     input
       font-size 1.125rem
       font-weight 600
   &--link
-    margin 10px auto 25px
+    margin 10px auto 5px
   &--date
     > div
       flex 1
