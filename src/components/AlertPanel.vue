@@ -4,7 +4,7 @@
     <div v-if="needList" class="alert__list" :class="{ multiple: isMultiple }">
       <template v-if="type === 'post' || type === 'video'">
         <div v-for="i in items" :key="i.id" class="alert__item">
-          <p><strong v-text="`${$t('ALERT.AUTHOR')}：`"></strong><span v-text="$_alertPanel_getPostAuthor(i)"></span></p>
+          <p v-if="showAuthor"><strong v-text="`${$t('ALERT.AUTHOR')}：`"></strong><span v-text="$_alertPanel_getPostAuthor(i)"></span></p>
           <p><strong v-text="`${$t('ALERT.TITLE')}：`"></strong><span v-text="i.title"></span></p>
           <p v-if="status === config.post.SCHEDULING || status === config.post.PUBLISHED"><strong v-text="`${$t('ALERT.PUBLISH_DATE')}：`"></strong><span v-text="moment(i.published_at).format('YYYY-MM-DD HH:MM')"></span></p>
         </div>
@@ -65,6 +65,8 @@
           post: POST_PUBLISH_STATUS,
           tag: TAG_ACTIVE,
         },
+        showAuthor: true,
+        timer: null,
       }
     },
     computed: {
@@ -140,11 +142,15 @@
       },
     },
     watch: {
+      items () {
+        this.showAuthor = true
+        if (this.timer) {
+          clearTimeout(this.timer)
+        }
+      },
       needConfirm (val) {
         if (!val && this.showLightBox) {
-          setTimeout(() => {
-            this.$emit('closeAlert')
-          }, 5000)
+          this.$_alertPanel_setTimeout()
         }
       },
     },
@@ -156,6 +162,7 @@
         switch (this.type) {
           case 'post':
           case 'video':
+            this.showAuthor = false
             switch (this.status) {
               case POST_PUBLISH_STATUS.SCHEDULING:
               case POST_PUBLISH_STATUS.PUBLISHED:
@@ -179,6 +186,11 @@
       },
       $_alertPanel_getPostAuthor (post) {
         return get(post, [ 'author', 'nickname', ]) || get(this.$store, [ 'state', 'profile', 'nickname', ])
+      },
+      $_alertPanel_setTimeout () {
+        this.timer = setTimeout(() => {
+          this.$emit('closeAlert')
+        }, 5000)
       },
       moment,
     },

@@ -322,6 +322,7 @@
         this.linkChanged = true
       },
       $_postPanel_publish () {
+        this.post.author = get(this.post, 'author.id')
         if (this.action === 'add') {
           addPost(this.$store, this.post)
             .then(() => {
@@ -457,15 +458,16 @@
                 })
             }
           } else if (this.action === 'edit') {
-            this.post.author = get(this.post, 'author.id')
             if (this.post.publish_status === POST_PUBLISH_STATUS.SCHEDULING ||
               this.post.publish_status === POST_PUBLISH_STATUS.PUBLISHED ||
               this.post.publish_status === POST_PUBLISH_STATUS.UNPUBLISHED ||
               (this.post.publish_status === POST_PUBLISH_STATUS.DRAFT && this.isReturnToDraft))
             {
+              this.post.author = get(this.post, 'author')
               this.needConfirm = true
               this.showAlert = true
             } else {
+              this.post.author = get(this.post, 'author.id')
               updatePost(this.$store, this.post)
                 .then(() => {
                   this.showAlert = true
@@ -483,6 +485,7 @@
         })
       },
       $_postPanel_updatePostConfirmed () {
+        this.post.author = get(this.post, 'author.id')
         updatePost(this.$store, this.post)
           .then(() => {
             this.needConfirm = false
