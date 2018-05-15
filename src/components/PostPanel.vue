@@ -264,7 +264,8 @@
         })
       },
       showAlert (value) {
-        if (!value) {
+        if (!value && this.alertType !== 'error') {
+          this.$emit('closeEditor')
           this.post = this.initialPost
           this.publishedDate = get(this.post, [ 'publishedAt', ]) || ''
           this.alertType = 'post'
@@ -301,7 +302,6 @@
         .then(() => {
           this.needConfirm = false
           this.loading = false
-          this.$emit('closeEditor')
           this.$emit('updateList', { needUpdateCount: true, })
         })
         .catch(() => {
@@ -327,7 +327,6 @@
             .then(() => {
               this.needConfirm = false
               this.loading = false
-              this.$emit('closeEditor')
               this.$emit('updateList', { needUpdateCount: true, })
             })
             .catch(() => {
@@ -341,7 +340,6 @@
             .then(() => {
                 this.needConfirm = false
                 this.loading = false
-                this.$emit('closeEditor')
                 this.$emit('updateList')
               })
               .catch(() => {
@@ -449,7 +447,6 @@
                 .then(() => {
                   this.showAlert = true
                   this.loading = false
-                  this.$emit('closeEditor')
                   this.$emit('updateList', { needUpdateCount: true, })
                 })
                 .catch(() => {
@@ -473,7 +470,6 @@
                 .then(() => {
                   this.showAlert = true
                   this.loading = false
-                  this.$emit('closeEditor')
                   this.$emit('updateList')
                 })
                 .catch(() => {
@@ -491,7 +487,6 @@
           .then(() => {
             this.needConfirm = false
             this.loading = false
-            this.$emit('closeEditor')
             this.$emit('updateList')
           })
           .catch(() => {
