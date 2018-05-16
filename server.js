@@ -92,15 +92,12 @@ app.use('/public', serve('./public', true))
 app.use('/manifest.json', serve('./manifest.json', true))
 app.use('/service-worker.js', serve('./distribution/service-worker.js'))
 
-app.use('/talk', (req, res) => {
-  debug('req', req.url)
-  superagent
-    .get('http://localhost:3000' + req.url)
-    .end((err, response) => {
-      console.log('response', response.text)
-      res.send(response)
-    })
-})
+app.use('/proxy', (req, res, next) => {
+  req.url = `/proxy${req.url}`
+  debug('Attemp to fetch stuff from proxy.')
+  debug(req.url)
+  next()
+}, require('./api/index'))
 
 // since this app has no user-specific content, every page is micro-cacheable.
 // if your app involves user-specific content, you need to implement custom
@@ -213,7 +210,7 @@ function render (req, res, next) {
       </script>` : '',
     include_recaptcha: req.url.match(targ_exp_login) ? `<script src='https://www.google.com/recaptcha/api.js'></script>` : '',
     setting: { 
-      TALK_SERVER: config.TALK_SERVER, 
+      TALK_SERVER: config.TALK_SERVER_PROXY || config.TALK_SERVER,
       POST_TYPE: config.POST_TYPE, 
       PROJECT_STATUS: config.PROJECT_STATUS, 
       TAG_ACTIVE: config.TAG_ACTIVE, 

@@ -57,7 +57,7 @@
         <img class="editor-writing-source__figure" v-if="post.linkImage" :src="post.linkImage" @load="setOgImageOrientation(post.linkImage, $event)">
       </a>
     </template>
-    <AppArticleNav :postId="this.post.id" :commentCount="commentCount"></AppArticleNav>
+    <AppArticleNav :postId="this.post.id" :articleType="this.post.flag" :commentCount="commentCount"></AppArticleNav>
   </div>
 </template>
 <script>
@@ -160,7 +160,7 @@
         return stopParagraphWordLength > this.showContentWordLimit
       },
       targetUrl () {
-        switch (this.post.type) {
+        switch (this.post.flag) {
           case 'memo':
             return `/memo/${get(this.$route, 'params.id')}/${get(this.post, 'id')}`
           default:

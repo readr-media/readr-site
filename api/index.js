@@ -128,11 +128,16 @@ router.use('/invitation', authVerify, require('./middle/member/invitation'))
 router.use('/member/notification', authVerify, require('./middle/member/notification'))
 router.use('/member', [ authVerify, authorize, ], require('./middle/member'))
 router.use('/memos', [ authVerify, authorize, setupClientCache, ], require('./middle/memo'))
+router.use('/memo', [ authVerify, authorize, setupClientCache, ], require('./middle/memo'))
 router.use('/comment', require('./middle/comment'))
 router.use('/register', authVerify, require('./middle/member/register'))
 router.use('/recoverpwd', require('./middle/member/recover'))
 router.use('/public', require('./middle/public'))
 router.use('/search', require('./middle/search'))
+router.use('/proxy/talk', (req, res, next) => {
+  debug('Going to get data from talk.')
+  next()
+}, require('./middle/talk/proxy'))
 router.use('/token', require('./middle/services/token'))
 router.use('/trace', (req, res, next) => {
   if  (config.GCP_PROJECT_ID && config.GCP_KEYFILE && config.GCP_STACKDRIVER_LOG_NAME) {
