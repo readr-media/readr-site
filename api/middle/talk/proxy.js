@@ -20,6 +20,9 @@ router.get('*', (req, res) => {
   const exp_target_file = /(?:.js)|(?:.css)/
   const headers = Object.assign({}, req.headers)
 
+  console.warn('Got a call to fetch stuff for talk.')
+  console.warn(req.url)
+
   if (headers[ 'accept-encoding' ]) {
     headers[ 'accept-encoding' ] = 'gzip'
   }
@@ -36,8 +39,12 @@ router.get('*', (req, res) => {
     }
     debug('options:')
     debug(options)
-    const request = http.request(options, (response) => {  
+    console.warn('options')
+    console.warn(options)    
+    const request = http.request(options, (response) => {
+      console.warn('Got response from talk successfully.') 
       res.set(response.headers)
+      console.warn('Setup header successfully. And going to pipe file.')
       response.pipe(res).pipe(zlib.createGzip())
     }).on('error', (err) => {
       const err_wrapper = handlerError(err)
