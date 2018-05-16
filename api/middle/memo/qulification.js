@@ -15,6 +15,8 @@ async function checkPerm (member, projects) {
     .end((err, res) => {
       debug('Get res from api server.')
       debug(res.body)
+      debug('projects')
+      debug(projects)
       if (!err) {
         const records = get(res, 'body._items', [])
         const validatedProjects = projects.map(pid => find(records, r => `${r.object_id}` === `${pid}`))

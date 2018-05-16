@@ -14,9 +14,9 @@ const apiHost = API_PROTOCOL + '://' + API_HOST + ':' + API_PORT
 
 router.get('/', publicQueryValidation.validate(schema.memos), (req, res) => {
   const user_id = get(req, 'user.id')
-  const project_id = get(req, 'query.project_id')
+  const project_id = JSON.parse(get(req, 'query.project_id', '[]'))
   debug('user_id', user_id)
-  debug('project_id', project_id)
+  debug('project_id', project_id, typeof(project_id))
 
   checkPerm(user_id, [ ...project_id, ])
   .then(isAnyUnauthorized => {
