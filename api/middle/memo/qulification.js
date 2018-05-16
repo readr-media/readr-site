@@ -18,10 +18,10 @@ async function checkPerm (member, projects) {
       if (!err) {
         const records = get(res, 'body._items', [])
         const validatedProjects = projects.map(pid => find(records, r => `${r.object_id}` === `${pid}`))
-        debug('validatedProjects')
+        debug('validatedProjects', validatedProjects.length, validatedProjects.filter(r => r).length)
         debug(validatedProjects)
         const isAnyUnauthorized = validatedProjects.length > 1
-          ? validatedProjects.length !== validatedProjects.filter(r => r).length
+          ? validatedProjects.length === validatedProjects.filter(r => r).length
           : validatedProjects[ 0 ]
         resolve(isAnyUnauthorized)
       } else {
