@@ -36,6 +36,7 @@ router.get('*', (req, res) => {
       method: 'GET',
       headers,
     }
+    console.warn(options)
     try {
       const request = http.request(options, (response) => {
         res.set(response.headers)
