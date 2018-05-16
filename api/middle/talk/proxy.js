@@ -40,19 +40,27 @@ router.get('*', (req, res) => {
     debug('options:')
     debug(options)
     console.warn('options')
-    console.warn(options)    
-    const request = http.request(options, (response) => {
-      console.warn('Got response from talk successfully.') 
-      res.set(response.headers)
-      console.warn('Setup header successfully. And going to pipe file.')
-      response.pipe(res).pipe(zlib.createGzip())
-    }).on('error', (err) => {
-      const err_wrapper = handlerError(err)
+    console.warn(options)
+    try {
+      const request = http.request(options, (response) => {
+        console.warn('Got response from talk successfully.') 
+        res.set(response.headers)
+        console.warn('Setup header successfully. And going to pipe file.')
+        response.pipe(res).pipe(zlib.createGzip())
+      }).on('error', (err) => {
+        const err_wrapper = handlerError(err)
+        res.status(err_wrapper.status).json(err_wrapper.text)      
+        console.error(`error during fetch stuff from : ${TALK_SERVER}${req.url}`)
+        console.error(err)
+      })
+      console.warn('Going to pipe the req.')
+      req.pipe(request)
+    } catch (e) {
+      const err_wrapper = handlerError(e)
       res.status(err_wrapper.status).json(err_wrapper.text)      
-      console.error(`error during fetch stuff from : ${TALK_SERVER}${req.url}`)
-      console.error(err)
-    })
-    req.pipe(request)
+      console.error(`Got a danming err : ${TALK_SERVER}${req.url}`)
+      console.error(e)      
+    }    
   } else {
     debug('Request')
     superagent
