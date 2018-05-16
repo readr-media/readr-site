@@ -6,7 +6,7 @@ const jwtService = require('../../service.js')
 const router = express.Router()
 const superagent = require('superagent')
 const zlib = require('zlib')
-const { API_TIMEOUT, API_DEADLINE, TALK_SERVER, TALK_SERVER_HOST, TALK_SERVER_PORT, TALK_SERVER_ROOT, } = require('../../config')
+const { API_TIMEOUT, API_DEADLINE, TALK_SERVER, TALK_SERVER_HOST, TALK_SERVER_PORT, TALK_SERVER_ROOT, TALK_SERVER_PROTOCOL, } = require('../../config')
 const { GraphQLClient, } = require('graphql-request')
 const { checkPerm, } = require('../memo/qulification')
 const { fetchMemoSingle, } = require('../memo/comm')
@@ -27,6 +27,7 @@ router.get('*', (req, res) => {
   if (exp_target_file.test(req.url)) {
     debug('File.', req.url)
     const options = {
+      protocol: TALK_SERVER_PROTOCOL || 'http',
       host: TALK_SERVER_HOST || 'localhost',
       port: `${TALK_SERVER_PORT}` || '80',
       path: `${TALK_SERVER_ROOT || ''}${req.url}`,
