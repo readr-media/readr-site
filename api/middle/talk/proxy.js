@@ -5,7 +5,6 @@ const http = require('http')
 const jwtService = require('../../service.js')
 const router = express.Router()
 const superagent = require('superagent')
-const zlib = require('zlib')
 const { API_TIMEOUT, API_DEADLINE, TALK_SERVER, TALK_SERVER_HOST, TALK_SERVER_PORT, TALK_SERVER_ROOT, TALK_SERVER_PROTOCOL, } = require('../../config')
 const { GraphQLClient, } = require('graphql-request')
 const { checkPerm, } = require('../memo/qulification')
@@ -37,23 +36,17 @@ router.get('*', (req, res) => {
       method: 'GET',
       headers,
     }
-    debug('options:')
-    debug(options)
-    console.warn('options')
-    console.warn(options)
     try {
       const request = http.request(options, (response) => {
-        console.warn('Got response from talk successfully.') 
         res.set(response.headers)
         console.warn('Setup header successfully. And going to pipe file.')
-        response.pipe(res).pipe(zlib.createGzip())
+        response.pipe(res)
       }).on('error', (err) => {
         const err_wrapper = handlerError(err)
         res.status(err_wrapper.status).json(err_wrapper.text)      
         console.error(`error during fetch stuff from : ${TALK_SERVER}${req.url}`)
         console.error(err)
       })
-      console.warn('Going to pipe the req.')
       req.pipe(request)
     } catch (e) {
       const err_wrapper = handlerError(e)
