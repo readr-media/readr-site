@@ -27,7 +27,7 @@ router.get('*', (req, res) => {
   if (exp_target_file.test(req.url)) {
     debug('File.', req.url)
     const options = {
-      protocol: TALK_SERVER_PROTOCOL || 'http',
+      protocol: TALK_SERVER_PROTOCOL || 'http:',
       host: TALK_SERVER_HOST || 'localhost',
       port: `${TALK_SERVER_PORT}` || '80',
       path: `${TALK_SERVER_ROOT || ''}${req.url}`,
