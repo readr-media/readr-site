@@ -20,11 +20,6 @@ router.get('*', (req, res) => {
   const exp_target_file = /(?:.js)|(?:.css)/
   const headers = Object.assign({}, req.headers)
 
-  console.error('Got a call to fetch stuff for talk.')
-  console.error(req.url)
-  console.warn('Got a call to fetch stuff for talk.')
-  console.warn(req.url)
-
   if (headers[ 'accept-encoding' ]) {
     headers[ 'accept-encoding' ] = 'gzip'
   }
@@ -34,17 +29,13 @@ router.get('*', (req, res) => {
     const options = {
       protocol: TALK_SERVER_PROTOCOL || 'http:',
       host: TALK_SERVER_HOST || 'localhost',
-      port: `${TALK_SERVER_PORT}` || '80',
+      port: `${TALK_SERVER_PORT || '80'}`,
       path: `${TALK_SERVER_ROOT || ''}${req.url}`,
       method: 'GET',
       headers,
     }
     debug('options:')
     debug(options)
-    console.error('options')
-    console.error(options)
-    console.warn('options')
-    console.warn(options)    
     const request = http.request(options, (response) => {  
       res.set(response.headers)
       response.pipe(res).pipe(zlib.createGzip())
