@@ -103,7 +103,7 @@
           <button
             v-if="(action === 'edit')"
             class="button"
-            @click="$_postPanel_validation()"
+            @click="$_postPanel_validation(post.publishStatus, false)"
             v-text="$t('POST_PANEL.SAVE')">
           </button>
           <button
@@ -257,6 +257,7 @@
         this.postStatusChanged = false
         this.tagsSelected = []
         this.tagsNeedAdd = []
+        this.errors = []
         const tags = get(this.post, [ 'tags', ]) || []
         tags.forEach((tag) => {
           tag.id = Number(tag.id)
@@ -318,6 +319,56 @@
         const tag = [ find(this.tagsSelected, { id: id, }), ]
         this.tagsSelected = xor(this.tagsSelected, tag)
       },
+      $_postPanel_addNewTag () {
+        return new Promise((resolve) => {
+          console.info('promiseTags 0', Date.now())
+          if (this.tagsNeedAdd.length !== 0) {
+            Promise.all(this.tagsNeedAdd.map(tag => addTags(this.$store, tag)))
+            .then((value) => {
+              const ids = map(value, t => get(t, 'body.tagId'))
+              const unionTag = union(this.tagsSelectedID, ids)
+              console.info('promiseTags 1', Date.now())
+              return resolve(unionTag)
+            })
+            .catch(() => resolve(this.tagsSelectedID))
+          } else {
+            console.info('promiseTags 2', Date.now())
+            return resolve(this.tagsSelectedID)
+          }
+        })
+      },
+      $_postPanel_getLinkMeta () {
+        return new Promise((resolve) => {
+          console.info('promiseLink 0', Date.now())
+          if (this.linkChanged) {
+            let link = get(this.post, 'link')
+            this.post.link_name = ''
+            this.post.link_title = ''
+            this.post.link_description = ''
+            this.post.link_image = ''
+            if (link && validator.isURL(link, { protocols: [ 'http','https', ], })) {
+              if (link.match(/[\u3400-\u9FBF]/)) {
+                link = encodeURI(link)
+              }
+              getMeta(this.$store, link)
+                .then((res) => {
+                  this.post.link_name = truncate(get(res, 'body.ogSiteName'), { 'length': 40, }) || ''
+                  this.post.link_title = truncate(get(res, 'body.ogTitle'), { 'length': 200, }) || ''
+                  this.post.link_description = truncate(get(res, 'body.ogDescription'), { 'length': 250, }) || ''
+                  this.post.link_image = get(res, 'body.ogImage') || ''
+                  console.info('promiseLink 1', Date.now())
+                  return resolve()
+                })
+            } else {
+              console.info('promiseLink 2', Date.now())
+              return resolve()
+            }
+          } else {
+            console.info('promiseLink 3', Date.now())
+            return resolve()
+          }
+        })     
+      },
       $_postPanel_linkChanged () {
         this.linkChanged = true
       },
@@ -367,59 +418,13 @@
           this.isReturnToDraft = true
         }
 
-        this.post.publish_status = get(this.post, 'publish_status')
-
-        if (publishStatus || publishStatus === POST_PUBLISH_STATUS.UNPUBLISHED) {
-          this.postStatusChanged = true
-          this.post.publish_status = publishStatus
-        }
-
+        this.post.publish_status = publishStatus
         this.post.updated_by = get(this.$store.state, 'profile.id')
         
-
-        const promiseLink = new Promise((resolve) => {
-          if (this.linkChanged) {
-            let link = get(this.post, 'link')
-            this.post.link_name = ''
-            this.post.link_title = ''
-            this.post.link_description = ''
-            this.post.link_image = ''
-            if (validator.isURL(link, { protocols: [ 'http','https', ], })) {
-              if (link.match(/[\u3400-\u9FBF]/)) {
-                link = encodeURI(link)
-              }
-              getMeta(this.$store, link)
-                .then((res) => {
-                  this.post.link_name = truncate(get(res, 'body.ogSiteName'), { 'length': 40, }) || ''
-                  this.post.link_title = truncate(get(res, 'body.ogTitle'), { 'length': 200, }) || ''
-                  this.post.link_description = truncate(get(res, 'body.ogDescription'), { 'length': 250, }) || ''
-                  this.post.link_image = get(res, 'body.ogImage') || ''
-                  resolve()
-                })
-            } else { 
-              resolve()
-            }
-          } else {
-            resolve()
-          }
-        })
-
-        const promiseTagsNeedAdd = new Promise((resolve) => {
-          if (this.tagsNeedAdd.length !== 0) {
-            Promise.all(this.tagsNeedAdd.map(tag => addTags(this.$store, tag)))
-            .then((value) => {
-              const ids = map(value, t => get(t, 'body.tagId'))
-              const unionTag = union(this.tagsSelectedID, ids)
-              return resolve(unionTag)
-            })
-            .catch(() => resolve(this.tagsSelectedID))
-          } else {
-            resolve(this.tagsSelectedID)
-          }
-        })
-
-        Promise.all([ promiseLink, promiseTagsNeedAdd, ])
+        console.info('Promise all sta', Date.now())
+        Promise.all([ this.$_postPanel_getLinkMeta(), this.$_postPanel_addNewTag(), ])
         .then((value) => {
+          console.info('Promise all end', Date.now())
           const unionTag = value[1]
           const now = new Date(Date.now())
 
@@ -516,18 +521,20 @@
             })
         }
       },
-      $_postPanel_validation (publishStatus) {
+      $_postPanel_validation (publishStatus, statusChanged = true) {
         this.errors = []
         this.loading = true
+        this.postStatusChanged = statusChanged
+
         if (!this.post.title) {
           this.errors.push('title')
         }
 
-        if ((publishStatus === POST_PUBLISH_STATUS.PUBLISHED || publishStatus === POST_PUBLISH_STATUS.PENDING) && !this.post.content) {
+        if ((publishStatus === POST_PUBLISH_STATUS.PUBLISHED || publishStatus === POST_PUBLISH_STATUS.SCHEDULING || publishStatus === POST_PUBLISH_STATUS.UNPUBLISHED || publishStatus === POST_PUBLISH_STATUS.PENDING) && !this.post.content) {
           this.errors.push('content')
         }
 
-        if (this.isReview && (publishStatus === POST_PUBLISH_STATUS.PUBLISHED || publishStatus === POST_PUBLISH_STATUS.PENDING) && !this.post.link) {
+        if (this.isReview && (publishStatus === POST_PUBLISH_STATUS.PUBLISHED || publishStatus === POST_PUBLISH_STATUS.SCHEDULING || publishStatus === POST_PUBLISH_STATUS.UNPUBLISHED || publishStatus === POST_PUBLISH_STATUS.PENDING) && !this.post.link) {
           this.errors.push('link')
         }
 
