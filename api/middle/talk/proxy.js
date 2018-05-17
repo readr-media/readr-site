@@ -27,7 +27,8 @@ router.get('*', (req, res) => {
   }
 
   if (exp_target_file.test(req.url)) {
-    debug('File.', req.url)
+    debug('File.', req.url, `${TALK_SERVER}${req.url}`)
+    console.warn(`${TALK_SERVER}${req.url}`)
     hyperquest(`${TALK_SERVER}${req.url}`, {
       method: 'GET',
       headers,
