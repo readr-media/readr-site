@@ -1,11 +1,11 @@
 const Cookies = require('cookies')
 const debug = require('debug')('READR:api:proxy')
 const express = require('express')
-const http = require('http')
+const hyperquest = require('hyperquest')
 const jwtService = require('../../service.js')
 const router = express.Router()
 const superagent = require('superagent')
-const { API_TIMEOUT, API_DEADLINE, TALK_SERVER, TALK_SERVER_HOST, TALK_SERVER_PORT, TALK_SERVER_ROOT, TALK_SERVER_PROTOCOL, } = require('../../config')
+const { API_TIMEOUT, API_DEADLINE, TALK_SERVER, } = require('../../config')
 const { GraphQLClient, } = require('graphql-request')
 const { checkPerm, } = require('../memo/qulification')
 const { fetchMemoSingle, } = require('../memo/comm')
@@ -28,33 +28,21 @@ router.get('*', (req, res) => {
 
   if (exp_target_file.test(req.url)) {
     debug('File.', req.url)
-    const options = {
-      protocol: TALK_SERVER_PROTOCOL || 'http:',
-      host: TALK_SERVER_HOST || 'localhost',
-      port: `${TALK_SERVER_PORT || '80'}`,
-      path: `${TALK_SERVER_ROOT || ''}${req.url}`,
+    hyperquest(`${TALK_SERVER}${req.url}`, {
       method: 'GET',
       headers,
-    }
-    console.warn(options)
-    try {
-      const request = http.request(options, (response) => {
+    }, (err, response) => {
+      if (!err) {
+        console.warn('Got response. And going to pipe it.')
         res.set(response.headers)
-        console.warn('Setup header successfully. And going to pipe file.')
         response.pipe(res)
-      }).on('error', (err) => {
+      } else {
         const err_wrapper = handlerError(err)
         res.status(err_wrapper.status).json(err_wrapper.text)      
         console.error(`error during fetch stuff from : ${TALK_SERVER}${req.url}`)
-        console.error(err)
-      })
-      req.pipe(request)
-    } catch (e) {
-      const err_wrapper = handlerError(e)
-      res.status(err_wrapper.status).json(err_wrapper.text)      
-      console.error(`Got a danming err : ${TALK_SERVER}${req.url}`)
-      console.error(e)      
-    }    
+        console.error(err)        
+      }     
+    })      
   } else {
     debug('Request')
     superagent
