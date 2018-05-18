@@ -70,6 +70,7 @@ export default {
   'editors': {
     'WORDING_EDITORS_GUESTEDITOR': '總編',
     'WORDING_EDITORS_CURRENT_GUESTEDITOR': '本週客座',
+    'WORDING_EDITORS_LIST': '客座列表',
   },
   'agreement': {
     'WORDING_AGREEMENT_TERMS_AND_SERVICE' : '會員服務條款',

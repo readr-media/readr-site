@@ -1,14 +1,29 @@
 <template>
   <div class="editors">
-    <div class="editors__container">
-      <AppTitledList :listTitle="$t('editors.WORDING_EDITORS_CURRENT_GUESTEDITOR')">
-        <ul class="editors-list-container">
-          <EditorsIntro class="editors-intro-main" v-for="customEditor in customEditors" :key="customEditor.id" :editor="customEditor"/>
+    <div class="editors__top">
+      <AppTitledList class="custom-editors" :listTitle="$t('editors.WORDING_EDITORS_CURRENT_GUESTEDITOR')">
+        <ul class="custom-editors__list">
+          <EditorsIntroListItemLarge
+            class="custom-editors__list-item"
+            v-for="member in customEditors"
+            :key="member.id"
+            :editor="member"
+          />
         </ul>
       </AppTitledList>
-      <ul class="editors__list-aside">
-        <EditorsIntro class="editors-intro-aside" v-for="member in asideListMembers" :key="member.id" :editor="member" :trimDescription="true"/>
-      </ul>
+    </div>
+    <div class="editors__bottom">
+      <AppTitledList class="guest-editors" :listTitle="$t('editors.WORDING_EDITORS_LIST')">
+        <ul class="guest-editors__list">
+          <EditorsIntroListItem
+            class="guest-editors__list-item"
+            v-for="member in guestEditors"
+            :key="member.id"
+            :editor="member"
+          />
+        </ul>
+      </AppTitledList>
+      <!-- reports listing here -->
     </div>
   </div>
 </template>
@@ -16,8 +31,9 @@
 <script>
 import { ROLE_MAP, } from '../constants'
 import AppTitledList from '../components/AppTitledList.vue'
-import EditorsIntro from '../components/editors/EditorsIntro.vue'
-import _ from 'lodash'
+import EditorsIntroListItem from '../components/editors/EditorsIntroListItem.vue'
+import EditorsIntroListItemLarge from '../components/editors/EditorsIntroListItemLarge.vue'
+import { get, find, uniq, concat, } from 'lodash'
 
 // const debug = require('debug')('CLIENT:Editors')
 const getMembersPublic = (store, params) => {
@@ -43,43 +59,44 @@ export default {
   name: 'Editors',
   // Uncomment this when v1.0 is released
   // asyncData ({ store, i18n, }) {
-  //   const targ_key = _.find(ROLE_MAP, { value: i18n.t('editors.WORDING_EDITORS_GUESTEDITOR'), }).key
+  //   const targ_key = find(ROLE_MAP, { value: i18n.t('editors.WORDING_EDITORS_GUESTEDITOR'), }).key
   //   return getMembersPublic(store, {
   //     role: targ_key,
   //   })
   // },
   components: {
     AppTitledList,
-    EditorsIntro,
+    EditorsIntroListItem,
+    EditorsIntroListItemLarge,
   },
   data () {
     return {
-      asideListRoleValue: this.$t('editors.WORDING_EDITORS_GUESTEDITOR'),
+      guestEditorRoleValue: this.$t('editors.WORDING_EDITORS_GUESTEDITOR'),
     }
   },
   computed: {
     customEditors () {
-      return _.get(this.$store, 'state.customEditors.items', [])
+      return get(this.$store, 'state.customEditors.items', [])
     },
-    asideListMembers () {
-      return _.get(this.$store, `state.publicMembers[${this.asideListRoleValue}].items`, [])
+    guestEditors () {
+      return get(this.$store, `state.publicMembers[${this.guestEditorRoleValue}].items`, [])
     },
   },
   beforeMount () {
     // Beta version code
-    const targ_key = _.find(ROLE_MAP, { value: this.$t('editors.WORDING_EDITORS_GUESTEDITOR'), }).key
+    const roleNum = find(ROLE_MAP, { value: this.guestEditorRoleValue, }).key
     Promise.all([
       getMembersPublic(this.$store, {
-        role: targ_key,
+        role: roleNum,
       }),
       getMembersPublic(this.$store, {
         custom_editor: true,
       }),
     ]).then(() => {
       if (this.$store.state.isLoggedIn) {
-        const customEditorsIds = this.$store.state.customEditors.items.map(editor => editor.id)
-        const asideListMembersIds = this.$store.state.publicMembers[this.asideListRoleValue].items.map(member => member.id)
-        const ids = _.uniq(_.concat(customEditorsIds, asideListMembersIds))
+        const customEditorsIds = this.customEditors.map(editor => editor.id)
+        const guestEditorsIds = this.guestEditors.map(member => member.id)
+        const ids = uniq(concat(customEditorsIds, guestEditorsIds))
         fetchFollowing(this.$store, {
           resource: 'member',
           ids: ids,
@@ -94,8 +111,8 @@ export default {
     // ]).then(() => {
     //   if (this.$store.state.isLoggedIn) {
     //     const customEditorsIds = this.$store.state.customEditors.items.map(editor => editor.id)
-    //     const asideListMembersIds = this.$store.state.publicMembers[this.asideListRoleValue].items.map(member => member.id)
-    //     const ids = _.uniq(_.concat(customEditorsIds, asideListMembersIds))
+    //     const guestEditorsIds = this.$store.state.publicMembers[this.guestEditorRoleValue].items.map(member => member.id)
+    //     const ids = uniq(concat(customEditorsIds, guestEditorsIds))
     //     fetchFollowing(this.$store, {
     //       resource: 'member',
     //       ids: ids,
@@ -108,29 +125,29 @@ export default {
 
 <style lang="stylus" scoped>
 .editors
-  &__container
+  &__bottom
     display flex
     justify-content flex-start
     align-items flex-start
-  &__list-aside
-    background-color white
-    list-style none
-    padding 16px 0
-    margin 28px 0 0 35px
+    margin 29.5px 0 0 0
 
-.editors-list-container
-  margin 0
-  padding 0
-.editors-intro-main
-  width calc(650px - 20px - 20px)
-  margin 0 20px
-  padding 14px 0 10px 0
-.editors-intro-aside
-  width calc(355px - 15px - 15px)
-  margin 0 15px
-  padding 10px 0
-  &:nth-child(1)
-    padding-top 0
+.custom-editors
+  &__list
+    margin 0
+    padding 16.5px 0
+    display flex
+  &__list-item
+    width 520px
+    padding 0 50px 0 20px
+
+.guest-editors
+  &__list
+    margin 0
+    padding 0
+  &__list-item
+    width calc(650px - 20px - 20px)
+    margin 0 20px
+    padding 14px 0 10px 0
 </style>
 
 
