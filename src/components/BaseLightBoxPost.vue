@@ -25,7 +25,7 @@
           </section>
         </article>
         <div class="nav-container">
-          <AppArticleNav :postId="post.id" :commentCount="commentCount"/>
+          <AppArticleNav :postId="post.id" :articleType="this.post.flag" :commentCount="commentCount"/>
         </div>
       </div>
     </template>
@@ -73,7 +73,7 @@ export default {
     },
     isClientSide,
     isNews () {
-      return get(this.post, 'type') === 'memo' || get(this.post, 'type', POST_TYPE.REVIEW) === POST_TYPE.NEWS
+      return get(this.post, 'flag') === 'memo' || get(this.post, 'type', POST_TYPE.REVIEW) === POST_TYPE.NEWS
     },
     authorId () {
       return getArticleAuthorId(this.post)
@@ -100,7 +100,7 @@ export default {
     getImageUrl,
     updatedAtYYYYMMDD,
     renderComment (ref) {
-      renderComment(this.$el, `${ref}`, `/post/${this.post.id}`, this.$store.state.setting.TALK_SERVER)
+      renderComment(this.$el, `${ref}`, `/${get(this.post, 'flag') || 'post'}/${this.post.id}`, this.$store.state.setting.TALK_SERVER)
     },
     isImg (content) {
       const regexp = /<img([\w\W]+?)\/>/

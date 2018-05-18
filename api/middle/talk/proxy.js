@@ -19,22 +19,17 @@ router.get('*', (req, res) => {
   const exp_target_file = /(?:.js)|(?:.css)/
   const headers = Object.assign({}, req.headers)
 
-  console.warn('Got a call to fetch stuff for talk.')
-  console.warn(req.url)
-
   if (headers[ 'accept-encoding' ]) {
     headers[ 'accept-encoding' ] = 'gzip'
   }
 
   if (exp_target_file.test(req.url)) {
     debug('File.', req.url, `${TALK_SERVER}${req.url}`)
-    console.warn(`${TALK_SERVER}${req.url}`)
     hyperquest(`${TALK_SERVER}${req.url}`, {
       method: 'GET',
       headers,
     }, (err, response) => {
       if (!err) {
-        console.warn('Got response. And going to pipe it.')
         res.set(response.headers)
         response.pipe(res)
       } else {
