@@ -90,13 +90,13 @@ $container
   &__aside
     width 75px
     height 100%
-    position sticky
+    position fixed
     // position fixed
-    top 57.5px
+    top 3px
     z-index 999
   &__main
     flex 1
-    margin-left 30px
+    margin-left calc(30px + 75px)
     // margin-right 30px
     display flex
     justify-content flex-start

@@ -1,21 +1,23 @@
 <template>
-  <li class="editors-intro-main">
-    <figure class="editors-intro-main__profile">
-      <router-link :to="`/profile/${editor.id}`" class="editors-intro-main__thumbnail">
-        <img :src="authorThumbnailImg" alt="" v-if="isClientSide">
-      </router-link>
-      <figcaption class="editors-intro-main__meta-container">
-        <router-link :to="`/profile/${editor.id}`" class="editors-intro-main__nickname">
-          <p v-text="authorNickname"></p>
-        </router-link>
-        <img class="editors-intro-main__follow-icon" v-if="editorIsNotCurrentUser" :src="isFollow ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="follow" @click="toogleFollow">
-      </figcaption>
-    </figure>
-    <p class="editors-intro-main__description" v-text="trimDescription ? descritpionTrim : editor.description"></p>
+  <li class="editors-intro-list-item-large">
+    <router-link :to="`/profile/${editor.id}`">
+      <img class="editors-intro-list-item-large__thumbnail" :src="editorThumbnailImg" alt="editors-intro-list-item-large__thumbnail" v-if="isClientSide">
+    </router-link>
+    <div class="editors-info">
+      <div class="editors-info__nickname-follow-container">
+        <router-link :to="`/profile/${editor.id}`" class="editors-info__nickname" v-text="editorNickname"></router-link>
+        <span class="follow-icon" v-if="editorIsNotCurrentUser" @click="toogleFollow">
+          <img class="follow-icon__thumbnail" :src="editorHasBeenFollowed ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'">
+          <span class="follow-icon__hint" v-text="$t('follow.WORDING_FOLLOW_LIST_FOLLOW')"></span>
+        </span>
+      </div>
+      <p class="editors-info__description" v-text="editorDescritpion"></p>
+    </div>
   </li>
 </template>
 
 <script>
+// TODO: scripts is same as EditorsIntroListItem.vue, refactor them
 import _ from 'lodash'
 import { isClientSide, getArticleAuthorNickname, getArticleAuthorThumbnailImg, } from 'src/util/comm'
 
@@ -47,8 +49,18 @@ export default {
     },
   },
   computed: {
-    isFollow () {
+    isClientSide,
+    editorThumbnailImg () {
+      return getArticleAuthorThumbnailImg(this.editor)
+    },
+    editorNickname () {
+      return getArticleAuthorNickname(this.editor)
+    },
+    editorHasBeenFollowed () {
       return this.$store.state.isLoggedIn && this.editorFollowers.indexOf(this.$store.state.profile.id) !== -1
+    },
+    editorIsNotCurrentUser () {
+      return !this.$store.state.isLoggedIn || this.$store.state.profile.id !== this.editor.id
     },
     editorFollowers () {
       if (this.$store.state.isLoggedIn) {
@@ -58,23 +70,13 @@ export default {
         return []
       }
     },
-    editorIsNotCurrentUser () {
-      return !this.$store.state.isLoggedIn || this.$store.state.profile.id !== this.editor.id
-    },
-    descritpionTrim () {
+    editorDescritpion () {
       const limit = 30
       if (this.editor.description) {
-        return this.editor.description.length > limit ? this.editor.description.slice(0, limit) + ' ...' : this.editor.description
+        return this.trimDescription ? this.editor.description.slice(0, limit) + ' ...' : this.editor.description
       } else {
         return ''
       }
-    },
-    isClientSide,
-    authorNickname () {
-      return getArticleAuthorNickname(this.editor)
-    },
-    authorThumbnailImg () {
-      return getArticleAuthorThumbnailImg(this.editor)
     },
   },
   methods: {
@@ -116,42 +118,53 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.editors-intro-main
+.editors-intro-list-item-large
   display flex
-  flex-direction column
-  align-items flex-start
-  & + &
-    border-top solid 0.5px #979797
-  &__profile
-    display flex
-    margin 0
-  &__nickname
-    text-decoration none
-    color #000
+  &:nth-child(1)
+    border-right solid 0.5px #000000
   &__thumbnail
-    r = 50px
+    r = 100px
     width r
     height r
     border-radius r
-    img
-      width 100%
-      height 100%
-      object-position center center
-      object-fit cover
-  &__meta-container
+    object-position center center
+    object-fit cover
+
+.editors-info
+  margin 0 0 0 15px
+  &__nickname-follow-container
     display flex
     align-items center
-    margin-left 4px
-  &__follow-icon
-    cursor pointer
-    width 25px
-    height 25px
-    margin-left 5px
+  &__nickname
+    font-size 25px
+    font-weight 500
+    text-align left
+    color #000000
   &__description
     font-size 15px
-    font-weight 300
-    text-align justify
+    font-weight 400
     line-height 1.5
-    margin 3px 0 0 0
+    text-align justify
+    color #000000
+
+$icon-size
+  width 25px
+  height 25px
+.follow-icon
+  cursor pointer
+  &__thumbnail
+    @extends $icon-size
+    margin-left 6.5px
+    cursor pointer
+  &__hint
+    position relative
+    // right 5px
+    bottom 2px
+    font-size 12px
+    -webkit-font-smoothing antialiased
+    -moz-font-smoothing antialiased
+    color #11b8c9
+    font-weight 600
 </style>
+
 

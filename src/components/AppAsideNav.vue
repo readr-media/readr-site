@@ -1,7 +1,7 @@
 <template>
   <nav class="app-aside-nav">
     <!-- <router-link to="/"><img class="app-aside-nav__logo" :src="[ isBackstage ? '/public/icons/readr-logo-backstage.svg' : '/public/icons/readr-logo-dark.svg' ]" alt=""></router-link> -->
-    <router-link to="/"><img class="app-aside-nav__logo" src="/public/icons/readr-logo-dark.svg" alt=""></router-link>
+    <router-link to="/"><img class="app-aside-nav__logo" src="/public/icons/readr-logo-backstage.svg" alt=""></router-link>
     <ol class="aside-navigation">
       <div class="aside-navigation__section--white">
         <!-- <transition name="fade" mode="out-in"> -->
@@ -82,8 +82,8 @@ export default {
   flex-direction column
   align-items center
   &__logo
-    width 75px
-    height 69px
+    width 50.5px
+    height 46.7px
     // transform scale(.673)
 
 $aside-navigation__section
