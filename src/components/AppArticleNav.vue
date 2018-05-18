@@ -10,6 +10,7 @@
         <span class="follow-icon__hint" v-text="$t('follow.WORDING_FOLLOW_LIST_FOLLOW')"></span>
       </span>
     </nav>
+    <Comment></Comment>
     <div :class="`article-nav__comment`">
       <div :class="`comment comment-${postId}`"></div>
     </div>
@@ -19,7 +20,10 @@
 <script>
 import { renderComment, } from 'src/util/talk'
 import _ from 'lodash'
+import Comment from 'readr-comment'
 import CommentCount from 'src/components/comment/CommentCount.vue'
+
+const debug = require('debug')('CLIENT:AppAritcleNav')
 
 const publishAction = (store, data) => {
   return store.dispatch('PUBLISH_ACTION', {
@@ -38,6 +42,7 @@ const updateStoreFollowingByResource = (store, { action, resource, resourceId, u
 }
 
 export default {
+  name: 'AppAritcleNav',
   props: {
     articleType: {
       type: String,
@@ -53,6 +58,7 @@ export default {
     },
   },
   components: {
+    Comment,
     CommentCount,
   },
   computed: {
@@ -107,6 +113,10 @@ export default {
         }
       }
     },
+  },
+  mounted () {
+    debug(Comment)
+    debug(this)
   },
 }
 </script>
