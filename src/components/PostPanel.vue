@@ -416,12 +416,11 @@
         if (this.action === 'edit' && publishStatus === POST_PUBLISH_STATUS.DRAFT) {
           this.isReturnToDraft = true
         }
-
         this.post.publish_status = publishStatus
         this.post.updated_by = get(this.$store.state, 'profile.id')
-        this.post.og_title = this.post.og_title || this.post.ogTitle
-        this.post.og_description = this.post.og_description || this.post.ogDescription
-        this.post.og_image = this.post.og_image || this.post.ogImage
+        this.post.og_title = this.post.og_title || ''
+        this.post.og_description = this.post.og_description || ''
+        this.post.og_image = this.post.og_image || ''
 
         console.info('Promise all sta', Date.now())
         Promise.all([ this.$_postPanel_getLinkMeta(), this.$_postPanel_addNewTag(), ])
