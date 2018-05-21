@@ -20,7 +20,7 @@
         @updateContent="$_postPanel_updateContent">
       </quill-editor-news>
       <p v-if="includes(errors, 'content')" v-text="`${$t('POST_PANEL.VALIDATION_MSG')}${$t('POST_PANEL.CONTENT')}`"></p>
-      <div class="input input--link" :class="{ 'input--error': includes(errors, 'link') }">
+      <div v-if="isReview" class="input input--link" :class="{ 'input--error': includes(errors, 'link') }">
         <label v-text="`${$t('POST_PANEL.NEWS')}${$t('POST_PANEL.LINK')}：`"></label>
         <input v-model="post.link" type="url" :disabled="loading" @change="$_postPanel_linkChanged">
         <p v-if="includes(errors, 'link')" v-text="`${$t('POST_PANEL.VALIDATION_MSG')}${$t('POST_PANEL.NEWS')}${$t('POST_PANEL.LINK')}`"></p>
@@ -55,17 +55,17 @@
         </post-panel-tag>
       </div>
 
-      <!-- <div v-if="$can('editPostOg')" class="input" :class="{ 'input--error': includes(errors, 'ogTitle') }">
+      <div v-if="!isReview && $can('editPostOg')" class="input" :class="{ 'input--error': includes(errors, 'ogTitle') }">
         <label v-text="`${$t('POST_PANEL.OG_TITLE')}：`"></label>
         <input v-model="post.ogTitle" type="text" :disabled="loading">
-        <p v-if="includes(errors, 'ogTitle')">請輸入分享標題</p>
-      </div> -->
-      <!-- <div v-if="$can('editPostOg')" class="input input--descr" :class="{ 'input--error': includes(errors, 'ogDescr') }">
+        <p v-if="includes(errors, 'ogTitle')" v-text="`${$t('POST_PANEL.VALIDATION_MSG')}${$t('POST_PANEL.OG_TITLE')}`"></p>
+      </div>
+      <div v-if="!isReview && $can('editPostOg')" class="input input--descr" :class="{ 'input--error': includes(errors, 'ogDescr') }">
         <label v-text="`${$t('POST_PANEL.OG_DESCRIPTION')}：`"></label>
-        <textarea rows="3" :disabled="loading"></textarea>
-        <p v-if="includes(errors, 'ogTitle')">請輸入分享說明</p>
-      </div> -->
-      <!-- <div v-if="$can('editPostOg')" class="input input--og-img">
+        <textarea v-model="post.ogDescription" rows="3" :disabled="loading"></textarea>
+        <p v-if="includes(errors, 'ogDescr')" v-text="`${$t('POST_PANEL.VALIDATION_MSG')}${$t('POST_PANEL.OG_DESCRIPTION')}`"></p>
+      </div>
+      <div v-if="!isReview && $can('editPostOg')" class="input input--og-img">
         <label v-text="`${$t('POST_PANEL.OG_IMAGE')}：`"></label>
         <input v-model="post.ogImage" type="text" :disabled="loading" readonly>
         <button v-show="!loading" class="button button--img" :disabled="loading" @click="$_postPanel_addOgImage">
@@ -75,10 +75,10 @@
           <img src="/public/icons/delete.png" :alt="$t('POST_PANEL.DELETE')">
         </button>
         <input ref="uploadImg" class="input--hidden" type="file" accept="image/*" @change="$_postPanel_uploadImg">
-      </div> -->
-      <!-- <div v-if="post.ogImage && $can('editPostOg')" class="post-panel__og-img">
+      </div>
+      <div v-if="!isReview && post.ogImage && $can('editPostOg')" class="post-panel__og-img">
         <img :src="post.ogImage" :alt="post.ogTitle">
-      </div> -->
+      </div>
 
       <div class="post-panel__action">
         <template v-if="isClientSide && !loading">
@@ -420,6 +420,9 @@
 
         this.post.publish_status = publishStatus
         this.post.updated_by = get(this.$store.state, 'profile.id')
+        this.post.og_title = this.post.ogTitle
+        this.post.og_description = this.post.ogDescription
+        this.post.og_image = this.post.ogImage
         
         console.info('Promise all sta', Date.now())
         Promise.all([ this.$_postPanel_getLinkMeta(), this.$_postPanel_addNewTag(), ])
@@ -639,6 +642,7 @@
   &--link
     margin 10px auto 5px
   &--date
+    margin-top 10px
     > div
       flex 1
     >>> input
