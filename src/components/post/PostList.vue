@@ -12,9 +12,9 @@
 import BaseLightBox from 'src/components/BaseLightBox.vue'
 import BaseLightBoxPost from 'src/components/BaseLightBoxPost.vue'
 import PostItem from 'src/components/post/PostItem.vue'
-import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, } from 'api/config'
+import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, REPORT_PUBLISH_STATUS, } from 'api/config'
 import { isScrollBarReachBottom, isElementReachInView, } from 'src/util/comm'
-import { find, get, } from 'lodash'
+import { find, get, sortBy, union, } from 'lodash'
 
 const MAXRESULT_POSTS = 10
 const DEFAULT_PAGE = 1
@@ -55,6 +55,22 @@ const fetchProjectSingle = (store, proj_id) => {
     },
   })
 }
+const fetchReportsList = (store, {
+  max_result = 10,
+  proj_ids = [],
+  sort = '-updated_at',
+} = {}) => {
+  return store.dispatch('GET_PUBLIC_REPORTS', {
+    params: {
+      max_result: max_result,
+      project_id: proj_ids,
+      where: {
+        publish_status: REPORT_PUBLISH_STATUS.PUBLISHED,
+      },
+      sort: sort,
+    },
+  })
+}
 
 export default {
   name: 'PostList',
@@ -74,11 +90,12 @@ export default {
        * check what type of posts is it gonna fetch by route.
        */
       switch (this.route) {
-        case 'memo':
+        case 'series':
           /**
            * make sure the project id is legal.
            */
           jobs.push(fetchProjectSingle(this.$store, Number(get(this.$route, 'params.id'))).then((proj) => {
+            console.log('proj', proj)
             if (proj) {
               return Promise.all([
                 fetchMemos(this.$store, {
@@ -86,6 +103,7 @@ export default {
                   proj_ids: [ Number(get(this.$route, 'params.id')), ],
                   page: this.currPage,
                 }).then(() => { this.currPage += 1 }),
+                fetchReportsList(this.$store, { proj_ids: [ Number(get(this.$route, 'params.id')), ], }),
                 get(this.$route, 'params.subItem')
                   ? fetchMemoSingle(this.$store, get(this.$route, 'params.subItem'))
                   : Promise.resolve(),
@@ -106,7 +124,7 @@ export default {
     jobsLoadmore () {
       const jobs = []
       switch (this.route) {
-        case 'memo':
+        case 'series':
           jobs.push(fetchMemos(this.$store, {
             mode: 'update',
             proj_ids: [ Number(get(this.$route, 'params.id')), ],
@@ -123,11 +141,16 @@ export default {
       return jobs      
     },
     posts () {
-      return get(this.$store, `state.${this.targState}`)
+      switch (this.route) {
+        case 'series':
+          return sortBy(union(get(this.$store, 'state.memos', []), get(this.$store, 'state.publicReports', [])), [ (p) => -p.publishedAt, ])
+        default:
+          return get(this.$store, `state.${this.targState}`)
+      }
     },
     postSingle () {
       switch (this.route) {
-        case 'memo':
+        case 'series':
           return get(this.$store, 'state.memoSingle', {})
         default:
           return
@@ -152,8 +175,8 @@ export default {
     targState () {
       let targ_state
       switch (this.route) {
-        case 'memo':
-          targ_state = 'memos'
+        case 'series':
+          targ_state = 'series'
           break
         default:
           targ_state = ''

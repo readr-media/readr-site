@@ -283,7 +283,7 @@ export function getMemos ({ params, }) {
   debug('params', params)
   if (query && (query.length > 0)) {
     url = url + `?${query}`
-  }  
+  }
   return _doFetchStrict(url, {})
 }
 
