@@ -92,6 +92,45 @@ router.get('/profile/:id', (req, res, next) => {
 
 router.get('/members', publicQueryValidation.validate(schema.members), fetchAndConstructMembers)
 
+router.get('/memos', publicQueryValidation.validate(schema.memos), (req, res, next) => {
+  let url = '/memos?'
+  mapKeys(req.query, (value, key) => {
+    url = `${url}&${key}=${value}`
+  })
+  req.url = url
+  next()
+}, fetchFromRedis, (req, res, next) => {
+  const url = `${apiHost}${req.url}`
+  if (res.redis) {
+    console.log('fetch data from Redis.', req.url)
+    const resData = JSON.parse(res.redis)
+    res.json(resData)
+  } else {
+    superagent
+      .get(url)
+      .timeout(API_TIMEOUT)
+      .end((e, r) => {
+        if (!e && r) {
+          const dt = JSON.parse(r.text)
+          if (dt['_items'] !== null && dt.constructor === Object) {
+            res.dataString = r.text
+            /**
+             * if data not empty, go next to save data to redis
+             */
+            next()
+          }
+          const resData = JSON.parse(r.text)
+          res.json(resData)
+        } else {
+          const err_wrapper = handlerError(e, r)
+          res.status(err_wrapper.status).json(err_wrapper.text)
+          console.error(`error during fetch public data from : ${url}`)
+          console.error(e)  
+        }
+      })
+  }
+}, insertIntoRedis)
+
 router.get('/post/:postId', fetchFromRedis, fetchAndConstructPosts, insertIntoRedis)
 
 router.get('/posts', publicQueryValidation.validate(schema.posts), (req, res, next) => {
@@ -136,6 +175,45 @@ router.get('/posts/hot', (req, res) => {
 
 router.get('/projects', publicQueryValidation.validate(schema.projects), (req, res, next) => {
   let url = '/project/list?'
+  mapKeys(req.query, (value, key) => {
+    url = `${url}&${key}=${value}`
+  })
+  req.url = url
+  next()
+}, fetchFromRedis, (req, res, next) => {
+  const url = `${apiHost}${req.url}`
+  if (res.redis) {
+    console.log('fetch data from Redis.', req.url)
+    const resData = JSON.parse(res.redis)
+    res.json(resData)
+  } else {
+    superagent
+      .get(url)
+      .timeout(API_TIMEOUT)
+      .end((e, r) => {
+        if (!e && r) {
+          const dt = JSON.parse(r.text)
+          if (dt['_items'] !== null && dt.constructor === Object) {
+            res.dataString = r.text
+            /**
+             * if data not empty, go next to save data to redis
+             */
+            next()
+          }
+          const resData = JSON.parse(r.text)
+          res.json(resData)
+        } else {
+          const err_wrapper = handlerError(e, r)
+          res.status(err_wrapper.status).json(err_wrapper.text)
+          console.error(`error during fetch public data from : ${url}`)
+          console.error(e)  
+        }
+      })
+  }
+}, insertIntoRedis)
+
+router.get('/reports', publicQueryValidation.validate(schema.reports), (req, res, next) => {
+  let url = '/report/list?'
   mapKeys(req.query, (value, key) => {
     url = `${url}&${key}=${value}`
   })

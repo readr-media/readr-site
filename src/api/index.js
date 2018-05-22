@@ -351,6 +351,15 @@ export function getPostsCount ({ params, }) {
   return _doFetchStrict(url, {})
 }
 
+export function getPublicMemos ({ params, }) {
+  let url = `${host}/api/public/memos`
+  const query = _buildQuery(params)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }
+  return _doFetch(url)
+}
+
 export function getPublicPosts ({ params, }) {
   let url = params.category !== 'hot' ? `${host}/api/public/posts` : `${host}/api/public/posts/hot`
   const query = _buildQuery(params)
@@ -362,6 +371,15 @@ export function getPublicPosts ({ params, }) {
 
 export function getPublicProjectsList ({ params, }) {
   let url = `${host}/api/public/projects`
+  const query = _buildQuery(params)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }
+  return _doFetch(url)
+}
+
+export function getPublicReportsList ({ params, }) {
+  let url = `${host}/api/public/reports`
   const query = _buildQuery(params)
   if (query && (query.length > 0)) {
     url = url + `?${query}`

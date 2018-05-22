@@ -140,7 +140,7 @@ export function isClientSide () {
   return _.get(this.$store, 'state.isClientSide', false)
 }
 
-export function getProjectUrl (slug) {
+export function getReportUrl (slug) {
   return OLD_PROJECTS_SLUGS.includes(slug) ? `http://${MM_SITE_DOMAIN}/projects/${slug}` : `http://${SITE_DOMAIN}/project/${slug}`
 }
 

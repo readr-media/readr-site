@@ -13,15 +13,15 @@
         </transition-group>
       </div>
       <div class="homepage__list-aside">
-        <AppTitledList v-if="hasProjectsInProgress" class="homepage__project-container" :listTitle="$t('SECTIONS.PROJECTS_IN_PROGRESS')">
-          <template v-for="project in projectsInProgress">
-            <ProjectsFigureProgress :project="project"></ProjectsFigureProgress>
-          </template>
-        </AppTitledList>
-        <AppTitledList :listTitle="$t('SECTIONS.PROJECTS')">
+        <AppTitledList v-if="reports.length > 0" class="homepage__report-container" :listTitle="$t('SECTIONS.REPORTS')">
           <ul class="aside-list-container">
-            <HomeProjectAside />
+            <HomeReportAside />
           </ul>
+        </AppTitledList>
+        <AppTitledList v-if="memos.length > 0" class="homepage__project-container" :listTitle="$t('SECTIONS.MEMOS')">
+          <template v-for="memo in memos">
+            <MemoFigure :key="memo.id" :memo="memo"></MemoFigure>
+          </template>
         </AppTitledList>
         <AppTitledList :listTitle="this.$route.path !== '/hot' ? $t('SECTIONS.HOT_TALK') : $t('SECTIONS.CHIEF_EDITOR_TALK')">
           <ul class="aside-list-container">
@@ -36,28 +36,43 @@
 </template>
 
 <script>
-import { POINT_OBJECT_TYPE, PROJECT_STATUS, PROJECT_PUBLISH_STATUS, } from '../../api/config'
+import { MEMO_PUBLISH_STATUS, POINT_OBJECT_TYPE, REPORT_PUBLISH_STATUS, } from '../../api/config'
 import { currEnv, isScrollBarReachBottom, isElementReachInView, isCurrentRoutePath, } from 'src/util/comm'
 import _ from 'lodash'
 import { createStore, } from '../store'
 import AppTitledList from 'src/components/AppTitledList.vue'
-import HomeProjectAside from 'src/components/home/HomeProjectAside.vue'
+import HomeReportAside from 'src/components/home/HomeReportAside.vue'
 import HomeArticleAside from 'src/components/home/HomeArticleAside.vue'
 import BaseLightBox from 'src/components/BaseLightBox.vue'
 import BaseLightBoxPost from 'src/components/BaseLightBoxPost.vue'
 import Invite from 'src/components/invitation/Invite.vue'
 import PostItem from 'src/components/post/PostItem.vue'
-import ProjectsFigureProgress from 'src/components/projects/ProjectsFigureProgress.vue'
+import MemoFigure from 'src/components/projects/MemoFigure.vue'
 
 const debug = require('debug')('CLIENT:Home')
 
+const MAXRESULT_MEMOS = 2
 const MAXRESULT_POSTS = 10
-const MAXRESULT_PROJECTS = 2
+const MAXRESULT_REPORTS = 4
 // const MAXRESULT_VIDEOS = 1
 const DEFAULT_PAGE = 1
 const DEFAULT_SORT = '-published_at'
-const DEFAULT_PROJECT_SORT = 'project_order,-updated_at'
 const DEFAULT_CATEGORY = 'latest'
+
+const fetchMemos = (store, {
+  max_result = MAXRESULT_MEMOS,
+  sort = DEFAULT_SORT,
+} = {}) => {
+  return store.dispatch('GET_PUBLIC_MEMOS', {
+    params: {
+      max_result: max_result,
+      where: {
+        publish_status: MEMO_PUBLISH_STATUS.PUBLISHED,
+      },
+      sort: sort,
+    },
+  })
+}
 
 const fetchPost = (store, { id, }) => {
   return store.dispatch('GET_POST', {
@@ -84,18 +99,18 @@ const fetchPosts = (store, {
     },
   })
 }
-const fetchProjectsList = (store, {
-  max_result = MAXRESULT_PROJECTS,
-  status,
+
+const fetchReportsList = (store, {
+  max_result = MAXRESULT_REPORTS,
+  sort = DEFAULT_SORT,
 } = {}) => {
-  return store.dispatch('GET_PUBLIC_PROJECTS', {
+  return store.dispatch('GET_PUBLIC_REPORTS', {
     params: {
       max_result: max_result,
       where: {
-        status: status,
-        publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
+        publish_status: REPORT_PUBLISH_STATUS.PUBLISHED,
       },
-      sort: DEFAULT_PROJECT_SORT,
+      sort: sort,
     },
   })
 }
@@ -175,12 +190,12 @@ export default {
   // },
   components: {
     AppTitledList,
-    HomeProjectAside,
+    HomeReportAside,
     HomeArticleAside,
     BaseLightBox,
     BaseLightBoxPost,
     Invite,
-    ProjectsFigureProgress,
+    MemoFigure,
     PostItem,
   },
   watch: {
@@ -212,8 +227,8 @@ export default {
     isClientSide () {
       return _.get(this.$store, 'state.isClientSide', false)
     },
-    hasProjectsInProgress () {
-      return this.projectsInProgress.length > 0
+    memos () {
+      return _.get(this.$store.state, 'publicMemos', [])
     },
     postsLatest () {
       return _.get(this.$store.state.publicPosts, 'items', [])
@@ -244,8 +259,8 @@ export default {
         return {}
       }
     },
-    projectsInProgress () {
-      return _.get(this.$store, [ 'state', 'publicProjects', 'inProgress', ], [])
+    reports () {
+      return _.get(this.$store, [ 'state', 'publicReports', ], [])
     },
     showLightBox () {
       return this.isCurrentRoutePath('/post/:postId')
@@ -297,11 +312,11 @@ export default {
   },
   beforeMount () {
     // Beta version code
-    let reqs = [ 
+    let reqs = [
+      fetchMemos(this.$store),
       fetchPosts(this.$store),
       fetchPosts(this.$store, { category: 'hot', }),
-      fetchProjectsList(this.$store, { max_result: 3, status: PROJECT_STATUS.WIP, }),
-      fetchProjectsList(this.$store, { max_result: 2, status: PROJECT_STATUS.DONE, }),
+      fetchReportsList(this.$store),
     ]
     if (this.$route.params.postId) {
       reqs.push(fetchPost(this.$store, { id: this.$route.params.postId, })) 
@@ -310,9 +325,9 @@ export default {
       if (this.$store.state.isLoggedIn) {
         const postIdsLatest = _.get(this.$store.state.publicPosts, 'items', []).map(post => `${post.id}`) 
         const postIdsHot = _.get(this.$store.state.publicPostsHot, 'items', []).map(post => `${post.id}`) 
-        const postIdFeaturedProject = _.concat(_.get(this.$store, 'state.publicProjects.done', []), _.get(this.$store, 'state.publicProjects.inProgress', [])).map(project => `${project.id}`)
+        // const reportIds = _.get(this.$store.state, 'publicReports', []).map(report => `${report.id}`)
         const ids = _.uniq(_.concat(postIdsLatest, postIdsHot))
-        const projectInProgressIds = _.get(this.$store, 'state.publicProjects.inProgress', []).map(project => project.id)
+        const projectIds = _.uniq(_.get(this.$store, 'state.publicMemos', []).map(memo => memo.projectId))
         if (ids.length !== 0) { 
           fetchFollowing(this.$store, { 
             resource: 'post', 
@@ -320,15 +335,14 @@ export default {
           }) 
         } 
    
-        if (postIdFeaturedProject.length !== 0) { 
-          fetchFollowing(this.$store, { 
-            resource: 'project', 
-            ids: postIdFeaturedProject, 
-          })
-        }
-
-        if (projectInProgressIds.length !== 0) {
-          fetchPointHistories(this.$store, { objectType: POINT_OBJECT_TYPE.PROJECT_MEMO, objectIds: projectInProgressIds, })
+        // if (reportIds.length !== 0) { 
+        //   fetchFollowing(this.$store, { 
+        //     resource: 'report', 
+        //     ids: reportIds, 
+        //   })
+        // }
+        if (projectIds.length !== 0) {
+          fetchPointHistories(this.$store, { objectType: POINT_OBJECT_TYPE.PROJECT_MEMO, objectIds: projectIds, })
         }
       }
     })
@@ -380,7 +394,8 @@ export default {
     section
       &:nth-child(2)
         margin-top 10px
-  &__project-container
+  &__project-container, &__report-container
     >>> .app-titled-list__content
       padding 0
+  
 </style>

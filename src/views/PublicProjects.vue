@@ -5,9 +5,9 @@
         <ProjectsFigure v-for="project in projects" :project="project" :key="project.id"/>
       </div>
       <div class="projects-list__list-aside">
-        <AppTitledList v-if="hasProjectsInProgress" class="projects-list__project-container" :listTitle="$t('SECTIONS.PROJECTS_IN_PROGRESS')">
-          <template v-for="project in projectsInProgress">
-            <ProjectsFigureProgress :project="project"></ProjectsFigureProgress>
+        <AppTitledList v-if="memos.length > 0" class="projects-list__project-container" :listTitle="$t('SECTIONS.MEMOS')">
+          <template v-for="memo in memos">
+            <MemoFigure :key="memo.id" :memo="memo"></MemoFigure>
           </template>
         </AppTitledList>
         <!-- <ProjectsFigureProgress/> -->
@@ -32,8 +32,8 @@
 <script>
 import AppTitledList from '../components/AppTitledList.vue'
 import ProjectsFigure from '../components/projects/ProjectsFigure.vue'
-import ProjectsFigureProgress from '../components/projects/ProjectsFigureProgress.vue'
-import { POINT_OBJECT_TYPE, PROJECT_PUBLISH_STATUS, PROJECT_STATUS, } from '../../api/config'
+import MemoFigure from '../components/projects/MemoFigure.vue'
+import { MEMO_PUBLISH_STATUS, POINT_OBJECT_TYPE, PROJECT_PUBLISH_STATUS, PROJECT_STATUS, } from '../../api/config'
 import { isScrollBarReachBottom, isElementReachInView, } from 'src/util/comm'
 import _ from 'lodash'
 
@@ -42,6 +42,21 @@ const debug = require('debug')('CLIENT:ProjectsList')
 const MAXRESULT = 5
 const DEFAULT_PAGE = 1
 const DEFAULT_SORT = 'project_order,-updated_at'
+
+const fetchMemos = (store, {
+  max_result = MAXRESULT,
+  sort = '-published_at',
+} = {}) => {
+  return store.dispatch('GET_PUBLIC_MEMOS', {
+    params: {
+      max_result: max_result,
+      where: {
+        publish_status: MEMO_PUBLISH_STATUS.PUBLISHED,
+      },
+      sort: sort,
+    },
+  })
+}
 
 const fetchPointHistories = (store, { objectIds, objectType, }) => {
   return store.dispatch('GET_POINT_HISTORIES', {
@@ -93,7 +108,7 @@ export default {
   components: {
     AppTitledList,
     ProjectsFigure,
-    ProjectsFigureProgress,
+    MemoFigure,
   },
   watch: {
     isReachBottom(isReachBottom) {
@@ -110,14 +125,11 @@ export default {
     }
   },
   computed: {
-    hasProjectsInProgress () {
-      return this.projectsInProgress.length > 0
+    memos () {
+      return _.get(this.$store.state, 'publicMemos', [])
     },
     projects () {
       return _.get(this.$store, 'state.publicProjects.done', [])
-    },
-    projectsInProgress () {
-      return _.get(this.$store, [ 'state', 'publicProjects', 'inProgress', ], [])
     },
   },
   methods: {
@@ -153,20 +165,20 @@ export default {
   beforeMount () {
     // Beta version code
     Promise.all([
+      fetchMemos(this.$store),
       fetchProjectsList(this.$store, { status: PROJECT_STATUS.DONE, }),
-      fetchProjectsList(this.$store, { max_result: 3, status: PROJECT_STATUS.WIP, }),
     ]).then(() => {
       if (this.$store.state.isLoggedIn) {
         const postIdFeaturedProject = _.get(this.$store, 'state.publicProjects.done', []).map(project => `${project.id}`)
-        const projectInProgressIds = _.get(this.$store, 'state.publicProjects.inProgress', []).map(project => project.id)
+        const projectIds = _.uniq(_.get(this.$store, 'state.publicMemos', []).map(memo => memo.projectId))
 
         fetchFollowing(this.$store, {
           resource: 'project',
           ids: postIdFeaturedProject,
         })
 
-        if (projectInProgressIds.length !== 0) {
-          fetchPointHistories(this.$store, { objectType: POINT_OBJECT_TYPE.PROJECT_MEMO, objectIds: projectInProgressIds, })
+        if (projectIds.length !== 0) {
+          fetchPointHistories(this.$store, { objectType: POINT_OBJECT_TYPE.PROJECT_MEMO, objectIds: projectIds, })
         }
       }
     })
@@ -189,6 +201,7 @@ export default {
 
 <style lang="stylus" scoped>
 .projects-list
+  width 100%
   &__container
     display flex
   &__list-main
@@ -197,6 +210,7 @@ export default {
     justify-content flex-end
     align-items flex-start
   &__list-aside
+    flex 1
     margin-left 40px
     display flex
     flex-direction column
@@ -208,6 +222,7 @@ export default {
     section
       margin-top 16.5px
   &__project-container
+    width 100%
     >>> .app-titled-list__content
       padding 0
 
