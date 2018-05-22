@@ -1,6 +1,6 @@
 <template>
   <div class="leading">
-    <template v-if="route === 'memo'">
+    <template v-if="route === 'series'">
       <ProjectIntroSingle :projId="Number(get(this.$route, 'params.id'))"></ProjectIntroSingle>
     </template>
   </div>

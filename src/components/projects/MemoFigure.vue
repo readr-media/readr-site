@@ -6,7 +6,7 @@
     </div>
     <div class="projects-figure-progress__info">
       <div v-if="deducted" class="projects-figure-progress__btn-container">
-        <router-link :to="`/memo/${get(memo, 'projectId')}`" class="projects-figure-progress__link"><img src="/public/icons/microphone-grey.png" :alt="$t('PROJECT.DISCUSS')"></router-link>
+        <router-link :to="`/series/${get(memo, 'projectId')}`" class="projects-figure-progress__link"><img src="/public/icons/microphone-grey.png" :alt="$t('PROJECT.DISCUSS')"></router-link>
         <div class="projects-figure-progress__alert" v-text="$t('PROJECT.DISCUSS')"></div>
       </div>
       <div v-else class="projects-figure-progress__btn-container">
@@ -82,7 +82,7 @@ export default {
       deductPoints(this.$store, { objectId: get(this.memo, 'projectId'), memoPoints: get(this.memo, 'project.memoPoints') || 0, })
       .then(() => {
         this.deducting = false
-        this.$router.push(`/memo/${get(this.memo, 'projectId')}`)
+        this.$router.push(`/series/${get(this.memo, 'projectId')}`)
       })
     },
     $_projectsFigureProgress_openLightBox () {
