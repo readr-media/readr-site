@@ -6,18 +6,18 @@
         <PostList></PostList>
       </div>
       <div class="public-page__aside">
-        <AppTitledList v-if="hasProjectsInProgress"
+        <AppTitledList v-if="memos.length > 0"
           class="public-page__aside-container"
-          :listTitle="$t('SECTIONS.PROJECTS_IN_PROGRESS')">
-          <template v-for="project in projectsInProgress">
-            <ProjectsFigureProgress :project="project"></ProjectsFigureProgress>
+          :listTitle="$t('SECTIONS.MEMOS')">
+          <template v-for="memo in memos">
+            <MemoFigure :key="memo.id" :memo="memo"></MemoFigure>
           </template>
         </AppTitledList>
         <AppTitledList 
           v-if="hasProjectsDone"
           class="public-page__aside-container"
           :listTitle="$t('SECTIONS.PROJECTS')">
-          <HomeProjectAside></HomeProjectAside>
+          <HomeReportAside></HomeReportAside>
         </AppTitledList>
       </div>
     </div>  
@@ -25,16 +25,31 @@
 </template>
 <script>
 import AppTitledList from 'src/components/AppTitledList.vue'
-import HomeProjectAside from 'src/components/home/HomeProjectAside.vue'
+import HomeReportAside from 'src/components/home/HomeReportAside.vue'
 import Leading from 'src/components/leading/Leading.vue'
 import PostList from 'src/components/post/PostList.vue'
-import ProjectsFigureProgress from 'src/components/projects/ProjectsFigureProgress.vue'
-import { POINT_OBJECT_TYPE, PROJECT_PUBLISH_STATUS, PROJECT_STATUS, } from 'api/config'
-import { get, } from 'lodash'
+import MemoFigure from 'src/components/projects/MemoFigure.vue'
+import { MEMO_PUBLISH_STATUS, POINT_OBJECT_TYPE, PROJECT_PUBLISH_STATUS, PROJECT_STATUS, } from 'api/config'
+import { get, uniq, } from 'lodash'
 
 const MAXRESULT = 5
 const DEFAULT_PAGE = 1
 const DEFAULT_SORT = '-updated_at'
+
+const fetchMemos = (store, {
+  max_result = MAXRESULT,
+  sort = DEFAULT_SORT,
+} = {}) => {
+  return store.dispatch('GET_PUBLIC_MEMOS', {
+    params: {
+      max_result: max_result,
+      where: {
+        publish_status: MEMO_PUBLISH_STATUS.PUBLISHED,
+      },
+      sort: sort,
+    },
+  })
+}
 
 const fetchPointHistories = (store, { objectIds, objectType, }) => {
   return store.dispatch('GET_POINT_HISTORIES', {
@@ -68,20 +83,17 @@ export default {
   name: 'PublicPageWithAside',
   components: {
     AppTitledList,
-    HomeProjectAside,
+    HomeReportAside,
     Leading,
     PostList,
-    ProjectsFigureProgress,
+    MemoFigure,
   },
   computed: {
-    hasProjectsInProgress () {
-      return this.projectsInProgress.length > 0
-    },    
     hasProjectsDone () {
       return this.projectsDone.length > 0      
     },
-    projectsInProgress () {
-      return get(this.$store, 'state.publicProjects.inProgress', [])
+    memos () {
+      return get(this.$store.state, 'publicMemos', [])
     },
     projectsDone () {
       return get(this.$store, 'state.publicProjects.done', [])
@@ -90,13 +102,13 @@ export default {
   methods: {},
   beforeMount () {
     Promise.all([
+      fetchMemos(this.$store),
       fetchProjectsList(this.$store, { max_result: 2, status: PROJECT_STATUS.DONE, }),
-      fetchProjectsList(this.$store, { max_result: 3, status: PROJECT_STATUS.WIP, }),
     ]).then(() => {
-      const projectInProgressIds = get(this.$store, 'state.publicProjects.inProgress', []).map(project => project.id)
+      const projectIds = uniq(get(this.$store, 'state.publicMemos', []).map(memo => memo.projectId))
       
-      if (projectInProgressIds.length !== 0) {
-        fetchPointHistories(this.$store, { objectType: POINT_OBJECT_TYPE.PROJECT_MEMO, objectIds: projectInProgressIds, })
+      if (projectIds.length !== 0) {
+        fetchPointHistories(this.$store, { objectType: POINT_OBJECT_TYPE.PROJECT_MEMO, objectIds: projectIds, })
       }
       // if (this.$store.state.isLoggedIn) {
       //   const postIdFeaturedProject = _.get(this.$store, 'state.publicProjects.done', []).map(project => `${project.id}`)
@@ -112,6 +124,7 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .public-page
+  width 100%
   &__container
     display flex
   &__main

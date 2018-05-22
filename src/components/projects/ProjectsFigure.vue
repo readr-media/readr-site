@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { updatedAtYYYYMMDD, getProjectUrl, } from '../../util/comm'
+import { updatedAtYYYYMMDD, getReportUrl, } from '../../util/comm'
 import AppShareButton from 'src/components/AppShareButton.vue'
 import AppArticleNav from 'src/components/AppArticleNav.vue'
 
@@ -32,7 +32,7 @@ export default {
   computed: {
     projectUrl () {
       if (this.project.slug) {
-        return getProjectUrl(this.project.slug)
+        return getReportUrl(this.project.slug)
       }
       return '/'
     },

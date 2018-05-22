@@ -65,6 +65,7 @@ const router = new Router({
     { path: '/guesteditor', component: ManageGuestEditor, meta: { permission: 'guesteditor', }, },
     { path: '/login', component: PublicLogin, },
     { path: '/member', component: ManageMember, meta: { permission: 'member', }, },
+    // { path: '/series/:id/:subItem?', component: PublicPageWithAside, meta: { permission: 'member', }, },
     { path: '/memo/:id/:subItem?', component: PublicPageWithAside, meta: { permission: 'member', }, },
     { path: '/profile/:id', component: PublicProfile, meta: { permission: 'member', }, },
     { path: '/projects', component: PublicProjects, meta: { permission: 'member', }, },

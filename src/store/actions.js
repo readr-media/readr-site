@@ -35,9 +35,11 @@ import {
   getProfile,
   getPublicMember,
   getPublicMembers,
+  getPublicMemos,
   getPublicPosts,
   getPublicProject,
   getPublicProjectsList,
+  getPublicReportsList,
   getPublicVideos,
   getPublicVideosCount,
   getTags,
@@ -282,6 +284,22 @@ export default {
       }
     })
   },
+  GET_PUBLIC_MEMOS: ({ commit, dispatch, state, }, { params, }) => {
+    return new Promise((resolve, reject) => { 
+      getPublicMemos({ params, }).then(({ status, body, }) => {
+        debug('Get memos!', status, body)
+        if (status === 200) {
+          commit('SET_PUBLIC_MEMOS', { memos: body.items, })
+          resolve({ status: 200, res: body, })
+        } else {
+          reject({ status: status, })
+        }
+      })
+      .catch((res) => {
+        reject({ status: status, res: res,})
+      })
+    })
+  },
   // Todos: sync the logic design the same as GET_PUBLIC_PROJECTS
   GET_PUBLIC_POSTS: ({ commit, dispatch, state, }, { params, outputStateTarget = 'publicPosts', }) => {
     return new Promise((resolve, reject) => {
@@ -356,6 +374,22 @@ export default {
         if (status === 200) {
           setPublicProject(body)
           resolve({ status: 200, res: body, })
+        }
+      })
+      .catch((res) => {
+        reject({ status: status, res: res,})
+      })
+    })
+  },
+  GET_PUBLIC_REPORTS: ({ commit, dispatch, state, }, { params, }) => {
+    return new Promise((resolve, reject) => { 
+      getPublicReportsList({ params, }).then(({ status, body, }) => {
+        debug('Get reports!', status, body)
+        if (status === 200) {
+          commit('SET_PUBLIC_REPORTS', { reports: body.items, })
+          resolve({ status: 200, res: body, })
+        } else {
+          reject({ status: status, })
         }
       })
       .catch((res) => {

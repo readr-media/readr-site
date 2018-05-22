@@ -313,7 +313,9 @@ export default {
     'CELEBRITIES_TALK': '對話',
     'HOT_TALK': '焦點',
     'CHIEF_EDITOR_LIST': '客座',
+    'MEMOS': '筆記',
     'PROJECTS': '議題',
-    'PROJECTS_IN_PROGRESS': '進行中議題',    
+    'PROJECTS_IN_PROGRESS': '進行中議題',
+    'REPORTS': '報導',
   },
 }
