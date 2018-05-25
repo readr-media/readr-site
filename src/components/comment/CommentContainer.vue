@@ -14,9 +14,10 @@
   import { get, map, } from 'lodash'
   import { getImageUrl, } from 'src/util/comm'
 
+  const DEFAULT_SORT = '-created_at'
   const addComment = (store, { params, }) => store.dispatch('ADD_COMMENT', { params, })
   const delComment = (store, { params, }) => store.dispatch('DELETE_COMMENT', { params, })
-  const fetchComment = (store, { params, }) => store.dispatch('FETCH_COMMENT', { params, })
+  const fetchComment = (store, { params, }) => store.dispatch('FETCH_COMMENT', { params: Object.assign({}, params, { sort: DEFAULT_SORT, }), })
   const reportComment = (store, { params, }) => store.dispatch('ADD_COMMENT_REPORT', { params, })
   const updateComment = (store, { params, }) => store.dispatch('UPDATE_COMMENT', { params, })
   const debug = require('debug')('CLIENT:Comment')
@@ -94,7 +95,6 @@
         reportComment(this.$store, {
           params: { 
             comment_id: id,
-            reporter: 673,
           },
         }) 
       },  
@@ -102,12 +102,9 @@
         debug('Saved!', comment)
         addComment(this.$store, {
           params: {
-            author: get(comment, 'author'),
             body: get(comment, 'body'),
             resource: this.asset,
-            parent_id: get(comment, 'parentId') || null,
-            active: 1,
-            status: 1,         
+            parent_id: get(comment, 'parentId') || null,         
           },
         }).then(() => {
           return this.rerenderComment(comment)

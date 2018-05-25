@@ -14,6 +14,17 @@ const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API
 // const jwtExpress = require('express-jwt')
 // const authVerify = jwtExpress({ secret: config.JWT_SECRET, })
 
+const getComment = (req, res, next) => {
+  const url = `${apiHost}/comment${req.url}`
+  superagent
+  .get(url)
+  .timeout(config.API_TIMEOUT)
+  .end((e, r) => {
+    req.comment = { e, r, }
+    next()
+  })
+}
+
 router.get('/count', fetchFromRedis, (req, res, next) => {
   res.header("Cache-Control", "public, max-age=3600")
   if (res.redis) {
@@ -54,25 +65,20 @@ router.get('/count', fetchFromRedis, (req, res, next) => {
   }
 }, insertIntoRedis)
 
-router.get('/', (req, res) => {
+router.get('/', getComment, (req, res) => {
   debug('Got a comment call!', req.url)
-  const url = `${apiHost}/comment${req.url}`
-  superagent
-  .get(url)
-  .timeout(config.API_TIMEOUT)
-  .end((e, r) => {
-    if (!e && r) {
-      debug('respaonse:')
-      debug(r.body)
-      const resData = JSON.parse(r.text)
-      res.json(resData)
-    } else {
-      const err_wrapper = handlerError(e, r)
-      res.status(err_wrapper.status).json(err_wrapper.text)      
-      console.error(`Error occurred during fetch comment data from : ${url}`)
-      console.error(e)
-    }
-  })  
+  const { e, r, } = req.comment
+  if (!e && r) {
+    debug('respaonse:')
+    debug(r.body)
+    const resData = JSON.parse(r.text)
+    res.json(resData)
+  } else {
+    const err_wrapper = handlerError(e, r)
+    res.status(err_wrapper.status).json(err_wrapper.text)      
+    console.error(`Error occurred during fetch comment data from : ${req.url}`)
+    console.error(e)
+  }  
 })
 
 router.delete('/', (req, res) => {
@@ -101,10 +107,16 @@ router.delete('/', (req, res) => {
 router.post('/', (req, res) => {
   debug('Got a comment post call!', req.url)
   debug(req.body)
+  const author = req.user.id
+  const payload = Object.assign({}, req.body, {
+    author: author,
+    status: 1,
+    active: 1,
+  })
   const url = `${apiHost}/comment`
   superagent
   .post(url)
-  .send(req.body)
+  .send(payload)
   .timeout(config.API_TIMEOUT)
   .end((e, r) => {
     if (!e && r) {
@@ -121,10 +133,14 @@ router.post('/', (req, res) => {
 router.post('/report', (req, res) => {
   debug('Got a comment report post call!', req.url)
   debug(req.body)
+  const reporter = req.user.id
+  const payload = Object.assign({}, req.body, {
+    reporter,
+  })
   const url = `${apiHost}/reported_comment`
   superagent
   .post(url)
-  .send(req.body)
+  .send(payload)
   .timeout(config.API_TIMEOUT)
   .end((e, r) => {
     if (!e && r) {

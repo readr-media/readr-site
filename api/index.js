@@ -129,7 +129,7 @@ router.use('/member/notification', authVerify, require('./middle/member/notifica
 router.use('/member', [ authVerify, authorize, ], require('./middle/member'))
 router.use('/memos', [ authVerify, authorize, setupClientCache, ], require('./middle/memo'))
 router.use('/memo', [ authVerify, authorize, setupClientCache, ], require('./middle/memo'))
-router.use('/comment', require('./middle/comment'))
+router.use('/comment', [ authVerify, authorize, ], require('./middle/comment'))
 router.use('/register', authVerify, require('./middle/member/register'))
 router.use('/recoverpwd', require('./middle/member/recover'))
 router.use('/public', require('./middle/public'))
