@@ -14,6 +14,9 @@ document.body.appendChild(bar.$el)
 const debug = require('debug')('CLIENT:entry-client')
 const { app, i18n, router, store, } = createApp()
 
+// import Comments from 'readr-comment'
+// Vue.use(Comments)
+
 // a global mixin that calls `asyncData` when a route component's params change
 Vue.mixin({
   beforeRouteEnter (to, from, next) {    

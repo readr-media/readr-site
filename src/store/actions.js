@@ -3,12 +3,15 @@ import _ from 'lodash'
 import { POST_PUBLISH_STATUS, POST_TYPE, PROJECT_STATUS, } from '../../api/config'
 import { ROLE_MAP, } from '../../src/constants'
 import {
+  addComment,
+  addCommentReport,
   addMember,
   addPost,
   addTags,
   addRewardPointsTransactions,
   checkLoginStatus,
   checkPassword,
+  deleteComment,
   deleteMemberProfileThumbnails,
   deleteMember,
   deleteMembers,
@@ -16,6 +19,7 @@ import {
   deletePosts,
   deletePostSelf,
   deleteTags,
+  fetchComment,
   fetchCommentCount,
   fetchMeComments,
   fetchInvitationQuota,
@@ -54,6 +58,7 @@ import {
   setupBasicProfile,
   search,
   syncAvatar,
+  updateComment,
   updateMember,
   updateNotificationStatus,
   updatePassword,
@@ -66,6 +71,12 @@ import { getProjectUrl, } from '../util/comm';
 
 const debug = require('debug')('CLIENT:STORE:actions')
 export default {
+  ADD_COMMENT: ({ commit, dispatch, state, }, { params, }) => {
+    return addComment({ params, })
+  },
+  ADD_COMMENT_REPORT: ({ commit, dispatch, state, }, { params, }) => {
+    return addCommentReport({ params, })
+  },
   ADD_MEMBER: ({ commit, dispatch, state, }, { params, }) => {
     return addMember(params)
   },
@@ -94,6 +105,9 @@ export default {
       commit('SET_TOKEN', { token, type, })
     })
   },
+  DELETE_COMMENT: ({ commit, dispatch, state, }, { params, }) => {
+    return deleteComment({ params, })
+  },
   DELETE_MEMBER_PROFILE_THUMBNAILS: ({ commit, dispatch, }, { id, }) => {
     return deleteMemberProfileThumbnails(id)
   },
@@ -115,8 +129,13 @@ export default {
   DELETE_TAGS: ({ commit, dispatch, state, }, { params, }) => {
     return deleteTags({ params, })
   },
+  FETCH_COMMENT: ({ commit, dispatch, state, }, { params, }) => {
+    return fetchComment({ params, }).then(({ status, body, }) => {
+      return _.get(body, 'items', [])
+    })
+  },
   FETCH_COMMENT_COUNT: ({ commit, dispatch, state, }, { params, type, }) => {
-    return fetchCommentCount({ params, }).then((count) => {
+    return fetchCommentCount({ params, }).then(count => {
       commit('SET_COMMENT_COUNT', { count, postId: params.postId, type, })
     })
   },
@@ -511,6 +530,9 @@ export default {
   },
   UPDATE_CLIENT_SIDE: ({ commit, dispatch, state, }) => {
     commit('SET_CLIENT_SIDE')
+  },
+  UPDATE_COMMENT: ({ commit, dispatch, state, }, { params, }) => {
+    return updateComment({ params, })
   },
   UPDATE_FOLLOWING_BY_USER: ({ commit, dispatch, state, }, { params, }) => {
     if (params.action === 'follow' && params.resource === 'post') {

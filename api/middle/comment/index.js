@@ -6,7 +6,10 @@ const { handlerError, } = require('../../comm')
 const config = require('../../config')
 const debug = require('debug')('READR:api:comment')
 const express = require('express')
+const superagent = require('superagent')
 const router = express.Router()
+
+const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
 
 // const jwtExpress = require('express-jwt')
 // const authVerify = jwtExpress({ secret: config.JWT_SECRET, })
@@ -50,6 +53,110 @@ router.get('/count', fetchFromRedis, (req, res, next) => {
     })
   }
 }, insertIntoRedis)
+
+router.get('/', (req, res) => {
+  debug('Got a comment call!', req.url)
+  const url = `${apiHost}/comment${req.url}`
+  superagent
+  .get(url)
+  .timeout(config.API_TIMEOUT)
+  .end((e, r) => {
+    if (!e && r) {
+      debug('respaonse:')
+      debug(r.body)
+      const resData = JSON.parse(r.text)
+      res.json(resData)
+    } else {
+      const err_wrapper = handlerError(e, r)
+      res.status(err_wrapper.status).json(err_wrapper.text)      
+      console.error(`Error occurred during fetch comment data from : ${url}`)
+      console.error(e)
+    }
+  })  
+})
+
+router.delete('/', (req, res) => {
+  debug('Got a comment del call!', req.url)
+  debug(req.params)
+  debug(req.body)
+  // const url = `${apiHost}/comment`
+  const url = `${apiHost}/comment/status`
+  superagent
+  // .delete(url)
+  .put(url)
+  .send(req.body)
+  .timeout(config.API_TIMEOUT)
+  .end((e, r) => {
+    if (!e && r) {
+      res.send({ status: 200, text: 'Deleting a comment successfully.', })
+    } else {
+      const err_wrapper = handlerError(e, r)
+      res.status(err_wrapper.status).json(err_wrapper.text)      
+      console.error(`Error occurred during deleting comment data from : ${url}`)
+      console.error(e)
+    }
+  })  
+})
+
+router.post('/', (req, res) => {
+  debug('Got a comment post call!', req.url)
+  debug(req.body)
+  const url = `${apiHost}/comment`
+  superagent
+  .post(url)
+  .send(req.body)
+  .timeout(config.API_TIMEOUT)
+  .end((e, r) => {
+    if (!e && r) {
+      res.send({ status: 200, text: 'Adding a new comment successfully.', })
+    } else {
+      const err_wrapper = handlerError(e, r)
+      res.status(err_wrapper.status).json(err_wrapper.text)      
+      console.error(`Error occurred during adding comment: ${url}`)
+      console.error(e)
+    }
+  })  
+})
+
+router.post('/report', (req, res) => {
+  debug('Got a comment report post call!', req.url)
+  debug(req.body)
+  const url = `${apiHost}/reported_comment`
+  superagent
+  .post(url)
+  .send(req.body)
+  .timeout(config.API_TIMEOUT)
+  .end((e, r) => {
+    if (!e && r) {
+      res.send({ status: 200, text: 'Adding a new comment report successfully.', })
+    } else {
+      const err_wrapper = handlerError(e, r)
+      res.status(err_wrapper.status).json(err_wrapper.text)      
+      console.error(`Error occurred during adding comment report: ${url}`)
+      console.error(e)
+    }
+  })  
+})
+
+router.put('/', (req, res) => {
+  debug('Got a comment put call!', req.url)
+  debug(req.body)
+  const url = `${apiHost}/comment`
+  superagent
+  .put(url)
+  .send(req.body)
+  .timeout(config.API_TIMEOUT)
+  .end((e, r) => {
+    if (!e && r) {
+      res.send({ status: 200, text: 'Updating a new comment successfully.', })
+    } else {
+      const err_wrapper = handlerError(e, r)
+      res.status(err_wrapper.status).json(err_wrapper.text)      
+      console.error(`Error occurred during Updating comment: ${url}`)
+      console.error(e)
+    }
+  })  
+})
 
 // router.get('/me', authVerify, (req, res) => {
 //   const cookies = new Cookies( req, res, {} )

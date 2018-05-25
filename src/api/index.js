@@ -26,6 +26,8 @@ function _buildQuery (params = {}) {
     'publish_status',
     'project_id',
     'object_ids',
+    'resource',
+    'parent',
   ]
   const snakeCaseParams = _.mapKeys(params, (value, key) => _.snakeCase(key))
   whitelist.forEach((ele) => {
@@ -117,10 +119,11 @@ function _doPut (url, params) {
   })
 }
 
-function _doDelete (url) {
+function _doDelete (url, params) {
   return new Promise((resolve, reject) => {
     superagent
       .delete(url)
+      .send(params || {})
       .set('Authorization', `Bearer ${getToken()}`)
       .end(function (err, res) {
         if (err) {
@@ -189,6 +192,40 @@ export function deleteTags ({ params, }) {
     url = url + `?${query}`
   }
   return _doDelete(url)
+}
+
+export function addComment ({ params, }) {
+  const url = `${host}/api/comment`
+  return _doPost(url, params,)
+}
+
+export function addCommentReport ({ params, }) {
+  const url = `${host}/api/comment/report`
+  return _doPost(url, params,)
+}
+
+export function fetchComment ({ params, }) {
+  let url = `${host}/api/comment`
+  const query = _buildQuery(params)
+  debug('params', params)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }    
+  return _doFetchStrict(url, {})
+}
+
+export function deleteComment ({ params, }) {
+  let url = `${host}/api/comment`
+  // const query = _buildQuery(params)
+  // if (query && (query.length > 0)) {
+  //   url = url + `?${query}`
+  // }  
+  return _doDelete(url, params)
+}
+
+export function updateComment ({ params, }) {
+  const url = `${host}/api/comment`
+  return _doPut(url, params,)
 }
 
 export function fetchCommentCount ({ params, }) {

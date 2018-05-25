@@ -215,7 +215,8 @@ function render (req, res, next) {
       PROJECT_STATUS: config.PROJECT_STATUS, 
       TAG_ACTIVE: config.TAG_ACTIVE, 
       GOOGLE_RECAPTCHA_SITE_KEY: config.GOOGLE_RECAPTCHA_SITE_KEY,
-      DOMAIN: config.DOMAIN
+      DOMAIN: config.DOMAIN,
+      HOST: `${config.SERVER_PROTOCOL}://${config.SERVER_HOST}`
     } 
   }
   const handleError = err => {
