@@ -1,7 +1,7 @@
 <template>
   <div class="article-nav">
     <nav class="article-nav__nav-btns">
-      <span class="comment-icon" @click="renderComment(`.article-nav__comment > .comment.comment-${postId}`, $event)">
+      <span class="comment-icon" @click="renderComment()">
         <img class="comment-icon__thumbnail" src="/public/icons/comment-blue.png" alt="comment">
         <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="postId" :type="'publicPostsHot'"></CommentCount>
       </span>
@@ -11,14 +11,10 @@
       </span>
     </nav>
     <CommentContainer v-if="showComment" :asset="asset"></CommentContainer>
-    <!--div :class="`article-nav__comment`">
-      <div :class="`comment comment-${postId}`"></div>
-    </div-->
   </div>
 </template>
 
 <script>
-// import { renderComment, } from 'src/util/talk'
 import { get, } from 'lodash'
 import CommentContainer from 'src/components/comment/CommentContainer.vue'
 import CommentCount from 'src/components/comment/CommentCount.vue'
@@ -65,7 +61,7 @@ export default {
     }
   },
   methods: {
-    renderComment (ref, event) {
+    renderComment (event) {
       if (event) event.preventDefault()
       this.showComment = true
     },

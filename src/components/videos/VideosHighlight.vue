@@ -9,23 +9,22 @@
         <h2 v-text="video.title"></h2>
         <app-share-button class="videosHighlight__share"></app-share-button>
       </div>
-      <div class="videosHighlight__info-comment">
-        <div class="comment"></div>
-      </div>
+      <CommentContainer class="videosHighlight__info-comment" v-if="showComment" :asset="asset"></CommentContainer>
     </div>
   </section>
 </template>
 
 <script>
   import { get, } from 'lodash'
-  import { renderComment, } from '../../../src/util/talk'
-  import AppShareButton from '../../components/AppShareButton.vue'
+  import AppShareButton from 'src/components/AppShareButton.vue'
+  import CommentContainer from 'src/components/comment/CommentContainer.vue'
   import moment from 'moment'
 
   export default {
     name: 'VideosHighlight',
     components: {
       AppShareButton,
+      CommentContainer,
     },
     props: {
       video: {
@@ -34,6 +33,9 @@
       },
     },
     computed: {
+      asset () {
+        return `${get(this.$store, 'state.setting.HOST')}/post/${get(this.video, [ 'id', ])}`
+      },      
       link () {
         if (this.video.link) {
           return this.video.link.split(';')[0]
@@ -41,17 +43,18 @@
         return 
       },
     },
+    data () {
+      return {
+        showComment: false,
+      }
+    },
     watch: {
       video () {
-        if (window.Coral) {
-          renderComment(this.$el, `.comment`, `/post/${get(this.video, [ 'id', ])}`, this.$store.state.setting.TALK_SERVER)
-        }
+        !this.showComment && (this.showComment = true)
       },
     },
     mounted () {
-      if (window.Coral) {
-        renderComment(this.$el, `.comment`, `/post/${get(this.video, [ 'id', ])}`, this.$store.state.setting.TALK_SERVER)
-      }
+      !this.showComment && (this.showComment = true)
     },
     methods: {
       moment,
