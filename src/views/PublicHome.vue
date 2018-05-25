@@ -51,7 +51,7 @@ import MemoFigure from 'src/components/projects/MemoFigure.vue'
 
 const debug = require('debug')('CLIENT:Home')
 
-const MAXRESULT_MEMOS = 2
+const MAXRESULT_MEMOS = 3
 const MAXRESULT_POSTS = 10
 const MAXRESULT_REPORTS = 4
 // const MAXRESULT_VIDEOS = 1
