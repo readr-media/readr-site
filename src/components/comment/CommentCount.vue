@@ -2,8 +2,9 @@
   <span v-text="commentAmount"></span>
 </template>
 <script>
-  import { SITE_DOMAIN, SITE_DOMAIN_DEV, } from 'src/constants'
-  import { currEnv, } from 'src/util/comm'
+  // import { SITE_DOMAIN, SITE_DOMAIN_DEV, } from 'src/constants'
+  // import { currEnv, } from 'src/util/comm'
+  import { get, } from 'lodash'
   
   const debug = require('debug')('CLIENT:commentCount')
   const getCommentCount = (store, { assetUrl, postId, type, }) => {
@@ -23,7 +24,7 @@
         return new Promise((resolve) => {
           setInterval(() => {
             getCommentCount(this.$store, {
-              assetUrl: `${location.protocol}//${currEnv() !== 'dev' ? SITE_DOMAIN : SITE_DOMAIN_DEV}/post/${this.postId}`,
+              assetUrl: `${get(this.$store, 'state.setting.HOST')}/post/${this.postId}`,
               postId: this.postId,
               type: this.type,
             })
@@ -34,12 +35,12 @@
     },
     mounted () {
       if (this.postId) {
-        getCommentCount(this.$store, {
-          assetUrl: `${location.protocol}//${currEnv() !== 'dev' ? SITE_DOMAIN : SITE_DOMAIN_DEV}/post/${this.postId}`,
-          postId: this.postId,
-          type: this.type,
-        })
-        this.seUpfetchCommentCountInterval()
+        // getCommentCount(this.$store, {
+        //   assetUrl: `${get(this.$store, 'state.setting.HOST')}/post/${this.postId}`,
+        //   postId: this.postId,
+        //   type: this.type,
+        // })
+        // this.seUpfetchCommentCountInterval()
       }
     },
     props: {

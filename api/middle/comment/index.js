@@ -1,6 +1,6 @@
-const { GraphQLClient, } = require('graphql-request')
-const { fetchFromRedis, insertIntoRedis, } = require('../redisHandler')
-const { find, } = require('lodash')
+// const { GraphQLClient, } = require('graphql-request')
+// const { fetchFromRedis, insertIntoRedis, } = require('../redisHandler')
+// const { find, } = require('lodash')
 const { handlerError, } = require('../../comm')
 // const Cookies = require('cookies')
 const config = require('../../config')
@@ -25,45 +25,45 @@ const getComment = (req, res, next) => {
   })
 }
 
-router.get('/count', fetchFromRedis, (req, res, next) => {
-  res.header("Cache-Control", "public, max-age=3600")
-  if (res.redis) {
-    console.error('fetch data from Redis.', req.url)
-    const resData = JSON.parse(res.redis)
-    res.json(resData)
-  } else {
-    const paramsStr = req.url.split('?')[1]
-    const params = paramsStr ? paramsStr.split('&') : []
-    let asset_url = find(params, (p) => (p.indexOf('asset_url') > -1))
-    asset_url = asset_url ? asset_url.split('=')[ 1 ] : ''
-    debug('About to fetch comment count of asset_url')
-    debug('paramsStr', paramsStr)
-    debug('params', params)
-    debug('asset_url', asset_url)
-    debug('url', `${config.TALK_SERVER}/api/v1/graph/ql/graphql?query={commentCount(query:{asset_url:"${asset_url}"})}`)
+// router.get('/count', fetchFromRedis, (req, res, next) => {
+//   res.header("Cache-Control", "public, max-age=3600")
+//   if (res.redis) {
+//     console.error('fetch data from Redis.', req.url)
+//     const resData = JSON.parse(res.redis)
+//     res.json(resData)
+//   } else {
+//     const paramsStr = req.url.split('?')[1]
+//     const params = paramsStr ? paramsStr.split('&') : []
+//     let asset_url = find(params, (p) => (p.indexOf('asset_url') > -1))
+//     asset_url = asset_url ? asset_url.split('=')[ 1 ] : ''
+//     debug('About to fetch comment count of asset_url')
+//     debug('paramsStr', paramsStr)
+//     debug('params', params)
+//     debug('asset_url', asset_url)
+//     debug('url', `${config.TALK_SERVER}/api/v1/graph/ql/graphql?query={commentCount(query:{asset_url:"${asset_url}"})}`)
   
-    const client = new GraphQLClient(`${config.TALK_SERVER}/api/v1/graph/ql`, { headers: {}, })
-    const query = `query { count: commentCount(query:{ asset_url:"${asset_url}" })}`
-    client.request(query).then(data => {
-      debug(data)
+//     const client = new GraphQLClient(`${config.TALK_SERVER}/api/v1/graph/ql`, { headers: {}, })
+//     const query = `query { count: commentCount(query:{ asset_url:"${asset_url}" })}`
+//     client.request(query).then(data => {
+//       debug(data)
 
-      if (data['count'] !== undefined && data.constructor === Object) {
-        const dt = JSON.stringify(data)
-        res.dataString = dt
-        /**
-         * if data not empty, go next to save data to redis
-         */
-        next()
-      }
+//       if (data['count'] !== undefined && data.constructor === Object) {
+//         const dt = JSON.stringify(data)
+//         res.dataString = dt
+//         /**
+//          * if data not empty, go next to save data to redis
+//          */
+//         next()
+//       }
 
-      res.send(data)
-    }).catch(err => {
-      debug('err', err)
-      const err_wrapper = handlerError(err)
-      res.status(err_wrapper.status).json(err_wrapper.text)
-    })
-  }
-}, insertIntoRedis)
+//       res.send(data)
+//     }).catch(err => {
+//       debug('err', err)
+//       const err_wrapper = handlerError(err)
+//       res.status(err_wrapper.status).json(err_wrapper.text)
+//     })
+//   }
+// }, insertIntoRedis)
 
 router.get('/', getComment, (req, res) => {
   debug('Got a comment call!', req.url)
