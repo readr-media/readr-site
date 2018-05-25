@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const { API_DEADLINE, API_HOST, API_PORT, API_PROTOCOL, API_TIMEOUT, } = require('./config')
-const { FB, } = require('fb')
-const { FB_CLIENT_ID, FB_CLIENT_SECRET, } = require('./config')
+// const { FB, } = require('fb')
+// const { FB_CLIENT_ID, FB_CLIENT_SECRET, } = require('./config')
 const { GCP_FILE_BUCKET, GOOGLE_RECAPTCHA_SECRET, GCS_IMG_MEMBER_PATH, GCS_IMG_POST_PATH, } = require('./config')
 const { JSDOM, } = require("jsdom")
 const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT, } = require('./config')
@@ -391,28 +391,29 @@ router.post('/meta', authVerify, (req, res) => {
       })
   }
 
-  FB.api('oauth/access_token', {
-    client_id: FB_CLIENT_ID,
-    client_secret: FB_CLIENT_SECRET,
-    grant_type: 'client_credentials',
-  }, (resp) => {
-      if(!resp || resp.error) {
-        getMetaByHtml()
-      } else {
-        FB.setAccessToken(resp.access_token)
-        FB.api('', { id: req.body.url, fields: 'og_object{title,description,image, site_name}', }, (response) => {
-          if(!response || response.error) {
-            getMetaByHtml()
-          } else {
-            og.ogTitle = _.get(response, 'og_object.title')
-            og.ogDescription = _.get(response, 'og_object.description')
-            og.ogImage = _.get(response, 'og_object.image[0].url')
-            og.ogSiteName = _.get(response, 'og_object.site_name')
-            return res.status(200).send(og).end()
-          }
-        })
-      }
-  })
+  // FB.api('oauth/access_token', {
+  //   client_id: FB_CLIENT_ID,
+  //   client_secret: FB_CLIENT_SECRET,
+  //   grant_type: 'client_credentials',
+  // }, (resp) => {
+  //     if(!resp || resp.error) {
+  //       getMetaByHtml()
+  //     } else {
+  //       FB.setAccessToken(resp.access_token)
+  //       FB.api('', { id: req.body.url, fields: 'og_object{title,description,image, site_name}', }, (response) => {
+  //         if(!response || response.error) {
+  //           getMetaByHtml()
+  //         } else {
+  //           og.ogTitle = _.get(response, 'og_object.title')
+  //           og.ogDescription = _.get(response, 'og_object.description')
+  //           og.ogImage = _.get(response, 'og_object.image[0].url')
+  //           og.ogSiteName = _.get(response, 'og_object.site_name')
+  //           return res.status(200).send(og).end()
+  //         }
+  //       })
+  //     }
+  // })
+  getMetaByHtml()
 })
 
 router.post('/publish-action', (req, res) => {
