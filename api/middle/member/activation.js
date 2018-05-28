@@ -1,4 +1,3 @@
-const { buildUserForTalk, } = require('../talk')
 const { fetchMem, } = require('./comm')
 const { handlerError, } = require('../../comm')
 const _ = require('lodash')
@@ -50,9 +49,7 @@ const activate = (req, res) => {
         debug('About to send req to activate mem')
         activateMem(member).then(({ err: e, res: r, }) => {
           if (!e && r) {
-            buildUserForTalk(member).then(() => {
               res.redirect(302, '/login')
-            })
           } else {
             console.log(r.status)
             console.log(e)

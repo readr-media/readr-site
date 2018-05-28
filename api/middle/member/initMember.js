@@ -1,4 +1,3 @@
-const { buildUserForTalk, updateUserForTalk, } = require('../talk')
 const { fetchMem, } = require('./comm')
 const { handlerError, } = require('../../comm')
 const { sendInitializingSuccessEmail, } = require('./comm')
@@ -11,22 +10,6 @@ const router = express.Router()
 const superagent = require('superagent')
 
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
-
-const update_default_data = (req, res, next) => {
-  const avatar_default = 'https://www.readr.tw/public/icons/exclamation.png'
-  const id = get(req, 'user.id')
-  const nickname = get(req, 'body.nickname')
-  const role = get(req, 'user.role')
-  debug('Goin to give a basic profile to talk')
-  updateUserForTalk(id, {
-    username: nickname,
-    metadata: { avatar: avatar_default, },
-    role,
-  }).then(() => {
-    debug('Update talk data for member successfully.')
-    next()
-  })
-}
 
 const send_email_for_initializing_successfully = (req) => {
   sendInitializingSuccessEmail({ email: get(req, 'user.id'), }).then(({ error, }) => {
@@ -67,24 +50,18 @@ router.post('/', (req, res, next) => {
         })
         .end((e, r) => {
           if (!e && r) {
-            buildUserForTalk({
-              id: get(member, 'id'),
-              mail: get(member, 'mail'),
-              nickname: req.body.nickname,
-            }).then(() => {
-              const cookies = new Cookies( req, res, {} )
-              cookies.set('setup', '', {
-                httpOnly: false,
-                domain: config.DOMAIN,
-                expires: new Date(Date.now() - 1000),
-              })  
-              res.status(200).end()
-  
-              /**
-               * Go update nickname and default avatar_img to talk server
-               */
-              next()
-            })
+            const cookies = new Cookies( req, res, {} )
+            cookies.set('setup', '', {
+              httpOnly: false,
+              domain: config.DOMAIN,
+              expires: new Date(Date.now() - 1000),
+            })  
+            res.status(200).end()
+
+            /**
+             * Go send email to notify new member.
+             */
+            next()
           } else {
             const err_wrapper = handlerError(e, r)
             res.status(err_wrapper.status).send(err_wrapper.text)
@@ -106,6 +83,6 @@ router.post('/', (req, res, next) => {
     console.error(`Error occurred during initing mem.`)
     console.error(err)
   })
-}, update_default_data, send_email_for_initializing_successfully)
+}, send_email_for_initializing_successfully)
 
 module.exports = router

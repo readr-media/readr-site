@@ -1,6 +1,4 @@
-const { get, } = require('lodash')
 const { handlerError, } = require('../../comm')
-const { banUserForTalk, checkoutUserPerms, syncAvatar, updateUserRoleForTalk, updateUserNameForTalk, } = require('../talk')
 const config = require('../../config')
 const debug = require('debug')('READR:api:member')
 const express = require('express')
@@ -19,17 +17,17 @@ router.put('/role', (req, res) => {
   .end((err, response) => {
     if (!err && response) {
       debug('Update user\'s role sucessfully')
-      checkoutUserPerms(req.body.role).then((talk_role) => {
-        return updateUserRoleForTalk(talk_role, req.body.mail).then(() => res.status(200).end())
-      })
+      return res.status(200).end()
     } else {
-      res.status(500).json(err)
+      const err_wrapper = handlerError(err, response)
+      res.status(err_wrapper.status).json(err_wrapper.text)      
+      console.error(`Error occurred during udpate member role from : ${req.body}`)
+      console.error(err)
     }
   })
 })
 
 router.put('/', (req, res, next) => {
-  req.body.nickname && updateUserNameForTalk(req.user.email, req.body.nickname)
   next()
 })
 
@@ -37,30 +35,17 @@ router.post('/syncavatar', (req, res) => {
   debug('Got a avatar sync req.')
   debug(req.body)
   debug(req.user)
-  const email = get(req.user, 'email', '')
-  const url = get(req.body, 'url', null)
-  syncAvatar(email, url)
-  .then(() => {
-    res.status(200).send('Sync avatar successfully.')
-  })
-  .catch((err) => {
-    const err_wrapper = handlerError(err, {})
-    res.status(err_wrapper.status).send(err_wrapper.text)
-    console.error(`Error occurred  during snyc avatar : ${req.url}`)
-    console.error(err)
-  })
+  res.status(200).send('Sync avatar successfully.')
 })
 
 router.post('*', () => {})
 
 router.delete('*', (req, res, next) => {
-  debug('going to del member')
+  const userid = req.url.split('/')[ 1 ]
+  debug('going to del member', userid)
   debug(req.body)
   debug(req.url)
-  const userid = req.url.split('/')[ 1 ]
-  userid && banUserForTalk(userid).then(() => {
-    next()
-  })
+  next()
 })
 
 module.exports = router
