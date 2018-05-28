@@ -216,11 +216,12 @@ export function fetchComment ({ params, }) {
 
 export function deleteComment ({ params, }) {
   let url = `${host}/api/comment`
-  // const query = _buildQuery(params)
-  // if (query && (query.length > 0)) {
-  //   url = url + `?${query}`
-  // }  
   return _doDelete(url, params)
+}
+
+export function hideComment ({ params, }) {
+  let url = `${host}/api/comment/hide`
+  return _doPut(url, params)
 }
 
 export function updateComment ({ params, }) {

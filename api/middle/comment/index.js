@@ -212,6 +212,32 @@ router.put('/', getCommentSingle, (req, res) => {
   }
 })
 
+router.put('/hide', (req, res) => {
+  debug('Got a comment hide call!', req.url)
+  debug(req.body)
+  const userRole = get(req, 'user.role')
+
+  debug('userRole', userRole)
+  if (config.ROLE_MAP.ADMIN !== userRole) { return res.status(403).send(`Forbidden.`) }
+
+  const payload = Object.assign({}, req.body, {
+    status: 0,
+  })
+  publishAction(payload, {
+    type: 'comment',
+    action: 'pubstatus',
+  }).then(result => {
+    debug('result:')
+    debug(result)
+    res.send({ status: 200, text: 'hidding a comment successfully.', })
+  }).catch(error => {
+    const err_wrapper = handlerError(error)
+    res.status(err_wrapper.status).json(err_wrapper.text)      
+    console.error(`Error occurred during hidding comment: ${payload}`)
+    console.error(error)    
+  })
+})
+
 // router.get('/me', authVerify, (req, res) => {
 //   const cookies = new Cookies( req, res, {} )
 //   const tokent = cookies.get('csrf')
