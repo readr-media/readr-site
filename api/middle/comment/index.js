@@ -1,9 +1,7 @@
-// const { GraphQLClient, } = require('graphql-request')
-// const { fetchFromRedis, insertIntoRedis, } = require('../redisHandler')
-// const { find, } = require('lodash')
+const { get, } = require('lodash')
 const { handlerError, } = require('../../comm')
 const { publishAction, } = require('../../gcs.js')
-// const Cookies = require('cookies')
+const { setupClientCache, } = require('../comm')
 const config = require('../../config')
 const debug = require('debug')('READR:api:comment')
 const express = require('express')
@@ -12,11 +10,20 @@ const router = express.Router()
 
 const apiHost = config.API_PROTOCOL + '://' + config.API_HOST + ':' + config.API_PORT
 
-// const jwtExpress = require('express-jwt')
-// const authVerify = jwtExpress({ secret: config.JWT_SECRET, })
-
 const getComment = (req, res, next) => {
   const url = `${apiHost}/comment${req.url}`
+  superagent
+  .get(url)
+  .timeout(config.API_TIMEOUT)
+  .end((e, r) => {
+    req.comment = { e, r, }
+    next()
+  })
+}
+
+const getCommentSingle = (req, res, next) => {
+  debug('Going to fetch this comment first.', req.body.id)
+  const url = `${apiHost}/comment/${req.body.id}`
   superagent
   .get(url)
   .timeout(config.API_TIMEOUT)
@@ -66,7 +73,7 @@ const getComment = (req, res, next) => {
 //   }
 // }, insertIntoRedis)
 
-router.get('/', getComment, (req, res) => {
+router.get('/', [ setupClientCache, getComment, ], (req, res) => {
   debug('Got a comment call!', req.url)
   const { e, r, } = req.comment
   if (!e && r) {
@@ -82,40 +89,43 @@ router.get('/', getComment, (req, res) => {
   }  
 })
 
-router.delete('/', (req, res) => {
+router.delete('/', (req, res, next) => {
+  req.body.id = req.body.ids[ 0 ]
+  next()
+}, getCommentSingle, (req, res) => {
   debug('Got a comment del call!', req.url)
   debug(req.params)
   debug(req.body)
-  // const url = `${apiHost}/comment`
-  const url = `${apiHost}/comment/status`
-  // superagent
-  // // .delete(url)
-  // .put(url)
-  // .send(req.body)
-  // .timeout(config.API_TIMEOUT)
-  // .end((e, r) => {
-  //   if (!e && r) {
-  //     res.send({ status: 200, text: 'Deleting a comment successfully.', })
-  //   } else {
-  //     const err_wrapper = handlerError(e, r)
-  //     res.status(err_wrapper.status).json(err_wrapper.text)      
-  //     console.error(`Error occurred during deleting comment data from : ${url}`)
-  //     console.error(e)
-  //   }
-  // })  
-  publishAction(req.body, {
-    type: 'comment',
-    action: 'delete',
-  }).then(result => {
-    debug('result:')
-    debug(result)
-    res.send({ status: 200, text: 'deleting a comment successfully.', })
-  }).catch(error => {
-    const err_wrapper = handlerError(error)
+
+  const { e, r, } = req.comment
+  if (!e) {
+    const author = get(r, 'body._items.author')
+    const userId = get(req, 'user.id')
+    const userRole = get(req, 'user.role')
+    debug('author', author)
+    debug('user', userId)
+    if (userId !== author && config.ROLE_MAP.ADMIN !== userRole) { return res.status(403).send(`Forbidden.`) }
+
+    publishAction(req.body, {
+      type: 'comment',
+      action: 'delete',
+    }).then(result => {
+      debug('result:')
+      debug(result)
+      res.send({ status: 200, text: 'deleting a comment successfully.', })
+    }).catch(error => {
+      const err_wrapper = handlerError(error)
+      res.status(err_wrapper.status).json(err_wrapper.text)      
+      console.error(`Error occurred during deleting comment: ${req.body.id}`)
+      console.error(error)    
+    })
+  } else {
+    const err_wrapper = handlerError(e, r)
     res.status(err_wrapper.status).json(err_wrapper.text)      
-    console.error(`Error occurred during deleting comment: ${url}`)
-    console.error(error)    
-  })
+    console.error(`Error occurred during Updating comment: ${req.body.ids}`)
+    console.error(e)   
+  }
+  
 })
 
 router.post('/', (req, res) => {
@@ -167,23 +177,39 @@ router.post('/report', (req, res) => {
   })  
 })
 
-router.put('/', (req, res) => {
+router.put('/', getCommentSingle, (req, res) => {
   debug('Got a comment put call!', req.url)
   debug(req.body)
-  const url = `${apiHost}/comment`
-  publishAction(req.body, {
-    type: 'comment',
-    action: 'put',
-  }).then(result => {
-    debug('result:')
-    debug(result)
-    res.send({ status: 200, text: 'Updating a comment successfully.', })
-  }).catch(error => {
-    const err_wrapper = handlerError(error)
+
+  const { e, r, } = req.comment
+  if (!e) {
+    const author = get(r, 'body._items.author')
+    const userId = get(req, 'user.id')
+    const userRole = get(req, 'user.role')
+    debug('author', author)
+    debug('user', userId)
+    if (userId !== author && config.ROLE_MAP.ADMIN !== userRole) { return res.status(403).send(`Forbidden.`) }
+
+    const url = `${apiHost}/comment`
+    publishAction(req.body, {
+      type: 'comment',
+      action: 'put',
+    }).then(result => {
+      debug('result:')
+      debug(result)
+      res.send({ status: 200, text: 'Updating a comment successfully.', })
+    }).catch(error => {
+      const err_wrapper = handlerError(error)
+      res.status(err_wrapper.status).json(err_wrapper.text)      
+      console.error(`Error occurred during Updating comment: ${url}`)
+      console.error(error)    
+    })
+  } else {
+    const err_wrapper = handlerError(e, r)
     res.status(err_wrapper.status).json(err_wrapper.text)      
-    console.error(`Error occurred during Updating comment: ${url}`)
-    console.error(error)    
-  })
+    console.error(`Error occurred during Updating comment: ${req.body.id}`)
+    console.error(e)      
+  }
 })
 
 // router.get('/me', authVerify, (req, res) => {
