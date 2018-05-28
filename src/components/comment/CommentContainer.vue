@@ -13,6 +13,7 @@
   import { Comment, } from 'readr-comment'
   import { get, map, } from 'lodash'
   import { getImageUrl, } from 'src/util/comm'
+  import { ROLE_MAP, } from 'api/config'
 
   const DEFAULT_SORT = '-created_at'
   const addComment = (store, { params, }) => store.dispatch('ADD_COMMENT', { params, })
@@ -38,7 +39,7 @@
           id: get(this.$store, 'state.profile.id'),
           nickname: get(this.$store, 'state.profile.nickname'),
           profileImage: getImageUrl(get(this.$store, 'state.profile.profileImage') || '/public/icons/exclamation.png'),
-          role: 'admin',
+          role: ROLE_MAP.ADMIN === get(this.$store, 'state.profile.role') ? 'admin' : 'member',
         }
       },
     },
