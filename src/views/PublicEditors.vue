@@ -3,8 +3,9 @@
     <div class="editors__top">
       <AppTitledList class="custom-editors" :listTitle="$t('editors.WORDING_EDITORS_CURRENT_GUESTEDITOR')">
         <ul class="custom-editors__list">
-          <EditorsIntroListItemLarge
+          <EditorsIntroListItem
             class="custom-editors__list-item"
+            :styleModifier="'large'"
             v-for="member in customEditors"
             :key="member.id"
             :editor="member"
@@ -32,7 +33,6 @@
 import { ROLE_MAP, } from '../constants'
 import AppTitledList from '../components/AppTitledList.vue'
 import EditorsIntroListItem from '../components/editors/EditorsIntroListItem.vue'
-import EditorsIntroListItemLarge from '../components/editors/EditorsIntroListItemLarge.vue'
 import { get, find, uniq, concat, } from 'lodash'
 
 // const debug = require('debug')('CLIENT:Editors')
@@ -67,7 +67,6 @@ export default {
   components: {
     AppTitledList,
     EditorsIntroListItem,
-    EditorsIntroListItemLarge,
   },
   data () {
     return {
