@@ -18,6 +18,7 @@
   const DEFAULT_SORT = '-created_at'
   const addComment = (store, { params, }) => store.dispatch('ADD_COMMENT', { params, })
   const delComment = (store, { params, }) => store.dispatch('DELETE_COMMENT', { params, })
+  const hideComment = (store, { params, }) => store.dispatch('HIDE_COMMENT', { params, })
   const fetchComment = (store, { params, }) => store.dispatch('FETCH_COMMENT', { params: Object.assign({}, params, { sort: DEFAULT_SORT, }), })
   const reportComment = (store, { params, }) => store.dispatch('ADD_COMMENT_REPORT', { params, })
   const updateComment = (store, { params, }) => store.dispatch('UPDATE_COMMENT', { params, })
@@ -86,10 +87,9 @@
       },
       hideComment (comment, id) {
         debug('Go to hide comment', id)
-        delComment(this.$store, {
+        hideComment(this.$store, {
           params: { 
             ids: [ id, ],
-            status: 0,
           },
         }).then(() => {
           return this.rerenderComment(comment)
