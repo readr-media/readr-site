@@ -2,7 +2,9 @@ const { API_PROTOCOL, API_HOST, API_PORT, API_TIMEOUT, } = require('../../config
 const { authVerify, } = require('../member/comm')
 const { authorize, } = require('../../services/perm')
 const { fetchFromRedis, insertIntoRedis, } = require('../redisHandler')
+const { get, } = require('lodash')
 const { handlerError, } = require('../../comm')
+const { publishAction, } = require('../../gcs.js')
 const debug = require('debug')('READR:api:middle:following')
 const express = require('express')
 const router = express.Router()
@@ -72,5 +74,17 @@ router.post('/byresource', (req, res, next) => {
     })
   }
 }, insertIntoRedis)
+
+router.post('/pubsub', (req, res) => {
+  const action = get(req, 'body.action', 'follow')
+  publishAction(req.body, {
+    typs: 'follow',
+    action,
+  }).then(result => {
+    res.status(200).send(result)
+  }).catch(error => {
+    res.status(500).json(error)
+  })
+})
 
 module.exports = router

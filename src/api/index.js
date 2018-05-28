@@ -280,6 +280,23 @@ export function getFollowingByUser (params) {
   })
 }
 
+export function follow ({ params, }) {
+  return new Promise((resolve, reject) => {
+    const url = `${host}/api/following/pubsub`
+    superagent
+    .post(url)
+    .set('Authorization', `Bearer ${getToken()}`)
+    .send(params)
+    .end(function (err, res) {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(res)
+      }
+    })
+  })
+}
+
 export function getDisposableToken (type) {
   const url = `${host}/api/token/${type}`
   return new Promise((resolve, reject) => {
@@ -662,23 +679,6 @@ export function verifyRecaptchaToken ({ token, }) {
           resolve(res.body)
         }
       })
-  })
-}
-
-export function publishAction ({ params, }) {
-  return new Promise((resolve, reject) => {
-    const url = `${host}/api/publish-action`
-    superagent
-    .post(url)
-    .set('Authorization', `Bearer ${getToken()}`)
-    .send(params)
-    .end(function (err, res) {
-      if (err) {
-        reject(err)
-      } else {
-        resolve(res)
-      }
-    })
   })
 }
 

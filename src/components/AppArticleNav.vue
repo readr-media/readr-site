@@ -21,7 +21,7 @@ import CommentCount from 'src/components/comment/CommentCount.vue'
 
 // const debug = require('debug')('CLIENT:AppAritcleNav')
 
-const publishAction = (store, data) => store.dispatch('PUBLISH_ACTION', { params: data, })
+const publishAction = (store, data) => store.dispatch('FOLLOW', { params: data, })
 const updateStoreFollowingByResource = (store, { action, resource, resourceId, userId, }) => {
   return store.dispatch('UPDATE_FOLLOWING_BY_RESOURCE', {
     params: {

@@ -33,7 +33,7 @@
   }
 
   const unfollow = (store, resource, subject, object) => {
-    return store.dispatch('PUBLISH_ACTION', {
+    return store.dispatch('FOLLOW', {
       params: {
         action: 'unfollow',
         resource: resource,

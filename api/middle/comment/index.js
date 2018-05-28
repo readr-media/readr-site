@@ -2,6 +2,7 @@
 // const { fetchFromRedis, insertIntoRedis, } = require('../redisHandler')
 // const { find, } = require('lodash')
 const { handlerError, } = require('../../comm')
+const { publishAction, } = require('../../gcs.js')
 // const Cookies = require('cookies')
 const config = require('../../config')
 const debug = require('debug')('READR:api:comment')
@@ -87,21 +88,34 @@ router.delete('/', (req, res) => {
   debug(req.body)
   // const url = `${apiHost}/comment`
   const url = `${apiHost}/comment/status`
-  superagent
-  // .delete(url)
-  .put(url)
-  .send(req.body)
-  .timeout(config.API_TIMEOUT)
-  .end((e, r) => {
-    if (!e && r) {
-      res.send({ status: 200, text: 'Deleting a comment successfully.', })
-    } else {
-      const err_wrapper = handlerError(e, r)
-      res.status(err_wrapper.status).json(err_wrapper.text)      
-      console.error(`Error occurred during deleting comment data from : ${url}`)
-      console.error(e)
-    }
-  })  
+  // superagent
+  // // .delete(url)
+  // .put(url)
+  // .send(req.body)
+  // .timeout(config.API_TIMEOUT)
+  // .end((e, r) => {
+  //   if (!e && r) {
+  //     res.send({ status: 200, text: 'Deleting a comment successfully.', })
+  //   } else {
+  //     const err_wrapper = handlerError(e, r)
+  //     res.status(err_wrapper.status).json(err_wrapper.text)      
+  //     console.error(`Error occurred during deleting comment data from : ${url}`)
+  //     console.error(e)
+  //   }
+  // })  
+  publishAction(req.body, {
+    type: 'comment',
+    action: 'delete',
+  }).then(result => {
+    debug('result:')
+    debug(result)
+    res.send({ status: 200, text: 'deleting a comment successfully.', })
+  }).catch(error => {
+    const err_wrapper = handlerError(error)
+    res.status(err_wrapper.status).json(err_wrapper.text)      
+    console.error(`Error occurred during deleting comment: ${url}`)
+    console.error(error)    
+  })
 })
 
 router.post('/', (req, res) => {
@@ -109,25 +123,24 @@ router.post('/', (req, res) => {
   debug(req.body)
   const author = req.user.id
   const payload = Object.assign({}, req.body, {
-    author: author,
+    author,
     status: 1,
     active: 1,
   })
   const url = `${apiHost}/comment`
-  superagent
-  .post(url)
-  .send(payload)
-  .timeout(config.API_TIMEOUT)
-  .end((e, r) => {
-    if (!e && r) {
-      res.send({ status: 200, text: 'Adding a new comment successfully.', })
-    } else {
-      const err_wrapper = handlerError(e, r)
-      res.status(err_wrapper.status).json(err_wrapper.text)      
-      console.error(`Error occurred during adding comment: ${url}`)
-      console.error(e)
-    }
-  })  
+  publishAction(payload, {
+    type: 'comment',
+    action: 'post',
+  }).then(result => {
+    debug('result:')
+    debug(result)
+    res.send({ status: 200, text: 'Adding a new comment successfully.', })
+  }).catch(error => {
+    const err_wrapper = handlerError(error)
+    res.status(err_wrapper.status).json(err_wrapper.text)      
+    console.error(`Error occurred during adding comment: ${url}`)
+    console.error(error)    
+  })
 })
 
 router.post('/report', (req, res) => {
@@ -158,20 +171,19 @@ router.put('/', (req, res) => {
   debug('Got a comment put call!', req.url)
   debug(req.body)
   const url = `${apiHost}/comment`
-  superagent
-  .put(url)
-  .send(req.body)
-  .timeout(config.API_TIMEOUT)
-  .end((e, r) => {
-    if (!e && r) {
-      res.send({ status: 200, text: 'Updating a new comment successfully.', })
-    } else {
-      const err_wrapper = handlerError(e, r)
-      res.status(err_wrapper.status).json(err_wrapper.text)      
-      console.error(`Error occurred during Updating comment: ${url}`)
-      console.error(e)
-    }
-  })  
+  publishAction(req.body, {
+    type: 'comment',
+    action: 'put',
+  }).then(result => {
+    debug('result:')
+    debug(result)
+    res.send({ status: 200, text: 'Updating a comment successfully.', })
+  }).catch(error => {
+    const err_wrapper = handlerError(error)
+    res.status(err_wrapper.status).json(err_wrapper.text)      
+    console.error(`Error occurred during Updating comment: ${url}`)
+    console.error(error)    
+  })
 })
 
 // router.get('/me', authVerify, (req, res) => {

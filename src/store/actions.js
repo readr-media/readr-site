@@ -23,6 +23,7 @@ import {
   fetchCommentCount,
   fetchMeComments,
   fetchInvitationQuota,
+  follow,
   getDisposableToken,
   getFollowingByResource,
   getFollowingByUser,
@@ -50,7 +51,6 @@ import {
   getTagsCount,
   invite,
   login,
-  publishAction,
   publishPosts,
   register,
   resetPwd,
@@ -149,6 +149,17 @@ export default {
       commit('SET_INVITATION_QUOTA', { quota, })
     })
   },
+  FOLLOW: ({ commit, dispatch, state, }, { params, }) => {
+    return new Promise((resolve, reject) => {
+      follow({ params, }).then(({ status, }) => {
+        if (status === 200) {
+          resolve()
+        }
+      }).catch((err) => {
+        reject()
+      })
+    })
+  },  
   GET_FOLLOWING_BY_RESOURCE: ({ commit, dispatch, state, }, params) => {
     return getFollowingByResource(params).then(({ status, body, }) => {
       if (status === 200) {
@@ -487,17 +498,6 @@ export default {
   },
   INVITE: ({ commit, dispatch, state, }, { params, }) => {
     return invite(params)
-  },
-  PUBLISH_ACTION: ({ commit, dispatch, state, }, { params, }) => {
-    return new Promise((resolve, reject) => {
-      publishAction({ params, }).then(({ status, }) => {
-        if (status === 200) {
-          resolve()
-        }
-      }).catch((err) => {
-        reject()
-      })
-    })
   },
   PUBLISH_POSTS: ({ commit, dispatch, state, }, { params, }) => {
     return publishPosts({ params, })

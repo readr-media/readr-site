@@ -52,20 +52,25 @@
         const params = get(comment, 'parentId')
           ? { parent: get(comment, 'parentId'), }
           : { resource: this.asset, }
-        return fetchComment(this.$store, { params, }).then(comments => {
-          if (get(comment, 'parentId')) {
-            this.comments_raw = map(this.comments_raw, c => {
-              if (c.id === get(comment, 'parentId')) {
-                comments && map(comments, sub_c => {
-                  sub_c.authorImage = getImageUrl(sub_c.authorImage || '/public/icons/exclamation.png')
-                })
-                c.replies = comments
+        return new Promise(resolve => {
+          setTimeout(() => {
+            fetchComment(this.$store, { params, }).then(comments => {
+              if (get(comment, 'parentId')) {
+                this.comments_raw = map(this.comments_raw, c => {
+                  if (c.id === get(comment, 'parentId')) {
+                    comments && map(comments, sub_c => {
+                      sub_c.authorImage = getImageUrl(sub_c.authorImage || '/public/icons/exclamation.png')
+                    })
+                    c.replies = comments
+                  }
+                  return c
+                })          
+              } else {
+                this.comments_raw = comments
               }
-              return c
-            })          
-          } else {
-            this.comments_raw = comments
-            }
+              resolve()
+            })
+          }, 1500)
         })
       },
       deleteComment (comment, id) {
@@ -73,7 +78,6 @@
         delComment(this.$store, {
           params: { 
             ids: [ id, ],
-            active: 0,
           },
         }).then(() => {
           return this.rerenderComment(comment)

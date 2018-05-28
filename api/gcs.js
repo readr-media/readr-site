@@ -1,4 +1,5 @@
 const { GCP_KEYFILE, GCP_PROJECT_ID, GCP_PUBSUB_TOPIC_NAME, } = require('./config')
+const debug = require('debug')('READR:api:gcs')
 const storage = require('@google-cloud/storage')
 const PubSub = require('@google-cloud/pubsub')
 
@@ -86,24 +87,29 @@ const deleteFilesInFolder = (bucket, options) => {
   })
 }
 
-const publishAction = (data) => {
+const publishAction = (data, action_attr) => {
   process.env['GOOGLE_APPLICATION_CREDENTIALS'] = GCP_KEYFILE
-  const projectId = GCP_PROJECT_ID
-  const pubsubClient = PubSub({
-    projectId: projectId,
-  })
-  const topicName = GCP_PUBSUB_TOPIC_NAME
-  const topic = pubsubClient.topic(topicName)
+  const pubsubClient = PubSub({ projectId: GCP_PROJECT_ID, })
+  const topic = pubsubClient.topic(GCP_PUBSUB_TOPIC_NAME)
   const publisher = topic.publisher()
+
+  const customAttrs = action_attr
   const dataBuffer = Buffer.from(JSON.stringify(data))
+
+  debug('action_attr:')
+  debug(action_attr)
+  debug('data:')
+  debug(data)
+
   return new Promise((resolve, reject) => {
-    publisher.publish(dataBuffer)
+    publisher.publish(dataBuffer, customAttrs)
     .then((results) => {
-      console.log(`Message ${results} published.`)
+      console.warn(`Message ${results} published.`)
       resolve(results)
     })
     .catch((error) => {
-      console.log(error)
+      console.error('Error occurred during publishing a pubsub req.')
+      console.error(error)
       reject(error)
     })
   })
