@@ -43,7 +43,7 @@ import _ from 'lodash'
 import { isClientSide, getArticleAuthorNickname, getArticleAuthorThumbnailImg, } from 'src/util/comm'
 
 const publishAction = (store, data) => {
-  return store.dispatch('PUBLISH_ACTION', {
+  return store.dispatch('FOLLOW', {
     params: data,
   })
 }

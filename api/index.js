@@ -7,7 +7,7 @@ const { JSDOM, } = require("jsdom")
 const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT, } = require('./config')
 const { camelizeKeys, } = require('humps')
 const { authorize, constructScope, fetchPermissions, } = require('./services/perm')
-const { initBucket, makeFilePublic, uploadFileToBucket, deleteFilesInFolder, publishAction, } = require('./gcs.js')
+const { initBucket, makeFilePublic, uploadFileToBucket, deleteFilesInFolder, } = require('./gcs.js')
 const { processImage, } = require('./sharp.js')
 const { setupClientCache, } = require('./middle/comm')
 const { verifyToken, } = require('./middle/member/comm')
@@ -129,7 +129,7 @@ router.use('/member/notification', authVerify, require('./middle/member/notifica
 router.use('/member', [ authVerify, authorize, ], require('./middle/member'))
 router.use('/memos', [ authVerify, authorize, setupClientCache, ], require('./middle/memo'))
 router.use('/memo', [ authVerify, authorize, setupClientCache, ], require('./middle/memo'))
-router.use('/comment', require('./middle/comment'))
+router.use('/comment', [ authVerify, authorize, ], require('./middle/comment'))
 router.use('/register', authVerify, require('./middle/member/register'))
 router.use('/recoverpwd', require('./middle/member/recover'))
 router.use('/public', require('./middle/public'))
@@ -414,14 +414,6 @@ router.post('/meta', authVerify, (req, res) => {
   //     }
   // })
   getMetaByHtml()
-})
-
-router.post('/publish-action', (req, res) => {
-  publishAction(req.body).then((result) => {
-    res.status(200).send(result)
-  }).catch((error) => {
-    res.status(500).json(error)
-  })
 })
 
 /**

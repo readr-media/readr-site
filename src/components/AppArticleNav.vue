@@ -1,7 +1,7 @@
 <template>
   <div class="article-nav">
     <nav class="article-nav__nav-btns">
-      <span class="comment-icon" @click="renderComment(`.article-nav__comment > .comment.comment-${postId}`, $event)">
+      <span class="comment-icon" @click="renderComment()">
         <img class="comment-icon__thumbnail" src="/public/icons/comment-blue.png" alt="comment">
         <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="postId" :type="'publicPostsHot'"></CommentCount>
       </span>
@@ -10,22 +10,18 @@
         <span class="follow-icon__hint" v-text="$t('follow.WORDING_FOLLOW_LIST_FOLLOW')"></span>
       </span>
     </nav>
-    <div :class="`article-nav__comment`">
-      <div :class="`comment comment-${postId}`"></div>
-    </div>
+    <CommentContainer v-if="showComment" :asset="asset"></CommentContainer>
   </div>
 </template>
 
 <script>
-import { renderComment, } from 'src/util/talk'
-import _ from 'lodash'
+import { get, } from 'lodash'
+import CommentContainer from 'src/components/comment/CommentContainer.vue'
 import CommentCount from 'src/components/comment/CommentCount.vue'
 
-const publishAction = (store, data) => {
-  return store.dispatch('PUBLISH_ACTION', {
-    params: data,
-  })
-}
+// const debug = require('debug')('CLIENT:AppAritcleNav')
+
+const publishAction = (store, data) => store.dispatch('FOLLOW', { params: data, })
 const updateStoreFollowingByResource = (store, { action, resource, resourceId, userId, }) => {
   return store.dispatch('UPDATE_FOLLOWING_BY_RESOURCE', {
     params: {
@@ -38,40 +34,36 @@ const updateStoreFollowingByResource = (store, { action, resource, resourceId, u
 }
 
 export default {
-  props: {
-    articleType: {
-      type: String,
-      default: 'post',
-    },
-    postId: {
-      // type: [ String, Number ],
-      required: true,
-    },
-    commentCount: {
-      type: Number,
-      required: true,
-    },
-  },
+  name: 'AppAritcleNav',
   components: {
+    CommentContainer,
     CommentCount,
   },
   computed: {
+    asset () {
+      return `${get(this.$store, 'state.setting.HOST')}/${this.articleType}/${this.postId}`
+    },
     isFollow () {
       return this.$store.state.isLoggedIn && this.postFollowers.indexOf(this.$store.state.profile.id) !== -1
     },
     postFollowers () {
       if (this.$store.state.isLoggedIn) {
-        const postFollowersData = _.find(this.$store.state.followingByResource[this.articleType], { resourceid: `${this.postId}`, })
+        const postFollowersData = find(this.$store.state.followingByResource[this.articleType], { resourceid: `${this.postId}`, })
         return postFollowersData ? postFollowersData.follower : []
       } else {
         return []
       }
     },
   },
+  data () {
+    return {
+      showComment: false,
+    }
+  },
   methods: {
-    renderComment (ref, event) {
+    renderComment (event) {
       if (event) event.preventDefault()
-      renderComment(this.$el, `${ref}`, `/${this.articleType}/${this.postId}`, this.$store.state.setting.TALK_SERVER)
+      this.showComment = true
     },
     toogleFollow (event) {
       if (event) event.preventDefault()
@@ -106,6 +98,21 @@ export default {
           })
         }
       }
+    },
+  },
+  mounted () {},
+    props: {
+    articleType: {
+      type: String,
+      default: 'post',
+    },
+    postId: {
+      // type: [ String, Number ],
+      required: true,
+    },
+    commentCount: {
+      type: Number,
+      required: true,
     },
   },
 }

@@ -40,20 +40,18 @@
           <div class="article-content__paragraph-container" v-html="!isPostEmpty ? post.content : ''"></div>
         </section>
       </article>
-      <section class="baselightbox-post__comment">
-        <div v-if="post.id" :class="`comment comment-${post.id}`"></div>
-      </section>
+      <CommentContainer class="baselightbox-post__comment" v-if="showComment" :asset="asset"></CommentContainer>
     </template>
   </div>
 </template>
 
 <script>
-import { renderComment, } from 'src/util/talk'
 import { updatedAtYYYYMMDD, isClientSide, getArticleAuthorId, getArticleAuthorNickname, getArticleAuthorThumbnailImg, getImageUrl, onImageLoaded, } from '../util/comm'
 import { POST_TYPE, } from '../../api/config'
 import { get, find,  map, isEmpty, } from 'lodash'
-import sanitizeHtml from 'sanitize-html'
 import AppArticleNav from 'src/components/AppArticleNav.vue'
+import CommentContainer from 'src/components/comment/CommentContainer.vue'
+import sanitizeHtml from 'sanitize-html'
 
 const dom = require('xmldom').DOMParser
 const seializer  = require('xmldom').XMLSerializer
@@ -66,14 +64,11 @@ export default {
   },
   components: {
     AppArticleNav,
+    CommentContainer,
   },
   computed: {
-    isPostEmpty () {
-      return isEmpty(this.post)
-    },
-    isClientSide,
-    isNews () {
-      return get(this.post, 'flag') === 'memo' || get(this.post, 'type', POST_TYPE.REVIEW) === POST_TYPE.NEWS
+    asset () {
+      return `${get(this.$store, 'state.setting.HOST')}/${get(this.post, 'flag') || 'post'}/${this.post.id}`
     },
     authorId () {
       return getArticleAuthorId(this.post)
@@ -84,6 +79,13 @@ export default {
     authorThumbnailImg () {
       return getArticleAuthorThumbnailImg(this.post)
     },
+    isPostEmpty () {
+      return isEmpty(this.post)
+    },
+    isClientSide,
+    isNews () {
+      return get(this.post, 'flag') === 'memo' || get(this.post, 'type', POST_TYPE.REVIEW) === POST_TYPE.NEWS
+    },    
     postContent () {
       if (!this.post.content || this.post.content.length === 0) { return [] }
       const wrappedContent = sanitizeHtml(this.post.content, { allowedTags: false, selfClosing: [ 'img', ], })
@@ -95,13 +97,15 @@ export default {
       return get(find(get(this.$store, 'state.commentCount'), { postId: this.post.id, }), 'count') || 0
     },
   },
+  data () {
+    return {
+      showComment: false,
+    }
+  },
   methods: {
     get,
     getImageUrl,
     updatedAtYYYYMMDD,
-    renderComment (ref) {
-      renderComment(this.$el, `${ref}`, `/${get(this.post, 'flag') || 'post'}/${this.post.id}`, this.$store.state.setting.TALK_SERVER)
-    },
     isImg (content) {
       const regexp = /<img([\w\W]+?)\/>/
       return regexp.test(content)
@@ -122,7 +126,9 @@ export default {
     },
   },
   updated () {
-    if (this.post.id && !this.isNews) this.renderComment(`.baselightbox-post__comment > .comment.comment-${this.post.id}`, this.$store.state.setting.TALK_SERVER)
+    if (this.post.id && !this.isNews) {
+      this.showComment = true
+    }
   },
 }
 </script>

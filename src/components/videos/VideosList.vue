@@ -17,9 +17,7 @@
             <span class="videosList__item-info-icon-count">{{ get(video, [ 'videoViews' ]) || 0 }}</span>
           </div>
         </div>
-        <div :class="`videosList__item-comment hidden video-${get(video, [ 'id' ])}`">
-          <div class="comment"></div>
-        </div>
+        <CommentContainer :class="`videosList__item-comment hidden video-${get(video, [ 'id' ])}`" v-if="showComment" :asset="asset(get(video, [ 'id' ]))"></CommentContainer>
       </div>
     </template>
     <button v-if="hasMore" class="videosList__btn" @click="$_videosList_loadMore">More</button>
@@ -28,14 +26,20 @@
 
 <script>
   import { get, } from 'lodash'
-  import { renderComment, } from '../../../src/util/talk'
-  import CommentCount from '../../components/comment/CommentCount.vue'
+  import CommentCount from 'src/components/comment/CommentCount.vue'
+  import CommentContainer from 'src/components/comment/CommentContainer.vue'
   import moment from 'moment'
 
   export default {
     name: 'VideosList',
     components: {
       CommentCount,
+      CommentContainer,
+    },
+    data () {
+      return {
+        showComment: false,
+      }
     },
     props: {
       hasMore: {
@@ -50,6 +54,9 @@
       },
     },
     methods: {
+      $_videosList_asset (id) {
+        return `${get(this.$store, 'state.setting.HOST')}/post/${id}`
+      },      
       $_videosList_loadMore () {
         this.$emit('loadMore')
       },
@@ -58,10 +65,7 @@
       },
       $_videosList_renderComment (id) {
         document.querySelector(`.videosList__item-comment.video-${id}`).classList.toggle('hidden')
-        const rendered = document.querySelector(`.videosList__item-comment.video-${id} iframe`)
-        if (!rendered && window.Coral) {
-          renderComment(this.$el, `.videosList__item-comment.video-${id} > .comment`, `/post/${id}`, this.$store.state.setting.TALK_SERVER)
-        }
+        !this.showComment && (this.showComment = true)
       },
       get,
       moment,
