@@ -1,7 +1,7 @@
 const { API_PROTOCOL, API_HOST, API_PORT, API_TIMEOUT, } = require('../../config')
 const { authVerify, } = require('../member/comm')
 const { authorize, } = require('../../services/perm')
-const { fetchFromRedis, insertIntoRedis, } = require('../redisHandler')
+// const { fetchFromRedis, insertIntoRedis, } = require('../redisHandler')
 const { get, } = require('lodash')
 const { handlerError, } = require('../../comm')
 const { publishAction, } = require('../../gcs.js')
@@ -41,7 +41,7 @@ router.post('/byuser', (req, res, next) => {
 router.post('/byresource', (req, res, next) => {
   req.url = '/following/byresource'
   next()
-}, fetchFromRedis, (req, res, next) => {
+}, [ authVerify, authorize, ], (req, res) => {
   if (res.redis) {
     const resData = JSON.parse(res.redis)
     res.json(resData)
@@ -64,7 +64,6 @@ router.post('/byresource', (req, res, next) => {
          * ToDo: should add some statements.
          */
         res.dataString = response.text
-        next()
       } else {
         const err_wrapper = handlerError(err, res)
         res.status(err_wrapper.status).send(err_wrapper.text)
@@ -73,12 +72,12 @@ router.post('/byresource', (req, res, next) => {
       }
     })
   }
-}, insertIntoRedis)
+})
 
 router.post('/pubsub', (req, res) => {
   const action = get(req, 'body.action', 'follow')
   publishAction(req.body, {
-    typs: 'follow',
+    type: 'follow',
     action,
   }).then(result => {
     res.status(200).send(result)

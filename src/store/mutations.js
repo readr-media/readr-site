@@ -14,10 +14,10 @@ export default {
     Vue.delete(state.followingByUser, index)
   },
   ADD_USER_TO_FOLLOWING_BY_RESOURCE: (state, params) => {
-    const resourceIndex = _.findIndex(state.followingByResource[params.resource], { resourceid: `${params.resourceId}`, })
+    const resourceIndex = _.findIndex(state.followingByResource[params.resource], { resourceid: params.resourceId, })
     if (resourceIndex === -1) {
       state.followingByResource[params.resource].push({
-        resourceid: `${params.resourceId}`,
+        resourceid: params.resourceId,
         follower: [ params.userId, ],
       })
     } else {
@@ -25,7 +25,7 @@ export default {
     }
   },
   REMOVE_USER_FROM_FOLLOWING_BY_RESOURCE: (state, params) => {
-    const resourceIndex = _.findIndex(state.followingByResource[params.resource], { resourceid: `${params.resourceId}`, })
+    const resourceIndex = _.findIndex(state.followingByResource[params.resource], { resourceid: params.resourceId, })
     const userIndex = state.followingByResource[params.resource][resourceIndex].follower.indexOf(params.userId)
     Vue.delete(state.followingByResource[params.resource][resourceIndex].follower, userIndex)
   },
