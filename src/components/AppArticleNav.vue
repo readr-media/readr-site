@@ -5,7 +5,7 @@
         <img class="comment-icon__thumbnail" src="/public/icons/comment-blue.png" alt="comment">
         <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="postId" :type="'publicPostsHot'"></CommentCount>
       </span>
-      <span class="follow-icon" @click="toogleFollow($event)">
+      <span v-if="isLoggedIn" class="follow-icon" @click="toogleFollow($event)">
         <img class="follow-icon__thumbnail" :src="isFollow ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="follow">
         <span class="follow-icon__hint" v-text="$t('follow.WORDING_FOLLOW_LIST_FOLLOW')"></span>
       </span>
@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { get, } from 'lodash'
+import { find, get, } from 'lodash'
 import CommentContainer from 'src/components/comment/CommentContainer.vue'
 import CommentCount from 'src/components/comment/CommentCount.vue'
 
@@ -46,9 +46,12 @@ export default {
     isFollow () {
       return this.$store.state.isLoggedIn && this.postFollowers.indexOf(this.$store.state.profile.id) !== -1
     },
+    isLoggedIn () {
+      return this.$store.state.isLoggedIn
+    },
     postFollowers () {
       if (this.$store.state.isLoggedIn) {
-        const postFollowersData = find(this.$store.state.followingByResource[this.articleType], { resourceid: `${this.postId}`, })
+        const postFollowersData = find(this.$store.state.followingByResource[this.articleType], { resourceid: this.postId, })
         return postFollowersData ? postFollowersData.follower : []
       } else {
         return []
@@ -75,7 +78,7 @@ export default {
             action: 'follow',
             resource: this.articleType,
             subject: this.$store.state.profile.id,
-            object: `${this.postId}`,
+            object: this.postId,
           })
           updateStoreFollowingByResource(this.$store, {
             action: 'follow',
@@ -88,7 +91,7 @@ export default {
             action: 'unfollow',
             resource: this.articleType,
             subject: this.$store.state.profile.id,
-            object: `${this.postId}`,
+            object: this.postId,
           })
           updateStoreFollowingByResource(this.$store, {
             action: 'unfollow',

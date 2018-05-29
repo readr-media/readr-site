@@ -42,7 +42,7 @@
 <script>
   import { POST_TYPE, } from 'api/config'
   import { ROLE_MAP, } from 'src/constants'
-  import { find, get, map, } from 'lodash'
+  import { concat, find, get, map, uniq, } from 'lodash'
   import { dateDiffFromNow, isScrollBarReachBottom, isElementReachInView, } from 'src/util/comm'
   import About from 'src/components/About.vue'
   import PostContent from 'src/components/post/PostContent.vue'
@@ -62,6 +62,14 @@
     { code: 5, name: 'FILTER_1Y', },
     { code: 5, name: 'FILTER_1YPLUS', },
   ]
+
+  const getFollowing = (store, params) => {
+    if (params.subject) {
+      return store.dispatch('GET_FOLLOWING_BY_USER', params)
+    } else {
+      return store.dispatch('GET_FOLLOWING_BY_RESOURCE', params)
+    }
+  }
 
   const getPosts = (store, {
     mode = 'set',
@@ -188,20 +196,26 @@
          * dont loadmore follow for now
          */
         if (get(this.tabs, [ this.curr_tab, 'key', ], 1) === 'follow') { return }
-        return Promise.all([
-          getPosts(this.$store, {
-            mode: 'update',
-            page: get(this.curr_page, this.currTabKey, 1) + 1,
-            outputStateTarget: this.currTabKey === 'review' ? 'publicPostReview' : 'publicPostNews',
-            where: {
-              author: Number(get(this.$route, 'params.id')),
-              type: [ this.currTabKey === 'review' ? POST_TYPE.REVIEW : POST_TYPE.NEWS, ],
-            },
-          }),
-        ]).then((res) => {
+        return getPosts(this.$store, {
+          mode: 'update',
+          page: get(this.curr_page, this.currTabKey, 1) + 1,
+          outputStateTarget: this.currTabKey === 'review' ? 'publicPostReview' : 'publicPostNews',
+          where: {
+            author: Number(get(this.$route, 'params.id')),
+            type: [ this.currTabKey === 'review' ? POST_TYPE.REVIEW : POST_TYPE.NEWS, ],
+          },
+        }).then((res) => {
           this.shouldShowSpinner = false
           debug('Loadmore done. Status', get(res, [ 0, 'status', ]), get(res, [ 0, 'res', ]))
           if (get(res, [ 0, 'status', ]) === 200) {
+            // if (this.$store.state.isLoggedIn) {
+            //   const ids = res.items.map(post => `${post.id}`)
+            //   fetchFollowing(this.$store, {
+            //     mode: 'update',
+            //     resource: 'post',
+            //     ids: ids,
+            //   })
+            // }
             get(this.curr_page, this.currTabKey)
               && (this.curr_page[ this.currTabKey ] += 1)
           } else if (get(res, [ 0, 'status', ]) === 'end') {
@@ -246,7 +260,21 @@
         getMemberPublic(this.$store, {
           id: Number(get(to, 'params.id')),
         }),
-      ]).then(() => next())      
+      ]).then(() => {
+        if (this.$store.state.isLoggedIn) {
+          const postIdsReview = get(this.$store, 'state.publicPostNews.items', []).map(post => `${post.id}`) 
+          const postIdsNews = get(this.$store, 'state.publicPostReview.items', []).map(post => `${post.id}`) 
+          const ids = uniq(concat(postIdsReview, postIdsNews))
+          
+          if (ids.length !== 0) { 
+            getFollowing(this.$store, { 
+              resource: 'post', 
+              ids: ids, 
+            }) 
+          } 
+        }
+        next()
+      })      
     },
     beforeMount () {
       // Beta version code
@@ -274,7 +302,21 @@
         getMemberPublic(this.$store, {
           id: Number(get(this.$route, 'params.id')),
         }),
-      ])
+      ]).then(() => {
+        if (this.$store.state.isLoggedIn) {
+          const postIdsReview = get(this.$store, 'state.publicPostNews.items', []).map(post => `${post.id}`) 
+          const postIdsNews = get(this.$store, 'state.publicPostReview.items', []).map(post => `${post.id}`) 
+          const ids = uniq(concat(postIdsReview, postIdsNews))
+          
+          if (ids.length !== 0) { 
+            getFollowing(this.$store, { 
+              resource: 'post', 
+              ids: ids, 
+            }) 
+          } 
+        }
+      })
+
     },
     mounted () {
        debug(`/profile/${this.$route.params.id}`)
