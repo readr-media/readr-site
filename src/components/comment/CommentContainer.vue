@@ -19,7 +19,7 @@
   const addComment = (store, { params, }) => store.dispatch('ADD_COMMENT', { params, })
   const delComment = (store, { params, }) => store.dispatch('DELETE_COMMENT', { params, })
   const hideComment = (store, { params, }) => store.dispatch('HIDE_COMMENT', { params, })
-  const fetchComment = (store, { params, }) => store.dispatch('FETCH_COMMENT', { params: Object.assign({}, params, { sort: DEFAULT_SORT, }), })
+  const fetchComment = (store, { params, }) => store.dispatch('FETCH_COMMENT', { params: Object.assign({}, { sort: DEFAULT_SORT, }, params), })
   const reportComment = (store, { params, }) => store.dispatch('ADD_COMMENT_REPORT', { params, })
   const updateComment = (store, { params, }) => store.dispatch('UPDATE_COMMENT', { params, })
   const debug = require('debug')('CLIENT:Comment')
@@ -52,7 +52,7 @@
     methods: {
       rerenderComment (comment) {
         const params = get(comment, 'parentId')
-          ? { parent: get(comment, 'parentId'), }
+          ? { parent: get(comment, 'parentId'), sort: 'created_at', }
           : { resource: this.asset, }
         return new Promise(resolve => {
           setTimeout(() => {
@@ -131,6 +131,7 @@
         fetchComment(this.$store, {
           params: {
             parent: id,
+            sort: 'created_at',
           },
         }).then((comments) => {
           this.comments_raw = map(this.comments_raw, c => {
