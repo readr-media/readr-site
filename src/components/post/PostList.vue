@@ -12,6 +12,7 @@
 import BaseLightBox from 'src/components/BaseLightBox.vue'
 import BaseLightBoxPost from 'src/components/BaseLightBoxPost.vue'
 import PostItem from 'src/components/post/PostItem.vue'
+import moment from 'moment'
 import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, REPORT_PUBLISH_STATUS, } from 'api/config'
 import { isScrollBarReachBottom, isElementReachInView, } from 'src/util/comm'
 import { find, get, sortBy, union, } from 'lodash'
@@ -143,7 +144,7 @@ export default {
     posts () {
       switch (this.route) {
         case 'series':
-          return sortBy(union(get(this.$store, 'state.memos', []), get(this.$store, 'state.publicReports', [])), [ (p) => -p.publishedAt, ])
+          return sortBy(union(get(this.$store, 'state.memos', []), get(this.$store, 'state.publicReports', [])), [ p => -moment(p.publishedAt), ])
         default:
           return get(this.$store, `state.${this.targState}`)
       }
