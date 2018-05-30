@@ -68,7 +68,7 @@
 </template>
 <script>
   import { POST_TYPE, } from 'api/config'
-  import { find, get, map, some, findIndex, } from 'lodash'
+  import { get, map, some, findIndex, } from 'lodash'
   import { onImageLoaded, getImageUrl, getReportUrl, isClientSide, } from 'src/util/comm'
   import AppArticleNav from 'src/components/AppArticleNav.vue'
   import sanitizeHtml from 'sanitize-html'
@@ -81,7 +81,7 @@
     name: 'PostContent',
     computed: {
       commentCount () {
-        return get(find(get(this.$store, 'state.commentCount'), { postId: this.post.id, }), 'count') || 0
+        return get(this.post, 'commentAmount') || 0
       },
       hasSource () {
         return this.post.linkTitle && this.post.linkDescription
