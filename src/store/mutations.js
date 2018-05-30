@@ -8,10 +8,8 @@ export default {
     state.followingByUser.push(data)
   },
   REMOVE_ITEM_FROM_FOLLOWING_BY_USER: (state, data) => {
-    const index = _.findIndex(state.followingByUser, (post) => {
-      return post.id === data.id
-    })
-    Vue.delete(state.followingByUser, index)
+    const resourceIndex = _.findIndex(state.followingByUser, { id: data.resourceId, })
+    Vue.delete(state.followingByUser, resourceIndex)
   },
   ADD_USER_TO_FOLLOWING_BY_RESOURCE: (state, params) => {
     const resourceIndex = _.findIndex(state.followingByResource[params.resource], { resourceid: params.resourceId, })

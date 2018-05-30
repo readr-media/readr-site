@@ -2,40 +2,41 @@
   <section class="followingListInTab">
     <nav class="followingListInTab__nav">
       <button
-        :class="[ currentResource === 'member' ? 'active' : '' ]"
-        @click="$_followingListInTab_resourceHandler('member')"
-        v-text="$t('follow.WORDING_FOLLOW_LIST_GUEST_EDITOR')">
+        :class="{ active: resource === 'member' }"
+        @click="$_followingListInTab_handleResource('member')"
+        v-text="$t('FOLLOWING.GUEST_EDITOR')">
       </button>
       <button
-        :class="[ currentResource === 'review' ? 'active' : '' ]"
-        @click="$_followingListInTab_resourceHandler('review')"
-        v-text="`${$t('follow.WORDING_FOLLOW_LIST_FOLLOW')}${$t('follow.WORDING_FOLLOW_LIST_REVIEW')}`">
+        :class="{ active: resource === 'post' && resourceType === 'review' }"
+        @click="$_followingListInTab_handleResource('review')"
+        v-text="`${$t('FOLLOWING.FOLLOW')}${$t('FOLLOWING.REVIEW')}`">
       </button>
       <button
-        :class="[ currentResource === 'news' ? 'active' : '' ]"
-        @click="$_followingListInTab_resourceHandler('news')"
-        v-text="`${$t('follow.WORDING_FOLLOW_LIST_FOLLOW')}${$t('follow.WORDING_FOLLOW_LIST_NEWS')}`">
+        :class="{ active: resource === 'post' && resourceType === 'news' }"
+        @click="$_followingListInTab_handleResource('news')"
+        v-text="`${$t('FOLLOWING.FOLLOW')}${$t('FOLLOWING.NEWS')}`">
       </button>
       <button
-        :class="[ currentResource === 'project' ? 'active' : '' ]"
-        @click="$_followingListInTab_resourceHandler('project')"
-        v-text="`${$t('follow.WORDING_FOLLOW_LIST_FOLLOW')}${$t('follow.WORDING_FOLLOW_LIST_PROJECT')}`">
+        :class="{ active: resource === 'project' }"
+        @click="$_followingListInTab_handleResource('project')"
+        v-text="`${$t('FOLLOWING.FOLLOW')}${$t('FOLLOWING.PROJECT')}`">
       </button>
     </nav>
     <!-- <pagination-nav></pagination-nav> -->
     <div class="followingListInTab__list">
-      <div v-for="follow in followingByUser" :key="follow.id" class="followingListInTab__item" :class="currentResource">
+      <div v-for="follow in followingByUser" :key="follow.id" class="followingListInTab__item" :class="resource">
         <div class="followingListInTab__img">
-          <div v-if="currentResource === 'member'" :style="{ backgroundImage: `url(${follow.profileImage})` }"></div>
+          <div v-if="resource === 'member'" :style="{ backgroundImage: `url(${follow.profileImage})` }"></div>
           <button @click="$_followingListInTab_unfollow(follow.id)"><img src="/public/icons/star-grey.png"></button>
         </div>
         <div class="followingListInTab__content">
-          <h2 v-if="currentResource === 'member'" v-text="follow.nickname"></h2>
-          <h2 v-if="currentResource !== 'member'" v-text="follow.title"></h2>
+          <h2 v-if="resource === 'member'" v-text="follow.nickname"></h2>
+          <h2 v-if="resource !== 'member'" v-text="follow.title"></h2>
           <p v-if="$_followingListInTab_getDescription(follow)" v-text="$_followingListInTab_getDescription(follow)"></p>
         </div>
-        <div v-if="currentResource === 'project'" class="followingListInTab__og"></div>
+        <div v-if="resource === 'project'" class="followingListInTab__og"></div>
       </div>
+      <span v-if="followingByUser.length === 0" v-text="`${$t('FOLLOWING.NO_RECORD')}${alertText}`"></span>
     </div>
   </section>
 </template>
@@ -43,24 +44,73 @@
   import { get, } from 'lodash'
   import PaginationNav from './PaginationNav.vue'
 
+  const getFollowing = (store, route, { isProfilePage = false, resource = 'member', resourceType = '', } = {}) => {
+    return store.dispatch('GET_FOLLOWING_BY_USER', {
+      subject: isProfilePage ? get(route, 'params.id') : get(store, 'state.profile.id'),
+      resource: resource,
+      resource_type: resourceType,
+    })
+  }
+
+  const unfollow = (store, { resource = 'member', object, }) => {
+    return store.dispatch('FOLLOW', {
+      params: {
+        action: 'unfollow',
+        resource: resource,
+        subject: get(store, 'state.profile.id'),
+        object: object,
+      },
+    })
+  }
+
+  const deleteStoreFollowingByUser = (store, { resource = 'member', object, }) => {
+    return store.dispatch('UPDATE_FOLLOWING_BY_USER', {
+      params: {
+        action: 'unfollow',
+        resource: resource,
+        resourceId: object,
+        userId: get(store, 'state.profile.id'),
+      },
+    })
+  }
+
   export default {
     name: 'FollowingListInTab',
     components: {
       'pagination-nav': PaginationNav,
     },
-    props: {
-      currentResource: {
-        type: String,
-        required: true,
+    data () {
+      return {
+        resource: 'member',
+        resourceType: '',
+      }
+    },
+    computed: {
+      alertText () {
+        switch (this.resource) {
+          case 'member':
+            return this.$t('FOLLOWING.GUEST_EDITOR')
+          case 'review':
+            return this.$t('FOLLOWING.REVIEW')
+          case 'news':
+            return this.$t('FOLLOWING.NEWS')
+          case 'project':
+            return this.$t('FOLLOWING.PROJECT')
+        }
       },
-      followingByUser: {
-        type: Array,
-        required: true,
+      isProfilePage () {
+        return get(this.$route, 'fullPath', '').split('/')[1] === 'profile'
       },
+      followingByUser () {
+        return get(this.$store, 'state.followingByUser', [])
+      },
+    },
+    beforeMount () {
+      getFollowing(this.$store, this.$route, { isProfilePage: this.isProfilePage, })
     },
     methods: {
       $_followingListInTab_getDescription (follow) {
-        switch (this.currentResource) {
+        switch (this.resource) {
           case 'member': {
             return get(follow, [ 'description', ])
           }
@@ -81,11 +131,27 @@
             return ''
         }
       },
-      $_followingListInTab_resourceHandler (resource) {
-        this.$emit('changeResource', resource)
+      $_followingListInTab_handleResource (type) {
+        switch (type) {
+          case 'review':
+            this.resource = 'post'
+            this.resourceType = 'review'
+            return getFollowing(this.$store, this.$route, { isProfilePage: this.isProfilePage, resource: this.resource, resourceType: this.resourceType, })
+          case 'news':
+            this.resource = 'post'
+            this.resourceType = 'news'
+            return getFollowing(this.$store, this.$route, { isProfilePage: this.isProfilePage, resource: this.resource, resourceType: this.resourceType, })
+          default:
+            this.resource = type
+            this.resourceType = ''
+            getFollowing(this.$store, this.$route, { isProfilePage: this.isProfilePage, resource: this.resource, })
+        }
       },
       $_followingListInTab_unfollow (id) {
-        this.$emit('unfollow', this.currentResource, id)
+        unfollow(this.$store, { resource: this.resource, object: id, })
+        .then(() => {
+          deleteStoreFollowingByUser(this.$store, { resource: this.resource, object: id, })
+        })
       },
     },
   }
@@ -121,6 +187,8 @@
   &__list
     margin-top 30px
     min-height 297px
+    > span
+      font-size 1.125rem
   &__item
     display flex
     align-items flex-start

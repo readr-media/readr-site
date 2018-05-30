@@ -541,7 +541,7 @@ export default {
     if (params.action === 'follow' && params.resource === 'post') {
       commit('ADD_ITEM_TO_FOLLOWING_BY_USER', params.data)
     } else {
-      commit('REMOVE_ITEM_FROM_FOLLOWING_BY_USER', params.data)
+      commit('REMOVE_ITEM_FROM_FOLLOWING_BY_USER', params)
     }
   },
   UPDATE_FOLLOWING_BY_RESOURCE: ({ commit, dispatch, state, }, { params, }) => {

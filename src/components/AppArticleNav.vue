@@ -7,7 +7,7 @@
       </span>
       <span v-if="isLoggedIn" class="follow-icon" @click="toogleFollow($event)">
         <img class="follow-icon__thumbnail" :src="isFollow ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="follow">
-        <span class="follow-icon__hint" v-text="$t('follow.WORDING_FOLLOW_LIST_FOLLOW')"></span>
+        <span class="follow-icon__hint" v-text="$t('FOLLOWING.FOLLOW')"></span>
       </span>
     </nav>
     <CommentContainer v-if="showComment" :asset="asset"></CommentContainer>
