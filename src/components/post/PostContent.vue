@@ -31,7 +31,7 @@
       <p class="report__descr"><a :href="getReportUrl(post.slug)" v-text="get(post, 'description')"></a></p>
     </template>
     <!-- template for post type is review and others -->
-    <template v-else-if="postType === 'post' || modifier !== 'main'">
+    <template v-else-if="postType === 'normal' || modifier !== 'main'">
       <h1 class="post-content__title" v-text="post.title"></h1>
       <div class="editor-writing">
         <router-link :to="targetUrl" class="editor-writing__container">
@@ -101,7 +101,7 @@
         } else if (get(this.post, 'projectId') && !get(this.post, 'flag')) {
           return 'report'
         } else {
-          return 'post'
+          return 'normal'
         }
       },
       hasCustomContentBreak () {
@@ -198,7 +198,7 @@
         return index === this.shouldContentStopAtIndex
       },      
       shouldShowReadMoreButton (index) {
-        return (this.isArticleMain && this.postType === 'post') && !this.isReadMoreClicked && (!this.isStopLastParagraphBeforeTruncate || this.isStopParagraphWordCountExceedLimit) && this.isLastParagraphAfterTruncate(index)
+        return (this.isArticleMain && this.postType === 'normal') && !this.isReadMoreClicked && (!this.isStopLastParagraphBeforeTruncate || this.isStopParagraphWordCountExceedLimit) && this.isLastParagraphAfterTruncate(index)
       },
       setOgImageOrientation (src, event) {
         onImageLoaded(src).then(({ width, height, }) => {
