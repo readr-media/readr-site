@@ -1,7 +1,7 @@
 <template>
   <div :class="`post-content__${modifier}`">
     <!-- template for post type is news -->
-    <template v-if="isNews && modifier === 'main'">
+    <template v-if="postType === 'news' && modifier === 'main'">
       <img class="post-content__leading-image" v-if="post.ogImage && isClientSide" :src="getImageUrl(post.ogImage)" alt="" @load="setLeadingImageOrientation(getImageUrl(post.ogImage), $event)">
       <h1 class="post-content__title--news" v-text="post.title"></h1>
       <div class="editor-writing--news">
@@ -24,8 +24,14 @@
         </router-link>
       </div>
     </template>
+    <!-- template for report -->
+    <template v-else-if="postType === 'report'">
+      <h1 class="report__title"><a :href="getReportUrl(post.slug)" v-text="get(post, 'title')"></a></h1>
+      <a v-if="post.heroImage" class="report__img" :href="getReportUrl(post.slug)"><img :src="getImageUrl(post.heroImage)" alt=""></a>
+      <p class="report__descr"><a :href="getReportUrl(post.slug)" v-text="get(post, 'description')"></a></p>
+    </template>
     <!-- template for post type is review and others -->
-    <template v-if="!isNews || modifier !== 'main'">
+    <template v-else-if="postType === 'post' || modifier !== 'main'">
       <h1 class="post-content__title" v-text="post.title"></h1>
       <div class="editor-writing">
         <router-link :to="targetUrl" class="editor-writing__container">
@@ -63,7 +69,7 @@
 <script>
   import { POST_TYPE, } from 'api/config'
   import { find, get, map, some, findIndex, } from 'lodash'
-  import { onImageLoaded, getImageUrl, isClientSide, } from 'src/util/comm'
+  import { onImageLoaded, getImageUrl, getReportUrl, isClientSide, } from 'src/util/comm'
   import AppArticleNav from 'src/components/AppArticleNav.vue'
   import sanitizeHtml from 'sanitize-html'
   import truncate from 'html-truncate'
@@ -89,8 +95,14 @@
       isArticleMain () {
         return this.modifier === 'main'
       },
-      isNews () {
-        return get(this.post, 'type', POST_TYPE.REVIEW) === POST_TYPE.NEWS
+      postType () {
+        if (get(this.post, 'type') === POST_TYPE.NEWS) {
+          return 'news'
+        } else if (get(this.post, 'projectId') && !get(this.post, 'flag')) {
+          return 'report'
+        } else {
+          return 'post'
+        }
       },
       hasCustomContentBreak () {
         return some(get(this.contentDOM, 'childNodes'), [ 'tagName', this.customContentBreakTagName, ])
@@ -186,7 +198,7 @@
         return index === this.shouldContentStopAtIndex
       },      
       shouldShowReadMoreButton (index) {
-        return (this.isArticleMain && !this.isNews) && !this.isReadMoreClicked && (!this.isStopLastParagraphBeforeTruncate || this.isStopParagraphWordCountExceedLimit) && this.isLastParagraphAfterTruncate(index)
+        return (this.isArticleMain && this.postType === 'post') && !this.isReadMoreClicked && (!this.isStopLastParagraphBeforeTruncate || this.isStopParagraphWordCountExceedLimit) && this.isLastParagraphAfterTruncate(index)
       },
       setOgImageOrientation (src, event) {
         onImageLoaded(src).then(({ width, height, }) => {
@@ -213,6 +225,8 @@
       },
       isClientSide,
       getImageUrl,
+      get,
+      getReportUrl,
     },
     mounted () {},
     props: {
@@ -231,6 +245,10 @@
   font-family = 'Songti TC', 'SimSun'
   .post-content
     &__main
+      a
+        color #000
+      h1, p
+        margin 0
       .post-content
         &__title
           font-size 18px
@@ -363,6 +381,17 @@
           position absolute
           bottom 0
 
+      .report
+        &__title
+          font-size 1.125rem
+        &__img
+          display block
+          margin-top 1em
+          img
+            width 100%
+        &__descr
+          margin 1.5em 0
+          font-size .9375rem
     &__aside
       .post-content
         &__title
