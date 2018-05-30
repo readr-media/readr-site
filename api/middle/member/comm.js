@@ -15,7 +15,7 @@ const sendEmail = ({ email, content, cb, subject, token, }) => {
   .post(`${apiHost}/mail`)
   .send({
     receiver: [ email, ],
-    bcc: [ 'keithchiang@mirrormedia.mg','mushin@mirrormedia.mg', ],
+    bcc: config.EMAIL_BCC || [],
     subject,
     content,
   })
