@@ -11,7 +11,7 @@
           <router-link :to="`/profile/${editor.id}`" class="editors-info__nickname" v-text="editorNickname"></router-link>
           <span class="follow-icon" v-if="editorIsNotCurrentUser" @click="toogleFollow">
             <img class="follow-icon__thumbnail" :src="editorHasBeenFollowed ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'">
-            <span class="follow-icon__hint" v-text="$t('follow.WORDING_FOLLOW_LIST_FOLLOW')"></span>
+            <span class="follow-icon__hint" v-text="$t('FOLLOWING.FOLLOW')"></span>
           </span>
         </div>
         <p class="editors-info__description" v-text="editorDescritpion"></p>
@@ -28,7 +28,7 @@
           <router-link :to="`/profile/${editor.id}`" class="editors-intro-list-item__nickname" v-text="editorNickname"></router-link>
           <span class="follow-icon" v-if="editorIsNotCurrentUser" @click="toogleFollow">
             <img class="follow-icon__thumbnail" :src="editorHasBeenFollowed ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'">
-            <span class="follow-icon__hint" v-text="$t('follow.WORDING_FOLLOW_LIST_FOLLOW')"></span>
+            <span class="follow-icon__hint" v-text="$t('FOLLOWING.FOLLOW')"></span>
           </span>
         </figcaption>
       </figure>

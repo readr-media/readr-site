@@ -25,13 +25,7 @@
             @editPost="$_guestEditor_showEditor"
             @filterChanged="$_guestEditor_filterHandler">
           </post-list-tab>
-          <following-list-tab
-            slot="2"
-            :currentResource="followingResource"
-            :followingByUser="followingByUser"
-            @changeResource="$_guestEditor_updateFollowingList"
-            @unfollow="$_guestEditor_unfollow">
-          </following-list-tab>
+          <following-list-tab slot="2"></following-list-tab>
         </app-tab>
       </template>
     </div>
@@ -90,14 +84,6 @@
     return store.dispatch('DELETE_POST', { id: id, })
   }
 
-  const getFollowing = (store, { subject, resource, resourceType = '', }) => {
-    return store.dispatch('GET_FOLLOWING_BY_USER', {
-      subject: subject,
-      resource: resource,
-      resource_type: resourceType,
-    })
-  }
-
   const getPostsByUser = (store, {
     maxResult = MAXRESULT,
     page = DEFAULT_PAGE,
@@ -117,17 +103,6 @@
   const getPostsCount = (store, params = {}) => {
     return store.dispatch('GET_POSTS_COUNT', {
       params: params,
-    })
-  }
-
-  const unfollow = (store, resource, subject, object) => {
-    return store.dispatch('FOLLOW', {
-      params: {
-        action: 'unfollow',
-        resource: resource,
-        subject: subject,
-        object: object,
-      },
     })
   }
 
@@ -155,7 +130,6 @@
         config: {
           type: POST_TYPE,
         },
-        followingResource: 'member',
         isPublishPostInEditor: false,
         itemsStatus: undefined,
         itemsSelected: [],
@@ -178,9 +152,6 @@
       }
     },
     computed: {
-      followingByUser () {
-        return _.get(this.$store, [ 'state', 'followingByUser', ], [])
-      },
       itemsSelectedID () {
         const items = []
         _.forEach(this.itemsSelected, (item) => {
@@ -375,30 +346,7 @@
             break
           case 2:
             this.activeTab = 'followings'
-            getFollowing(this.$store, { subject: _.get(this.profile, [ 'id', ]), resource: 'member', })
-              .then(() => this.loading = false)
-              .catch(() => this.loading = false)
-              break
-        }
-      },
-      $_guestEditor_unfollow (resource, object) {
-        const subject = _.get(this.profile, [ 'id', ]) 
-        const objectID = object.toString()
-        unfollow(this.$store, resource, subject, objectID) 
-        .then(() => {
-          setTimeout(() => this.$_guestEditor_updateFollowingList(), 1000)
-        }) 
-      },
-      $_guestEditor_updateFollowingList (resource = this.followingResource) {
-        this.followingResource = resource
-        this.page = DEFAULT_PAGE
-        switch (resource) {
-          case 'review':
-            return getFollowing(this.$store, { subject: _.get(this.profile, [ 'id', ]), resource: 'post', resourceType: resource, })
-          case 'news':
-            return getFollowing(this.$store, { subject: _.get(this.profile, [ 'id', ]), resource: 'post', resourceType: resource, })
-          default:
-            getFollowing(this.$store, { subject: _.get(this.profile, [ 'id', ]), resource: resource, })
+            break
         }
       },
       $_guestEditor_updatePostList ({ sort, page, needUpdateCount = false, } = {}) {

@@ -118,12 +118,13 @@ export default {
     'WORIDNG_HEADER_MEMBER_CENTRE' : '會員中心',
     'WORIDNG_HEADER_MEMBER_SEARCH' : '搜尋',
   },
-  'follow': {
-    'WORDING_FOLLOW_LIST_FOLLOW' : '追蹤',
-    'WORDING_FOLLOW_LIST_GUEST_EDITOR' : '客座總編',
-    'WORDING_FOLLOW_LIST_NEWS' : '新聞',
-    'WORDING_FOLLOW_LIST_PROJECT' : '專題',
-    'WORDING_FOLLOW_LIST_REVIEW' : '評論',
+  'FOLLOWING': {
+    'FOLLOW': '追蹤',
+    'GUEST_EDITOR': '客座總編',
+    'NEWS': '新聞',
+    'NO_RECORD': '尚未追蹤',
+    'PROJECT': '專題',
+    'REVIEW': '評論',
   },
   'homepage': {
     'WORDING_HOME_POST_MORE' : '更多',

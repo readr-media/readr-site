@@ -31,13 +31,7 @@
               @editPost="showEditorHandler"
               @filterChanged="filterChanged">
             </PostListInTab>
-            <FollowingListInTab
-              slot="2"
-              :currentResource="followingResource"
-              :followingByUser="followingByUser"
-              @changeResource="updateFollowingList"
-              @unfollow="unfollow">
-            </FollowingListInTab>
+            <FollowingListInTab slot="2"></FollowingListInTab>
           </app-tab>
         </template>
         <template v-else-if="activePanel === 'posts'">
@@ -154,14 +148,6 @@
     })
   }
 
-  const getFollowing = (store, { subject, resource, resourceType = '', }) => {
-    return store.dispatch('GET_FOLLOWING_BY_USER', {
-      subject: subject,
-      resource: resource,
-      resource_type: resourceType,
-    })
-  }
-
   const getPosts = (store, {
     maxResult = MAXRESULT,
     page = DEFAULT_PAGE,
@@ -242,17 +228,6 @@
     return store.dispatch('PUBLISH_POSTS', { params, }) 
   } 
 
-  const unfollow = (store, resource, subject, object) => {
-    return store.dispatch('FOLLOW', {
-      params: {
-        action: 'unfollow',
-        resource: resource,
-        subject: subject,
-        object: object,
-      },
-    })
-  }
-
   export default {
     name: 'admin-page',
     components: {
@@ -283,7 +258,6 @@
         currPage: DEFAULT_PAGE,
         currPagePostsDraft: DEFAULT_PAGE,
         currSort: DEFAULT_SORT,
-        followingResource: 'member',
         isPublishPostInEditor: false,
         itemsStatus: undefined,
         itemsSelected: [],
@@ -308,9 +282,6 @@
       }
     },
     computed: {
-      followingByUser () {
-        return _.get(this.$store, [ 'state', 'followingByUser', ], [])
-      },
       itemsSelectedID () {
         const items = []
         _.forEach(this.itemsSelected, (item) => {
@@ -611,30 +582,7 @@
             break
           case 2:
             this.activeTab = 'followings'
-            getFollowing(this.$store, { subject: _.get(this.profile, [ 'id', ]), resource: 'member', })
-              .then(() => this.loading = false)
-              .catch(() => this.loading = false)
-              break
-        }
-      },
-      unfollow (resource, object) {
-        const subject = _.get(this.profile, [ 'id', ]) 
-        const objectID = object.toString()
-        unfollow(this.$store, resource, subject, objectID) 
-        .then(() => {
-          setTimeout(() => this.updateFollowingList(), 1000)
-        }) 
-      },
-      updateFollowingList (resource = this.followingResource) {
-        this.followingResource = resource
-        this.page = DEFAULT_PAGE
-        switch (resource) {
-          case 'review':
-            return getFollowing(this.$store, { subject: _.get(this.profile, [ 'id', ]), resource: 'post', resourceType: resource, })
-          case 'news':
-            return getFollowing(this.$store, { subject: _.get(this.profile, [ 'id', ]), resource: 'post', resourceType: resource, })
-          default:
-            getFollowing(this.$store, { subject: _.get(this.profile, [ 'id', ]), resource: resource, })
+            break
         }
       },
       updatePostList ({ sort, page, needUpdateCount = false, } = {}) {
