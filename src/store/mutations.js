@@ -4,12 +4,12 @@ const { camelize, } = require('humps')
 const debug = require('debug')('CLIENT:STORE:mutations')
 
 export default {
-  ADD_ITEM_TO_FOLLOWING_BY_USER: (state, data) => {
-    state.followingByUser.push(data)
+  ADD_ITEM_TO_FOLLOWING_BY_USER: (state, params) => {
+    state.followingByUser[params.userId].push(params.item)
   },
   REMOVE_ITEM_FROM_FOLLOWING_BY_USER: (state, data) => {
-    const resourceIndex = _.findIndex(state.followingByUser, { id: data.resourceId, })
-    Vue.delete(state.followingByUser, resourceIndex)
+    const resourceIndex = _.findIndex(state.followingByUser[data.userId], { id: data.resourceId, })
+    Vue.delete(state.followingByUser[data.userId], resourceIndex)
   },
   ADD_USER_TO_FOLLOWING_BY_RESOURCE: (state, params) => {
     const resourceIndex = _.findIndex(state.followingByResource[params.resource], { resourceid: params.resourceId, })
@@ -53,8 +53,8 @@ export default {
       state['followingByResource'][resourceType].push(follow)
     })
   },
-  SET_FOLLOWING_BY_USER: (state, { following, }) => {
-    state['followingByUser'] = following
+  SET_FOLLOWING_BY_USER: (state, { following, userId, }) => {
+    Vue.set(state['followingByUser'], userId, following)
   },
   SET_LOGGEIN_STATUS: (state, { body, }) => {
     state['isLoggedIn'] = body
