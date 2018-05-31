@@ -46,28 +46,26 @@
 </template>
 
 <script>
-import { updatedAtYYYYMMDD, isClientSide, getArticleAuthorId, getArticleAuthorNickname, getArticleAuthorThumbnailImg, getImageUrl, onImageLoaded, } from '../util/comm'
 import { POST_TYPE, } from '../../api/config'
 import { get, find,  map, isEmpty, } from 'lodash'
+import { updatedAtYYYYMMDD, isClientSide, getArticleAuthorId, getArticleAuthorNickname, getArticleAuthorThumbnailImg, getImageUrl, onImageLoaded, } from '../util/comm'
 import AppArticleNav from 'src/components/AppArticleNav.vue'
 import CommentContainer from 'src/components/comment/CommentContainer.vue'
 import sanitizeHtml from 'sanitize-html'
 
+const debug = require('debug')('CLIENT:BaseLightBoxPost')
 const dom = require('xmldom').DOMParser
 const seializer  = require('xmldom').XMLSerializer
 
 export default {
-  props: {
-    post: {
-      type: Object,
-    },
-  },
+  name: 'BaseLightBoxPost',
   components: {
     AppArticleNav,
     CommentContainer,
   },
   computed: {
     asset () {
+      debug('this.asset', `${get(this.$store, 'state.setting.HOST')}/${get(this.post, 'flag') || 'post'}/${this.post.id}`)
       return `${get(this.$store, 'state.setting.HOST')}/${get(this.post, 'flag') || 'post'}/${this.post.id}`
     },
     authorId () {
@@ -125,10 +123,20 @@ export default {
       }).catch(() => { event.target.classList.add('landscape') })
     },
   },
+  props: {
+    post: {
+      type: Object,
+    },
+  },
   updated () {
     if (this.post.id && !this.isNews) {
       this.showComment = true
     }
+  },
+  watch: {
+    post () {
+      debug('Mutation detected: post', this.post)
+    },
   },
 }
 </script>

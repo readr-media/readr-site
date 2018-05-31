@@ -22,7 +22,7 @@
   const fetchComment = (store, { params, }) => store.dispatch('FETCH_COMMENT', { params: Object.assign({}, { sort: DEFAULT_SORT, }, params), })
   const reportComment = (store, { params, }) => store.dispatch('ADD_COMMENT_REPORT', { params, })
   const updateComment = (store, { params, }) => store.dispatch('UPDATE_COMMENT', { params, })
-  const debug = require('debug')('CLIENT:Comment')
+  const debug = require('debug')('CLIENT:CommentContainer')
 
   export default {
     name: 'CommentContainer',
@@ -165,6 +165,17 @@
     watch: {
       comments_raw () {
         debug('Mutation detected: comments_raw')
+      },
+      asset () {
+        debug('Mutation detected: asset', this.asset)
+        fetchComment(this.$store, {
+          params: {
+            resource: this.asset,
+          },
+        }).then((comments) => {
+          debug('comments', comments)
+          this.comments_raw = comments
+        })        
       },
     },    
   }
