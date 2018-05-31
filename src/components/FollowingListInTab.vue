@@ -26,8 +26,13 @@
     <div class="followingListInTab__list">
       <div v-for="follow in followingByUser" :key="follow.id" class="followingListInTab__item" :class="resource">
         <div class="followingListInTab__img">
-          <div v-if="resource === 'member'" :style="{ backgroundImage: `url(${follow.profileImage})` }"></div>
-          <button @click="$_followingListInTab_unfollow(follow.id)"><img src="/public/icons/star-grey.png"></button>
+          <div v-if="resource === 'member'" :style="{ backgroundImage: follow.profileImage ? `url(${follow.profileImage})` : `url(/public/icons/exclamation.png)` }"></div>
+          <template v-if="!isProfilePage">
+            <button @click="$_followingListInTab_unfollow(follow.id)"><img src="/public/icons/star-grey.png"></button>
+          </template>
+          <template v-else-if="isProfilePage && isLoggedIn">
+            <button @click="$_followingListInTab_toggleFollow(follow.id, $_followingListInTab_isFollow(follow.id))"><img :src="$_followingListInTab_isFollow(follow.id) ? '/public/icons/star-grey.png' : '/public/icons/star-line-grey.png'"></button>
+          </template>
         </div>
         <div class="followingListInTab__content">
           <h2 v-if="resource === 'member'" v-text="follow.nickname"></h2>
@@ -41,21 +46,21 @@
   </section>
 </template>
 <script>
-  import { get, } from 'lodash'
+  import { filter, find, get, } from 'lodash'
   import PaginationNav from './PaginationNav.vue'
 
-  const getFollowing = (store, route, { isProfilePage = false, resource = 'member', resourceType = '', } = {}) => {
+  const getFollowing = (store, { subject = get(store, 'state.profile.id'), resource = 'member', resourceType = '', } = {}) => {
     return store.dispatch('GET_FOLLOWING_BY_USER', {
-      subject: isProfilePage ? get(route, 'params.id') : get(store, 'state.profile.id'),
+      subject: subject,
       resource: resource,
       resource_type: resourceType,
     })
   }
 
-  const unfollow = (store, { resource = 'member', object, }) => {
+  const publishAction = (store, { action, resource = 'member', object, }) => {
     return store.dispatch('FOLLOW', {
       params: {
-        action: 'unfollow',
+        action: action,
         resource: resource,
         subject: get(store, 'state.profile.id'),
         object: object,
@@ -63,13 +68,14 @@
     })
   }
 
-  const deleteStoreFollowingByUser = (store, { resource = 'member', object, }) => {
+  const updateStoreFollowingByUser = (store, { action, resource = 'member', object, item, }) => {
     return store.dispatch('UPDATE_FOLLOWING_BY_USER', {
       params: {
-        action: 'unfollow',
+        action: action,
         resource: resource,
         resourceId: object,
         userId: get(store, 'state.profile.id'),
+        item: item,
       },
     })
   }
@@ -90,23 +96,37 @@
         switch (this.resource) {
           case 'member':
             return this.$t('FOLLOWING.GUEST_EDITOR')
-          case 'review':
-            return this.$t('FOLLOWING.REVIEW')
-          case 'news':
+          case 'post':
+            if (this.resourceType === 'review') {
+              return this.$t('FOLLOWING.REVIEW')
+            }
             return this.$t('FOLLOWING.NEWS')
           case 'project':
             return this.$t('FOLLOWING.PROJECT')
         }
       },
+      isLoggedIn () {
+        return this.$store.state.isLoggedIn
+      },
       isProfilePage () {
         return get(this.$route, 'fullPath', '').split('/')[1] === 'profile'
       },
       followingByUser () {
-        return get(this.$store, 'state.followingByUser', [])
+        if (this.isProfilePage) {
+          if (this.resource === 'member') {
+            return filter(get(this.$store, [ 'state', 'followingByUser', get(this.$route, 'params.id'), ], []), o => o.id !== get(this.$store, 'state.profile.id'))
+          }
+          return get(this.$store, [ 'state', 'followingByUser', get(this.$route, 'params.id'), ], [])
+        }
+        return get(this.$store, [ 'state', 'followingByUser', get(this.$store, 'state.profile.id'), ], [])
       },
     },
     beforeMount () {
-      getFollowing(this.$store, this.$route, { isProfilePage: this.isProfilePage, })
+      if (this.isProfilePage) {
+        Promise.all([ getFollowing(this.$store), getFollowing(this.$store, { subject: Number(get(this.$route, 'params.id')), }), ])
+      } else {
+        getFollowing(this.$store)
+      }
     },
     methods: {
       $_followingListInTab_getDescription (follow) {
@@ -136,21 +156,59 @@
           case 'review':
             this.resource = 'post'
             this.resourceType = 'review'
-            return getFollowing(this.$store, this.$route, { isProfilePage: this.isProfilePage, resource: this.resource, resourceType: this.resourceType, })
+            if (this.isProfilePage) {
+              return Promise.all([
+                getFollowing(this.$store, { resource: this.resource, resourceType: this.resourceType, }),
+                getFollowing(this.$store, { subject: Number(get(this.$route, 'params.id')), resource: this.resource, resourceType: this.resourceType, }),
+              ])
+            } else {
+              return getFollowing(this.$store, { resource: this.resource, resourceType: this.resourceType, })
+            }
           case 'news':
             this.resource = 'post'
             this.resourceType = 'news'
-            return getFollowing(this.$store, this.$route, { isProfilePage: this.isProfilePage, resource: this.resource, resourceType: this.resourceType, })
+            if (this.isProfilePage) {
+              return Promise.all([
+                getFollowing(this.$store, { resource: this.resource, resourceType: this.resourceType, }),
+                getFollowing(this.$store, { subject: Number(get(this.$route, 'params.id')), resource: this.resource, resourceType: this.resourceType, }),
+              ])
+            } else {
+              return getFollowing(this.$store, { resource: this.resource, resourceType: this.resourceType, })
+            }
           default:
             this.resource = type
             this.resourceType = ''
-            getFollowing(this.$store, this.$route, { isProfilePage: this.isProfilePage, resource: this.resource, })
+            if (this.isProfilePage) {
+              return Promise.all([
+                getFollowing(this.$store, { resource: this.resource, }),
+                getFollowing(this.$store, { subject: Number(get(this.$route, 'params.id')), resource: this.resource, }),
+              ])
+            } else {
+              return getFollowing(this.$store, { resource: this.resource, })
+            }
+        }
+      },
+      $_followingListInTab_isFollow (id) {
+        return find(get(this.$store, [ 'state', 'followingByUser', get(this.$store, 'state.profile.id'), ]), { id: id, })
+      },
+      $_followingListInTab_toggleFollow (id, isFollow) {
+        if (isFollow) {
+          publishAction(this.$store, { action: 'unfollow', resource: this.resource, object: id, })
+          .then(() => {
+            updateStoreFollowingByUser(this.$store, { action: 'unfollow', resource: this.resource, object: id, })
+          })
+        } else {
+          const item = find(this.followingByUser, { id: id, })
+          publishAction(this.$store, { action: 'follow', resource: this.resource, object: id, })
+          .then(() => {
+            updateStoreFollowingByUser(this.$store, { action: 'follow', resource: this.resource, object: id, item: item, })
+          })
         }
       },
       $_followingListInTab_unfollow (id) {
-        unfollow(this.$store, { resource: this.resource, object: id, })
+        publishAction(this.$store, { action: 'unfollow', resource: this.resource, object: id, })
         .then(() => {
-          deleteStoreFollowingByUser(this.$store, { resource: this.resource, object: id, })
+          updateStoreFollowingByUser(this.$store, { action: 'unfollow', resource: this.resource, object: id, })
         })
       },
     },
