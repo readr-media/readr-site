@@ -41,18 +41,11 @@ const getMembersPublic = (store, params) => {
     params: params,
   })
 }
-const fetchFollowing = (store, params) => {
-  if (params.subject) {
-    return store.dispatch('GET_FOLLOWING_BY_USER', {
-      subject: params.subject,
-      resource: params.resource,
-    })
-  } else {
-    return store.dispatch('GET_FOLLOWING_BY_RESOURCE', {
-      resource: params.resource,
-      ids: params.ids,
-    })
-  }
+const fetchFollowing = (store, { ids, }) => {
+  return store.dispatch('GET_FOLLOWING_BY_RESOURCE', {
+    resource: 'member',
+    ids: ids,
+  })
 }
 
 export default {
@@ -93,11 +86,10 @@ export default {
       }),
     ]).then(() => {
       if (this.$store.state.isLoggedIn) {
-        const customEditorsIds = this.customEditors.map(editor => editor.id)
-        const guestEditorsIds = this.guestEditors.map(member => member.id)
+        const customEditorsIds = this.customEditors.map(editor => `${editor.id}`)
+        const guestEditorsIds = this.guestEditors.map(member => `${member.id}`)
         const ids = uniq(concat(customEditorsIds, guestEditorsIds))
         fetchFollowing(this.$store, {
-          resource: 'member',
           ids: ids,
         })
       }
