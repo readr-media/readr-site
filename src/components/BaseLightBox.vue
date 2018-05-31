@@ -13,6 +13,7 @@
 </template>
 <script>
   import pathToRegexp from 'path-to-regexp'
+  import preventScroll from 'prevent-scroll'
 
   const debug = require('debug')('CLIENT:BaseLightBox')
 
@@ -57,14 +58,14 @@
       showLightBox (val) {
         debug('val', val)
         if (val) {
-          document.body.classList.add('locked')
+          preventScroll.on()
         } else {
-          document.body.classList.remove('locked')
+          preventScroll.off()
         }
       },
     },
     mounted () {
-      this.showLightBox && document.body.classList.add('locked')
+      this.showLightBox && preventScroll.on()
     },
     methods: {
       $_baseLightBox_close () {
