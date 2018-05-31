@@ -91,7 +91,7 @@ export default {
     },
     editorFollowers () {
       if (this.$store.state.isLoggedIn) {
-        const editorFollowersData = _.find(this.$store.state.followingByResource['member'], { resourceid: `${this.editor.id}`, })
+        const editorFollowersData = _.find(this.$store.state.followingByResource['member'], { resourceid: this.editor.id, })
         return editorFollowersData ? editorFollowersData.follower : []
       } else {
         return []
@@ -111,12 +111,12 @@ export default {
       if (!this.$store.state.isLoggedIn) {
         alert('please login first')
       } else {
-        if (!this.isFollow) {
+        if (!this.editorHasBeenFollowed) {
           publishAction(this.$store, {
             action: 'follow',
             resource: 'member',
             subject: this.$store.state.profile.id,
-            object: `${this.editor.id}`,
+            object: this.editor.id,
           })
           updateStoreFollowingByResource(this.$store, {
             action: 'follow',
@@ -129,7 +129,7 @@ export default {
             action: 'unfollow',
             resource: 'member',
             subject: this.$store.state.profile.id,
-            object: `${this.editor.id}`,
+            object: this.editor.id,
           })
           updateStoreFollowingByResource(this.$store, {
             action: 'unfollow',
