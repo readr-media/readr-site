@@ -7,7 +7,7 @@
       <div class="project-single-intro__desc">
         <span v-text="desc"></span>
       </div>
-      <AppArticleNav :articleType="'project'" :postId="project.id" :commentCount="project.commentAmount || 0"></AppArticleNav>
+      <AppArticleNav :articleType="'project'" :postId="project.slug" :commentCount="project.commentAmount || 0"></AppArticleNav>
     </div>
   </div>
 </template>
