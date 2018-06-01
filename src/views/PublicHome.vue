@@ -23,6 +23,7 @@
             <MemoFigure :key="memo.id" :memo="memo"></MemoFigure>
           </template>
         </AppTitledList>
+        <AppNavExternalLinks/>
         <!-- <AppTitledList :listTitle="this.$route.path !== '/hot' ? $t('SECTIONS.HOT_TALK') : $t('SECTIONS.CHIEF_EDITOR_TALK')">
           <ul class="aside-list-container">
             <transition-group name="fade" mode="out-in">
@@ -41,6 +42,7 @@ import { currEnv, isScrollBarReachBottom, isElementReachInView, isCurrentRoutePa
 import _ from 'lodash'
 import { createStore, } from '../store'
 import AppTitledList from 'src/components/AppTitledList.vue'
+import AppNavExternalLinks from 'src/components/AppNavExternalLinks.vue'
 import HomeReportAside from 'src/components/home/HomeReportAside.vue'
 import HomeArticleAside from 'src/components/home/HomeArticleAside.vue'
 import BaseLightBox from 'src/components/BaseLightBox.vue'
@@ -190,6 +192,7 @@ export default {
   // },
   components: {
     AppTitledList,
+    AppNavExternalLinks,
     HomeReportAside,
     HomeArticleAside,
     BaseLightBox,
