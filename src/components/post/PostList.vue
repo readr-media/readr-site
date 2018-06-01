@@ -45,14 +45,14 @@ const fetchMemoSingle = (store, memoId) => {
     params: { memoId, },
   })
 }
-const fetchProjectSingle = (store, proj_id) => {
+const fetchProjectSingle = (store, proj_slug) => {
   return store.dispatch('GET_PUBLIC_PROJECT', {
     params: {
       where: {
         status: [ PROJECT_STATUS.WIP, PROJECT_STATUS.DONE, ],
         publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
       },
-      ids: [ proj_id, ],
+      slugs: [ proj_slug, ],
     },
   })
 }
@@ -81,8 +81,8 @@ export default {
     PostItem,    
   },
   computed: {
-    curr_project () {
-      return get(this.$route, 'params.id')
+    curr_ref () {
+      return get(this.$route, 'params.slug')
     },
     jobs () {
       const jobs = []
@@ -95,16 +95,22 @@ export default {
           /**
            * make sure the project id is legal.
            */
-          jobs.push(fetchProjectSingle(this.$store, Number(get(this.$route, 'params.id'))).then((proj) => {
+          jobs.push(fetchProjectSingle(this.$store, this.curr_ref).then((proj) => {
             console.log('proj', proj)
+            this.currRefId = get(proj, 'id')
             if (proj) {
               return Promise.all([
-                fetchMemos(this.$store, {
-                  mode: this.currPage === 1 ? 'set' : 'update',
-                  proj_ids: [ Number(get(this.$route, 'params.id')), ],
-                  page: this.currPage,
-                }).then(() => { this.currPage += 1 }),
-                fetchReportsList(this.$store, { proj_ids: [ Number(get(this.$route, 'params.id')), ], }),
+                Promise.all([
+                  fetchMemos(this.$store, {
+                    mode: this.currPage === 1 ? 'set' : 'update',
+                    proj_ids: [ this.currRefId, ],
+                    page: this.currPage,
+                  }),
+                  fetchReportsList(this.$store, {
+                    proj_ids: [ this.currRefId, ], 
+                    page: this.currPage,  
+                  }),
+                ]).then(() => { this.currPage += 1 }),
                 get(this.$route, 'params.subItem')
                   ? fetchMemoSingle(this.$store, get(this.$route, 'params.subItem'))
                   : Promise.resolve(),
@@ -128,7 +134,7 @@ export default {
         case 'series':
           jobs.push(fetchMemos(this.$store, {
             mode: 'update',
-            proj_ids: [ Number(get(this.$route, 'params.id')), ],
+            proj_ids: [ this.currRefId, ],
             page: this.currPage,
           }).then(res => {
             this.currPage += 1
@@ -188,6 +194,7 @@ export default {
   data () {
     return {
       currPage: DEFAULT_PAGE,
+      currRefId: 0,
       isReachBottom: false,
       isLoadMoreEnd: false,
     }
@@ -231,8 +238,8 @@ export default {
     '$route' (to, from) {
       debug('Mutation detected: $route', to, from)
     },
-    curr_project () {
-      debug('Mutation detected: curr_project')
+    curr_ref () {
+      debug('Mutation detected: curr_ref')
       this.currPage = DEFAULT_PAGE,
       Promise.all(this.jobs)
     },

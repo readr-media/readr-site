@@ -9,6 +9,7 @@
         <img class="follow-icon__thumbnail" :src="isFollow ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="follow">
         <span class="follow-icon__hint" v-text="$t('FOLLOWING.FOLLOW')"></span>
       </span>
+      <span v-else></span>
     </nav>
     <CommentContainer v-if="showComment" :asset="asset"></CommentContainer>
   </div>
