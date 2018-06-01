@@ -69,7 +69,7 @@
     },
     methods: {
       $_baseLightBox_close () {
-        if (pathToRegexp('/post/:postId').test(this.$route.path) || pathToRegexp('/memo/:id/:subItem?').test(this.$route.path)) {
+        if (pathToRegexp('/post/:postId').test(this.$route.path) || pathToRegexp('/series/:id/:subItem?').test(this.$route.path)) {
           this.$emit('closeLightBox')
         } else {
           this.$emit('update:showLightBox', false)

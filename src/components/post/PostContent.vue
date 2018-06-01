@@ -174,7 +174,7 @@
       targetUrl () {
         switch (this.post.flag) {
           case 'memo':
-            return `/memo/${get(this.$route, 'params.id')}/${get(this.post, 'id')}`
+            return `/series/${get(this.$route, 'params.id')}/${get(this.post, 'id')}`
           default:
             return `/post/${get(this.post, 'id')}`
         }
