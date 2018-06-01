@@ -23,13 +23,13 @@
             <MemoFigure :key="memo.id" :memo="memo"></MemoFigure>
           </template>
         </AppTitledList>
-        <AppTitledList :listTitle="this.$route.path !== '/hot' ? $t('SECTIONS.HOT_TALK') : $t('SECTIONS.CHIEF_EDITOR_TALK')">
+        <!-- <AppTitledList :listTitle="this.$route.path !== '/hot' ? $t('SECTIONS.HOT_TALK') : $t('SECTIONS.CHIEF_EDITOR_TALK')">
           <ul class="aside-list-container">
             <transition-group name="fade" mode="out-in">
               <HomeArticleAside v-for="post in postsAside" :articleData="post" :key="`${post.id}-aside`"/>
             </transition-group> 
           </ul>
-        </AppTitledList>
+        </AppTitledList> -->
       </div>
     </div>
   </div>   
