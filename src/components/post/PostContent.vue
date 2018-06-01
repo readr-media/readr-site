@@ -63,7 +63,7 @@
         <img class="editor-writing-source__figure" v-if="post.linkImage" :src="post.linkImage" @load="setOgImageOrientation(post.linkImage, $event)">
       </a>
     </template>
-    <AppArticleNav :postId="this.post.id" :articleType="this.post.flag" :commentCount="commentCount"></AppArticleNav>
+    <AppArticleNav :postId="get(this.post, 'flag') === 'report' ? this.post.slug : this.post.id" :articleType="this.post.flag" :commentCount="commentCount"></AppArticleNav>
   </div>
 </template>
 <script>
@@ -98,7 +98,7 @@
       postType () {
         if (get(this.post, 'type') === POST_TYPE.NEWS) {
           return 'news'
-        } else if (get(this.post, 'projectId') && !get(this.post, 'flag')) {
+        } else if (get(this.post, 'projectId') && get(this.post, 'flag') === 'report') {
           return 'report'
         } else {
           return 'normal'
