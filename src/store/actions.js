@@ -417,7 +417,11 @@ export default {
       getPublicReportsList({ params, }).then(({ status, body, }) => {
         debug('Get reports!', status, body)
         if (status === 200) {
-          commit('SET_PUBLIC_REPORTS', { reports: body.items, })
+          commit('SET_PUBLIC_REPORTS', { reports: _.map(_.get(body, 'items', []), i => {
+            i.flag = 'report'
+            return i
+          }), })
+                    
           resolve({ status: 200, res: body, })
         } else {
           reject({ status: status, })

@@ -42,7 +42,17 @@ export default {
   },
   computed: {
     asset () {
-      return `${get(this.$store, 'state.setting.HOST')}/${this.articleType}/${this.postId}`
+      switch (this.articleType) {
+        case 'memo':
+          return `${get(this.$store, 'state.setting.HOST')}/series/${get(this.$route, 'params.slug')}/${this.postId}`
+        case 'project':
+          return `${get(this.$store, 'state.setting.HOST')}/series/${this.postId}`
+        case 'report':
+          return `${get(this.$store, 'state.setting.HOST')}/project/${this.postId}`
+        default: 
+          return `${get(this.$store, 'state.setting.HOST')}/${this.articleType}/${this.postId}`
+
+      }
     },
     isFollow () {
       return this.$store.state.isLoggedIn && this.postFollowers.indexOf(this.$store.state.profile.id) !== -1
