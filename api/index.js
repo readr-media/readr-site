@@ -213,6 +213,7 @@ router.get('/profile', [ authVerify, setupClientCache, ], (req, res) => {
   debug('req.user')
   debug(req.user)
   const targetProfile = req.user.id
+  const roleSetInToken = req.user.role
 
   /**
    * 'cause there's some logged-user's cookie token constructed with id which is in old type,
@@ -231,6 +232,15 @@ router.get('/profile', [ authVerify, setupClientCache, ], (req, res) => {
     const profile = response[ 0 ][ 'items' ][ 0 ]
     const perms = response[ 1 ]
     const scopes = constructScope(perms, profile.role)
+
+    if (roleSetInToken !== profile.role) {
+      /**
+       * This statement means this user's role has been changed. At this moment, we need to force user to login again.
+       */
+      res.status(401).json({ message: 'Should Authorized Again.', })
+      return
+    }
+
     res.json({
       name: profile.name,
       nickname: profile.nickname,
