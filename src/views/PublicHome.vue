@@ -13,23 +13,22 @@
         </transition-group>
       </div>
       <div class="homepage__list-aside">
-        <AppTitledList v-if="reports.length > 0" class="homepage__report-container" :listTitle="$t('SECTIONS.REPORTS')">
+        <AppTitledList v-if="reports.length > 0" class="homepage__report-container" :listTitle="[ $t('SECTIONS.PROJECTS'), $t('SECTIONS.REPORTS') ]" :listTitleMarginLeft="'15px'">
           <ul class="aside-list-container">
             <HomeReportAside />
           </ul>
         </AppTitledList>
-        <AppTitledList v-if="memos.length > 0" class="homepage__project-container" :listTitle="$t('SECTIONS.MEMOS')">
+        <AppTitledList v-if="memos.length > 0" class="homepage__project-container" :listTitle="[ $t('SECTIONS.PROJECTS'), $t('SECTIONS.MEMOS') ]" :listTitleMarginLeft="'15px'">
           <template v-for="memo in memos">
             <MemoFigure :key="memo.id" :memo="memo"></MemoFigure>
           </template>
         </AppTitledList>
-        <AppTitledList :listTitle="this.$route.path !== '/hot' ? $t('SECTIONS.HOT_TALK') : $t('SECTIONS.CHIEF_EDITOR_TALK')">
-          <ul class="aside-list-container">
-            <transition-group name="fade" mode="out-in">
-              <HomeArticleAside v-for="post in postsAside" :articleData="post" :key="`${post.id}-aside`"/>
-            </transition-group> 
-          </ul>
+        <AppTitledList class="homepage__latest-comments-container" :listTitle="$t('SECTIONS.LATEST_COMMENTS')" :listTitleMarginLeft="'15px'">
+          <template v-for="comment in latestCommentsList">
+            <HomeLatestCommentAside :comment="comment" :key="comment.id"/>
+          </template>
         </AppTitledList>
+        <AppNavExternalLinks/>
       </div>
     </div>
   </div>   
@@ -41,8 +40,10 @@ import { currEnv, isScrollBarReachBottom, isElementReachInView, isCurrentRoutePa
 import _ from 'lodash'
 import { createStore, } from '../store'
 import AppTitledList from 'src/components/AppTitledList.vue'
+import AppNavExternalLinks from 'src/components/AppNavExternalLinks.vue'
 import HomeReportAside from 'src/components/home/HomeReportAside.vue'
 import HomeArticleAside from 'src/components/home/HomeArticleAside.vue'
+import HomeLatestCommentAside from 'src/components/home/HomeLatestCommentAside.vue'
 import BaseLightBox from 'src/components/BaseLightBox.vue'
 import BaseLightBoxPost from 'src/components/BaseLightBoxPost.vue'
 import Invite from 'src/components/invitation/Invite.vue'
@@ -54,9 +55,11 @@ const debug = require('debug')('CLIENT:Home')
 const MAXRESULT_MEMOS = 3
 const MAXRESULT_POSTS = 10
 const MAXRESULT_REPORTS = 4
+const MAXRESULT_LATEST_COMMENTS = 10
 // const MAXRESULT_VIDEOS = 1
 const DEFAULT_PAGE = 1
 const DEFAULT_SORT = '-published_at'
+const DEFAULT_SORT_LATEST_COMMENTS = '-created_at'
 const DEFAULT_CATEGORY = 'latest'
 
 const fetchMemos = (store, {
@@ -125,6 +128,10 @@ const fetchPointHistories = (store, { objectIds, objectType, }) => {
   })
 }
 
+const fetchComment = (store, { params = {}, } = {}) => store.dispatch('FETCH_COMMENT', {
+  params: Object.assign({}, { sort: DEFAULT_SORT_LATEST_COMMENTS, max_result: MAXRESULT_LATEST_COMMENTS, }, params),
+})
+
 const fetchFollowing = (store, params) => {
   if (params.subject) {
     return store.dispatch('GET_FOLLOWING_BY_USER', params)
@@ -190,8 +197,10 @@ export default {
   // },
   components: {
     AppTitledList,
+    AppNavExternalLinks,
     HomeReportAside,
     HomeArticleAside,
+    HomeLatestCommentAside,
     BaseLightBox,
     BaseLightBoxPost,
     Invite,
@@ -220,6 +229,7 @@ export default {
       currentPageLatest: 1,
       endPage: false,
       articlesListMainCategory: this.$route.path !== '/hot' ? '/' : '/hot',
+      latestCommentsList: [],
     } 
   },
   computed: {
@@ -345,6 +355,11 @@ export default {
           fetchPointHistories(this.$store, { objectType: POINT_OBJECT_TYPE.PROJECT_MEMO, objectIds: projectIds, })
         }
       }
+    })
+
+    fetchComment(this.$store)
+    .then((comments) => {
+      this.latestCommentsList = comments
     })
     // Uncomment this when v1.0 is released
     // if (this.$store.state.isLoggedIn) {
