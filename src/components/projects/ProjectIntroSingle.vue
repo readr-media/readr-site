@@ -1,26 +1,25 @@
 <template>
-  <div class="project-single-intro">
-    <div class="project-single-intro__progress-bar" :style="{ width: `${targProgress}%` }">
-      <div class="current-progress"><span v-text="`${currProgress}%`"></span></div>
-    </div>
+  <div class="project-single-intro" :style="{ backgroundImage: `url(${getImageUrl(get(project, 'heroImage'))})`, }">
     <div class="project-single-intro__container">
+      <div class="project-single-intro__title">
+        <span v-text="title"></span>
+      </div>
       <div class="project-single-intro__desc">
         <span v-text="desc"></span>
       </div>
-      <AppArticleNav :articleType="'project'" :postId="project.slug" :commentCount="project.commentAmount || 0"></AppArticleNav>
+    </div>
+    <div class="project-single-intro__progress-bar" :style="{ width: `${targProgress}%` }">
+      <div class="current-progress"><span v-text="`${currProgress}%`"></span></div>
     </div>
   </div>
 </template>
 <script>
-import AppArticleNav from 'src/components/AppArticleNav.vue'
 import { get, } from 'lodash'
-const debug = require('debug')('CLIENT:ProjectIntroSingle')
+import { getImageUrl, } from 'src/util/comm'
+// const debug = require('debug')('CLIENT:ProjectIntroSingle')
 
 export default {
   name: 'ProjectIntroSingle',
-  components: {
-    AppArticleNav,
-  },
   computed: {
     targProgress () {
       return get(this.project, 'progress', 0)
@@ -31,6 +30,9 @@ export default {
     project () {
       return get(this.$store, 'state.publicProjectSingle', {})
     },
+    title () {
+      return get(this.project, 'title')
+    },
   },
   data () {
     return {
@@ -39,12 +41,14 @@ export default {
     }
   },
   methods: {
+    get,
+    getImageUrl,
     runProgress () {
-      debug('this.targProgress', this.targProgress)
+      // debug('this.targProgress', this.targProgress)
       const interval = setInterval(() => {
         this.currProgress += Math.ceil(this.targProgress / 100)
-        debug('this.currProgress', this.currProgress)
-        debug('this.targProgress', this.targProgress)
+        // debug('this.currProgress', this.currProgress)
+        // debug('this.targProgress', this.targProgress)
         if (this.currProgress >= this.targProgress) {
           this.currProgress = this.targProgress
           clearInterval(interval)
@@ -54,8 +58,8 @@ export default {
   },
   mounted () {},
   props: {
-    projId: {
-      type: Number,
+    projSlug: {
+      type: String,
     },
   },
   watch: {
@@ -71,23 +75,35 @@ export default {
 <style lang="stylus" scoped>
 .project-single-intro
   width 100%
-  background-color #fff
-  padding 30px 30px 24px
+  // min-height 205px
   margin-bottom 10px
   position relative
+  background-color #fff
+  background-position center right
+  background-size 80%
+  background-repeat no-repeat
   &__container
+    background-image linear-gradient(to right, rgba(255,255,255,1) 0%,rgba(255,255,255,1) 30%,rgba(255,255,255,0) 70%,rgba(255,255,255,0) 100%)
+    padding 20px 30px 35px
     width 100%
+    height 100%
     font-size 1.125rem
     line-height 1.5625rem
     font-weight normal
     > div:not(:first-child)
-      margin-top 20px
+      margin-top 10px
     > div:not(:last-child)
-      margin-bottom 20px
+      margin-bottom 10px
+  &__title
+    font-size 3.125rem
+    font-weight 600
+    line-height normal
+  &__desc
+    width 40%
   &__progress-bar
     position absolute
     height 5px
-    top 0
+    bottom 0
     left 0
     background-color #ddcf21
     transition width 1.5s
@@ -104,4 +120,5 @@ export default {
       align-items center
       color #fff
       font-size 0.625rem
+      z-index 999
 </style>

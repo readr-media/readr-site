@@ -1,8 +1,8 @@
 <template>
   <div class="public-page">
+    <Leading></Leading>
     <div class="public-page__container">
       <div class="public-page__main">
-        <Leading></Leading>
         <PostList></PostList>
       </div>
       <div class="public-page__aside">

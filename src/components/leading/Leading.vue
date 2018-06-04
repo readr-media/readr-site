@@ -1,7 +1,7 @@
 <template>
   <div class="leading">
     <template v-if="route === 'series'">
-      <ProjectIntroSingle :projId="Number(get(this.$route, 'params.id'))"></ProjectIntroSingle>
+      <ProjectIntroSingle :projId="get(this.$route, 'params.slug')"></ProjectIntroSingle>
     </template>
   </div>
 </template>
@@ -27,4 +27,5 @@ export default {
 <style lang="stylus" scoped>
 .leading
   width 100%
+  margin-bottom 20px
 </style>
