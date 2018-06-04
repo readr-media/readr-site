@@ -6,7 +6,7 @@
     </div>
     <div class="projects-figure-progress__info">
       <div v-if="deducted" class="projects-figure-progress__btn-container">
-        <router-link :to="`/series/${get(memo, 'projectId')}`" class="projects-figure-progress__link"><img src="/public/icons/microphone-grey.png" :alt="$t('PROJECT.DISCUSS')"></router-link>
+        <router-link :to="`/series/${get(memo, 'project.slug')}`" class="projects-figure-progress__link"><img src="/public/icons/microphone-grey.png" :alt="$t('PROJECT.DISCUSS')"></router-link>
         <div class="projects-figure-progress__alert" v-text="$t('PROJECT.DISCUSS')"></div>
       </div>
       <div v-else class="projects-figure-progress__btn-container">
