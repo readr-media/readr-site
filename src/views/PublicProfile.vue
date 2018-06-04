@@ -211,8 +211,8 @@
           },
         }).then((res) => {
           this.shouldShowSpinner = false
-          debug('Loadmore done. Status', get(res, [ 0, 'status', ]), get(res, [ 0, 'res', ]))
-          if (get(res, [ 0, 'status', ]) === 200) {
+          debug('Loadmore done. Status', get(res, 'status'), get(res, 'res'))
+          if (get(res, 'status') === 200) {
             // if (this.$store.state.isLoggedIn) {
             //   const ids = res.items.map(post => `${post.id}`)
             //   fetchFollowing(this.$store, {
@@ -223,7 +223,7 @@
             // }
             get(this.curr_page, this.currTabKey)
               && (this.curr_page[ this.currTabKey ] += 1)
-          } else if (get(res, [ 0, 'status', ]) === 'end') {
+          } else if (get(res, 'status') === 'end') {
             this.isLoadMoreEnd[ this.currTabKey ] = true
           }
         })
