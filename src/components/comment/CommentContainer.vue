@@ -32,7 +32,10 @@
     computed: {
       commentsSalted () {
         return map(this.comments_raw, c => {
-          return Object.assign({}, c, { authorImage: getImageUrl(c.authorImage || '/public/icons/exclamation.png'), })
+          return Object.assign({}, c, {
+            authorImage: getImageUrl(c.authorImage || '/public/icons/exclamation.png'),
+            authorPage: `/profile/${c.author}`,
+          })
         })
       },      
       me () {
