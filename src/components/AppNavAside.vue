@@ -90,6 +90,7 @@ export default {
     background-color #ddcf21
     border-top none
   &__list-item
+    width 100%
     height 50px
     display flex
     justify-content center
