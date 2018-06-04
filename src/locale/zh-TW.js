@@ -318,5 +318,6 @@ export default {
     'PROJECTS': '專題',
     'PROJECTS_IN_PROGRESS': '進行中專題',
     'REPORTS': '報導',
+    'LATEST_COMMENTS': '最新留言',
   },
 }

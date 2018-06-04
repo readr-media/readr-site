@@ -1,6 +1,6 @@
 <template>
   <section class="app-titled-list">
-    <div class="app-titled-list__title">
+    <div class="app-titled-list__title" :style="{ paddingLeft: listTitleMarginLeft }">
       <div v-if="isTitleMultple" class="app-titled-list__multiple-indicator">
         <h2 v-text="multipleTitleFirst"></h2>
         <div class="indicator-icon">
@@ -26,6 +26,10 @@ export default {
     listTitle: {
       type: [ String, Array, ],
       required: true,
+    },
+    listTitleMarginLeft: {
+      type: String,
+      default: '20px',
     },
   },
   computed: {
@@ -53,7 +57,7 @@ export default {
     margin-top 23px !important
   &__title
     display flex
-    padding 0 0 5px 20px
+    padding 0 0 5px 0
     border-bottom solid 3px #ddcf21
     h1
       font-size 18px
