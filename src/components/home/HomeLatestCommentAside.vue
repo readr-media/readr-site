@@ -1,5 +1,5 @@
 <template>
-  <router-link class="latest-comment" :to="`/post/${commentResourceId}`">
+  <router-link class="latest-comment" :to="`/${commentResource.route}/${commentResource.param}`">
     <div class="latest-comment__info">
       <div class="latest-comment__icon-nickname-container">
         <img class="latest-comment__icon" src="/public/icons/quotation.png" alt="latest-comment__icon">
@@ -30,9 +30,12 @@ export default {
     }
   },
   computed: {
-    commentResourceId () {
-      const re = pathToRegexp(`${this.SITE_DOMAIN}/post/:id`)
-      return re.exec(get(this.comment, 'resource', ''))[1]
+    commentResource () {
+      const re = pathToRegexp(`${this.SITE_DOMAIN}/:route/:id`)
+      return {
+        route: re.exec(get(this.comment, 'resource', ''))[1],
+        param: re.exec(get(this.comment, 'resource', ''))[2],
+      }
     },
     commentAuthorId () {
       return get(this.comment, 'author', '')
