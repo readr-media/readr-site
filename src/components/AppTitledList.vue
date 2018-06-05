@@ -9,11 +9,18 @@
           <div class="indicator-icon__dot"></div>
         </div>
       </div>
-      <h1 v-text="titleMain"></h1>
+      <router-link class="app-titled-list__title-main" v-if="moreButtonShow" v-text="titleMain" :to="moreButtonTo"></router-link>
+      <h1 class="app-titled-list__title-main" v-else v-text="titleMain"></h1>
       <div class="triangle"></div>
     </div>
     <div class="app-titled-list__content">
       <slot></slot>
+      <router-link
+        v-if="moreButtonShow"
+        class="app-titled-list__more"
+        :to="moreButtonTo"
+        v-text="`${$t('homepage.WORDING_HOME_POST_MORE')}${titleMain}`"
+      ></router-link>
     </div>
   </section>
 </template>
@@ -30,6 +37,14 @@ export default {
     listTitleMarginLeft: {
       type: String,
       default: '20px',
+    },
+    moreButtonShow: {
+      type: Boolean,
+      default: false,
+    },
+    moreButtonTo: {
+      type: String,
+      default: '/',
     },
   },
   computed: {
@@ -59,10 +74,6 @@ export default {
     display flex
     padding 0 0 5px 0
     border-bottom solid 3px #ddcf21
-    h1
-      font-size 18px
-      font-weight 600
-      margin 0
     h2
       font-size 15px
       font-weight 300
@@ -86,6 +97,11 @@ export default {
         border-style solid
         border-width 0 11px 19.8px 11px
         border-color transparent transparent white transparent
+  &__title-main
+    font-size 18px
+    font-weight 600
+    margin 0
+    color black
   &__multiple-indicator
     display flex
     justify-content center
@@ -93,6 +109,14 @@ export default {
   &__content
     background-color white
     padding-bottom 12px
+  &__more
+    display flex
+    justify-content center
+    align-items center
+    height 25px
+    background-color #808080
+    font-size 12px
+    color white
 
 .indicator-icon
   display flex
