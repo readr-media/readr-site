@@ -31,8 +31,8 @@ export default {
   },
   computed: {
     commentResourceId () {
-      const re = pathToRegexp(`${this.SITE_DOMAIN}/post/:id`)
-      return re.exec(get(this.comment, 'resource', ''))[1]
+      const re = pathToRegexp(`${this.SITE_DOMAIN}/:route/:id`)
+      return re.exec(get(this.comment, 'resource', ''))[2]
     },
     commentAuthorId () {
       return get(this.comment, 'author', '')

@@ -1,7 +1,7 @@
 <template>
   <div class="article-nav">
     <nav class="article-nav__nav-btns">
-      <span class="'comment-icon'" @click="renderComment()">
+      <span class="comment-icon" @click="renderComment()">
         <img class="comment-icon__thumbnail" :src="commentIcon" alt="comment">
         <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="postId" :type="'publicPostsHot'"></CommentCount>
       </span>
