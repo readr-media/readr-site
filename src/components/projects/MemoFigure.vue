@@ -1,17 +1,19 @@
 <template>
-  <figure class="projects-figure-progress">
+  <router-link class="projects-figure-progress" :to="`/series/${get(memo, 'project.slug')}`">
     <div class="projects-figure-progress__title">
       <h3 v-if="projectName" v-text="projectName"></h3>
       <h2 v-text="memo.title"></h2>
     </div>
     <div class="projects-figure-progress__info">
-      <div v-if="deducted" class="projects-figure-progress__btn-container">
-        <router-link :to="`/series/${get(memo, 'project.slug')}`" class="projects-figure-progress__link"><img src="/public/icons/microphone-grey.png" :alt="$t('PROJECT.DISCUSS')"></router-link>
-        <div class="projects-figure-progress__alert" v-text="$t('PROJECT.DISCUSS')"></div>
+      <div v-if="deducted" :class="[ 'projects-figure-progress__btn-container', { 'projects-figure-progress__btn-container--wide': !showStatusTooltip } ]">
+        <router-link :to="`/series/${get(memo, 'project.slug')}`" :class="[ 'projects-figure-progress__link', { 'projects-figure-progress__link--small': !showStatusTooltip } ]"><img src="/public/icons/microphone-grey.png" :alt="$t('PROJECT.DISCUSS')"></router-link>
+        <div v-if="showStatusTooltip" class="projects-figure-progress__alert" v-text="$t('PROJECT.DISCUSS')"></div>
+        <p v-else class="projects-figure-progress__alert--hint" v-text="$t('PROJECT.DISCUSS')"></p>
       </div>
-      <div v-else class="projects-figure-progress__btn-container">
-        <button class="projects-figure-progress__button button--encoruage" @click="$_projectsFigureProgress_openLightBox"><img src="/public/icons/participate-grey.png" :alt="$t('PROJECT.ENCOURAGE')"></button>
-        <div class="projects-figure-progress__alert" v-text="$t('PROJECT.ENCOURAGE')"></div>
+      <div v-else :class="[ 'projects-figure-progress__btn-container', { 'projects-figure-progress__btn-container--wide': !showStatusTooltip } ]">
+        <button :class="[ 'projects-figure-progress__button', { 'projects-figure-progress__button--small': !showStatusTooltip }, 'button--encoruage']" @click="$_projectsFigureProgress_openLightBox"><img src="/public/icons/participate-grey.png" :alt="$t('PROJECT.ENCOURAGE')"></button>
+        <div v-if="showStatusTooltip" class="projects-figure-progress__alert" v-text="`${$t('PROJECT.ENCOURAGE_ACTION')}${$t('PROJECT.ENCOURAGE')}`"></div>
+        <p v-else class="projects-figure-progress__alert--hint">{{ $t('PROJECT.ENCOURAGE_ACTION') }}<br>{{ $t('PROJECT.ENCOURAGE') }}</p>
       </div>
     </div>
     <base-light-box :showLightBox.sync="showLightBox" borderStyle="nonBorder">
@@ -28,7 +30,7 @@
         </div>
       </div>
     </base-light-box>
-  </figure>
+  </router-link>
 </template>
 
 <script>
@@ -57,6 +59,10 @@ export default {
     memo: {
       type: Object,
       default: {},
+    },
+    showStatusTooltip: {
+      type: Boolean,
+      default: true,
     },
   },
   data () {
@@ -102,6 +108,7 @@ export default {
   background-color white
   border-bottom 1px solid #d3d3d3
   overflow hidden
+  color black
   // > h2
   //   flex 1
   //   margin 0
@@ -130,6 +137,11 @@ export default {
     width 37px
     margin 0 5px
     border-left 1px solid #979797
+    display flex
+    justify-content center
+    align-items center
+    &--wide
+      width 99px
     &:hover
       .projects-figure-progress__alert
         display block
@@ -144,6 +156,8 @@ export default {
     font-size 12px
     font-weight 600
     color white
+    &--small
+      width 35px
     & > img
       width 25px
       height 25px
@@ -157,6 +171,8 @@ export default {
     height 100%
     background-color #fff
     cursor pointer
+    &--small
+      width 35px
     & > img
       width 25px
       height 25px
@@ -173,6 +189,10 @@ export default {
     border 1px solid #d3d3d3
     user-select none
     white-space nowrap
+    &--hint
+      font-size 10px
+      color #808080
+      margin 0
     &::before
       content ''
       position absolute
