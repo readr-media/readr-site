@@ -3,7 +3,7 @@
     <app-header></app-header>
     <div :class="`app__container${ isLoginPage ? '--wide' : ''}`">
       <aside class="app__aside" v-if="!isLoginPage">
-        <AppAsideNav/>
+        <AppNavAside/>
       </aside>
       <main class="app__main">
         <transition name="fade" mode="out-in">
@@ -18,7 +18,7 @@
   import { get, } from 'lodash'
   import { logTrace, } from 'src/util/services'
   import AppHeader from 'src/components/header/AppHeader.vue'
-  import AppAsideNav from 'src/components/AppAsideNav.vue'
+  import AppNavAside from 'src/components/AppNavAside.vue'
   import Tap from 'tap.js'
   
   // const debug = require('debug')('CLIENT:App')
@@ -26,7 +26,7 @@
   export default {
     components: {
       'app-header': AppHeader,
-      AppAsideNav,
+      AppNavAside,
     },
     computed: {
       currUser () {
