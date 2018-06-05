@@ -17,9 +17,9 @@
           <p v-text="$t('SECTIONS.CHIEF_EDITOR_LIST')"></p>
         </li>
       </router-link>
-      <router-link class="nav-list__link" to="/projects">
+      <router-link class="nav-list__link" to="/series-list">
         <li class="nav-list__list-item">
-          <p v-text="$t('SECTIONS.PROJECTS')"></p>
+          <p v-text="$t('SECTIONS.SERIES')"></p>
         </li>
       </router-link>
       <router-link class="nav-list__link" :to="`/profile/${ANNOUNCEMENT_ACCOUNT_ID}`">

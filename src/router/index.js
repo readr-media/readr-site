@@ -16,10 +16,10 @@ const PublicAgreement = () => import('../views/PublicAgreement.vue')
 const PublicEditors = () => import('../views/PublicEditors.vue')
 const PublicHome = () => import('../views/PublicHome.vue')
 const PublicLogin = () => import('../views/PublicLogin.vue')
+const PublicPage = () => import('../views/PublicPage.vue')
 const PublicPageWithAside = () => import('../views/PublicPageWithAside.vue')
 const PublicPageNotFound = () => import('../views/PublicPageNotFound.vue')
 const PublicProfile = () => import('../views/PublicProfile.vue')
-const PublicProjects = () => import('../views/PublicProjects.vue')
 const PublicSearch = () => import('../views/PublicSearch.vue')
 const PublicServerError = () => import('../views/PublicServerError.vue')
 const PublicSetPassword = () => import('../views/PublicSetPassword.vue')
@@ -69,8 +69,8 @@ const router = new Router({
     { path: '/reports', component: PublicPageWithAside, meta: { permission: 'member', }, props: { hasPostList: false, hasLeading: false, }, },
     { path: '/memos', component: PublicPageWithAside, meta: { permission: 'member', }, props: { hasPostList: false, hasLeading: false, }, },
     { path: '/profile/:id', component: PublicProfile, meta: { permission: 'member', }, },
-    { path: '/projects', component: PublicProjects, meta: { permission: 'member', }, },
     { path: '/search/:keyword', component: PublicSearch, meta: { permission: 'member', }, },
+    { path: '/series-list', component: PublicPage, meta: { permission: 'member', }, },
     { path: '/setup/:type', component: PublicSetPassword, },
     { path: '/404', component: PublicPageNotFound, },
     { path: '/500', component: PublicServerError, },
