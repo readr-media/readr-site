@@ -13,12 +13,26 @@
         </transition-group>
       </div>
       <div class="homepage__list-aside">
-        <AppTitledList v-if="reports.length > 0" class="homepage__report-container" :listTitle="[ $t('SECTIONS.PROJECTS'), $t('SECTIONS.REPORTS') ]" :listTitleMarginLeft="'15px'">
+        <AppTitledList
+          v-if="reports.length > 0"
+          class="homepage__report-container"
+          :listTitle="[ $t('SECTIONS.PROJECTS'), $t('SECTIONS.REPORTS') ]"
+          :listTitleMarginLeft="'15px'"
+          :moreButtonShow="true"
+          :moreButtonTo="'/reports'"
+        >
           <ul class="aside-list-container">
             <HomeReportAside />
           </ul>
         </AppTitledList>
-        <AppTitledList v-if="memos.length > 0" class="homepage__project-container" :listTitle="[ $t('SECTIONS.PROJECTS'), $t('SECTIONS.MEMOS') ]" :listTitleMarginLeft="'15px'">
+        <AppTitledList
+          v-if="memos.length > 0"
+          class="homepage__project-container"
+          :listTitle="[ $t('SECTIONS.PROJECTS'), $t('SECTIONS.MEMOS') ]"
+          :listTitleMarginLeft="'15px'"
+          :moreButtonShow="true"
+          :moreButtonTo="'/memos'"
+        >
           <template v-for="memo in memos">
             <MemoFigure :key="memo.id" :memo="memo"></MemoFigure>
           </template>
