@@ -231,7 +231,11 @@ export default {
       debug('GET_MEMO', body)
       if (status === 200) {
         commit('SET_MEMO_SINGLE', { item: Object.assign({}, _.get(body, 'items', {}), { flag: 'memo', }), })
+      } else {
+        commit('SET_MEMO_SINGLE', { item: null, })
       }
+    }).catch(({ res, }) => {
+      commit('SET_MEMO_SINGLE', { item: null, })
     })
   },
   GET_MEMOS: ({ commit, dispatch, state, }, { params, mode, }) => {
@@ -252,7 +256,11 @@ export default {
           }), })          
         }
         return { status, }
+      } else {
+        commit('SET_MEMOS', { items: [], })
       }
+    }).catch(({ res, }) => {
+      commit('SET_MEMOS', { items: [], })
     })
   },
   GET_META: ({ commit, dispatch, state, }, { url, }) => {
