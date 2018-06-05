@@ -1,16 +1,16 @@
 <template>
   <section class="home-project-aside">
     <template v-for="report in reports">
-      <div :key="report.id" class="home-project-aside__container">
+      <a :key="report.id" class="home-project-aside__container" :href="getReportUrl(report.slug)" target="_blank">
         <div class="home-project-aside__content">
           <h3 v-if="report.project.title" v-text="report.project.title"></h3>
-          <a :href="getReportUrl(report.slug)" target="_blank"><h1 class="home-project-aside__project-title" v-text="report.title"></h1></a>
+          <h1 class="home-project-aside__project-title" v-text="report.title"></h1>
         </div>
-        <a :href="getReportUrl(report.slug)" target="_blank"><img class="home-project-aside__project-image" :src="report.heroImage ? report.heroImage : '/public/icons/readr-logo.png'"></a>
+        <img class="home-project-aside__project-image" :src="report.heroImage ? report.heroImage : '/public/icons/readr-logo.png'">
         <div class="home-project-aside__comment">
-          <AppArticleNav :articleType="'project'" :postId="report.id" :commentCount="report.commentAmount || 0"/>
+          <AppArticleNav :articleType="'project'" :postId="report.id" :commentCount="report.commentAmount || 0" :toogleComment="false"/>
         </div>
-      </div>
+      </a>
     </template>
   </section>
 </template>

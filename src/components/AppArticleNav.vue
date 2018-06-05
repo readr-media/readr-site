@@ -1,8 +1,8 @@
 <template>
   <div class="article-nav">
     <nav class="article-nav__nav-btns">
-      <span class="comment-icon" @click="renderComment()">
-        <img class="comment-icon__thumbnail" src="/public/icons/comment-blue.png" alt="comment">
+      <span class="'comment-icon'" @click="renderComment()">
+        <img class="comment-icon__thumbnail" :src="commentIcon" alt="comment">
         <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="postId" :type="'publicPostsHot'"></CommentCount>
       </span>
       <span v-if="isLoggedIn" class="follow-icon" @click="toogleFollow($event)">
@@ -68,6 +68,9 @@ export default {
         return []
       }
     },
+    commentIcon () {
+      return this.toogleComment ? '/public/icons/comment-blue.png' : '/public/icons/comment-quote.png'
+    },
   },
   data () {
     return {
@@ -77,7 +80,7 @@ export default {
   methods: {
     renderComment (event) {
       if (event) event.preventDefault()
-      this.showComment = true
+      if (this.toogleComment) this.showComment = true
     },
     toogleFollow (event) {
       if (event) event.preventDefault()
@@ -127,6 +130,10 @@ export default {
     commentCount: {
       type: Number,
       required: true,
+    },
+    toogleComment: {
+      type: Boolean,
+      default: true,
     },
   },
 }
