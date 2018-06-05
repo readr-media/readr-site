@@ -1,13 +1,13 @@
 <template>
   <section class="project-list">
     <template v-for="(p, i) in projects">
-      <div :key="p.id" class="project-block">
+      <a :key="p.id" class="project-block" :href="`/series/${p.slug}`">
         <div class="project-block__index" v-text="i + 1"></div>
         <div class="project-block__info">
-          <a :href="`/series/${p.id}`"><h2 v-text="p.title"></h2></a>
-          <AppArticleNav :articleType="'project'" :postId="p.id" :commentCount="p.commentAmount || 0"/>
+          <h2 v-text="p.title"></h2>
+          <AppArticleNav :articleType="'project'" :postId="p.id" :commentCount="p.commentAmount || 0" :toogleComment="false"/>
         </div>
-      </div>
+      </a>
     </template>
   </section>
 </template>
@@ -51,6 +51,7 @@ export default {
       h2
         margin 0 0 5px 0
         font-size .9375rem
+        color black
 </style>
 
 
