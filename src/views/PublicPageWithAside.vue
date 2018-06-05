@@ -1,9 +1,8 @@
 <template>
   <div class="public-page">
-    <Leading></Leading>
+    <Leading v-if="hasLeading"></Leading>
     <div class="public-page__container">
       <div v-if="hasPostList" class="public-page__main">
-        <Leading v-if="hasLeading"></Leading>
         <PostList></PostList>
       </div>
       <AppTitledList v-else
@@ -19,12 +18,13 @@
         </template>
       </AppTitledList>
       <div class="public-page__aside">
+        <div class="public-page__aside-comment" v-if="commentAsset && isClientSide"><CommentContainer :asset="commentAsset"></CommentContainer></div>
+        <div v-else></div>
         <AppTitledList v-if="projects.length > 0"
           class="public-page__aside-container"
           :listTitle="$t('SECTIONS.PROJECTS')"
           :moreButtonShow="true"
-          :moreButtonTo="'/projects'"
-        >
+          :moreButtonTo="'/projects'">
           <ProjectList :projects="projects"></ProjectList>
         </AppTitledList>
       </div>
@@ -33,13 +33,14 @@
 </template>
 <script>
 import AppTitledList from 'src/components/AppTitledList.vue'
+import CommentContainer from 'src/components/comment/CommentContainer.vue'
 import HomeReportAside from 'src/components/home/HomeReportAside.vue'
 import Leading from 'src/components/leading/Leading.vue'
 import MemoFigure from 'src/components/projects/MemoFigure.vue'
 import PostList from 'src/components/post/PostList.vue'
 import ProjectList from 'src/components/projects/ProjectList.vue'
 import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, REPORT_PUBLISH_STATUS, MEMO_PUBLISH_STATUS, } from 'api/config'
-import { isScrollBarReachBottom, isElementReachInView, } from 'src/util/comm'
+import { isClientSide, isScrollBarReachBottom, isElementReachInView, } from 'src/util/comm'
 import { get, } from 'lodash'
 
 const MAXRESULT = 10
@@ -113,6 +114,7 @@ export default {
   },
   components: {
     AppTitledList,
+    CommentContainer,
     HomeReportAside,
     Leading,
     PostList,
@@ -137,11 +139,23 @@ export default {
     }
   },
   computed: {
+    commentAsset () {
+      let asset
+      switch (this.route) {
+        case 'series':
+          asset = `${get(this.$store, 'state.setting.HOST')}/series/${get(this.$route, 'params.slug')}`
+      }
+      return asset
+    },
+    isClientSide,
+    memos () {
+      return get(this.$store.state, 'publicMemos', [])
+    },
     projects () {
       return get(this.$store, 'state.publicProjects.done') || []
     },
-    memos () {
-      return get(this.$store.state, 'publicMemos', [])
+    route () {
+      return this.$route.fullPath.split('/')[ 1 ]
     },
   },
   methods: {
@@ -214,6 +228,11 @@ export default {
       width 100%
       >>> .app-titled-list__content
         padding 0
+    &-comment
+      width 100%
+      background-color #fff
+      padding 10px 15px
+      margin-bottom 20px
   &__main
     &-container
       width 650px
