@@ -24,7 +24,7 @@
           class="public-page__aside-container"
           :listTitle="$t('SECTIONS.PROJECTS')"
           :moreButtonShow="true"
-          :moreButtonTo="'/projects'">
+          :moreButtonTo="'/series-list'">
           <ProjectList :projects="projects"></ProjectList>
         </AppTitledList>
       </div>

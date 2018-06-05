@@ -1,6 +1,6 @@
 <template>
   <div class="projects-figure">
-    <a class="projects-figure-content" :href="projectUrl" target="_blank">
+    <router-link class="projects-figure-content" :to="`/series/${this.project.slug}`">
       <figure>
         <img v-if="project.heroImage" :src="project.heroImage">
         <span v-if="!project.heroImage" v-text="project.title"></span>
@@ -12,7 +12,7 @@
         </div>
         <p class="projects-figure-content__descr" v-text="project.description"></p>
       </div>
-    </a>
+    </router-link>
     <div class="projects-figure-controlbar">
       <div>
         <img src="/public/icons/comment-count-blue.png" alt="">
@@ -35,7 +35,7 @@
 
 <script>
 import { find, } from 'lodash'
-import { getReportUrl, updatedAtYYYYMMDD, } from '../../util/comm'
+import { updatedAtYYYYMMDD, } from '../../util/comm'
 import AppShareButton from 'src/components/AppShareButton.vue'
 import AppArticleNav from 'src/components/AppArticleNav.vue'
 
@@ -76,12 +76,12 @@ export default {
     projectId () {
       return this.project.id
     },
-    projectUrl () {
-      if (this.project.slug) {
-        return getReportUrl(this.project.slug)
-      }
-      return '/'
-    },
+    // projectUrl () {
+    //   if (this.project.slug) {
+    //     return getReportUrl(this.project.slug)
+    //   }
+    //   return '/'
+    // },
   },
   methods: {
     toogleFollow () {
