@@ -1,5 +1,5 @@
 <template>
-  <div class="project-single-intro" :style="{ backgroundImage: `url(${getImageUrl(get(project, 'heroImage'))})`, }">
+  <div class="project-single-intro" :style="{ backgroundImage: `url(${getImageUrl(get(project, 'heroImage') || '/public/media.jpeg')})`, }">
     <div class="project-single-intro__container">
       <div class="project-single-intro__title">
         <span v-text="title"></span>
@@ -78,7 +78,7 @@ export default {
   // min-height 205px
   margin-bottom 10px
   position relative
-  background-color #fff
+  background-color #e6e6e6
   background-position center right
   background-size 80%
   background-repeat no-repeat
