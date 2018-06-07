@@ -7,12 +7,12 @@
       </figure>
       <div class="projects-figure-content__info">
         <div class="progress">
-          <span v-text="`${project.progress}%`"></span>
+          <span v-text="`${progress}%`"></span>
           <div class="progress__left rect">
-            <div class="circle" :style="{ transform: project.progress >= 50 ? `rotate(${225 + (project.progress - 50) / 100 * 180}deg)` : 'rotate(225deg)' }"></div>
+            <div class="circle" :style="{ transform: progress >= 50 ? `rotate(${225 + (progress - 50) / 50 * 180}deg)` : 'rotate(225deg)' }"></div>
           </div>
           <div class="progress__right rect">
-            <div class="circle" :style="{ transform: project.progress >= 50 ? 'rotate(405deg)' : `rotate(${225 + project.progress / 100 * 180}deg)` }"></div>
+            <div class="circle" :style="{ transform: progress >= 50 ? 'rotate(405deg)' : `rotate(${225 + progress / 50 * 180}deg)` }"></div>
           </div>
         </div>
         <div class="projects-figure-content__info-title">
@@ -82,15 +82,12 @@ export default {
     isLoggedIn () {
       return this.$store.state.isLoggedIn
     },
+    progress () {
+      return (this.project.progress && this.project.progress > 0) ? this.project.progress : 0
+    },
     projectId () {
       return this.project.id
     },
-    // projectUrl () {
-    //   if (this.project.slug) {
-    //     return getReportUrl(this.project.slug)
-    //   }
-    //   return '/'
-    // },
   },
   methods: {
     toogleFollow () {
