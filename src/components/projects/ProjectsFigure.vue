@@ -6,7 +6,16 @@
         <span v-if="!project.heroImage" v-text="project.title"></span>
       </figure>
       <div class="projects-figure-content__info">
-        <div>
+        <div class="progress">
+          <span v-text="`${project.progress}%`"></span>
+          <div class="progress__left rect">
+            <div class="circle" :style="{ transform: project.progress >= 50 ? `rotate(${225 + (project.progress - 50) / 100 * 180}deg)` : 'rotate(225deg)' }"></div>
+          </div>
+          <div class="progress__right rect">
+            <div class="circle" :style="{ transform: project.progress >= 50 ? 'rotate(405deg)' : `rotate(${225 + project.progress / 100 * 180}deg)` }"></div>
+          </div>
+        </div>
+        <div class="projects-figure-content__info-title">
           <p v-text="updatedAtYYYYMMDD(project.updatedAt)"></p>
           <h1 v-text="project.title"></h1>
         </div>
@@ -167,8 +176,13 @@ export default {
     object-fit cover
     object-position center center
   &__info
+    display flex
+    flex-wrap wrap
+    align-items center
     padding 20px 10px
-  
+  &__info-title
+    flex 1
+    margin-left 10px
   &__descr
     max-height 3.34em
     line-height 1.67
@@ -203,7 +217,49 @@ export default {
   .follow
     cursor pointer
 
-
+.progress
+  position relative
+  width 40px
+  height 40px
+  span
+    position absolute
+    top 50%
+    left 50%
+    transform translate(-50%, -50%)
+    color #ddcf21
+    font-size .625rem
+  &__left
+    left 0
+    .circle
+      position absolute
+      top 0
+      left 0
+      transform rotate(225deg)
+      width 40px
+      height 40px
+      border 3px solid #ccc
+      border-bottom 3px solid #ddcf21
+      border-left 3px solid #ddcf21
+      border-radius 50%
+  &__right
+    right 0
+    .circle
+      position absolute
+      top 0
+      right 0
+      transform rotate(225deg)
+      width 40px
+      height 40px
+      border 3px solid #ccc
+      border-top 3px solid #ddcf21
+      border-right 3px solid #ddcf21
+      border-radius 50%
+  .rect
+    position absolute
+    top 0
+    width 20px
+    height 40px
+    overflow hidden
 </style>
 
 
