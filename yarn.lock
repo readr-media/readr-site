@@ -8047,9 +8047,9 @@ readdirp@^2.0.0:
     readable-stream "^2.0.2"
     set-immediate-shim "^1.0.1"
 
-readr-comment@1.0.11:
-  version "1.0.11"
-  resolved "https://registry.yarnpkg.com/readr-comment/-/readr-comment-1.0.11.tgz#bf1f82e0ee0d9a83ecb2eae2fa6290a6733be3b3"
+readr-comment@^1.0.15:
+  version "1.0.15"
+  resolved "https://registry.yarnpkg.com/readr-comment/-/readr-comment-1.0.15.tgz#33e93ea060215f172c940a09fd3b4a104299b7cc"
   dependencies:
     babel-cli "^6.22.2"
     babel-core "^6.18.2"
@@ -8064,6 +8064,7 @@ readr-comment@1.0.11:
     lodash "^4.17.10"
     moment "^2.22.1"
     prevent-scroll "^2.0.0"
+    sanitize-html "^1.18.2"
 
 redent@^1.0.0:
   version "1.0.0"
