@@ -39,9 +39,9 @@ import Leading from 'src/components/leading/Leading.vue'
 import MemoFigure from 'src/components/projects/MemoFigure.vue'
 import PostList from 'src/components/post/PostList.vue'
 import ProjectList from 'src/components/projects/ProjectList.vue'
-import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, REPORT_PUBLISH_STATUS, MEMO_PUBLISH_STATUS, } from 'api/config'
+import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, REPORT_PUBLISH_STATUS, MEMO_PUBLISH_STATUS, POINT_OBJECT_TYPE, } from 'api/config'
 import { isClientSide, isScrollBarReachBottom, isElementReachInView, } from 'src/util/comm'
-import { get, } from 'lodash'
+import { get, uniq, } from 'lodash'
 
 const MAXRESULT = 10
 const MAXRESULT_REPORTS_MEMOS = 50
@@ -96,6 +96,16 @@ const fetchMemos = (store, {
         publish_status: MEMO_PUBLISH_STATUS.PUBLISHED,
       },
       sort: sort,
+    },
+  })
+}
+
+const fetchPointHistories = (store, { objectIds, objectType, }) => {
+  return store.dispatch('GET_POINT_HISTORIES', {
+    params: {
+      memberId: get(store, [ 'state', 'profile', 'id', ]),
+      objectType: objectType,
+      objectIds: objectIds,
     },
   })
 }
@@ -189,6 +199,10 @@ export default {
   beforeMount () {
     const requests = this.getRequests(this.$route.path)
     Promise.all(requests).then(() => {
+      const projectIds = uniq(get(this.$store, 'state.publicMemos', []).map(memo => memo.projectId))
+      if (projectIds.length !== 0) {
+        fetchPointHistories(this.$store, { objectType: POINT_OBJECT_TYPE.PROJECT_MEMO, objectIds: projectIds, })
+      }
       // if (this.$store.state.isLoggedIn) {
       //   const reportIds = _.get(this.$store.state, 'publicReports', []).map(report => `${report.id}`)
       //   fetchFollowing(this.$store, {
