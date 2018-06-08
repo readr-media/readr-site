@@ -61,7 +61,7 @@ const login = (req, res) => {
           mail: get(mem, 'mail', req.body.email),
           role: get(mem, 'role', 1),
           scopes,
-          profileImage: get(mem, 'profileImage'),
+          profileImage: get(mem, 'profile_image'),
           points: get(mem, 'points'),
         },})
       } else {
