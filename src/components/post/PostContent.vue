@@ -84,7 +84,7 @@
         return get(this.post, 'commentAmount') || 0
       },
       hasSource () {
-        return this.post.linkTitle && this.post.linkDescription
+        return this.post.linkTitle
       },
       linkTitleTrim () {
         return truncate(this.post.linkTitle, 20)
