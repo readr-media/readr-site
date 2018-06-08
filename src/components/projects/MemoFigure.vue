@@ -1,19 +1,21 @@
 <template>
-  <router-link class="projects-figure-progress" :to="`/series/${get(memo, 'project.slug')}`">
-    <div class="projects-figure-progress__title">
-      <h3 v-if="projectName" v-text="projectName"></h3>
-      <h2 v-text="memo.title"></h2>
-    </div>
-    <div class="projects-figure-progress__info">
-      <div v-if="deducted" :class="[ 'projects-figure-progress__btn-container', { 'projects-figure-progress__btn-container--wide': !showStatusTooltip } ]">
-        <router-link :to="`/series/${get(memo, 'project.slug')}`" :class="[ 'projects-figure-progress__link', { 'projects-figure-progress__link--small': !showStatusTooltip } ]"><img src="/public/icons/microphone-grey.png" :alt="$t('PROJECT.DISCUSS')"></router-link>
-        <div v-if="showStatusTooltip" class="projects-figure-progress__alert" v-text="$t('PROJECT.DISCUSS')"></div>
-        <p v-else class="projects-figure-progress__alert--hint" v-text="$t('PROJECT.DISCUSS')"></p>
+  <div class="projects-figure-progress">
+    <div class="projects-figure-progress__container" @click="navigateToMemo">
+      <div class="projects-figure-progress__title">
+        <h3 v-if="projectName" v-text="projectName"></h3>
+        <h2 v-text="memo.title"></h2>
       </div>
-      <div v-else :class="[ 'projects-figure-progress__btn-container', { 'projects-figure-progress__btn-container--wide': !showStatusTooltip } ]">
-        <button :class="[ 'projects-figure-progress__button', { 'projects-figure-progress__button--small': !showStatusTooltip }, 'button--encoruage']" @click="$_projectsFigureProgress_openLightBox"><img src="/public/icons/participate-grey.png" :alt="$t('PROJECT.ENCOURAGE')"></button>
-        <div v-if="showStatusTooltip" class="projects-figure-progress__alert" v-text="`${$t('PROJECT.ENCOURAGE_ACTION')}${$t('PROJECT.ENCOURAGE')}`"></div>
-        <p v-else class="projects-figure-progress__alert--hint">{{ $t('PROJECT.ENCOURAGE_ACTION') }}<br>{{ $t('PROJECT.ENCOURAGE') }}</p>
+      <div class="projects-figure-progress__info">
+        <div v-if="deducted" :class="[ 'projects-figure-progress__btn-container', { 'projects-figure-progress__btn-container--wide': !showStatusTooltip } ]">
+          <div :class="[ 'projects-figure-progress__link', { 'projects-figure-progress__link--small': !showStatusTooltip } ]"><img src="/public/icons/microphone-grey.png" :alt="$t('PROJECT.DISCUSS')"></div>
+          <div v-if="showStatusTooltip" class="projects-figure-progress__alert" v-text="$t('PROJECT.DISCUSS')"></div>
+          <p v-else class="projects-figure-progress__alert--hint" v-text="$t('PROJECT.DISCUSS')"></p>
+        </div>
+        <div v-else :class="[ 'projects-figure-progress__btn-container', { 'projects-figure-progress__btn-container--wide': !showStatusTooltip } ]">
+          <button :class="[ 'projects-figure-progress__button', { 'projects-figure-progress__button--small': !showStatusTooltip }, 'button--encoruage']"><img src="/public/icons/participate-grey.png" :alt="$t('PROJECT.ENCOURAGE')"></button>
+          <div v-if="showStatusTooltip" class="projects-figure-progress__alert" v-text="`${$t('PROJECT.ENCOURAGE_ACTION')}${$t('PROJECT.ENCOURAGE')}`"></div>
+          <p v-else class="projects-figure-progress__alert--hint">{{ $t('PROJECT.ENCOURAGE_ACTION') }}<br>{{ $t('PROJECT.ENCOURAGE') }}</p>
+        </div>
       </div>
     </div>
     <base-light-box :showLightBox.sync="showLightBox" borderStyle="nonBorder">
@@ -30,7 +32,7 @@
         </div>
       </div>
     </base-light-box>
-  </router-link>
+  </div>
 </template>
 
 <script>
@@ -79,6 +81,9 @@ export default {
     projectName () {
       return get(this.memo, 'project.title')
     },
+    memoURL () {
+      return `/series/${get(this.memo, 'project.slug')}`
+    },
   },
   mounted () {
   },
@@ -88,11 +93,14 @@ export default {
       deductPoints(this.$store, { objectId: get(this.memo, 'projectId'), memoPoints: get(this.memo, 'project.memoPoints') || 0, })
       .then(() => {
         this.deducting = false
-        this.$router.push(`/series/${get(this.memo, 'projectId')}`)
+        this.$router.push(this.memoURL)
       })
     },
     $_projectsFigureProgress_openLightBox () {
       this.showLightBox = true
+    },
+    navigateToMemo () {
+      this.deducted ? this.$router.push(this.memoURL) : this.$_projectsFigureProgress_openLightBox()
     },
     get,
   },
@@ -109,6 +117,7 @@ export default {
   border-bottom 1px solid #d3d3d3
   overflow hidden
   color black
+  cursor pointer
   // > h2
   //   flex 1
   //   margin 0
@@ -116,6 +125,9 @@ export default {
   //   font-size 1.5rem
   //   font-weight 400
   //   line-height 74px
+  &__container
+    display flex
+    width 100%
   &__title
     flex 1
     padding 10px
