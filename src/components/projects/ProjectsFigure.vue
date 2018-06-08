@@ -24,7 +24,7 @@
     </router-link>
     <div class="projects-figure-controlbar">
       <div>
-        <img src="/public/icons/comment-count-blue.png" alt="">
+        <img src="/public/icons/comment-quote.png" alt="">
         <span v-text="project.commentAmount || 0"></span>
       </div>
       <div>
@@ -45,8 +45,6 @@
 <script>
 import { find, } from 'lodash'
 import { updatedAtYYYYMMDD, } from '../../util/comm'
-import AppShareButton from 'src/components/AppShareButton.vue'
-import AppArticleNav from 'src/components/AppArticleNav.vue'
 
 const publishAction = (store, data) => store.dispatch('FOLLOW', { params: data, })
 const updateStoreFollowingByResource = (store, { action, resource, resourceId, userId, }) => {
@@ -61,15 +59,12 @@ const updateStoreFollowingByResource = (store, { action, resource, resourceId, u
 }
 
 export default {
+  name: 'ProjectsFigure',
   props: {
     project: {
       type: Object,
       required: true,
     },
-  },
-  components: {
-    AppShareButton,
-    AppArticleNav,
   },
   computed: {
     followers () {

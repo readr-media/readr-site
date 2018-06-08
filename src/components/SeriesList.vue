@@ -17,7 +17,7 @@ const MAXRESULT = 9
 
 const fetchFollowing = (store, params) => {
   return store.dispatch('GET_FOLLOWING_BY_RESOURCE', {
-    resource: params.resource,
+    resource: 'project',
     ids: params.ids,
   })
 }
@@ -25,16 +25,17 @@ const fetchFollowing = (store, params) => {
 const fetchProjectsList = (store, {
   max_result = MAXRESULT,
   page = DEFAULT_PAGE,
+  sort = DEFAULT_SORT,
 } = {}) => {
   return store.dispatch('GET_PUBLIC_PROJECTS', {
     params: {
       max_result: max_result,
       page: page,
+      sort: sort,
       where: {
         status: [ PROJECT_STATUS.DONE, PROJECT_STATUS.WIP, ],
         publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
       },
-      sort: DEFAULT_SORT,
     },
   })
 }
@@ -52,9 +53,6 @@ export default {
     }
   },
   computed: {
-    isLoggedIn () {
-      return this.$store.state.isLoggedIn
-    },
     projects () {
       return get(this.$store, 'state.publicProjects.normal', []) || []
     },
@@ -70,8 +68,8 @@ export default {
     fetchProjectsList(this.$store)
     .then(() => {
       const projectIds = uniq(get(this.$store, 'state.publicProjects.normal', []).map(p => `${p.id}`))
-      if (this.isLoggedIn && projectIds.length > 0) {
-        fetchFollowing(this.$store, { resource: 'project', ids: projectIds, })
+      if (this.$store.state.isLoggedIn && projectIds.length > 0) {
+        fetchFollowing(this.$store, { ids: projectIds, })
       }
     })
   },
@@ -93,11 +91,10 @@ export default {
           this.endPage = true
         } else {
           this.currentPage += 1
-          if (this.$store.state.isLoggedIn) {
-            const ids = res.items.map(project => `${project.id}`)
+          const ids = res.items.map(project => `${project.id}`)
+          if (this.$store.state.isLoggedIn && ids.length > 0) {
             fetchFollowing(this.$store, {
               mode: 'update',
-              resource: 'project',
               ids: ids,
             })
           }
