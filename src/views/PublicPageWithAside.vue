@@ -78,6 +78,7 @@ const fetchReportsList = (store, {
       max_result: max_result,
       where: {
         publish_status: REPORT_PUBLISH_STATUS.PUBLISHED,
+        project_publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
       },
       sort: sort,
       page,
@@ -94,6 +95,7 @@ const fetchMemos = (store, {
       max_result: max_result,
       where: {
         publish_status: MEMO_PUBLISH_STATUS.PUBLISHED,
+        project_publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
       },
       sort: sort,
     },

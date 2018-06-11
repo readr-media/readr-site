@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import { MEMO_PUBLISH_STATUS, POINT_OBJECT_TYPE, REPORT_PUBLISH_STATUS, } from '../../api/config'
+import { MEMO_PUBLISH_STATUS, POINT_OBJECT_TYPE, REPORT_PUBLISH_STATUS, PROJECT_PUBLISH_STATUS, } from '../../api/config'
 import { currEnv, isScrollBarReachBottom, isElementReachInView, isCurrentRoutePath, } from 'src/util/comm'
 import _ from 'lodash'
 import { createStore, } from '../store'
@@ -85,6 +85,7 @@ const fetchMemos = (store, {
       max_result: max_result,
       where: {
         publish_status: MEMO_PUBLISH_STATUS.PUBLISHED,
+        project_publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
       },
       sort: sort,
     },
@@ -126,6 +127,7 @@ const fetchReportsList = (store, {
       max_result: max_result,
       where: {
         publish_status: REPORT_PUBLISH_STATUS.PUBLISHED,
+        project_publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
       },
       sort: sort,
     },
