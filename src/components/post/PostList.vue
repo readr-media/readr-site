@@ -28,7 +28,8 @@ const fetchMemos = (store, {
   page = DEFAULT_PAGE,
 }) => {
   return store.dispatch('GET_MEMOS', {
-    params: { 
+    params: {
+      member_id: get(store, 'state.profile.id'),
       project_id: proj_ids,
       max_result: MAXRESULT_POSTS,
       page,
