@@ -57,7 +57,6 @@ distribution/
 
 .idea
 api/config.js
-config/*
 /tmp
 gcskeyfile.json
 archives
