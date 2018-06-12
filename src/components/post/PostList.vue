@@ -43,7 +43,10 @@ const fetchMemos = (store, {
 }
 const fetchMemoSingle = (store, memoId) => {
   return store.dispatch('GET_MEMO', {
-    params: { memoId, },
+    params: {
+      member_id: get(store, 'state.profile.id'),
+      memoId,
+    },
   })
 }
 const fetchProjectSingle = (store, proj_slug) => {
