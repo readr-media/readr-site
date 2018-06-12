@@ -80,7 +80,11 @@ export default {
   methods: {
     renderComment (event) {
       if (event) event.preventDefault()
-      if (this.toogleComment) this.showComment = true
+      if (this.inLightbox) {
+        this.$emit('toogleComment')
+      } else if (this.toogleComment && !this.inLightbox) {
+        this.showComment = true
+      }
     },
     toogleFollow (event) {
       if (event) event.preventDefault()
@@ -134,6 +138,10 @@ export default {
     toogleComment: {
       type: Boolean,
       default: true,
+    },
+    inLightbox: {
+      type: Boolean,
+      default: false,
     },
   },
 }
