@@ -207,16 +207,15 @@ export default {
         margin 40px 0
         display block
 
-  font-family = 'Songti TC', 'SimSun'
   &--news
     width 1029px
     height 90vh
     overflow-y scroll
     .baselightbox-post
       &__leading-image
-        width 100%
-        height 617.5px
-        background-color #444746
+        width 600px
+        height auto
+        margin 50px 214.5px 0 214.5px
       &__article-container
         width 100%
         padding 65.5px 214.5px 0 214.5px
@@ -249,18 +248,15 @@ export default {
         color black
     .article-content
       h1
-        font-family font-family
         font-size 35px
         line-height 1.5
         margin 16.5px 0 21px 0
       h2
-        font-family font-family
         font-size 25px
         line-height 1.5
         font-weight bold
         margin 23.5px 0 15px 0
       p
-        font-family font-family
         font-size 15px
         letter-spacing 0.5px
         line-height 1.6
@@ -273,7 +269,6 @@ export default {
         flex-direction column
         align-items center
       figcaption
-        font-family font-family
         font-size 14px
         line-height 1.71
         letter-spacing 0.5px
