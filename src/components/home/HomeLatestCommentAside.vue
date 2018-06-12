@@ -7,15 +7,19 @@
       </div>
       <p class="latest-comment__created-at" v-text="commentDate"></p>
     </div>
-    <p class="latest-comment__body">{{ commentBody }}<span v-if="isCommentBodyExceed">...<span class="latest-comment__more" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span></span></p>
+    <div class="latest-comment__content">
+      <span class="latest-comment__body" v-html="commentBody"></span>
+      <span v-if="isCommentBodyExceed" class="latest-comment__more">...<span class="latest-comment__more" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span></span>
+    </div>
   </router-link>
 </template>
 
 <script>
 import { getArticleAuthorNickname, currEnv, dateDiffFromNow, } from 'src/util/comm'
 import { SITE_DOMAIN, SITE_DOMAIN_DEV, } from 'src/constants'
-import { get, } from 'lodash'
+import { get, isEqual, } from 'lodash'
 import pathToRegexp from 'path-to-regexp'
+import truncate from 'html-truncate'
 
 export default {
   props: {
@@ -47,16 +51,19 @@ export default {
       return dateDiffFromNow(get(this.comment, 'createdAt', ''))
     },
     commentBody () {
-      return get(this.comment, 'body', '').slice(0, this.commentBodyLengthLimit)
+      return get(this.comment, 'body', '')
+    },
+    commentBodyTruncate () {
+      return truncate(this.commentBody, this.commentBodyLengthLimit)
     },
     isCommentBodyExceed () {
-      return get(this.comment, 'body', '').length > this.commentBodyLengthLimit
+      return !isEqual(this.commentBody, this.commentBodyTruncate)
     },
   },
 }
 </script>
 
-<style lang="stylus" scoped>
+<style lang="stylus">
 .latest-comment
   display flex
   flex-direction column
@@ -79,13 +86,16 @@ export default {
     font-size 14px
     font-weight 500
     color #808080
-  &__body
+  &__content
     margin 5px 0 0 36px
     text-align justify
     font-size 15px
     line-height 1.5
     color black
     word-break break-all
+  &__body 
+    & > a
+      color black
   &__more
     color #808080
   & + &
