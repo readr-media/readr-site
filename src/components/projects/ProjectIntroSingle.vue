@@ -120,5 +120,5 @@ export default {
       align-items center
       color #fff
       font-size 0.625rem
-      z-index 999
+      z-index 998
 </style>
