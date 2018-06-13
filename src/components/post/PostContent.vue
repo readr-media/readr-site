@@ -26,9 +26,9 @@
     </template>
     <!-- template for report -->
     <template v-else-if="postType === 'report'">
-      <h1 class="report__title"><a :href="getReportUrl(post.slug)" v-text="get(post, 'title')"></a></h1>
+      <h1 class="report__title"><a :href="getReportUrl(post.slug)" v-text="get(post, 'title')" target="_blank"></a></h1>
       <a v-if="post.heroImage" class="report__img" :href="getReportUrl(post.slug)"><img :src="getImageUrl(post.heroImage)" alt=""></a>
-      <p class="report__descr"><a :href="getReportUrl(post.slug)" v-text="get(post, 'description')"></a></p>
+      <p class="report__descr"><a :href="getReportUrl(post.slug)" v-text="get(post, 'description')" target="_blank"></a></p>
     </template>
     <!-- template for post type is review and others -->
     <template v-else-if="postType === 'normal' || modifier !== 'main'">
