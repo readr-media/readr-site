@@ -58,3 +58,9 @@ export const OLD_PROJECTS_SLUGS = [
 export const IMAGE_UPLOAD_MAX_SIZE = 31457280
 
 export const CUSTOM_EDITOR_LIMIT = 3
+export const RESOURCE_TYPE = {
+  POST: 'post',
+  RPOJECT: 'series',
+  MEMO: 'memo',
+  REPORT: 'project',
+}
