@@ -9,7 +9,7 @@
         <h2 v-text="video.title"></h2>
         <app-share-button class="videosHighlight__share"></app-share-button>
       </div>
-      <CommentContainer class="videosHighlight__info-comment" v-if="showComment" :asset="asset" :assetId="get(this.video, [ 'id', ])"></CommentContainer>
+      <CommentContainer class="videosHighlight__info-comment" v-if="showComment" :asset="asset" :assetId="get(video, [ 'id', ])"></CommentContainer>
     </div>
   </section>
 </template>
