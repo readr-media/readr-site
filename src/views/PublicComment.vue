@@ -7,6 +7,7 @@
     <CommentContainer
       :asset="resourceURL"
       :isPublic="true"
+      @heightChanged="sendHeight"
     />
   </div>
 </template>
@@ -39,6 +40,7 @@ export default {
       comments_raw: [],
       isGoingRecoverPwd: false,
       isClientSide: false,
+      pymChild: undefined,
     }
   },
   computed: {
@@ -49,6 +51,9 @@ export default {
   methods: {
     goRecoverPwd () {
       this.isGoingRecoverPwd = true
+    },
+    sendHeight () {
+      this.pymChild.sendHeight()
     }, 
   },
   beforeMount () {
@@ -58,6 +63,8 @@ export default {
   },
   mounted () {
     this.isClientSide = true
+    const pym = require('pym.js/dist/pym.v1.js')
+    this.pymChild = new pym.Child()
   },
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div ref="comment-container">
     <Comment
       v-if="shouldRenderComment"
       :me="me"
@@ -182,7 +182,12 @@
             }
             return c
           })
+          this.$emit('heightChanged')
         })
+      },
+      setMutationObserver() {
+        const observer = new MutationObserver(() => { this.$emit('heightChanged') })
+        observer.observe(this.$refs['comment-container'], { attributes: true, childList: true, subtree: true, });
       },
     },
     mounted () {
@@ -198,6 +203,11 @@
       }).catch(({ res, }) => {
         this.fetchCommentErrorText = res.text
       })
+
+      this.setMutationObserver()
+    },
+    updated () {
+      this.$emit('heightChanged')
     },
     props: {
       asset: {
