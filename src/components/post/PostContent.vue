@@ -63,7 +63,11 @@
         <img class="editor-writing-source__figure" v-if="post.linkImage" :src="post.linkImage" @load="setOgImageOrientation(post.linkImage, $event)">
       </a>
     </template>
-    <AppArticleNav :postId="get(this.post, 'flag') === 'report' ? this.post.slug : this.post.id" :articleType="this.post.flag" :commentCount="commentCount"></AppArticleNav>
+    <AppArticleNav
+      :postId="this.post.id"
+      :articleType="this.post.flag" 
+      :slug="get(this.post, 'flag') === 'report'? this.post.slug : ''"
+      :commentCount="commentCount"></AppArticleNav>
   </div>
 </template>
 <script>

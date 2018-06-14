@@ -45,7 +45,7 @@
           <AppArticleNav :postId="post.id" :articleType="this.post.flag" :commentCount="commentCount" :inLightbox="true" @toogleComment="toogleComment"/>
         </section>
       </article>
-      <CommentContainer class="baselightbox-post__comment" v-show="showComment" v-if="shouldRenderComment" :asset="asset"></CommentContainer>
+      <CommentContainer class="baselightbox-post__comment" v-show="showComment" v-if="shouldRenderComment" :asset="asset" :assetId="post.id"></CommentContainer>
     </template>
   </div>
 </template>

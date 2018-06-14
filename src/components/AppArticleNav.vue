@@ -11,7 +11,7 @@
       </span>
       <span v-else></span>
     </nav>
-    <CommentContainer v-if="showComment" :asset="asset"></CommentContainer>
+    <CommentContainer v-if="showComment" :asset="asset" :assetId="postId"></CommentContainer>
   </div>
 </template>
 
@@ -48,7 +48,7 @@ export default {
         case 'project':
           return `${get(this.$store, 'state.setting.HOST')}/series/${this.postId}`
         case 'report':
-          return `${get(this.$store, 'state.setting.HOST')}/project/${this.postId}`
+          return `${get(this.$store, 'state.setting.HOST')}/project/${this.slug}`
         default: 
           return `${get(this.$store, 'state.setting.HOST')}/${this.articleType}/${this.postId}`
 
@@ -122,7 +122,7 @@ export default {
     },
   },
   mounted () {},
-    props: {
+  props: {
     articleType: {
       type: String,
       default: 'post',
@@ -134,6 +134,10 @@ export default {
     commentCount: {
       type: Number,
       required: true,
+    },
+    slug: {
+      // For report use.
+      type: String,
     },
     toogleComment: {
       type: Boolean,

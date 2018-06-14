@@ -14,6 +14,7 @@
   import { get, map, } from 'lodash'
   import { getImageUrl, } from 'src/util/comm'
   import { ROLE_MAP, } from 'api/config'
+  import { RESOURCE_TYPE, } from 'src/constants'
 
   const DEFAULT_SORT = '-created_at'
   const addComment = (store, { params, }) => store.dispatch('ADD_COMMENT', { params, })
@@ -44,6 +45,27 @@
           nickname: get(this.$store, 'state.profile.nickname'),
           profileImage: getImageUrl(get(this.$store, 'state.profile.profileImage') || '/public/icons/exclamation.png'),
           role: ROLE_MAP.ADMIN === get(this.$store, 'state.profile.role') ? 'admin' : 'member',
+        }
+      },
+      resource () {
+        const resource_type_exp = /(?:http|https)?:?(?:\/\/)?(?:[A-Za-z0-9.\-_]*)?\/([A-Za-z0-9.\-_]*)\/?([A-Za-z0-9.\-_]*)?\/?([A-Za-z0-9.\-_]*)?/
+        const test_rs = this.asset.match(resource_type_exp)
+        const route = test_rs[ 1 ]
+        // const id = test_rs[ 2 ]
+        const sub_id = test_rs[ 3 ]
+        switch (route) {
+          case RESOURCE_TYPE.POST:
+            return { name: route, id: this.assetId, }
+          case RESOURCE_TYPE.REPORT:
+            return  { name: 'report', id: this.assetId, }
+          case RESOURCE_TYPE.RPOJECT:
+            if (sub_id) {
+              return { name: RESOURCE_TYPE.MEMO, id: this.assetId, }
+            } else {
+              return { name: 'project', id: this.assetId, }
+            }
+          default:
+            return {}
         }
       },
     },
@@ -108,11 +130,14 @@
       },  
       saveComment (comment) {
         debug('Saved!', comment)
+        debug('this.resourceType', this.resource)
         addComment(this.$store, {
           params: {
             body: get(comment, 'body'),
             resource: this.asset,
-            parent_id: get(comment, 'parentId') || null,         
+            parent_id: get(comment, 'parentId') || null,
+            resource_name: this.resource.name,
+            resource_id: this.resource.id,
           },
         }).then(() => {
           return this.rerenderComment(comment)
@@ -161,8 +186,12 @@
     },
     props: {
       asset: {
-        typs: String,
+        type: String,
         default: '',
+      },
+      assetId: {
+        type: Number,
+        required: true,
       },
     },
     watch: {

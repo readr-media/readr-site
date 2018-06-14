@@ -18,7 +18,9 @@
         </template>
       </AppTitledList>
       <div class="public-page__aside">
-        <div class="public-page__aside-comment" v-if="commentAsset && isClientSide"><CommentContainer :asset="commentAsset"></CommentContainer></div>
+        <div class="public-page__aside-comment" v-if="commentAsset && isClientSide">
+          <CommentContainer :asset="commentAsset" :assetId="assetId"></CommentContainer>
+        </div>
         <div v-else></div>
         <AppTitledList v-if="projects.length > 0"
           class="public-page__aside-container"
@@ -152,6 +154,15 @@ export default {
     }
   },
   computed: {
+    assetId () {
+      let assetId = 0
+      switch (this.route) {
+        case 'series':
+          assetId = get(this.projectSingle, 'id') || assetId
+          break
+      }
+      return assetId      
+    },
     commentAsset () {
       let asset
       switch (this.route) {
@@ -167,11 +178,15 @@ export default {
     projects () {
       return get(this.$store, 'state.publicProjects.done') || []
     },
+    projectSingle () {
+      return get(this.$store, 'state.publicProjectSingle', {})
+    },    
     route () {
       return this.$route.fullPath.split('/')[ 1 ]
     },
   },
   methods: {
+    get,
     getListTitleMain (path) {
       switch (path) {
         case '/reports':
