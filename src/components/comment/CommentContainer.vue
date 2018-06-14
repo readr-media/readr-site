@@ -1,17 +1,22 @@
 <template>
-  <Comment
-    :me="me"
-    :refreshSubComment="refreshSubComment"
-    :deleteComment="deleteComment"
-    :hideComment="hideComment"
-    :reportComment="reportComment"
-    :saveComment="saveComment"
-    :updateComment="updateComment"
-    :comments="commentsSalted"></Comment>
+  <div>
+    <Comment
+      v-if="shouldRenderComment"
+      :me="me"
+      :refreshSubComment="refreshSubComment"
+      :deleteComment="deleteComment"
+      :hideComment="hideComment"
+      :reportComment="reportComment"
+      :saveComment="saveComment"
+      :updateComment="updateComment"
+      :comments="commentsSalted"
+    />
+    <p v-if="shouldRenderCommentError" v-text="fetchCommentErrorText"></p>
+  </div>
 </template>
 <script>
   import { Comment, } from 'readr-comment'
-  import { get, map, } from 'lodash'
+  import { get, map, isEmpty, } from 'lodash'
   import { getImageUrl, } from 'src/util/comm'
   import { ROLE_MAP, } from 'api/config'
   import { RESOURCE_TYPE, } from 'src/constants'
@@ -20,7 +25,8 @@
   const addComment = (store, { params, }) => store.dispatch('ADD_COMMENT', { params, })
   const delComment = (store, { params, }) => store.dispatch('DELETE_COMMENT', { params, })
   const hideComment = (store, { params, }) => store.dispatch('HIDE_COMMENT', { params, })
-  const fetchComment = (store, { params, }) => store.dispatch('FETCH_COMMENT', { params: Object.assign({}, { sort: DEFAULT_SORT, }, params), })
+  const fetchCommentStrict = (store, { params, }) => store.dispatch('FETCH_COMMENT', { params: Object.assign({}, { sort: DEFAULT_SORT, }, params), })
+  const fetchCommentPublic = (store, { params, }) => store.dispatch('FETCH_COMMENT_PUBLIC', { params: Object.assign({}, { sort: DEFAULT_SORT, }, params), })
   const reportComment = (store, { params, }) => store.dispatch('ADD_COMMENT_REPORT', { params, })
   const updateComment = (store, { params, }) => store.dispatch('UPDATE_COMMENT', { params, })
   const debug = require('debug')('CLIENT:CommentContainer')
@@ -38,7 +44,7 @@
             authorPage: `/profile/${c.author}`,
           })
         })
-      },      
+      },
       me () {
         return {
           id: get(this.$store, 'state.profile.id'),
@@ -68,10 +74,15 @@
             return {}
         }
       },
+      shouldRenderCommentError () {
+        return !isEmpty(this.fetchCommentErrorText)
+      },
     },
     data () {
       return {
         comments_raw: [],
+        shouldRenderComment: false,
+        fetchCommentErrorText: '',
       }
     },    
     methods: {
@@ -81,7 +92,7 @@
           : { resource: this.asset, }
         return new Promise(resolve => {
           setTimeout(() => {
-            fetchComment(this.$store, { params, }).then(comments => {
+            fetchCommentStrict(this.$store, { params, }).then(comments => {
               if (get(comment, 'parentId')) {
                 this.comments_raw = map(this.comments_raw, c => {
                   if (c.id === get(comment, 'parentId')) {
@@ -156,7 +167,7 @@
       },
       refreshSubComment (id) {
         debug('Go get sub comment!', id)
-        fetchComment(this.$store, {
+        fetchCommentStrict(this.$store, {
           params: {
             parent: id,
             sort: 'created_at',
@@ -172,9 +183,10 @@
             return c
           })
         })
-      },      
+      },
     },
     mounted () {
+      const fetchComment = this.isPublic ? fetchCommentPublic : fetchCommentStrict
       fetchComment(this.$store, {
         params: {
           resource: this.asset,
@@ -182,7 +194,10 @@
       }).then((comments) => {
         debug('comments', comments)
         this.comments_raw = comments
-      })      
+        this.shouldRenderComment = true
+      }).catch(({ res, }) => {
+        this.fetchCommentErrorText = res.text
+      })
     },
     props: {
       asset: {
@@ -193,6 +208,10 @@
         type: Number,
         required: true,
       },
+      isPublic: {
+        type: Boolean,
+        default: false,
+      },
     },
     watch: {
       comments_raw () {
@@ -200,7 +219,7 @@
       },
       asset () {
         debug('Mutation detected: asset', this.asset)
-        fetchComment(this.$store, {
+        fetchCommentStrict(this.$store, {
           params: {
             resource: this.asset,
           },

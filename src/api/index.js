@@ -60,7 +60,7 @@ function _doFetch (url) {
     .get(url)
     .end(function (err, res) {
       if (err) {
-        reject(err)
+        reject({ err, res, })
       } else {
         // resolve(camelizeKeys(res.body))
         if (res.text === 'not found' || res.status !== 200) {
@@ -215,6 +215,16 @@ export function fetchComment ({ params, }) {
     url = url + `?${query}`
   }    
   return _doFetchStrict(url, {})
+}
+
+export function fetchCommentPublic ({ params, }) {
+  let url = `${host}/api/public/comment`
+  const query = _buildQuery(params)
+  debug('params', params)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }    
+  return _doFetch(url, {})
 }
 
 export function deleteComment ({ params, }) {

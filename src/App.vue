@@ -1,11 +1,11 @@
 <template>
   <div id="app">
-    <app-header></app-header>
-    <div :class="`app__container${ isLoginPage ? '--wide' : ''}`">
-      <aside class="app__aside" v-if="!isLoginPage">
+    <app-header v-if="!isCommentPage"></app-header>
+    <div :class="[ 'app__container', { 'app__container--wide': isLoginPage }, { 'app__container--normalize': isCommentPage } ]">
+      <aside class="app__aside" v-if="!isLoginPage && !isCommentPage">
         <AppNavAside/>
       </aside>
-      <main class="app__main">
+      <main :class="[ 'app__main', { 'app__main--normalize': isCommentPage } ]">
         <transition name="fade" mode="out-in">
           <router-view class="view"></router-view>
         </transition>
@@ -34,6 +34,9 @@
       },
       isLoginPage () {
         return this.$route.path === '/login'
+      },
+      isCommentPage () {
+        return this.$route.path === '/comment'
       },
       useragent () {
         return get(this.$store, 'state.useragent')
@@ -87,6 +90,10 @@ $container
       padding 0
       > .app__main
         margin-left 0
+    &--normalize
+      max-width initial
+      margin 0
+      padding 0
   &__aside
     width 75px
     height 100%
@@ -101,6 +108,8 @@ $container
     display flex
     justify-content flex-start
     align-items flex-start
+    &--normalize
+      margin 0
 
 a
   text-decoration none
@@ -114,6 +123,7 @@ button
   // margin 0 auto
   position relative
   background-color #fff
+  width 100%
   // padding-top 35px
   &.locked
     width 100%
