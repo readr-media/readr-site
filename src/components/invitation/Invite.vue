@@ -85,7 +85,8 @@
       },
       inviteStyle () {
         return {
-          height: this.isOn ? `${ 40 * this.activeItemsCount + 275 }px` : '140px',
+          height: this.isOn ? `${ 40 * this.activeItemsCount + 275 }px` : '0',
+          marginBottom: this.isOn ? `40px` : '0',
         }
       },
       quota () {
@@ -175,20 +176,12 @@
     display flex
     transition all 0.5s
     height 0
-    // min-height 375px
-    // height auto
     &.hide
       display none
     &.overflow-hide
       overflow hidden
     &.off
-      // height 90px
-      // min-height 90px
-      min-height 140px
       overflow hidden
-      // &.sent
-      //   min-height 140px
-
     &__icon
       height 35px
       background-image url(/public/icons/invitation.png)
