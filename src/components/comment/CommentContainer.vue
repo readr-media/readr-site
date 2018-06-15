@@ -161,7 +161,8 @@
       },
       refreshSubComment (id) {
         debug('Go get sub comment!', id)
-        fetchCommentStrict(this.$store, {
+        const fetchComment = this.isPublic && !this.$store.state.isLoggedin ? fetchCommentPublic : fetchCommentStrict
+        fetchComment(this.$store, {
           params: {
             parent: id,
             sort: 'created_at',
@@ -211,7 +212,7 @@
       this.resourceName = this.getResourceName()
     },
     mounted () {
-      const fetchComment = this.isPublic ? fetchCommentPublic : fetchCommentStrict
+      const fetchComment = this.isPublic && !this.$store.state.isLoggedin ? fetchCommentPublic : fetchCommentStrict
       fetchComment(this.$store, {
         params: {
           resource: this.asset,
