@@ -30,6 +30,7 @@ function _buildQuery (params = {}) {
     'parent',
     'slugs',
     'project_slugs',
+    'report_slugs',
     'member_id',
   ]
   const snakeCaseParams = _.mapKeys(params, (value, key) => _.snakeCase(key))
@@ -43,7 +44,7 @@ function _buildQuery (params = {}) {
         Object.keys(where).forEach((key) => {
           query[key] = JSON.stringify(where[key])
         })
-      } else if (ele === 'ids' || ele === 'project_id' || ele === 'object_ids' || ele === 'slugs' || ele === 'project_slugs') {
+      } else if (ele === 'ids' || ele === 'project_id' || ele === 'object_ids' || ele === 'slugs' || ele === 'project_slugs' || ele === 'report_slugs') {
         query[ele] = JSON.stringify(snakeCaseParams[ele])
       } else {
         query[ele] = snakeCaseParams[ele]
