@@ -7438,6 +7438,10 @@ path-to-regexp@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/path-to-regexp/-/path-to-regexp-2.2.0.tgz#80f0ff45c1e0e641da74df313644eaf115050972"
 
+path-to-regexp@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/path-to-regexp/-/path-to-regexp-2.2.1.tgz#90b617025a16381a879bc82a38d4e8bdeb2bcf45"
+
 path-type@^1.0.0:
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/path-type/-/path-type-1.1.0.tgz#59c44f7ee491da704da415da5a4070ba4f8fe441"
@@ -8135,6 +8139,10 @@ punycode@2.x.x, punycode@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-2.1.0.tgz#5f863edc89b96db09074bad7947bf09056ca4e7d"
 
+pym.js@^1.3.2:
+  version "1.3.2"
+  resolved "https://registry.yarnpkg.com/pym.js/-/pym.js-1.3.2.tgz#0ebd083c5a7ef7650214db872b4b29a10743305d"
+
 q@1.4.1, q@~1.4.0:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/q/-/q-1.4.1.tgz#55705bcd93c5f3673530c2c2cbc0c2b3addc286e"
@@ -8151,7 +8159,7 @@ qs@6.5.1, qs@^6.5.1, qs@~6.5.1:
   version "6.5.1"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.1.tgz#349cdf6eef89ec45c12d7d5eb3fc0c870343a6d8"
 
-qs@6.5.2:
+qs@6.5.2, qs@^6.5.2:
   version "6.5.2"
   resolved "https://registry.yarnpkg.com/qs/-/qs-6.5.2.tgz#cb3ae806e8740444584ef154ce8ee98d403f3e36"
 
@@ -8371,9 +8379,9 @@ readr-comment@^1.0.16:
     prevent-scroll "^2.0.0"
     sanitize-html "^1.18.2"
 
-readr-web-api@^1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/readr-web-api/-/readr-web-api-1.0.6.tgz#8cbf985d2ec172ddd6d2105904e96127686c743d"
+readr-web-api@^1.0.9:
+  version "1.0.9"
+  resolved "https://registry.yarnpkg.com/readr-web-api/-/readr-web-api-1.0.9.tgz#ba0a1dc4e7fb245300dcfde2f531df8c3d7c11f6"
   dependencies:
     "@google-cloud/logging" "^1.2.0"
     "@google-cloud/pubsub" "^0.18.0"
@@ -8401,6 +8409,8 @@ readr-web-api@^1.0.6:
     lodash "^4.17.10"
     moment "^2.22.2"
     multer "^1.3.0"
+    path-to-regexp "^2.2.1"
+    qs "^6.5.2"
     redis-connection-pool "^1.6.1"
     sharp "^0.20.3"
     superagent "^3.8.3"
