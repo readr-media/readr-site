@@ -1,17 +1,22 @@
 <template>
-  <Comment
-    :me="me"
-    :refreshSubComment="refreshSubComment"
-    :deleteComment="deleteComment"
-    :hideComment="hideComment"
-    :reportComment="reportComment"
-    :saveComment="saveComment"
-    :updateComment="updateComment"
-    :comments="commentsSalted"></Comment>
+  <div ref="comment-container">
+    <Comment
+      v-if="shouldRenderComment"
+      :me="me"
+      :refreshSubComment="refreshSubComment"
+      :deleteComment="deleteComment"
+      :hideComment="hideComment"
+      :reportComment="reportComment"
+      :saveComment="saveComment"
+      :updateComment="updateComment"
+      :comments="commentsSalted"
+    />
+    <p v-if="shouldRenderCommentError" v-text="fetchCommentErrorText"></p>
+  </div>
 </template>
 <script>
   import { Comment, } from 'readr-comment'
-  import { get, map, } from 'lodash'
+  import { get, map, isEmpty, } from 'lodash'
   import { getImageUrl, } from 'src/util/comm'
   import { ROLE_MAP, } from 'api/config'
   import { RESOURCE_TYPE, } from 'src/constants'
@@ -20,9 +25,11 @@
   const addComment = (store, { params, }) => store.dispatch('ADD_COMMENT', { params, })
   const delComment = (store, { params, }) => store.dispatch('DELETE_COMMENT', { params, })
   const hideComment = (store, { params, }) => store.dispatch('HIDE_COMMENT', { params, })
-  const fetchComment = (store, { params, }) => store.dispatch('FETCH_COMMENT', { params: Object.assign({}, { sort: DEFAULT_SORT, }, params), })
+  const fetchCommentStrict = (store, { params, }) => store.dispatch('FETCH_COMMENT', { params: Object.assign({}, { sort: DEFAULT_SORT, }, params), })
+  const fetchCommentPublic = (store, { params, }) => store.dispatch('FETCH_COMMENT_PUBLIC', { params: Object.assign({}, { sort: DEFAULT_SORT, }, params), })
   const reportComment = (store, { params, }) => store.dispatch('ADD_COMMENT_REPORT', { params, })
   const updateComment = (store, { params, }) => store.dispatch('UPDATE_COMMENT', { params, })
+  const fetchReportsListBySlugs = (store, slugs = []) => store.dispatch('GET_PUBLIC_REPORTS', { params: { report_slugs: slugs, }, })
   const debug = require('debug')('CLIENT:CommentContainer')
 
   export default {
@@ -38,7 +45,7 @@
             authorPage: `/profile/${c.author}`,
           })
         })
-      },      
+      },
       me () {
         return {
           id: get(this.$store, 'state.profile.id'),
@@ -47,31 +54,29 @@
           role: ROLE_MAP.ADMIN === get(this.$store, 'state.profile.role') ? 'admin' : 'member',
         }
       },
+      resourceURLParam () {
+        return this.getResourceURLParam(this.asset)
+      },
+      assetIdComputed () {
+        return this.resourceName === 'report' ? this.resourceIdByResourceURL : this.assetId
+      },
       resource () {
-        const resource_type_exp = /(?:http|https)?:?(?:\/\/)?(?:[A-Za-z0-9.\-_]*)?\/([A-Za-z0-9.\-_]*)\/?([A-Za-z0-9.\-_]*)?\/?([A-Za-z0-9.\-_]*)?/
-        const test_rs = this.asset.match(resource_type_exp)
-        const route = test_rs[ 1 ]
-        // const id = test_rs[ 2 ]
-        const sub_id = test_rs[ 3 ]
-        switch (route) {
-          case RESOURCE_TYPE.POST:
-            return { name: route, id: this.assetId, }
-          case RESOURCE_TYPE.REPORT:
-            return  { name: 'report', id: this.assetId, }
-          case RESOURCE_TYPE.RPOJECT:
-            if (sub_id) {
-              return { name: RESOURCE_TYPE.MEMO, id: this.assetId, }
-            } else {
-              return { name: 'project', id: this.assetId, }
-            }
-          default:
-            return {}
+        return {
+          name: this.resourceName,
+          id: this.assetIdComputed,
         }
+      },
+      shouldRenderCommentError () {
+        return !isEmpty(this.fetchCommentErrorText)
       },
     },
     data () {
       return {
         comments_raw: [],
+        shouldRenderComment: false,
+        fetchCommentErrorText: '',
+        resourceName: undefined,
+        resourceIdByResourceURL: undefined,
       }
     },    
     methods: {
@@ -81,7 +86,7 @@
           : { resource: this.asset, }
         return new Promise(resolve => {
           setTimeout(() => {
-            fetchComment(this.$store, { params, }).then(comments => {
+            fetchCommentStrict(this.$store, { params, }).then(comments => {
               if (get(comment, 'parentId')) {
                 this.comments_raw = map(this.comments_raw, c => {
                   if (c.id === get(comment, 'parentId')) {
@@ -156,7 +161,7 @@
       },
       refreshSubComment (id) {
         debug('Go get sub comment!', id)
-        fetchComment(this.$store, {
+        fetchCommentStrict(this.$store, {
           params: {
             parent: id,
             sort: 'created_at',
@@ -171,10 +176,42 @@
             }
             return c
           })
+          this.$emit('heightChanged')
         })
-      },      
+      },
+      setMutationObserver() {
+        const observer = new MutationObserver(() => { this.$emit('heightChanged') })
+        observer.observe(this.$refs['comment-container'], { attributes: true, childList: true, subtree: true, });
+      },
+      getResourceURLParam (resourceURL) {
+        const resource_type_exp = /(?:http|https)?:?(?:\/\/)?(?:[A-Za-z0-9.\-_]*)?\/([A-Za-z0-9.\-_]*)\/?([A-Za-z0-9.\-_]*)?\/?([A-Za-z0-9.\-_]*)?/
+        const test_rs = resourceURL.match(resource_type_exp)
+        return test_rs
+      },
+      getResourceName () {
+        const route = this.resourceURLParam[1]
+        const sub_id = this.resourceURLParam[3]
+        switch (route) {
+          case RESOURCE_TYPE.POST:
+            return route
+          case RESOURCE_TYPE.REPORT:
+            return 'report'
+          case RESOURCE_TYPE.RPOJECT:
+            if (sub_id) {
+              return RESOURCE_TYPE.MEMO
+            } else {
+              return 'project'
+            }
+          default:
+            return ''
+        }
+      },
+    },
+    created () {
+      this.resourceName = this.getResourceName()
     },
     mounted () {
+      const fetchComment = this.isPublic ? fetchCommentPublic : fetchCommentStrict
       fetchComment(this.$store, {
         params: {
           resource: this.asset,
@@ -182,7 +219,15 @@
       }).then((comments) => {
         debug('comments', comments)
         this.comments_raw = comments
-      })      
+        this.shouldRenderComment = true
+      }).catch(({ res, }) => {
+        this.fetchCommentErrorText = res.text
+      })
+
+      this.setMutationObserver()
+    },
+    updated () {
+      this.$emit('heightChanged')
     },
     props: {
       asset: {
@@ -191,7 +236,10 @@
       },
       assetId: {
         type: Number,
-        required: true,
+      },
+      isPublic: {
+        type: Boolean,
+        default: false,
       },
     },
     watch: {
@@ -200,7 +248,7 @@
       },
       asset () {
         debug('Mutation detected: asset', this.asset)
-        fetchComment(this.$store, {
+        fetchCommentStrict(this.$store, {
           params: {
             resource: this.asset,
           },
@@ -208,6 +256,15 @@
           debug('comments', comments)
           this.comments_raw = comments
         })        
+      },
+      resourceName (value) {
+        if (value === 'report') {
+          const slug = this.resourceURLParam[2]
+          fetchReportsListBySlugs(this.$store, [ slug, ],)
+          .then((res) => {
+            this.resourceIdByResourceURL = get(res, [ 'res', 'items', '0', 'id', ], '')
+          })
+        }
       },
     },    
   }

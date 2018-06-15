@@ -30,6 +30,7 @@ function _buildQuery (params = {}) {
     'parent',
     'slugs',
     'project_slugs',
+    'report_slugs',
     'member_id',
   ]
   const snakeCaseParams = _.mapKeys(params, (value, key) => _.snakeCase(key))
@@ -43,7 +44,7 @@ function _buildQuery (params = {}) {
         Object.keys(where).forEach((key) => {
           query[key] = JSON.stringify(where[key])
         })
-      } else if (ele === 'ids' || ele === 'project_id' || ele === 'object_ids' || ele === 'slugs' || ele === 'project_slugs') {
+      } else if (ele === 'ids' || ele === 'project_id' || ele === 'object_ids' || ele === 'slugs' || ele === 'project_slugs' || ele === 'report_slugs') {
         query[ele] = JSON.stringify(snakeCaseParams[ele])
       } else {
         query[ele] = snakeCaseParams[ele]
@@ -60,7 +61,7 @@ function _doFetch (url) {
     .get(url)
     .end(function (err, res) {
       if (err) {
-        reject(err)
+        reject({ err, res, })
       } else {
         // resolve(camelizeKeys(res.body))
         if (res.text === 'not found' || res.status !== 200) {
@@ -215,6 +216,16 @@ export function fetchComment ({ params, }) {
     url = url + `?${query}`
   }    
   return _doFetchStrict(url, {})
+}
+
+export function fetchCommentPublic ({ params, }) {
+  let url = `${host}/api/public/comment`
+  const query = _buildQuery(params)
+  debug('params', params)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }    
+  return _doFetch(url, {})
 }
 
 export function deleteComment ({ params, }) {

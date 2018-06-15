@@ -20,6 +20,7 @@ import {
   deletePostSelf,
   deleteTags,
   fetchComment,
+  fetchCommentPublic,
   fetchCommentCount,
   fetchMeComments,
   fetchInvitationQuota,
@@ -132,6 +133,11 @@ export default {
   },
   FETCH_COMMENT: ({ commit, dispatch, state, }, { params, }) => {
     return fetchComment({ params, }).then(({ status, body, }) => {
+      return _.get(body, 'items', [])
+    })
+  },
+  FETCH_COMMENT_PUBLIC: ({ commit, dispatch, state, }, { params, }) => {
+    return fetchCommentPublic({ params, }).then(({ status, body, }) => {
       return _.get(body, 'items', [])
     })
   },

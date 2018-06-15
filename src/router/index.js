@@ -23,6 +23,7 @@ const PublicProfile = () => import('../views/PublicProfile.vue')
 const PublicSearch = () => import('../views/PublicSearch.vue')
 const PublicServerError = () => import('../views/PublicServerError.vue')
 const PublicSetPassword = () => import('../views/PublicSetPassword.vue')
+const PublicComment = () => import('../views/PublicComment.vue')
 // const PublicVideos = () => import('../views/PublicVideos.vue')
 
 const router = new Router({
@@ -72,6 +73,7 @@ const router = new Router({
     { path: '/search/:keyword', component: PublicSearch, meta: { permission: 'member', }, },
     { path: '/series-list', component: PublicPage, meta: { permission: 'member', }, },
     { path: '/setup/:type', component: PublicSetPassword, },
+    { path: '/comment', component: PublicComment, props: (route) => ({ resourceURL: route.query.resource_url, }), },
     { path: '/404', component: PublicPageNotFound, },
     { path: '/500', component: PublicServerError, },
     // { path: '/videos', component: PublicVideos },
