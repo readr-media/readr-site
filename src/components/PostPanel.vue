@@ -321,25 +321,21 @@
       },
       $_postPanel_addNewTag () {
         return new Promise((resolve) => {
-          console.info('promiseTags 0', Date.now())
           if (this.tagsNeedAdd.length !== 0) {
             Promise.all(this.tagsNeedAdd.map(tag => addTags(this.$store, tag)))
             .then((value) => {
               const ids = map(value, t => get(t, 'body.tagId'))
               const unionTag = union(this.tagsSelectedID, ids)
-              console.info('promiseTags 1', Date.now())
               return resolve(unionTag)
             })
             .catch(() => resolve(this.tagsSelectedID))
           } else {
-            console.info('promiseTags 2', Date.now())
             return resolve(this.tagsSelectedID)
           }
         })
       },
       $_postPanel_getLinkMeta () {
         return new Promise((resolve) => {
-          console.info('promiseLink 0', Date.now())
           if (this.linkChanged) {
             let link = get(this.post, 'link')
             this.post.link_name = ''
@@ -356,15 +352,12 @@
                   this.post.link_title = truncate(get(res, 'body.ogTitle'), { 'length': 200, }) || ''
                   this.post.link_description = truncate(get(res, 'body.ogDescription'), { 'length': 250, }) || ''
                   this.post.link_image = get(res, 'body.ogImage') || ''
-                  console.info('promiseLink 1', Date.now())
                   return resolve()
                 })
             } else {
-              console.info('promiseLink 2', Date.now())
               return resolve()
             }
           } else {
-            console.info('promiseLink 3', Date.now())
             return resolve()
           }
         })     
@@ -410,9 +403,7 @@
         this.showAlert = true
       },
       $_postPanel_submit (publishStatus) {
-        if (this.action === 'edit') {
-          this.post = pickBy(mapKeys(this.post, (value, key) => snakeCase(key)), identity())
-        }
+        this.post = pickBy(mapKeys(this.post, (value, key) => snakeCase(key)), identity())
         if (this.action === 'edit' && publishStatus === POST_PUBLISH_STATUS.DRAFT) {
           this.isReturnToDraft = true
         }
@@ -422,10 +413,8 @@
         this.post.og_description = this.post.og_description || ''
         this.post.og_image = this.post.og_image || ''
 
-        console.info('Promise all sta', Date.now())
         Promise.all([ this.$_postPanel_getLinkMeta(), this.$_postPanel_addNewTag(), ])
         .then((value) => {
-          console.info('Promise all end', Date.now())
           const unionTag = value[1]
           const now = new Date(Date.now())
 
