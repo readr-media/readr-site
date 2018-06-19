@@ -45,24 +45,23 @@ import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, REPORT_PUBLISH_STATUS, MEMO_PUB
 import { isClientSide, isScrollBarReachBottom, isElementReachInView, } from 'src/util/comm'
 import { get, uniq, } from 'lodash'
 
-const MAXRESULT = 10
+const MAXRESULT = 8
 const MAXRESULT_REPORTS_MEMOS = 50
 const DEFAULT_PAGE = 1
-const DEFAULT_SORT = '-updated_at'
+const DEFAULT_SORT = 'project_order,-updated_at'
 const DEFAULT_SORT_REPORTS_MEMOS = '-published_at'
 
 const fetchProjectsList = (store, {
   max_result = MAXRESULT,
   page = DEFAULT_PAGE,
   sort = DEFAULT_SORT,
-  status,
 } = {}) => {
   return store.dispatch('GET_PUBLIC_PROJECTS', {
     params: {
       max_result: max_result,
       page: page,
       where: {
-        status: status,
+        status: [ PROJECT_STATUS.DONE, PROJECT_STATUS.WIP, ],
         publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
       },
       sort: sort,
@@ -176,7 +175,7 @@ export default {
       return get(this.$store.state, 'publicMemos', [])
     },
     projects () {
-      return get(this.$store, 'state.publicProjects.done') || []
+      return get(this.$store, 'state.publicProjects.normal') || []
     },
     projectSingle () {
       return get(this.$store, 'state.publicProjectSingle', {})
@@ -198,7 +197,7 @@ export default {
       }
     },
     getRequests (path) {
-      let requests = [ fetchProjectsList(this.$store, { status: PROJECT_STATUS.DONE, }), ]
+      let requests = [ fetchProjectsList(this.$store), ]
       switch (path) {
         case '/reports':
           requests.push(fetchReportsList(this.$store))
