@@ -8,7 +8,7 @@
       <p class="latest-comment__created-at" v-text="commentDate"></p>
     </div>
     <div class="latest-comment__content">
-      <span class="latest-comment__body" v-html="commentBody"></span>
+      <span class="latest-comment__body" v-html="commentBodyTruncate"></span>
       <span v-if="isCommentBodyExceed" class="latest-comment__more">...<span class="latest-comment__more" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span></span>
     </div>
   </router-link>
@@ -35,7 +35,7 @@ export default {
   },
   computed: {
     commentResource () {
-      const re = pathToRegexp(`${this.SITE_DOMAIN}/:route/:id`)
+      const re = pathToRegexp(`${this.SITE_DOMAIN}/:route/:id/:sub_id?`)
       return {
         route: get(re.exec(get(this.comment, 'resource', '')), [ 1, ]),
         param: get(re.exec(get(this.comment, 'resource', '')), [ 2, ]),
