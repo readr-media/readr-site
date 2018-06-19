@@ -65,9 +65,10 @@
       <a v-else-if="isArticleMain && !hasSource" class="editor-writing-no-source" :href="post.link"  target="_blank" v-text="postLinkDecoded"></a>
     </template>
     <AppArticleNav
-      :postId="this.post.id"
-      :articleType="this.post.flag" 
-      :slug="get(this.post, 'flag') === 'report'? this.post.slug : ''"
+      :postId="post.id"
+      :postRefId="get(post, 'project.id')"
+      :articleType="post.flag" 
+      :slug="get(post, 'flag') === 'report'? post.slug : ''"
       :commentCount="commentCount"></AppArticleNav>
   </div>
 </template>

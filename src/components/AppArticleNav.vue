@@ -11,7 +11,7 @@
       </span>
       <span v-else></span>
     </nav>
-    <CommentContainer v-if="showComment" :asset="asset" :assetId="postId"></CommentContainer>
+    <CommentContainer v-if="showComment" :asset="asset" :assetId="postId" :assetRefId="postRefId"></CommentContainer>
   </div>
 </template>
 
@@ -130,6 +130,9 @@ export default {
     postId: {
       // type: [ String, Number ],
       required: true,
+    },
+    postRefId: {
+      // type: [ String, Number ],
     },
     commentCount: {
       type: Number,

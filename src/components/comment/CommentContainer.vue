@@ -11,7 +11,7 @@
       :updateComment="updateComment"
       :comments="commentsSalted"
     />
-    <p v-if="shouldRenderCommentError" v-text="fetchCommentErrorText"></p>
+    <p v-if="shouldRenderCommentError" v-text="fetchCommentErrorText" class="alert"></p>
   </div>
 </template>
 <script>
@@ -216,6 +216,7 @@
       fetchComment(this.$store, {
         params: {
           resource: this.asset,
+          resource_id: this.assetRefId,
         },
       }).then((comments) => {
         debug('comments', comments)
@@ -238,6 +239,9 @@
       assetId: {
         type: Number,
       },
+      assetRefId: {
+        type: Number,
+      },
       isPublic: {
         type: Boolean,
         default: false,
@@ -252,6 +256,7 @@
         fetchCommentStrict(this.$store, {
           params: {
             resource: this.asset,
+            resource_id: this.assetId,
           },
         }).then((comments) => {
           debug('comments', comments)
@@ -270,3 +275,8 @@
     },    
   }
 </script>
+<style lang="stylus" scoped>
+    .alert
+      margin-top 20px
+      color #d4d4d4
+</style>
