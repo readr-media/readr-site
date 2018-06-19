@@ -32,6 +32,7 @@ function _buildQuery (params = {}) {
     'project_slugs',
     'report_slugs',
     'member_id',
+    'memo_publish_status',
   ]
   const snakeCaseParams = _.mapKeys(params, (value, key) => _.snakeCase(key))
   whitelist.forEach((ele) => {

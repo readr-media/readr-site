@@ -85,7 +85,7 @@ const fetchMemos = (store, {
       member_id: _.get(store, 'state.profile.id'),
       max_result: max_result,
       where: {
-        publish_status: MEMO_PUBLISH_STATUS.PUBLISHED,
+        memo_publish_status: MEMO_PUBLISH_STATUS.PUBLISHED,
         project_publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
       },
       sort: sort,
