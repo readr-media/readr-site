@@ -10,7 +10,7 @@
       <div class="postListInTab__content">
         <div class="postListInTab__title">
           <h2 v-text="p.title"></h2>
-          <div v-if="!(!$can('editOtherPost') && p.publishStatus !== config.publishStatus.DRAFT) && parent !== 'RewardPointsInTab'" class="postListInTab__control--desktop">
+          <div v-if="!(!$can('editOtherPost') && p.publishStatus !== config.publishStatus.DRAFT && p.publishStatus !== config.publishStatus.PENDING) && parent !== 'RewardPointsInTab'" class="postListInTab__control--desktop">
             <button class="postListInTab__btn" @click="$_postListInTab_editPost(p.id)" v-text="$t('POST_LIST.EDIT')"></button>
             <button class="postListInTab__btn" @click="$_postListInTab_deletePost(p.id)" v-text="$t('POST_LIST.DELETE')"></button>
           </div>

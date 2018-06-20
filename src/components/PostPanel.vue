@@ -89,7 +89,7 @@
             v-text="$t('POST_PANEL.DELETE')">
           </button>
           <button
-            v-if="(action === 'edit') && $can('editPostOg') && (post.publishStatus !== config.publishStatus.DRAFT)"
+            v-if="(action === 'edit') && (post.publishStatus !== config.publishStatus.DRAFT)"
             class="button"
             @click="$_postPanel_validation(config.publishStatus.DRAFT)"
             v-text="$t('POST_PANEL.RETURN_TO_DRAFT')">
@@ -113,7 +113,7 @@
             v-text="$t('POST_PANEL.SAVE_DRAFT')">
           </button>
           <button
-            v-if="!$can('publishPost')"
+            v-if="!$can('publishPost') && post.publishStatus !== config.publishStatus.PENDING"
             class="button"
             @click="$_postPanel_validation(config.publishStatus.PENDING)"
             v-text="$t('POST_PANEL.SAVE_PENDING')">
