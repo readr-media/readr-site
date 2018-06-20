@@ -62,6 +62,7 @@
         </div>
         <img class="editor-writing-source__figure" v-if="post.linkImage" :src="post.linkImage" @load="setOgImageOrientation(post.linkImage, $event)">
       </a>
+      <a v-else-if="isArticleMain && !hasSource" class="editor-writing-no-source" :href="post.link"  target="_blank" v-text="postLinkDecoded"></a>
     </template>
     <AppArticleNav
       :postId="this.post.id"
@@ -182,6 +183,9 @@
           default:
             return `/post/${get(this.post, 'id')}`
         }
+      },
+      postLinkDecoded () {
+        return decodeURI(this.post.link)
       },
     },
     components: {
@@ -390,6 +394,11 @@
         &__descr
           margin 1.5em 0
           font-size .9375rem
+      .editor-writing-no-source
+        display block
+        margin-bottom 15.5px
+        color #808080
+        font-size 14px
     &__aside
       .post-content
         &__title
