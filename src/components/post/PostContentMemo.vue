@@ -53,7 +53,7 @@
   </div>
 </template>
 <script>
-  import { POINT_OBJECT_TYPE, POST_PUBLISH_STATUS, } from 'api/config'
+  import { POINT_OBJECT_TYPE, PROJECT_STATUS, } from 'api/config'
   import { get, } from 'lodash'
   import BaseLightBox from 'src/components/BaseLightBox.vue'
   import truncate from 'html-truncate'
@@ -85,7 +85,7 @@
         return truncate(this.post.linkDescription, 45)
       },
       isProjectPublished () {
-        return get(this.post, 'project.publishStatus') === POST_PUBLISH_STATUS.PUBLISHED
+        return get(this.post, 'project.publishStatus') === PROJECT_STATUS.DONE
       },
     },
     data () {
