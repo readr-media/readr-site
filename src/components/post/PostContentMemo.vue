@@ -20,7 +20,7 @@
             :class="`editor-writing__paragraph--${isReadMoreClicked ? 'visible' : 'invisible'}`" 
             :key="`${post.id}-${i}`"></p>
         </template>
-        <template v-if="isMemoPaid === false">
+        <template v-if="isMemoPaid === false && !isProjectPublished">
           <span :style="{ marginTop: '20px', display: 'inline-block' }">...... </span>
           <span class="editor-writing__more" @click.prevent="memoDeductMach" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span>
         </template>
@@ -36,7 +36,7 @@
       </div>
       <img class="editor-writing-source__figure" v-if="post.linkImage" :src="post.linkImage" @load="setOgImageOrientation(post.linkImage, $event)">
     </a>
-    <BaseLightBox :showLightBox.sync="showMemoDeduction" borderStyle="nonBorder" v-if="isMemoPaid === false" @closeLightBox="hideMemoDeduction()">
+    <BaseLightBox :showLightBox.sync="showMemoDeduction" borderStyle="nonBorder" v-if="isMemoPaid === false && !isProjectPublished" @closeLightBox="hideMemoDeduction()">
       <div class="project-memo-alert">
         <div class="project-memo-alert__content">
           <h2 v-text="$t('PROJECT.JOIN_CONTENT_1')"></h2>
@@ -53,7 +53,7 @@
   </div>
 </template>
 <script>
-  import { POINT_OBJECT_TYPE, } from 'api/config'
+  import { POINT_OBJECT_TYPE, POST_PUBLISH_STATUS, } from 'api/config'
   import { get, } from 'lodash'
   import BaseLightBox from 'src/components/BaseLightBox.vue'
   import truncate from 'html-truncate'
@@ -84,6 +84,9 @@
       linkDescriptionTrim () {
         return truncate(this.post.linkDescription, 45)
       },
+      isProjectPublished () {
+        return get(this.post, 'project.publishStatus') === POST_PUBLISH_STATUS.PUBLISHED
+      },
     },
     data () {
       return {
@@ -94,7 +97,7 @@
     },
     methods: {
       goMemo () {
-        if (this.isMemoPaid !== false) {
+        if (this.isMemoPaid !== false || this.isProjectPublished) {
           this.$router.push(this.targetUrl)
         }
       },
