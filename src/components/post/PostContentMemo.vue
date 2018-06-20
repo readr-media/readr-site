@@ -85,7 +85,7 @@
         return truncate(this.post.linkDescription, 45)
       },
       isProjectPublished () {
-        return get(this.post, 'project.publishStatus') === PROJECT_STATUS.DONE
+        return get(this.post, 'project.status') === PROJECT_STATUS.DONE
       },
     },
     data () {
