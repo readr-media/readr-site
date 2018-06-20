@@ -73,35 +73,6 @@ export default {
       },
     }
   },
-  mounted () {
-    /*global Quill*/
-    const Block = Quill.import('blots/block')
-    const BlockEmbed = Quill.import('blots/block/embed')
-    class Hr extends BlockEmbed {
-      static create(value) {
-        const node = super.create(value)
-        return node
-      }
-    }
-    Hr.blotName = 'hr'
-    Hr.tagName = 'hr'
-    Quill.register({ 'formats/hr': Hr, })
-
-    class Figcaption extends Block {
-      static create(value) {
-        const node = super.create(value)
-        node.innerText = `請在此輸入圖說`
-        return node
-      }
-      static value(node) {
-        return node.innerText
-      }
-    }
-    Figcaption.blotName = 'figcaption'
-    Figcaption.tagName = 'figcaption'
-    Quill.register({ 'formats/figcaption': Figcaption, })
-
-  },
   methods: {
     $_quillEditor_customHrHandler () {
       if (this.$can('editPostOg')) {

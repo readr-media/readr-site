@@ -12,8 +12,33 @@ import VueI18n from 'vue-i18n'
 
 Vue.use(VueI18n)
 
+// Quill Editor
 if (process.browser) {
   const VueQuillEditor = require('vue-quill-editor/dist/ssr')
+
+  const Block = VueQuillEditor.Quill.import('blots/block')
+  const BlockEmbed = VueQuillEditor.Quill.import('blots/block/embed')
+  class Hr extends BlockEmbed {
+    static create(value) {
+      const node = super.create(value)
+      return node
+    }
+  }
+  Hr.blotName = 'hr'
+  Hr.tagName = 'hr'
+
+  class Figcaption extends Block {
+    static create() {
+      let node = super.create()
+      node.innerText = node.innerText || `請在此輸入圖說`
+      return node
+    }
+  }
+  Figcaption.blotName = 'figcaption'
+  Figcaption.tagName = 'figcaption'
+
+  VueQuillEditor.Quill.register({ 'formats/hr': Hr, })
+  VueQuillEditor.Quill.register({ 'formats/figcaption': Figcaption, })
   Vue.use(VueQuillEditor)
 }
 
