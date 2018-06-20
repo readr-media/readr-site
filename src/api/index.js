@@ -27,6 +27,7 @@ function _buildQuery (params = {}) {
     'project_id',
     'object_ids',
     'resource',
+    'resource_id',
     'parent',
     'slugs',
     'project_slugs',

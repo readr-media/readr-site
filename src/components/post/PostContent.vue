@@ -30,6 +30,21 @@
       <a v-if="post.heroImage" class="report__img" :href="getReportUrl(post.slug)"><img :src="getImageUrl(post.heroImage)" alt=""></a>
       <p class="report__descr"><a :href="getReportUrl(post.slug)" v-text="get(post, 'description')" target="_blank"></a></p>
     </template>
+    <template v-else-if="postType === 'memo'">
+      <PostContentMemo
+        :targetUrl="targetUrl"
+        :postContentProcessed="postContentProcessed"
+        :shouldContentStopAtIndex="shouldContentStopAtIndex"
+        :isImg="isImg"
+        :getImgSrc="getImgSrc"
+        :setContentImageOrientation="setContentImageOrientation"
+        :isClientSide="isClientSide"
+        :shouldShowReadMoreButton="shouldShowReadMoreButton"
+        :isArticleMain="isArticleMain"
+        :hasSource="hasSource"
+        :setOgImageOrientation="setOgImageOrientation"
+        :post="post"></PostContentMemo>
+    </template>
     <!-- template for post type is review and others -->
     <template v-else-if="postType === 'normal' || modifier !== 'main'">
       <h1 class="post-content__title" v-text="post.title"></h1>
@@ -65,9 +80,10 @@
       <a v-else-if="isArticleMain && !hasSource" class="editor-writing-no-source" :href="post.link"  target="_blank" v-text="postLinkDecoded"></a>
     </template>
     <AppArticleNav
-      :postId="this.post.id"
-      :articleType="this.post.flag" 
-      :slug="get(this.post, 'flag') === 'report'? this.post.slug : ''"
+      :postId="post.id"
+      :postRefId="get(post, 'project.id')"
+      :articleType="post.flag" 
+      :slug="get(post, 'flag') === 'report'? post.slug : ''"
       :commentCount="commentCount"></AppArticleNav>
   </div>
 </template>
@@ -76,6 +92,7 @@
   import { get, map, some, findIndex, } from 'lodash'
   import { onImageLoaded, getImageUrl, getReportUrl, isClientSide, } from 'src/util/comm'
   import AppArticleNav from 'src/components/AppArticleNav.vue'
+  import PostContentMemo from 'src/components/post/PostContentMemo.vue'
   import sanitizeHtml from 'sanitize-html'
   import truncate from 'html-truncate'
 
@@ -105,6 +122,8 @@
           return 'news'
         } else if (get(this.post, 'projectId') && get(this.post, 'flag') === 'report') {
           return 'report'
+        } else if (get(this.post, 'flag') === 'memo'){
+          return 'memo'
         } else {
           return 'normal'
         }
@@ -190,6 +209,7 @@
     },
     components: {
       AppArticleNav,
+      PostContentMemo,
     },
     data () {
       return {

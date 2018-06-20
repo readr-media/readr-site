@@ -5,7 +5,10 @@
         <div class="project-block__index" v-text="i + 1"></div>
         <div class="project-block__info">
           <h2 v-text="p.title"></h2>
-          <AppArticleNav :articleType="'project'" :postId="p.id" :commentCount="p.commentAmount || 0" :toogleComment="false"/>
+          <AppArticleNav
+            :articleType="'project'"
+            :postId="p.id" 
+            :commentCount="p.commentAmount || 0" :toogleComment="false"/>
         </div>
       </a>
     </template>
