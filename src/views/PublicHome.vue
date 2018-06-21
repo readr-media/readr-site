@@ -50,9 +50,9 @@
 
 <script>
 import { MEMO_PUBLISH_STATUS, POINT_OBJECT_TYPE, REPORT_PUBLISH_STATUS, PROJECT_PUBLISH_STATUS, } from '../../api/config'
-import { currEnv, isScrollBarReachBottom, isElementReachInView, isCurrentRoutePath, } from 'src/util/comm'
+import { currEnv, isScrollBarReachBottom, isElementReachInView, isCurrentRoutePath, isClientSide, } from 'src/util/comm'
 import _ from 'lodash'
-import { createStore, } from '../store'
+// import { createStore, } from '../store'
 import AppTitledList from 'src/components/AppTitledList.vue'
 import AppNavExternalLinks from 'src/components/AppNavExternalLinks.vue'
 import HomeReportAside from 'src/components/home/HomeReportAside.vue'
@@ -251,9 +251,7 @@ export default {
   },
   computed: {
     currEnv,
-    isClientSide () {
-      return _.get(this.$store, 'state.isClientSide', false)
-    },
+    isClientSide,
     memos () {
       return _.get(this.$store.state, 'publicMemos', [])
     },
@@ -328,56 +326,81 @@ export default {
     isElementReachInView,
   },
   beforeRouteEnter (to, from, next) {
-    const store = createStore()
+    // const store = createStore()
     debug('Hook: beforeRouteEnter', 'postId' in to.params)
     debug(to)
-    pageJump({ store, to, next, })
+    // pageJump({ store, to, next, })
+    next()
   },
   beforeRouteUpdate (to, from, next) {
     debug('Hook: beforeRouteUpdate', 'postId' in to.params)
     pageJump({ store: this.$store, to, next, })
   },
   beforeMount () {
-    // Beta version code
-    let reqs = [
-      fetchMemos(this.$store),
-      fetchPosts(this.$store),
-      fetchPosts(this.$store, { category: 'hot', }),
-      fetchReportsList(this.$store),
-    ]
-    if (this.$route.params.postId) {
-      reqs.push(fetchPost(this.$store, { id: this.$route.params.postId, })) 
-    }
-    Promise.all(reqs).then(() => {
-      if (this.$store.state.isLoggedIn) {
-        const postIdsLatest = _.get(this.$store.state.publicPosts, 'items', []).map(post => `${post.id}`) 
-        const postIdsHot = _.get(this.$store.state.publicPostsHot, 'items', []).map(post => `${post.id}`) 
-        // const reportIds = _.get(this.$store.state, 'publicReports', []).map(report => `${report.id}`)
-        const ids = _.uniq(_.concat(postIdsLatest, postIdsHot))
-        const projectIds = _.uniq(_.get(this.$store, 'state.publicMemos', []).map(memo => memo.projectId))
-        if (ids.length !== 0) { 
-          fetchFollowing(this.$store, { 
-            resource: 'post', 
-            ids: ids, 
-          }) 
-        } 
-   
-        // if (reportIds.length !== 0) { 
-        //   fetchFollowing(this.$store, { 
-        //     resource: 'report', 
-        //     ids: reportIds, 
-        //   })
-        // }
-        if (projectIds.length !== 0) {
-          fetchPointHistories(this.$store, { objectType: POINT_OBJECT_TYPE.PROJECT_MEMO, objectIds: projectIds, })
-        }
-      }
-    })
 
-    fetchComment(this.$store)
-    .then((comments) => {
-      this.latestCommentsList = comments
-    })
+    const process = () => {
+      // Beta version code
+      let reqs = [
+        fetchMemos(this.$store),
+        fetchPosts(this.$store),
+        fetchPosts(this.$store, { category: 'hot', }),
+        fetchReportsList(this.$store),
+      ]
+      if (this.$route.params.postId) {
+        reqs.push(fetchPost(this.$store, { id: this.$route.params.postId, })) 
+      }
+      Promise.all(reqs).then(() => {
+        if (this.$store.state.isLoggedIn) {
+          const postIdsLatest = _.get(this.$store.state.publicPosts, 'items', []).map(post => `${post.id}`) 
+          const postIdsHot = _.get(this.$store.state.publicPostsHot, 'items', []).map(post => `${post.id}`) 
+          // const reportIds = _.get(this.$store.state, 'publicReports', []).map(report => `${report.id}`)
+          const ids = _.uniq(_.concat(postIdsLatest, postIdsHot))
+          const projectIds = _.uniq(_.get(this.$store, 'state.publicMemos', []).map(memo => memo.projectId))
+          if (ids.length !== 0) { 
+            fetchFollowing(this.$store, { 
+              resource: 'post', 
+              ids: ids, 
+            }) 
+          } 
+    
+          // if (reportIds.length !== 0) { 
+          //   fetchFollowing(this.$store, { 
+          //     resource: 'report', 
+          //     ids: reportIds, 
+          //   })
+          // }
+          if (projectIds.length !== 0) {
+            fetchPointHistories(this.$store, { objectType: POINT_OBJECT_TYPE.PROJECT_MEMO, objectIds: projectIds, })
+          }
+        }
+      })
+
+      fetchComment(this.$store)
+      .then((comments) => {
+        this.latestCommentsList = comments
+      })      
+    }
+  
+    if (_.get(this.$route, 'params.postId')) {
+      fetchPost(this.$store, { id: _.get(this.$route, 'params.postId'), }).then(({ status, }) => {
+        if (status === 'error') {
+          if (process.browser) {
+            this.$router.push('/404')
+          } else {
+            const e = new Error()
+            e.massage = 'Page Not Found'
+            e.code = '404'
+            throw e  
+          }
+        } else {
+          process()
+        }
+      })  
+    } else {
+      process()
+    }
+
+
     // Uncomment this when v1.0 is released
     // if (this.$store.state.isLoggedIn) {
     //   const postIdsLatest = _.get(this.$store.state.publicPosts, 'items', []).map(post => `${post.id}`) 
