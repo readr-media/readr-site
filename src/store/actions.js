@@ -236,7 +236,7 @@ export default {
     return getMemo({ params, }).then(({ status, body, }) => {
       debug('GET_MEMO', body)
       if (status === 200) {
-        commit('SET_MEMO_SINGLE', { item: Object.assign({}, _.get(body, 'items', {}), { flag: 'memo', }), })
+        commit('SET_MEMO_SINGLE', { item: Object.assign({}, _.get(body, 'items.0', {}), { flag: 'memo', }), })
       } else {
         commit('SET_MEMO_SINGLE', { item: null, })
       }
