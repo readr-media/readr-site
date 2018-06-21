@@ -130,7 +130,7 @@ function render (req, res, next) {
   if (_.filter(PAGE_CACHE_EXCLUDING, (p) => (req.url.indexOf(p) > -1)).length === 0) {
     !curr_host.match(targ_exp) && res.setHeader('Cache-Control', 'public, max-age=3600')  
   }
-  res.setHeader('Cache-Control', 'public, max-age=3600')  
+  // res.setHeader('Cache-Control', 'public, max-age=3600')  
   res.setHeader("Content-Type", "text/html")
   res.setHeader("Server", serverInfo)
 
