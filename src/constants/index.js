@@ -1,3 +1,4 @@
+import { ROLE_MAP as ROLE_MAP_CONF, } from 'api/config'
 import projectList from './projectList'
 export const PROJECTS = projectList
 
@@ -7,10 +8,10 @@ export const SITE_DOMAIN_DEV = 'dev.readr.tw'
 export const ANNOUNCEMENT_ACCOUNT_ID = '126'
 
 export const ROLE_MAP = [
-  { key: 9, value: '管理員', route: 'admin', },
-  { key: 3, value: '編輯', route: 'editor', },
-  { key: 2, value: '總編', route: 'guesteditor', },
-  { key: 1, value: '會員', route: 'member', },
+  { key: ROLE_MAP_CONF[ 'ADMIN' ], value: '管理員', route: 'admin', },
+  { key: ROLE_MAP_CONF[ 'EDITOR' ], value: '編輯', route: 'editor', },
+  { key: ROLE_MAP_CONF[ 'GUESTEDITOR' ], value: '總編', route: 'guesteditor', },
+  { key: ROLE_MAP_CONF[ 'MEMBER' ], value: '會員', route: 'member', },
 ]
 
 export const SECTIONS_DEFAULT = [

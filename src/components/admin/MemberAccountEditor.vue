@@ -35,7 +35,8 @@
         <span class="label" v-text="$t('admin.WORDING_ADMIN_ROLE') + '：'"></span>
         <div class="options">
           <RadioItem class="admin" name="role"
-            v-if="role.key > 1" v-for="role in roles"
+            v-for="role in roles"
+            v-if="!(role.key === 1 && action === 'add')"
             :label="role.value"
             :key="role.key"
             :value="role.key"
@@ -256,7 +257,7 @@
     &__form
       position relative
       background-color #fff
-      width 325px
+      width 350px
       // height 140px
       padding 13.5px 0 10px
       color #000
