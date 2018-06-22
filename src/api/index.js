@@ -201,7 +201,12 @@ export function deleteTags ({ params, }) {
 }
 
 export function addComment ({ params, }) {
-  const url = `${host}/api/comment`
+  let url = `${host}/api/comment`
+  const query = _buildQuery(params.query)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }  
+  delete params.query
   return _doPost(url, params,)
 }
 
@@ -213,10 +218,9 @@ export function addCommentReport ({ params, }) {
 export function fetchComment ({ params, }) {
   let url = `${host}/api/comment`
   const query = _buildQuery(params)
-  debug('params', params)
   if (query && (query.length > 0)) {
     url = url + `?${query}`
-  }    
+  }
   return _doFetchStrict(url, {})
 }
 
@@ -232,16 +236,31 @@ export function fetchCommentPublic ({ params, }) {
 
 export function deleteComment ({ params, }) {
   let url = `${host}/api/comment`
+  const query = _buildQuery(params.query)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }
+  delete params.query
   return _doDelete(url, params)
 }
 
 export function hideComment ({ params, }) {
   let url = `${host}/api/comment/hide`
+  const query = _buildQuery(params.query)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }
+  delete params.query
   return _doPut(url, params)
 }
 
 export function updateComment ({ params, }) {
-  const url = `${host}/api/comment`
+  let url = `${host}/api/comment`
+  const query = _buildQuery(params.query)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }
+  delete params.query
   return _doPut(url, params,)
 }
 
