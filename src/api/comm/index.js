@@ -4,7 +4,9 @@ import { camelizeKeys, } from 'humps'
 import { getToken, } from 'src/util/services'
 import { mapKeys, mapValues, snakeCase, } from 'lodash'
 
-function _buildQuery (params = {}) {
+const debug = require('debug')('CLIENT:api:comm')
+
+export function _buildQuery (params = {}) {
   let query = {}
   const whitelist = [
     'where',
@@ -59,6 +61,74 @@ export function constructUrlWithQuery (url, params) {
     _url = _url + `?${_query}`
   }
   return _url
+}
+
+export function fetch (url) {
+  return new Promise((resolve, reject) => {
+    superagent
+    .get(url)
+    .end(function (err, res) {
+      if (err) {
+        reject({ err, res, })
+      } else {
+        // resolve(camelizeKeys(res.body))
+        if (res.text === 'not found' || res.status !== 200) {
+          reject(res.text)
+        } else {
+          resolve({ status: res.status, body: camelizeKeys(res.body), })
+        }
+      }
+    })
+  })
+}
+
+export function post (url, params, token) {
+  return new Promise((resolve, reject) => {
+    superagent
+      .post(url)
+      .set('Authorization', `Bearer ${token || getToken()}`)
+      .send(params)
+      .end(function (err, res) {
+        if (err) {
+          debug(err)
+          reject(err)
+        } else {
+          resolve({ status: res.status, body: camelizeKeys(res.body), })
+        }
+      })
+  })
+}
+
+export function put (url, params) {
+  return new Promise((resolve, reject) => {
+    superagent
+      .put(url)
+      .set('Authorization', `Bearer ${getToken()}`)
+      .send(params)
+      .end(function (err, res) {
+        if (err) {
+          reject(err)
+        } else {
+          resolve({ status: res.status, body: camelizeKeys(res.body), })
+        }
+      })
+  })
+}
+
+export function del (url, params) {
+  return new Promise((resolve, reject) => {
+    superagent
+      .delete(url)
+      .send(params || {})
+      .set('Authorization', `Bearer ${getToken()}`)
+      .end(function (err, res) {
+        if (err) {
+          reject(err)
+        } else {
+          resolve({ status: res.status, body: camelizeKeys(res.body), })
+        }
+      })
+  })
 }
 
 export function fetchInStrict (url, { cookie, }) {
