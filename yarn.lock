@@ -8379,9 +8379,9 @@ readr-comment@^1.0.16:
     prevent-scroll "^2.0.0"
     sanitize-html "^1.18.2"
 
-readr-web-api@^1.0.16:
-  version "1.0.16"
-  resolved "https://registry.yarnpkg.com/readr-web-api/-/readr-web-api-1.0.16.tgz#812146494823acd82886feee9971d9cf0a4c9627"
+readr-web-api@^1.0.17:
+  version "1.0.17"
+  resolved "https://registry.yarnpkg.com/readr-web-api/-/readr-web-api-1.0.17.tgz#93040eecc1329d1579e153ddd1a7997a37386690"
   dependencies:
     "@google-cloud/logging" "^1.2.0"
     "@google-cloud/pubsub" "^0.18.0"

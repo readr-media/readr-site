@@ -312,7 +312,7 @@ export default {
         } else {
           this.currentPageLatest += 1
           if (this.$store.state.isLoggedIn) {
-            const ids = res.items.map(post => `${post.id}`)
+            const ids = res.items.map(post => post.id)
             fetchFollowing(this.$store, {
               mode: 'update',
               resource: 'post',
@@ -351,8 +351,8 @@ export default {
       }
       Promise.all(reqs).then(() => {
         if (this.$store.state.isLoggedIn) {
-          const postIdsLatest = _.get(this.$store.state.publicPosts, 'items', []).map(post => `${post.id}`) 
-          const postIdsHot = _.get(this.$store.state.publicPostsHot, 'items', []).map(post => `${post.id}`) 
+          const postIdsLatest = _.get(this.$store.state.publicPosts, 'items', []).map(post => post.id) 
+          const postIdsHot = _.get(this.$store.state.publicPostsHot, 'items', []).map(post => post.id) 
           // const reportIds = _.get(this.$store.state, 'publicReports', []).map(report => `${report.id}`)
           const ids = _.uniq(_.concat(postIdsLatest, postIdsHot))
           const projectIds = _.uniq(_.get(this.$store, 'state.publicMemos', []).map(memo => memo.projectId))

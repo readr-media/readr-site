@@ -49,9 +49,9 @@
   import { filter, find, get, } from 'lodash'
   import PaginationNav from './PaginationNav.vue'
 
-  const getFollowing = (store, { subject = get(store, 'state.profile.id'), resource = 'member', resourceType = '', } = {}) => {
+  const getFollowing = (store, { id = get(store, 'state.profile.id'), resource = 'member', resourceType = '', } = {}) => {
     return store.dispatch('GET_FOLLOWING_BY_USER', {
-      subject: subject,
+      id: id,
       resource: resource,
       resource_type: resourceType,
     })
@@ -62,7 +62,7 @@
       params: {
         action: action,
         resource: resource,
-        subject: get(store, 'state.profile.id'),
+        id: get(store, 'state.profile.id'),
         object: object,
       },
     })
@@ -123,7 +123,7 @@
     },
     beforeMount () {
       if (this.isProfilePage) {
-        Promise.all([ getFollowing(this.$store), getFollowing(this.$store, { subject: Number(get(this.$route, 'params.id')), }), ])
+        Promise.all([ getFollowing(this.$store), getFollowing(this.$store, { id: Number(get(this.$route, 'params.id')), }), ])
       } else {
         getFollowing(this.$store)
       }
@@ -159,7 +159,7 @@
             if (this.isProfilePage) {
               return Promise.all([
                 getFollowing(this.$store, { resource: this.resource, resourceType: this.resourceType, }),
-                getFollowing(this.$store, { subject: Number(get(this.$route, 'params.id')), resource: this.resource, resourceType: this.resourceType, }),
+                getFollowing(this.$store, { id: Number(get(this.$route, 'params.id')), resource: this.resource, resourceType: this.resourceType, }),
               ])
             } else {
               return getFollowing(this.$store, { resource: this.resource, resourceType: this.resourceType, })
@@ -170,7 +170,7 @@
             if (this.isProfilePage) {
               return Promise.all([
                 getFollowing(this.$store, { resource: this.resource, resourceType: this.resourceType, }),
-                getFollowing(this.$store, { subject: Number(get(this.$route, 'params.id')), resource: this.resource, resourceType: this.resourceType, }),
+                getFollowing(this.$store, { id: Number(get(this.$route, 'params.id')), resource: this.resource, resourceType: this.resourceType, }),
               ])
             } else {
               return getFollowing(this.$store, { resource: this.resource, resourceType: this.resourceType, })
@@ -181,7 +181,7 @@
             if (this.isProfilePage) {
               return Promise.all([
                 getFollowing(this.$store, { resource: this.resource, }),
-                getFollowing(this.$store, { subject: Number(get(this.$route, 'params.id')), resource: this.resource, }),
+                getFollowing(this.$store, { id: Number(get(this.$route, 'params.id')), resource: this.resource, }),
               ])
             } else {
               return getFollowing(this.$store, { resource: this.resource, })
