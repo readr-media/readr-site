@@ -1,7 +1,15 @@
 <template>
   <div class="member-panel">
-    <div class="member-panel__pagination">
-      <PaginationNav :totalPages="totalPages" :currPage.sync="curr_page"></PaginationNav>
+    <div class="member-panel__controlbar">
+      <div class="member-panel__filter" @keyup.enter="goSearch">
+        <TextItem
+          :placeHolder="$t('admin.SEARCH')"
+          :value.sync="filter"></TextItem>
+        <div class="filter__search" @click="goSearch"></div>
+      </div>    
+      <div class="member-panel__pagination">
+        <PaginationNav :totalPages="totalPages" :currPage.sync="curr_page"></PaginationNav>
+      </div>    
     </div>
     <div class="member-panel__items">
       <MemberItem class="member-panel__items__item">
@@ -40,6 +48,7 @@
   import { FILTER, } from 'src/constants/admin'
   import { filter, get, map, } from 'lodash'
   import BaseLightBox from 'src/components/BaseLightBox.vue'
+  import TextItem from 'src/components/form/TextItem.vue'
   import MemberAccountEditor from 'src/components/admin/MemberAccountEditor.vue'
   import MemberItem from 'src/components/admin/MemberItem.vue'
   import PaginationNav from 'src/components/PaginationNav.vue'
@@ -60,6 +69,7 @@
     name: 'MembersPanel',
     components: {
       BaseLightBox,
+      TextItem,
       MemberAccountEditor,
       MemberItem,
       PaginationNav,
@@ -80,8 +90,9 @@
         action: 'update',
         currOrder: '',
         curr_page: 1,
-        isAllSelected: false,
         editorTitle: '',
+        filter: '',
+        isAllSelected: false,
         showLightBox: false,
         targMember: null,
       }
@@ -106,6 +117,10 @@
         this.$refs[ 'selectAll' ].checked = false
         this.toggoleSelectAll()
         this.$emit('filterChanged', { sort: event.target.value, })
+      },
+      goSearch () {
+        debug(this.filter)
+        this.$emit('filterChanged', { keyword: this.filter, })
       },
       toogleCustomEditor (index, event) {
         const exceedMaxCustomEditor = () => {
@@ -186,10 +201,33 @@
     border solid 5px #d8ca21
     padding 23.5px 75px 45px
     background-color white
+    &__controlbar
+      width 100%
+      display flex
+      justify-content space-between
+    &__filter
+      border 1px solid #d3d3d3
+      position relative
+      padding-right 20px
+      > .text-item
+        & >>> input
+          height 20px
+          font-size 14px
+      > .filter__search
+        cursor pointer
+        position absolute
+        top 0
+        right 0
+        background-size 80% 80%
+        background-repeat no-repeat
+        background-position center center
+        background-image url(/public/icons/search-grey.png)
+        height 20px
+        width 20px
     &__pagination
       height 20px
       top 36px
-      width 100%
+      flex 1
       text-align right
     &__items
       width 100%

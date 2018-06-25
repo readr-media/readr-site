@@ -208,13 +208,15 @@
     return store.dispatch('GET_TAGS_COUNT')
   }
 
-  const getMembers = (store, { page, sort, }) => {
+  const getMembers = (store, { page, sort, keyword, type, }) => {
     return store.dispatch('GET_MEMBERS', {
       params: {
         max_result: MAXRESULT,
         page: page || DEFAULT_PAGE,
         sort: sort || DEFAULT_SORT,
+        keyword,
       },
+      type,
     })
   }
 
@@ -262,6 +264,7 @@
         itemsStatus: undefined,
         itemsSelected: [],
         loading: false,
+        lastSearchType: 'normal',
         needConfirm: false,
         post: {},
         postStatusChanged: false,
@@ -306,7 +309,7 @@
       this.loading = true
       debug('Admin beforeMount')
       this.$can('memberManage') && Promise.all([
-        getMembers(this.$store, {}),
+        getMembers(this.$store, { type: 'normal', }),
         getMembersCount(this.$store),
       ])
       .then(() => this.loading = false)
@@ -368,13 +371,24 @@
       filterChanged (filter = {}) {
         this.currPage = filter.page || this.currPage
         this.currSort = filter.sort || this.currSort
-        
+        const { keyword, } = filter
         switch (this.activePanel) {
           case 'accounts':
-            return Promise.all([
-              getMembers(this.$store, { page: this.currPage, sort: this.currSort, }),
-              getMembersCount(this.$store),
-            ])
+            if (!keyword) {
+              this.lastSearchType !== 'normal' && (this.currPage = 1)
+              this.lastSearchType = 'normal'
+              return Promise.all([
+                getMembers(this.$store, { page: this.currPage, sort: this.currSort, type: this.lastSearchType, }),
+                getMembersCount(this.$store),
+              ])
+            } else {
+              this.lastSearchType !== 'byname' && (this.currPage = 1)
+              this.lastSearchType = 'byname'
+              return Promise.all([
+                getMembers(this.$store, { page: this.currPage, sort: this.currSort, keyword, type: this.lastSearchType, }),
+                getMembersCount(this.$store),
+              ])
+            }
           case 'records':
           case 'posts':
           case 'videos':
