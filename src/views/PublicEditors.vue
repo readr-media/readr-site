@@ -86,8 +86,8 @@ export default {
       }),
     ]).then(() => {
       if (this.$store.state.isLoggedIn) {
-        const customEditorsIds = this.customEditors.map(editor => `${editor.id}`)
-        const guestEditorsIds = this.guestEditors.map(member => `${member.id}`)
+        const customEditorsIds = this.customEditors.map(editor => editor.id)
+        const guestEditorsIds = this.guestEditors.map(member => member.id)
         const ids = uniq(concat(customEditorsIds, guestEditorsIds))
         fetchFollowing(this.$store, {
           ids: ids,

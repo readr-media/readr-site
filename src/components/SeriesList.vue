@@ -68,7 +68,7 @@ export default {
   beforeMount () {
     fetchProjectsList(this.$store)
     .then(() => {
-      const projectIds = uniq(get(this.$store, 'state.publicProjects.normal', []).map(p => `${p.id}`))
+      const projectIds = uniq(get(this.$store, 'state.publicProjects.normal', []).map(p => p.id))
       if (this.$store.state.isLoggedIn && projectIds.length > 0) {
         fetchFollowing(this.$store, { ids: projectIds, })
       }
@@ -92,7 +92,7 @@ export default {
           this.endPage = true
         } else {
           this.currentPage += 1
-          const ids = res.items.map(project => `${project.id}`)
+          const ids = res.items.map(project => project.id)
           if (this.$store.state.isLoggedIn && ids.length > 0) {
             fetchFollowing(this.$store, {
               mode: 'update',

@@ -17,6 +17,7 @@ function _buildQuery (params = {}) {
     'page',
     'sort',
     'sorting',
+    'id',
     'ids',
     'custom_editor',
     'updated_by',
@@ -28,6 +29,7 @@ function _buildQuery (params = {}) {
     'object_ids',
     'resource',
     'resource_id',
+    'resource_type',
     'parent',
     'slugs',
     'project_slugs',
@@ -283,10 +285,14 @@ export function fetchMeComments () {
 }
 
 export function getFollowingByResource (params) {
-  let url = `${host}/api/following/byresource`
+  let url = `${host}/api/following/resource`
+  const query = _buildQuery(params)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }
   return new Promise((resolve, reject) => {
     superagent
-      .post(url)
+      .get(url)
       .set('Authorization', `Bearer ${getToken()}`)
       .send(params)
       .end(function (err, res) {
@@ -300,10 +306,14 @@ export function getFollowingByResource (params) {
 }
 
 export function getFollowingByUser (params) {
-  let url = `${host}/api/following/byuser`
+  let url = `${host}/api/following/user`
+  const query = _buildQuery(params)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }
   return new Promise((resolve, reject) => {
     superagent
-      .post(url)
+      .get(url)
       .set('Authorization', `Bearer ${getToken()}`)
       .send(params)
       .end(function (err, res) {
