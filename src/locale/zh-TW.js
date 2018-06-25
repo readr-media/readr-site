@@ -35,6 +35,7 @@ export default {
     'WORDING_CREATE_PWD' : '新增密碼'    ,
   },
   'admin': {
+    'SEARCH': '搜尋',
     'WORDING_ADMIN_ACCOUNT' : '帳號',
     'WORDING_ADMIN_EMAIL' : '信箱',
     'WORDING_ADMIN_ROLE' : '身份',

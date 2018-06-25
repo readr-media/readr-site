@@ -2,6 +2,7 @@
 import _ from 'lodash'
 import { POST_PUBLISH_STATUS, POST_TYPE, PROJECT_STATUS, } from '../../api/config'
 import { ROLE_MAP, } from '../../src/constants'
+import * as memberFunc from 'src/api/member'
 import {
   addComment,
   addCommentReport,
@@ -28,7 +29,6 @@ import {
   getDisposableToken,
   getFollowingByResource,
   getFollowingByUser,
-  getMembers,
   getMembersCount,
   getMemo,
   getMemos,
@@ -187,8 +187,9 @@ export default {
       }
     })
   },
-  GET_MEMBERS: ({ commit, dispatch, state, }, { params, }) => {
-    return getMembers({ params, }).then(({ status, body, }) => {
+  GET_MEMBERS: ({ commit, dispatch, state, }, { params, type, }) => {
+    const process = type !== 'byname' ? memberFunc.getMembers : memberFunc.getMembersByName
+    return process({ params, }).then(({ status, body, }) => {
       if (status === 200) {
         if (params.custom_editor) {
           commit('SET_CUSTOM_EDITORS', { members: body, })
