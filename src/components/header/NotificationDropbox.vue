@@ -63,7 +63,22 @@
             debug(`/${get(this.notificationItems, [ ids, 'object_type', ])}/${get(this.notificationItems, [ ids, 'object_id', ])}`)
             this.$emit('update:isBoxActive', false)
             this.$emit('updateNotification')
-            this.$router.push(`/${get(this.notificationItems, [ ids, 'object_type', ])}/${get(this.notificationItems, [ ids, 'object_id', ])}`)
+            switch (get(this.notificationItems, [ ids, 'object_type', ])) {
+              case 'project':
+                this.$router.push(`/series/${get(this.notificationItems, [ ids, 'object_slug', ])}`)
+                break
+              case 'memo':
+                this.$router.push(`/series/${get(this.notificationItems, [ ids, 'object_slug', ])}/${get(this.notificationItems, [ ids, 'object_id', ])}`)
+                break
+              case 'report':
+                this.$router.push(`/project/${get(this.notificationItems, [ ids, 'object_slug', ])}`)
+                break
+              case '':
+                this.$router.push(get(this.notificationItems, [ ids, 'object_name', ]))
+                break
+              default:
+                this.$router.push(`/${get(this.notificationItems, [ ids, 'object_type', ])}/${get(this.notificationItems, [ ids, 'object_id', ])}`)
+            }
           } else {
            this.$emit('updateNotification') 
           }

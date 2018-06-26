@@ -175,6 +175,8 @@
       margin 0
     .controlBar--subBtn
       width calc(100% - 2px)
+    &:hover
+      z-index 10
 
   &--btn
     width 90px
@@ -231,6 +233,7 @@
       &.active
         color #fff
         background-color #808080
+        z-index 10
 
 
 @media (min-width 950px)
