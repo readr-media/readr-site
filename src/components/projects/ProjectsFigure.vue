@@ -68,8 +68,8 @@ export default {
   },
   computed: {
     followers () {
-      const data = find(this.$store.state.followingByResource.project, { resourceid: this.projectId, })
-      return data ? data.follower : []
+      const data = find(this.$store.state.followingByResource.project, { resourceID: this.projectId, })
+      return data ? data.followers : []
     },
     isFollowed () {
       return this.$store.state.isLoggedIn && this.followers.indexOf(this.$store.state.profile.id) !== -1 

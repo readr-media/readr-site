@@ -123,9 +123,11 @@ export default {
   'FOLLOWING': {
     'FOLLOW': '追蹤',
     'GUEST_EDITOR': '客座總編',
+    'MEMO': '筆記',
     'NEWS': '新聞',
     'NO_RECORD': '尚未追蹤',
     'PROJECT': '專題',
+    'REPORT': '報導',
     'REVIEW': '評論',
   },
   'homepage': {

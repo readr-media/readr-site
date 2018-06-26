@@ -21,6 +21,16 @@
         @click="$_followingListInTab_handleResource('project')"
         v-text="`${$t('FOLLOWING.FOLLOW')}${$t('FOLLOWING.PROJECT')}`">
       </button>
+      <button
+        :class="{ active: resource === 'report' }"
+        @click="$_followingListInTab_handleResource('report')"
+        v-text="`${$t('FOLLOWING.FOLLOW')}${$t('FOLLOWING.REPORT')}`">
+      </button>
+      <button
+        :class="{ active: resource === 'memo' }"
+        @click="$_followingListInTab_handleResource('memo')"
+        v-text="`${$t('FOLLOWING.FOLLOW')}${$t('FOLLOWING.MEMO')}`">
+      </button>
     </nav>
     <!-- <pagination-nav></pagination-nav> -->
     <div class="followingListInTab__list">
@@ -50,6 +60,7 @@
   import PaginationNav from './PaginationNav.vue'
 
   const getFollowing = (store, { id = get(store, 'state.profile.id'), resource = 'member', resourceType = '', } = {}) => {
+    console.log('id', id)
     return store.dispatch('GET_FOLLOWING_BY_USER', {
       id: id,
       resource: resource,
@@ -62,7 +73,7 @@
       params: {
         action: action,
         resource: resource,
-        id: get(store, 'state.profile.id'),
+        subject: get(store, 'state.profile.id'),
         object: object,
       },
     })

@@ -62,8 +62,8 @@ export default {
     },
     postFollowers () {
       if (this.$store.state.isLoggedIn) {
-        const postFollowersData = find(this.$store.state.followingByResource[this.articleType], { resourceid: this.postId, })
-        return postFollowersData ? postFollowersData.follower : []
+        const postFollowersData = find(this.$store.state.followingByResource[this.articleType], { resourceID: this.postId, })
+        return postFollowersData ? postFollowersData.followers : []
       } else {
         return []
       }

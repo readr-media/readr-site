@@ -171,10 +171,10 @@ export default {
     return getFollowingByResource(params).then(({ status, body, }) => {
       if (status === 200) {
         if (params.mode === 'update') {
-          commit('UPDATE_FOLLOWING_BY_RESOURCE', { resourceType: params.resource, following: body, })
+          commit('UPDATE_FOLLOWING_BY_RESOURCE', { resourceType: params.resource, following: body.items, })
         } else {
           if (body.status !== 400) {
-            commit('SET_FOLLOWING_BY_RESOURCE', { resourceType: params.resource, following: body, })
+            commit('SET_FOLLOWING_BY_RESOURCE', { resourceType: params.resource, following: body.items, })
           }
         }
       }
