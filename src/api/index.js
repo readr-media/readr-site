@@ -160,7 +160,6 @@ export function getFollowingByResource (params) {
     superagent
       .get(url)
       .set('Authorization', `Bearer ${getToken()}`)
-      .send(params)
       .end(function (err, res) {
         if (err) {
           reject(err)
@@ -181,7 +180,6 @@ export function getFollowingByUser (params) {
     superagent
       .get(url)
       .set('Authorization', `Bearer ${getToken()}`)
-      .send(params)
       .end(function (err, res) {
         if (err) {
           reject(err)

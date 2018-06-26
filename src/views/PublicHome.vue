@@ -19,8 +19,7 @@
           :listTitle="[ $t('SECTIONS.PROJECTS'), $t('SECTIONS.REPORTS') ]"
           :listTitleMarginLeft="'15px'"
           :moreButtonShow="true"
-          :moreButtonTo="'/reports'"
-        >
+          :moreButtonTo="'/reports'">
           <ul class="aside-list-container">
             <HomeReportAside />
           </ul>
@@ -31,8 +30,7 @@
           :listTitle="[ $t('SECTIONS.PROJECTS'), $t('SECTIONS.MEMOS') ]"
           :listTitleMarginLeft="'15px'"
           :moreButtonShow="true"
-          :moreButtonTo="'/memos'"
-        >
+          :moreButtonTo="'/memos'">
           <template v-for="memo in memos">
             <MemoFigure :key="memo.id" :memo="memo"></MemoFigure>
           </template>
@@ -353,7 +351,7 @@ export default {
         if (this.$store.state.isLoggedIn) {
           const postIdsLatest = _.get(this.$store.state.publicPosts, 'items', []).map(post => post.id) 
           const postIdsHot = _.get(this.$store.state.publicPostsHot, 'items', []).map(post => post.id) 
-          // const reportIds = _.get(this.$store.state, 'publicReports', []).map(report => `${report.id}`)
+          const reportIds = _.get(this.$store.state, 'publicReports', []).map(report => report.id)
           const ids = _.uniq(_.concat(postIdsLatest, postIdsHot))
           const projectIds = _.uniq(_.get(this.$store, 'state.publicMemos', []).map(memo => memo.projectId))
           if (ids.length !== 0) { 
@@ -362,13 +360,12 @@ export default {
               ids: ids, 
             }) 
           } 
-    
-          // if (reportIds.length !== 0) { 
-          //   fetchFollowing(this.$store, { 
-          //     resource: 'report', 
-          //     ids: reportIds, 
-          //   })
-          // }
+          if (reportIds.length !== 0) { 
+            fetchFollowing(this.$store, { 
+              resource: 'report', 
+              ids: reportIds, 
+            })
+          }
           if (projectIds.length !== 0) {
             fetchPointHistories(this.$store, { objectType: POINT_OBJECT_TYPE.PROJECT_MEMO, objectIds: projectIds, })
           }

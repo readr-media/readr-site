@@ -12,9 +12,11 @@ export function createStore () {
       'customEditors': [],
       'commentCount': [],
       'followingByResource': {
+        'member': [],
+        'memo': [],
         'post': [],
         'project': [],
-        'member': [],
+        'report': [],
       },
       'followingByUser': {},
       'isClientSide': false,

@@ -8,7 +8,7 @@
         </div>
         <img class="home-project-aside__project-image" :src="report.heroImage ? report.heroImage : '/public/icons/readr-logo.png'">
         <div class="home-project-aside__comment">
-          <AppArticleNav :articleType="'project'" :postId="report.id" :commentCount="report.commentAmount || 0" :toogleComment="false"/>
+          <AppArticleNav :articleType="'report'" :postId="report.id" :commentCount="report.commentAmount || 0" :toogleComment="false"/>
         </div>
       </a>
     </template>
