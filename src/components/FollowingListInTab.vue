@@ -60,7 +60,6 @@
   import PaginationNav from './PaginationNav.vue'
 
   const getFollowing = (store, { id = get(store, 'state.profile.id'), resource = 'member', resourceType = '', } = {}) => {
-    console.log('id', id)
     return store.dispatch('GET_FOLLOWING_BY_USER', {
       id: id,
       resource: resource,
