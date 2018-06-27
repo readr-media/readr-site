@@ -54,7 +54,8 @@ export default {
     })
   },
   SET_FOLLOWING_BY_USER: (state, { following, userId, }) => {
-    Vue.set(state['followingByUser'], userId, following)
+    const data = following || []
+    Vue.set(state['followingByUser'], userId, data)
   },
   SET_LOGGEIN_STATUS: (state, { body, }) => {
     state['isLoggedIn'] = body
