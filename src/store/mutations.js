@@ -12,20 +12,20 @@ export default {
     Vue.delete(state.followingByUser[data.userId], resourceIndex)
   },
   ADD_USER_TO_FOLLOWING_BY_RESOURCE: (state, params) => {
-    const resourceIndex = _.findIndex(state.followingByResource[params.resource], { resourceid: params.resourceId, })
+    const resourceIndex = _.findIndex(state.followingByResource[params.resource], { resourceID: params.resourceId, })
     if (resourceIndex === -1) {
       state.followingByResource[params.resource].push({
-        resourceid: params.resourceId,
-        follower: [ params.userId, ],
+        resourceID: params.resourceId,
+        followers: [ params.userId, ],
       })
     } else {
-      state.followingByResource[params.resource][resourceIndex].follower.push(params.userId)
+      state.followingByResource[params.resource][resourceIndex].followers.push(params.userId)
     }
   },
   REMOVE_USER_FROM_FOLLOWING_BY_RESOURCE: (state, params) => {
-    const resourceIndex = _.findIndex(state.followingByResource[params.resource], { resourceid: params.resourceId, })
-    const userIndex = state.followingByResource[params.resource][resourceIndex].follower.indexOf(params.userId)
-    Vue.delete(state.followingByResource[params.resource][resourceIndex].follower, userIndex)
+    const resourceIndex = _.findIndex(state.followingByResource[params.resource], { resourceID: params.resourceId, })
+    const userIndex = state.followingByResource[params.resource][resourceIndex].followers.indexOf(params.userId)
+    Vue.delete(state.followingByResource[params.resource][resourceIndex].followers, userIndex)
   },
   SET_CLIENT_SIDE: (state) => {
     state['isClientSide'] = true
