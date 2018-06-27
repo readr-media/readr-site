@@ -39,11 +39,11 @@ export const PROFILE_SETTING = [
       // { name: 'DAILY_PUSH', key: 'daily_push', },
     ],
   },
-  {
+  // {
     // object: 'SETTING_NOTIFICATION_EDITOR', name: 'NOTIFICATION_EDITOR', items: [
     //   { name: 'REVIEW_COMMENT_PUSH', key: 'review_comment_push', },
     // ],
-  },
+  // },
 ]
 
 export const MM_SITE_DOMAIN = 'mirrormedia.mg'
