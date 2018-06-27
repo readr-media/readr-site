@@ -1,4 +1,4 @@
-import About from 'src/components/About.vue'
+import About from 'src/components/member/About.vue'
 import Admin from 'src/views/Admin.vue'
 import BaseLightBox from 'src/components/BaseLightBox.vue'
 import AppHeader from 'src/components/header/AppHeader.vue'

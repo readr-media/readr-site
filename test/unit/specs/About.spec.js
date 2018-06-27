@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import About from 'src/components/About.vue'
+import About from 'src/components/member/About.vue'
 import BaseLightBox from 'src/components/BaseLightBox.vue'
 import BaseLightBoxProfileEdit from 'src/components/BaseLightBoxProfileEdit.vue'
 import { ROLE_MAP, } from 'src/constants'

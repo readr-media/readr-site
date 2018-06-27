@@ -1,8 +1,8 @@
 /*eslint no-unused-vars: 0*/
 import _ from 'lodash'
-import { POST_PUBLISH_STATUS, POST_TYPE, PROJECT_STATUS, } from '../../api/config'
-import { ROLE_MAP, } from '../../src/constants'
-import * as memberFunc from 'src/api/member'
+import { POST_PUBLISH_STATUS, POST_TYPE, PROJECT_STATUS, } from 'api/config'
+import { ROLE_MAP, } from 'src/constants'
+import * as actionsMember from 'src/store/actions/member'
 import {
   addComment,
   addCommentReport,
@@ -68,11 +68,11 @@ import {
   updateTags,
   uploadImage,
   verifyRecaptchaToken,
-} from '../api'
-import { getProjectUrl, } from '../util/comm';
+} from 'src/api'
+import { getProjectUrl, } from 'src/util/comm';
 
 const debug = require('debug')('CLIENT:STORE:actions')
-export default {
+export default Object.assign({
   ADD_COMMENT: ({ commit, dispatch, state, }, { params, }) => {
     return addComment({ params, })
   },
@@ -184,18 +184,6 @@ export default {
     return getFollowingByUser(params).then(({ status, body, }) => {
       if (status === 200) {
         commit('SET_FOLLOWING_BY_USER', { following: body.items, userId: params.id, })
-      }
-    })
-  },
-  GET_MEMBERS: ({ commit, dispatch, state, }, { params, type, }) => {
-    const process = type !== 'byname' ? memberFunc.getMembers : memberFunc.getMembersByName
-    return process({ params, }).then(({ status, body, }) => {
-      if (status === 200) {
-        if (params.custom_editor) {
-          commit('SET_CUSTOM_EDITORS', { members: body, })
-        } else {
-          commit('SET_MEMBERS', { members: body, })
-        }
       }
     })
   },
@@ -547,9 +535,9 @@ export default {
         commit('SET_SEARCH', { searchResult, })
       })
   },
-  SYNC_AVATAR: ({ commit, dispatch, state, }, { params, }) => {
-    return syncAvatar(params)
-  },
+  // SYNC_AVATAR: ({ commit, dispatch, state, }, { params, }) => {
+  //   return syncAvatar(params)
+  // },
   UPDATE_CLIENT_SIDE: ({ commit, dispatch, state, }) => {
     commit('SET_CLIENT_SIDE')
   },
@@ -605,4 +593,4 @@ export default {
   INVITATION_SWITCH_OFF: ({ commit, dispatch, state, }, { params, }) => {
     commit('INVITATION_SWITCH_OFF', {})
   },
-}
+}, actionsMember)

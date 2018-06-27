@@ -89,6 +89,9 @@ export default {
   SET_NOTIFICATION: (state, { items, }) => {
     state['notification'] = items
   },
+  SET_PERSONAL_SETTING: (state, { setting, }) => {
+    state['personalSetting'] = setting
+  },
   SET_POINT_HISTORIES: (state, { histories, }) => {
     state['pointHistories'] = histories.items || []
   },

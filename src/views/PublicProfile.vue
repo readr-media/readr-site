@@ -47,7 +47,7 @@
   import { ROLE_MAP, } from 'src/constants'
   import { concat, find, get, map, uniq, } from 'lodash'
   import { dateDiffFromNow, isScrollBarReachBottom, isElementReachInView, } from 'src/util/comm'
-  import About from 'src/components/About.vue'
+  import About from 'src/components/member/About.vue'
   import FollowingListInTab from '../components/FollowingListInTab.vue'
   import PostContent from 'src/components/post/PostContent.vue'
   import Tab from 'src/components/Tab.vue'
