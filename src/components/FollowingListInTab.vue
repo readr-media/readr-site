@@ -106,6 +106,8 @@
         switch (this.resource) {
           case 'member':
             return this.$t('FOLLOWING.GUEST_EDITOR')
+          case 'memo':
+            return this.$t('FOLLOWING.MEMO')
           case 'post':
             if (this.resourceType === 'review') {
               return this.$t('FOLLOWING.REVIEW')
@@ -113,6 +115,8 @@
             return this.$t('FOLLOWING.NEWS')
           case 'project':
             return this.$t('FOLLOWING.PROJECT')
+          case 'report':
+            return this.$t('FOLLOWING.REPORT')
         }
       },
       isLoggedIn () {
