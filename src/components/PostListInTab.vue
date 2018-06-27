@@ -76,6 +76,8 @@
             return this.parent !== 'RewardPointsInTab' ? this.$t('POST_LIST.PUBLISH_STATUS_PUBLISHED') : this.$t('POST_LIST.PUBLISH_STATUS_PUBLISHED_PROJECT')
           case POST_PUBLISH_STATUS.DRAFT:
             return this.$t('POST_LIST.PUBLISH_STATUS_DRAFT')
+          case POST_PUBLISH_STATUS.SCHEDULING:
+            return this.$t('POST_LIST.PUBLISH_STATUS_SCHEDULING')
           case POST_PUBLISH_STATUS.PENDING:
             return this.parent !== 'RewardPointsInTab' ? this.$t('POST_LIST.PUBLISH_STATUS_PENDING') : this.$t('POST_LIST.PUBLISH_STATUS_PENDING_PROJECT')
           case POST_PUBLISH_STATUS.UNPUBLISHED:
