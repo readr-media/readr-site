@@ -89,7 +89,7 @@
 <script>
   import { POST_PUBLISH_STATUS, POST_TYPE, TAG_ACTIVE, } from '../../api/config'
   import _ from 'lodash'
-  import About from '../components/About.vue'
+  import About from '../components/member/About.vue'
   import AlertPanelB from '../components/AlertPanel.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
   import FollowingListInTab from '../components/FollowingListInTab.vue'

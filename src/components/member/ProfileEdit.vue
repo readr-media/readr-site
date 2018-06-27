@@ -4,12 +4,10 @@
       <div class="form">
         <div class="form__item">
           <span class="form__name">{{ $t('profile_editor.WORDING_PROFILEEDIT_NICKNAME') }}：</span>
-          <!-- <input type="text" name="nickname" v-model="computedNickname"> -->
           <input class="form__input" type="text" name="nickname" v-model="inputNickname">
         </div>
         <div class="form__item">
           <span class="form__name--align-start">{{ $t('profile_editor.WORDING_PROFILEEDIT_DESCRIPTION') }}：</span>
-          <!-- <textarea name="description" v-model="computedDescription"></textarea> -->
           <textarea class="form__description" name="description" v-model="inputDescription"></textarea>
         </div>
         <div class="form__item">
@@ -24,10 +22,10 @@
           <span class="form__name">{{ $t('profile_editor.WORDING_PROFILEEDIT_CONFIRMPASSWORD') }}：</span>
           <input class="form__input" type="password" name="confirm_password" v-model="inputConfirmPassword">
         </div>
-        <!-- <div class="form__item">
-          <span class="form__name">{{ $t('profile_editor.WORDING_PROFILEEDIT_PERSONAL_OPTIONS') }}：</span>
-          <div class="form__personal-options"></div>
-        </div> -->
+        <div class="form__item">
+          <span class="form__name" v-text="`${$t('profile_editor.WORDING_PROFILEEDIT_PERSONAL_OPTIONS')}：`"></span>
+          <Advanced class="form__field" :values.sync="advanced" :fetchPersonalSetting="fetchPersonalSetting"></Advanced>
+        </div>
       </div>
     </div>
     <div class="profile-edit__aside">
@@ -44,13 +42,13 @@
 </template>
 
 <script>
-import { removeToken, } from '../util/services'
-import { getImageUrl, } from '../util/comm'
-import validator from 'validator'
 import _ from 'lodash'
+import Advanced from 'src/components/member/Advanced.vue'
+import validator from 'validator'
+import { camelize, } from 'humps'
+import { getImageUrl, } from 'src/util/comm'
+import { removeToken, } from 'src/util/services'
 
-
-const debug = require('debug')('CLIENT:')
 const updateInfo = (store, profile, action) => {
   return store.dispatch(action, {
     params: profile,
@@ -61,25 +59,25 @@ const checkPassword = (store, profile) => {
     params: {
       email: profile.email,
       password: profile.password,
-      // keepAlive: profile.keepAlive
     },
   })
 }
+
 const logout = (store) => {
   return store.dispatch('LOGOUT', {})
 }
 const uploadImage = (store, file) => {
   return store.dispatch('UPLOAD_IMAGE', { file, type: 'member', })
 }
-const syncAvatar = (store, params) => {
-  return store.dispatch('SYNC_AVATAR', { params, })
-}
 const deleteMemberProfileThumbnails = (store, id) => {
   return store.dispatch('DELETE_MEMBER_PROFILE_THUMBNAILS', { id, })
 }
 
 export default {
-  name: 'BaseLightBoxProfileEdit',
+  name: 'ProfileEdit',
+  components: {
+    Advanced,
+  },
   props: {
     profile: {
       type: Object,
@@ -92,32 +90,28 @@ export default {
   data () {
     return {
       staticNickname : _.get(this.profile, [ 'nickname', ], ''),
-      // inputNickname: '',
-      // inputDescription: '',
       inputNickname: _.get(this.profile, [ 'nickname', ], ''),
       inputDescription: _.get(this.profile, [ 'description', ], ''),
       inputOldPassword: '',
       inputNewPassword: '',
       inputConfirmPassword: '',
+      advanced: {},
     }
   },
   computed: {
-    // computedNickname: {
-    //   get () {
-    //     return _.get(this.profile, [ 'nickname' ], '')
-    //   },
-    //   set (newValue) {
-    //     this.inputNickname = newValue
-    //   }
-    // },
-    // computedDescription: {
-    //   get () {
-    //     return _.get(this.profile, [ 'description' ], '')
-    //   },
-    //   set (newValue) {
-    //     this.inputDescription = newValue
-    //   }
-    // },
+    isPersonalSettingMutated () {
+      let isMutated = false
+      _.map(this.advanced, (v, k) => {
+        const origin = _.get(this.personalSetting, camelize(k))
+        if (origin !== undefined && _.get(this.personalSetting, camelize(k)) !== v) {
+          isMutated = true
+        }
+      })
+      return isMutated
+    },
+    personalSetting () {
+      return _.get(this.$store, 'state.personalSetting', {})
+    }, 
     thumbnail () {
       return _.get(this.profile, [ 'profileImage', ]) || '/public/icons/exclamation.png'
     },
@@ -137,6 +131,9 @@ export default {
     },
   },
   methods: {
+    fetchPersonalSetting: (store) => {
+      return store.dispatch('FETCH_PERSONAL_SETTONG')
+    },
     getImageUrl,
     profileEditorUploadThumbnail () {
       const saveImage = (file) => {
@@ -150,13 +147,7 @@ export default {
             id: this.profile.id,
             edit_mode: 'edit_profile',
             profile_image: res.body.url,
-          }, 'UPDATE_PROFILE').then(() => {
-            debug('Going to sync the avatar to talk db.')
-            return syncAvatar(this.$store, {
-              url: res.body.url,
-              id: this.profile.id,
-            })
-          })
+          }, 'UPDATE_PROFILE')
         })
         .catch((err) => {
           console.error(err)
@@ -189,8 +180,13 @@ export default {
         if (!inputNotChange('Description')) {
           params.description = this.inputDescription
         }
+        if (this.isPersonalSettingMutated) {
+          params = Object.assign(params, this.advanced)
+        }
 
-        updateInfo(this.$store, params, 'UPDATE_PROFILE')
+        updateInfo(this.$store, params, 'UPDATE_PROFILE').then(() => {
+          return this.fetchPersonalSetting(this.$store)
+        })
         // .then(callback)
       }
 
@@ -244,7 +240,7 @@ export default {
         })
       }
 
-      if (!(inputNotChange('Nickname') && inputNotChange('Description'))) {
+      if (!(inputNotChange('Nickname') && inputNotChange('Description')) || this.isPersonalSettingMutated) {
         updateBasicInfo()
       }
       if (!isOldPasswordEmpty() && isConfirmNewPassword()) {
@@ -316,6 +312,9 @@ $form__name
       @extends $form__name
       align-self flex-start
   form-width = 560px
+  &__field
+    width form-width
+    border 1px solid white
   &__input
     width form-width
     height 35px

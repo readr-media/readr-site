@@ -97,6 +97,22 @@ export default {
     'WORDING_PROFILEEDIT_CONFIRMPASSWORD' : '密碼確認',
     'WORDING_PROFILEEDIT_PERSONAL_OPTIONS' : '個人設定',
     'WORDING_PROFILEEDIT_SAVE' : 'SAVE',
+    'SETTING_PRIVACY' : {
+      'PRIVACY' : '隱私設定',
+      'HIDE_PROFILE' : '隱藏個人頁面',
+    },
+    'SETTING_NOTIFICATION' : {
+      'NOTIFICATION' : '通知設定<sub>（Email 通知）</sub>',
+      'POST_PUSH' : '追蹤評論成為議題',
+      'POST_UPDATE' : '追蹤議題更新',
+      'PROFILE_PUSH' : '追蹤總編發佈新評論',
+      'COMMENT_PUSH' : '留言回覆',
+      'DAILY_PUSH' : '每日精選通知',
+    },
+    'SETTING_NOTIFICATION_EDITOR' : {
+      'NOTIFICATION_EDITOR' : '總編通知設定<sub>（Email 通知）</sub>',
+      'REVIEW_COMMENT_PUSH' : '評論留言',
+    },
   },
   'project': {
     'WORDING_PROJECT_HOT_KEYWORD' : '熱門關鍵字',

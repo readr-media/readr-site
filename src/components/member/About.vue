@@ -12,7 +12,7 @@
       <span class="about__edit__btn" v-text="editText" @click="goEdit"></span>
     </div>
     <BaseLightBox :showLightBox.sync="showLightBox" borderStyle="nonBorder" v-if="isCurrUser">
-      <BaseLightBoxProfileEdit :showLightBox="showLightBox" :profile="profile" @save="showLightBox = false"/>
+      <ProfileEdit :showLightBox="showLightBox" :profile="profile" @save="showLightBox = false"/>
     </BaseLightBox>
   </div>
 </template>
@@ -21,13 +21,13 @@
   import { ROLE_MAP, } from 'src/constants'
   import { getImageUrl, } from 'src/util/comm'
   import BaseLightBox from 'src/components/BaseLightBox.vue'
-  import BaseLightBoxProfileEdit from 'src/components/BaseLightBoxProfileEdit.vue'
+  import ProfileEdit from 'src/components/member/ProfileEdit.vue'
 
   const debug = require('debug')('CLIENT:About')
   export default {
     components: {
       BaseLightBox,
-      BaseLightBoxProfileEdit,
+      ProfileEdit,
     },
     computed: {
       isCurrUser () {

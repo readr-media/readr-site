@@ -10,7 +10,7 @@
 </template>
 <script>
   import { get, } from 'lodash'
-  import About from '../components/About.vue'
+  import About from '../components/member/About.vue'
   import FollowingListInTab from '../components/FollowingListInTab.vue'
   import Tab from '../components/Tab.vue'
 

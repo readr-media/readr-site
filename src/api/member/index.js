@@ -12,3 +12,8 @@ export function getMembersByName ({ params, }) {
   const url = constructUrlWithQuery(`${host}/api/members/nickname`, params)
   return fetchInStrict(url, {})
 }
+
+export function fetchPersonalSetting () {
+  const url = `${host}/api/member/setting`
+  return fetchInStrict(url, {})
+}

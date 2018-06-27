@@ -606,7 +606,7 @@ export function search (keyword = '', params = {}) {
   return fetch(url)
 }
 
-export function syncAvatar (params) {
-  const url = `${host}/api/member/syncavatar`
-  return post(url, params)
-}
+// export function syncAvatar (params) {
+//   const url = `${host}/api/member/syncavatar`
+//   return post(url, params)
+// }

@@ -28,6 +28,7 @@ export function createStore () {
       'memos': [],
       'memoSingle': {},
       'notification': [],
+      'personalSetting': {},
       'pointHistories': [],
       'posts': [],
       'postsCount': 0,
