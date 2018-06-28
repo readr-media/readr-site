@@ -77,7 +77,7 @@
         </div>
         <img class="editor-writing-source__figure" v-if="post.linkImage" :src="post.linkImage" @load="setOgImageOrientation(post.linkImage, $event)">
       </a>
-      <a v-else-if="isArticleMain && !hasSource" class="editor-writing-no-source" :href="post.link"  target="_blank" v-text="postLinkDecoded"></a>
+      <a v-else-if="isArticleMain && post.link && !hasSource" class="editor-writing-no-source" :href="post.link"  target="_blank" v-text="postLinkDecoded"></a>
     </template>
     <AppArticleNav
       :postId="post.id"
