@@ -49,7 +49,12 @@
           <h2 v-if="resource !== 'member'" v-text="follow.title"></h2>
           <p v-if="$_followingListInTab_getDescription(follow)" v-text="$_followingListInTab_getDescription(follow)"></p>
         </div>
-        <div v-if="resource === 'project'" class="followingListInTab__og"></div>
+        <div 
+          v-if="resource === 'project' || resource === 'report'" 
+          class="followingListInTab__og"
+          :class="{ 'no-image': !follow.heroImage }"
+          :style="{ backgroundImage: follow.heroImage ? `url(${follow.heroImage})` : `url(/public/icons/exclamation.png)` }">
+        </div>
       </div>
       <span v-if="followingByUser.length === 0" v-text="`${$t('FOLLOWING.NO_RECORD')}${alertText}`"></span>
     </div>
@@ -145,10 +150,13 @@
     methods: {
       $_followingListInTab_getDescription (follow) {
         switch (this.resource) {
-          case 'member': {
+          case 'member':
+          case 'project':
+          case 'report': {
             return get(follow, [ 'description', ])
           }
-          case 'post': {
+          case 'post':
+          case 'memo': {
             const parser = new DOMParser()
             const html = parser.parseFromString(follow.content, 'text/html')
             const origin = Array.from(html.querySelectorAll('p'))
@@ -315,5 +323,10 @@
     width 175px
     height 92px
     margin-left 15px
+    background-position center
+    background-size cover
+    background-repeat no-repeat
+    &.no-image
+      background-size contain
 
 </style>
