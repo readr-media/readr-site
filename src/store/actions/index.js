@@ -594,4 +594,4 @@ export default Object.assign({
   INVITATION_SWITCH_OFF: ({ commit, dispatch, state, }, { params, }) => {
     commit('INVITATION_SWITCH_OFF', {})
   },
-},actionsEmotion, actionsMember)
+}, actionsEmotion, actionsMember)
