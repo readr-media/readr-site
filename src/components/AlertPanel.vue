@@ -6,7 +6,7 @@
         <div v-for="i in items" :key="i.id" class="alert__item">
           <p v-if="showAuthor"><strong v-text="`${$t('ALERT.AUTHOR')}：`"></strong><span v-text="$_alertPanel_getPostAuthor(i)"></span></p>
           <p><strong v-text="`${$t('ALERT.TITLE')}：`"></strong><span v-text="i.title"></span></p>
-          <p v-if="status === config.post.SCHEDULING || status === config.post.PUBLISHED"><strong v-text="`${$t('ALERT.PUBLISH_DATE')}：`"></strong><span v-text="moment(i.published_at).format('YYYY-MM-DD HH:MM')"></span></p>
+          <p v-if="status === config.post.SCHEDULING || status === config.post.PUBLISHED"><strong v-text="`${$t('ALERT.PUBLISH_DATE')}：`"></strong><span v-text="moment(i.published_at).format('YYYY-MM-DD HH:mm')"></span></p>
         </div>
       </template>
       <template v-if="type === 'tag'">

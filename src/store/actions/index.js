@@ -4,6 +4,7 @@ import { POST_PUBLISH_STATUS, POST_TYPE, PROJECT_STATUS, } from 'api/config'
 import { ROLE_MAP, } from 'src/constants'
 import * as actionsEmotion from 'src/store/actions/emotion'
 import * as actionsMember from 'src/store/actions/member'
+import * as actionPoints from 'src/store/actions/points'
 import {
   addComment,
   addCommentReport,
@@ -35,7 +36,6 @@ import {
   getMemos,
   getMeta,
   getNotification,
-  getPointHistories,
   getPost,
   getPosts,
   getPostsCount,
@@ -261,13 +261,6 @@ export default Object.assign({
   },
   GET_META: ({ commit, dispatch, state, }, { url, }) => {
     return getMeta(url)
-  },
-  GET_POINT_HISTORIES: ({ commit, dispatch, state, }, { params, }) => {
-    return getPointHistories({ params, }).then(({ status, body, }) => {
-      if (status === 200) {
-        commit('SET_POINT_HISTORIES', { histories: body, })
-      }
-    })
   },
   GET_POST: ({ commit, dispatch, state, }, { params, }) => {
     return new Promise((resolve, reject) => {
@@ -594,4 +587,4 @@ export default Object.assign({
   INVITATION_SWITCH_OFF: ({ commit, dispatch, state, }, { params, }) => {
     commit('INVITATION_SWITCH_OFF', {})
   },
-}, actionsEmotion, actionsMember)
+}, actionsEmotion, actionsMember, actionPoints)

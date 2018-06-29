@@ -92,6 +92,9 @@ export default {
   SET_NOTIFICATION: (state, { items, }) => {
     state['notification'] = items
   },
+  SET_POINT_PERSONAL: (state, { personalPoints, }) => {
+    state['personalPoints'] = personalPoints
+  },
   SET_PERSONAL_SETTING: (state, { setting, }) => {
     state['personalSetting'] = setting
   },
