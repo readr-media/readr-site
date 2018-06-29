@@ -4,7 +4,6 @@ import { getHost, } from 'src/util/comm'
 import { getToken, getSetupToken, saveToken, } from 'src/util/services'
 import _ from 'lodash'
 import validator from 'validator'
-
 const debug = require('debug')('CLIENT:src:api')
 const superagent = require('superagent')
 const host = getHost()
@@ -367,18 +366,6 @@ export function getTags ({ params = {},}) {
 
 export function getTagsCount () {
   let url = `${host}/api/tags/count`
-  return fetchInStrict(url, {})
-}
-
-export function getPointHistories ({ params, }) {
-  let url = `${host}/api/points/${params.memberId}`
-  const query = _buildQuery(params)
-  if (params.objectType) {
-    url = `${host}/api/points/${params.memberId}/${params.objectType}`
-  }
-  if (query && (query.length > 0)) {
-    url = url + `?${query}`
-  }
   return fetchInStrict(url, {})
 }
 

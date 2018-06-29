@@ -43,6 +43,7 @@ export function createStore () {
       'memoSingle': {},
       'notification': [],
       'personalSetting': {},
+      'personalPoints': 0,
       'pointHistories': [],
       'posts': [],
       'postsCount': 0,
