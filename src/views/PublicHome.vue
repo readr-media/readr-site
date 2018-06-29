@@ -314,11 +314,9 @@ export default {
           this.currentPageLatest += 1
           if (this.$store.state.isLoggedIn) {
             const ids = res.items.map(post => post.id)
-            fetchFollowing(this.$store, {
-              mode: 'update',
-              resource: 'post',
-              ids: ids,
-            })
+            fetchFollowing(this.$store, { mode: 'update', resource: 'post', ids: ids, })
+            fetchEmotion(this.$store, { mode: 'update', resource: 'post', ids: ids, emotion: 'like', })
+            fetchEmotion(this.$store, { mode: 'update', resource: 'post', ids: ids, emotion: 'dislike', })
           }
         }
       })

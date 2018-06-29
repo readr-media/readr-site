@@ -150,10 +150,16 @@ export default {
             page: this.currPage,
           }).then(res => {
             this.currPage += 1
-            debug('Loadmore done. Status', get(res, 'status'))                  
+            debug('Loadmore done. Status', get(res, 'status'))
+            const memoIds = res.body.items.map(post => post.id)
+            if (memoIds.length > 0) {
+              fetchFollowing(this.$store, { mode: 'update', resource: 'memo', ids: memoIds, })
+              fetchEmotion(this.$store, { mode: 'update', resource: 'memo', ids: memoIds, emotion: 'like', })
+              fetchEmotion(this.$store, { mode: 'update', resource: 'memo', ids: memoIds, emotion: 'dislike', })
+            }          
             if (get(res, 'status') === 'end') {
               this.isLoadMoreEnd = true
-            }                  
+            }          
           }))
           break
       }

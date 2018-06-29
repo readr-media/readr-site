@@ -204,6 +204,11 @@ export default {
         return
     }
   },
+  UPDATE_EMOTION_BY_RESOURCE: (state, { resource, emotion, data, }) => {
+    const orig = _.values(state['emotionByResource'][resource][emotion])
+    const loadmore = data || []
+    state['emotionByResource'][resource][emotion] = _.concat(orig, loadmore)
+  },
   UPDATE_PUBLIC_POSTS: (state, { posts, outputStateTarget, }) => {
     state[ outputStateTarget ]['items'] = _.concat(
       _.get(state, `${outputStateTarget}.items`, []),

@@ -87,7 +87,6 @@ export default {
       return this.$store.state.isLoggedIn && this.postFollowers.indexOf(this.$store.state.profile.id) !== -1
     },
     isLike () {
-      
       const ids = get(find(get(this.$store, [ 'state', 'emotionByResource', this.articleType, 'like', ], []), { resourceID: this.postId, }), 'followers', []) || [] 
       return this.$store.state.isLoggedIn && ids.indexOf(this.$store.state.profile.id) !== -1
     },
