@@ -1,16 +1,16 @@
 <template>
   <section class="home-project-aside">
     <template v-for="report in reports">
-      <a :key="report.id" class="home-project-aside__container" :href="getReportUrl(report.slug)" target="_blank">
-        <div class="home-project-aside__content">
+      <div :key="report.id" class="home-project-aside__container">
+        <a class="home-project-aside__content" :href="getReportUrl(report.slug)" target="_blank">
           <h3 v-if="report.project.title" v-text="report.project.title"></h3>
           <h1 class="home-project-aside__project-title" v-text="report.title"></h1>
-        </div>
-        <img class="home-project-aside__project-image" :src="report.heroImage ? report.heroImage : '/public/icons/readr-logo.png'">
+        </a>
+        <a :href="getReportUrl(report.slug)" target="_blank"><img class="home-project-aside__project-image" :src="report.heroImage ? report.heroImage : '/public/icons/readr-logo.png'"></a>
         <div class="home-project-aside__comment">
           <AppArticleNav :articleType="'report'" :postId="report.id" :commentCount="report.commentAmount || 0" :toogleComment="false"/>
         </div>
-      </a>
+      </div>
     </template>
   </section>
 </template>
@@ -48,13 +48,7 @@ export default {
     padding 25px 15px 0
     color black
     &:not(:first-of-type)
-      // margin-top -25px
       border-top 1px solid #d3d3d3
-    > a
-      margin-left 20px
-      font-size 0
-      outline none
-    
   &__project-image
     width 130px
     height 70px

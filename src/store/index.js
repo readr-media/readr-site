@@ -11,6 +11,20 @@ export function createStore () {
     state: {
       'customEditors': [],
       'commentCount': [],
+      'emotionByResource': {
+        'memo': {
+          'like': [],
+          'dislike': [],
+        },
+        'post': {
+          'like': [],
+          'dislike': [],
+        },
+        'report': {
+          'like': [],
+          'dislike': [],
+        },
+      },
       'followingByResource': {
         'member': [],
         'memo': [],
