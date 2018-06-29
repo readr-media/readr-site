@@ -74,6 +74,10 @@ const DEFAULT_SORT = '-published_at'
 const DEFAULT_SORT_LATEST_COMMENTS = '-created_at'
 const DEFAULT_CATEGORY = 'latest'
 
+const fetchEmotion = (store, params) => {
+  return store.dispatch('FETCH_EMOTION_BY_RESOURCE', params)
+}
+
 const fetchMemos = (store, {
   max_result = MAXRESULT_MEMOS,
   sort = DEFAULT_SORT,
@@ -354,11 +358,12 @@ export default {
           const reportIds = _.get(this.$store.state, 'publicReports', []).map(report => report.id)
           const ids = _.uniq(_.concat(postIdsLatest, postIdsHot))
           const projectIds = _.uniq(_.get(this.$store, 'state.publicMemos', []).map(memo => memo.projectId))
-          if (ids.length !== 0) { 
-            fetchFollowing(this.$store, { 
-              resource: 'post', 
-              ids: ids, 
-            }) 
+          if (ids.length !== 0) {
+            fetchFollowing(this.$store, { resource: 'post', ids: ids, })
+            fetchEmotion(this.$store, { resource: 'post', ids: ids, emotion: 'like', })
+            fetchEmotion(this.$store, { resource: 'post', ids: ids, emotion: 'dislike', })
+            fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'like', })
+            fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'dislike', })
           } 
           if (reportIds.length !== 0) { 
             fetchFollowing(this.$store, { 

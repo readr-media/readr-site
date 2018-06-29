@@ -114,6 +114,14 @@ const fetchPointHistories = (store, { objectIds, objectType, }) => {
   })
 }
 
+const fetchFollowing = (store, params) => {
+  return store.dispatch('GET_FOLLOWING_BY_RESOURCE', params)
+}
+
+const fetchEmotion = (store, params) => {
+  return store.dispatch('FETCH_EMOTION_BY_RESOURCE', params)
+}
+
 export default {
   name: 'PublicPageWithAside',
   props: {
@@ -216,17 +224,20 @@ export default {
   beforeMount () {
     const requests = this.getRequests(this.$route.path)
     Promise.all(requests).then(() => {
-      const projectIds = uniq(get(this.$store, 'state.publicMemos', []).map(memo => memo.projectId))
-      if (projectIds.length !== 0) {
-        fetchPointHistories(this.$store, { objectType: POINT_OBJECT_TYPE.PROJECT_MEMO, objectIds: projectIds, })
+      const peojectIds = get(this.$store.state, 'publicProjects.normal', []).map(project => project.id)
+      const memoProjectIds = uniq(get(this.$store, 'state.publicMemos', []).map(memo => memo.projectId))
+      const reportIds = get(this.$store.state, 'publicReports', []).map(report => report.id)
+      if (memoProjectIds.length > 0) {
+        fetchPointHistories(this.$store, { objectType: POINT_OBJECT_TYPE.PROJECT_MEMO, objectIds: memoProjectIds, })
       }
-      // if (this.$store.state.isLoggedIn) {
-      //   const reportIds = _.get(this.$store.state, 'publicReports', []).map(report => `${report.id}`)
-      //   fetchFollowing(this.$store, {
-      //     resource: 'report',
-      //     ids: reportIds,
-      //   })
-      // }
+      if (peojectIds.length > 0) {
+        fetchFollowing(this.$store, { resource: 'project', ids: peojectIds, })
+      }
+      if (reportIds.length > 0)  {
+        fetchFollowing(this.$store, { resource: 'report', ids: reportIds, })
+        fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'like', })
+        fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'dislike', })
+      }
     })
   },
   // TODO: reportList and memoList loadmore  

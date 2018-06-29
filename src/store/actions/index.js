@@ -2,6 +2,7 @@
 import _ from 'lodash'
 import { POST_PUBLISH_STATUS, POST_TYPE, PROJECT_STATUS, } from 'api/config'
 import { ROLE_MAP, } from 'src/constants'
+import * as actionsEmotion from 'src/store/actions/emotion'
 import * as actionsMember from 'src/store/actions/member'
 import {
   addComment,
@@ -593,4 +594,4 @@ export default Object.assign({
   INVITATION_SWITCH_OFF: ({ commit, dispatch, state, }, { params, }) => {
     commit('INVITATION_SWITCH_OFF', {})
   },
-}, actionsMember)
+},actionsEmotion, actionsMember)

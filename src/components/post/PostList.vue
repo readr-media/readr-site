@@ -77,6 +77,14 @@ const fetchReportsList = (store, {
   })
 }
 
+const fetchFollowing = (store, params) => {
+  return store.dispatch('GET_FOLLOWING_BY_RESOURCE', params)
+}
+
+const fetchEmotion = (store, params) => {
+  return store.dispatch('FETCH_EMOTION_BY_RESOURCE', params)
+}
+
 export default {
   name: 'PostList',
   components: {
@@ -219,13 +227,18 @@ export default {
   },
   beforeMount () {
     Promise.all(this.jobs).then(() => {
-      // if (this.$store.state.isLoggedIn) {
-      //   const postIdFeaturedProject = _.get(this.$store, 'state.publicProjects.done', []).map(project => `${project.id}`)
-      //   fetchFollowing(this.$store, {
-      //     resource: 'project',
-      //     ids: postIdFeaturedProject,
-      //   })
-      // }
+      const reportIds = get(this.$store.state, 'publicReports', []).map(report => report.id)
+      const memoIds = get(this.$store.state, 'memos', []).map(memo => memo.id)
+      if (reportIds.length > 0) {
+        fetchFollowing(this.$store, { resource: 'report', ids: reportIds, })
+        fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'like', })
+        fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'dislike', })
+      }
+      if (memoIds.length > 0) {
+        fetchFollowing(this.$store, { resource: 'memo', ids: memoIds, })
+        fetchEmotion(this.$store, { resource: 'memo', ids: memoIds, emotion: 'like', })
+        fetchEmotion(this.$store, { resource: 'memo', ids: memoIds, emotion: 'dislike', })
+      }
     })
   },   
   mounted () {
