@@ -70,7 +70,7 @@ const fetchReportsList = (store, {
       max_result: max_result,
       project_id: proj_ids,
       where: {
-        publish_status: REPORT_PUBLISH_STATUS.PUBLISHED,
+        report_publish_status: REPORT_PUBLISH_STATUS.PUBLISHED,
       },
       sort: sort,
     },
