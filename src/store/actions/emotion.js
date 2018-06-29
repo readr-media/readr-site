@@ -5,7 +5,10 @@ const debug = require('debug')('CLIENT:store:actions:emotion')
 const FETCH_EMOTION_BY_RESOURCE = ({ commit, }, params) => {
   return fetchEmotionByResource(params).then(({ status, body, }) => {
     if (status === 200) {
-      commit('SET_EMOTION_BY_RESOURCE', { resource: params.resource, emotion: params.emotion, data: body.items, })
+      if (params.mode === 'update') {
+        return commit('UPDATE_EMOTION_BY_RESOURCE', { resource: params.resource, emotion: params.emotion, data: body.items, })
+      }
+      return commit('SET_EMOTION_BY_RESOURCE', { resource: params.resource, emotion: params.emotion, data: body.items, })
     }
   })
 }
