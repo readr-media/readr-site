@@ -358,20 +358,17 @@ export default {
           const reportIds = _.get(this.$store.state, 'publicReports', []).map(report => report.id)
           const ids = _.uniq(_.concat(postIdsLatest, postIdsHot))
           const projectIds = _.uniq(_.get(this.$store, 'state.publicMemos', []).map(memo => memo.projectId))
-          if (ids.length !== 0) {
+          if (ids.length > 0) {
             fetchFollowing(this.$store, { resource: 'post', ids: ids, })
             fetchEmotion(this.$store, { resource: 'post', ids: ids, emotion: 'like', })
             fetchEmotion(this.$store, { resource: 'post', ids: ids, emotion: 'dislike', })
+          } 
+          if (reportIds.length > 0) {
+            fetchFollowing(this.$store, { resource: 'report', ids: reportIds, })
             fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'like', })
             fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'dislike', })
-          } 
-          if (reportIds.length !== 0) { 
-            fetchFollowing(this.$store, { 
-              resource: 'report', 
-              ids: reportIds, 
-            })
           }
-          if (projectIds.length !== 0) {
+          if (projectIds.length > 0) {
             fetchPointHistories(this.$store, { objectType: POINT_OBJECT_TYPE.PROJECT_MEMO, objectIds: projectIds, })
           }
         }
