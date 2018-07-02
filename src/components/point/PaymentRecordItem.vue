@@ -2,11 +2,11 @@
   <div class="item">
     <div class="item__timestamp"><span v-text="datetime"></span></div>
     <div class="item__subject">
-      <span class="prefix" v-text="$t('point.payment.prefix')"></span>
+      <span class="prefix" v-text="$t('point.PAYMENT.PREFIX')"></span>
       <span class="points-original" :class="{ negative: isPointOriginNegative, }" v-text="pointOrigin"></span>
-      <span class="infix" v-text="$t('point.payment.infix')"></span>
+      <span class="infix" v-text="$t('point.PAYMENT.INFIX')"></span>
       <span class="points-deposit" v-text="pointDeposit"></span>
-      <span class="postfix" v-text="$t('point.payment.postfix')"></span>
+      <span class="postfix" v-text="$t('point.PAYMENT.POSTFIX')"></span>
     </div>
     <div class="item__points-deposit">
       <span class="value" v-text="balance"></span>
