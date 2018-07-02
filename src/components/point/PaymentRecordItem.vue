@@ -10,7 +10,7 @@
     </div>
     <div class="item__points-deposit">
       <span class="value" v-text="balance"></span>
-      <span class="unit" v-text="$t('point.unit')"></span>
+      <span class="unit" v-text="$t('point.UNIT')"></span>
     </div>
   </div>
 </template>

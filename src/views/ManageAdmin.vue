@@ -234,6 +234,11 @@
 
   export default {
     name: 'admin-page',
+    metaInfo () {
+      return {
+        isStripeNeeded: this.isStripeRequired,
+      }
+    },    
     components: {
       'app-header': AppHeader,
       'app-tab': Tab,
@@ -289,6 +294,9 @@
       }
     },
     computed: {
+      isStripeRequired () {
+        return _.get(this.$store, 'state.isStripeRequired', false)
+      },
       itemsSelectedID () {
         const items = []
         _.forEach(this.itemsSelected, (item) => {
@@ -680,6 +688,11 @@
     },
     mounted () {
       this.showMain = true
+    },
+    watch: {
+      isStripeRequired () {
+        this.$forceUpdate()
+      },
     },
   }
 </script>

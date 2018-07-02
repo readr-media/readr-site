@@ -5,6 +5,7 @@
         <span class="prefix" v-text="$t('point.WORDING_POINTS_AVAILABLE') + '：'"></span>
         <span class="value" :class="{ negative: isPointsNegative, }" v-text="currentPoints"></span>
         <span class="postfix" v-text="$t('point.UNIT')"></span>
+        <Deposit class="deposit" v-if="isStripeNeeded"></Deposit>
       </div>
       <div class="point-manager__infobar--switcher">
         <div class="point-record" :class="isActive(0)" @click="check(0)"><span class="radio"></span><span v-text="'點數明細'"></span></div>
@@ -18,24 +19,30 @@
   </div>
 </template>
 <script>
+  import Deposit from 'src/components/point/Deposit.vue'
   import PointRecord from 'src/components/point/PointRecord.vue'
   import PaymentRecord from 'src/components/point/PaymentRecord.vue'
   import { get, } from 'lodash'
-  // const debug = require('debug')('CLIENT:PointManager')
+  const debug = require('debug')('CLIENT:PointManager')
   const fetchCurrPoints = store => store.dispatch('GET_POINT_CURRENT', { params: {}, })
+  const loadStripeSDK = store => store.dispatch('LOAD_STRIPE_SDK')
 
   export default {
     name: 'PointManager',
     components: {
+      Deposit,
       PointRecord,
       PaymentRecord,
     },
     computed: {
+      currentPoints () {
+        return get(this.$store, 'state.personalPoints.points', 0)
+      },
       isPointsNegative () {
         return this.currentPoints < 0
       },
-      currentPoints () {
-        return get(this.$store, 'state.personalPoints.points', 0)
+      isStripeNeeded () {
+        return get(this.$store, 'state.isStripeRequired', false)
       },
     },
     data () {
@@ -47,12 +54,20 @@
       check (index) {
         this.activeIndex = index
       },
+      deposit () {
+        this.showDepositSlip = true
+      },
       isActive (index) {
         return [ this.activeIndex === index ? 'active' : '', ]
       },
     },
     mounted () {
-      fetchCurrPoints(this.$store)
+      fetchCurrPoints(this.$store).then(() => loadStripeSDK(this.$store))
+    },
+    watch: {
+      isStripeNeeded () {
+        debug('Mutation detected: isStripeNeeded', this.isStripeNeeded)
+      },
     },
   }
 </script>
@@ -65,6 +80,8 @@
       margin 0 0 25px
       &--current
         font-size 0.9375rem
+        padding-right 40px
+        position relative
         .value
           font-size 1.5625rem
           font-weight 600
@@ -72,6 +89,18 @@
           margin 0 10px
           &.negative
             color #d0021b
+        .deposit
+          position absolute
+          right 0
+          bottom -2px
+          display block
+          height 25px
+          width 20px
+          background-size contain
+          background-position center center
+          background-repeat no-repeat
+          background-image url(/public/icons/encourage.png)
+          cursor pointer
       &--switcher
         display flex
         justify-content space-between

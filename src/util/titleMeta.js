@@ -1,4 +1,5 @@
 import { SITE_DOMAIN_DEV, } from '../constants'
+let isStripeSDKLoaded = false
 
 function getMetaInfo (vm) {
   const { metaInfo, } = vm.$options
@@ -63,6 +64,21 @@ const clientMetaInfoMixin = {
       if (metaImage) {
         document.head.querySelector(`meta[property='og:image']`).content = metaImage
       }
+    }
+  },
+  updated () {
+    const metaInfo = getMetaInfo(this)
+    if (metaInfo) {
+      /**
+       * If Stripe SDK needed.
+       */
+      const { isStripeNeeded, } = metaInfo
+      if (isStripeNeeded && !isStripeSDKLoaded) {
+        const script = document.createElement('script')
+        script.setAttribute('src', 'https://checkout.stripe.com/checkout.js')
+        document.head.appendChild(script)
+        isStripeSDKLoaded = true
+      }      
     }
   },
 }
