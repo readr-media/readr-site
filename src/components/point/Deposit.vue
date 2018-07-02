@@ -1,0 +1,52 @@
+<template>
+  <div class="readr-deposit" @click="deposit"></div>
+</template>
+<script>
+  const debug = require('debug')('CLIENT:Deposit')
+
+  export default {
+    name: 'Deposit',
+    data () {
+      return {
+        handler: undefined,
+      }
+    },
+    methods: {
+      deposit (e) {
+        const open = () => this.handler.open({
+            name: 'Stripe.com',
+            description: '2 widgets',
+            zipCode: true,
+            amount: 2000,
+            locale: 'en',
+        })
+        if (this.handler) {
+          open()
+        } else {
+          if (window.StripeCheckout) {
+            this.handler = window.StripeCheckout.configure({
+              key: 'pk_test_g6do5S237ekq10r65BnxO6S0',
+              image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+              locale: 'auto',
+              // token: function(token) {
+                // You can access the token ID with `token.id`.
+                // Get the token ID to your server-side code for use.
+              // }
+            })
+            open()
+          }
+        }
+        e.preventDefault()              
+      },
+      setupHandler () {
+        window.addEventListener('popstate', function() {
+          debug('Going to close something.')
+          this.handler && this.handler.close()
+        })        
+      },
+    },
+    mounted () {
+      this.setupHandler()
+    },
+  }
+</script>

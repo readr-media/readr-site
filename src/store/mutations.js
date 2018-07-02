@@ -156,7 +156,9 @@ export default {
     debug(searchResult)
     state['searchResult']['items'] = searchResult[ 'items' ]
   },
-  
+  SET_STRIPE_REQUIREMENT: (state, { isStripeRequired, }) => {
+    state['isStripeRequired'] = isStripeRequired
+  },
   SET_INVITATION_QUOTA: (state, { quota, }) => {
     state['invitation_quota'] = quota
   },

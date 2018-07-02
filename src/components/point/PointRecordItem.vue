@@ -68,6 +68,7 @@
     > div
       margin-right 30px
       font-size 0.9375rem
+      font-weight normal
       line-height normal
       &:last-child
         margin-right 0
@@ -88,7 +89,7 @@
       flex 1
       .object-type
         margin-right 5px
-        font-weight 200
+        // font-weight 200
       .object-name
-        font-weight 500
+        font-weight 800
 </style>
