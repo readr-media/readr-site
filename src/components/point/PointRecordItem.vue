@@ -2,16 +2,16 @@
   <div class="item">
     <div class="item__timestamp"><span v-text="datetime"></span></div>
     <div class="item__subject">
-      <span class="object-type" v-text="objectType && $t(`point.${objectType}`)"></span>
+      <span class="object-type" v-text="objectType && ( `${$t(`point.${objectType}`)}${$t(`point.PROJECT`)}` )"></span>
       <span class="object-name" v-text="objectName"></span>
     </div>
     <div class="item__deduction">
       <span class="value" v-text="0 - deduction"></span>
-      <span class="unit" v-text="$t('point.unit')"></span>
+      <span class="unit" v-text="$t('point.UNIT')"></span>
     </div>
     <div class="item__rest">
       <span class="value" :class="{ negative: isBalanceNegative, }" v-text="balance"></span>
-      <span class="unit" v-text="$t('point.unit')"></span>
+      <span class="unit" v-text="$t('point.UNIT')"></span>
     </div>
   </div>
 </template>
@@ -39,9 +39,9 @@
       objectType () {
         switch (get(this.record, 'objectType', )) {
           case 1:
-            return 'encourage'
+            return 'ENCOURAGE'
           case 2:
-            return 'participate'
+            return 'PARTICIPATE'
           default:
             return
         }
@@ -88,7 +88,7 @@
       flex 1
       .object-type
         margin-right 5px
+        font-weight 200
       .object-name
         font-weight 500
-
 </style>
