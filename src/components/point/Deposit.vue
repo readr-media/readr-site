@@ -2,6 +2,7 @@
   <div class="readr-deposit" @click="deposit"></div>
 </template>
 <script>
+  import { get, } from 'lodash'
   const debug = require('debug')('CLIENT:Deposit')
 
   export default {
@@ -22,9 +23,10 @@
         if (this.handler) {
           open()
         } else {
-          if (window.StripeCheckout) {
+          const key = get(this.$store, 'state.setting.STRIPE_KEY', '')
+          if (window.StripeCheckout && key) {
             this.handler = window.StripeCheckout.configure({
-              key: 'pk_test_g6do5S237ekq10r65BnxO6S0',
+              key,
               image: '/public/icons/creditcard.png',
               // zipCode: true,
               currency: 'TWD',
