@@ -14,11 +14,10 @@
     methods: {
       deposit (e) {
         const open = () => this.handler.open({
-            name: 'Stripe.com',
-            description: '2 widgets',
+            name: 'Readr',
+            description: this.$t('point.DEPOSIT.DESCRIPTION'),
             zipCode: true,
-            amount: 2000,
-            locale: 'en',
+            amount: 0,
         })
         if (this.handler) {
           open()
@@ -26,12 +25,16 @@
           if (window.StripeCheckout) {
             this.handler = window.StripeCheckout.configure({
               key: 'pk_test_g6do5S237ekq10r65BnxO6S0',
-              image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
-              locale: 'auto',
-              // token: function(token) {
+              image: '/public/icons/creditcard.png',
+              // zipCode: true,
+              currency: 'TWD',
+              locale: 'en',
+              panelLabel: this.$t('point.DEPOSIT.CONFIRM_TO_PAY'),
+              token: function(token) {
                 // You can access the token ID with `token.id`.
                 // Get the token ID to your server-side code for use.
-              // }
+                debug('token', token)
+              },
             })
             open()
           }

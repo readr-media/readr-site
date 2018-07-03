@@ -36,7 +36,7 @@ export const PROFILE_SETTING = [
       // { name: 'POST_UPDATE', key: 'post_update', },
       { name: 'PROFILE_PUSH', key: 'profile_push', },
       { name: 'COMMENT_PUSH', key: 'comment_push', },
-      // { name: 'DAILY_PUSH', key: 'daily_push', },
+      { name: 'DAILY_PUSH', key: 'daily_push', },
     ],
   },
   // {

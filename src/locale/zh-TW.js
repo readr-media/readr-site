@@ -234,6 +234,10 @@ export default {
       'INFIX': '點，付款金額',
       'POSTFIX': '元',
     },
+    'DEPOSIT': {
+      'DESCRIPTION': '您目前沒有足夠點數，請先付款',
+      'CONFIRM_TO_PAY': '確認付款',
+    },
   },
   'tag_list': {
     'WORDING_TAGLIST_ADD' : '新增',
