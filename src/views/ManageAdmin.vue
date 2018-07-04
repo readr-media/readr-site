@@ -211,12 +211,14 @@
   }
 
   const getMembers = (store, { page, sort, keyword, type, }) => {
+    const fields = keyword && [ 'mail', 'role', 'custom_editor', ]
     return store.dispatch('GET_MEMBERS', {
       params: {
         max_result: MAXRESULT,
         page: page || DEFAULT_PAGE,
         sort: sort || DEFAULT_SORT,
         keyword,
+        fields,
       },
       type,
     })

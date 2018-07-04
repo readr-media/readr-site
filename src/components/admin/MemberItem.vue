@@ -51,6 +51,10 @@
         type: Function,
         default: () => {},
       },
+      toogleCustomEditor: {
+        type: Function,
+        default: () => {},
+      },
       index: {
         type: Number,
       },
