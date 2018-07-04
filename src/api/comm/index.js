@@ -34,6 +34,8 @@ export function _buildQuery (params = {}) {
     'member_id',
     'memo_publish_status',
     'emotion',
+    'fields',
+    'pay_type',
   ]
   const snakeCaseParams = mapKeys(params, (value, key) => snakeCase(key))
   whitelist.forEach((ele) => {
@@ -46,7 +48,13 @@ export function _buildQuery (params = {}) {
         Object.keys(where).forEach((key) => {
           query[key] = JSON.stringify(where[key])
         })
-      } else if (ele === 'ids' || ele === 'project_id' || ele === 'object_ids' || ele === 'slugs' || ele === 'project_slugs' || ele === 'report_slugs') {
+      } else if (ele === 'ids'
+        || ele === 'fields' 
+        || ele === 'project_id' 
+        || ele === 'object_ids' 
+        || ele === 'slugs' 
+        || ele === 'project_slugs' 
+        || ele === 'report_slugs') {
         query[ele] = JSON.stringify(snakeCaseParams[ele])
       } else {
         query[ele] = snakeCaseParams[ele]

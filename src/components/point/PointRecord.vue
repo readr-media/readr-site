@@ -9,7 +9,11 @@
   import PointRecordItem from 'src/components/point/PointRecordItem.vue'
   import { get, } from 'lodash'
 
-  const fetchPointRecords = (store) => store.dispatch('GET_POINT_HISTORIES', { params: {}, })
+  const fetchPointRecords = (store) => store.dispatch('GET_POINT_HISTORIES', {
+    params: {
+      pay_type: 'consumption',
+    },
+  })
 
   export default {
     name: 'PointRecord',
