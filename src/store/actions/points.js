@@ -19,3 +19,7 @@ export const GET_POINT_CURRENT = ({ commit, }, { params, }) => {
 export const LOAD_STRIPE_SDK = ({ commit, }) => {
   commit('SET_STRIPE_REQUIREMENT', { isStripeRequired: true, })
 }
+
+export const ADD_REWARD_POINTS_TRANSACTIONS = (action, { params, }) => {
+  return pointsFunc.addRewardPointsTransactions(params)
+}

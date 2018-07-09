@@ -32,13 +32,6 @@ export function addTags (params) {
   return post(url, params)
 }
 
-export function addRewardPointsTransactions (params) {
-  const url = `${host}/api/points`
-  return post(url, params)
-    .then(res => res.status)
-    .catch(err => err)
-}
-
 export function deletePost (id) {
   const url = `${host}/api/post/${id}`
   return del(url)
