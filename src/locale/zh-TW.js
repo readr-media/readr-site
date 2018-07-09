@@ -237,6 +237,8 @@ export default {
     'DEPOSIT': {
       'DESCRIPTION': '您目前沒有足夠點數，請先付款',
       'CONFIRM_TO_PAY': '確認付款',
+      'INFAIL': '付款失敗！',
+      'SUCCESSFULLY': '付款成功',
     },
   },
   'tag_list': {

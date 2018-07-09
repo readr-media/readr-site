@@ -11,7 +11,6 @@ import {
   addMember,
   addPost,
   addTags,
-  addRewardPointsTransactions,
   checkLoginStatus,
   checkPassword,
   deleteComment,
@@ -60,7 +59,6 @@ import {
   resetPwdEmail,
   setupBasicProfile,
   search,
-  syncAvatar,
   updateComment,
   updateMember,
   updateNotificationStatus,
@@ -88,9 +86,6 @@ export default Object.assign({
   },
   ADD_TAGS: ({ commit, dispatch, state, }, { params, }) => {
     return addTags(params)
-  },
-  ADD_REWARD_POINTS_TRANSACTIONS: ({ commit, dispatch, state, }, { params, }) => {
-    return addRewardPointsTransactions(params)
   },
   CHECK_LOGIN_STATUS: ({ commit, dispatch, state, }, { params, }) => {
     return checkLoginStatus({ params, }).then(({ status, body, }) => {
