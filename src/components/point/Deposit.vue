@@ -28,14 +28,6 @@
     components: {
       Spinner,
     },
-    computed: {
-      temProjecId () {
-        /**
-         * vomit a proj id for now, this is really weird and waiting to revise.
-         */
-        return get(this.$store, 'state.pointHistories.0.objectId')
-      },
-    },
     data () {
       return {
         alertFlag: false,
@@ -73,7 +65,6 @@
                 // Get the token ID to your server-side code for use.
                 this.isLoading = false
                 deposit(this.$store, {
-                  objectId: this.temProjecId,
                   points: -100,
                   token: token.id,
                 }).then(res => {
