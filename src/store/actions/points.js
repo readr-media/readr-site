@@ -23,3 +23,17 @@ export const LOAD_STRIPE_SDK = ({ commit, }) => {
 export const ADD_REWARD_POINTS_TRANSACTIONS = (action, { params, }) => {
   return pointsFunc.addRewardPointsTransactions(params)
 }
+
+export const SWITCH_OFF_CONSUME_PANEL = ({ commit, }, { active, }) => {
+  return commit('SET_CONSUME_FLAG', {
+    active,
+    item: {},
+  })
+}
+
+export const SWITCH_ON_CONSUME_PANEL = ({ commit, }, { active, item, }) => {
+  return commit('SET_CONSUME_FLAG', {
+    active,
+    item,
+  })
+}

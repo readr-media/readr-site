@@ -192,6 +192,10 @@ export default {
     'UPDATE_AT' : '更新時間',
     'VIDEO': '影片',
   },
+  'POST_CONTENT': {
+    'NO_PERMISSION': '此為不存在的內容，或是您沒有權限？',
+    'GO_JOIN_MEMO': '此筆記目前需要點數，點我加入',
+  },
   'POST_EDITOR': {
     'EDITOR' : '編輯器',
   },

@@ -18,45 +18,16 @@
         </div>
       </div>
     </div>
-    <base-light-box :showLightBox.sync="showLightBox" borderStyle="nonBorder">
-      <div class="project-memo-alert">
-        <div class="project-memo-alert__content">
-          <h2 v-text="$t('PROJECT.JOIN_CONTENT_1')"></h2>
-          <h1 v-text="projectName"></h1>
-          <h2>{{ $t('PROJECT.JOIN_CONTENT_2') }}<strong v-text="get(memo, 'project.memoPoints', 0) || 0"></strong>{{ $t('PROJECT.JOIN_CONTENT_POINT') }}</h2>
-          <button
-            :disabled="deducting"
-            @click="$_projectsFigureProgress_deductPoints()"
-            v-text="deducting ? `${$t('PROJECT.DEDUCTING')} ...` : $t('PROJECT.JOIN_CONFIRM')">
-          </button>
-        </div>
-      </div>
-    </base-light-box>
   </div>
 </template>
 
 <script>
-
-import { POINT_OBJECT_TYPE, } from '../../../api/config'
 import { get, includes, } from 'lodash'
-import BaseLightBox from '../BaseLightBox.vue'
 
-const deductPoints = (store, { objectId, memoPoints, } = {}) => {
-  return store.dispatch('ADD_REWARD_POINTS_TRANSACTIONS', {
-    params: {
-      member_id: get(store, [ 'state', 'profile', 'id', ]),
-      object_type: POINT_OBJECT_TYPE.PROJECT_MEMO,
-      object_id: objectId,
-      points: memoPoints,
-    },
-  })
-}
+const switchOnDeductionPanel = (store, item) => store.dispatch('SWITCH_ON_CONSUME_PANEL', { active: true, item, })
 
 export default {
   name: 'MemoFigure',
-  components: {
-    BaseLightBox,
-  },
   props: {
     memo: {
       type: Object,
@@ -66,12 +37,6 @@ export default {
       type: Boolean,
       default: true,
     },
-  },
-  data () {
-    return {
-      deducting: false,
-      showLightBox: false,
-    }
   },
   computed: {
     deducted () {
@@ -88,16 +53,10 @@ export default {
   mounted () {
   },
   methods: {
-    $_projectsFigureProgress_deductPoints () {
-      this.deducting = true
-      deductPoints(this.$store, { objectId: get(this.memo, 'projectId'), memoPoints: get(this.memo, 'project.memoPoints') || 0, })
-      .then(() => {
-        this.deducting = false
+    $_projectsFigureProgress_openLightBox () {
+      switchOnDeductionPanel(this.$store, this.memo).then(() => {
         this.$router.push(this.memoURL)
       })
-    },
-    $_projectsFigureProgress_openLightBox () {
-      this.showLightBox = true
     },
     navigateToMemo () {
       this.deducted ? this.$router.push(this.memoURL) : this.$_projectsFigureProgress_openLightBox()
@@ -230,45 +189,5 @@ export default {
     
 .button--progress
   cursor auto
-
-.project-memo-alert
-  position relative
-  min-width 500px
-  min-height 400px
-  background-color #11b8c9
-  background-image url(/public/icons/join.png)
-  background-position calc(100% - 20px) center
-  background-size 185px auto
-  background-repeat no-repeat
-  border 5px solid #fff
-  &__content
-    position absolute
-    left 30px
-    bottom 60px
-    h1
-      max-width 290px
-      margin 1em 0 0
-      color #fff
-      font-size 1.875rem
-      font-weight 400
-      letter-spacing 1px
-    h2
-      margin 0
-      font-size 1.125rem
-      strong
-        color #fff
-        font-size 1.875rem
-        margin 0 .2em
-    button
-      width 290px
-      margin-top 30px
-      padding 15px 0
-      color #11b8c9
-      font-size 1.875rem
-      background-color #fff
-      border none
-      transition color .5s
-      &:disabled
-        color rgba(17, 184, 201, .6)
 </style>
 
