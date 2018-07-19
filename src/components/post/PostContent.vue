@@ -152,7 +152,7 @@
         if (this.postContentWordCountTotal <= this.showContentWordLimit){
           return this.postContent
         } else {
-          const ellipsis = '......'
+          const ellipsis = '......更多'
           return this.postContent.map((paragraph, index) => {
             if (!this.isReadMoreClicked && index === this.shouldContentStopAtIndex) {
               if (this.isStopParagraphWordCountExceedLimit) {

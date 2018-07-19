@@ -4,6 +4,7 @@ import { POST_PUBLISH_STATUS, POST_TYPE, PROJECT_STATUS, } from 'api/config'
 import { ROLE_MAP, } from 'src/constants'
 import * as actionsEmotion from 'src/store/actions/emotion'
 import * as actionsMember from 'src/store/actions/member'
+import * as actionsTag from 'src/store/actions/tag'
 import * as actionPoints from 'src/store/actions/points'
 import {
   addComment,
@@ -84,9 +85,6 @@ export default Object.assign({
   ADD_POST: ({ commit, dispatch, state, }, { params, }) => {
     return addPost(params)
   },
-  ADD_TAGS: ({ commit, dispatch, state, }, { params, }) => {
-    return addTags(params)
-  },
   CHECK_LOGIN_STATUS: ({ commit, dispatch, state, }, { params, }) => {
     return checkLoginStatus({ params, }).then(({ status, body, }) => {
       commit('SET_LOGGEIN_STATUS', { status, body, })
@@ -123,9 +121,6 @@ export default Object.assign({
   },
   DELETE_POST_SELF: ({ commit, dispatch, state, }, { id, }) => {
     return deletePostSelf(id)
-  },
-  DELETE_TAGS: ({ commit, dispatch, state, }, { params, }) => {
-    return deleteTags({ params, })
   },
   FETCH_COMMENT: ({ commit, dispatch, state, }, { params, }) => {
     return fetchComment({ params, }).then(({ status, body, }) => {
@@ -464,20 +459,6 @@ export default Object.assign({
       return { status, body, }
     })
   },
-  GET_TAGS: ({ commit, dispatch, state, }, { params, }) => {
-    return getTags({ params, }).then(({ status, body, }) => {
-      if (status === 200) {
-        commit('SET_TAGS', { tags: body, })
-      }
-    })
-  },
-  GET_TAGS_COUNT: ({ commit, dispatch, state, }) => {
-    return getTagsCount().then(({ status, body, }) => {
-      if (status === 200) {
-        commit('SET_TAGS_COUNT', { meta: body.meta, })
-      }
-    })
-  },
   HIDE_COMMENT: ({ commit, dispatch, state, }, { params, }) => {
     return hideComment({ params, })
   },
@@ -524,9 +505,6 @@ export default Object.assign({
         commit('SET_SEARCH', { searchResult, })
       })
   },
-  // SYNC_AVATAR: ({ commit, dispatch, state, }, { params, }) => {
-  //   return syncAvatar(params)
-  // },
   UPDATE_CLIENT_SIDE: ({ commit, dispatch, state, }) => {
     commit('SET_CLIENT_SIDE')
   },
@@ -563,9 +541,6 @@ export default Object.assign({
   UPDATE_POST: ({ commit, dispatch, state, }, { params, }) => {
     return updatePost({ params, })
   },
-  UPDATE_TAGS: ({ commit, dispatch, state, }, { params, }) => {
-    return updateTags({ params, })
-  },
   UPLOAD_IMAGE: ({ commit, dispatch, }, { file, type, }) => {
     debug('Got a action call to upload image.')
     return uploadImage(file, type)
@@ -582,4 +557,4 @@ export default Object.assign({
   INVITATION_SWITCH_OFF: ({ commit, dispatch, state, }, { params, }) => {
     commit('INVITATION_SWITCH_OFF', {})
   },
-}, actionsEmotion, actionsMember, actionPoints)
+}, actionsEmotion, actionsMember, actionsTag, actionPoints)

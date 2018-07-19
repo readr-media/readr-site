@@ -194,7 +194,7 @@
     sort = DEFAULT_SORT,
     keyword = '',
     stats = false,
-  }) => {
+  } = {}) => {
     return store.dispatch('GET_TAGS', {
       params: {
         max_result: max_result,
@@ -206,8 +206,14 @@
     })
   }
 
-  const getTagsCount = (store) => {
-    return store.dispatch('GET_TAGS_COUNT')
+  const getTagsCount = (store, {
+    keyword = '',
+  } = {}) => {
+    return store.dispatch('GET_TAGS_COUNT', {
+      params: {
+        keyword: keyword,
+      },
+    })
   }
 
   const getMembers = (store, { page, sort, keyword, type, }) => {
@@ -678,7 +684,7 @@
         this.sort = sort || this.sort
         this.page = page || this.page
         if (needUpdateCount) {
-          getTagsCount(this.$store)
+          getTagsCount(this.$store, { keyword: keyword, })
         }
         getTags(this.$store, {
           page: this.page,

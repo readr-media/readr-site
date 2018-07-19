@@ -27,11 +27,6 @@ export function addPost (params) {
   return post(url, params)
 }
 
-export function addTags (params) {
-  const url = `${host}/api/tags`
-  return post(url, params)
-}
-
 export function deletePost (id) {
   const url = `${host}/api/post/${id}`
   return del(url)
@@ -48,15 +43,6 @@ export function deletePosts ({ params, }) {
 
 export function deletePostSelf (id) {
   const url = `${host}/api/post-self/${id}`
-  return del(url)
-}
-
-export function deleteTags ({ params, }) {
-  let url = `${host}/api/tags`
-  const query = _buildQuery(params)
-  if (query && (query.length > 0)) {
-    url = url + `?${query}`
-  }
   return del(url)
 }
 
@@ -348,20 +334,6 @@ export function getProfile ({ params = {},}) {
   return fetchInStrict(url, { cookie: params.cookie, })
 }
 
-export function getTags ({ params = {},}) {
-  let url = `${host}/api/tags`
-  const query = _buildQuery(params)
-  if (query && (query.length > 0)) {
-    url = url + `?${query}`
-  }
-  return fetchInStrict(url, {})
-}
-
-export function getTagsCount () {
-  let url = `${host}/api/tags/count`
-  return fetchInStrict(url, {})
-}
-
 export function checkLoginStatus ({ params = {},}) {
   const url = `${host}/api/status`
 
@@ -506,11 +478,6 @@ export function updatePassword ({ params, }) {
 
 export function updatePost ({ params, }) {
   const url = `${host}/api/post`
-  return put(url, params)
-}
-
-export function updateTags ({ params, }) {
-  const url = `${host}/api/tags`
   return put(url, params)
 }
 
