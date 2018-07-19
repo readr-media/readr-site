@@ -2,8 +2,12 @@
   <div class="tagList">
     <div class="tagList__control">
       <div class="tagList__add">
-        <input v-model="addTag" type="text" :placeholder="$t('tag_list.WORDING_TAGLIST_ADD_PLACEHOLDER')">
-        <button :disabled="!tagNameValidated" @click="$_tagList_addTag" v-text="$t('tag_list.WORDING_TAGLIST_ADD')"></button>
+        <input v-model="addTag" type="text" :placeholder="$t('TAG_LIST.ADD_PLACEHOLDER')">
+        <button :disabled="!tagNameValidated" @click="$_tagList_addTag" v-text="$t('TAG_LIST.ADD')"></button>
+      </div>
+      <div class="tagList__search">
+        <input v-model="searchVal" type="text">
+        <button @click="$_tagList_search" v-text="$t('TAG_LIST.SEARCH')"></button>
       </div>
       <pagination-nav :totalPages="totalPages" :currPage.sync="currPage"></pagination-nav>
     </div>
@@ -11,17 +15,17 @@
       <thead>
         <tr>
           <th class="tagList__checkbox"><input type="checkbox" ref="checkboxSelectAll"  @click="$_tagList_toggleSelectAll"></th>
-          <th class="tagList__text"><span @click="$_tagList_orderBy('text')" v-text="$t('tag_list.WORDING_TAGLIST_TAG')"></span></th>
-          <th><span @click="$_tagList_orderBy('related_reviews')" v-text="$t('tag_list.WORDING_TAGLIST_REVIEW_COUNT')"></span></th>
-          <th><span @click="$_tagList_orderBy('related_news')" v-text="$t('tag_list.WORDING_TAGLIST_NEWS_COUNT')"></span></th>
+          <th class="tagList__text"><span @click="$_tagList_orderBy('text')" v-text="$t('TAG_LIST.TAG')"></span></th>
+          <th><span @click="$_tagList_orderBy('related_reviews')" v-text="$t('TAG_LIST.REVIEW_COUNT')"></span></th>
+          <th><span @click="$_tagList_orderBy('related_news')" v-text="$t('TAG_LIST.NEWS_COUNT')"></span></th>
           <th class="tagList__edit"></th>
           <th class="tagList__delete">
-            <button class="tagList__btn tagList__btn--multiple" v-text="$t('tag_list.WORDING_TAGLIST_DELETE')" @click="$_postList_deleteTags"></button>
+            <button class="tagList__btn tagList__btn--multiple" v-text="$t('TAG_LIST.DELETE')" @click="$_postList_deleteTags"></button>
           </th>
           <th class="tagList__sort">
             <select name="" id="">
-              <option value="-updated_at" v-text="$t('tag_list.WORDING_TAGLIST_UPDATE_AT')"></option>
-              <option value="-created_at" v-text="$t('tag_list.WORDING_TAGLIST_PUBLISH_AT')"></option>
+              <option value="-updated_at" v-text="$t('TAG_LIST.UPDATE_AT')"></option>
+              <option value="-created_at" v-text="$t('TAG_LIST.PUBLISH_AT')"></option>
             </select>
           </th>
         </tr>
@@ -32,13 +36,13 @@
           <td ref="tagTextBlock" class="tagList__text">
             <span ref="originTagText" @click="$_tagList_editTag" v-text="t.text"></span>
             <input ref="inputTagText" type="text" :value="t.text">
-            <button @click="$_tagList_confirmEdit($event, t.id)" v-text="$t('tag_list.WORDING_TAGLIST_CONFIRM')"></button>
-            <button @click="$_tagList_cancel" v-text="$t('tag_list.WORDING_TAGLIST_CANCEL')"></button>
+            <button @click="$_tagList_confirmEdit($event, t.id)" v-text="$t('TAG_LIST.CONFIRM')"></button>
+            <button @click="$_tagList_cancel" v-text="$t('TAG_LIST.CANCEL')"></button>
           </td>
           <td v-text="t.relatedReviews"></td>
           <td v-text="t.relatedNews"></td>
-          <td class="tagList__edit"><button class="tagList__btn tagList__btn--single" @click="$_tagList_editTagBtn" v-text="$t('tag_list.WORDING_TAGLIST_EDIT')"></button></td>
-          <td class="tagList__delete"><button class="tagList__btn tagList__btn--single" @click="$_tagList_deleteTag(t.id)" v-text="$t('tag_list.WORDING_TAGLIST_DELETE')"></button></td>
+          <td class="tagList__edit"><button class="tagList__btn tagList__btn--single" @click="$_tagList_editTagBtn" v-text="$t('TAG_LIST.EDIT')"></button></td>
+          <td class="tagList__delete"><button class="tagList__btn tagList__btn--single" @click="$_tagList_deleteTag(t.id)" v-text="$t('TAG_LIST.DELETE')"></button></td>
           <td></td>
         </tr>
       </tbody>
@@ -83,6 +87,7 @@
         addTag: '',
         currPage: 1,
         checkedIems: [],
+        searchVal: '',
       }
     },
     computed: {
@@ -142,7 +147,10 @@
         } else {
           order = field
         }
-        this.$emit('filterChanged', { sort: order, })
+        this.$emit('filterChanged', { sort: order, keyword: this.searchVal, })
+      },
+      $_tagList_search () {
+        this.$emit('filterChanged', { sort: this.sort, keyword: this.searchVal, })
       },
       $_tagList_toggleHandler (event, id) {
         if (event.target.checked) {
@@ -209,8 +217,9 @@
       height 15px
   &__control
     display flex
-    justify-content space-between
-  &__add
+    justify-content flex-start
+    align-items center
+  &__add, &__search
     input
       width 250px
       height 25px
@@ -229,6 +238,10 @@
       border-radius 4px
     button:disabled
       background-color #ccc
+  &__search
+    margin-left 50px
+    input
+      width 150px
   &__checkbox
     width 15px
     padding-right 10px

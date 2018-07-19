@@ -408,7 +408,7 @@
           case 'videos':
             return this.updatePostList({ page: this.currPage, sort: this.currSort, })
           case 'tags':
-            return this.updateTagList({ page: this.currPage, sort: this.currSort, })
+            return this.updateTagList({ keyword: keyword, page: this.currPage, sort: this.currSort, needUpdateCount: true, })
           
         }
       },
@@ -440,6 +440,7 @@
               getPostsCount(this.$store, {
                 where: { publish_status: [ POST_PUBLISH_STATUS.UNPUBLISHED, POST_PUBLISH_STATUS.PUBLISHED, POST_PUBLISH_STATUS.SCHEDULING, POST_PUBLISH_STATUS.PENDING, ], type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ], },
               }),
+              getTags(this.$store, { stats: true, }),
             ])
             .then(() => this.loading = false)
             .catch(() => this.loading = false)
@@ -673,7 +674,7 @@
             break
         }
       },
-      updateTagList ({ sort, page, needUpdateCount = false, }) {
+      updateTagList ({ sort, page, keyword = '', needUpdateCount = false, }) {
         this.sort = sort || this.sort
         this.page = page || this.page
         if (needUpdateCount) {
@@ -682,6 +683,7 @@
         getTags(this.$store, {
           page: this.page,
           sort: this.sort,
+          keyword: keyword,
           stats: true,
         })
         .then(() => this.loading = false)
