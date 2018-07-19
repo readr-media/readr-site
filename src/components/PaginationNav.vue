@@ -110,6 +110,7 @@
 </script>
 <style lang="stylus" scoped>
   .pagination-nav
+    margin 0 0 0 auto
     font-size 0.875rem
     color #808080
     > div

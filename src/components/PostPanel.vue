@@ -412,16 +412,13 @@
         this.post.og_title = this.post.og_title || ''
         this.post.og_description = this.post.og_description || ''
         this.post.og_image = this.post.og_image || ''
-
         Promise.all([ this.$_postPanel_getLinkMeta(), this.$_postPanel_addNewTag(), ])
         .then((value) => {
           const unionTag = value[1]
           const now = new Date(Date.now())
 
-          if (unionTag && unionTag.length !== 0) {
-            this.post.tags = unionTag
-          }
-
+          this.post.tags = unionTag || []
+          
           if (publishStatus === POST_PUBLISH_STATUS.PUBLISHED && !this.publishedDate) {
             this.post.published_at = now
           } else if (this.publishedDate) {

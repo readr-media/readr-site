@@ -1,5 +1,5 @@
 <template>
-  <div class="post-panel-tag">
+  <div ref="tagsContainer" class="post-panel-tag">
     <div class="post-panel-tag__list" :class="{ disabled: disabled }" @mousedown.prevent="$_postPanelTag_focusInput">
       <template>
         <div v-for="t in tagsSelected" :key="t.id" class="tag-selected">
@@ -90,14 +90,16 @@
           this.$refs.tagsSearched.classList.remove('hidden')
         })
       },
-      tags () {
-        this.$_postPanelTag_calcTagsSearchedDirection()
+      tagsNeedAdd () {
+        this.tagsSearchedDirection = this.$_postPanelTag_calcTagsSearchedDirection() || '100%'
+      },
+      tagsSelected () {
+        this.tagsSearchedDirection = this.$_postPanelTag_calcTagsSearchedDirection() || '100%'
       },
     },
     beforeMount () {
       getTags(this.$store, { stats: true, })
     },
-    
     methods: {
       $_postPanelTag_addToSelected (id) {
         this.$emit('addToSelected', find(this.tags, { id: id, }))
@@ -105,11 +107,15 @@
         this.$refs.tagsSearched.classList.add('hidden')
       },
       $_postPanelTag_calcTagsSearchedDirection () {
-        const tagBottom = document.querySelector('.input--tag').getBoundingClientRect().bottom || 0
-        const actionTop = document.querySelector('.post-panel__action').getBoundingClientRect().top || 0
-        const actionEleStyle = window.getComputedStyle ? getComputedStyle(document.querySelector('.post-panel__action'), null) : document.querySelector('.post-panel__action').currentStyle
-        const marginTop = parseInt(actionEleStyle.marginTop) || 0
-        return (actionTop - ( tagBottom + marginTop) > this.$refs.tagsSearched.offsetHeight) ? '-1px' : `29px`
+        this.$nextTick(() => {
+          const tagsContainer = this.$refs.tagsContainer
+          const tagsContainerHeight = tagsContainer.offsetHeight || 0
+          const tagBottom = document.querySelector('.input--tag').getBoundingClientRect().bottom || 0
+          const actionTop = document.querySelector('.post-panel__action').getBoundingClientRect().top || 0
+          const actionEleStyle = window.getComputedStyle ? getComputedStyle(document.querySelector('.post-panel__action'), null) : document.querySelector('.post-panel__action').currentStyle
+          const marginTop = parseInt(actionEleStyle.marginTop) || 0
+          return (actionTop - ( tagBottom + marginTop) > this.$refs.tagsSearched.offsetHeight) ? '-1px' : `${tagsContainerHeight}px`
+        })
       },
       $_postPanelTag_closeSearched () {
         this.$refs.tagsSearched.classList.add('hidden')
@@ -152,6 +158,7 @@
     padding .1em .5em
     transition background-color .5s linear
     > input
+      width 100px
       padding .2em .5em
       border none
       outline none
