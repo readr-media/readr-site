@@ -63,7 +63,12 @@ export function getHost () {
 }
 
 export function getArticleAuthorId (articleData) {
-  return _.get(articleData, 'author.id') || _.get(articleData, 'author')
+  debug('Going to parse author data.')
+  const author = _.get(articleData, 'author.id')
+  debug(_.get(articleData, 'author'))
+  debug(_.get(articleData, 'author.id'))
+  debug(isNaN(`${author}`))
+  return !isNaN(`${author}`) ? author : _.get(articleData, 'author')
 }
 
 export function getArticleAuthorNickname (articleData) {

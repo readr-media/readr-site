@@ -1,84 +1,51 @@
 <template>
-  <div class="baselightbox-post--review" v-if="isContentEmpty">
-    No content found. Or, you may not have the right to fetch this content? 
+  <div class="baselightbox-post--review no-content" v-if="isContentEmpty">
+    <span v-if="isMemo && !isMemoPaid" v-text="$t('POST_CONTENT.GO_JOIN_MEMO')" class="go-join" @click="goJoin"></span>
+    <span v-else v-text="$t('POST_CONTENT.NO_PERMISSION')"></span>
   </div>
-  <div :class="[ { 'baselightbox-post--review': !isNews }, { 'baselightbox-post--news': isNews } ]" v-else>
+  <div :class="[ { 'baselightbox-post--review': !isNews && !isMemo }, { 'baselightbox-post--news': isNews || isMemo } ]" v-else>
     <!-- template for post type is news -->
-    <template v-if="isNews">
-      <img class="baselightbox-post__leading-image" v-if="post.ogImage && isClientSide" :src="getImageUrl(post.ogImage)" @load="setLeadingImageOrientation(getImageUrl(post.ogImage), $event)">
-      <div class="baselightbox-post__article-container">
-        <article class="baselightbox-post__article">
-          <section class="author-info">
-            <router-link :to="`/profile/${authorId}`">
-              <img class="author-info__thumbnail" :src="authorThumbnailImg" v-if="isClientSide">
-            </router-link>
-            <div class="author-info__meta">
-              <p class="author-info__date" v-text="!isPostEmpty ? updatedAtYYYYMMDD(post.updatedAt) : ''"></p>
-              <router-link class="author-info__author-nickname" :to="`/profile/${authorId}`" v-text="authorNickname"></router-link>
-            </div>
-          </section>
-          <section class="article-content">
-            <h1 v-text="!isPostEmpty ? post.title : ''"></h1>
-            <template v-for="p in postContent">
-              <figure v-if="isImg(p)">
-                <img v-if="isClientSide" :src="getImgSrc(p)" alt="post-content-img" @load="setContentImageOrientation(getImgSrc(p), $event)">
-              </figure>
-              <p v-else v-html="p"></p>
-            </template>
-          </section>
-        </article>
-        <div class="nav-container">
-          <AppArticleNav :postId="post.id" :postRefId="assetRefId" :articleType="post.flag" :commentCount="commentCount"/>
-        </div>
-      </div>
-    </template>
+    <BaseLightBoxTemplateNews v-if="isNews || isMemo"
+      :assetRefId="assetRefId"
+      :authorId="authorId"
+      :authorThumbnailImg="authorThumbnailImg"
+      :authorNickname="authorNickname"
+      :commentCount="commentCount"
+      :isPostEmpty="isPostEmpty"    
+      :post="post"
+      :postContent="postContent"></BaseLightBoxTemplateNews>
     <!-- template for post type is review and others -->
-    <template v-if="!isNews">
-      <article class="baselightbox-post__article">
-        <img class="baselightbox-post__author-thumbnail" :src="authorThumbnailImg" v-if="isClientSide">
-        <section class="article-content">
-          <h2 class="article-content__date" v-text="!isPostEmpty ? updatedAtYYYYMMDD(post.updatedAt) : ''"></h2>
-          <h2 class="article-content__author-nickname" v-text="authorNickname"></h2>
-          <h1 class="article-content__title" v-text="!isPostEmpty ? post.title : ''"></h1>
-          <div class="article-content__paragraph-container" v-html="!isPostEmpty ? post.content : ''"></div>
-          <a class="article-content__source-link" :href="post.link" target="_blank" v-text="post.linkTitle"></a>
-          <AppArticleNav
-            :postId="post.id"
-            :postRefId="assetRefId"
-            :articleType="post.flag"
-            :commentCount="commentCount"
-            :inLightbox="true" @toogleComment="toogleComment"/>
-        </section>
-      </article>
-      <CommentContainer class="baselightbox-post__comment" v-show="showComment" v-if="shouldRenderComment"
-        :asset="asset" :assetId="post.id" :assetRefId="assetRefId"></CommentContainer>
-    </template>
+    <BaseLightBoxTemplatePost v-else
+      :assetRefId="assetRefId"
+      :authorThumbnailImg="authorThumbnailImg"
+      :authorNickname="authorNickname"
+      :commentCount="commentCount"
+      :isPostEmpty="isPostEmpty"
+      :post="post"></BaseLightBoxTemplatePost>
   </div>
 </template>
 
 <script>
-import { POST_TYPE, } from '../../api/config'
-import { get, find,  map, isEmpty, } from 'lodash'
-import { updatedAtYYYYMMDD, isClientSide, getArticleAuthorId, getArticleAuthorNickname, getArticleAuthorThumbnailImg, getImageUrl, onImageLoaded, } from '../util/comm'
-import AppArticleNav from 'src/components/AppArticleNav.vue'
-import CommentContainer from 'src/components/comment/CommentContainer.vue'
+import { POST_TYPE, } from 'api/config'
+import { get, find, map, isEmpty, } from 'lodash'
+import { getArticleAuthorId, getArticleAuthorNickname, getArticleAuthorThumbnailImg, isClientSide, } from 'src/util/comm'
+import BaseLightBoxTemplateNews from 'src/components/BaseLightBoxTemplateNews.vue'
+import BaseLightBoxTemplatePost from 'src/components/BaseLightBoxTemplatePost.vue'
 import sanitizeHtml from 'sanitize-html'
 
 const debug = require('debug')('CLIENT:BaseLightBoxPost')
 const dom = require('xmldom').DOMParser
 const seializer  = require('xmldom').XMLSerializer
 
+const switchOnDeductionPanel = (store, item) => store.dispatch('SWITCH_ON_CONSUME_PANEL', { active: true, item, })
+
 export default {
   name: 'BaseLightBoxPost',
   components: {
-    AppArticleNav,
-    CommentContainer,
+    BaseLightBoxTemplateNews,
+    BaseLightBoxTemplatePost,
   },
   computed: {
-    asset () {
-      debug('this.asset', `${get(this.$store, 'state.setting.HOST')}/${get(this.post, 'flag') || 'post'}/${this.post.id}`)
-      return `${get(this.$store, 'state.setting.HOST')}/${get(this.post, 'flag') === 'memo' ? `series/${get(this.$route, 'params.slug')}` : 'post'}/${this.post.id}`
-    },
     assetRefId () {
       return get(this.post, 'project.id')
     },
@@ -91,12 +58,19 @@ export default {
     authorThumbnailImg () {
       return getArticleAuthorThumbnailImg(this.post)
     },
+    isClientSide,
     isPostEmpty () {
       return isEmpty(this.post)
     },
-    isClientSide,
     isNews () {
-      return get(this.post, 'flag') === 'memo' || get(this.post, 'type', POST_TYPE.REVIEW) === POST_TYPE.NEWS
+      return get(this.post, 'type', POST_TYPE.REVIEW) === POST_TYPE.NEWS
+    }, 
+    isMemo () {
+      return get(this.post, 'flag') === 'memo'
+        || (this.$route.fullPath.split('/')[ 1 ] === 'series' && get(this.$route, 'params.slug') && get(this.$route, 'params.subItem'))
+    },   
+    isMemoPaid () {
+      return get(this.post, 'project.paid')
     },    
     postContent () {
       if (!this.post.content || this.post.content.length === 0) { return [] }
@@ -112,38 +86,28 @@ export default {
   data () {
     return {
       isContentEmpty: true,
-      showComment: true,
-      shouldRenderComment: false,
     }
   },
   methods: {
     get,
-    getImageUrl,
-    updatedAtYYYYMMDD,
-    isImg (content) {
-      const regexp = /<img([\w\W]+?)\/>/
-      return regexp.test(content)
-    },
-    getImgSrc (content) {
-      const regexp = /<img.*?src=['"](.*?)['"]/
-      return getImageUrl(regexp.exec(content)[1])
-    },
-    setLeadingImageOrientation (src, event) {
-      onImageLoaded(src).then(({ width, height, }) => {
-        width < height ? event.target.style.objectFit = 'contain' : event.target.style.objectFit = 'cover'
-      }).catch(() => { event.target.style.objectFit = 'cover' })
-    },
-    setContentImageOrientation (src, event) {
-      onImageLoaded(src).then(({ width, height, }) => {
-        width < height ? event.target.classList.add('portrait') : event.target.classList.add('landscape')
-      }).catch(() => { event.target.classList.add('landscape') })
-    },
-    toogleComment () {
-      this.showComment = !this.showComment
+    goJoin () {
+      if (this.post && this.isMemo && !this.isMemoPaid) {
+        switchOnDeductionPanel(this.$store, this.post)
+      }      
     },
   },
   mounted () {
-    this.isContentEmpty = !this.post
+    if (!this.isPostEmpty) {
+      debug(this.isMemo && !this.isMemoPaid && !this.isNews)      
+      if (this.isMemo && !this.isMemoPaid) {
+        this.isContentEmpty = true
+        switchOnDeductionPanel(this.$store, this.post)
+      } else {
+        this.isContentEmpty = false
+      }
+    } else {
+      this.isContentEmpty = true
+    }
   },
   props: {
     post: {
@@ -153,14 +117,18 @@ export default {
   watch: {
     post () {
       debug('Mutation detected: post', this.post)
-      if (!this.post) {
+      if (!this.isPostEmpty) {
+        if (this.isMemo && !this.isMemoPaid) {
+          this.isContentEmpty = true
+          switchOnDeductionPanel(this.$store, this.post)
+        } else {
+          this.isContentEmpty = false
+        }
+      } else {
         /**
          * Client may not have the right to fetch this post content.
          */
-         this.isContentEmpty = true
-      } else if (this.post.id && !this.isNews ) {
-        this.shouldRenderComment = true
-        this.showComment = true
+        this.isContentEmpty = true
       }
     },
   },
@@ -174,6 +142,21 @@ export default {
     height 620.5px
     padding 26px 120px 26px 91px
     overflow-y scroll
+    &.no-content
+      display flex
+      justify-content center
+      align-items center
+      .go-join
+        padding 10px 20px
+        background-color #d8ca21
+        cursor pointer
+        box-shadow 0 0 10px rgba(0,0,0,0.3)
+        border-radius 2px
+        color #fff
+        &:hover
+          background-color #e8dc4c
+
+
     .baselightbox-post
       &__article
         display flex

@@ -2,8 +2,9 @@ import _ from 'lodash'
 import Vue from 'vue'
 const { camelize, } = require('humps')
 const debug = require('debug')('CLIENT:STORE:mutations')
+import * as mutationsPoints from 'src/store/mutations/points'
 
-export default {
+export default Object.assign({
   ADD_ITEM_TO_FOLLOWING_BY_USER: (state, params) => {
     state.followingByUser[params.userId].push(params.item)
   },
@@ -229,4 +230,4 @@ export default {
   INVITATION_SWITCH_OFF: (state) => {
     state['invitation_switch_status'] = false
   },
-}
+}, mutationsPoints)

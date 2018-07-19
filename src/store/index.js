@@ -11,6 +11,10 @@ export function createStore () {
     state: {
       'customEditors': [],
       'commentCount': [],
+      'consumeFlag': {
+        "active": false,
+        "item": {},
+      },
       'emotionByResource': {
         'memo': {
           'like': [],

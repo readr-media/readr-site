@@ -10,6 +10,7 @@
           <router-view class="view"></router-view>
         </transition>
       </main>
+      <Consume></Consume>
     </div>
   </div>
 </template>
@@ -19,6 +20,7 @@
   import { logTrace, } from 'src/util/services'
   import AppHeader from 'src/components/header/AppHeader.vue'
   import AppNavAside from 'src/components/AppNavAside.vue'
+  import Consume from 'src/components/point/Consume.vue'
   import Tap from 'tap.js'
   
   // const debug = require('debug')('CLIENT:App')
@@ -27,6 +29,7 @@
     components: {
       'app-header': AppHeader,
       AppNavAside,
+      Consume,
     },
     computed: {
       currUser () {
