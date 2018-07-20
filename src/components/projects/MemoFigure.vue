@@ -54,9 +54,7 @@ export default {
   },
   methods: {
     $_projectsFigureProgress_openLightBox () {
-      switchOnDeductionPanel(this.$store, this.memo).then(() => {
-        this.$router.push(this.memoURL)
-      })
+      switchOnDeductionPanel(this.$store, this.memo)
     },
     navigateToMemo () {
       this.deducted ? this.$router.push(this.memoURL) : this.$_projectsFigureProgress_openLightBox()

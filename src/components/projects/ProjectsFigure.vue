@@ -72,7 +72,7 @@ export default {
       return data ? data.followers : []
     },
     isFollowed () {
-      return this.$store.state.isLoggedIn && this.followers.indexOf(this.$store.state.profile.id) !== -1 
+      return this.$store.state.isLoggedIn && this.followers && this.followers.indexOf(this.$store.state.profile.id) !== -1 
     },
     isLoggedIn () {
       return this.$store.state.isLoggedIn

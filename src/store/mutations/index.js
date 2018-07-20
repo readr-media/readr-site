@@ -53,7 +53,7 @@ export default Object.assign({
     state['followingByResource'][resourceType] = following
   },
   UPDATE_FOLLOWING_BY_RESOURCE: (state, { resourceType, following, }) => {
-    following.forEach(follow => {
+    following && following.forEach(follow => {
       state['followingByResource'][resourceType].push(follow)
     })
   },

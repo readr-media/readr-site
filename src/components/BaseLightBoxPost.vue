@@ -1,6 +1,6 @@
 <template>
   <div class="baselightbox-post--review no-content" v-if="isContentEmpty">
-    <span v-if="isMemo && !isMemoPaid" v-text="$t('POST_CONTENT.GO_JOIN_MEMO')" class="go-join" @click="goJoin"></span>
+    <span v-if="isMemo && !isMemoPaid && !isPostEmpty" v-text="$t('POST_CONTENT.GO_JOIN_MEMO')" class="go-join" @click="goJoin"></span>
     <span v-else v-text="$t('POST_CONTENT.NO_PERMISSION')"></span>
   </div>
   <div :class="[ { 'baselightbox-post--review': !isNews && !isMemo }, { 'baselightbox-post--news': isNews || isMemo } ]" v-else>
@@ -91,7 +91,7 @@ export default {
   methods: {
     get,
     goJoin () {
-      if (this.post && this.isMemo && !this.isMemoPaid) {
+      if (!this.isPostEmpty && this.isMemo && !this.isMemoPaid) {
         switchOnDeductionPanel(this.$store, this.post)
       }      
     },
