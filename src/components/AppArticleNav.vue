@@ -84,7 +84,7 @@ export default {
       return get(find(get(this.$store, [ 'state', 'emotionByResource', this.articleType, 'dislike', ], []), { resourceID: this.postId, }), 'count', 0 ) || 0
     },
     isFollow () {
-      return this.$store.state.isLoggedIn && this.postFollowers.indexOf(this.$store.state.profile.id) !== -1
+      return this.$store.state.isLoggedIn && this.postFollowers && this.postFollowers.indexOf(this.$store.state.profile.id) !== -1
     },
     isLike () {
       const ids = get(find(get(this.$store, [ 'state', 'emotionByResource', this.articleType, 'like', ], []), { resourceID: this.postId, }), 'followers', []) || [] 
