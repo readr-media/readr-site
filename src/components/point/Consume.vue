@@ -9,9 +9,13 @@
           <strong v-text="get(targetItem, 'project.memoPoints', 0) || 0"></strong>
           <span v-text="$t('PROJECT.JOIN_CONTENT_POINT')"></span>
         </h2>
-        <button v-text="memoDeducting ? `${$t('PROJECT.DEDUCTING')} ...` : $t('PROJECT.JOIN_CONFIRM')"
+        <h2>
+          <span v-if="isDepositNeeded"
+            v-text="this.$t('PROJECT.WARNING_DEPOSIT_PREFIX') + this.currentPoints + this.$t('PROJECT.WARNING_DEPOSIT_POSTFIX')"></span>
+        </h2>
+        <button v-text="btnWording"
           :disabled="memoDeducting"
-          @click="memoDeduct()">
+          @click="clickHandler">
         </button>
       </div>
     </div>
@@ -19,9 +23,13 @@
 </template>
 <script>
   import BaseLightBox from 'src/components/BaseLightBox.vue'
-  import { POINT_OBJECT_TYPE, } from 'api/config'
-  import { get, } from 'lodash'
+  import { POINT_OBJECT_TYPE, DONATION_POINT_MIN_LINE, } from 'api/config'
+  import { ROLE_MAP, } from 'src/constants'
+  import { filter, get, } from 'lodash'
 
+  const DEFAULT_DONATION_POINT_MIN_LINE = DONATION_POINT_MIN_LINE || -100
+
+  const debug = require('debug')('CLIENT:Consume')
   const deductPoints = (store, { objectId, memoPoints, } = {}) => {
     return store.dispatch('ADD_REWARD_POINTS_TRANSACTIONS', {
       params: {
@@ -32,6 +40,7 @@
       },
     })
   }  
+  const fetchCurrPoints = store => store.dispatch('GET_POINT_CURRENT', { params: {}, })
   const switchOffDeductionPanel = store => store.dispatch('SWITCH_OFF_CONSUME_PANEL', { active: false, })
   
   export default {
@@ -40,12 +49,34 @@
       BaseLightBox,
     },
     computed: {
-      isMemoPaid () {
-        return get(this.targetItem, 'project.paid')
+      btnWording () {
+        if (this.isDepositNeeded) {
+          debug('WARN: YOU GOTTA DEPOSIT!!!!!!', DEFAULT_DONATION_POINT_MIN_LINE)
+          debug('WARN: YOU GOTTA DEPOSIT!!!!!!', this.$t('PROJECT.WARNING_DEPOSIT_PREFIX') + this.currentPoints + this.$t('PROJECT.WARNING_DEPOSIT_POSTFIX'))
+          return this.$t('PROJECT.DEPOSIT')
+        } else {
+
+          return this.memoDeducting ? `${this.$t('PROJECT.DEDUCTING')} ...` : this.$t('PROJECT.JOIN_CONFIRM')
+        }
       },
+      currentPoints () {
+        return get(this.$store, 'state.personalPoints.points', 0)
+      },      
       isActive () {
         return get(this.$store, 'state.consumeFlag.active', false)
       },
+      isDonationActive () {
+        return get(this.$store, 'state.setting.DONATION_IS_DEPOSIT_ACTIVE', false)
+      },      
+      isMemoPaid () {
+        return get(this.targetItem, 'project.paid')
+      },
+      isDepositNeeded () {
+        return this.isDonationActive && this.currentPoints <= DEFAULT_DONATION_POINT_MIN_LINE
+      },
+      profile () {
+        return get(this.$store, 'state.profile', {})
+      },      
       targetItem () {
         return get(this.$store, 'state.consumeFlag.item', {})
       },
@@ -58,6 +89,17 @@
     },
     methods: {
       get,
+      clickHandler () {
+        if (this.isDepositNeeded) {
+          switchOffDeductionPanel(this.$store).then(() => {
+            this.showMemoDeduction = false
+            const memberCenter = get(filter(ROLE_MAP, { key: get(this.$store, 'state.profile.role'), }), '0.route', 'member')
+            this.$router.push(`/${memberCenter}/records/point-manager`)
+          })
+        } else {
+          this.memoDeduct()
+        }
+      },
       memoDeduct () {
         this.memoDeducting = true
         deductPoints(this.$store, {
@@ -72,7 +114,11 @@
         this.showMemoDeduction = false
       },
     },
-    mounted () {},
+    mounted () {
+      fetchCurrPoints(this.$store).then(() => {
+        debug('GOT CURRENT POINT:', this.currentPoints)
+      })
+    },
     watch: {
       isActive () {
         this.isActive && (this.showMemoDeduction = true)
@@ -108,6 +154,7 @@
       h2
         margin 0
         font-size 1.125rem
+        line-height normal
         strong
           color #fff
           font-size 1.875rem

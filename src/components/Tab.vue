@@ -11,7 +11,12 @@
 <script>
   export default {
     name: 'AppTab',
-    props: [ 'tabs', ],
+    props: {
+      tabs: {},
+      defaultTab: {
+        default: 0,
+      },
+    },
     data () {
       return {
         activeItem: 0,
@@ -30,7 +35,9 @@
         this.$emit('update:tabCurrIndex', val)
       },
     },
-    mounted () {},
+    mounted () {
+      this.defaultTab && (this.activeItem = this.defaultTab)
+    },
     methods: {
       navClickHandler (itemIndex) {
         this.activeItem = itemIndex

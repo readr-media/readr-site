@@ -129,6 +129,9 @@ export default {
     'JOIN_CONTENT_2': '加入此專題需要',
     'JOIN_CONTENT_POINT': '點',
     'PROGRESS': '目前進度',
+    'DEPOSIT': '前往儲值',
+    'WARNING_DEPOSIT_PREFIX': '您目前點數不足（餘 ',
+    'WARNING_DEPOSIT_POSTFIX': ' 點）',
   },
   'header': {
     'WORDING_HEADER_LOGIN' : '登入',

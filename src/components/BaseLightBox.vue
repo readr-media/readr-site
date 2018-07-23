@@ -70,8 +70,10 @@
     methods: {
       $_baseLightBox_close () {
         if (pathToRegexp('/post/:postId').test(this.$route.path) || pathToRegexp('/series/:id/:subItem?').test(this.$route.path)) {
+          preventScroll.off()
           this.$emit('closeLightBox')
         } else {
+          preventScroll.off()
           this.$emit('update:showLightBox', false)
         }
       },

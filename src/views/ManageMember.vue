@@ -2,39 +2,69 @@
   <div class="backstage member">
     <div class="backstage-container">
       <app-about :profile="profile"></app-about>
-      <app-tab class="backstage__tab" :tabs="tabs">
+      <app-tab class="backstage__tab" :tabs="tabs" :defaultTab="defaultTab">
         <following-list-tab slot="0"></following-list-tab>
+        <PointManager slot="1" v-if="isDonationActive"></PointManager>
       </app-tab>
     </div>
   </div>
 </template>
 <script>
   import { get, } from 'lodash'
-  import About from '../components/member/About.vue'
-  import FollowingListInTab from '../components/FollowingListInTab.vue'
-  import Tab from '../components/Tab.vue'
+  import About from 'src/components/member/About.vue'
+  import FollowingListInTab from 'src/components/FollowingListInTab.vue'
+  import PointManager from 'src/components/point/PointManager.vue'
+  import Tab from 'src/components/Tab.vue'
 
-  // const MAXRESULT = 20
-  // const DEFAULT_PAGE = 1
-  // const DEFAULT_SORT = '-updated_at'
+  // const debug = require('debug')('CLIENT:AppMember')
 
   export default {
     name: 'AppMember',
+    metaInfo () {
+      return {
+        isStripeNeeded: this.isStripeRequired,
+      }
+    },      
     components: {
       'app-about': About,
       'app-tab': Tab,
       'following-list-tab': FollowingListInTab,
+      PointManager,
     },
     data () {
       return {
-        tabs: [
-          this.$t('tab.WORDING_TAB_FOLLOW_RECORD'),
-        ],
+        defaultTab: 0,
       }
     },
     computed: {
+      isDonationActive () {
+        return get(this.$store, 'state.setting.DONATION_IS_DEPOSIT_ACTIVE', false)
+      },      
+      isStripeRequired () {
+        return get(this.$store, 'state.isStripeRequired', false)
+      },       
       profile () {
-        return get(this.$store, [ 'state', 'profile', ], {})
+        return get(this.$store, 'state.profile', {})
+      },
+      tabs () {
+        const defaultTabs = [
+          this.$t('tab.WORDING_TAB_FOLLOW_RECORD'),
+        ]
+        this.isDonationActive && defaultTabs.push(this.$t('tab.WORDING_TAB_REWARD_POINTS_RECORD'))
+        return defaultTabs
+      },           
+    },
+    beforeMount () {
+      if (get(this.$route, 'params.panel')) {
+        this.activePanel = get(this.$route, 'params.panel')
+        if (get(this.$route, 'params.tool') === 'point-manager' && this.isDonationActive) {
+          this.defaultTab = 1
+        }
+      }      
+    },
+    watch: {
+      isStripeRequired () {
+        this.$forceUpdate()
       },
     },
   }
