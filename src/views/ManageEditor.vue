@@ -11,7 +11,7 @@
         @openPanel="$_editor_openPanel">
       </control-bar>
       <template v-if="activePanel === 'records'">
-        <app-tab class="backstage__tab" :tabs="tabs" @changeTab="$_editor_tabHandler">
+        <app-tab class="backstage__tab" :tabs="tabs" @changeTab="$_editor_tabHandler" :defaultTab="defaultTab">
           <post-list-tab
             slot="0"
             :posts="posts"
@@ -27,6 +27,7 @@
             @filterChanged="$_editor_filterHandler">
           </post-list-tab>
           <following-list-tab slot="2"></following-list-tab>
+          <PointManager slot="3" v-if="isDonationActive"></PointManager>
         </app-tab>
       </template>
       <template v-else-if="activePanel === 'posts'">
@@ -93,6 +94,7 @@
   import AlertPanelB from '../components/AlertPanel.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
   import FollowingListInTab from '../components/FollowingListInTab.vue'
+  import PointManager from 'src/components/point/PointManager.vue'
   import PostList from '../components/PostList.vue'
   import PostListDetailed from '../components/PostListDetailed.vue'
   import PostListInTab from '../components/PostListInTab.vue'
@@ -202,6 +204,11 @@
 
   export default {
     name: 'AppEditor',
+    metaInfo () {
+      return {
+        isStripeNeeded: this.isStripeRequired,
+      }
+    },      
     components: {
       'alert-panel': AlertPanelB,
       'app-about': About,
@@ -215,6 +222,7 @@
       'post-panel': PostPanel,
       'tag-list': TagList,
       'video-list': VideoList,
+      PointManager,
     },
     data () {
       return {
@@ -224,6 +232,7 @@
         config: {
           type: POST_TYPE,
         },
+        defaultTab: 0,
         isPublishPostInEditor: false,
         itemsStatus: undefined,
         itemsSelected: [],
@@ -239,14 +248,15 @@
         showAlert: false,
         showDraftList: false,
         showEditor: false,
-        tabs: [
-          this.$t('tab.WORDING_TAB_REVIEW_RECORD'),
-          this.$t('tab.WORDING_TAB_NEWS_RECORD'),
-          this.$t('tab.WORDING_TAB_FOLLOW_RECORD'),
-        ],
       }
     },
     computed: {
+      isDonationActive () {
+        return _.get(this.$store, 'state.setting.DONATION_IS_DEPOSIT_ACTIVE', false)
+      },   
+      isStripeRequired () {
+        return _.get(this.$store, 'state.isStripeRequired', false)
+      },         
       itemsSelectedID () {
         const items = []
         _.forEach(this.itemsSelected, (item) => {
@@ -263,6 +273,15 @@
       profile () {
         return _.get(this.$store, [ 'state', 'profile', ], {})
       },
+      tabs () {
+        const defaultTabs = [
+          this.$t('tab.WORDING_TAB_REVIEW_RECORD'),
+          this.$t('tab.WORDING_TAB_NEWS_RECORD'),
+          this.$t('tab.WORDING_TAB_FOLLOW_RECORD'),
+        ]
+        this.isDonationActive && defaultTabs.push(this.$t('tab.WORDING_TAB_REWARD_POINTS_RECORD'))
+        return defaultTabs
+      },      
       tags () {
         return _.get(this.$store, [ 'state', 'tags', ], [])
       },
@@ -284,6 +303,12 @@
       ])
       .then(() => this.loading = false)
       .catch(() => this.loading = false)
+      if (_.get(this.$route, 'params.panel')) {
+        this.activePanel = _.get(this.$route, 'params.panel')
+        if (_.get(this.$route, 'params.tool') === 'point-manager' && this.isDonationActive) {
+          this.defaultTab = 3
+        }
+      }      
     },
     methods: {
       
@@ -620,6 +645,11 @@
         })
         .then(() => this.loading = false)
         .catch(() => this.loading = false)
+      },
+    },
+    watch: {
+      isStripeRequired () {
+        this.$forceUpdate()
       },
     },
   }

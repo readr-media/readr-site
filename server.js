@@ -209,6 +209,8 @@ function render (req, res, next) {
       TAG_ACTIVE: config.TAG_ACTIVE, 
       GOOGLE_RECAPTCHA_SITE_KEY: config.GOOGLE_RECAPTCHA_SITE_KEY,
       DOMAIN: config.DOMAIN,
+      DONATION_IS_DEPOSIT_ACTIVE: config.DONATION_IS_DEPOSIT_ACTIVE,
+      DONATION_DEPOSIT_AMOUNT_ONCE: config.DONATION_DEPOSIT_AMOUNT_ONCE,
       HOST: `${config.SERVER_PROTOCOL}://${config.SERVER_HOST}`,
       STRIPE_KEY: config.STRIPE_KEY,
     } 

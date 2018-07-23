@@ -5,7 +5,7 @@
         <Spinner :show="isLoading"></Spinner>
       </div>
     </div>
-    <div class="readr-deposit__alert" v-show="alertFlag"><span v-text="reaultMessage"></span></div>
+    <div class="readr-deposit__alert" v-show="alertFlag" @click="skipAlert"><span v-text="reaultMessage"></span></div>
   </div>
 </template>
 <script>
@@ -28,6 +28,11 @@
     components: {
       Spinner,
     },
+    computed: {
+      depositAmountOnce () {
+        return get(this.$store, 'state.setting.DONATION_DEPOSIT_AMOUNT_ONCE', 100)
+      },
+    },
     data () {
       return {
         alertFlag: false,
@@ -45,7 +50,7 @@
             name: 'Readr',
             description: this.$t('point.DEPOSIT.DESCRIPTION'),
             zipCode: true,
-            amount: 10000,
+            amount: this.depositAmountOnce * 100,
           })
         }
         if (this.handler) {
@@ -65,7 +70,7 @@
                 // Get the token ID to your server-side code for use.
                 this.isLoading = false
                 deposit(this.$store, {
-                  points: -100,
+                  points: 0 - this.depositAmountOnce,
                   token: token.id,
                 }).then(res => {
                   if (res === 200) {
@@ -100,6 +105,9 @@
           debug('Going to close something.')
           this.handler && this.handler.close()
         })        
+      },
+      skipAlert (e) {
+        e.stopPropagation()
       },
     },
     mounted () {
