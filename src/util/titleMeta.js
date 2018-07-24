@@ -1,6 +1,6 @@
 import { SITE_DOMAIN_DEV, } from '../constants'
 let isStripeSDKLoaded = false
-const debug = require('debug')('CLIENT:titleMeta')
+// const debug = require('debug')('CLIENT:titleMeta')
 
 function getMetaInfo (vm) {
   const { metaInfo, } = vm.$options
@@ -74,14 +74,7 @@ const clientMetaInfoMixin = {
        * If Stripe SDK needed.
        */
       const { isStripeNeeded, } = metaInfo
-      debug('isStripeNeeded', isStripeNeeded)
-      debug('isStripeNeeded', isStripeNeeded)
-      debug('isStripeNeeded', isStripeNeeded)
       if (isStripeNeeded && !isStripeSDKLoaded) {
-        debug('LETS LOAD STRIPE!')
-        debug('LETS LOAD STRIPE!')
-        debug('LETS LOAD STRIPE!')
-        debug('LETS LOAD STRIPE!')
         const script = document.createElement('script')
         script.setAttribute('src', 'https://checkout.stripe.com/checkout.js')
         document.head.appendChild(script)

@@ -5,7 +5,7 @@
         <Spinner :show="isLoading"></Spinner>
       </div>
     </div>
-    <div class="readr-deposit__alert" v-show="alertFlag" @click="skipAlert"><span v-text="reaultMessage"></span></div>
+    <div class="readr-deposit__alert" v-show="alertFlag" @click="skipAlert"><span v-text="resultMessage"></span></div>
   </div>
 </template>
 <script>
@@ -39,7 +39,7 @@
         handler: undefined,
         isActive: false,
         isLoading: false,
-        reaultMessage: '',
+        resultMessage: '',
       }
     },
     methods: {
@@ -78,10 +78,10 @@
                      * Deposited successfully. And go refresh current point.
                      */
                     this.$emit('fetchCurrentPoint')
-                    this.reaultMessage = this.$t('point.DEPOSIT.SUCCESSFULLY')
+                    this.resultMessage = this.$t('point.DEPOSIT.SUCCESSFULLY')
                     this.alertFlag = true
                   } else {
-                    this.reaultMessage = this.$t('point.DEPOSIT.INFAIL')
+                    this.resultMessage = this.$t('point.DEPOSIT.INFAIL')
                     this.alertFlag = true
                     debug('res', res)
                   }

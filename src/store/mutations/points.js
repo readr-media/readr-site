@@ -6,6 +6,11 @@ const SET_CONSUME_FLAG = (state, { active, item, }) => {
   state[ 'consumeFlag' ].item = item
 }
 
+const SET_STRIPE_REQUIREMENT = (state, { isStripeRequired, }) => {
+  state['isStripeRequired'] = isStripeRequired
+}
+
 export {
   SET_CONSUME_FLAG,
+  SET_STRIPE_REQUIREMENT,
 }
