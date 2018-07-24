@@ -55,7 +55,6 @@
           debug('WARN: YOU GOTTA DEPOSIT!!!!!!', this.$t('PROJECT.WARNING_DEPOSIT_PREFIX') + this.currentPoints + this.$t('PROJECT.WARNING_DEPOSIT_POSTFIX'))
           return this.$t('PROJECT.DEPOSIT')
         } else {
-
           return this.memoDeducting ? `${this.$t('PROJECT.DEDUCTING')} ...` : this.$t('PROJECT.JOIN_CONFIRM')
         }
       },
@@ -74,9 +73,6 @@
       isDepositNeeded () {
         return this.isDonationActive && this.currentPoints <= DEFAULT_DONATION_POINT_MIN_LINE
       },
-      profile () {
-        return get(this.$store, 'state.profile', {})
-      },      
       targetItem () {
         return get(this.$store, 'state.consumeFlag.item', {})
       },
