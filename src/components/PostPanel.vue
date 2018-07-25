@@ -348,10 +348,10 @@
               }
               getMeta(this.$store, link)
                 .then((res) => {
-                  this.post.link_name = truncate(get(res, 'body.ogSiteName'), { 'length': 40, }) || ''
-                  this.post.link_title = truncate(get(res, 'body.ogTitle'), { 'length': 200, }) || ''
-                  this.post.link_description = truncate(get(res, 'body.ogDescription'), { 'length': 250, }) || ''
-                  this.post.link_image = get(res, 'body.ogImage') || ''
+                  this.post.link_name = truncate(get(res, [ 'body', 'items', 0, 'ogInfo', 'ogSiteName', ]), { 'length': 40, }) || ''
+                  this.post.link_title = truncate(get(res, [ 'body', 'items', 0, 'ogInfo', 'ogTitle', ]), { 'length': 200, }) || ''
+                  this.post.link_description = truncate(get(res, [ 'body', 'items', 0, 'ogInfo', 'ogDescription', ]), { 'length': 250, }) || ''
+                  this.post.link_image = get(res, [ 'body', 'items', 0, 'ogInfo', 'ogImage', ]) || ''
                   return resolve()
                 })
             } else {
