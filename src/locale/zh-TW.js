@@ -242,7 +242,7 @@ export default {
       'POSTFIX': '元',
     },
     'DEPOSIT': {
-      'DESCRIPTION': '您目前沒有足夠點數，請先付款',
+      'DESCRIPTION': '您正在進行儲值，每次儲值以 300 元台幣為單位，可多次儲值。',
       'CONFIRM_TO_PAY': '確認付款',
       'INFAIL': '付款失敗！',
       'SUCCESSFULLY': '付款成功',

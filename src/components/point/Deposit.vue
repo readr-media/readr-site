@@ -32,6 +32,9 @@
       depositAmountOnce () {
         return get(this.$store, 'state.setting.DONATION_DEPOSIT_AMOUNT_ONCE', 100)
       },
+      profile () {
+        return get(this.$store, 'state.profile')
+      },
     },
     data () {
       return {
@@ -51,6 +54,8 @@
             description: this.$t('point.DEPOSIT.DESCRIPTION'),
             zipCode: true,
             amount: this.depositAmountOnce * 100,
+            email: get(this.profile, 'mail'),
+            // allowRememberMe: false,
           })
         }
         if (this.handler) {
