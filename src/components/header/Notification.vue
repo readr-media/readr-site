@@ -11,6 +11,7 @@
   </div>
 </template>
 <script>
+  import { NOTIFICATION_TYPE, } from 'src/constants'
   import { filter, get, map, throttle, } from 'lodash'
   import NotificationDropbox from 'src/components/header/NotificationDropbox.vue'
   const debug = require('debug')('CLIENT:Notification')
@@ -33,7 +34,10 @@
         return map(get(this.$store, 'state.notification', []), n => (JSON.parse(n)))
       },
       notReadYetCount () {
-        return filter(this.notificationItems, { read: false, }).length
+        // return filter(this.notificationItems, { read: false, }).length
+        return filter(this.notificationItems, item => {
+          return item.read === false && get(NOTIFICATION_TYPE, get(item, 'event_type', '').toUpperCase())
+        }).length
       },
     },
     data () {

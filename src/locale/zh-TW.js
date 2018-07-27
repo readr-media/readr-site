@@ -356,6 +356,7 @@ export default {
       'PROJECT': '專題',
     },
     'PUBLISH': '發表了新的',
+    'UPDATE': '更新了！',
   },
   'SECTIONS': {
     'CHIEF_EDITOR_TALK': '視角',

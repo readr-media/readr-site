@@ -88,3 +88,19 @@ export const RESOURCE_TYPE = {
   MEMO: 'memo',
   REPORT: 'project',
 }
+
+export const NOTIFICATION_TYPE = {
+  COMMENT_COMMENT: 'comment_comment',
+  COMMENT_REPLY: 'comment_reply',
+  COMMENT_REPLY_AUTHOR: 'comment_reply_author',
+  FOLLOW_MEMBER_REPLY: 'follow_member_reply',
+  FOLLOW_MEMBER_POST: 'follow_member_post',
+  FOLLOW_POST_REPLY: 'follow_post_reply',
+  FOLLOW_PROJECT_REPLY: 'follow_project_reply',
+  FOLLOW_MEMO_REPLY: 'follow_memo_reply',
+  FOLLOW_PROJECT_STATUS: 'follow_project_status',
+  // FOLLOE_PROJECT_PROGRESS: 'follow_project_progress',
+  FOLLOW_PROJECT_MEMO: 'follow_project_memo',
+  FOLLOW_PROJECT_REPORT: 'follow_project_report',
+  POST_REPLY: 'post_reply',
+}
