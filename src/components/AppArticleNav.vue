@@ -20,6 +20,9 @@
         </span>
       </template>
     </nav>
+    <section v-if="tags && tags.length > 0" class="article-nav__tags">
+      <span v-for="tag in tags" :key="tag.id" v-text="tag.text"></span>
+    </section>
     <CommentContainer v-if="showComment" :asset="asset" :assetId="postId" :assetRefId="postRefId"></CommentContainer>
   </div>
 </template>
@@ -192,6 +195,9 @@ export default {
       // For report use.
       type: String,
     },
+    tags: {
+      default: () => [],
+    },
     toogleComment: {
       type: Boolean,
       default: true,
@@ -212,7 +218,32 @@ export default {
   &__nav-btns
     height 25px
     margin-top auto // for automatically placing nav to the botom of the container
-
+  &__tags
+    margin-top 20px
+    padding-top 10px
+    border-top 1px solid #d3d3d3
+    span
+      display inline-block
+      padding 0 .5em
+      margin 5px 0 0
+      font-size .9375rem
+      line-height 1.5rem
+      font-weight 700
+      border 1px solid #11b8c9
+      border-radius 12px
+      user-select none
+      &:first-of-type
+        position relative
+        margin-left 20px
+        &::before
+          content '#'
+          position absolute
+          top 0
+          left -20px
+          color #11b8c9
+          font-size 1.5rem
+      & + span
+        margin-left 5px
 $icon-size
   width 25px
   height 25px
