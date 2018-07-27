@@ -25,7 +25,7 @@
         </section>
       </article>
       <div class="nav-container">
-        <AppArticleNav :postId="post.id" :postRefId="assetRefId" :articleType="post.flag" :commentCount="commentCount" />
+        <AppArticleNav :postId="post.id" :postRefId="assetRefId" :articleType="post.flag" :commentCount="commentCount" :tags="post.tags" />
       </div>
     </div>  
   </div>
@@ -42,6 +42,7 @@
       isClientSide,
     },
     methods: {
+      getImageUrl,
       updatedAtYYYYMMDD,  
       getImgSrc (content) {
         const regexp = /<img.*?src=['"](.*?)['"]/
