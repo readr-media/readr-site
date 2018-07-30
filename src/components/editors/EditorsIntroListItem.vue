@@ -9,10 +9,6 @@
       <div class="editors-info">
         <div class="editors-info__nickname-follow-container">
           <router-link :to="`/profile/${editor.id}`" class="editors-info__nickname" v-text="editorNickname"></router-link>
-          <span class="follow-icon" v-if="editorIsNotCurrentUser" @click="toogleFollow">
-            <img class="follow-icon__thumbnail" :src="editorHasBeenFollowed ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'">
-            <span class="follow-icon__hint" v-text="$t('FOLLOWING.FOLLOW')"></span>
-          </span>
         </div>
         <p class="editors-info__description" v-text="editorDescritpion"></p>
       </div>
@@ -26,10 +22,6 @@
         <!-- editor's nickname and follow icon -->
         <figcaption class="editors-intro-list-item__nickname-follow-container">
           <router-link :to="`/profile/${editor.id}`" class="editors-intro-list-item__nickname" v-text="editorNickname"></router-link>
-          <span class="follow-icon" v-if="editorIsNotCurrentUser" @click="toogleFollow">
-            <img class="follow-icon__thumbnail" :src="editorHasBeenFollowed ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'">
-            <span class="follow-icon__hint" v-text="$t('FOLLOWING.FOLLOW')"></span>
-          </span>
         </figcaption>
       </figure>
       <!-- editor's description -->
@@ -39,24 +31,7 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import { isClientSide, getArticleAuthorNickname, getArticleAuthorThumbnailImg, } from 'src/util/comm'
-
-const publishAction = (store, data) => {
-  return store.dispatch('FOLLOW', {
-    params: data,
-  })
-}
-const updateStoreFollowingByResource = (store, { action, resource, resourceId, userId, }) => {
-  store.dispatch('UPDATE_FOLLOWING_BY_RESOURCE', {
-    params: {
-      action: action,
-      resource: resource,
-      resourceId: resourceId,
-      userId: userId,
-    },
-  })
-}
 
 export default {
   props: {
@@ -83,61 +58,12 @@ export default {
     editorNickname () {
       return getArticleAuthorNickname(this.editor)
     },
-    editorHasBeenFollowed () {
-      return this.$store.state.isLoggedIn && this.editorFollowers.indexOf(this.$store.state.profile.id) !== -1
-    },
-    editorIsNotCurrentUser () {
-      return !this.$store.state.isLoggedIn || this.$store.state.profile.id !== this.editor.id
-    },
-    editorFollowers () {
-      if (this.$store.state.isLoggedIn) {
-        const editorFollowersData = _.find(this.$store.state.followingByResource['member'], { resourceID: this.editor.id, })
-        return editorFollowersData ? editorFollowersData.followers : []
-      } else {
-        return []
-      }
-    },
     editorDescritpion () {
       const limit = 30
       if (this.editor.description) {
         return this.trimDescription ? this.editor.description.slice(0, limit) + ' ...' : this.editor.description
       } else {
         return ''
-      }
-    },
-  },
-  methods: {
-    toogleFollow () {
-      if (!this.$store.state.isLoggedIn) {
-        alert('please login first')
-      } else {
-        if (!this.editorHasBeenFollowed) {
-          publishAction(this.$store, {
-            action: 'follow',
-            resource: 'member',
-            subject: this.$store.state.profile.id,
-            object: this.editor.id,
-          })
-          updateStoreFollowingByResource(this.$store, {
-            action: 'follow',
-            resource: 'member',
-            resourceId: this.editor.id,
-            userId: this.$store.state.profile.id,
-          })
-        } else {
-          publishAction(this.$store, {
-            action: 'unfollow',
-            resource: 'member',
-            subject: this.$store.state.profile.id,
-            object: this.editor.id,
-          })
-          updateStoreFollowingByResource(this.$store, {
-            action: 'unfollow',
-            resource: 'member',
-            resourceId: this.editor.id,
-            userId: this.$store.state.profile.id,
-          })
-        }
       }
     },
   },
@@ -205,25 +131,4 @@ export default {
     line-height 1.5
     text-align justify
     color #000000
-
-// common follow icon style both used in standard list items and large list items
-$icon-size
-  width 25px
-  height 25px
-.follow-icon
-  cursor pointer
-  &__thumbnail
-    @extends $icon-size
-    margin-left 4.5px
-    cursor pointer
-  &__hint
-    position relative
-    // right 5px
-    bottom 2px
-    font-size 12px
-    -webkit-font-smoothing antialiased
-    -moz-font-smoothing antialiased
-    color #11b8c9
-    font-weight 600
 </style>
-
