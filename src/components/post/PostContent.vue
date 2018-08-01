@@ -85,7 +85,9 @@
       :articleType="post.flag" 
       :slug="get(post, 'flag') === 'report'? post.slug : ''"
       :tags="post.tags"
-      :commentCount="commentCount"></AppArticleNav>
+      :commentCount="commentCount">
+      <TagNav class="post-content__tag-nav" :tags="post.tags" slot="tagNav"/>
+    </AppArticleNav>
   </div>
 </template>
 <script>
@@ -94,6 +96,7 @@
   import { onImageLoaded, getImageUrl, getReportUrl, isClientSide, } from 'src/util/comm'
   import AppArticleNav from 'src/components/AppArticleNav.vue'
   import PostContentMemo from 'src/components/post/PostContentMemo.vue'
+  import TagNav from 'src/components/tag/TagNav.vue'
   import sanitizeHtml from 'sanitize-html'
   import truncate from 'html-truncate'
 
@@ -211,6 +214,7 @@
     components: {
       AppArticleNav,
       PostContentMemo,
+      TagNav,
     },
     data () {
       return {
@@ -476,4 +480,8 @@
             display block
           &--invisible
             display none
+    &__tag-nav
+      margin-top 20px
+      padding-top 10px
+      border-top 1px solid #d3d3d3
 </style>
