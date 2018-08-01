@@ -34,16 +34,23 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="p in posts" :key="p.id">
-          <td class="postList__checkbox"><input type="checkbox" ref="checkboxItems" @change="$_postList_toggleHandler($event, p.id)"></td>
-          <td class="postList__nickname" v-text="$_postList_getAuthorId(p)"></td>
-          <td class="postList__type"><div v-if="p.type === postType.NEWS" class="postList__type--news">N</div></td>
-          <td class="postList__title" @click="$_showPost(p)" v-text="p.title"></td>
-          <td class="postList__status postList--center" v-text="$_postList_getStatus(p)"></td>
-          <td class="postList__update postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_editPost(p.id)" v-text="$t('POST_LIST.UPDATE')"></button></td>
-          <td class="postList__delete postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_deletePost(p.id)" v-text="$t('POST_LIST.DELETE')"></button></td>
-          <td class="postList__sort"></td>
-        </tr>
+        <template v-for="p in posts">
+          <tr :key="p.id" class="row">
+            <td class="postList__checkbox"><input type="checkbox" ref="checkboxItems" @change="$_postList_toggleHandler($event, p.id)"></td>
+            <td class="postList__nickname" v-text="$_postList_getAuthorId(p)"></td>
+            <td class="postList__type"><div v-if="p.type === postType.NEWS" class="postList__type--news">N</div></td>
+            <td class="postList__title" @click="$_showPost(p)" v-text="p.title"></td>
+            <td class="postList__status postList--center" v-text="$_postList_getStatus(p)"></td>
+            <td class="postList__update postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_editPost(p.id)" v-text="$t('POST_LIST.UPDATE')"></button></td>
+            <td class="postList__delete postList--center"><button class="postList__btn postList__btn--single" @click="$_postList_deletePost(p.id)" v-text="$t('POST_LIST.DELETE')"></button></td>
+            <td class="postList__sort"></td>
+          </tr>
+          <tr :key="`${p.id}-tags`" class="row--tags">
+            <td v-if="p.tags && p.tags.length > 0" colspan="8">
+              <TagNav class="post-list__tag-nav" :tags="p.tags" />
+            </td>
+          </tr>
+        </template>
       </tbody>
     </table>
     <BaseLightBox :showLightBox.sync="showLightBox">
@@ -57,6 +64,7 @@
   import BaseLightBox from './BaseLightBox.vue'
   import BaseLightBoxPost from './BaseLightBoxPost.vue'
   import PaginationNav from './PaginationNav.vue'
+  import TagNav from './tag/TagNav.vue'
 
   export default {
     name: 'PostList',
@@ -64,6 +72,7 @@
       BaseLightBox,
       BaseLightBoxPost,
       PaginationNav,
+      TagNav,
     },
     props: {
       maxResult: {
@@ -226,7 +235,6 @@
     padding-bottom 5px
     text-overflow ellipsis
     white-space nowrap
-    border-bottom 1px solid #d3d3d3
     overflow hidden
   
   input[type="checkbox"]
@@ -272,7 +280,14 @@
       line-height 23px
       background-color #808080
       border-radius 4px
-
+  &__tag-nav
+    display table-cell
+    padding 0 0 0.5em
+  .row
+    border-top 1px solid #d3d3d3
+    &--tags
+      td
+        padding-top 0
 @media (min-width 950px)
   .postList
     thead
