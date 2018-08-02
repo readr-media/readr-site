@@ -70,7 +70,6 @@
   import FollowingListInTab from '../components/FollowingListInTab.vue'
   import PointManager from 'src/components/point/PointManager.vue'
   import PaginationNav from '../components/PaginationNav.vue'
-  import PostList from '../components/PostList.vue'
   import PostListDetailed from '../components/PostListDetailed.vue'
   import PostListInTab from '../components/PostListInTab.vue'
   import PostPanel from '../components/PostPanel.vue'
@@ -124,7 +123,6 @@
       'base-light-box': BaseLightBox,
       'following-list-tab': FollowingListInTab,
       'pagination-nav': PaginationNav,
-      'post-list': PostList,
       'post-list-detailed': PostListDetailed,
       'post-list-tab': PostListInTab,
       'post-panel': PostPanel,

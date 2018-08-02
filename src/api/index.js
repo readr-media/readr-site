@@ -542,8 +542,6 @@ export function verifyRecaptchaToken ({ token, }) {
 export function publishPosts ({ params, }) {
   const url = `${host}/api/posts`
   return put(url, params)
-    .then(res => ({ status: res.status, }))
-    .catch(err => err)
 }
 
 export function search (keyword = '', params = {}) {

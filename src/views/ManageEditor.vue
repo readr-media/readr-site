@@ -31,16 +31,7 @@
         </app-tab>
       </template>
       <template v-else-if="activePanel === 'posts'">
-        <post-list
-          class="backstage__panel"
-          :maxResult="20"
-          :posts="posts"
-          :sort="sort"
-          @deletePosts="$_editor_showAlert"
-          @editPost="$_editor_showEditor"
-          @filterChanged="$_editor_filterHandler"
-          @publishPosts="$_editor_showAlert">
-        </post-list>
+        <PostListManage class="backstage__panel" />
       </template>
       <template v-else-if="activePanel === 'tags'">
         <tag-list
@@ -95,9 +86,9 @@
   import BaseLightBox from '../components/BaseLightBox.vue'
   import FollowingListInTab from '../components/FollowingListInTab.vue'
   import PointManager from 'src/components/point/PointManager.vue'
-  import PostList from '../components/PostList.vue'
   import PostListDetailed from '../components/PostListDetailed.vue'
   import PostListInTab from '../components/PostListInTab.vue'
+  import PostListManage from '../components/post/PostListManage.vue'
   import PostPanel from '../components/PostPanel.vue'
   import Tab from '../components/Tab.vue'
   import TagList from '../components/TagList.vue'
@@ -181,7 +172,7 @@
       params: {
         max_result: max_result,
         page: page,
-        sort: sort,
+        sorting: sort,
         keyword: keyword,
         stats: stats,
       },
@@ -216,13 +207,13 @@
       'base-light-box': BaseLightBox,
       'control-bar': TheControlBar,
       'following-list-tab': FollowingListInTab,
-      'post-list': PostList,
       'post-list-detailed': PostListDetailed,
       'post-list-tab': PostListInTab,
       'post-panel': PostPanel,
       'tag-list': TagList,
       'video-list': VideoList,
       PointManager,
+      PostListManage,
     },
     data () {
       return {
@@ -364,7 +355,6 @@
       $_editor_filterHandler ({ keyword = '', sort = this.sort, page = this.page, }) {
         switch (this.activePanel) {
           case 'records':
-          case 'posts':
           case 'videos':
             return this.$_editor_updatePostList({ sort: sort, page: page, })
           case 'tags':
@@ -386,20 +376,6 @@
               getPostsCount(this.$store, {
                 where: { author: _.get(this.profile, [ 'id', ]), type: POST_TYPE.REVIEW, },
               }),
-            ])
-            .then(() => this.loading = false)
-            .catch(() => this.loading = false)
-            break
-          case 'posts':
-            this.alertType = 'post'
-            Promise.all([
-              getPosts(this.$store, {
-                where: { publish_status: [ POST_PUBLISH_STATUS.UNPUBLISHED, POST_PUBLISH_STATUS.PUBLISHED, POST_PUBLISH_STATUS.SCHEDULING, POST_PUBLISH_STATUS.PENDING, ], type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ], },
-              }),
-              getPostsCount(this.$store, {
-                where: { publish_status: [ POST_PUBLISH_STATUS.UNPUBLISHED, POST_PUBLISH_STATUS.PUBLISHED, POST_PUBLISH_STATUS.SCHEDULING, POST_PUBLISH_STATUS.PENDING, ], type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ], },
-              }),
-              getTags(this.$store, { stats: true, }),
             ])
             .then(() => this.loading = false)
             .catch(() => this.loading = false)
@@ -600,20 +576,6 @@
                 })
                 break
             }
-            break
-          case 'posts':
-            if (needUpdateCount) {
-              getPostsCount(this.$store, {
-                where: { publish_status: [ POST_PUBLISH_STATUS.UNPUBLISHED, POST_PUBLISH_STATUS.PUBLISHED, POST_PUBLISH_STATUS.SCHEDULING, POST_PUBLISH_STATUS.PENDING, ], type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ], },
-              })
-            }
-            getPosts(this.$store, {
-              page: this.page,
-              sort: this.sort,
-              where: { publish_status: [ POST_PUBLISH_STATUS.UNPUBLISHED, POST_PUBLISH_STATUS.PUBLISHED, POST_PUBLISH_STATUS.SCHEDULING, POST_PUBLISH_STATUS.PENDING, ], type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ], },
-            })
-            .then(() => this.loading = false)
-            .catch(() => this.loading = false)
             break
           case 'videos':
             if (needUpdateCount) {
