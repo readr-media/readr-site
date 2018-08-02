@@ -36,16 +36,7 @@
           </app-tab>
         </template>
         <template v-else-if="activePanel === 'posts'">
-          <PostList
-            class="backstage__panel"
-            :maxResult="20"
-            :posts="posts"
-            :sort="currSort"
-            @deletePosts="showAlertHandler"
-            @editPost="showEditorHandler"
-            @filterChanged="filterChanged"
-            @publishPosts="showAlertHandler">
-          </PostList>
+          <PostListManage class="backstage__panel" />
         </template>
         <template v-else-if="activePanel === 'tags'">
           <TagList
@@ -112,9 +103,9 @@
   import MemberAccountEditor from '../components/admin/MemberAccountEditor.vue'
   import MembersPanel from '../components/admin/MembersPanel.vue'
   import PointManager from 'src/components/point/PointManager.vue'
-  import PostList from '../components/PostList.vue'
   import PostListDetailed from '../components/PostListDetailed.vue'
   import PostListInTab from '../components/PostListInTab.vue'
+  import PostListManage from '../components/post/PostListManage.vue'
   import PostPanel from '../components/PostPanel.vue'
   import Tab from '../components/Tab.vue'
   import TagList from '../components/TagList.vue'
@@ -199,7 +190,7 @@
       params: {
         max_result: max_result,
         page: page,
-        sort: sort,
+        sorting: sort,
         keyword: keyword,
         stats: stats,
       },
@@ -257,9 +248,9 @@
       MemberAccountEditor,
       MembersPanel,
       PointManager,
-      PostList,
       PostListDetailed,
       PostListInTab,
+      PostListManage,
       PostPanel,
       TagList,
       TheControlBar,
@@ -423,7 +414,6 @@
               ])
             }
           case 'records':
-          case 'posts':
           case 'videos':
             return this.updatePostList({ page: this.currPage, sort: this.currSort, })
           case 'tags':
@@ -446,20 +436,6 @@
               getPostsCount(this.$store, {
                 where: { author: _.get(this.profile, [ 'id', ]), type: POST_TYPE.REVIEW, },
               }),
-            ])
-            .then(() => this.loading = false)
-            .catch(() => this.loading = false)
-            break
-          case 'posts':
-            this.alertType = 'post'
-            Promise.all([
-              getPosts(this.$store, {
-                where: { publish_status: [ POST_PUBLISH_STATUS.UNPUBLISHED, POST_PUBLISH_STATUS.PUBLISHED, POST_PUBLISH_STATUS.SCHEDULING, POST_PUBLISH_STATUS.PENDING, ], type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ], },
-              }),
-              getPostsCount(this.$store, {
-                where: { publish_status: [ POST_PUBLISH_STATUS.UNPUBLISHED, POST_PUBLISH_STATUS.PUBLISHED, POST_PUBLISH_STATUS.SCHEDULING, POST_PUBLISH_STATUS.PENDING, ], type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ], },
-              }),
-              getTags(this.$store, { stats: true, }),
             ])
             .then(() => this.loading = false)
             .catch(() => this.loading = false)
@@ -662,20 +638,6 @@
                 })
                 break
             }
-            break
-          case 'posts':
-            if (needUpdateCount) {
-              getPostsCount(this.$store, {
-                where: { publish_status: [ POST_PUBLISH_STATUS.UNPUBLISHED, POST_PUBLISH_STATUS.PUBLISHED, POST_PUBLISH_STATUS.SCHEDULING, POST_PUBLISH_STATUS.PENDING, ], type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ], },
-              })
-            }
-            getPosts(this.$store, {
-              page: this.page,
-              sort: this.sort,
-              where: { publish_status: [ POST_PUBLISH_STATUS.UNPUBLISHED, POST_PUBLISH_STATUS.PUBLISHED, POST_PUBLISH_STATUS.SCHEDULING, POST_PUBLISH_STATUS.PENDING, ], type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ], },
-            })
-            .then(() => this.loading = false)
-            .catch(() => this.loading = false)
             break
           case 'videos':
             if (needUpdateCount) {

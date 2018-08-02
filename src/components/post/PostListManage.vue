@@ -14,8 +14,8 @@
           <th></th>
           <th><span @click="sortBy('-title')" v-text="$t('POST_LIST.TITLE')"></span></th>
           <th class="col--align-center"><span @click="sortBy('-publish_status')" v-text="$t('POST_LIST.PUBLISH_STATUS')"></span></th>
-          <th class="col--align-center"><button :disabled="!canPublishPosts" @click="publishPosts"><span v-text="$t('POST_LIST.PUBLISH')"></span></button></th>
-          <th class="col--align-center"><button :disabled="itemsChecked.length < 1" @click="deletePosts"><span v-text="$t('POST_LIST.DELETE')"></span></button></th>
+          <th class="col--align-center"><button :disabled="!canPublishPosts" @click="showAlertMultiple(POST_PUBLISH_STATUS.PUBLISHED)"><span v-text="$t('POST_LIST.PUBLISH')"></span></button></th>
+          <th class="col--align-center"><button :disabled="itemsChecked.length < 1" @click="showAlertMultiple(POST_PUBLISH_STATUS.DELETED)"><span v-text="$t('POST_LIST.DELETE')"></span></button></th>
           <th class="head--datetime col--align-right">
             <span :class="{ active: isSortByPublishedAt }" @click="sortBy('-published_at')" v-text="$t('POST_LIST.PUBLISH_AT')"></span>
             <span :class="{ active: !isSortByPublishedAt }" @click="sortBy('-updated_at')" v-text="$t('POST_LIST.UPDATE_AT')"></span>
@@ -36,7 +36,7 @@
             <td class="col--title col--single-line"><span @click="showPost(post)" v-text="post.title"></span></td>
             <td class="col--align-center" v-text="getStatus(post)"></td>
             <td class="col--action col--align-center"><span @click="editPost(post)" v-text="$t('POST_LIST.UPDATE')"></span></td>
-            <td class="col--action col--align-center"><span @click="deletePost(post.id)" v-text="$t('POST_LIST.DELETE')"></span></td>
+            <td class="col--action col--align-center"><span @click="showAlertSingleDelete(post)" v-text="$t('POST_LIST.DELETE')"></span></td>
             <td class="col--datetime col--align-right" v-text="isSortByPublishedAt ? getDateTime(post.publishedAt) : getDateTime(post.updatedAt)"></td>
           </tr>
           <tr :key="`${post.id}-tags`">
@@ -59,14 +59,23 @@
         @updateList="updatePostList">
       </PostPanel>
     </BaseLightBox>
-    <BaseLightBox :showLightBox.sync="showLightBoxAlert">
-      
+    <BaseLightBox :isAlert="true" :showLightBox.sync="showLightBoxAlert">
+      <AlertPanel
+        :status="itemsStatus"
+        :statusChanged="changePublishStatus"
+        :items="itemsSelected"
+        :needConfirm="needConfirm"
+        :showLightBox="showLightBoxAlert"
+        :type="alertType"
+        @closeAlert="showLightBoxAlert = false"
+        @deletePosts="deletePosts"
+        @publishPosts="publishPosts" />
     </BaseLightBox>
   </div>
 </template>
 <script>
   import { POST_PUBLISH_STATUS, POST_TYPE, } from 'api/config'
-  import { filter, find, get, } from 'lodash'
+  import { get, } from 'lodash'
   import AlertPanel from 'src/components/AlertPanel.vue'
   import BaseLightBox from 'src/components/BaseLightBox.vue'
   import BaseLightBoxPost from 'src/components/BaseLightBoxPost.vue'
@@ -78,6 +87,12 @@
   const MAXRESULT = 20
   const DEFAULT_PAGE = 1
   const DEFAULT_SORT = '-updated_at'
+
+  const deletePosts = (store, { params, }) => {
+    return store.dispatch('DELETE_POSTS', {
+      params: params,
+    })
+  }
 
   const getPosts = (store, {
     maxResult = MAXRESULT,
@@ -114,6 +129,12 @@
     })
   }
 
+  const publishPosts = (store, { params, }) => { 
+    return store.dispatch('PUBLISH_POSTS', {
+      params: params,
+    })
+  } 
+
   export default {
     name: 'PostListManage',
     components: {
@@ -128,7 +149,12 @@
       return {
         POST_PUBLISH_STATUS,
         POST_TYPE,
+        alertType: 'post',
+        changePublishStatus: false,
         itemsChecked: [],
+        itemsSelected: [],
+        itemsStatus: undefined,
+        needConfirm: false,
         page: DEFAULT_PAGE,
         post: {},
         showLightBoxAlert: false,
@@ -140,13 +166,16 @@
     computed: {
       canPublishPosts () {
         const items = this.itemsChecked.filter((id) => {
-          const post = find(this.posts, { id: id, })
+          const post = this.posts.find(value => value.id === id)
           return get(post, 'publishStatus') !== POST_PUBLISH_STATUS.PUBLISHED
         })
         return items.length > 0
       },
       isSortByPublishedAt () {
         return this.sort.indexOf('published_at') !== -1
+      },
+      itemsSelectedID () {
+        return this.itemsSelected.map(post => post.id)
       },
       posts () {
         return this.$store.state.posts
@@ -168,11 +197,20 @@
       Promise.all([ getPosts(this.$store), getPostsCount(this.$store), ])
     },
     methods: {
-      deletePost (id) { // need to integrate
-        this.$emit('deletePosts', [ id, ], POST_PUBLISH_STATUS.DELETED)
-      },
-      deletePosts () { // need to integrate
-        this.$emit('deletePosts', this.itemsChecked, POST_PUBLISH_STATUS.DELETED)
+      deletePosts () {
+        deletePosts(this.$store, {
+          params: {
+            ids: this.itemsSelectedID,
+            updated_by: this.$store.state.profile.id,
+          },
+        }).then(() => {
+          this.updatePostList({ needUpdateCount: true, })
+          this.showLightBoxEditor = false
+          this.needConfirm = false // change alert message
+        }).catch(() => {
+          this.alertType = 'error'
+          this.needConfirm = false // change alert message
+        })
       },
       editPost (post) { // need to integrate
         this.post = post
@@ -204,12 +242,40 @@
             return ' '
         }
       },
-      publishPosts () { // // need to integrate
-        const items = filter(this.itemsChecked, (id) => {
-          const post = find(this.posts, { id: id, })
-          return get(post, 'publishStatus', ) !== POST_PUBLISH_STATUS.PUBLISHED
+      publishPosts () {
+        publishPosts(this.$store, {
+          params: {
+            ids: this.itemsSelectedID,
+            updated_by: this.$store.state.profile.id,
+            publish_status: POST_PUBLISH_STATUS.PUBLISHE,
+          },
+        }).then(() => {
+          this.updatePostList({ needUpdateCount: true, })
+          this.needConfirm = false // change alert message
+        }).catch(() => {
+          this.alertType = 'error'
+          this.needConfirm = false // change alert message
         })
-        this.$emit('publishPosts', items, POST_PUBLISH_STATUS.PUBLISHED)
+      },
+      showAlertSingleDelete (post) {
+        this.alertType = 'post'
+        this.itemsSelected = [ post, ]
+        this.changePublishStatus = true
+        this.itemsStatus = POST_PUBLISH_STATUS.DELETED
+        this.needConfirm = true
+        this.showLightBoxAlert = true
+      },
+      showAlertMultiple (statusToChange) {
+        this.alertType = 'post'
+        this.itemsChecked = this.itemsChecked.filter((id) => {
+          const post = this.posts.find(value => value.id === id)
+          return post && post.publishStatus !== statusToChange
+        })
+        this.itemsSelected = this.itemsChecked.map(id => this.posts.find(value => value.id === id))
+        this.itemsStatus = statusToChange
+        this.changePublishStatus = true
+        this.needConfirm = true
+        this.showLightBoxAlert = true
       },
       showPost (post) {
         this.post = post
@@ -298,9 +364,6 @@
           background-color #ccc
     tbody
       font-size .9375rem
-      // tr:nth-child(even)
-      //   border-top 1px solid #d3d3d3
-      //   background-color blue
       td
         height 30px
         padding-right 10px
