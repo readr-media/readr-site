@@ -5,7 +5,7 @@
 </template>
 <script>
 import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, } from '../../api/config'
-import { get, uniq,  } from 'lodash'
+import { get, uniq, uniqBy,  } from 'lodash'
 import { isScrollBarReachBottom, } from 'src/util/comm'
 import ProjectsFigure from 'src/components/projects/ProjectsFigure.vue'
 
@@ -19,7 +19,7 @@ const fetchFollowing = (store, params) => {
   return store.dispatch('GET_FOLLOWING_BY_RESOURCE', {
     ids: params.ids,
     mode: params.mode,
-    resource: 'project',
+    resource: params.resource,
   })
 }
 
@@ -57,6 +57,9 @@ export default {
     projects () {
       return get(this.$store, 'state.publicProjects.normal', []) || []
     },
+    projectsTagIds () {
+      return uniqBy(this.projects.map(project => project.tags).filter(tags => tags).reduce((all, tags) => all.concat(tags), []), 'id').map(tag => tag.id)
+    },
   },
   watch: {
     isReachBottom(value) {
@@ -64,13 +67,16 @@ export default {
         this.loadmore()
       }
     },
+    projectsTagIds (ids) {
+      fetchFollowing(this.$store, { ids: ids, resource: 'tag', })
+    },
   },
   beforeMount () {
     fetchProjectsList(this.$store)
     .then(() => {
       const projectIds = uniq(get(this.$store, 'state.publicProjects.normal', []).map(p => p.id))
       if (this.$store.state.isLoggedIn && projectIds.length > 0) {
-        fetchFollowing(this.$store, { ids: projectIds, })
+        fetchFollowing(this.$store, { ids: projectIds, resource: 'project', })
       }
     })
   },
@@ -97,6 +103,7 @@ export default {
             fetchFollowing(this.$store, {
               mode: 'update',
               ids: ids,
+              resource: 'project',
             })
           }
         }

@@ -20,9 +20,7 @@
         </span>
       </template>
     </nav>
-    <section v-if="tags && tags.length > 0" class="article-nav__tags">
-      <span v-for="tag in tags" :key="tag.id" v-text="tag.text"></span>
-    </section>
+    <slot name="tagNav"></slot>
     <CommentContainer v-if="showComment" :asset="asset" :assetId="postId" :assetRefId="postRefId"></CommentContainer>
   </div>
 </template>

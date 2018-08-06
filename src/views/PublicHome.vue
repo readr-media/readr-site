@@ -240,6 +240,9 @@ export default {
     postSingle () {
       debug('Mutation detected: postSingle', this.postSingle)
     },
+    postsMainTagIds (ids) {
+      fetchFollowing(this.$store, { resource: 'tag', ids: ids, })
+    },
   },
   data () {
     return {
@@ -270,6 +273,9 @@ export default {
     },
     postsMain () {
       return this.articlesListMainCategory !== '/hot' ? this.postsLatest : this.postsHot
+    },
+    postsMainTagIds () {
+      return _.uniqBy(this.postsMain.map(post => post.tags).filter(tags => tags).reduce((all, tags) => all.concat(tags), []), 'id').map(tag => tag.id)
     },
     postsAside () {
       return this.articlesListMainCategory !== '/hot' ? this.postsHot : this.postsLatest

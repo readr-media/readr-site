@@ -86,7 +86,11 @@
       :slug="get(post, 'flag') === 'report'? post.slug : ''"
       :tags="post.tags"
       :commentCount="commentCount">
-      <TagNav class="post-content__tag-nav" :tags="post.tags" slot="tagNav"/>
+      <TagNav
+        v-if="post.tags && post.tags.length > 0"
+        slot="tagNav"
+        :tags="post.tags"
+        class="post-content__tag-nav" />
     </AppArticleNav>
   </div>
 </template>
@@ -484,4 +488,6 @@
       margin-top 20px
       padding-top 10px
       border-top 1px solid #d3d3d3
+      > div
+        margin-top 5px
 </style>
