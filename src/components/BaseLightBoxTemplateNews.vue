@@ -25,18 +25,26 @@
         </section>
       </article>
       <div class="nav-container">
-        <AppArticleNav :postId="post.id" :postRefId="assetRefId" :articleType="post.flag" :commentCount="commentCount" :tags="post.tags" />
+        <AppArticleNav :postId="post.id" :postRefId="assetRefId" :articleType="post.flag" :commentCount="commentCount" :tags="post.tags">
+          <TagNav
+            v-if="post.tags && post.tags.length > 0"
+            slot="tagNav"
+            :tags="post.tags"
+            class="baselightbox-post__tags" />
+        </AppArticleNav>
       </div>
     </div>  
   </div>
 </template>
 <script>
   import AppArticleNav from 'src/components/AppArticleNav.vue'
+  import TagNav from 'src/components/tag/TagNav.vue'
   import { isClientSide, updatedAtYYYYMMDD, getImageUrl, onImageLoaded, } from 'src/util/comm'
   export default {
     name: 'BaseLightBoxTemplateNews',
     components: {
       AppArticleNav,
+      TagNav,
     },
     computed: {
       isClientSide,

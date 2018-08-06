@@ -443,6 +443,8 @@
   &__tag-nav
     display table-cell
     padding 0 0 .5em
+    >>> div
+      margin-top 5px
 .checkbox
   position relative
   width 20px
