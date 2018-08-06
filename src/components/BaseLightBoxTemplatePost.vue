@@ -13,7 +13,13 @@
           :postRefId="assetRefId"
           :articleType="post.flag"
           :commentCount="commentCount"
-          :inLightbox="true" @toogleComment="toogleComment"/>
+          :inLightbox="true" @toogleComment="toogleComment">
+          <TagNav
+            v-if="post.tags && post.tags.length > 0"
+            slot="tagNav"
+            :tags="post.tags"
+            class="baselightbox-post__tags" />
+        </AppArticleNav>
       </section>
     </article>
     <CommentContainer class="baselightbox-post__comment" v-show="showComment" v-if="shouldRenderComment"
@@ -23,6 +29,7 @@
 <script>
   import AppArticleNav from 'src/components/AppArticleNav.vue'
   import CommentContainer from 'src/components/comment/CommentContainer.vue'
+  import TagNav from 'src/components/tag/TagNav.vue'
   import { get, } from 'lodash'
   import { isClientSide, updatedAtYYYYMMDD, } from 'src/util/comm'
   const debug = require('debug')('CLIENT:BaseLightBoxTemplatePost')
@@ -31,6 +38,7 @@
     components: {
       AppArticleNav,
       CommentContainer,
+      TagNav,
     },
     computed: {
       asset () {
