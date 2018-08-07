@@ -1,6 +1,7 @@
 <template>
   <div class="leading">
     <template v-if="route === 'series'">
+      <slot name="tagNav"></slot>
       <ProjectIntroSingle :projId="get(this.$route, 'params.slug')"></ProjectIntroSingle>
     </template>
   </div>
