@@ -1,6 +1,12 @@
 <template>
   <div class="public-page">
-    <Leading v-if="hasLeading"></Leading>
+    <Leading v-if="hasLeading">
+      <TagNav
+        v-if="projectSingle.tags && projectSingle.tags.length > 0"
+        slot="tagNav"
+        :tags="projectSingle.tags"
+        class="public-page__tag-nav" />
+    </Leading>
     <div class="public-page__container">
       <div v-if="hasPostList" class="public-page__main">
         <PostList></PostList>
@@ -22,7 +28,7 @@
           <CommentContainer :asset="commentAsset" :assetId="assetId"></CommentContainer>
         </div>
         <div v-else></div>
-        <AppTitledList v-if="projects.length > 0"
+        <AppTitledList v-if="projects.length > 0 && route !== 'series'"
           class="public-page__aside-container"
           :listTitle="$t('SECTIONS.PROJECTS')"
           :moreButtonShow="true"
@@ -41,6 +47,7 @@ import Leading from 'src/components/leading/Leading.vue'
 import MemoFigure from 'src/components/projects/MemoFigure.vue'
 import PostList from 'src/components/post/PostList.vue'
 import ProjectList from 'src/components/projects/ProjectList.vue'
+import TagNav from 'src/components/tag/TagNav.vue'
 import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, REPORT_PUBLISH_STATUS, MEMO_PUBLISH_STATUS, POINT_OBJECT_TYPE, } from 'api/config'
 import { isClientSide, isScrollBarReachBottom, isElementReachInView, } from 'src/util/comm'
 import { get, uniq, } from 'lodash'
@@ -141,17 +148,21 @@ export default {
     PostList,
     MemoFigure,
     ProjectList,
+    TagNav,
   },
   // TODO: reportList and memoList loadmore
-  // watch: {
-  //   isReachBottom (value) {
-  //     if (value) {
-  //       fetchReportsList(this.$store, {
-  //         page: 2
-  //       })
-  //     }
-  //   },
-  // },
+  watch: {
+    // isReachBottom (value) {
+    //   if (value) {
+    //     fetchReportsList(this.$store, {
+    //       page: 2
+    //     })
+    //   }
+    // },
+    projectSingleTagIds (ids) {
+      fetchFollowing(this.$store, { resource: 'tag', ids: ids, })
+    },
+  },
   data () {
     const listTitleMain = this.getListTitleMain(this.$route.path)
     return {
@@ -186,7 +197,11 @@ export default {
     },
     projectSingle () {
       return get(this.$store, 'state.publicProjectSingle', {})
-    },    
+    },
+    projectSingleTagIds () {
+      const tags = this.projectSingle.tags || []
+      return tags.map(tag => tag.id)
+    },
     route () {
       return this.$route.fullPath.split('/')[ 1 ]
     },
@@ -277,4 +292,8 @@ export default {
   &__main
     &-container
       width 650px
+  &__tag-nav
+    margin-bottom 20px
+    >>> .tag
+      background-color #fff
 </style>
