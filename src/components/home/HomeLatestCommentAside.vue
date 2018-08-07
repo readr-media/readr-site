@@ -67,12 +67,16 @@ export default {
 .latest-comment
   display flex
   flex-direction column
-  padding 15px
+  padding 15px 0
   max-width 410px
   min-height 67px
+  border-bottom .5px solid #cbcbcb
   &__info
     display flex
     justify-content space-between
+  &__icon-nickname-container
+    display flex
+    align-items center
   &__icon
     width 16.5px
     height 15px
@@ -81,6 +85,11 @@ export default {
     color black
     font-size 14px
     font-weight 500
+    display inline-block
+    width 75px
+    overflow hidden
+    text-overflow ellipsis
+    white-space nowrap
   &__created-at
     margin 0
     font-size 14px
@@ -98,7 +107,5 @@ export default {
       color black
   &__more
     color #808080
-  & + &
-    border-top .5px solid #979797
 </style>
 

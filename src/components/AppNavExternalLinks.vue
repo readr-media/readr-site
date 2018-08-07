@@ -38,31 +38,32 @@ export default {
 
 <style lang="stylus" scoped>
 .external-links
-  height 50px
+  height 30px
   display flex
-  margin 15px 0 0 0
+  margin 24px 0 0 0
   img
-    width 30px
-    height 30px
+    width 25px
+    height 25px
   &__independent
     flex 1 1 auto
     display flex
     justify-content center
     align-items center
     background-color #d3d3d3
-    margin 0 0 0 13px
+    margin 0 0 0 5.5px
 
 .nav-list
   list-style none
-  width 255px
+  width 130px
   padding 0
   margin 0
   display flex
+  align-items center
+  background-color #d3d3d3
   &__link
     flex 1 1 auto
     padding 7.5px 0
-    height 50px
-    background-color #d3d3d3
+    height 20px
     display flex
     justify-content center
     align-items center
@@ -74,5 +75,6 @@ export default {
     justify-content center
     align-items center
     width 100%
+    height 20px
 </style>
 

@@ -153,6 +153,7 @@ export default {
     'WORDING_HOME_POST_MORE' : '更多',
     'WORDING_HOME_POST_MORE_NEWS' : '查看更多',
     'WORDING_HOME_POST_SOURCE' : '出處：',
+    'WORDING_HOME_ASIDE_TITLE': '最新留言',
   },
   'post_list': {
     'WORDING_POSTLIST_ACTIVE' : '狀態',

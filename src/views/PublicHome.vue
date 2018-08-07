@@ -12,34 +12,16 @@
           <PostItem v-for="post in postsMain" :post="post" :key="`${post.id}-main`"></PostItem>
         </transition-group>
       </div>
-      <div class="homepage__list-aside">
-        <AppTitledList
-          v-if="reports.length > 0"
-          class="homepage__report-container"
-          :listTitle="[ $t('SECTIONS.PROJECTS'), $t('SECTIONS.REPORTS') ]"
-          :listTitleMarginLeft="'15px'"
-          :moreButtonShow="true"
-          :moreButtonTo="'/reports'">
-          <ul class="aside-list-container">
-            <HomeReportAside />
-          </ul>
-        </AppTitledList>
-        <AppTitledList
-          v-if="memos.length > 0"
-          class="homepage__project-container"
-          :listTitle="[ $t('SECTIONS.PROJECTS'), $t('SECTIONS.MEMOS') ]"
-          :listTitleMarginLeft="'15px'"
-          :moreButtonShow="true"
-          :moreButtonTo="'/memos'">
-          <template v-for="memo in memos">
-            <MemoFigure :key="memo.id" :memo="memo"></MemoFigure>
-          </template>
-        </AppTitledList>
-        <AppTitledList class="homepage__latest-comments-container" :listTitle="$t('SECTIONS.LATEST_COMMENTS')" :listTitleMarginLeft="'15px'">
-          <template v-for="comment in latestCommentsList">
-            <HomeLatestCommentAside :comment="comment" :key="comment.id"/>
-          </template>
-        </AppTitledList>
+      <div class="homepage__list-aside aside-latest-comments">
+        <h1 class="aside-latest-comments__title" v-text="$t('homepage.WORDING_HOME_ASIDE_TITLE')"></h1>
+        <div class="aside-latest-comments__list">
+          <HomeLatestCommentAside
+            class="aside-latest-comments__list-item"
+            v-for="comment in latestCommentsList"
+            :key="comment.id"
+            :comment="comment"
+          />
+        </div>
         <AppNavExternalLinks/>
       </div>
     </div>
@@ -437,22 +419,29 @@ export default {
 .homepage
   &__container
     display flex
-    justify-content flex-end
+    justify-content center
     align-items flex-start
   &__list-main
     max-width 650px
     width 650px
   &__list-aside
-    margin-left 35px
+    // margin-left 35px
     flex 1
-    .aside-list-container
-      margin 0
-      padding 0
-    section
-      &:nth-child(2)
-        margin-top 10px
+    position fixed
+    top 35px
+    right 0
+    height calc(100vh - 35px)
+    background-color white
+    overflow-y scroll
   &__project-container, &__report-container
     >>> .app-titled-list__content
       padding 0
-  
+
+.aside-latest-comments
+  width 240px
+  padding 20px
+  &__title
+    font-size 18px
+    font-weight 600
+    margin 0 0 5px 0
 </style>
