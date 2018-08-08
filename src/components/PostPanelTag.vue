@@ -36,7 +36,7 @@
   const getTags = (store, {
     max_result = MAXRESULT,
     page = DEFAULT_PAGE,
-    sorting = '-update_at',
+    sort = '-updated_at',
     keyword = '',
     stats = false,
   }) => {
@@ -44,7 +44,7 @@
       params: {
         max_result: max_result,
         page: page,
-        sorting: sorting,
+        sort: sort,
         keyword: keyword,
         stats: stats,
       },

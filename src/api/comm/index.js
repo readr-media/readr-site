@@ -13,7 +13,6 @@ export function _buildQuery (params = {}) {
     'max_result',
     'page',
     'sort',
-    'sorting',
     'id',
     'ids',
     'custom_editor',

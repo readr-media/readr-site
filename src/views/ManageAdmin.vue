@@ -190,7 +190,7 @@
       params: {
         max_result: max_result,
         page: page,
-        sorting: sort,
+        sort: sort,
         keyword: keyword,
         stats: stats,
       },
