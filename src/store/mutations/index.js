@@ -65,7 +65,7 @@ export default Object.assign({
     state['isLoggedIn'] = body
   },
   SET_TAGS: (state, { tags, }) => {
-    state['tags'] = tags.items
+    state['tags'] = tags
   },
   SET_TAGS_COUNT: (state, { meta, }) => {
     state['tagsCount'] = meta.total

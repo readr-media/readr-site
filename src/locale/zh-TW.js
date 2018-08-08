@@ -263,6 +263,14 @@ export default {
     'TAG' : '關鍵字詞',
     'UPDATE_AT' : '更新時間',
   },
+  'TAG_NAV_ASIDE': {
+    'TITLE': {
+      'LATEST': '最新關鍵字',
+    },
+    'CATEGORY': {
+      'PROJECT': '讀 + 專題',
+    },
+  },
   'control_bar': {
     'WORDING_CONTROLBAR_ACCOUNT' : '帳號',
     'WORDING_CONTROLBAR_ACCOUNT_LIST' : '帳號列表',

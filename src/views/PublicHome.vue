@@ -4,6 +4,7 @@
       <BaseLightBoxPost :showLightBox="showLightBox" :post="postLightBox"/>
     </BaseLightBox>
     <div class="homepage__container">
+      <TagNavAside class="homepage__tag-nav-aside"/>
       <div class="homepage__list-main">
         <div class="invitation">
           <Invite></Invite>
@@ -15,7 +16,7 @@
       <div class="homepage__list-aside aside-latest-comments">
         <h1 class="aside-latest-comments__title" v-text="$t('homepage.WORDING_HOME_ASIDE_TITLE')"></h1>
         <div class="aside-latest-comments__list">
-          <HomeLatestCommentAside
+          <HomeAsideLatestComment
             class="aside-latest-comments__list-item"
             v-for="comment in latestCommentsList"
             :key="comment.id"
@@ -35,14 +36,15 @@ import _ from 'lodash'
 // import { createStore, } from '../store'
 import AppTitledList from 'src/components/AppTitledList.vue'
 import AppNavExternalLinks from 'src/components/AppNavExternalLinks.vue'
-import HomeReportAside from 'src/components/home/HomeReportAside.vue'
-import HomeArticleAside from 'src/components/home/HomeArticleAside.vue'
-import HomeLatestCommentAside from 'src/components/home/HomeLatestCommentAside.vue'
+import HomeAsideReport from 'src/components/home/HomeAsideReport.vue'
+import HomeAsideArticle from 'src/components/home/HomeAsideArticle.vue'
+import HomeAsideLatestComment from 'src/components/home/HomeAsideLatestComment.vue'
 import BaseLightBox from 'src/components/BaseLightBox.vue'
 import BaseLightBoxPost from 'src/components/BaseLightBoxPost.vue'
 import Invite from 'src/components/invitation/Invite.vue'
 import PostItem from 'src/components/post/PostItem.vue'
 import MemoFigure from 'src/components/projects/MemoFigure.vue'
+import TagNavAside from 'src/components/tag/TagNavAside.vue'
 
 const debug = require('debug')('CLIENT:Home')
 
@@ -198,14 +200,15 @@ export default {
   components: {
     AppTitledList,
     AppNavExternalLinks,
-    HomeReportAside,
-    HomeArticleAside,
-    HomeLatestCommentAside,
+    HomeAsideReport,
+    HomeAsideArticle,
+    HomeAsideLatestComment,
     BaseLightBox,
     BaseLightBoxPost,
     Invite,
     MemoFigure,
     PostItem,
+    TagNavAside,
   },
   watch: {
     isReachBottom(isReachBottom) {
@@ -419,11 +422,15 @@ export default {
 .homepage
   &__container
     display flex
-    justify-content center
+    justify-content flex-start
     align-items flex-start
+  &__tag-nav-aside
+    position sticky
+    top 57.5px
   &__list-main
     max-width 650px
     width 650px
+    margin 0 0 0 31px
   &__list-aside
     // margin-left 35px
     flex 1

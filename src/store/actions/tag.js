@@ -1,4 +1,5 @@
 /*eslint no-unused-vars: 0*/
+import { get, values, concat, } from 'lodash'
 import { addTags, deleteTags, getTags, getTagsCount, updateTags, } from 'src/api/tag'
 
 // const debug = require('debug')('CLIENT:store:actions:tag')
@@ -11,10 +12,15 @@ const DELETE_TAGS = ({ commit, dispatch, state, }, { params, }) => {
   return deleteTags({ params, })
 }
 
-const GET_TAGS = ({ commit, }, { params, }) => {
+const GET_TAGS = ({ commit, state, }, { params, }) => {
   return getTags({ params, }).then(({ status, body, }) => {
     if (status === 200) {
-      commit('SET_TAGS', { tags: body, })
+      let result = get(body, 'items', [])
+      if (params.page > 1) {
+        let orig = get(state, 'tags', [])
+        result = concat(orig, result)
+      }
+      commit('SET_TAGS', { tags: result, })
     }
   })
 }

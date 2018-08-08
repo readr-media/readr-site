@@ -106,7 +106,7 @@ $container
     z-index 999
   &__main
     flex 1
-    margin-left calc(30px + 75px)
+    margin-left calc(40px + 75px)
     // margin-right 30px
     display flex
     justify-content flex-start
