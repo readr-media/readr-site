@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <app-header v-if="!isCommentPage"></app-header>
+    <app-header v-if="!isLoginPage && !isCommentPage"></app-header>
     <div :class="[ 'app__container', { 'app__container--wide': isLoginPage }, { 'app__container--normalize': isCommentPage } ]">
       <aside class="app__aside" v-if="!isLoginPage && !isCommentPage">
         <AppNavAside/>
@@ -36,7 +36,7 @@
         return get(this.$store, 'state.profile.id')
       },
       isLoginPage () {
-        return this.$route.path === '/login'
+        return /\/login/.test(this.$route.fullPath)
       },
       isCommentPage () {
         return this.$route.path === '/comment'
@@ -99,10 +99,10 @@ $container
       padding 0
   &__aside
     width 75px
-    height 100%
+    // height 100%
     position fixed
-    // position fixed
-    top 3px
+    top 60px
+    left 0
     z-index 999
   &__main
     flex 1

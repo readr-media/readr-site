@@ -1,6 +1,5 @@
 <template>
   <nav class="app-aside-nav">
-    <router-link to="/"><img class="app-aside-nav__logo" src="/public/icons/readr-logo-backstage.svg" alt=""></router-link>
     <ol class="nav-list">
       <router-link class="nav-list__link" to="/">
         <li class="nav-list__list-item">
@@ -69,7 +68,7 @@ export default {
 .nav-list
   list-style none
   padding 0 7px
-  margin 5px 0 0 0
+  margin 0
   &__link
     width 50px
     height 50px

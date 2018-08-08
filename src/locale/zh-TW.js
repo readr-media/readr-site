@@ -133,11 +133,11 @@ export default {
     'WARNING_DEPOSIT_PREFIX': '您目前點數不足（餘 ',
     'WARNING_DEPOSIT_POSTFIX': ' 點）',
   },
-  'header': {
-    'WORDING_HEADER_LOGIN' : '登入',
-    'WORDING_HEADER_LOGOUT' : '登出',
-    'WORIDNG_HEADER_MEMBER_CENTRE' : '會員中心',
-    'WORIDNG_HEADER_MEMBER_SEARCH' : '搜尋',
+  'HEADER': {
+    'LOGIN' : '登入',
+    'LOGOUT' : '登出',
+    'MEMBER_CENTRE' : '會員中心',
+    'SEARCH' : '搜尋',
   },
   'FOLLOWING': {
     'FOLLOW': '追蹤',
