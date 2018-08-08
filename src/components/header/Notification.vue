@@ -1,7 +1,8 @@
 <template>
   <div class="notification" tabIndex="0" @focusout="closeBox" @focus="openBox">
-    <div class="notification__light" :class="{ off: !isBoxActive }" v-if="notReadYetCount !== 0"><span v-text="notReadYetCount"></span></div>
-    <div class="notification__light bell" v-else></div>
+    <span v-show="notReadYetCount > 0" v-text="notReadYetCount > 99 ? 99 : notReadYetCount"></span>
+    <!-- <div class="notification__light" :class="{ off: !isBoxActive }" v-if="notReadYetCount !== 0"><span v-text="notReadYetCount"></span></div> -->
+    <!-- <div class="notification__light bell" v-else></div> -->
     <NotificationDropbox class="notification__dropbox"
       @updateNotification="updateNotification"
       :class="{ show: isBoxActive }"
@@ -78,21 +79,28 @@
 <style lang="stylus" scoped>
   .notification
     position relative
-    width 28px
+    width 40px
     // height 30px
     height 100%
     display block
     // position absolute
     background-color transparent
-    background-image url(/public/icons/account.png)
+    background-image url(/public/icons/bell-yellow.png)
     background-position bottom center
     background-repeat no-repeat
     background-size contain
     // bottom 0
     // right 10px    
-    margin-right 10px
+    // margin-right 10px
     cursor pointer
     outline none
+    > span
+      position absolute
+      top 50%
+      left 50%
+      transform translate(-50%, -50%)
+      color #d0021b
+      font-size .625rem
     &__light
       border-radius 50%
       width 18px
@@ -134,7 +142,7 @@
         z-index 1
     > .notification__dropbox
       top calc(100% + 24px)
-      margin-right -50px
+      // margin-right -50px
       z-index 2
       cursor default
       display none
