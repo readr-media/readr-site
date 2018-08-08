@@ -21,7 +21,7 @@ import { get, } from 'lodash'
 import { getReportUrl, } from 'src/util/comm'
 
 export default {
-  name: 'HomeReportAside',
+  name: 'HomeAsideReport',
   components: {
     AppArticleNav,
   },

@@ -15,7 +15,7 @@
         class="public-page__main-container"
         :listTitle="listTitle">
         <template v-if="$route.path === '/reports'">
-          <HomeReportAside/>
+          <HomeAsideReport/>
         </template>
         <template v-if="$route.path === '/memos'">
           <template v-for="memo in memos">
@@ -42,7 +42,7 @@
 <script>
 import AppTitledList from 'src/components/AppTitledList.vue'
 import CommentContainer from 'src/components/comment/CommentContainer.vue'
-import HomeReportAside from 'src/components/home/HomeReportAside.vue'
+import HomeAsideReport from 'src/components/home/HomeAsideReport.vue'
 import Leading from 'src/components/leading/Leading.vue'
 import MemoFigure from 'src/components/projects/MemoFigure.vue'
 import PostList from 'src/components/post/PostList.vue'
@@ -143,7 +143,7 @@ export default {
   components: {
     AppTitledList,
     CommentContainer,
-    HomeReportAside,
+    HomeAsideReport,
     Leading,
     PostList,
     MemoFigure,
