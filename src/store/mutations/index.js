@@ -67,6 +67,14 @@ export default Object.assign({
   SET_TAGS: (state, { tags, }) => {
     state['tags'] = tags
   },
+  INIT_TAGS_MOUSEEVENT: (state, { tags, }) => {
+    let obj = {}
+    tags.forEach(tag => { obj[tag.id] = false })
+    state['tagsIsMouseover'] = obj
+  },
+  SET_TAGS_MOUSEEVENT: (state, { id, value, }) => {
+    state['tagsIsMouseover'][id] = value
+  },
   SET_TAGS_COUNT: (state, { meta, }) => {
     state['tagsCount'] = meta.total
   },

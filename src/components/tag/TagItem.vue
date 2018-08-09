@@ -1,7 +1,10 @@
 <template>
-  <div class="tag-item">
+  <div class="tag-item"
+    @mouseover="handleMouseEvent"
+    @mouseout="handleMouseEvent"
+  >
     <div class="tag-item__tag tag">
-      <div class="tag__header">
+      <div :class="[ 'tag__header', { 'tag__header--highlight': isMouseover } ]">
         <span class="tag__text" v-text="tag.text"></span>
         <span v-if="isLoggedIn" class="tag__action tag-action">
           <img :src="isFollow(tag.id) ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" @click="toogleFollow(tag.id)">
@@ -65,6 +68,7 @@ export default {
   data () {
     return {
       showActionTooltip: false,
+      isMouseoverLocal: false, // For preserving mouseover effect when tag's isMouseover status is not exist
     }
   },
   computed: {
@@ -73,6 +77,9 @@ export default {
     },
     isTagRelatedProjectsExist () {
       return get(this.tag, 'relatedProjects') !== null
+    },
+    isMouseover () {
+      return get(this.$store.state, [ 'tagsIsMouseover', this.tag.id, ], this.isMouseoverLocal)
     },
   },
   methods: {
@@ -121,6 +128,10 @@ export default {
         this.showActionTooltip = false
       }, 1000)
     },
+    handleMouseEvent (e) {
+      this.isMouseoverLocal = e.type === 'mouseover'
+      this.$store.commit('SET_TAGS_MOUSEEVENT', { id: this.tag.id, value: e.type === 'mouseover', })
+    },
   },
 }
 </script>
@@ -153,6 +164,13 @@ export default {
     display flex
     justify-content space-between
     align-items center
+    border-radius 12px
+    background-color white
+    color black
+    transition background-color .1s ease-out, color .1s ease-out
+    &--highlight
+      background-color #11b8c9
+      color white
   &__text
     font-size 12px
     font-weight 400
@@ -202,6 +220,7 @@ export default {
 .tag-action
   position relative
   &__tooltip
+    pointer-events none
     padding 1px 2px
     position absolute
     top 5%
