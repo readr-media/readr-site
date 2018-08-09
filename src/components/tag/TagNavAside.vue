@@ -23,7 +23,9 @@ import TagItem from './TagItem.vue'
 const MAXRESULT = 40
 const DEFAULT_PAGE = 1
 const DEFAULT_SORT = '-updated_at'
+const DEFAULT_URL_PARAM= '' // empty for getting latest tags
 const getTags = (store, {
+  urlParam = DEFAULT_URL_PARAM,
   max_result = MAXRESULT,
   page = DEFAULT_PAGE,
   sort = DEFAULT_SORT,
@@ -31,6 +33,7 @@ const getTags = (store, {
   stats = false,
 } = {}) => {
   return store.dispatch('GET_TAGS', {
+    urlParam: urlParam,
     params: {
       max_result: max_result,
       page: page,

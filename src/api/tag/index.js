@@ -14,8 +14,8 @@ export function deleteTags ({ params, }) {
   return del(url)
 }
 
-export function getTags ({ params = {}, }) {
-  const url = constructUrlWithQuery(`${host}/api/tags`, params)
+export function getTags ({ urlParam, params = {}, }) {
+  const url = constructUrlWithQuery(`${host}/api/tags${urlParam}`, params)
   return fetchInStrict(url, {})
 }
 
