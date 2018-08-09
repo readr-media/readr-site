@@ -12,8 +12,8 @@ const DELETE_TAGS = ({ commit, dispatch, state, }, { params, }) => {
   return deleteTags({ params, })
 }
 
-const GET_TAGS = ({ commit, state, }, { params, }) => {
-  return getTags({ params, }).then(({ status, body, }) => {
+const GET_TAGS = ({ commit, state, }, { urlParam, params, }) => {
+  return getTags({ urlParam, params, }).then(({ status, body, }) => {
     if (status === 200) {
       let result = get(body, 'items', [])
       if (params.page > 1) {
