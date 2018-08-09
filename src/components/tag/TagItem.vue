@@ -1,10 +1,18 @@
 <template>
-  <div class="tag-item">
+  <div class="tag-item"
+    @mouseover="handleMouseEvent"
+    @mouseout="handleMouseEvent"
+  >
     <div class="tag-item__tag tag">
-      <div class="tag__header">
+      <div :class="[ 'tag__header', { 'tag__header--highlight': isMouseover } ]">
         <span class="tag__text" v-text="tag.text"></span>
-        <span v-if="isLoggedIn" class="tag__action">
+        <span v-if="isLoggedIn" class="tag__action tag-action">
           <img :src="isFollow(tag.id) ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" @click="toogleFollow(tag.id)">
+          <span
+            :class="[ 'tag-action__tooltip', { 'tag-action__tooltip--toogled': showActionTooltip } ]"
+            v-text="isFollow(tag.id) ? $t('FOLLOWING.FOLLOW_TAG') : $t('FOLLOWING.UNFOLLOW_TAG') "
+          >
+          </span>
         </span>
       </div>
       <!-- TODO: add related projects while data available -->
@@ -57,12 +65,21 @@ export default {
   components: {
     TagItemRelatedsListItem,
   },
+  data () {
+    return {
+      showActionTooltip: false,
+      isMouseoverLocal: false, // For preserving mouseover effect when tag's isMouseover status is not exist
+    }
+  },
   computed: {
     isLoggedIn () {
       return this.$store.state.isLoggedIn
     },
     isTagRelatedProjectsExist () {
       return get(this.tag, 'relatedProjects') !== null
+    },
+    isMouseover () {
+      return get(this.$store.state, [ 'tagsIsMouseover', this.tag.id, ], this.isMouseoverLocal)
     },
   },
   methods: {
@@ -99,6 +116,21 @@ export default {
           userId: this.$store.state.profile.id,
         })
       }
+
+      this.toogleFollowTooltip()
+    },
+    toogleFollowTooltip () {
+      this.showActionTooltip = true
+      if (this._timer) {
+        clearTimeout(this._timer)
+      }
+      this._timer = setTimeout(() => {
+        this.showActionTooltip = false
+      }, 1000)
+    },
+    handleMouseEvent (e) {
+      this.isMouseoverLocal = e.type === 'mouseover'
+      this.$store.commit('SET_TAGS_MOUSEEVENT', { id: this.tag.id, value: e.type === 'mouseover', })
     },
   },
 }
@@ -132,6 +164,13 @@ export default {
     display flex
     justify-content space-between
     align-items center
+    border-radius 12px
+    background-color white
+    color black
+    transition background-color .1s ease-out, color .1s ease-out
+    &--highlight
+      background-color #11b8c9
+      color white
   &__text
     font-size 12px
     font-weight 400
@@ -159,24 +198,66 @@ export default {
       position absolute
       top 0
       left 30px
-      width: 0;
-      height: 0;
-      border-style: solid;
-      border-width: 10px 4px 0 4px;
-      border-color: #11b8c9 transparent transparent transparent;
+      width 0
+      height 0
+      border-style solid
+      border-width 10px 4px 0 4px
+      border-color #11b8c9 transparent transparent transparent
     &:after
       content ''
       position absolute
       top -1px
       left 30.5px
-      width: 0;
-      height: 0;
-      border-style: solid;
-      border-width: 9px 3px 0 3px;
-      border-color: white transparent transparent transparent;
+      width 0
+      height 0
+      border-style solid
+      border-width 9px 3px 0 3px
+      border-color white transparent transparent transparent
   &__relateds-list-item
     & + &
       border-top 1px solid #d3d3d3
+
+.tag-action
+  position relative
+  &__tooltip
+    pointer-events none
+    padding 1px 2px
+    position absolute
+    top 5%
+    left 30px
+    width max-content
+    height 90%
+    font-size 10px
+    color #444746
+    background-color white
+    border 1px solid #d3d3d3
+    z-index 100
+    display flex
+    align-items center
+    opacity 0
+    transition opacity .25s
+    &:before
+      position absolute
+      top 2.5px
+      left -10px
+      content ''
+      width 0
+      height 0
+      border-style solid
+      border-width 7px 10px 7px 0
+      border-color transparent #d3d3d3 transparent transparent
+    &:after
+      position absolute
+      top 3.5px
+      left -9px
+      content ''
+      width 0
+      height 0
+      border-style solid
+      border-width 6px 9px 6px 0
+      border-color transparent white transparent transparent
+    &--toogled
+      opacity 1
 </style>
 
 

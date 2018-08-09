@@ -75,6 +75,7 @@ export function createStore () {
         'items': [],
       },
       'tags': [],
+      'tagsIsMouseover': {},
       'tagsCount': 0,
     },
     actions,

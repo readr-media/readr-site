@@ -148,6 +148,8 @@ export default {
     'PROJECT': '專題',
     'REPORT': '報導',
     'REVIEW': '評論',
+    'FOLLOW_TAG': '已追蹤',
+    'UNFOLLOW_TAG': '已取消追蹤',
   },
   'homepage': {
     'WORDING_HOME_POST_MORE' : '更多',

@@ -430,7 +430,7 @@ export default {
   &__list-main
     max-width 650px
     width 650px
-    margin 0 0 0 31px
+    margin 0 0 0 3px
   &__list-aside
     // margin-left 35px
     flex 1

@@ -21,6 +21,7 @@ const GET_TAGS = ({ commit, state, }, { params, }) => {
         result = concat(orig, result)
       }
       commit('SET_TAGS', { tags: result, })
+      commit('INIT_TAGS_MOUSEEVENT', { tags: result, })
     }
   })
 }
