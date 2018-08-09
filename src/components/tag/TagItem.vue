@@ -1,5 +1,5 @@
 <template>
-  <div class="tag-item"
+  <li class="tag-item"
     @mouseover="handleMouseEvent"
     @mouseout="handleMouseEvent"
   >
@@ -26,7 +26,7 @@
     </div>
     <!-- TODO: add trending-rank -->
     <p v-if="showTrendingRank" class="tag-item__trending-rank"></p>
-  </div>
+  </li>
 </template>
 
 <script>

@@ -2,14 +2,16 @@
   <nav class="tag-nav-aside">
     <!-- TODO: add sorting radio buttons -->
     <h1 class="tag-nav-aside__sort-title" v-text="$t('TAG_NAV_ASIDE.TITLE.LATEST')"></h1>
-    <TagItem
-      v-for="tag in tags"
-      :key="tag.id"
-      class="tag-nav-aside__tag-item"
-      :tag="tag"
-      :showTrendingRank="true"
-      :showRelatedsList="true"
-    />
+    <ol class="tag-nav-aside__list">
+      <TagItem
+        v-for="tag in tags"
+        :key="tag.id"
+        class="tag-nav-aside__tag-item"
+        :tag="tag"
+        :showTrendingRank="true"
+        :showRelatedsList="true"
+      />
+    </ol>
   </nav>
 </template>
 
@@ -96,6 +98,10 @@ export default {
     font-size 18px
     font-weight 600
     margin 0 0 20px 0
+  &__list
+    list-style none
+    margin 0
+    padding 0
   &__tag-item
     display flex !important
     & + &
