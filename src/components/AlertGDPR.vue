@@ -30,11 +30,12 @@ export default {
     z-index 9999
     width 100%
     color #fff
+    font-size .875rem
     background-color #444746
     overflow hidden
     > button
       align-self stretch
-      padding 1em 2em
+      padding 1em 1em
       margin 0 0 0 auto
       color #444746
       background-color #ddcf21
@@ -49,13 +50,18 @@ export default {
       line-height 1.67
       a
         color #ddcf21
+        font-size .75rem
         cursor pointer
 
   @media (min-width 800px)
     .gdpr
+      font-size 1rem
+      > button
+        padding 1em 2em
       &__info
         br
           display none
         a
           margin-left 1em
+          font-size .875rem
 </style>
