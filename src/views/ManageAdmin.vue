@@ -39,7 +39,7 @@
           <PostListManage class="backstage__panel" />
         </template>
         <template v-else-if="activePanel === 'tags'">
-          <TagList
+          <TagListManage
             class="backstage__panel"
             :maxResult="20"
             :sort="currSort"
@@ -47,8 +47,7 @@
             @addTag="addTag"
             @deleteTags="showAlertHandler"
             @filterChanged="filterChanged"
-            @updateTagList="updateTagList({})">
-          </TagList>
+            @updateTagList="updateTagList({})" />
         </template>
         <BaseLightBox borderStyle="nonBorder" :showLightBox.sync="showLightBox" :isConversation="true">
           <MemberAccountEditor
@@ -108,7 +107,7 @@
   import PostListManage from '../components/post/PostListManage.vue'
   import PostPanel from '../components/PostPanel.vue'
   import Tab from '../components/Tab.vue'
-  import TagList from '../components/TagList.vue'
+  import TagListManage from '../components/tag/TagListManage.vue'
   import TheControlBar from '../components/TheControlBar.vue'
   import VideoList from '../components/VideoList.vue'
 
@@ -185,6 +184,7 @@
     sort = DEFAULT_SORT,
     keyword = '',
     stats = false,
+    taggedResources = 1,
   } = {}) => {
     return store.dispatch('GET_TAGS', {
       params: {
@@ -193,6 +193,7 @@
         sort: sort,
         keyword: keyword,
         stats: stats,
+        tagged_resources: taggedResources,
       },
     })
   }
@@ -252,7 +253,7 @@
       PostListInTab,
       PostListManage,
       PostPanel,
-      TagList,
+      TagListManage,
       TheControlBar,
       VideoList,
     },

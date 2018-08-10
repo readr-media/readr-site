@@ -32,7 +32,7 @@ const getTags = (store, {
   keyword = '',
   stats = false,
 } = {}) => {
-  return store.dispatch('GET_TAGS', {
+  return store.dispatch('GET_PUBLIC_TAGS', {
     urlParam: urlParam,
     params: {
       max_result: max_result,
@@ -40,6 +40,7 @@ const getTags = (store, {
       sorting: sort,
       keyword: keyword,
       stats: stats,
+      tagged_resources: 1,
     },
   })
 }
@@ -63,14 +64,15 @@ export default {
   },
   computed: {
     ...mapState({
-      tags: state => state.tags,
+      tags: state => state.publicTags,
     }),
   },
   beforeMount () {
     if (isEmpty(this.tags)) {
       getTags(this.$store, { stats: false, })
     }
-
+  },
+  mounted () {
     this.$el.onscroll = () => {
       const isScrollbarReachEnd = this.$el.scrollTop + this.$el.offsetHeight === this.$el.scrollHeight
       if (isScrollbarReachEnd) {

@@ -68,6 +68,7 @@ export function createStore () {
       'publicProjects': {},
       'publicProjectSingle': {},
       'publicReports': [],
+      'publicTags': [],
       'publicVideos': {},
       'publicVideosCount': 0,
       'register-token': '',

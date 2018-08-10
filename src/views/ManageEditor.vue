@@ -34,7 +34,7 @@
         <PostListManage class="backstage__panel" />
       </template>
       <template v-else-if="activePanel === 'tags'">
-        <tag-list
+        <TagListManage
           class="backstage__panel"
           :maxResult="20"
           :sort="sort"
@@ -42,8 +42,7 @@
           @addTag="$_editor_addTag"
           @deleteTags="$_editor_showAlert"
           @filterChanged="$_editor_filterHandler"
-          @updateTagList="$_editor_updateTagList({})">
-        </tag-list>
+          @updateTagList="$_editor_updateTagList({})" />
       </template>
     </div>
     <base-light-box :showLightBox.sync="showDraftList">
@@ -91,7 +90,7 @@
   import PostListManage from '../components/post/PostListManage.vue'
   import PostPanel from '../components/PostPanel.vue'
   import Tab from '../components/Tab.vue'
-  import TagList from '../components/TagList.vue'
+  import TagListManage from '../components/tag/TagListManage.vue'
   import TheControlBar from '../components/TheControlBar.vue'
   import VideoList from '../components/VideoList.vue'
 
@@ -210,10 +209,10 @@
       'post-list-detailed': PostListDetailed,
       'post-list-tab': PostListInTab,
       'post-panel': PostPanel,
-      'tag-list': TagList,
       'video-list': VideoList,
       PointManager,
       PostListManage,
+      TagListManage,
     },
     data () {
       return {
