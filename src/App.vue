@@ -12,21 +12,25 @@
       </main>
       <Consume></Consume>
     </div>
+    <AlertGDPR v-if="showAlertGDPR" @closeAlertGDPR="showAlertGDPR = false" />
   </div>
 </template>
 
 <script>
   import { get, } from 'lodash'
   import { logTrace, } from 'src/util/services'
+  import AlertGDPR from 'src/components/AlertGDPR.vue'
   import AppHeader from 'src/components/header/AppHeader.vue'
   import AppNavAside from 'src/components/AppNavAside.vue'
   import Consume from 'src/components/point/Consume.vue'
   import Tap from 'tap.js'
+  import VueCookie from 'vue-cookie'
   
   // const debug = require('debug')('CLIENT:App')
 
   export default {
     components: {
+      AlertGDPR,
       'app-header': AppHeader,
       AppNavAside,
       Consume,
@@ -48,10 +52,14 @@
     data () {
       return {
         doc: {},
-        globalTapevent: {},        
+        globalTapevent: {},      
+        showAlertGDPR: false,  
       }
     },
     methods: {
+      getGDPRCookie () {
+        return VueCookie.get('gdpr-accept-cookie')
+      },
       launchLogger () {
         this.globalTapevent = new Tap(this.doc)
         this.doc.addEventListener('tap', (event) => {
@@ -70,6 +78,7 @@
       this.doc = document
       this.$store.dispatch('UPDATE_CLIENT_SIDE')
       this.launchLogger()
+      this.showAlertGDPR = !this.getGDPRCookie()
     },
   }
 </script>
