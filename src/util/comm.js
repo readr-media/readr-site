@@ -159,7 +159,7 @@ export function isDescendant (child, { parent = document.body, }) {
   }
   return false
 }
-  
+
 export function onImageLoaded(url) {
   var image = new Image()
   image.src = url

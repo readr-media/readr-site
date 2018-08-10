@@ -118,7 +118,7 @@ function logTraceXHR (params) {
     }    
   })
 }
-function isAlinkDescendant (child) {
+export function isAlinkDescendant (child) {
   let node = child.parentNode
   while (node !== null && node !== undefined) {
     if (node.tagName === 'A') {
@@ -189,3 +189,5 @@ export function logTrace ({ category, description, eventType, sub, target, usera
       debug('res from logTracing:', res)
     })
 }
+
+
