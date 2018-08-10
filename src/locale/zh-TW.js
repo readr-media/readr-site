@@ -324,6 +324,11 @@ export default {
     'UPDATE_SUCCESSFUL' : '已更新',
     'VIDEO' : '影片',
   },
+  'GDPR': {
+    'ACCEPT': '我知道了！',
+    'LEARN_MORE': '了解更多',
+    'MESSAGE': '「本網站使用 cookie 及相關技術分析來改善使用者體驗。」',
+  },
   'INVITATION': {
     'TITLE': '將讀＋分享給好友',
     'BTN_CANCEL': '關閉',
