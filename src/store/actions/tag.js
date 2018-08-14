@@ -17,7 +17,7 @@ const GET_PUBLIC_TAGS = ({ commit, state, }, { urlParam, params, }) => {
     if (status === 200) {
       let result = get(body, 'items', [])
       if (params.page > 1) {
-        let orig = get(state, 'tags', [])
+        let orig = get(state, 'publicTags', [])
         result = concat(orig, result)
       }
       commit('SET_PUBLIC_TAGS', { tags: result, })

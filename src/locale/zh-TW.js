@@ -272,7 +272,10 @@ export default {
   },
   'TAG_NAV_ASIDE': {
     'TITLE': {
-      'LATEST': '最新關鍵字',
+      'hot': '熱門關鍵字',
+      'latest': '最新關鍵字',
+      'taggedProjects': '專題關鍵字',
+      'followed': '已追蹤關鍵字',
     },
     'CATEGORY': {
       'PROJECT': '讀 + 專題',

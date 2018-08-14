@@ -37,6 +37,7 @@ export function _buildQuery (params = {}) {
     'pay_type',
     'url',
     'tagged_resources',
+    'tagging_type',
   ]
   const snakeCaseParams = mapKeys(params, (value, key) => snakeCase(key))
   whitelist.forEach((ele) => {

@@ -58,9 +58,29 @@ export default Object.assign({
       state['followingByResource'][resourceType].push(follow)
     })
   },
-  SET_FOLLOWING_BY_USER: (state, { following, userId, }) => {
+  // SET_FOLLOWING_BY_USER: (state, { following, userId, }) => {
+  //   const data = following || []
+  //   Vue.set(state['followingByUser'], userId, data)
+  // },
+  SET_FOLLOWING_BY_USER: (state, { following, userId, resource, resourceType, }) => {
     const data = following || []
-    Vue.set(state['followingByUser'], userId, data)
+    // Vue.set(state['followingByUser'], userId, data)
+    if (!(userId in state['followingByUser'])) {
+      Vue.set(state['followingByUser'], userId, {})
+    }
+    if (!(resource in state['followingByUser'][userId])) {
+      Vue.set(state['followingByUser'][userId], resource, {})
+    }
+
+    if (resource === 'post') {
+      if (!_.isEmpty(resourceType)) {
+        Vue.set(state['followingByUser'][userId][resource], resourceType, data)
+      } else {
+        Vue.set(state['followingByUser'][userId][resource], 'fetchedByNoResourceType', data)
+      }
+    } else {
+      Vue.set(state['followingByUser'][userId], resource, data)
+    }
   },
   SET_LOGGEIN_STATUS: (state, { body, }) => {
     state['isLoggedIn'] = body
