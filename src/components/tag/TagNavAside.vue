@@ -1,11 +1,10 @@
 <template>
   <nav class="tag-nav-aside">
-    <!-- TODO: add sorting radio buttons -->
-    <h1 class="tag-nav-aside__sort-title" v-text="$t('TAG_NAV_ASIDE.TITLE.LATEST')"></h1>
+    <TagNavAsideDropdownOptions class="tag-nav-aside__sort" :picked.sync="currentRadioPicked"/>
     <ol class="tag-nav-aside__list">
       <TagItem
-        v-for="tag in tags"
-        :key="tag.id"
+        v-for="(tag, i) in tags"
+        :key="`${currentRadioPicked}-${tag.id}-${i}`"
         class="tag-nav-aside__tag-item"
         :tag="tag"
         :showTrendingRank="true"
@@ -16,37 +15,52 @@
 </template>
 
 <script>
-import { isEmpty, } from 'lodash'
+import { get, isEmpty, } from 'lodash'
 import { mapState, } from 'vuex'
+import TagNavAsideDropdownOptions from './TagNavAsideDropdownOptions.vue'
 import TagItem from './TagItem.vue'
 
 const MAXRESULT = 40
 const DEFAULT_PAGE = 1
 const DEFAULT_SORT = '-updated_at'
-const DEFAULT_URL_PARAM= '' // empty for getting latest tags
+const DEFAULT_URL_PARAM = '' // empty for getting latest tags
+const TYPE_TAGGED_PROJECTS = 2
+const RESOURCE_TAGGED_PROJECTS = 1
 const getTags = (store, {
   urlParam = DEFAULT_URL_PARAM,
   max_result = MAXRESULT,
   page = DEFAULT_PAGE,
-  sort = DEFAULT_SORT,
+  sorting = DEFAULT_SORT,
   keyword = '',
   stats = false,
+  tagging_type = '',
+  tagged_resources = RESOURCE_TAGGED_PROJECTS,
 } = {}) => {
   return store.dispatch('GET_PUBLIC_TAGS', {
-    urlParam: urlParam,
+    urlParam,
     params: {
-      max_result: max_result,
-      page: page,
-      sorting: sort,
-      keyword: keyword,
-      stats: stats,
-      tagged_resources: 1,
+      max_result,
+      page,
+      sorting,
+      keyword,
+      stats,
+      tagging_type,
+      tagged_resources,
     },
+  })
+}
+
+const getUserFollowing = (store, { id = get(store, 'state.profile.id'), resource, resourceType = '', } = {}) => {
+  return store.dispatch('GET_FOLLOWING_BY_USER', {
+    id: id,
+    resource: resource,
+    resource_type: resourceType,
   })
 }
 
 export default {
   components: {
+    TagNavAsideDropdownOptions,
     TagItem,
   },
   watch: {
@@ -55,31 +69,63 @@ export default {
         this.shouldTagsLoadMore = false
       }
     },
+    currentRadioPicked () {
+      this.resetLoadmore()
+      this.fetchTags()
+    },
   },
   data () {
     return {
       tagsCurrentPage: DEFAULT_PAGE,
       shouldTagsLoadMore: true,
+      currentRadioPicked: 'latest',
     }
   },
   computed: {
     ...mapState({
-      tags: state => state.publicTags,
+      tagsPublic: state => state.publicTags,
+      tagsFollowed: state => get(state.followingByUser, [ state.profile.id, 'tag', ], [],),
     }),
+    tags () {
+      return this.currentRadioPicked === 'followed' ? this.tagsFollowed : this.tagsPublic
+    },
+  },
+  methods: {
+    resetLoadmore () {
+      this.tagsCurrentPage = DEFAULT_PAGE
+      this.shouldTagsLoadMore = true
+    },
+    fetchTags () {
+      switch (this.currentRadioPicked) {
+        case 'latest':
+          getTags(this.$store, { stats: false, })
+          break
+        case 'hot':
+          getTags(this.$store, { stats: false, urlParam: '/hot', })
+          break
+        case 'taggedProjects':
+          getTags(this.$store, { stats: false, tagging_type: TYPE_TAGGED_PROJECTS, })
+          break
+        default:
+          getTags(this.$store, { stats: false, })
+      }
+    },
   },
   beforeMount () {
     if (isEmpty(this.tags)) {
-      getTags(this.$store, { stats: false, })
+      this.fetchTags()
+    }
+    if (isEmpty(this.tagsFollowed)) {
+      getUserFollowing(this.$store, { resource: 'tag', })
     }
   },
   mounted () {
     this.$el.onscroll = () => {
       const isScrollbarReachEnd = this.$el.scrollTop + this.$el.offsetHeight === this.$el.scrollHeight
-      if (isScrollbarReachEnd) {
+      if (isScrollbarReachEnd && this.shouldTagsLoadMore && this.currentRadioPicked === 'latest') {
         getTags(this.$store, { page: this.tagsCurrentPage + 1, stats: false, })
-        .then(() => {
-          if (this.shouldTagsLoadMore) this.tagsCurrentPage += 1
-        })
+        .then(() => { this.tagsCurrentPage += 1 })
+        .catch(() => { this.shouldTagsLoadMore = false })
       }
     }
   },
@@ -99,9 +145,7 @@ export default {
     background-color transparent
   &::-webkit-scrollbar-thumb
     background-color transparent
-  &__sort-title
-    font-size 18px
-    font-weight 600
+  &__sort
     margin 0 0 20px 0
   &__list
     list-style none

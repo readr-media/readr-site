@@ -121,11 +121,15 @@
       isProfilePage () {
         return get(this.$route, 'fullPath', '').split('/')[1] === 'profile'
       },
+      userId () {
+        return this.isProfilePage ? get(this.$route, 'params.id') : get(this.$store, 'state.profile.id')
+      },
       followingByUser () {
-        if (this.isProfilePage) {
-          return get(this.$store, [ 'state', 'followingByUser', get(this.$route, 'params.id'), ], [])
+        if (this.resource === 'post') {
+          return get(this.$store, [ 'state', 'followingByUser', this.userId, this.resource, this.resourceType, ], [])
+        } else {
+          return get(this.$store, [ 'state', 'followingByUser', this.userId, this.resource, ], [])
         }
-        return get(this.$store, [ 'state', 'followingByUser', get(this.$store, 'state.profile.id'), ], [])
       },
     },
     beforeMount () {

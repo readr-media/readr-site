@@ -1,13 +1,21 @@
 <template>
-  <li class="tag-item"
-    @mouseover="handleMouseEvent"
-    @mouseout="handleMouseEvent"
-  >
+  <li class="tag-item">
     <div class="tag-item__tag tag">
-      <div :class="[ 'tag__header', { 'tag__header--highlight': isMouseover } ]">
+      <div
+        :class="[
+          'tag__header',
+          { 'tag__header--has-list': showRelatedsList && isTaggedProjectsExist },
+          { 'tag__header--highlight': isMouseover}
+        ]"
+        @mouseover="handleMouseEvent"
+        @mouseout="handleMouseEvent"
+      >
         <span class="tag__text" v-text="tag.text"></span>
         <span v-if="isLoggedIn" class="tag__action tag-action">
-          <img :src="isFollow(tag.id) ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" @click="toogleFollow(tag.id)">
+          <img
+            :src="isFollow(tag.id) ? starUrlFollowed : starUrlUnFollowed"
+            @click="toogleFollow(tag.id)"
+          >
           <span
             :class="[ 'tag-action__tooltip', { 'tag-action__tooltip--toogled': showActionTooltip } ]"
             v-text="isFollow(tag.id) ? $t('FOLLOWING.FOLLOW_TAG') : $t('FOLLOWING.UNFOLLOW_TAG') "
@@ -15,10 +23,13 @@
           </span>
         </span>
       </div>
-      <!-- TODO: add related projects while data available -->
-      <ul v-if="showRelatedsList && isTagRelatedProjectsExist" class="tag__relateds-list">
+      <ul
+        v-if="showRelatedsList && isTaggedProjectsExist"
+        :class="[ 'tag__relateds-list', { 'tag__relateds-list--colorize-triangle': isMouseover } ]"
+      >
         <TagItemRelatedsListItem
-          v-for="(projects, i) in tag.relatedProjects"
+          v-for="(project, i) in tag.taggedProjects"
+          :data="project"
           :key="i"
           class="tag__relateds-list-item"
         />
@@ -75,11 +86,17 @@ export default {
     isLoggedIn () {
       return this.$store.state.isLoggedIn
     },
-    isTagRelatedProjectsExist () {
-      return get(this.tag, 'relatedProjects') !== null
+    isTaggedProjectsExist () {
+      return 'taggedProjects' in this.tag
     },
     isMouseover () {
       return get(this.$store.state, [ 'tagsIsMouseover', this.tag.id, ], this.isMouseoverLocal)
+    },
+    starUrlFollowed () {
+      return this.isMouseover ? '/public/icons/star-white.png' : '/public/icons/star-blue.png'
+    },
+    starUrlUnFollowed () {
+      return this.isMouseover ? '/public/icons/star-whiteline.png' : '/public/icons/star-line-blue.png'
     },
   },
   methods: {
@@ -168,6 +185,10 @@ export default {
     background-color white
     color black
     transition background-color .1s ease-out, color .1s ease-out
+    &--has-list
+      border-radius 0
+      border-top-left-radius 12px
+      border-top-right-radius 12px
     &--highlight
       background-color #11b8c9
       color white
@@ -213,6 +234,18 @@ export default {
       border-style solid
       border-width 9px 3px 0 3px
       border-color white transparent transparent transparent
+      transition border-color .1s ease-out
+    &--colorize-triangle
+      &:after
+        content ''
+        position absolute
+        top -1px
+        left 30.5px
+        width 0
+        height 0
+        border-style solid
+        border-width 9px 3px 0 3px
+        border-color #11b8c9 transparent transparent transparent
   &__relateds-list-item
     & + &
       border-top 1px solid #d3d3d3

@@ -1,16 +1,41 @@
 <template>
   <li class="list-item">
-    <router-link to="/" class="list-item__link">
+    <a :href="url" target="_blank" class="list-item__link">
       <figure class="figure">
-        <img class="figure__img" src="https://www.mirrormedia.mg/projects/political-contribution/ogimage-story4.jpg" alt="">
+        <img class="figure__img" :src="heroImage" alt="">
         <figcaption class="figure__figcaption">
           <h1 class="figure__figcaption-category figure__figcaption-category--yellow" v-text="$t('TAG_NAV_ASIDE.CATEGORY.PROJECT')"></h1>
-          <p class="figure__figcaption-title">title</p>
+          <p class="figure__figcaption-title" v-text="title"></p>
         </figcaption>
       </figure>
-    </router-link>
+    </a>
   </li>
 </template>
+
+<script>
+import { get, } from 'lodash'
+import { getReportUrl, } from 'src/util/comm'
+
+export default {
+  props: {
+    data: {
+      type: Object,
+      required: true,
+    },
+  },
+  computed: {
+    title () {
+      return get(this.data, 'title', '')
+    },
+    heroImage () {
+      return get(this.data, 'heroImage', '')
+    },
+    url () {
+      return getReportUrl(get(this.data, 'slug', ''))
+    },
+  },
+}
+</script>
 
 <style lang="stylus" scoped>
 .list-item
