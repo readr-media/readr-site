@@ -1,36 +1,38 @@
 <template>
   <header :class="{ 'header--backstage': isBackstage }" class="header">
-    <router-link to="/" class="header__logo"><img src="/public/icons/readr-logo-backstage.svg" alt=""></router-link>
-    <div v-if="isBackstage" class="header__item header--edit" @click="openControlBar">
-      <img src="/public/icons/pen-white.png" alt="">
-    </div>
-    <SearchTool v-if="!isBackstage" class="header__item header--search"></SearchTool>
-    <div class="header__item hamburger" @click="toggleMenu">
-      <div class="hamburger__bar"></div>
-      <div class="hamburger__bar"></div>
-      <div class="hamburger__bar"></div>
-    </div>
-    <div class="header__item header--account">
-      <div @click="toggleDropdown">
-        <span v-show="userNickname" v-text="userNickname"></span>
-        <img :src="profileImage" :alt="userNickname">
+    <div class="header__wrapper">
+      <router-link to="/" class="header__logo"><img src="/public/icons/readr-logo-backstage.svg" alt=""></router-link>
+      <div v-if="isBackstage" class="header__item header--edit" @click="openControlBar">
+        <img src="/public/icons/pen-white.png" alt="">
       </div>
-      <div :class="{ active: openDropdown }" class="dropdown account">
-        <div class="dropdown__item" @click="goMemberCenter" v-text="$t('HEADER.MEMBER_CENTRE')"></div>
-        <div class="dropdown__item logout" @click="logout" v-text="$t('HEADER.LOGOUT')"></div>
+      <SearchTool v-if="!isBackstage" class="header__item header--search"></SearchTool>
+      <div class="header__item hamburger" @click="toggleMenu">
+        <div class="hamburger__bar"></div>
+        <div class="hamburger__bar"></div>
+        <div class="hamburger__bar"></div>
       </div>
+      <div class="header__item header--account">
+        <div @click="toggleDropdown">
+          <span v-show="userNickname" v-text="userNickname"></span>
+          <img :src="profileImage" :alt="userNickname">
+        </div>
+        <div :class="{ active: openDropdown }" class="dropdown account">
+          <div class="dropdown__item" @click="goMemberCenter" v-text="$t('HEADER.MEMBER_CENTRE')"></div>
+          <div class="dropdown__item logout" @click="logout" v-text="$t('HEADER.LOGOUT')"></div>
+        </div>
+      </div>
+      <Notification class="header__item"></Notification>
+      <div v-if="isClientSide && !isLoggedIn" class="header__item header--status">
+        <router-link to="/login" v-text="$t('HEADER.LOGIN')"></router-link>
+      </div>
+      <section :class="{ open: openMenu }" class="header__menu">
+        <ul>
+          <li><router-link to="/about"><img src="/public/icons/info.png" alt=""></router-link></li>
+          <li><a href="https://www.mirrormedia.mg/" target="_blank"><img src="/public/icons/mirrormedia.png" alt=""></a></li>
+        </ul>
+        <div class="header__menu-curtain" @click="toggleMenu"></div>
+      </section>
     </div>
-    <Notification class="header__item"></Notification>
-    <div v-if="isClientSide && !isLoggedIn" class="header__item header--status">
-      <router-link to="/login" v-text="$t('HEADER.LOGIN')"></router-link>
-    </div>
-    <section :class="{ open: openMenu }" class="header__menu">
-      <ul>
-        <li><router-link to="/about"><img src="/public/icons/info.png" alt=""></router-link></li>
-        <li><a href="https://www.mirrormedia.mg/" target="_blank"><img src="/public/icons/mirrormedia.png" alt=""></a></li>
-      </ul>
-      <div class="header__menu-curtain" @click="toggleMenu"></div>
-    </section>
   </header>
 </template>
 <script>
@@ -111,18 +113,28 @@
 </script>
 <style lang="stylus" scoped>
   .header
-    display flex
-    justify-content flex-end
-    align-items center
     position fixed
     left 0
     top 0
     z-index 999
     width 100%
     height 40px
-    padding 0 15px 0 75px
     color #fff
     background-color #444746
+    display flex
+    justify-content center
+
+    &__wrapper
+      padding 0 15px 0 75px
+      width 100%
+      height 100%
+      max-width 1200px
+      display flex
+      justify-content flex-end
+      align-items center
+      position relative
+      // margin 0 240 0 0
+
     a
       color #fff
       cursor pointer
@@ -252,6 +264,10 @@
         border-top 1px solid #d3d3d3
     .logout
       color #11b8c9
+
+  @media (min-width 1440px)
+    .header
+      padding-right 240px
 
   @media (min-width 769px)
     .header

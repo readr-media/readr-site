@@ -422,14 +422,14 @@ export default {
 .homepage
   &__container
     display flex
-    justify-content flex-start
+    justify-content center
     align-items flex-start
   &__tag-nav-aside
     position sticky
     top 57.5px
   &__list-main
-    max-width 650px
-    width 650px
+    max-width 540px
+    width 540px
     margin 0 0 0 3px
   &__list-aside
     // margin-left 35px
@@ -451,4 +451,8 @@ export default {
     font-size 18px
     font-weight 600
     margin 0 0 5px 0
+@media (max-width 1440px)
+  .homepage
+    &__container
+      padding-right 240px
 </style>

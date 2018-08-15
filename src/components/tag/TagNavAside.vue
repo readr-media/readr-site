@@ -134,7 +134,6 @@ export default {
 
 <style lang="stylus" scoped>
 .tag-nav-aside
-  width 275px
   height calc(100vh - 57.5px)
   padding 5.5px 0 28px 0
   overflow-y scroll
