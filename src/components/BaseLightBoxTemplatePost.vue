@@ -11,7 +11,8 @@
         <AppArticleNav
           :postId="post.id"
           :postRefId="assetRefId"
-          :articleType="post.flag"
+          :resource="post.flag"
+          :resourceType="'review'"
           :commentCount="commentCount"
           :inLightbox="true" @toogleComment="toogleComment">
           <TagNav

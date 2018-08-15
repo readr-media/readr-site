@@ -38,6 +38,16 @@ export function createStore () {
         'tag': [],
       },
       'followingByUser': {},
+      'followingByUserStats': {
+        post: {
+          review: {},
+          news: {},
+        },
+        report: {},
+        memo: {},
+        project: {},
+        tag: {},
+      },
       'invitation_switch_status': false,
       'invitation_quota': 0,
       'isClientSide': false,

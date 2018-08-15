@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { get, isEmpty, } from 'lodash'
+import { get, } from 'lodash'
 import { mapState, } from 'vuex'
 import TagNavAsideDropdownOptions from './TagNavAsideDropdownOptions.vue'
 import TagItem from './TagItem.vue'
@@ -106,18 +106,17 @@ export default {
         case 'taggedProjects':
           getTags(this.$store, { stats: false, tagging_type: TYPE_TAGGED_PROJECTS, })
           break
+        case 'followed':
+          getUserFollowing(this.$store, { resource: 'tag', })
+          break
         default:
           getTags(this.$store, { stats: false, })
       }
     },
   },
   beforeMount () {
-    if (isEmpty(this.tags)) {
-      this.fetchTags()
-    }
-    if (isEmpty(this.tagsFollowed)) {
-      getUserFollowing(this.$store, { resource: 'tag', })
-    }
+    this.fetchTags()
+    getUserFollowing(this.$store, { resource: 'tag', })
   },
   mounted () {
     this.$el.onscroll = () => {

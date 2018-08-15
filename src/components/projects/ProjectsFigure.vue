@@ -48,17 +48,17 @@
 
 <script>
 import TagNav from 'src/components/tag/TagNav.vue'
-import { find, } from 'lodash'
+import { get, find, } from 'lodash'
 import { updatedAtYYYYMMDD, } from '../../util/comm'
+import { mapState, } from 'vuex'
 
 const publishAction = (store, data) => store.dispatch('FOLLOW', { params: data, })
-const updateStoreFollowingByResource = (store, { action, resource, resourceId, userId, }) => {
-  return store.dispatch('UPDATE_FOLLOWING_BY_RESOURCE', {
+const toogleFollowingByUserStat = (store, { resource, resourceType = '', targetId, }) => {
+  return store.commit('TOOGLE_FOLLOWING_BY_USER_STAT', {
     params: {
-      action: action,
-      resource: resource,
-      resourceId: resourceId,
-      userId: userId,
+      resource,
+      resourceType,
+      targetId,
     },
   })
 }
@@ -75,12 +75,16 @@ export default {
     },
   },
   computed: {
+    ...mapState({
+      userId: state => state.profile.id,
+      projectFollowingByUser: state => get(state.followingByUserStats, [ 'project', ], {}),
+    }),
     followers () {
       const data = find(this.$store.state.followingByResource.project, { resourceID: this.projectId, })
       return data ? data.followers : []
     },
     isFollowed () {
-      return this.$store.state.isLoggedIn && this.followers && this.followers.indexOf(this.$store.state.profile.id) !== -1 
+      return this.$store.state.isLoggedIn && get(this.projectFollowingByUser, this.project.id, false)
     },
     isLoggedIn () {
       return this.$store.state.isLoggedIn
@@ -101,12 +105,6 @@ export default {
           subject: this.$store.state.profile.id,
           object: this.projectId,
         })
-        updateStoreFollowingByResource(this.$store, {
-          action: 'unfollow',
-          resource: 'project',
-          resourceId: this.projectId,
-          userId: this.$store.state.profile.id,
-        })
       } else {
         publishAction(this.$store, {
           action: 'follow',
@@ -114,13 +112,9 @@ export default {
           subject: this.$store.state.profile.id,
           object: this.projectId,
         })
-        updateStoreFollowingByResource(this.$store, {
-          action: 'follow',
-          resource: 'project',
-          resourceId: this.projectId,
-          userId: this.$store.state.profile.id,
-        })
       }
+
+      toogleFollowingByUserStat(this.$store, { resource: 'project', targetId: this.project.id, })
     },
     updatedAtYYYYMMDD,
   },

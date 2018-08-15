@@ -120,6 +120,14 @@ const fetchPointHistories = (store, { objectIds, objectType, }) => {
   })
 }
 
+const getUserFollowing = (store, { id = get(store, 'state.profile.id'), resource, resourceType = '', } = {}) => {
+  return store.dispatch('GET_FOLLOWING_BY_USER', {
+    id: id,
+    resource: resource,
+    resource_type: resourceType,
+  })
+}
+
 const fetchFollowing = (store, params) => {
   return store.dispatch('GET_FOLLOWING_BY_RESOURCE', params)
 }
@@ -238,20 +246,21 @@ export default {
   beforeMount () {
     const requests = this.getRequests(this.$route.path)
     Promise.all(requests).then(() => {
-      const peojectIds = get(this.$store.state, 'publicProjects.normal', []).map(project => project.id)
+      // const peojectIds = get(this.$store.state, 'publicProjects.normal', []).map(project => project.id)
       const memoProjectIds = uniq(get(this.$store, 'state.publicMemos', []).map(memo => memo.projectId))
       const reportIds = get(this.$store.state, 'publicReports', []).map(report => report.id)
       if (memoProjectIds.length > 0) {
         fetchPointHistories(this.$store, { objectType: POINT_OBJECT_TYPE.PROJECT_MEMO, objectIds: memoProjectIds, })
       }
-      if (peojectIds.length > 0) {
-        fetchFollowing(this.$store, { resource: 'project', ids: peojectIds, })
-      }
       if (reportIds.length > 0)  {
-        fetchFollowing(this.$store, { resource: 'report', ids: reportIds, })
         fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'like', })
         fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'dislike', })
       }
+
+      getUserFollowing(this.$store, { resource: 'post', })
+      getUserFollowing(this.$store, { resource: 'memo', })
+      getUserFollowing(this.$store, { resource: 'report', })
+      getUserFollowing(this.$store, { resource: 'tag', })
     })
   },
   // TODO: reportList and memoList loadmore  

@@ -82,7 +82,8 @@
     <AppArticleNav
       :postId="post.id"
       :postRefId="get(post, 'project.id')"
-      :articleType="post.flag" 
+      :resource="post.flag"
+      :resourceType="resourceType"
       :slug="get(post, 'flag') === 'report'? post.slug : ''"
       :tags="post.tags"
       :commentCount="commentCount">
@@ -134,6 +135,16 @@
           return 'memo'
         } else {
           return 'normal'
+        }
+      },
+      resourceType () {
+        switch (get(this.post, 'type')) {
+          case POST_TYPE.NEWS:
+            return 'news'
+          case POST_TYPE.REVIEW:
+            return 'review'
+          default:
+            return ''
         }
       },
       hasCustomContentBreak () {
