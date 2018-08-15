@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" :class="{ home: isHome, }">
     <app-header v-if="!isLoginPage && !isCommentPage"></app-header>
     <div :class="[ 'app__container', { 'app__container--wide': isLoginPage }, { 'app__container--normalize': isCommentPage } ]">
       <div class="app__wrapper">
@@ -47,6 +47,9 @@
       },
       isCommentPage () {
         return this.$route.path === '/comment'
+      },
+      isHome () {
+        return this.$route.path === '/' || this.$route.path.indexOf('/post/') === 0
       },
       useragent () {
         return get(this.$store, 'state.useragent')
@@ -151,7 +154,7 @@ $container
       position fixed
   &__main
     flex 1
-    padding-left 130px
+    padding-left 80px
     margin-top 25px
     display flex
     justify-content flex-start
@@ -246,7 +249,8 @@ button
   .main-panel
     padding 35px calc((100% - 800px) / 2) 40px
 @media (min-width 1440px)
-  .app
-    &__container
-      padding-right 240px
+  .home
+    .app
+      &__container
+        padding-right 240px
 </style>
