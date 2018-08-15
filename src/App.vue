@@ -2,14 +2,16 @@
   <div id="app">
     <app-header v-if="!isLoginPage && !isCommentPage"></app-header>
     <div :class="[ 'app__container', { 'app__container--wide': isLoginPage }, { 'app__container--normalize': isCommentPage } ]">
-      <aside class="app__aside" v-if="!isLoginPage && !isCommentPage">
-        <AppNavAside/>
-      </aside>
-      <main :class="[ 'app__main', { 'app__main--normalize': isCommentPage } ]">
-        <transition name="fade" mode="out-in">
-          <router-view class="view"></router-view>
-        </transition>
-      </main>
+      <div class="app__wrapper">
+        <aside class="app__aside" :class="{ fixed: isFixedAside, }" v-if="!isLoginPage && !isCommentPage">
+          <AppNavAside/>
+        </aside>
+        <main :class="[ 'app__main', { 'app__main--normalize': isCommentPage } ]">
+          <transition name="fade" mode="out-in">
+            <router-view class="view"></router-view>
+          </transition>
+        </main>
+      </div>
       <Consume></Consume>
     </div>
     <AlertGDPR v-if="showAlertGDPR" @closeAlertGDPR="showAlertGDPR = false" />
@@ -18,6 +20,7 @@
 
 <script>
   import { get, } from 'lodash'
+  import { currentYPosition, elmYPosition, } from 'kc-scroll'
   import { isAlinkDescendant, logTrace, } from 'src/util/services'
   import AlertGDPR from 'src/components/AlertGDPR.vue'
   import AppHeader from 'src/components/header/AppHeader.vue'
@@ -54,6 +57,7 @@
         doc: {},
         globalTapevent: {},      
         showAlertGDPR: false,  
+        isFixedAside: false,
       }
     },
     methods: {
@@ -83,7 +87,16 @@
           target: {},
           useragent: this.useragent,
         })
-      },        
+      },
+      setupAsideBehavior () {
+        window.addEventListener('scroll', () => {
+          const aside_top_Y = elmYPosition('#app .app__aside')
+          const current_top_y = currentYPosition()
+
+          const _isFixedAside = current_top_y > (aside_top_Y - 60)
+          _isFixedAside !== this.isFixedAside ? this.isFixedAside = _isFixedAside : null
+        })
+      },   
     },
     mounted () {
       this.doc = document
@@ -91,6 +104,7 @@
       this.launchLogger()
       this.sendPageview()
       this.showAlertGDPR = !this.getGDPRCookie()
+      this.setupAsideBehavior()
     },
     watch: {
       '$route.fullPath': function () {
@@ -106,11 +120,16 @@
   min-height 100vh
 
 $container
-  max-width 1200px
-  margin auto
-  padding calc(35px + 22.5px) 0
+  width 100%
   display flex
+  justify-content center
 .app
+  &__wrapper
+    width 100%
+    max-width 1200px
+    padding 40px 0
+    display flex
+    position relative
   &__container
     @extends $container
     &--wide
@@ -125,15 +144,15 @@ $container
       padding 0
   &__aside
     width 75px
-    // height 100%
-    position fixed
+    position absolute
     top 60px
-    left 0
     z-index 999
+    &.fixed
+      position fixed
   &__main
     flex 1
-    margin-left calc(40px + 75px)
-    // margin-right 30px
+    padding-left 130px
+    margin-top 25px
     display flex
     justify-content flex-start
     align-items flex-start
@@ -148,12 +167,9 @@ button
   &:disabled
     cursor not-allowed
 .view
-  // max-width 800px
-  // margin 0 auto
   position relative
   background-color #fff
   width 100%
-  // padding-top 35px
   &.locked
     width 100%
     height 100vh
@@ -190,13 +206,11 @@ button
 .backstage
   width 100%
   min-height 100vh
-  // padding 35px 0 0 65px
   overflow hidden
   &-container
     width 950px
     height 100%
     margin 0 auto
-    // padding 25px 0
     overflow hidden
   &__aside
     position fixed
@@ -231,4 +245,8 @@ button
     margin 22px auto 0
   .main-panel
     padding 35px calc((100% - 800px) / 2) 40px
+@media (min-width 1440px)
+  .app
+    &__container
+      padding-right 240px
 </style>

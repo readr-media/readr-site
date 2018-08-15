@@ -128,7 +128,7 @@ export default {
         border-width 0 12px 20px 12px
         border-color transparent transparent #ffffff transparent
     &__content
-      width 650px
+      width 540px
       height inherit
       box-shadow 0px 0px 3px 2px rgba(211, 211, 211, 1)
       padding 30px 32.5px
