@@ -13,12 +13,12 @@
         <span class="tag__text" v-text="tag.text"></span>
         <span v-if="isLoggedIn" class="tag__action tag-action">
           <img
-            :src="isFollow(tag.id) ? starUrlFollowed : starUrlUnFollowed"
-            @click="toogleFollow(tag.id)"
+            :src="isFollowed ? starUrlFollowed : starUrlUnFollowed"
+            @click="toogleFollow"
           >
           <span
             :class="[ 'tag-action__tooltip', { 'tag-action__tooltip--toogled': showActionTooltip } ]"
-            v-text="isFollow(tag.id) ? $t('FOLLOWING.FOLLOW_TAG') : $t('FOLLOWING.UNFOLLOW_TAG') "
+            v-text="isFollowed ? $t('FOLLOWING.FOLLOW_TAG') : $t('FOLLOWING.UNFOLLOW_TAG') "
           >
           </span>
         </span>
@@ -43,16 +43,16 @@
 <script>
 import { get, } from 'lodash'
 import TagItemRelatedsListItem from './TagItemRelatedsListItem.vue'
+import { mapState, } from 'vuex'
 
 const publishAction = (store, data) => store.dispatch('FOLLOW', { params: data, })
 
-const updateStoreFollowingByResource = (store, { action, resource, resourceId, userId, }) => {
-  return store.dispatch('UPDATE_FOLLOWING_BY_RESOURCE', {
+const toogleFollowingByUserStat = (store, { resource, resourceType = '', targetId, }) => {
+  return store.commit('TOOGLE_FOLLOWING_BY_USER_STAT', {
     params: {
-      action: action,
-      resource: resource,
-      resourceId: resourceId,
-      userId: userId,
+      resource,
+      resourceType,
+      targetId,
     },
   })
 }
@@ -83,11 +83,18 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      userId: state => state.profile.id,
+      tagsFollowingByUser: state => get(state.followingByUserStats, 'tag', {}),
+    }),
+    isFollowed () {
+      return get(this.tagsFollowingByUser, this.tag.id, false)
+    },
     isLoggedIn () {
       return this.$store.state.isLoggedIn
     },
     isTaggedProjectsExist () {
-      return 'taggedProjects' in this.tag
+      return 'taggedProjects' in this.tag && this.tag.taggedProjects !== null
     },
     isMouseover () {
       return get(this.$store.state, [ 'tagsIsMouseover', this.tag.id, ], this.isMouseoverLocal)
@@ -100,40 +107,23 @@ export default {
     },
   },
   methods: {
-    isFollow (id) {
-      const data = this.$store.state.followingByResource.tag.find(tag => tag.resourceID === id)
-      const followers = data ? data.followers : []
-      return followers.find(memberId => memberId === this.$store.state.profile.id )
-    },
-    toogleFollow (id) {
-      if (this.isFollow(id)) {
+    toogleFollow () {
+      if (this.isFollowed) {
         publishAction(this.$store, {
           action: 'unfollow',
           resource: 'tag',
           subject: this.$store.state.profile.id,
-          object: id,
-        })
-        updateStoreFollowingByResource(this.$store, {
-          action: 'unfollow',
-          resource: 'tag',
-          resourceId: id,
-          userId: this.$store.state.profile.id,
+          object: this.tag.id,
         })
       } else {
         publishAction(this.$store, {
           action: 'follow',
           resource: 'tag',
           subject: this.$store.state.profile.id,
-          object: id,
-        })
-        updateStoreFollowingByResource(this.$store, {
-          action: 'follow',
-          resource: 'tag',
-          resourceId: id,
-          userId: this.$store.state.profile.id,
+          object: this.tag.id,
         })
       }
-
+      toogleFollowingByUserStat(this.$store, { resource: 'tag', targetId: this.tag.id, })
       this.toogleFollowTooltip()
     },
     toogleFollowTooltip () {

@@ -111,8 +111,8 @@ export function isScrollBarReachBottom (ratio = 0) {
   return getDocHeight() <= getScrollXY()[1] + window.innerHeight + (vh * ratio)
 }
 
-export function isElementReachInView (selector, offset = 0) {
-  const ele = this.$el.querySelector(selector)
+export function isElementReachInView (root, selector, offset = 0) {
+  const ele = root.querySelector(selector)
   if (!ele) {
     return false
   } else {
@@ -137,8 +137,8 @@ export function updatedAtYYYYMMDD (isoDate) {
   return date.replace(/-/g, '/')
 }
 
-export function isCurrentRoutePath (path) {
-  return pathToRegexp(path).test(this.$route.path)
+export function isCurrentRoutePath (route, path) {
+  return pathToRegexp(path).test(route.path)
 }
 
 export function isClientSide () {

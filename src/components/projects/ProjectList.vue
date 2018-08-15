@@ -6,7 +6,7 @@
         <div class="project-block__info">
           <h2 v-text="p.title"></h2>
           <AppArticleNav
-            :articleType="'project'"
+            :resource="'project'"
             :postId="p.id" 
             :commentCount="p.commentAmount || 0" :toogleComment="false"/>
         </div>

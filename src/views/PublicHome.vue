@@ -30,9 +30,10 @@
 </template>
 
 <script>
-import { MEMO_PUBLISH_STATUS, POINT_OBJECT_TYPE, REPORT_PUBLISH_STATUS, PROJECT_PUBLISH_STATUS, } from '../../api/config'
-import { currEnv, isScrollBarReachBottom, isElementReachInView, isCurrentRoutePath, isClientSide, } from 'src/util/comm'
-import _ from 'lodash'
+import { get, uniqBy, find, unionBy, } from 'lodash'
+import { mapState, } from 'vuex'
+import { MEMO_PUBLISH_STATUS, REPORT_PUBLISH_STATUS, PROJECT_PUBLISH_STATUS, } from '../../api/config'
+import { isScrollBarReachBottom, isElementReachInView, isCurrentRoutePath, } from 'src/util/comm'
 // import { createStore, } from '../store'
 import AppTitledList from 'src/components/AppTitledList.vue'
 import AppNavExternalLinks from 'src/components/AppNavExternalLinks.vue'
@@ -68,7 +69,7 @@ const fetchMemos = (store, {
 } = {}) => {
   return store.dispatch('GET_PUBLIC_MEMOS', {
     params: {
-      member_id: _.get(store, 'state.profile.id'),
+      member_id: get(store, 'state.profile.id'),
       max_result: max_result,
       where: {
         memo_publish_status: MEMO_PUBLISH_STATUS.PUBLISHED,
@@ -121,26 +122,27 @@ const fetchReportsList = (store, {
   })
 }
 
-const fetchPointHistories = (store, { objectIds, objectType, }) => {
-  return store.dispatch('GET_POINT_HISTORIES', {
-    params: {
-      objectType: objectType,
-      objectIds: objectIds,
-    },
-  })
-}
+// const fetchPointHistories = (store, { objectIds, objectType, }) => {
+//   return store.dispatch('GET_POINT_HISTORIES', {
+//     params: {
+//       objectType: objectType,
+//       objectIds: objectIds,
+//     },
+//   })
+// }
 
 const fetchComment = (store, { params = {}, } = {}) => store.dispatch('FETCH_COMMENT', {
   params: Object.assign({}, { sort: DEFAULT_SORT_LATEST_COMMENTS, max_result: MAXRESULT_LATEST_COMMENTS, }, params),
 })
 
-const fetchFollowing = (store, params) => {
-  if (params.subject) {
-    return store.dispatch('GET_FOLLOWING_BY_USER', params)
-  } else {
-    return store.dispatch('GET_FOLLOWING_BY_RESOURCE', params)
-  }
+const getUserFollowing = (store, { id = get(store, 'state.profile.id'), resource, resourceType = '', } = {}) => {
+  return store.dispatch('GET_FOLLOWING_BY_USER', {
+    id: id,
+    resource: resource,
+    resource_type: resourceType,
+  })
 }
+
 const pageJump = ({ store, to, next, }) => {
   if ('postId' in to.params && to.params.postId) {
     fetchPost(store, { id: to.params.postId, }).then(({ status, }) => {
@@ -163,6 +165,7 @@ const pageJump = ({ store, to, next, }) => {
 }
 
 export default {
+  name: 'Home',
   // Uncomment this when v1.0 is released
   // asyncData ({ store, route, }) {
   //   debug('Starting to fetch data by asyncData.')
@@ -217,7 +220,7 @@ export default {
       }
     },
     '$route' (to, from) {
-      this.articlesListMainCategory = this.isCurrentRoutePath('/post/:postId') ? from.path : to.path
+      this.articlesListMainCategory = isCurrentRoutePath(this.$route, '/post/:postId') ? from.path : to.path
     },
     postLightBox () {
       debug('Mutation detected: postLightBox', this.postLightBox)
@@ -225,9 +228,9 @@ export default {
     postSingle () {
       debug('Mutation detected: postSingle', this.postSingle)
     },
-    postsMainTagIds (ids) {
-      fetchFollowing(this.$store, { resource: 'tag', ids: ids, })
-    },
+    // postsMainTagIds (ids) {
+    //   fetchFollowing(this.$store, { resource: 'tag', ids: ids, })
+    // },
   },
   data () {
     return {
@@ -239,36 +242,29 @@ export default {
     } 
   },
   computed: {
-    currEnv,
-    isClientSide,
-    memos () {
-      return _.get(this.$store.state, 'publicMemos', [])
-    },
-    postsLatest () {
-      return _.get(this.$store.state.publicPosts, 'items', [])
-    },
-    postsHot () {
-      return _.get(this.$store.state.publicPostsHot, 'items', [])
-    },
+    ...mapState({
+      postsLatest: state => get(state, [ 'publicPosts', 'items', ], []),
+      postsHot: state => get(state, [ 'publicPostsHot', 'items', ], []),
+      postSingle: state => get(state, [ 'publicPostSingle', 'items', 0, ], []), // store binding to the post fetched while user visiting /post/:postid
+      memos: state => get(state, 'publicMemos', []),
+      reports: state => get(state, 'publicReports', []),
+    }),
     postsHome () {
-      return _.unionBy(this.postsLatest, this.postsHot, 'id', [])
-    },
-    postSingle () {
-      return _.get(this.$store.state.publicPostSingle, 'items[0]', {})
+      return unionBy(this.postsLatest, this.postsHot, 'id', [])
     },
     postsMain () {
       return this.articlesListMainCategory !== '/hot' ? this.postsLatest : this.postsHot
     },
     postsMainTagIds () {
-      return _.uniqBy(this.postsMain.map(post => post.tags).filter(tags => tags).reduce((all, tags) => all.concat(tags), []), 'id').map(tag => tag.id)
+      return uniqBy(this.postsMain.map(post => post.tags).filter(tags => tags).reduce((all, tags) => all.concat(tags), []), 'id').map(tag => tag.id)
     },
-    postsAside () {
-      return this.articlesListMainCategory !== '/hot' ? this.postsHot : this.postsLatest
-    },
+    // postsAside () {
+    //   return this.articlesListMainCategory !== '/hot' ? this.postsHot : this.postsLatest
+    // },
     postLightBox () {
       if (this.showLightBox) {
-        debug('Going to show lightbox of content for post', _.get(this.$route, 'params.postId'))
-        const findPostInList = _.find(this.postsHome, [ 'id', Number(this.$route.params.postId), ])
+        debug('Going to show lightbox of content for post', get(this.$route, 'params.postId'))
+        const findPostInList = find(this.postsHome, [ 'id', Number(this.$route.params.postId), ])
         debug('findPostInList', findPostInList)
         debug('this.postSingle', this.postSingle)
         return findPostInList || this.postSingle
@@ -276,19 +272,14 @@ export default {
         return {}
       }
     },
-    reports () {
-      return _.get(this.$store, [ 'state', 'publicReports', ], [])
-    },
     showLightBox () {
-      return this.isCurrentRoutePath('/post/:postId')
+      return isCurrentRoutePath(this.$route, '/post/:postId')
     },
   },
-  name: 'Home',
   methods: {
     closeLightBox () {
       this.$router.push(this.articlesListMainCategory)
     },
-    isCurrentRoutePath,
     loadmoreLatest () {
       fetchPosts(this.$store, {
         mode: 'update',
@@ -305,15 +296,13 @@ export default {
           this.currentPageLatest += 1
           if (this.$store.state.isLoggedIn) {
             const ids = res.items.map(post => post.id)
-            fetchFollowing(this.$store, { mode: 'update', resource: 'post', ids: ids, })
+            // fetchFollowing(this.$store, { mode: 'update', resource: 'post', ids: ids, })
             fetchEmotion(this.$store, { mode: 'update', resource: 'post', ids: ids, emotion: 'like', })
             fetchEmotion(this.$store, { mode: 'update', resource: 'post', ids: ids, emotion: 'dislike', })
           }
         }
       })
     },
-    isScrollBarReachBottom,
-    isElementReachInView,
   },
   beforeRouteEnter (to, from, next) {
     // const store = createStore()
@@ -339,37 +328,18 @@ export default {
       if (this.$route.params.postId) {
         reqs.push(fetchPost(this.$store, { id: this.$route.params.postId, })) 
       }
-      Promise.all(reqs).then(() => {
-        if (this.$store.state.isLoggedIn) {
-          const postIdsLatest = _.get(this.$store.state.publicPosts, 'items', []).map(post => post.id) 
-          const postIdsHot = _.get(this.$store.state.publicPostsHot, 'items', []).map(post => post.id) 
-          const reportIds = _.get(this.$store.state, 'publicReports', []).map(report => report.id)
-          const ids = _.uniq(_.concat(postIdsLatest, postIdsHot))
-          const projectIds = _.uniq(_.get(this.$store, 'state.publicMemos', []).map(memo => memo.projectId))
-          if (ids.length > 0) {
-            fetchFollowing(this.$store, { resource: 'post', ids: ids, })
-            fetchEmotion(this.$store, { resource: 'post', ids: ids, emotion: 'like', })
-            fetchEmotion(this.$store, { resource: 'post', ids: ids, emotion: 'dislike', })
-          } 
-          if (reportIds.length > 0) {
-            fetchFollowing(this.$store, { resource: 'report', ids: reportIds, })
-            fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'like', })
-            fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'dislike', })
-          }
-          if (projectIds.length > 0) {
-            fetchPointHistories(this.$store, { objectType: POINT_OBJECT_TYPE.PROJECT_MEMO, objectIds: projectIds, })
-          }
-        }
-      })
+      Promise.all(reqs)
 
       fetchComment(this.$store)
       .then((comments) => {
         this.latestCommentsList = comments
-      })      
+      })
+
+      getUserFollowing(this.$store, { resource: 'post', })
     }
   
-    if (_.get(this.$route, 'params.postId')) {
-      fetchPost(this.$store, { id: _.get(this.$route, 'params.postId'), }).then(({ status, }) => {
+    if (get(this.$route, 'params.postId')) {
+      fetchPost(this.$store, { id: get(this.$route, 'params.postId'), }).then(({ status, }) => {
         if (status === 'error') {
           if (process.browser) {
             this.$router.push('/404')
@@ -386,34 +356,11 @@ export default {
     } else {
       process()
     }
-
-
-    // Uncomment this when v1.0 is released
-    // if (this.$store.state.isLoggedIn) {
-    //   const postIdsLatest = _.get(this.$store.state.publicPosts, 'items', []).map(post => `${post.id}`) 
-    //   const postIdsHot = _.get(this.$store.state.publicPostsHot, 'items', []).map(post => `${post.id}`) 
-    //   const postIdFeaturedProject = _.get(this.$store.state.projectsList, 'items', []).map(project => `${project.id}`) 
-    //   const ids = _.uniq(_.concat(postIdsLatest, postIdsHot)) 
-  
-    //   if (ids.length !== 0) { 
-    //     fetchFollowing(this.$store, { 
-    //       resource: 'post', 
-    //       ids: ids, 
-    //     }) 
-    //   } 
-  
-    //   if (postIdFeaturedProject.length !== 0) { 
-    //     fetchFollowing(this.$store, { 
-    //       resource: 'project', 
-    //       ids: postIdFeaturedProject, 
-    //     })
-    //   }
-    // }
   },
   mounted () {
-    window.addEventListener('scroll', () => {
-      this.isReachBottom = this.isElementReachInView('.homepage__list-main', 0.5) || this.isScrollBarReachBottom()
-    })
+    window.onscroll = () => {
+      this.isReachBottom = isElementReachInView(this.$el, '.homepage__list-main', 0.5) || isScrollBarReachBottom()
+    }
   },
 }
 </script>

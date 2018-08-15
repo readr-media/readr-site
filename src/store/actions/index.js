@@ -172,6 +172,7 @@ export default Object.assign({
       if (status === 200) {
         // commit('SET_FOLLOWING_BY_USER', { following: body.items, userId: params.id, })
         commit('SET_FOLLOWING_BY_USER', { following: body.items, userId: params.id, resource: params.resource, resourceType: params.resource_type, })
+        commit('SET_FOLLOWING_BY_USER_STATS', { following: body.items, userId: params.id, resource: params.resource, resourceType: params.resource_type, })
       }
     })
   },

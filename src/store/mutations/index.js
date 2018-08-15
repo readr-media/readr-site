@@ -4,14 +4,45 @@ const { camelize, } = require('humps')
 const debug = require('debug')('CLIENT:STORE:mutations')
 import * as mutationsPoints from 'src/store/mutations/points'
 import * as mutationsTag from 'src/store/mutations/tag'
+import { POST_TYPE, } from 'api/config'
 
 export default Object.assign({
   ADD_ITEM_TO_FOLLOWING_BY_USER: (state, params) => {
-    state.followingByUser[params.userId].push(params.item)
+    const followingByUser = state.followingByUser[params.userId]
+    const followingByUserResource = followingByUser[params.resource]
+    if (params.resource === 'post') {
+      followingByUserResource[params.resourceType].push(params.item)
+    } else {
+      followingByUserResource.push(params.item)
+    }
   },
-  REMOVE_ITEM_FROM_FOLLOWING_BY_USER: (state, data) => {
-    const resourceIndex = _.findIndex(state.followingByUser[data.userId], { id: data.resourceId, })
-    Vue.delete(state.followingByUser[data.userId], resourceIndex)
+  REMOVE_ITEM_FROM_FOLLOWING_BY_USER: (state, params) => {
+    const followingByUser = state.followingByUser[params.userId]
+    const followingByUserResource = followingByUser[params.resource]
+    if (params.resource === 'post') {
+      const resourceIndex = _.findIndex(followingByUserResource[params.resourceType], { id: params.item.id, })
+      Vue.delete(followingByUserResource[params.resourceType], resourceIndex)
+    } else {
+      const resourceIndex = _.findIndex(followingByUserResource, { id: params.item.id, })
+      Vue.delete(followingByUserResource, resourceIndex)
+    }
+  },
+  TOOGLE_FOLLOWING_BY_USER_STAT: (state, { params, }) => {
+    if (params.resource === 'post') {
+      const isNotFollowed = !(params.targetId in state.followingByUserStats[params.resource][params.resourceType])
+      if (isNotFollowed) {
+        Vue.set(state.followingByUserStats[params.resource][params.resourceType], params.targetId, true)
+      } else {
+        state.followingByUserStats[params.resource][params.resourceType][params.targetId] = !state.followingByUserStats[params.resource][params.resourceType][params.targetId]
+      }
+    } else {
+      const isNotFollowed = !(params.targetId in state.followingByUserStats[params.resource])
+      if (isNotFollowed) {
+        Vue.set(state.followingByUserStats[params.resource], params.targetId, true)
+      } else {
+        state.followingByUserStats[params.resource][params.targetId] = !state.followingByUserStats[params.resource][params.targetId]
+      }
+    }
   },
   ADD_USER_TO_FOLLOWING_BY_RESOURCE: (state, params) => {
     const resourceIndex = _.findIndex(state.followingByResource[params.resource], { resourceID: params.resourceId, })
@@ -58,29 +89,56 @@ export default Object.assign({
       state['followingByResource'][resourceType].push(follow)
     })
   },
-  // SET_FOLLOWING_BY_USER: (state, { following, userId, }) => {
-  //   const data = following || []
-  //   Vue.set(state['followingByUser'], userId, data)
-  // },
   SET_FOLLOWING_BY_USER: (state, { following, userId, resource, resourceType, }) => {
     const data = following || []
-    // Vue.set(state['followingByUser'], userId, data)
     if (!(userId in state['followingByUser'])) {
-      Vue.set(state['followingByUser'], userId, {})
-    }
-    if (!(resource in state['followingByUser'][userId])) {
-      Vue.set(state['followingByUser'][userId], resource, {})
+      Vue.set(state['followingByUser'], userId, {
+        post: {
+          review: [],
+          news: [],
+        },
+        report: [],
+        memo: [],
+        project: [],
+        tag: [],
+      })
     }
 
     if (resource === 'post') {
       if (!_.isEmpty(resourceType)) {
         Vue.set(state['followingByUser'][userId][resource], resourceType, data)
       } else {
-        Vue.set(state['followingByUser'][userId][resource], 'fetchedByNoResourceType', data)
+        const postType = Object.entries(POST_TYPE)
+        data.forEach(post => {
+          const currentResourceType = _.get(_.find(postType, [ 1, post.type, ]), 0, '').toLowerCase()
+          if (currentResourceType !== '') {
+            const store = state['followingByUser'][userId][resource][currentResourceType]
+            store.push(post)
+          }
+        })
       }
     } else {
       Vue.set(state['followingByUser'][userId], resource, data)
     }
+  },
+  SET_FOLLOWING_BY_USER_STATS: (state, { following, resource, resourceType, }) => {
+    const data = following || []
+
+    data.forEach(item => {
+      if (resource === 'post') {
+        if (!_.isEmpty(resourceType)) {
+          Vue.set(state['followingByUserStats'][resource][resourceType], item.id, true)
+        } else {
+          const postType = Object.entries(POST_TYPE)
+          const currentResourceType = _.get(_.find(postType, [ 1, item.type, ]), 0, '').toLowerCase()
+          if (currentResourceType !== null && currentResourceType in state['followingByUserStats'][resource]) {
+            Vue.set(state['followingByUserStats'][resource][currentResourceType], item.id, true)
+          }
+        }
+      } else {
+        Vue.set(state['followingByUserStats'][resource], item.id, true)
+      }
+    })
   },
   SET_LOGGEIN_STATUS: (state, { body, }) => {
     state['isLoggedIn'] = body

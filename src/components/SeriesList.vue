@@ -5,7 +5,7 @@
 </template>
 <script>
 import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, } from '../../api/config'
-import { get, uniq, uniqBy,  } from 'lodash'
+import { get, } from 'lodash'
 import { isScrollBarReachBottom, } from 'src/util/comm'
 import ProjectsFigure from 'src/components/projects/ProjectsFigure.vue'
 
@@ -15,11 +15,11 @@ const DEFAULT_PAGE = 1
 const DEFAULT_SORT = 'project_order,-updated_at'
 const MAXRESULT = 9
 
-const fetchFollowing = (store, params) => {
-  return store.dispatch('GET_FOLLOWING_BY_RESOURCE', {
-    ids: params.ids,
-    mode: params.mode,
-    resource: params.resource,
+const getUserFollowing = (store, { id = get(store, 'state.profile.id'), resource, resourceType = '', } = {}) => {
+  return store.dispatch('GET_FOLLOWING_BY_USER', {
+    id: id,
+    resource: resource,
+    resource_type: resourceType,
   })
 }
 
@@ -57,9 +57,6 @@ export default {
     projects () {
       return get(this.$store, 'state.publicProjects.normal', []) || []
     },
-    projectsTagIds () {
-      return uniqBy(this.projects.map(project => project.tags).filter(tags => tags).reduce((all, tags) => all.concat(tags), []), 'id').map(tag => tag.id)
-    },
   },
   watch: {
     isReachBottom(value) {
@@ -67,18 +64,11 @@ export default {
         this.loadmore()
       }
     },
-    projectsTagIds (ids) {
-      fetchFollowing(this.$store, { ids: ids, resource: 'tag', })
-    },
   },
   beforeMount () {
     fetchProjectsList(this.$store)
-    .then(() => {
-      const projectIds = uniq(get(this.$store, 'state.publicProjects.normal', []).map(p => p.id))
-      if (this.$store.state.isLoggedIn && projectIds.length > 0) {
-        fetchFollowing(this.$store, { ids: projectIds, resource: 'project', })
-      }
-    })
+    getUserFollowing(this.$store, { resource: 'project', })
+    getUserFollowing(this.$store, { resource: 'tag', })
   },
   mounted () {
     window.addEventListener('scroll', this.detectReachBottom)
@@ -93,19 +83,11 @@ export default {
     loadmore () {
       const origCount = get(this.projects, 'length', 0) || 0
       fetchProjectsList(this.$store, { page: this.currentPage + 1, })
-      .then(({ res, }) => {
+      .then(() => {
         if (get(this.projects, 'length', 0) <= origCount) {
           this.endPage = true
         } else {
           this.currentPage += 1
-          const ids = res.items.map(project => project.id)
-          if (this.$store.state.isLoggedIn && ids.length > 0) {
-            fetchFollowing(this.$store, {
-              mode: 'update',
-              ids: ids,
-              resource: 'project',
-            })
-          }
         }
       })
       .catch(({ status, res, }) => {
