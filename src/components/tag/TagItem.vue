@@ -87,7 +87,7 @@ export default {
       return this.$store.state.isLoggedIn
     },
     isTaggedProjectsExist () {
-      return 'taggedProjects' in this.tag
+      return 'taggedProjects' in this.tag && this.tag.taggedProjects !== null
     },
     isMouseover () {
       return get(this.$store.state, [ 'tagsIsMouseover', this.tag.id, ], this.isMouseoverLocal)
