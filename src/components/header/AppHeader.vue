@@ -1,5 +1,5 @@
 <template>
-  <header :class="{ 'header--backstage': isBackstage }" class="header">
+  <header :class="{ 'header--backstage': isBackstage, home: isHome, }" class="header">
     <div class="header__wrapper">
       <router-link to="/" class="header__logo"><img src="/public/icons/readr-logo-backstage.svg" alt=""></router-link>
       <div v-if="isBackstage" class="header__item header--edit" @click="openControlBar">
@@ -73,6 +73,9 @@
       isLoggedIn () {
         return get(this.$store, 'state.isLoggedIn',)
       },
+      isHome () {
+        return this.$route.path === '/' || this.$route.path.indexOf('/post/') === 0
+      },      
       profileImage () {
         return this.currentUser.profileImage || '/public/icons/exclamation.png'
       },
@@ -266,8 +269,9 @@
       color #11b8c9
 
   @media (min-width 1440px)
-    .header
-      padding-right 240px
+    .home
+      .header
+        padding-right 240px
 
   @media (min-width 769px)
     .header
