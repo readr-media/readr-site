@@ -2,124 +2,47 @@
   <div class="public-page">
     <Leading v-if="hasLeading">
       <TagNav
-        v-if="projectSingle.tags && projectSingle.tags.length > 0"
+        v-if="tagsForNav && tagsForNav.length > 0"
         slot="tagNav"
-        :tags="projectSingle.tags"
+        :tags="tagsForNav"
         class="public-page__tag-nav" />
     </Leading>
+    <template v-else>
+      <TagNav
+        v-if="tagsForNav && tagsForNav.length > 0"
+        slot="tagNav"
+        :tags="tagsForNav"
+        class="public-page__tag-nav" />
+    </template>
     <div class="public-page__container">
-      <div v-if="hasPostList" class="public-page__main">
+      <div class="public-page__main">
         <PostList></PostList>
       </div>
-      <AppTitledList v-else
-        class="public-page__main-container"
-        :listTitle="listTitle">
-        <template v-if="$route.path === '/reports'">
-          <HomeAsideReport/>
-        </template>
-        <template v-if="$route.path === '/memos'">
-          <template v-for="memo in memos">
-            <MemoFigure :key="memo.id" :memo="memo" :showStatusTooltip="false"></MemoFigure>
-          </template>
-        </template>
-      </AppTitledList>
-      <div class="public-page__aside">
-        <div class="public-page__aside-comment" v-if="commentAsset && isClientSide">
-          <CommentContainer :asset="commentAsset" :assetId="assetId"></CommentContainer>
+      <div class="public-page__aside" :class="asideType.toLowerCase()">
+        <div class="public-page__aside-container">
+          <CommentContainer :asset="commentAsset" :assetId="assetId" v-if="asideType === ASIDE_TYPE.COMMENTS"></CommentContainer>
+          <TagNavAside v-else-if="asideType === ASIDE_TYPE.TAGS" />
         </div>
-        <div v-else></div>
-        <AppTitledList v-if="projects.length > 0 && route !== 'series'"
-          class="public-page__aside-container"
-          :listTitle="$t('SECTIONS.PROJECTS')"
-          :moreButtonShow="true"
-          :moreButtonTo="'/series-list'">
-          <ProjectList :projects="projects"></ProjectList>
-        </AppTitledList>
+        <!--render else empty block for ss/cs mating-->
+        <!--div v-else></div-->
+        <!--render else empty block for ss/cs mating-->
       </div>
     </div>  
   </div>
 </template>
 <script>
-import AppTitledList from 'src/components/AppTitledList.vue'
 import CommentContainer from 'src/components/comment/CommentContainer.vue'
-import HomeAsideReport from 'src/components/home/HomeAsideReport.vue'
 import Leading from 'src/components/leading/Leading.vue'
-import MemoFigure from 'src/components/projects/MemoFigure.vue'
 import PostList from 'src/components/post/PostList.vue'
-import ProjectList from 'src/components/projects/ProjectList.vue'
 import TagNav from 'src/components/tag/TagNav.vue'
-import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, REPORT_PUBLISH_STATUS, MEMO_PUBLISH_STATUS, POINT_OBJECT_TYPE, } from 'api/config'
-import { isClientSide, isScrollBarReachBottom, isElementReachInView, } from 'src/util/comm'
-import { get, uniq, } from 'lodash'
+import TagNavAside from 'src/components/tag/TagNavAside.vue'
+import { isClientSide, } from 'src/util/comm'
+import { filter, get, } from 'lodash'
 
-const MAXRESULT = 8
-const MAXRESULT_REPORTS_MEMOS = 50
-const DEFAULT_PAGE = 1
-const DEFAULT_SORT = 'project_order,-updated_at'
-const DEFAULT_SORT_REPORTS_MEMOS = '-published_at'
-
-const fetchProjectsList = (store, {
-  max_result = MAXRESULT,
-  page = DEFAULT_PAGE,
-  sort = DEFAULT_SORT,
-} = {}) => {
-  return store.dispatch('GET_PUBLIC_PROJECTS', {
-    params: {
-      max_result: max_result,
-      page: page,
-      where: {
-        status: [ PROJECT_STATUS.DONE, PROJECT_STATUS.WIP, ],
-        publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
-      },
-      sort: sort,
-    },
-  })
+const ASIDE_TYPE = {
+  COMMENTS: 'COMMENTS',
+  TAGS: 'TAGS',
 }
-
-const fetchReportsList = (store, {
-  max_result = MAXRESULT_REPORTS_MEMOS,
-  sort = DEFAULT_SORT_REPORTS_MEMOS,
-  page = 1,
-} = {}) => {
-  return store.dispatch('GET_PUBLIC_REPORTS', {
-    params: {
-      max_result: max_result,
-      where: {
-        report_publish_status: REPORT_PUBLISH_STATUS.PUBLISHED,
-        project_publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
-      },
-      sort: sort,
-      page,
-    },
-  })
-}
-
-const fetchMemos = (store, {
-  max_result = MAXRESULT_REPORTS_MEMOS,
-  sort = DEFAULT_SORT_REPORTS_MEMOS,
-} = {}) => {
-  return store.dispatch('GET_PUBLIC_MEMOS', {
-    params: {
-      member_id: get(store, 'state.profile.id'),
-      max_result: max_result,
-      where: {
-        memo_publish_status: MEMO_PUBLISH_STATUS.PUBLISHED,
-        project_publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
-      },
-      sort: sort,
-    },
-  })
-}
-
-const fetchPointHistories = (store, { objectIds, objectType, }) => {
-  return store.dispatch('GET_POINT_HISTORIES', {
-    params: {
-      objectType: objectType,
-      objectIds: objectIds,
-    },
-  })
-}
-
 const getUserFollowing = (store, { id = get(store, 'state.profile.id'), resource, resourceType = '', } = {}) => {
   return store.dispatch('GET_FOLLOWING_BY_USER', {
     id: id,
@@ -132,10 +55,6 @@ const fetchFollowing = (store, params) => {
   return store.dispatch('GET_FOLLOWING_BY_RESOURCE', params)
 }
 
-const fetchEmotion = (store, params) => {
-  return store.dispatch('FETCH_EMOTION_BY_RESOURCE', params)
-}
-
 export default {
   name: 'PublicPageWithAside',
   props: {
@@ -143,39 +62,23 @@ export default {
       type: Boolean,
       default: true,
     },
-    hasPostList: {
-      type: Boolean,
-      default: true,
-    },
   },
   components: {
-    AppTitledList,
     CommentContainer,
-    HomeAsideReport,
     Leading,
     PostList,
-    MemoFigure,
-    ProjectList,
     TagNav,
+    TagNavAside,
   },
-  // TODO: reportList and memoList loadmore
   watch: {
-    // isReachBottom (value) {
-    //   if (value) {
-    //     fetchReportsList(this.$store, {
-    //       page: 2
-    //     })
-    //   }
-    // },
     projectSingleTagIds (ids) {
       fetchFollowing(this.$store, { resource: 'tag', ids: ids, })
     },
   },
   data () {
-    const listTitleMain = this.getListTitleMain(this.$route.path)
     return {
+      ASIDE_TYPE,
       isReachBottom: false,
-      listTitle: [ this.$t('SECTIONS.PROJECTS'), this.$t(listTitleMain), ],
     }
   },
   computed: {
@@ -197,11 +100,8 @@ export default {
       return asset
     },
     isClientSide,
-    memos () {
-      return get(this.$store.state, 'publicMemos', [])
-    },
-    projects () {
-      return get(this.$store, 'state.publicProjects.normal') || []
+    asideType () {
+      return this.route === 'series' ? ASIDE_TYPE.COMMENTS : ASIDE_TYPE.TAGS
     },
     projectSingle () {
       return get(this.$store, 'state.publicProjectSingle', {})
@@ -210,70 +110,36 @@ export default {
       const tags = this.projectSingle.tags || []
       return tags.map(tag => tag.id)
     },
+    tagsForNav () {
+      switch (this.route) {
+        case 'series':
+          return this.projectSingle.tags || []
+        case 'tag':
+          return filter(get(this.$store, 'state.postsByTag.items', []), t => t.text === this.$route.params.tagName)
+        default:
+          return []
+      }
+    },
     route () {
       return this.$route.fullPath.split('/')[ 1 ]
     },
   },
   methods: {
     get,
-    getListTitleMain (path) {
-      switch (path) {
-        case '/reports':
-          return 'SECTIONS.REPORTS'
-        case '/memos':
-          return 'SECTIONS.MEMOS'
-        default:
-          return ''
-      }
-    },
-    getRequests (path) {
-      let requests = [ fetchProjectsList(this.$store), ]
-      switch (path) {
-        case '/reports':
-          requests.push(fetchReportsList(this.$store))
-          break
-        case '/memos':
-          requests.push(fetchMemos(this.$store))
-          break
-        default:
-          break
-      }
-      return requests
-    },
-    isElementReachInView,
-    isScrollBarReachBottom,
   },
   beforeMount () {
-    const requests = this.getRequests(this.$route.path)
-    Promise.all(requests).then(() => {
-      // const peojectIds = get(this.$store.state, 'publicProjects.normal', []).map(project => project.id)
-      const memoProjectIds = uniq(get(this.$store, 'state.publicMemos', []).map(memo => memo.projectId))
-      const reportIds = get(this.$store.state, 'publicReports', []).map(report => report.id)
-      if (memoProjectIds.length > 0) {
-        fetchPointHistories(this.$store, { objectType: POINT_OBJECT_TYPE.PROJECT_MEMO, objectIds: memoProjectIds, })
-      }
-      if (reportIds.length > 0)  {
-        fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'like', })
-        fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'dislike', })
-      }
-
-      getUserFollowing(this.$store, { resource: 'post', })
-      getUserFollowing(this.$store, { resource: 'memo', })
-      getUserFollowing(this.$store, { resource: 'report', })
-      getUserFollowing(this.$store, { resource: 'tag', })
-    })
+    getUserFollowing(this.$store, { resource: 'post', })
+    getUserFollowing(this.$store, { resource: 'memo', })
+    getUserFollowing(this.$store, { resource: 'report', })
+    getUserFollowing(this.$store, { resource: 'tag', })
   },
-  // TODO: reportList and memoList loadmore  
-  // mounted () {
-  //   window.addEventListener('scroll', () => {
-  //     this.isReachBottom = this.isElementReachInView('.public-page__main-container', 0.5) || this.isScrollBarReachBottom()
-  //   })
-  // },
 }
 </script>
 <style lang="stylus" scoped>
 .public-page
   width 100%
+  position static
+  padding-left 20px
   &__container
     display flex
   &__main
@@ -291,13 +157,20 @@ export default {
     flex 1
     &-container
       width 100%
-      >>> .app-titled-list__content
-        padding 0
-    &-comment
-      width 100%
       background-color #fff
       padding 10px 15px
       margin-bottom 20px
+    &.tags
+      // width 250px
+      height calc(100vh - 40px)
+      overflow-y scroll
+      position absolute
+      right 0
+      top 0
+      padding-top 25px
+      .public-page__aside-container
+        background-color transparent
+
   &__main
     &-container
       width 650px

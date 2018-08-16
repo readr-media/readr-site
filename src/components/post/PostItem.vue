@@ -22,7 +22,7 @@
         </figcaption>
       </figure>
     </div>  
-    <div class="post__content">
+    <div class="post__content" :style="{ width: `${width}px`, }">
       <PostContent modifier="main" :post="post"></PostContent>
     </div>
   </div>
@@ -69,6 +69,7 @@ export default {
         content: '',
       },
     },
+    width: {},
   },
 }
 </script>

@@ -7,6 +7,7 @@ import * as actionsMember from 'src/store/actions/member'
 import * as actionsMeta from 'src/store/actions/meta'
 import * as actionsTag from 'src/store/actions/tag'
 import * as actionPoints from 'src/store/actions/points'
+import * as actionsPost from 'src/store/actions/post'
 import {
   addComment,
   addCommentReport,
@@ -552,4 +553,4 @@ export default Object.assign({
   INVITATION_SWITCH_OFF: ({ commit, dispatch, state, }, { params, }) => {
     commit('INVITATION_SWITCH_OFF', {})
   },
-}, actionsEmotion, actionsMember, actionsMeta, actionsTag, actionPoints)
+}, actionsEmotion, actionsMember, actionsMeta, actionsTag, actionPoints, actionsPost)
