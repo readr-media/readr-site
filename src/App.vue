@@ -139,8 +139,12 @@ $container
       @extends $container
       max-width 100vw
       padding 0
-      > .app__main
-        margin-left 0
+      > .app__wrapper
+        max-width none
+        padding 0
+        > .app__main
+          margin 0
+          padding 0
     &--normalize
       max-width initial
       margin 0
