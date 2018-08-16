@@ -144,15 +144,6 @@ $container
   display flex
   justify-content center
 
-.page_login
-  .app
-    &__wrapper
-      padding 0
-      max-width 100%
-    &__main
-      padding 0
-      margin 0
-
 .app
   &__wrapper
     width 100%
