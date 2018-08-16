@@ -1,6 +1,6 @@
 <template>
   <li class="tag-item">
-    <div class="tag-item__tag tag">
+    <router-link :to="`/tag/${tag.text}`" class="tag-item__tag tag">
       <div
         :class="[
           'tag__header',
@@ -34,7 +34,7 @@
           class="tag__relateds-list-item"
         />
       </ul>
-    </div>
+    </router-link>
     <!-- TODO: add trending-rank -->
     <p v-if="showTrendingRank" class="tag-item__trending-rank"></p>
   </li>

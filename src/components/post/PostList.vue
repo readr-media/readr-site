@@ -4,7 +4,7 @@
       <BaseLightBoxPost :showLightBox="showLightBox" :post="postLightBox"></BaseLightBoxPost>
     </BaseLightBox>  
     <transition-group name="fade" mode="out-in">
-      <PostItem v-for="post in posts" :post="post" :key="`${post.id}-main`"></PostItem>
+      <PostItem v-for="post in posts" :post="post" :key="`${post.id}-main`" width="650"></PostItem>
     </transition-group>  
   </div>
 </template>
@@ -15,7 +15,7 @@ import PostItem from 'src/components/post/PostItem.vue'
 import moment from 'moment'
 import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, REPORT_PUBLISH_STATUS, } from 'api/config'
 import { isScrollBarReachBottom, isElementReachInView, } from 'src/util/comm'
-import { find, get, sortBy, union, } from 'lodash'
+import { concat, filter, find, flatten, get, map, sortBy, union, uniqWith, } from 'lodash'
 
 const MAXRESULT_POSTS = 10
 const DEFAULT_PAGE = 1
@@ -76,6 +76,16 @@ const fetchReportsList = (store, {
     },
   })
 }
+const fetchPostsByTags = (store, { keyword, }) => store.dispatch('GET_POSTS_BY_TAG', {
+  params: {
+    // max_result: MAXRESULT_POSTS,
+    // page: page || DEFAULT_PAGE,
+    // sort: '-updated_at',
+    tagged_resources: 1,
+    stats: 1,
+    keyword,
+  },
+})
 
 const fetchFollowing = (store, params) => {
   return store.dispatch('GET_FOLLOWING_BY_RESOURCE', params)
@@ -137,6 +147,12 @@ export default {
             }
           }))
           break
+        case 'tag':
+          jobs.push(fetchPostsByTags(this.$store, {
+            page: 1,
+            keyword: this.$route.params.tagName,
+          }))
+          break
       }
       return jobs
     },
@@ -169,8 +185,12 @@ export default {
       switch (this.route) {
         case 'series':
           return sortBy(union(get(this.$store, 'state.memos', []), get(this.$store, 'state.publicReports', [])), [ p => -moment(p.publishedAt), ])
+        case 'tag': {
+          const posts = flatten(concat(map(filter(get(this.$store, 'state.postsByTag.items', []), t => (t.taggedPosts && t.text === this.$route.params.tagName)), p => p.taggedPosts)))
+          return sortBy(uniqWith(posts, (a, o) => a.id === o.id), [ p => -moment(p.publishedAt), ])
+        }
         default:
-          return get(this.$store, `state.${this.targState}`)
+          return []
       }
     },
     postSingle () {
@@ -197,17 +217,6 @@ export default {
     showLightBox () {
       return typeof(get(this.$route, 'params.subItem')) === 'string'
     },    
-    targState () {
-      let targ_state
-      switch (this.route) {
-        case 'series':
-          targ_state = 'series'
-          break
-        default:
-          targ_state = ''
-      }
-      return targ_state
-    },
   },
   data () {
     return {
@@ -249,7 +258,7 @@ export default {
   },   
   mounted () {
     window.addEventListener('scroll', () => {
-      this.isReachBottom = this.isElementReachInView('.post-list', 0.5) || this.isScrollBarReachBottom()
+      this.isReachBottom = this.isElementReachInView(this.$el, '.post-list', 0.5) || this.isScrollBarReachBottom()
     })    
   },
   watch: {
@@ -269,4 +278,3 @@ export default {
   },
 }
 </script>
-<style lang="stylus" scoped></style>

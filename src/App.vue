@@ -1,8 +1,8 @@
 <template>
-  <div id="app" :class="{ home: isHome, }">
+  <div id="app" :class="`page_${pageType.toLowerCase()}`">
     <app-header v-if="!isLoginPage && !isCommentPage"></app-header>
     <div :class="[ 'app__container', { 'app__container--wide': isLoginPage }, { 'app__container--normalize': isCommentPage } ]">
-      <div class="app__wrapper">
+      <div class="app__wrapper" :class="[ `page_${pageType.toLowerCase()}` ]">
         <aside class="app__aside" :class="{ fixed: isFixedAside, }" v-if="!isLoginPage && !isCommentPage">
           <AppNavAside/>
         </aside>
@@ -30,6 +30,12 @@
   import VueCookie from 'vue-cookie'
   
   // const debug = require('debug')('CLIENT:App')
+  const PAGE_TYPE = {
+    HOME: 'HOME',
+    LOGIN: 'LOGIN',
+    COMMENT: 'COMMENT',
+    OTHER: 'OTHER',
+  }
 
   export default {
     components: {
@@ -53,6 +59,17 @@
       },
       useragent () {
         return get(this.$store, 'state.useragent')
+      },
+      pageType () {
+        if (this.isLoginPage) {
+          return PAGE_TYPE.LOGIN
+        } else if (this.isHome) {
+          return PAGE_TYPE.HOME
+        } else if (this.isCommentPage) {
+          return PAGE_TYPE.COMMENT
+        } else {
+          return PAGE_TYPE.OTHER
+        }
       },
     },
     data () {
@@ -126,6 +143,16 @@ $container
   width 100%
   display flex
   justify-content center
+
+.page_login
+  .app
+    &__wrapper
+      padding 0
+      max-width 100%
+    &__main
+      padding 0
+      margin 0
+
 .app
   &__wrapper
     width 100%
@@ -133,6 +160,7 @@ $container
     padding 40px 0
     display flex
     position relative
+
   &__container
     @extends $container
     &--wide
@@ -157,9 +185,10 @@ $container
     &.fixed
       position fixed
   &__main
+    position relative
     flex 1
     padding-left 80px
-    margin-top 25px
+    padding-top 25px
     display flex
     justify-content flex-start
     align-items flex-start
@@ -253,7 +282,7 @@ button
   .main-panel
     padding 35px calc((100% - 800px) / 2) 40px
 @media (min-width 1440px)
-  .home
+  .page_home
     .app
       &__container
         padding-right 240px

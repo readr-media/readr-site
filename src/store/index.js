@@ -62,6 +62,7 @@ export function createStore () {
       'personalPoints': 0,
       'pointHistories': [],
       'posts': [],
+      'postsByTag': [],
       'postsCount': 0,
       'postsDraft': [],
       'postsDraftCount': 0,
