@@ -270,7 +270,7 @@
 
   @media (min-width 1440px)
     .home
-      .header
+      &.header
         padding-right 240px
 
   @media (min-width 769px)
