@@ -1,6 +1,6 @@
 <template>
   <div class="homepage">
-    <BaseLightBox v-show="showLightBox" :showLightBox="showLightBox" @closeLightBox="closeLightBox">
+    <BaseLightBox v-show="showLightBox" :showLightBox="showLightBox" :hadRouteBeenNavigate="hadRouteBeenNavigate" @closeLightBox="closeLightBox">
       <BaseLightBoxPost :showLightBox="showLightBox" :post="postLightBox"/>
     </BaseLightBox>
     <div class="homepage__container">
@@ -239,13 +239,14 @@ export default {
       endPage: false,
       articlesListMainCategory: this.$route.path !== '/hot' ? '/' : '/hot',
       latestCommentsList: [],
+      hadRouteBeenNavigate: false,
     } 
   },
   computed: {
     ...mapState({
       postsLatest: state => get(state, [ 'publicPosts', 'items', ], []),
       postsHot: state => get(state, [ 'publicPostsHot', 'items', ], []),
-      postSingle: state => get(state, [ 'publicPostSingle', 'items', 0, ], []), // store binding to the post fetched while user visiting /post/:postid
+      postSingle: state => get(state, [ 'publicPostSingle', 'items', 0, ], {}), // store binding to the post fetched while user visiting /post/:postid
       memos: state => get(state, 'publicMemos', []),
       reports: state => get(state, 'publicReports', []),
     }),
@@ -308,8 +309,15 @@ export default {
     // const store = createStore()
     debug('Hook: beforeRouteEnter', 'postId' in to.params)
     debug(to)
+    debug(from)
+    debug(`to`, isCurrentRoutePath(to, '/post/:postId'))
+    debug(`from`, isCurrentRoutePath(from, '/'))
     // pageJump({ store, to, next, })
-    next()
+    next(vm => {
+      if (isCurrentRoutePath(to, '/post/:postId') && !isCurrentRoutePath(from, '/')) {
+        vm.hadRouteBeenNavigate = true
+      }
+    })
   },
   beforeRouteUpdate (to, from, next) {
     debug('Hook: beforeRouteUpdate', 'postId' in to.params)
