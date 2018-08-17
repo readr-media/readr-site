@@ -34,6 +34,7 @@
     HOME: 'HOME',
     LOGIN: 'LOGIN',
     COMMENT: 'COMMENT',
+    HOT: 'HOT',
     OTHER: 'OTHER',
   }
 
@@ -57,6 +58,9 @@
       isHome () {
         return this.$route.path === '/' || this.$route.path.indexOf('/post/') === 0
       },
+      isHOT () {
+        return this.$route.path === '/hot'
+      },
       useragent () {
         return get(this.$store, 'state.useragent')
       },
@@ -67,6 +71,8 @@
           return PAGE_TYPE.HOME
         } else if (this.isCommentPage) {
           return PAGE_TYPE.COMMENT
+        } else if (this.isHOT) {
+          return PAGE_TYPE.HOT
         } else {
           return PAGE_TYPE.OTHER
         }
@@ -273,7 +279,7 @@ button
   .main-panel
     padding 35px calc((100% - 800px) / 2) 40px
 @media (min-width 1440px)
-  .page_home
+  .page_home, .page_hot
     .app
       &__container
         padding-right 240px
