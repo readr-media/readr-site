@@ -162,13 +162,15 @@ export default {
       margin-bottom 20px
     &.tags
       // width 250px
-      height calc(100vh - 40px)
-      overflow-y scroll
+      height calc(100% - 40px)
       position absolute
       right 0
       top 0
       padding-top 25px
       .public-page__aside-container
+        position sticky
+        top 0
+        overflow-y scroll
         background-color transparent
 
   &__main
