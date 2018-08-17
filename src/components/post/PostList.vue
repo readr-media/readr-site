@@ -242,17 +242,26 @@ export default {
   },
   beforeMount () {
     Promise.all(this.jobs).then(() => {
-      const reportIds = get(this.$store.state, 'publicReports', []).map(report => report.id)
-      const memoIds = get(this.$store.state, 'memos', []).map(memo => memo.id)
-      if (reportIds.length > 0) {
-        fetchFollowing(this.$store, { resource: 'report', ids: reportIds, })
-        fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'like', })
-        fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'dislike', })
-      }
-      if (memoIds.length > 0) {
-        fetchFollowing(this.$store, { resource: 'memo', ids: memoIds, })
-        fetchEmotion(this.$store, { resource: 'memo', ids: memoIds, emotion: 'like', })
-        fetchEmotion(this.$store, { resource: 'memo', ids: memoIds, emotion: 'dislike', })
+      if (this.route === 'series') {
+        const reportIds = get(this.$store.state, 'publicReports', []).map(report => report.id)
+        const memoIds = get(this.$store.state, 'memos', []).map(memo => memo.id)
+        if (reportIds.length > 0) {
+          fetchFollowing(this.$store, { resource: 'report', ids: reportIds, })
+          fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'like', })
+          fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'dislike', })
+        }
+        if (memoIds.length > 0) {
+          fetchFollowing(this.$store, { resource: 'memo', ids: memoIds, })
+          fetchEmotion(this.$store, { resource: 'memo', ids: memoIds, emotion: 'like', })
+          fetchEmotion(this.$store, { resource: 'memo', ids: memoIds, emotion: 'dislike', })
+        }
+      } else if (this.route === 'tag') {
+        const postsIds = map(this.posts, p => p.id)
+        if (postsIds.length > 0) {
+          fetchFollowing(this.$store, { resource: 'post', ids: postsIds, })
+          fetchEmotion(this.$store, { resource: 'post', ids: postsIds, emotion: 'like', })
+          fetchEmotion(this.$store, { resource: 'post', ids: postsIds, emotion: 'dislike', })
+        }
       }
     })
   },   

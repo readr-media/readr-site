@@ -53,6 +53,10 @@
         type: Boolean,
         default: false,
       },
+      hadRouteBeenNavigate: {
+        type: Boolean,
+        default: false,
+      },
     },
     watch: {
       showLightBox (val) {
@@ -69,12 +73,15 @@
     },
     methods: {
       $_baseLightBox_close () {
-        if (pathToRegexp('/post/:postId').test(this.$route.path) || pathToRegexp('/series/:id/:subItem?').test(this.$route.path)) {
-          preventScroll.off()
-          this.$emit('closeLightBox')
+        preventScroll.off()
+        if (this.hadRouteBeenNavigate) {
+          this.$router.back()
         } else {
-          preventScroll.off()
-          this.$emit('update:showLightBox', false)
+          if (pathToRegexp('/post/:postId').test(this.$route.path) || pathToRegexp('/series/:id/:subItem?').test(this.$route.path)) {
+            this.$emit('closeLightBox')
+          } else {
+            this.$emit('update:showLightBox', false)
+          }
         }
       },
     },
