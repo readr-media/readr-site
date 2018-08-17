@@ -74,7 +74,7 @@
         return get(this.$store, 'state.isLoggedIn',)
       },
       isHome () {
-        return this.$route.path === '/' || this.$route.path.indexOf('/post/') === 0
+        return this.$route.path === '/' || this.$route.path.indexOf('/post/') === 0 || this.$route.path === '/hot'
       },      
       profileImage () {
         return this.currentUser.profileImage || '/public/icons/exclamation.png'
