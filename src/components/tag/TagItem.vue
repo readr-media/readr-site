@@ -36,7 +36,7 @@
       </ul>
     </router-link>
     <!-- TODO: add trending-rank -->
-    <p v-if="showTrendingRank" class="tag-item__trending-rank"></p>
+    <!-- <p v-if="showTrendingRank" class="tag-item__trending-rank"></p> -->
   </li>
 </template>
 
