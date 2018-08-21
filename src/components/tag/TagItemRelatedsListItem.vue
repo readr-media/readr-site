@@ -4,7 +4,6 @@
       <figure class="figure">
         <img class="figure__img" :src="heroImage" alt="">
         <figcaption class="figure__figcaption">
-          <h1 class="figure__figcaption-category figure__figcaption-category--yellow" v-text="$t('TAG_NAV_ASIDE.CATEGORY.PROJECT')"></h1>
           <p class="figure__figcaption-title" v-text="title"></p>
         </figcaption>
       </figure>
@@ -39,6 +38,7 @@ export default {
 
 <style lang="stylus" scoped>
 .list-item
+  position relative
   padding 6px 0
   &__link
     color black
@@ -58,13 +58,6 @@ export default {
     height d
     min-height d
     object-fit cover
-  &__figcaption-category
-    display inline
-    font-size inherit
-    margin 0
-    padding 1px 3px
-    &--yellow
-      background-color #ddcf21
   &__figcaption-title
     line-height 1.5
     margin 0

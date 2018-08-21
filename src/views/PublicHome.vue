@@ -382,7 +382,7 @@ export default {
   &__tag-nav-aside
     position sticky
     top 57.5px
-    min-width 215px
+    min-width 235px
     margin-right 30px
   &__list-main
     max-width 540px

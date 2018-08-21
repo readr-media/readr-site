@@ -278,7 +278,7 @@ export default {
       'followed': '已追蹤關鍵字',
     },
     'CATEGORY': {
-      'PROJECT': '讀 + 專題',
+      'PROJECT': '專題',
     },
   },
   'control_bar': {
