@@ -27,6 +27,7 @@
         v-if="showRelatedsList && isTaggedProjectsExist"
         :class="[ 'tag__relateds-list', { 'tag__relateds-list--colorize-triangle': isMouseover } ]"
       >
+        <div class="tag__category" v-text="$t('TAG_NAV_ASIDE.CATEGORY.PROJECT')"></div>
         <TagItemRelatedsListItem
           v-for="(project, i) in tag.taggedProjects"
           :data="project"
@@ -184,7 +185,7 @@ export default {
       color white
   &__text
     font-size 12px
-    font-weight 400
+    font-weight 700
     white-space nowrap
     overflow hidden
     text-overflow ellipsis
@@ -239,7 +240,20 @@ export default {
   &__relateds-list-item
     & + &
       border-top 1px solid #d3d3d3
-
+  &__category
+    position absolute
+    top 0
+    left -21px
+    width 20px
+    padding .5em 0 .2em
+    color #000
+    font-size .5625rem
+    line-height 20px
+    letter-spacing .3em
+    writing-mode vertical-rl
+    background-color #ddcf21
+    user-select none
+    cursor default
 .tag-action
   position relative
   &__tooltip
