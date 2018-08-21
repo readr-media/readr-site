@@ -92,7 +92,7 @@
       rerenderComment (comment) {
         const params = get(comment, 'parentId')
           ? { parent: get(comment, 'parentId'), sort: 'created_at', }
-          : { resource: this.asset, }
+          : { resource: [ this.asset, ], }
         return new Promise(resolve => {
           setTimeout(() => {
             fetchCommentStrict(this.$store, { params, }).then(comments => {
@@ -232,7 +232,7 @@
       const fetchComment = this.isPublic && !this.$store.state.isLoggedin ? fetchCommentPublic : fetchCommentStrict
       fetchComment(this.$store, {
         params: {
-          resource: this.asset,
+          resource: [ this.asset, ],
           resource_id: this.assetRefId,
         },
       }).then((comments) => {
@@ -272,7 +272,7 @@
         debug('Mutation detected: asset', this.asset)
         fetchCommentStrict(this.$store, {
           params: {
-            resource: this.asset,
+            resource: [ this.asset, ],
             resource_id: this.assetId,
           },
         }).then((comments) => {
