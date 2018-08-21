@@ -132,7 +132,7 @@ export default {
       width 540px
       height inherit
       box-shadow 0px 0px 3px 2px rgba(211, 211, 211, 1)
-      padding 30px 32.5px
+      padding 17px 20px
       background-color white
       display flex
       flex-direction column

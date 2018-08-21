@@ -118,10 +118,10 @@
         return this.post.linkTitle
       },
       linkTitleTrim () {
-        return truncate(this.post.linkTitle, 20)
+        return truncate(this.post.linkTitle, 15)
       },
       linkDescriptionTrim () {
-        return truncate(this.post.linkDescription, 45)
+        return truncate(this.post.linkDescription, 35)
       },
       isArticleMain () {
         return this.modifier === 'main'
@@ -393,8 +393,11 @@
         justify-content space-between
         margin-bottom 15.5px
         &__content
-          width 350.5px
+          width 300px
+          min-width 300px
+          max-width 300px
           position relative
+          margin 0 20px 0 0
         &__title
           font-size 14px
           font-weight 500
