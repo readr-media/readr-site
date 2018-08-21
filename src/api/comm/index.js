@@ -50,13 +50,7 @@ export function _buildQuery (params = {}) {
         Object.keys(where).forEach((key) => {
           query[key] = JSON.stringify(where[key])
         })
-      } else if (ele === 'ids'
-        || ele === 'fields' 
-        || ele === 'project_id' 
-        || ele === 'object_ids' 
-        || ele === 'slugs' 
-        || ele === 'project_slugs' 
-        || ele === 'report_slugs') {
+      } else if (Array.isArray(snakeCaseParams[ele])) {
         query[ele] = JSON.stringify(snakeCaseParams[ele])
       } else {
         query[ele] = snakeCaseParams[ele]
