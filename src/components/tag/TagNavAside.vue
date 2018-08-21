@@ -78,7 +78,7 @@ export default {
     return {
       tagsCurrentPage: DEFAULT_PAGE,
       shouldTagsLoadMore: true,
-      currentRadioPicked: 'latest',
+      currentRadioPicked: 'hot',
     }
   },
   computed: {
