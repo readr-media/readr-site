@@ -14,7 +14,7 @@
         <span v-if="isLoggedIn" class="tag__action tag-action">
           <img
             :src="isFollowed ? starUrlFollowed : starUrlUnFollowed"
-            @click="toogleFollow"
+            @click.prevent="toogleFollow"
           >
           <span
             :class="[ 'tag-action__tooltip', { 'tag-action__tooltip--toogled': showActionTooltip } ]"
@@ -218,7 +218,7 @@ export default {
       content ''
       position absolute
       top -1px
-      left 30.5px
+      left 31px
       width 0
       height 0
       border-style solid
@@ -230,7 +230,7 @@ export default {
         content ''
         position absolute
         top -1px
-        left 30.5px
+        left 31px
         width 0
         height 0
         border-style solid

@@ -310,7 +310,7 @@
             color #4a4a4a
         &__leading-image
           width 100%
-          height 329px
+          height auto
           background-color #444746
           margin-bottom 22px
       .editor-writing
