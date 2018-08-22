@@ -1,36 +1,38 @@
 <template>
   <div class="external-links">
     <ol class="nav-list">
-      <a class="nav-list__link" :href="`//www.facebook.com/${SITE_DOMAIN}`" target="_blank">
+      <a class="nav-list__link" :href="URL_FB_FANPAGE" target="_blank">
         <li class="nav-list__list-item">
-          <img src="/public/icons/fb.png" alt="">
+          <img src="/public/icons/fb-square.svg" alt="">
         </li>
       </a>
-      <!-- <a class="nav-list__link" href="">
+      <a class="nav-list__link" :href="URL_TWITTER" target="_blank">
         <li class="nav-list__list-item">
-          <img src="/public/icons/github.png" alt="">
+          <img src="/public/icons/twitter.png" alt="">
         </li>
-      </a> -->
-      <router-link class="nav-list__link" to="/about">
+      </a>
+      <a class="nav-list__link" :href="URL_IG" target="_blank">
         <li class="nav-list__list-item">
-          <img src="/public/icons/info.png" alt="">
+          <img src="/public/icons/ig.png" alt="">
         </li>
-      </router-link>
+      </a>
     </ol>
-    <a class="external-links__independent" :href="`//${MM_SITE_DOMAIN}`" target="_blank">
-      <img src="/public/icons/mirrormedia.png" alt="">
-    </a>
   </div>
 </template>
 
 <script>
-import { SITE_DOMAIN, MM_SITE_DOMAIN, } from '../constants'
+import {
+  URL_FB_FANPAGE,
+  URL_TWITTER,
+  URL_IG,
+} from '../constants'
 
 export default {
   data () {
     return {
-      SITE_DOMAIN,
-      MM_SITE_DOMAIN,
+      URL_FB_FANPAGE,
+      URL_TWITTER,
+      URL_IG,
     }
   },
 }
@@ -42,19 +44,12 @@ export default {
   display flex
   margin 24px 0 0 0
   img
-    width 25px
-    height 25px
-  &__independent
-    flex 1 1 auto
-    display flex
-    justify-content center
-    align-items center
-    background-color #d3d3d3
-    margin 0 0 0 5.5px
+    width auto
+    height 23px
 
 .nav-list
   list-style none
-  width 130px
+  width 100%
   padding 0
   margin 0
   display flex

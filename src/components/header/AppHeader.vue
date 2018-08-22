@@ -25,6 +25,9 @@
       <div v-if="isClientSide && !isLoggedIn" class="header__item header--status">
         <router-link to="/login" v-text="$t('HEADER.LOGIN')"></router-link>
       </div>
+      <a href="https://www.mirrormedia.mg/" target="_blank">
+        <img class="header__item header__item--border-less" src="/public/icons/mirrormedia.png" alt="">
+      </a>
       <section :class="{ open: openMenu }" class="header__menu">
         <ul>
           <li><router-link to="/about"><img src="/public/icons/info.png" alt=""></router-link></li>
@@ -145,6 +148,8 @@
       height 20px
       padding 0 10px
       border-left 1px solid #fff
+      &--border-less
+        border-left none
     &__logo
       position absolute
       top 8px
