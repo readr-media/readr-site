@@ -6,9 +6,9 @@
           <p v-text="$t('SECTIONS.CHIEF_EDITOR_TALK')"></p>
         </li>
       </router-link>
-      <router-link class="nav-list__link" to="/hot">
+      <router-link class="nav-list__link" to="/series-list">
         <li class="nav-list__list-item">
-          <p v-text="$t('SECTIONS.HOT_TALK')"></p>
+          <p v-text="$t('SECTIONS.SERIES')"></p>
         </li>
       </router-link>
       <router-link class="nav-list__link" to="/editors">
@@ -16,9 +16,9 @@
           <p v-text="$t('SECTIONS.CHIEF_EDITOR_LIST')"></p>
         </li>
       </router-link>
-      <router-link class="nav-list__link" to="/series-list">
+      <router-link class="nav-list__link" to="/about">
         <li class="nav-list__list-item">
-          <p v-text="$t('SECTIONS.SERIES')"></p>
+          <p v-text="$t('SECTIONS.ABOUT')"></p>
         </li>
       </router-link>
       <router-link class="nav-list__link" :to="`/profile/${ANNOUNCEMENT_ACCOUNT_ID}`">
@@ -95,14 +95,10 @@ export default {
     justify-content center
     align-items center
     p
-      font-size 18px
-      font-weight normal
-      font-style normal
-      font-stretch normal
-      line-height normal
-      letter-spacing normal
+      font-size 14px
       color #000000
       margin 0
+      text-align center
     img
       width 30px
       height 30px
