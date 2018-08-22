@@ -104,7 +104,7 @@ export default {
   },
   computed: {
     curr_ref () {
-      return get(this.$route, 'params.slug')
+      return get(this.$route, 'params.slug') || get(this.$route, 'params.tagName')
     },
     jobs () {
       const jobs = []
@@ -181,13 +181,21 @@ export default {
       }
       return jobs      
     },
+    postsByTag () {
+      return get(this.$store, [ 'state', 'postsByTag', 'items', ], [])
+    },
+    postsByTagCurrentTag () {
+      return filter(this.postsByTag, t => (t.taggedPosts && t.text === this.$route.params.tagName))
+    },
+    postsByTagCurrentTagFlatten () {
+      return flatten(concat(map(this.postsByTagCurrentTag, p => p.taggedPosts)))
+    },
     posts () {
       switch (this.route) {
         case 'series':
           return sortBy(union(get(this.$store, 'state.memos', []), get(this.$store, 'state.publicReports', [])), [ p => -moment(p.publishedAt), ])
         case 'tag': {
-          const posts = flatten(concat(map(filter(get(this.$store, 'state.postsByTag.items', []), t => (t.taggedPosts && t.text === this.$route.params.tagName)), p => p.taggedPosts)))
-          return sortBy(uniqWith(posts, (a, o) => a.id === o.id), [ p => -moment(p.publishedAt), ])
+          return sortBy(uniqWith(this.postsByTagCurrentTagFlatten, (a, o) => a.id === o.id), [ p => -moment(p.publishedAt), ])
         }
         default:
           return []

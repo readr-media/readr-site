@@ -133,16 +133,16 @@ export default {
 
 <style lang="stylus" scoped>
 .tag-nav-aside
-  height calc(100vh - 57.5px)
-  padding 5.5px 0 28px 20px
-  overflow-y scroll
-  &::-webkit-scrollbar
-    display none
-    background-color transparent
-  &::-webkit-scrollbar-track
-    background-color transparent
-  &::-webkit-scrollbar-thumb
-    background-color transparent
+  // height calc(100vh - 57.5px)
+  // padding 5.5px 0 28px 20px
+  // overflow-y scroll
+  // &::-webkit-scrollbar
+  //   display none
+  //   background-color transparent
+  // &::-webkit-scrollbar-track
+  //   background-color transparent
+  // &::-webkit-scrollbar-thumb
+  //   background-color transparent
   &__sort
     margin 0 0 20px 0
   &__list

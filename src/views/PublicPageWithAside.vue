@@ -19,9 +19,9 @@
         <PostList></PostList>
       </div>
       <div class="public-page__aside" :class="asideType.toLowerCase()">
-        <div class="public-page__aside-container">
+        <div class="public-page__aside-container aside-container">
           <CommentContainer :asset="commentAsset" :assetId="assetId" v-if="asideType === ASIDE_TYPE.COMMENTS"></CommentContainer>
-          <TagNavAside v-else-if="asideType === ASIDE_TYPE.TAGS" />
+          <TagNavAside class="aside-container__tag-nav-aside" v-else-if="asideType === ASIDE_TYPE.TAGS" />
         </div>
         <!--render else empty block for ss/cs mating-->
         <!--div v-else></div-->
@@ -167,11 +167,6 @@ export default {
       right 0
       top 0
       padding-top 25px
-      .public-page__aside-container
-        position sticky
-        top 0
-        overflow-y scroll
-        background-color transparent
 
   &__main
     &-container
@@ -180,4 +175,20 @@ export default {
     margin-bottom 20px
     >>> .tag
       background-color #fff
+
+.aside-container
+  position sticky
+  top 65px
+  background-color transparent
+  &__tag-nav-aside
+    height calc(100vh - 65px)
+    padding 5.5px 0 28px 20px
+    overflow-y scroll
+    &::-webkit-scrollbar
+      display none
+      background-color transparent
+    &::-webkit-scrollbar-track
+      background-color transparent
+    &::-webkit-scrollbar-thumb
+      background-color transparent
 </style>

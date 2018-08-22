@@ -384,6 +384,16 @@ export default {
     top 57.5px
     min-width 235px
     margin-right 30px
+    height calc(100vh - 57.5px)
+    padding 5.5px 0 28px 20px
+    overflow-y scroll
+    &::-webkit-scrollbar
+      display none
+      background-color transparent
+    &::-webkit-scrollbar-track
+      background-color transparent
+    &::-webkit-scrollbar-thumb
+      background-color transparent
   &__list-main
     max-width 540px
     width 540px
