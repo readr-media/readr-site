@@ -13,7 +13,7 @@
   // import LoginPanel from '../components/LoginPanel.vue'
   import LoginPanelPackingTest from 'src/components/LoginPanelPackingTest.vue'
   import AppHeader from 'src/components/header/AppHeader.vue'
-  
+
   export default {
     components: {
       'app-header': AppHeader,

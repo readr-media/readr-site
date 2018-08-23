@@ -1,69 +1,36 @@
 <template>
-  <div class="about">
-    <div class="about__container">
-      <app-tab class="about__tab" :tabs="tabs">
-        <article slot="0" class="about__content" v-html="aboutContent">
-        </article>
-      </app-tab>
-    </div>
-  </div>
+  <AboutContent @clickClose="clickClose"/>
 </template>
 
 <script>
-  import { ABOUT_CONTENT, } from '../constants/about'
-  import Tab from '../components/Tab.vue'
+  import AboutContent from '../components/about/AboutContent.vue'
+  import VueCookie from 'vue-cookie'
 
   export default {
     name: 'PublicAbout',
     components: {
-      'app-tab': Tab,
+      AboutContent,
     },
     data () {
       return {
-        aboutContent: ABOUT_CONTENT,
-        tabs: [
-          this.$t('ABOUT.TAB_TITLE'),
-        ],
+        routeFrom: undefined,
       }
+    },
+    beforeRouteEnter (to, from, next) {
+      next(vm => {
+        vm.routeFrom = from.path
+      })
+    },
+    mounted () {
+      VueCookie.set('readr-first-login', 'N', { expires: '1Y', })
+    },
+    methods: {
+      clickClose () {
+        this.$router.push({ path: this.routeFrom, })
+      },
     },
   }
 </script>
 
 <style lang="stylus" scoped>
-  .about
-    width 100%
-    min-height 100vh
-    &__container
-      padding-top 22.5px
-    &__aside
-      display none
-      position sticky
-      top 60px
-      width 75px
-      height 100%
-    &__content
-      >>> h3
-        margin-top 0
-        font-size 1.5rem
-        line-height 1
-      >>> p
-        font-size .9375rem
-        text-align justify
-        line-height 1.5
-        &:last-of-type
-          margin-bottom 0
-  @media (min-width 950px)
-    .about
-      &__container
-        display flex
-        justify-content space-between
-        align-items flex-start
-        width 100%
-      &__tab
-        width 100%
-        max-width 950px
-        margin 0 auto
-        background-color #fff
 </style>
-
-

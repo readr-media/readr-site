@@ -49,6 +49,9 @@
       currUser () {
         return get(this.$store, 'state.profile.id')
       },
+      isAboutPage () {
+        return /\/about/.test(this.$route.fullPath)
+      },
       isLoginPage () {
         return /\/login/.test(this.$route.fullPath)
       },
@@ -87,6 +90,9 @@
       }
     },
     methods: {
+      getFirstLoginCookie () {
+        return VueCookie.get('readr-first-login')
+      },
       getGDPRCookie () {
         return VueCookie.get('gdpr-accept-cookie')
       },
@@ -124,6 +130,12 @@
         })
       },   
     },
+    beforeMount () {
+      const showAbout = !this.getFirstLoginCookie()
+      if (!this.isLoginPage && !this.isAboutPage && showAbout) {
+        this.$router.push('/about')
+      }
+    },
     mounted () {
       this.doc = document
       this.$store.dispatch('UPDATE_CLIENT_SIDE')
@@ -135,6 +147,10 @@
     watch: {
       '$route.fullPath': function () {
         this.sendPageview()
+        const showAbout = !this.getFirstLoginCookie()
+        if (!this.isLoginPage && !this.isAboutPage && showAbout) {
+          this.$router.push('/about')
+        }
       },
     },
   }
