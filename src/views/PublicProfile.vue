@@ -77,7 +77,6 @@
 
   const getPosts = (store, {
     mode = 'set',
-    category = 'latest',
     maxResult = MAXRESULT,
     outputStateTarget,
     page = DEFAULT_PAGE,
@@ -87,7 +86,6 @@
     return store.dispatch('GET_PUBLIC_POSTS', {
       params: {
         mode,
-        category,
         max_result: maxResult,
         page,
         sort,
