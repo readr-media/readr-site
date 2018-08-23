@@ -336,7 +336,15 @@ export default {
       if (this.$route.params.postId) {
         reqs.push(fetchPost(this.$store, { id: this.$route.params.postId, })) 
       }
-      Promise.all(reqs)
+      Promise.all(reqs).then(() => {
+        if (this.$store.state.isLoggedIn) {
+          const postIdsLatest = get(this.$store.state.publicPosts, 'items', []).map(post => post.id)
+          if (postIdsLatest.length > 0) {
+            fetchEmotion(this.$store, { resource: 'post', ids: postIdsLatest, emotion: 'like', })
+            fetchEmotion(this.$store, { resource: 'post', ids: postIdsLatest, emotion: 'dislike', })
+          } 
+        }
+      })
 
       fetchComment(this.$store)
       .then((comments) => {
