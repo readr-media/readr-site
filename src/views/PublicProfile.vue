@@ -333,7 +333,7 @@
       this.routeToMemCenter()
 
       window.addEventListener('scroll', () => {
-        this.isReachBottom = this.isElementReachInView('.profile > .tab', 0.5) || this.isScrollBarReachBottom()
+        this.isReachBottom = this.isElementReachInView(this.$el, '.profile > .tab', 0.5) || this.isScrollBarReachBottom()
       })
     },
     watch: {
