@@ -321,10 +321,10 @@ export default Object.assign({
       .then(({ status, body, }) => {
         if (status === 200 && body.items) {
           if (params.mode === 'set') {
-            if (params.category === 'latest') {
-              commit('SET_PUBLIC_POSTS', { posts: body, outputStateTarget, })
-            } else if (params.category === 'hot') {
+            if (params.category === 'hot') {
               commit('SET_PUBLIC_POSTS', { posts: body, outputStateTarget: 'publicPostsHot', })
+            } else {
+              commit('SET_PUBLIC_POSTS', { posts: body, outputStateTarget, })
             }
           } else if (params.mode === 'update') {
             commit('UPDATE_PUBLIC_POSTS', { posts: body, outputStateTarget, })
