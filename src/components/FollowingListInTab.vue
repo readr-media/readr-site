@@ -32,10 +32,14 @@
       <div v-for="follow in followingByUser" :key="follow.id" class="followingListInTab__item" :class="resource">
         <div class="followingListInTab__img">
           <template v-if="!isProfilePage">
-            <button @click="$_followingListInTab_unfollow(follow.id)"><img src="/public/icons/star-grey.png"></button>
+            <button @click="$_followingListInTab_unfollow(follow.id)">
+              <img src="/public/icons/star-grey.png">
+            </button>
           </template>
           <template v-else-if="isProfilePage && isLoggedIn">
-            <button @click="$_followingListInTab_toggleFollow(follow.id, $_followingListInTab_isFollow(follow.id))"><img :src="$_followingListInTab_isFollow(follow.id) ? '/public/icons/star-grey.png' : '/public/icons/star-line-grey.png'"></button>
+            <button @click="$_followingListInTab_toggleFollow(follow.id, get(followingStats, [ follow.id ]))">
+              <img :src="get(followingStats, [ follow.id ], false) ? '/public/icons/star-grey.png' : '/public/icons/star-line-grey.png'">
+            </button>
           </template>
         </div>
         <div class="followingListInTab__content">
@@ -54,7 +58,7 @@
   </section>
 </template>
 <script>
-  import { find, get, } from 'lodash'
+  import { get, } from 'lodash'
   import PaginationNav from './PaginationNav.vue'
 
   const getFollowing = (store, { id = get(store, 'state.profile.id'), resource = 'post', resourceType = 'review', } = {}) => {
@@ -76,17 +80,27 @@
     })
   }
 
-  const updateStoreFollowingByUser = (store, { action, resource = 'post', object, item, }) => {
-    return store.dispatch('UPDATE_FOLLOWING_BY_USER', {
+  const toogleFollowingByUserStat = (store, { resource, resourceType = '', targetId, }) => {
+    return store.commit('TOOGLE_FOLLOWING_BY_USER_STAT', {
       params: {
-        action: action,
-        resource: resource,
-        resourceId: object,
-        userId: get(store, 'state.profile.id'),
-        item: item,
+        resource,
+        resourceType,
+        targetId,
       },
     })
   }
+
+  // const updateStoreFollowingByUser = (store, { action, resource = 'post', object, item, }) => {
+  //   return store.dispatch('UPDATE_FOLLOWING_BY_USER', {
+  //     params: {
+  //       action: action,
+  //       resource: resource,
+  //       resourceId: object,
+  //       userId: get(store, 'state.profile.id'),
+  //       item: item,
+  //     },
+  //   })
+  // }
 
   export default {
     name: 'FollowingListInTab',
@@ -131,6 +145,13 @@
           return get(this.$store, [ 'state', 'followingByUser', this.userId, this.resource, ], [])
         }
       },
+      followingStats () {
+        if (this.resource === 'post') {
+          return get(this.$store.state.followingByUserStats, [ this.resource, this.resourceType, ], {})
+        } else {
+          return get(this.$store.state.followingByUserStats, [ this.resource, ], {})
+        }
+      },
     },
     beforeMount () {
       if (this.isProfilePage) {
@@ -140,6 +161,7 @@
       }
     },
     methods: {
+      get,
       $_followingListInTab_getDescription (follow) {
         switch (this.resource) {
           case 'project':
@@ -201,28 +223,17 @@
             }
         }
       },
-      $_followingListInTab_isFollow (id) {
-        return find(get(this.$store, [ 'state', 'followingByUser', get(this.$store, 'state.profile.id'), ]), { id: id, })
-      },
       $_followingListInTab_toggleFollow (id, isFollow) {
         if (isFollow) {
           publishAction(this.$store, { action: 'unfollow', resource: this.resource, object: id, })
-          .then(() => {
-            updateStoreFollowingByUser(this.$store, { action: 'unfollow', resource: this.resource, object: id, })
-          })
         } else {
-          const item = find(this.followingByUser, { id: id, })
           publishAction(this.$store, { action: 'follow', resource: this.resource, object: id, })
-          .then(() => {
-            updateStoreFollowingByUser(this.$store, { action: 'follow', resource: this.resource, object: id, item: item, })
-          })
         }
+        toogleFollowingByUserStat(this.$store, { resource: this.resource, resourceType: this.resourceType, targetId: id, })
       },
       $_followingListInTab_unfollow (id) {
         publishAction(this.$store, { action: 'unfollow', resource: this.resource, object: id, })
-        .then(() => {
-          updateStoreFollowingByUser(this.$store, { action: 'unfollow', resource: this.resource, object: id, })
-        })
+        toogleFollowingByUserStat(this.$store, { resource: this.resource, resourceType: this.resourceType, targetId: id, })
       },
     },
   }
