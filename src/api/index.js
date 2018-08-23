@@ -303,7 +303,12 @@ export function getPublicMemos ({ params, }) {
 }
 
 export function getPublicPosts ({ params, }) {
-  let url = params.category !== 'hot' ? `${host}/api/public/posts` : `${host}/api/public/posts/hot`
+  let url = `${host}/api/public/posts`
+  if (params.category === 'latest') {
+    url = `${host}/api/public/posts/latest`
+  } else if (params.category === 'hot') {
+    url = `${host}/api/public/posts/hot`
+  }
   const query = _buildQuery(params)
   if (query && (query.length > 0)) {
     url = url + `?${query}`
