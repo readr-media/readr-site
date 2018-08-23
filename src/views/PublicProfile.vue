@@ -67,12 +67,16 @@
     { code: 5, name: 'FILTER_1YPLUS', },
   ]
 
-  const getFollowing = (store, params) => {
-    if (params.subject) {
-      return store.dispatch('GET_FOLLOWING_BY_USER', params)
-    } else {
-      return store.dispatch('GET_FOLLOWING_BY_RESOURCE', params)
-    }
+  const fetchEmotion = (store, params) => {
+    return store.dispatch('FETCH_EMOTION_BY_RESOURCE', params)
+  }
+
+  const getUserFollowing = (store, { id = get(store, 'state.profile.id'), resource, resourceType = '', } = {}) => {
+    return store.dispatch('GET_FOLLOWING_BY_USER', {
+      id: id,
+      resource: resource,
+      resource_type: resourceType,
+    })
   }
 
   const getPosts = (store, {
@@ -225,6 +229,17 @@
             this.isLoadMoreEnd[ this.currTabKey ] = true
           }
         })
+        .then(() => {
+          if (this.$store.state.isLoggedIn) {
+            const postIdsReview = get(this.$store.state.publicPostReview, 'items', []).map(post => post.id)
+            const postIdsNews = get(this.$store.state.publicPostNews, 'items', []).map(post => post.id)
+            const ids = uniq(concat(postIdsReview, postIdsNews))
+            if (ids.length > 0) {
+              fetchEmotion(this.$store, { resource: 'post', ids: ids, emotion: 'like', })
+              fetchEmotion(this.$store, { resource: 'post', ids: ids, emotion: 'dislike', })
+            }
+          }
+        })
       },
       isElementReachInView,
       isScrollBarReachBottom,
@@ -236,48 +251,6 @@
           this.$router.push(`/${route}`)
         }
       },
-    },
-    beforeRouteUpdate (to, from, next) {
-      // Beta version code
-      Promise.all([
-        getPosts(this.$store, {
-          outputStateTarget: 'publicPostReview',
-          where: {
-            author: Number(get(to, 'params.id')),
-            type: [ POST_TYPE.REVIEW, ],
-          },
-        }),
-        getPosts(this.$store, {
-          outputStateTarget: 'publicPostNews',
-          where: {
-            author: Number(get(to, 'params.id')),
-            type: [ POST_TYPE.NEWS, ],
-          },
-        }),
-        // getPostsCount(this.$store, {
-        //   where: {
-        //     author: get(to, 'params.id'),
-        //     type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ],
-        //   },
-        // }),
-        getMemberPublic(this.$store, {
-          id: Number(get(to, 'params.id')),
-        }),
-      ]).then(() => {
-        if (this.$store.state.isLoggedIn) {
-          const postIdsReview = get(this.$store, 'state.publicPostNews.items', []).map(post => `${post.id}`) 
-          const postIdsNews = get(this.$store, 'state.publicPostReview.items', []).map(post => `${post.id}`) 
-          const ids = uniq(concat(postIdsReview, postIdsNews))
-          
-          if (ids.length !== 0) { 
-            getFollowing(this.$store, { 
-              resource: 'post', 
-              ids: ids, 
-            }) 
-          } 
-        }
-        next()
-      })      
     },
     beforeMount () {
       // Beta version code
@@ -305,24 +278,24 @@
         getMemberPublic(this.$store, {
           id: Number(get(this.$route, 'params.id')),
         }),
-        getFollowing(this.$store, {
-          subject: get(this.$route, 'params.id'), resource: 'member',
-        }),
-      ]).then(() => {
+      ])
+      .then(() => {
         if (this.$store.state.isLoggedIn) {
-          const postIdsReview = get(this.$store, 'state.publicPostNews.items', []).map(post => `${post.id}`) 
-          const postIdsNews = get(this.$store, 'state.publicPostReview.items', []).map(post => `${post.id}`) 
+          const postIdsReview = get(this.$store.state.publicPostReview, 'items', []).map(post => post.id)
+          const postIdsNews = get(this.$store.state.publicPostNews, 'items', []).map(post => post.id)
           const ids = uniq(concat(postIdsReview, postIdsNews))
-          
-          if (ids.length !== 0) { 
-            getFollowing(this.$store, { 
-              resource: 'post', 
-              ids: ids, 
-            }) 
-          } 
+          if (ids.length > 0) {
+            fetchEmotion(this.$store, { resource: 'post', ids: ids, emotion: 'like', })
+            fetchEmotion(this.$store, { resource: 'post', ids: ids, emotion: 'dislike', })
+          }
         }
       })
 
+      getUserFollowing(this.$store, { resource: 'post', })
+      getUserFollowing(this.$store, { resource: 'report', })
+      getUserFollowing(this.$store, { resource: 'memo', })
+      getUserFollowing(this.$store, { resource: 'project', })
+      getUserFollowing(this.$store, { resource: 'tag', })
     },
     mounted () {
        debug(`/profile/${this.$route.params.id}`)
@@ -333,7 +306,7 @@
       this.routeToMemCenter()
 
       window.addEventListener('scroll', () => {
-        this.isReachBottom = this.isElementReachInView('.profile > .tab', 0.5) || this.isScrollBarReachBottom()
+        this.isReachBottom = this.isElementReachInView(this.$el, '.profile > .tab', 0.5) || this.isScrollBarReachBottom()
       })
     },
     watch: {
