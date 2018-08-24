@@ -1,145 +1,21 @@
-import _ from 'lodash'
-import Vue from 'vue'
-const { camelize, } = require('humps')
-const debug = require('debug')('CLIENT:STORE:mutations')
+import * as mutationsComment from 'src/store/mutations/comment'
+import * as mutationsEmotion from 'src/store/mutations/emotion'
+import * as mutationsFollowing from 'src/store/mutations/following'
+import * as mutationsMember from 'src/store/mutations/member'
+import * as mutationsMemo from 'src/store/mutations/memo'
 import * as mutationsPoints from 'src/store/mutations/points'
 import * as mutationsPost from 'src/store/mutations/post'
+import * as mutationsProject from 'src/store/mutations/project'
 import * as mutationsTag from 'src/store/mutations/tag'
-import { POST_TYPE, } from 'api/config'
+
+const debug = require('debug')('CLIENT:STORE:mutations')
 
 export default Object.assign({
-  ADD_ITEM_TO_FOLLOWING_BY_USER: (state, params) => {
-    const followingByUser = state.followingByUser[params.userId]
-    const followingByUserResource = followingByUser[params.resource]
-    if (params.resource === 'post') {
-      followingByUserResource[params.resourceType].push(params.item)
-    } else {
-      followingByUserResource.push(params.item)
-    }
-  },
-  REMOVE_ITEM_FROM_FOLLOWING_BY_USER: (state, params) => {
-    const followingByUser = state.followingByUser[params.userId]
-    const followingByUserResource = followingByUser[params.resource]
-    if (params.resource === 'post') {
-      const resourceIndex = _.findIndex(followingByUserResource[params.resourceType], { id: params.item.id, })
-      Vue.delete(followingByUserResource[params.resourceType], resourceIndex)
-    } else {
-      const resourceIndex = _.findIndex(followingByUserResource, { id: params.item.id, })
-      Vue.delete(followingByUserResource, resourceIndex)
-    }
-  },
-  TOOGLE_FOLLOWING_BY_USER_STAT: (state, { params, }) => {
-    if (params.resource === 'post') {
-      const isNotFollowed = !(params.targetId in state.followingByUserStats[params.resource][params.resourceType])
-      if (isNotFollowed) {
-        Vue.set(state.followingByUserStats[params.resource][params.resourceType], params.targetId, true)
-      } else {
-        state.followingByUserStats[params.resource][params.resourceType][params.targetId] = !state.followingByUserStats[params.resource][params.resourceType][params.targetId]
-      }
-    } else {
-      const isNotFollowed = !(params.targetId in state.followingByUserStats[params.resource])
-      if (isNotFollowed) {
-        Vue.set(state.followingByUserStats[params.resource], params.targetId, true)
-      } else {
-        state.followingByUserStats[params.resource][params.targetId] = !state.followingByUserStats[params.resource][params.targetId]
-      }
-    }
-  },
-  ADD_USER_TO_FOLLOWING_BY_RESOURCE: (state, params) => {
-    const resourceIndex = _.findIndex(state.followingByResource[params.resource], { resourceID: params.resourceId, })
-    if (resourceIndex === -1) {
-      state.followingByResource[params.resource].push({
-        resourceID: params.resourceId,
-        followers: [ params.userId, ],
-      })
-    } else {
-      state.followingByResource[params.resource][resourceIndex].followers.push(params.userId)
-    }
-  },
-  REMOVE_USER_FROM_FOLLOWING_BY_RESOURCE: (state, params) => {
-    const resourceIndex = _.findIndex(state.followingByResource[params.resource], { resourceID: params.resourceId, })
-    const userIndex = state.followingByResource[params.resource][resourceIndex].followers.indexOf(params.userId)
-    Vue.delete(state.followingByResource[params.resource][resourceIndex].followers, userIndex)
-  },
   SET_CLIENT_SIDE: (state) => {
     state['isClientSide'] = true
   },
-  SET_COMMENT_COUNT: (state, { count, postId, }) => {
-    let commentCount = _.find(_.get(state, [ 'commentCount', ]), { postId, })
-    if (!commentCount) {
-      commentCount = { postId, count: 0, }
-      _.get(state, [ 'commentCount', ]).push(commentCount)
-    }
-    commentCount.count = count || 0
-  },
-  SET_COMMENTS_ME: (state, { comments, }) => {
-    const profile = state['profile']
-    profile && (profile.comments = comments)
-  },
   SET_CUSTOM_EDITORS: (state, { members, }) => {
     state['customEditors'] = members
-  },
-  SET_EMOTION_BY_RESOURCE: (state, { resource, emotion, data, }) => {
-    state['emotionByResource'][resource][emotion] = data || []
-  },
-  SET_FOLLOWING_BY_RESOURCE: (state, { resourceType, following, }) => {
-    state['followingByResource'][resourceType] = following
-  },
-  UPDATE_FOLLOWING_BY_RESOURCE: (state, { resourceType, following, }) => {
-    following && following.forEach(follow => {
-      state['followingByResource'][resourceType].push(follow)
-    })
-  },
-  SET_FOLLOWING_BY_USER: (state, { following, userId, resource, resourceType, }) => {
-    const data = following || []
-    if (!(userId in state['followingByUser'])) {
-      Vue.set(state['followingByUser'], userId, {
-        post: {
-          review: [],
-          news: [],
-        },
-        report: [],
-        memo: [],
-        project: [],
-        tag: [],
-      })
-    }
-
-    if (resource === 'post') {
-      if (!_.isEmpty(resourceType)) {
-        Vue.set(state['followingByUser'][userId][resource], resourceType, data)
-      } else {
-        const postType = Object.entries(POST_TYPE)
-        data.forEach(post => {
-          const currentResourceType = _.get(_.find(postType, [ 1, post.type, ]), 0, '').toLowerCase()
-          if (currentResourceType !== '') {
-            const store = state['followingByUser'][userId][resource][currentResourceType]
-            store.push(post)
-          }
-        })
-      }
-    } else {
-      Vue.set(state['followingByUser'][userId], resource, data)
-    }
-  },
-  SET_FOLLOWING_BY_USER_STATS: (state, { following, resource, resourceType, }) => {
-    const data = following || []
-
-    data.forEach(item => {
-      if (resource === 'post') {
-        if (!_.isEmpty(resourceType)) {
-          Vue.set(state['followingByUserStats'][resource][resourceType], item.id, true)
-        } else {
-          const postType = Object.entries(POST_TYPE)
-          const currentResourceType = _.get(_.find(postType, [ 1, item.type, ]), 0, '').toLowerCase()
-          if (currentResourceType !== null && currentResourceType in state['followingByUserStats'][resource]) {
-            Vue.set(state['followingByUserStats'][resource][currentResourceType], item.id, true)
-          }
-        }
-      } else {
-        Vue.set(state['followingByUserStats'][resource], item.id, true)
-      }
-    })
   },
   SET_LOGGEIN_STATUS: (state, { body, }) => {
     state['isLoggedIn'] = body
@@ -151,62 +27,8 @@ export default Object.assign({
         break
     }
   },
-  SET_MEMBERS: (state, { members, }) => {
-    state['members'] = members
-  },
-  SET_MEMBERS_COUNT: (state, { count, }) => {
-    state['membersCount'] = count
-  },
-  SET_MEMOS: (state, { items, }) => {
-    state['memos'] = items
-  },
-  SET_MEMO_SINGLE: (state, { item, }) => {
-    debug('SET_MEMO_SINGLE', item)
-    state['memoSingle'] = item
-  },
   SET_NOTIFICATION: (state, { items, }) => {
     state['notification'] = items
-  },
-  SET_POINT_PERSONAL: (state, { personalPoints, }) => {
-    state['personalPoints'] = personalPoints
-  },
-  SET_PERSONAL_SETTING: (state, { setting, }) => {
-    state['personalSetting'] = setting
-  },
-  SET_POINT_HISTORIES: (state, { histories, }) => {
-    state['pointHistories'] = histories.items || []
-  },
-  SET_POSTS: (state, { posts, }) => {
-    state['posts'] = posts.items
-  },
-  SET_POSTS_COUNT: (state, { meta, }) => {
-    state['postsCount'] = meta.total
-  },
-  SET_POSTS_DRAFT: (state, { posts, }) => {
-    state['postsDraft'] = posts.items
-  },
-  SET_POSTS_DRAFT_COUNT: (state, { meta, }) => {
-    state['postsDraftCount'] = meta.total
-  },
-  SET_PUBLIC_POSTS: (state, { posts, outputStateTarget, }) => {
-    debug('public posts', posts)
-    state[ outputStateTarget ] = posts
-  },
-  SET_PUBLIC_MEMBER: (state, { member, }) => {
-    state['publicMember'] = _.get(member, [ 'items', 0, ])
-    debug('SET_PUBLIC_MEMBER', state['publicMember'])
-  },
-  SET_PUBLIC_MEMBERS: (state, { members, role, }) => {
-    Vue.set(state['publicMembers'], role, members)
-  },
-  SET_PUBLIC_MEMOS: (state, { memos, }) => {
-    state['publicMemos'] = memos
-  },
-  SET_PUBLIC_PROJECTS: (state, { status, publicProjects, }) => {
-    Vue.set(state['publicProjects'], status, publicProjects)
-  },
-  SET_PUBLIC_PROJECT_SINGLE: (state, { item, }) => {
-    state['publicProjectSingle'] = item
   },
   SET_PUBLIC_REPORTS: (state, { reports, }) => {
     state['publicReports'] = reports
@@ -217,15 +39,6 @@ export default Object.assign({
   SET_PUBLIC_VIDEOS_COUNT: (state, { meta, }) => {
     state['publicVideosCount'] = meta.total
   },
-  SET_PROJECTS_LIST: (state, { projectsList, }) => {
-    state['projectsList'] = projectsList
-  },
-  SET_PUBLIC_POST_SINGLE: (state, { posts, }) => {
-    state['publicPostSingle'] = posts
-  },
-  SET_PROFILE: (state, { profile, }) => {
-    state['profile'] = profile
-  },
   SET_SEARCH: (state, { searchResult, }) => {
     debug('searchResult:')
     debug(searchResult)
@@ -233,64 +46,6 @@ export default Object.assign({
   },
   SET_INVITATION_QUOTA: (state, { quota, }) => {
     state['invitation_quota'] = quota
-  },
-  UPDATED_PROFILE: (state, { profile, }) => {
-    // Update the entry when user saving the profile value which has been edited
-    Object.entries(profile).forEach((entry) => {
-      const profileKey = camelize(entry[0])
-      const profileValue = entry[1]
-      state['profile'][profileKey] = profileValue
-    })
-  },
-  UPDATE_EMOTION: (state, params) => {
-    const action = params.customAttrs.action
-    const emotion = params.dataBuffer.emotion
-    const resource = params.dataBuffer.resource
-    const oppositeEmotion = emotion === 'like' ? 'dislike' : 'like'
-    const resourceIndex = _.findIndex(state.emotionByResource[resource][emotion], { resourceID: params.dataBuffer.object, })
-    let userIndex
-    let oppositeEmotionResourceIndex
-    let oppositeEmotionUserIndex
-    switch (action) {
-      case 'insert':
-        if (resourceIndex === -1) {
-          return state.emotionByResource[resource][emotion].push({ count: 1, followers: [ params.dataBuffer.subject, ], resourceID: params.dataBuffer.object, })
-        }
-        state.emotionByResource[resource][emotion][resourceIndex].followers.push(params.dataBuffer.subject)
-        state.emotionByResource[resource][emotion][resourceIndex].count += 1
-        return
-      case 'delete':
-        userIndex = state.emotionByResource[resource][emotion][resourceIndex].followers.indexOf(params.dataBuffer.subject)
-        state.emotionByResource[resource][emotion][resourceIndex].count -= 1
-        Vue.delete(state.emotionByResource[resource][emotion][resourceIndex].followers, userIndex)
-        return
-      case 'update':
-        oppositeEmotionResourceIndex = _.findIndex(state.emotionByResource[resource][oppositeEmotion], { resourceID: params.dataBuffer.object, })
-        oppositeEmotionUserIndex = state.emotionByResource[resource][oppositeEmotion][oppositeEmotionResourceIndex].followers.indexOf(params.dataBuffer.subject)
-        if (resourceIndex === -1) {
-          state.emotionByResource[resource][emotion].push({ count: 1, followers: [ params.dataBuffer.subject, ], resourceID: params.dataBuffer.object, })
-        } else {
-          state.emotionByResource[resource][emotion][resourceIndex].followers.push(params.dataBuffer.subject)
-          state.emotionByResource[resource][emotion][resourceIndex].count += 1
-        }
-        state.emotionByResource[resource][oppositeEmotion][oppositeEmotionResourceIndex].count -= 1
-        Vue.delete(state.emotionByResource[resource][oppositeEmotion][oppositeEmotionResourceIndex].followers, oppositeEmotionUserIndex)
-        return
-    }
-  },
-  UPDATE_EMOTION_BY_RESOURCE: (state, { resource, emotion, data, }) => {
-    const orig = _.values(state['emotionByResource'][resource][emotion])
-    const loadmore = data || []
-    state['emotionByResource'][resource][emotion] = _.concat(orig, loadmore)
-  },
-  UPDATE_PUBLIC_POSTS: (state, { posts, outputStateTarget, }) => {
-    state[ outputStateTarget ]['items'] = _.concat(
-      _.get(state, `${outputStateTarget}.items`, []),
-      _.get(posts, 'items', [])
-    )
-  },
-  UPDATE_MEMOS: (state, { items, }) => {
-    state['memos'] = _.concat(_.get(state, `memos`, []), items)
   },
   /**
    * invitation
@@ -301,4 +56,4 @@ export default Object.assign({
   INVITATION_SWITCH_OFF: (state) => {
     state['invitation_switch_status'] = false
   },
-}, mutationsPoints, mutationsTag, mutationsPost)
+}, mutationsComment, mutationsEmotion, mutationsFollowing, mutationsMember, mutationsMemo, mutationsPoints, mutationsTag, mutationsPost, mutationsProject)
