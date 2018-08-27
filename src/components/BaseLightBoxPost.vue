@@ -81,7 +81,7 @@ export default {
       return postParagraphs
     },
     commentCount () {
-      return get(find(get(this.$store, 'state.commentCount'), { postId: this.post.id, }), 'count') || 0
+      return get(find(get(this.$store, 'state.commentCount'), { postId: this.post.id, }), 'count', get(this.post, 'commentAmount')) || 0
     },
   },
   data () {
