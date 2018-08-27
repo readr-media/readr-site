@@ -131,7 +131,7 @@ export default {
     &__content
       width 540px
       height inherit
-      box-shadow 0px 0px 3px 2px rgba(211, 211, 211, 1)
+      // box-shadow 0px 0px 3px 2px rgba(211, 211, 211, 1)
       padding 17px 20px
       background-color white
       display flex

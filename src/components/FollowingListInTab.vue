@@ -37,7 +37,7 @@
             </button>
           </template>
           <template v-else-if="isProfilePage && isLoggedIn">
-            <button @click="$_followingListInTab_toggleFollow(follow.id, get(followingStats, [ follow.id ]))">
+            <button @click="$_followingListInTab_toggleFollow(follow.id, get(followingStats, [ follow.id ], false))">
               <img :src="get(followingStats, [ follow.id ], false) ? '/public/icons/star-grey.png' : '/public/icons/star-line-grey.png'">
             </button>
           </template>
