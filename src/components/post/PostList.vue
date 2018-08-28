@@ -52,7 +52,7 @@ const fetchMemoSingle = (store, memoId) => {
 
 const fetchPostAndReportByTag = (store, {
   tagId,
-  max_result = 3,
+  max_result = MAXRESULT_POSTS,
   page = DEFAULT_PAGE,
   sort = '-published_at',
   datetime,
