@@ -72,7 +72,7 @@ const router = new Router({
     { path: '/profile/:id', component: PublicProfile, meta: { permission: 'member', }, },
     { path: '/search/:keyword', component: PublicSearch, meta: { permission: 'member', }, },
     { path: '/series-list', component: PublicPage, meta: { permission: 'member', }, },
-    { path: '/tag/:tagName', component: PublicPageWithAside, meta: { permission: 'member', }, props: { hasLeading: false, }, },
+    { path: '/tag/:tagId', component: PublicPageWithAside, meta: { permission: 'member', }, props: { hasLeading: false, }, },
     { path: '/setup/:type', component: PublicSetPassword, },
     { path: '/comment', component: PublicComment, props: (route) => ({ resourceURL: route.query.resource_url, }), },
     { path: '/404', component: PublicPageNotFound, },

@@ -37,7 +37,7 @@ import PostList from 'src/components/post/PostList.vue'
 import TagNav from 'src/components/tag/TagNav.vue'
 import TagNavAside from 'src/components/tag/TagNavAside.vue'
 import { isClientSide, } from 'src/util/comm'
-import { filter, get, } from 'lodash'
+import { get, } from 'lodash'
 
 const ASIDE_TYPE = {
   COMMENTS: 'COMMENTS',
@@ -115,7 +115,7 @@ export default {
         case 'series':
           return this.projectSingle.tags || []
         case 'tag':
-          return filter(get(this.$store, 'state.postsByTag.items', []), t => t.text === this.$route.params.tagName)
+          return get(this.$store, [ 'state', 'itemsByTag', 'items', 0, 'tags', ], []).filter(tag => tag.id === Number(this.$route.params.tagId))
         default:
           return []
       }
