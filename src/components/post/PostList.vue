@@ -15,7 +15,7 @@ import PostItem from 'src/components/post/PostItem.vue'
 import moment from 'moment'
 import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, REPORT_PUBLISH_STATUS, } from 'api/config'
 import { isScrollBarReachBottom, isElementReachInView, } from 'src/util/comm'
-import { concat, filter, find, flatten, get, map, sortBy, union, uniqWith, } from 'lodash'
+import { find, get, isEqual, sortBy, union, uniqWith, } from 'lodash'
 
 const MAXRESULT_POSTS = 10
 const DEFAULT_PAGE = 1
@@ -49,6 +49,29 @@ const fetchMemoSingle = (store, memoId) => {
     },
   })
 }
+
+const fetchPostAndReportByTag = (store, {
+  tagId,
+  max_result = 3,
+  page = DEFAULT_PAGE,
+  sort = '-published_at',
+  datetime,
+  nextLink,
+} = {}) => {
+  const time = datetime ? datetime : new Date().toISOString()
+  const sortClean = sort.replace('-', '')
+  return store.dispatch('GET_POST_REPORT_BY_TAG', {
+    tagId,
+    params: {
+      max_result,
+      page,
+      sort,
+      filter: `pnr:${sortClean}<=${time}`,
+    },
+    nextLink,
+  })
+}
+
 const fetchProjectSingle = (store, proj_slug) => {
   return store.dispatch('GET_PUBLIC_PROJECT', {
     params: {
@@ -76,16 +99,6 @@ const fetchReportsList = (store, {
     },
   })
 }
-const fetchPostsByTags = (store, { keyword, }) => store.dispatch('GET_POSTS_BY_TAG', {
-  params: {
-    // max_result: MAXRESULT_POSTS,
-    // page: page || DEFAULT_PAGE,
-    // sort: '-updated_at',
-    tagged_resources: 1,
-    stats: 1,
-    keyword,
-  },
-})
 
 const fetchFollowing = (store, params) => {
   return store.dispatch('GET_FOLLOWING_BY_RESOURCE', params)
@@ -104,7 +117,7 @@ export default {
   },
   computed: {
     curr_ref () {
-      return get(this.$route, 'params.slug') || get(this.$route, 'params.tagName')
+      return get(this.$route, 'params.slug') || get(this.$route, 'params.tagId')
     },
     jobs () {
       const jobs = []
@@ -148,9 +161,8 @@ export default {
           }))
           break
         case 'tag':
-          jobs.push(fetchPostsByTags(this.$store, {
-            page: 1,
-            keyword: this.$route.params.tagName,
+          jobs.push(fetchPostAndReportByTag(this.$store, {
+            tagId: this.$route.params.tagId,
           }))
           break
       }
@@ -178,24 +190,42 @@ export default {
             }          
           }))
           break
+        case 'tag': {
+          const hasMore = get(this.$store, 'state.itemsByTag.links.next.url')
+          if (hasMore) {
+            jobs.push(fetchPostAndReportByTag(this.$store, {
+              nextLink: hasMore,
+            }).then(res => {
+              this.currPage += 1
+              const items = res.body.items || []
+              const postIds = items.filter(post => !post.projectId).map(post => post.id)
+              const reportIds = items.filter(report => report.projectId).map(report => report.id)
+              if (postIds.length > 0) {
+                fetchFollowing(this.$store, { resource: 'post', ids: postIds, })
+                fetchEmotion(this.$store, { resource: 'post', ids: postIds, emotion: 'like', })
+                fetchEmotion(this.$store, { resource: 'post', ids: postIds, emotion: 'dislike', })
+              }
+              if (reportIds.length > 0) {
+                fetchFollowing(this.$store, { resource: 'report', ids: reportIds, })
+                fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'like', })
+                fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'dislike', })
+              }
+            }))
+          }
+          break
+        }
       }
       return jobs      
     },
     postsByTag () {
       return get(this.$store, [ 'state', 'postsByTag', 'items', ], [])
     },
-    postsByTagCurrentTag () {
-      return filter(this.postsByTag, t => (t.taggedPosts && t.text === this.$route.params.tagName))
-    },
-    postsByTagCurrentTagFlatten () {
-      return flatten(concat(map(this.postsByTagCurrentTag, p => p.taggedPosts)))
-    },
     posts () {
       switch (this.route) {
         case 'series':
           return sortBy(union(get(this.$store, 'state.memos', []), get(this.$store, 'state.publicReports', [])), [ p => -moment(p.publishedAt), ])
         case 'tag': {
-          return sortBy(uniqWith(this.postsByTagCurrentTagFlatten, (a, o) => a.id === o.id), [ p => -moment(p.publishedAt), ])
+          return uniqWith(this.$store.state.itemsByTag.items, isEqual)
         }
         default:
           return []
@@ -264,11 +294,17 @@ export default {
           fetchEmotion(this.$store, { resource: 'memo', ids: memoIds, emotion: 'dislike', })
         }
       } else if (this.route === 'tag') {
-        const postsIds = map(this.posts, p => p.id)
-        if (postsIds.length > 0) {
-          fetchFollowing(this.$store, { resource: 'post', ids: postsIds, })
-          fetchEmotion(this.$store, { resource: 'post', ids: postsIds, emotion: 'like', })
-          fetchEmotion(this.$store, { resource: 'post', ids: postsIds, emotion: 'dislike', })
+        const postIds = this.posts.filter(post => !post.projectId).map(post => post.id)
+        const reportIds = this.posts.filter(report => report.projectId).map(report => report.id)
+        if (postIds.length > 0) {
+          fetchFollowing(this.$store, { resource: 'post', ids: postIds, })
+          fetchEmotion(this.$store, { resource: 'post', ids: postIds, emotion: 'like', })
+          fetchEmotion(this.$store, { resource: 'post', ids: postIds, emotion: 'dislike', })
+        }
+        if (reportIds.length > 0) {
+          fetchFollowing(this.$store, { resource: 'report', ids: reportIds, })
+          fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'like', })
+          fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'dislike', })
         }
       }
     })

@@ -1,15 +1,28 @@
-/*eslint no-unused-vars: 0*/
-import { get, values, concat, } from 'lodash'
-import { addTags, deleteTags, getTags, getTagsCount, updateTags, } from 'src/api/tag'
+/*eslint no-empty-pattern: 0*/
+import { get, concat, } from 'lodash'
+import { addTags, deleteTags, getPostAndReportByTag, getTags, getTagsCount, updateTags, } from 'src/api/tag'
 
 // const debug = require('debug')('CLIENT:store:actions:tag')
 
-const ADD_TAGS = ({ commit, dispatch, state, }, { params, }) => {
+const ADD_TAGS = ({}, { params, }) => {
   return addTags(params)
 }
 
-const DELETE_TAGS = ({ commit, dispatch, state, }, { params, }) => {
+const DELETE_TAGS = ({}, { params, }) => {
   return deleteTags({ params, })
+}
+
+const GET_POST_REPORT_BY_TAG = ({ commit, state, }, { tagId, params, nextLink, }) => {
+  return getPostAndReportByTag({ tagId, params, nextLink, }).then(({ status, body, }) => {
+    if (status === 200) {
+      if (nextLink) {
+        let orig = get(state, 'itemsByTag.items', [])
+        body.items = concat(orig, body.items)
+      }
+      commit('SET_POST_REPORT_BY_TAG', body)
+      return { status, body, }
+    }
+  })
 }
 
 const GET_PUBLIC_TAGS = ({ commit, state, }, { urlParam, params, }) => {
@@ -42,13 +55,14 @@ const GET_TAGS_COUNT = ({ commit, }, { params, }) => {
   })
 }
 
-const UPDATE_TAGS = ({ commit, dispatch, state, }, { params, }) => {
+const UPDATE_TAGS = ({}, { params, }) => {
   return updateTags({ params, })
 }
 
 export {
   ADD_TAGS,
   DELETE_TAGS,
+  GET_POST_REPORT_BY_TAG,
   GET_PUBLIC_TAGS,
   GET_TAGS,
   GET_TAGS_COUNT,

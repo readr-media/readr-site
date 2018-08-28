@@ -14,6 +14,16 @@ export function deleteTags ({ params, }) {
   return del(url)
 }
 
+export function getPostAndReportByTag ({ tagId, params = {}, nextLink, }) {
+  let url
+  if (nextLink) {
+    url = `${host}/api${nextLink}`
+  } else {
+    url = constructUrlWithQuery(`${host}/api/tags/pnr/${tagId}`, params)
+  }
+  return fetchInStrict(url, {})
+}
+
 export function getTags ({ urlParam = '', params = {}, }) {
   const url = constructUrlWithQuery(`${host}/api/tags${urlParam}`, params)
   return fetchInStrict(url, {})
