@@ -1,12 +1,12 @@
 <template>
   <div id="app" :class="`page_${pageType.toLowerCase()}`">
     <app-header v-if="!isLoginPage && !isCommentPage"></app-header>
-    <div :class="[ 'app__container', { 'app__container--wide': isLoginPage }, { 'app__container--normalize': isCommentPage } ]">
+    <div :class="[ 'app__container', { 'app__container--wide': isLoginPage }, { 'app__container--reset': isCommentPage } ]">
       <div class="app__wrapper" :class="[ `page_${pageType.toLowerCase()}` ]">
         <aside class="app__aside" :class="{ fixed: isFixedAside, }" v-if="!isLoginPage && !isCommentPage">
           <AppNavAside/>
         </aside>
-        <main :class="[ 'app__main', { 'app__main--normalize': isCommentPage } ]">
+        <main :class="[ 'app__main', { 'app__main--reset': isCommentPage } ]">
           <transition name="fade" mode="out-in">
             <router-view class="view"></router-view>
           </transition>
@@ -60,6 +60,9 @@
       },
       isHome () {
         return this.$route.path === '/' || this.$route.path.indexOf('/post/') === 0
+      },
+      shouldShowAbout () {
+        return !this.isLoginPage && !this.isAboutPage && !this.isCommentPage
       },
       isHOT () {
         return this.$route.path === '/hot'
@@ -132,7 +135,7 @@
     },
     beforeMount () {
       const showAbout = !this.getFirstLoginCookie()
-      if (!this.isLoginPage && !this.isAboutPage && showAbout) {
+      if (this.shouldShowAbout && showAbout) {
         this.$router.push('/about')
       }
     },
@@ -141,14 +144,14 @@
       this.$store.dispatch('UPDATE_CLIENT_SIDE')
       this.launchLogger()
       this.sendPageview()
-      this.showAlertGDPR = !this.getGDPRCookie()
+      this.showAlertGDPR = !this.getGDPRCookie() && !this.isCommentPage
       this.setupAsideBehavior()
     },
     watch: {
       '$route.fullPath': function () {
         this.sendPageview()
         const showAbout = !this.getFirstLoginCookie()
-        if (!this.isLoginPage && !this.isAboutPage && showAbout) {
+        if (this.shouldShowAbout && showAbout) {
           this.$router.push('/about')
         }
       },
@@ -186,7 +189,7 @@ $container
         > .app__main
           margin 0
           padding 0
-    &--normalize
+    &--reset
       max-width initial
       margin 0
       padding 0
@@ -205,8 +208,9 @@ $container
     display flex
     justify-content flex-start
     align-items flex-start
-    &--normalize
+    &--reset
       margin 0
+      padding 0
 
 a
   text-decoration none
