@@ -23,8 +23,14 @@
         </AppArticleNav>
       </section>
     </article>
-    <CommentContainer class="baselightbox-post__comment" v-show="showComment" v-if="shouldRenderComment"
-      :asset="asset" :assetId="post.id" :assetRefId="assetRefId"></CommentContainer>  
+    <CommentContainer
+      v-if="shouldRenderComment"
+      v-show="showComment"
+      class="baselightbox-post__comment"
+      :asset="asset"
+      :assetId="post.id"
+      :assetRefId="assetRefId"
+    />  
   </div>
 </template>
 <script>
@@ -53,7 +59,7 @@
     },
     data () {
       return {
-        showComment: false,
+        showComment: true,
       }
     },
     methods: {

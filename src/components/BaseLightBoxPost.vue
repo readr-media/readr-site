@@ -5,7 +5,8 @@
   </div>
   <div :class="[ { 'baselightbox-post--review': !isNews && !isMemo }, { 'baselightbox-post--news': isNews || isMemo } ]" v-else>
     <!-- template for post type is news -->
-    <BaseLightBoxTemplateNews v-if="isNews || isMemo"
+    <BaseLightBoxTemplateNews
+      v-if="isNews || isMemo"
       :assetRefId="assetRefId"
       :authorId="authorId"
       :authorThumbnailImg="authorThumbnailImg"
@@ -13,15 +14,18 @@
       :commentCount="commentCount"
       :isPostEmpty="isPostEmpty"    
       :post="post"
-      :postContent="postContent"></BaseLightBoxTemplateNews>
+      :postContent="postContent"
+    />
     <!-- template for post type is review and others -->
-    <BaseLightBoxTemplatePost v-else
+    <BaseLightBoxTemplatePost
+      v-else
       :assetRefId="assetRefId"
       :authorThumbnailImg="authorThumbnailImg"
       :authorNickname="authorNickname"
       :commentCount="commentCount"
       :isPostEmpty="isPostEmpty"
-      :post="post"></BaseLightBoxTemplatePost>
+      :post="post"
+    />
   </div>
 </template>
 
