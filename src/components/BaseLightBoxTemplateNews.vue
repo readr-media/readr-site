@@ -25,12 +25,21 @@
         </section>
       </article>
       <div class="nav-container">
-        <AppArticleNav :postId="post.id" :postRefId="assetRefId" :resource="post.flag" :resourceType="'news'" :commentCount="commentCount" :tags="post.tags">
+        <AppArticleNav
+          :postId="post.id"
+          :postRefId="assetRefId"
+          :resource="post.flag"
+          :resourceType="'news'"
+          :commentCount="commentCount"
+          :tags="post.tags"
+          :shouldShowComment="true"
+        >
           <TagNav
             v-if="post.tags && post.tags.length > 0"
             slot="tagNav"
             :tags="post.tags"
-            class="baselightbox-post__tags" />
+            class="baselightbox-post__tags"
+          />
         </AppArticleNav>
       </div>
     </div>  
