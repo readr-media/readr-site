@@ -387,25 +387,10 @@ export default {
     display flex
     justify-content center
     align-items flex-start
-  &__tag-nav-aside
-    position sticky
-    top 57.5px
-    min-width 235px
-    margin-right 30px
-    height calc(100vh - 57.5px)
-    padding 5.5px 0 28px 20px
-    overflow-y scroll
-    &::-webkit-scrollbar
-      display none
-      background-color transparent
-    &::-webkit-scrollbar-track
-      background-color transparent
-    &::-webkit-scrollbar-thumb
-      background-color transparent
   &__list-main
     max-width 540px
     width 540px
-    margin 0 0 0 3px
+    margin 0 0 0 27px
   &__list-aside
     // margin-left 35px
     flex 1
@@ -426,6 +411,7 @@ export default {
     font-size 18px
     font-weight 600
     margin 0 0 5px 0
+
 @media (max-width 1440px)
   .homepage
     &__container
