@@ -1,14 +1,15 @@
 <template>
   <li class="tag-item">
-    <router-link :to="`/tag/${tag.id}`" class="tag-item__tag tag">
-      <div
+    <div class="tag-item__tag tag">
+      <router-link
+        :to="`/tag/${tag.id}`" 
         :class="[
           'tag__header',
-          { 'tag__header--has-list': showRelatedsList && isTaggedProjectsExist },
+          { 'tag__header--has-list': showRelatedsList && isTaggedReportsExist },
           { 'tag__header--highlight': isMouseover}
         ]"
-        @mouseover="handleMouseEvent"
-        @mouseout="handleMouseEvent"
+        @mouseover.native="handleMouseEvent"
+        @mouseout.native="handleMouseEvent"
       >
         <span class="tag__text" v-text="tag.text"></span>
         <span v-if="isLoggedIn" class="tag__action tag-action">
@@ -22,20 +23,20 @@
           >
           </span>
         </span>
-      </div>
+      </router-link>
       <ul
-        v-if="showRelatedsList && isTaggedProjectsExist"
+        v-if="showRelatedsList && isTaggedReportsExist"
         :class="[ 'tag__relateds-list', { 'tag__relateds-list--colorize-triangle': isMouseover } ]"
       >
         <div class="tag__category" v-text="$t('TAG_NAV_ASIDE.CATEGORY.PROJECT')"></div>
         <TagItemRelatedsListItem
-          v-for="(project, i) in tag.taggedProjects"
+          v-for="(project, i) in tag.taggedReports"
           :data="project"
           :key="i"
           class="tag__relateds-list-item"
         />
       </ul>
-    </router-link>
+    </div>
     <!-- TODO: add trending-rank -->
     <!-- <p v-if="showTrendingRank" class="tag-item__trending-rank"></p> -->
   </li>
@@ -94,8 +95,8 @@ export default {
     isLoggedIn () {
       return this.$store.state.isLoggedIn
     },
-    isTaggedProjectsExist () {
-      return 'taggedProjects' in this.tag && this.tag.taggedProjects !== null
+    isTaggedReportsExist () {
+      return 'taggedReports' in this.tag && this.tag.taggedReports !== null
     },
     isMouseover () {
       return get(this.$store.state, [ 'tagsIsMouseover', this.tag.id, ], this.isMouseoverLocal)
