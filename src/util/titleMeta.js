@@ -1,6 +1,8 @@
 import { SITE_DOMAIN_DEV, } from '../constants'
+// import { debug } from 'request/request';
 let isStripeSDKLoaded = false
-// const debug = require('debug')('CLIENT:titleMeta')
+let isTappaySDKLoaded = false
+const debug = require('debug')('CLIENT:titleMeta')
 
 function getMetaInfo (vm) {
   const { metaInfo, } = vm.$options
@@ -73,13 +75,29 @@ const clientMetaInfoMixin = {
       /**
        * If Stripe SDK needed.
        */
-      const { isStripeNeeded, } = metaInfo
+      const { isStripeNeeded, isTappayNeeded, } = metaInfo
       if (isStripeNeeded && !isStripeSDKLoaded) {
         const script = document.createElement('script')
         script.setAttribute('src', 'https://checkout.stripe.com/checkout.js')
         document.head.appendChild(script)
         isStripeSDKLoaded = true
-      }      
+      }
+
+      /**
+       * If Tappays SDK needed.
+       */
+      if (isTappayNeeded && !isTappaySDKLoaded) {
+        const script = document.createElement('script')
+        script.onload = () => {
+          debug('isTappaySDKLoaded', window.TPDirect)
+          this.$store.dispatch('SET_TAPPAY_LOADED').then(() => {
+            debug('SET_TAPPAY_LOADED: done!')
+            isTappaySDKLoaded = true
+          })
+        }
+        script.setAttribute('src', 'https://js.tappaysdk.com/tpdirect/v3')
+        document.head.appendChild(script)
+      }
     }
   },
 }

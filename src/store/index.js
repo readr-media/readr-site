@@ -53,6 +53,8 @@ export function createStore () {
       'isClientSide': false,
       'isLoggedIn': false,
       'isStripeRequired': false,
+      'isTappayRequired': false,
+      'isTappayLoaded': false,
       'itemsByTag': {},
       'members': [],
       'membersCount': 0,

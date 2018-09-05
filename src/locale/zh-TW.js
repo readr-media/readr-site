@@ -245,10 +245,21 @@ export default {
       'POSTFIX': '元',
     },
     'DEPOSIT': {
-      'DESCRIPTION': '您正在進行儲值，每次儲值以 300 元台幣為單位，可多次儲值。',
+      'DESCRIPTION': '您正在進行儲值，每次儲值以<br>100 元台幣為單位，可多次儲值。',
       'CONFIRM_TO_PAY': '確認付款',
       'INFAIL': '付款失敗！',
       'SUCCESSFULLY': '付款成功',
+      'REMEMBER': '記住卡號',
+      'PLACEHOLDER': {
+        'CARD_NUMBER': '**** **** **** ****',
+        'CCV': '後三碼',
+        'EXPIRY': 'MM / YY',
+      },
+      'ITEM': {
+        'CARD_NUMBER': '卡&emsp;號',
+        'CCV': '檢查碼',
+        'EXPIRY': '到期年月',      
+      },
     },
   },
   'TAG_LIST': {

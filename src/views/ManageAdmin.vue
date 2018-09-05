@@ -237,6 +237,7 @@
     metaInfo () {
       return {
         isStripeNeeded: this.isStripeRequired,
+        isTappayNeeded: this.isTappayRequired,
       }
     },    
     components: {
@@ -293,6 +294,9 @@
         return _.get(this.$store, 'state.setting.DONATION_IS_DEPOSIT_ACTIVE', false)
       },
       isStripeRequired () {
+        return _.get(this.$store, 'state.isStripeRequired', false)
+      },
+      isTappayRequired () {
         return _.get(this.$store, 'state.isStripeRequired', false)
       },
       itemsSelectedID () {
@@ -679,6 +683,10 @@
       isStripeRequired () {
         this.$forceUpdate()
       },
+      isTappayRequired () {
+        debug('Mutation detected: isTappayRequired', this.isTappayRequired)
+        this.$forceUpdate()
+      },      
     },
   }
 </script>

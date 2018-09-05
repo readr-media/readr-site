@@ -18,9 +18,19 @@ const SET_STRIPE_REQUIREMENT = (state, { isStripeRequired, }) => {
   state['isStripeRequired'] = isStripeRequired
 }
 
+const SET_TAPPAY_REQUIREMENT = (state, { isTappayRequired, }) => {
+  state['isTappayRequired'] = isTappayRequired
+}
+
+const SET_TAPPAY_LOADED = (state, { isLoaded, }) => {
+  state['isTappayLoaded'] = isLoaded
+}
+
 export {
   SET_CONSUME_FLAG,
   SET_POINT_HISTORIES,
   SET_POINT_PERSONAL,
   SET_STRIPE_REQUIREMENT,
+  SET_TAPPAY_REQUIREMENT,
+  SET_TAPPAY_LOADED,
 }

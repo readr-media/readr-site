@@ -20,6 +20,14 @@ export const LOAD_STRIPE_SDK = ({ commit, }) => {
   commit('SET_STRIPE_REQUIREMENT', { isStripeRequired: true, })
 }
 
+export const LOAD_TAPPAY_SDK = ({ commit,  }) => {
+  commit('SET_TAPPAY_REQUIREMENT', { isTappayRequired: true, })
+}
+
+export const SET_TAPPAY_LOADED = ({ commit, }) => {
+  return commit('SET_TAPPAY_LOADED', { isLoaded: true, })
+}
+
 export const ADD_REWARD_POINTS_TRANSACTIONS = (action, { params, }) => {
   return pointsFunc.addRewardPointsTransactions(params)
 }
