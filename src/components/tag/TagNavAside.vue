@@ -17,6 +17,7 @@
 <script>
 import { get, } from 'lodash'
 import { mapState, } from 'vuex'
+import { isElementReachInView, isElementScrollable, } from 'src/util/comm'
 import TagNavAsideDropdownOptions from './TagNavAsideDropdownOptions.vue'
 import TagItem from './TagItem.vue'
 
@@ -66,7 +67,7 @@ export default {
   watch: {
     tags (newValue, oldValue) {
       if (newValue.length === oldValue.length) {
-        this.shouldTagsLoadMore = false
+        this.hasNextPage = false
       }
     },
     currentRadioPicked () {
@@ -77,7 +78,8 @@ export default {
   data () {
     return {
       tagsCurrentPage: DEFAULT_PAGE,
-      shouldTagsLoadMore: true,
+      hasNextPage: true,
+      isLoadingTags: false,
       currentRadioPicked: 'hot',
     }
   },
@@ -93,39 +95,58 @@ export default {
   methods: {
     resetLoadmore () {
       this.tagsCurrentPage = DEFAULT_PAGE
-      this.shouldTagsLoadMore = true
+      this.hasNextPage = true
+    },
+    createLoadmoreBehavior (shouldLoadmoreAt) {
+      if (shouldLoadmoreAt && this.hasNextPage && !this.isLoadingTags && this.currentRadioPicked === 'latest') {
+        this.isLoadingTags = true
+        getTags(this.$store, { page: this.tagsCurrentPage + 1, stats: false, })
+        .then(() => {
+          this.tagsCurrentPage += 1
+          this.isLoadingTags = false
+        })
+        .catch(() => {
+          this.hasNextPage = false
+          this.isLoadingTags = false
+        })
+      }
+    },
+    loadmoreTags () {
+      const shouldLoadmore = isElementReachInView(document.querySelector('body'), '.tag-nav-aside', 0.5)
+      this.createLoadmoreBehavior(shouldLoadmore)
     },
     fetchTags () {
       switch (this.currentRadioPicked) {
         case 'latest':
-          getTags(this.$store, { stats: false, })
-          break
+          return getTags(this.$store, { stats: false, })
         case 'hot':
-          getTags(this.$store, { stats: false, urlParam: '/hot', })
-          break
+          return getTags(this.$store, { stats: false, urlParam: '/hot', })
         case 'taggedProjects':
-          getTags(this.$store, { stats: false, tagging_type: TYPE_TAGGED_PROJECTS, })
-          break
+          return getTags(this.$store, { stats: false, tagging_type: TYPE_TAGGED_PROJECTS, })
         case 'followed':
-          getUserFollowing(this.$store, { resource: 'tag', })
-          break
+          return getUserFollowing(this.$store, { resource: 'tag', })
         default:
-          getTags(this.$store, { stats: false, })
+          return getTags(this.$store, { stats: false, })
       }
     },
   },
   beforeMount () {
     this.fetchTags()
+    .then(() => {
+      if (!isElementScrollable(this.$el)) {
+        document.addEventListener('scroll', this.loadmoreTags)
+      } else {
+        this.$el.onscroll = () => {
+          const shouldLoadmore = this.$el.scrollTop + this.$el.offsetHeight === this.$el.scrollHeight
+          this.createLoadmoreBehavior(shouldLoadmore)
+        }
+      }
+    })
     getUserFollowing(this.$store, { resource: 'tag', })
   },
-  mounted () {
-    this.$el.onscroll = () => {
-      const isScrollbarReachEnd = this.$el.scrollTop + this.$el.offsetHeight === this.$el.scrollHeight
-      if (isScrollbarReachEnd && this.shouldTagsLoadMore && this.currentRadioPicked === 'latest') {
-        getTags(this.$store, { page: this.tagsCurrentPage + 1, stats: false, })
-        .then(() => { this.tagsCurrentPage += 1 })
-        .catch(() => { this.shouldTagsLoadMore = false })
-      }
+  destroyed () {
+    if (!isElementScrollable(this.$el)) {
+      document.removeEventListener('scroll', this.loadmoreTags)
     }
   },
 }
@@ -133,16 +154,6 @@ export default {
 
 <style lang="stylus" scoped>
 .tag-nav-aside
-  // height calc(100vh - 57.5px)
-  // padding 5.5px 0 28px 20px
-  // overflow-y scroll
-  // &::-webkit-scrollbar
-  //   display none
-  //   background-color transparent
-  // &::-webkit-scrollbar-track
-  //   background-color transparent
-  // &::-webkit-scrollbar-thumb
-  //   background-color transparent
   &__sort
     margin 0 0 20px 0
   &__list

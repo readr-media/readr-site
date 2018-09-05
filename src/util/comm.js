@@ -121,6 +121,10 @@ export function isElementReachInView (root, selector, offset = 0) {
   }
 }
 
+export function isElementScrollable (el) {
+  return (el && (el.scrollHeight > el.offsetHeight) && !(el.offsetWidth > el.scrollWidth))
+}
+
 export function setReadrCookie () {
   const uuid = uuidv4()
   Cookie.set('mmid', uuid, { expires: (10 * 365 * 24) + 'h', })
