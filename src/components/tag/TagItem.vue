@@ -30,8 +30,8 @@
       >
         <div class="tag__category" v-text="$t('TAG_NAV_ASIDE.CATEGORY.PROJECT')"></div>
         <TagItemRelatedsListItem
-          v-for="(project, i) in tag.taggedReports"
-          :data="project"
+          v-for="(report, i) in tag.taggedReports"
+          :data="report"
           :key="i"
           class="tag__relateds-list-item"
         />
