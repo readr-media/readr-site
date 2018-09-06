@@ -5,7 +5,7 @@
         :to="`/tag/${tag.id}`" 
         :class="[
           'tag__header',
-          { 'tag__header--has-list': showRelatedsList && isTaggedReportsExist },
+          { 'tag__header--has-list': showRelatedsList && isRelatedListExist },
           { 'tag__header--highlight': isMouseover}
         ]"
         @mouseover.native="handleMouseEvent"
@@ -25,13 +25,13 @@
         </span>
       </router-link>
       <ul
-        v-if="showRelatedsList && isTaggedReportsExist"
+        v-if="showRelatedsList && isRelatedListExist"
         :class="[ 'tag__relateds-list', { 'tag__relateds-list--colorize-triangle': isMouseover } ]"
       >
         <div class="tag__category" v-text="$t('TAG_NAV_ASIDE.CATEGORY.PROJECT')"></div>
         <TagItemRelatedsListItem
-          v-for="(report, i) in tag.taggedReports"
-          :data="report"
+          v-for="(item, i) in relatedListItems"
+          :data="item"
           :key="i"
           class="tag__relateds-list-item"
         />
@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { get, } from 'lodash'
+import { get, take, } from 'lodash'
 import TagItemRelatedsListItem from './TagItemRelatedsListItem.vue'
 import { mapState, } from 'vuex'
 
@@ -82,6 +82,8 @@ export default {
     return {
       showActionTooltip: false,
       isMouseoverLocal: false, // For preserving mouseover effect when tag's isMouseover status is not exist
+      relatedListName: 'taggedReports',
+      relatedListItemLimit: 3,
     }
   },
   computed: {
@@ -95,8 +97,11 @@ export default {
     isLoggedIn () {
       return this.$store.state.isLoggedIn
     },
-    isTaggedReportsExist () {
-      return 'taggedReports' in this.tag && this.tag.taggedReports !== null
+    isRelatedListExist () {
+      return this.relatedListName in this.tag && this.tag[this.relatedListName] !== null
+    },
+    relatedListItems () {
+      return take(get(this.tag, this.relatedListName, []), this.relatedListItemLimit)
     },
     isMouseover () {
       return get(this.$store.state, [ 'tagsIsMouseover', this.tag.id, ], this.isMouseoverLocal)
