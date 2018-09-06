@@ -250,10 +250,16 @@ export default {
       'INFAIL': '付款失敗！',
       'SUCCESSFULLY': '付款成功',
       'REMEMBER': '記住卡號',
+      'RESET_CARD_INFO': '重設',
       'PLACEHOLDER': {
         'CARD_NUMBER': '**** **** **** ****',
         'CCV': '後三碼',
         'EXPIRY': 'MM / YY',
+      },
+      'CENSORED': {
+        'CARD_NUMBER': '**** **** **** ',
+        'CCV': '***',
+        'EXPIRY': '** / **',
       },
       'ITEM': {
         'CARD_NUMBER': '卡&emsp;號',

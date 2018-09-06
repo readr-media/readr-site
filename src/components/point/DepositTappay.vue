@@ -6,24 +6,15 @@
           <div class="leading"></div>
           <div class="leading-text"><span v-html="$t('point.DEPOSIT.DESCRIPTION')"></span></div>
         </div>
-        <div class="tappay-deposit__item">
-          <div class="name"><span v-html="$t('point.DEPOSIT.ITEM.CARD_NUMBER')"></span></div>
-          <div class="tpfield" id="card-number"></div>
-        </div>
-        <div class="tappay-deposit__item__wrapper">
-          <div class="tappay-deposit__item">
-            <div class="name"><span v-text="$t('point.DEPOSIT.ITEM.CCV')"></span></div>
-            <div class="tpfield" id="card-ccv"></div>    
-          </div>
-          <div class="tappay-deposit__item">
-            <div class="name"><span v-text="$t('point.DEPOSIT.ITEM.EXPIRY')"></span></div>
-            <div class="tpfield" id="card-expiration-date"></div>
-          </div>
-        </div>
-        <div class="tappay-deposit__item remember">
-          <div>
-            <input type="checkbox" :checked="isRememberActive" @click.stop="toggleRemember" id="checkbox-remember">
+        <DepositTappayForm v-if="!isRememberedCardExisting" :isReadyToDeposit.sync="isReadyToDeposit"></DepositTappayForm>
+        <DepositTappayCardRemember :card="cdtcLast4" v-else></DepositTappayCardRemember>
+        <div class="tappay-deposit__item toolbox">
+          <div class="remember">
+            <input type="checkbox" :checked="isRememberActive" id="checkbox-remember" @click.stop="toggleRemember">
             <label v-text="$t('point.DEPOSIT.REMEMBER')" for="checkbox-remember"></label>
+          </div>
+          <div class="reset" v-if="isRememberedCardExisting" @click.stop="resetCardInfo">
+            <span v-text="$t('point.DEPOSIT.RESET_CARD_INFO')"></span>
           </div>
         </div>
         <div class="go-deposit" :class="{ active: isReadyToDeposit, }" @click.stop="goDeposit">
@@ -37,39 +28,46 @@
   </div>
 </template>
 <script>
+  import Cookie from 'vue-cookie'
+  import DepositTappayForm from 'src/components/point/DepositTappayForm.vue'
+  import DepositTappayCardRemember from 'src/components/point/DepositTappayCardRemember.vue'
   import Spinner from 'src/components/Spinner.vue'
   import { POINT_OBJECT_TYPE, } from 'api/config'
   import { get, } from 'lodash'
   const debug = require('debug')('CLIENT:DepositTappay')
-  const deposit = (store, { objectId, points, token, remember, } = {}) => store.dispatch('ADD_REWARD_POINTS_TRANSACTIONS', {
+  const deposit = (store, { objectId, points, token, remember, lastfour, } = {}) => store.dispatch('ADD_REWARD_POINTS_TRANSACTIONS', {
     params: {
       object_type: POINT_OBJECT_TYPE.PROJECT_MEMO,
       object_id: objectId,
       points: points,
       token,
       remember,
+      lastfour,
     },
   })
   export default {
     name: 'DepositTappay',
     components: {
+      DepositTappayForm,
+      DepositTappayCardRemember,
       Spinner,
     },
     computed: {
       depositAmountOnce () {
         return get(this.$store, 'state.setting.DONATION_DEPOSIT_AMOUNT_ONCE', 100)
       },
-      isTappayLoaded () {
-        return get(this.$store, 'state.isTappayLoaded', false)
-      },      
+      memberId () {
+        return get(this.$store, 'state.profile.id')
+      },
     },
     data () {
       return {
         alertFlag: false,
+        cdtcLast4: null,
         isReadyToDeposit: false,
         isRememberActive: false,
-        isTappayInitialized: false,
         isDepositing: false,
+        isRememberedCardExisting: true,
         resultMessage: '',
       }
     },
@@ -78,32 +76,49 @@
         if (!this.isReadyToDeposit) { return }
         this.isReadyToDeposit = false
         this.isDepositing = true
-        window.TPDirect && window.TPDirect.card.getPrime(result => {
-          if (result.status !== 0) {
-              debug('get prime error ' + result.msg)
-              return
-          }
-          debug('get prime 成功，prime: ' + result.card.prime)  
-          this.isDepositing = false    
+
+        const cb = res => {
+          if (res === 200) {
+            /**
+              * Deposited successfully. And go refresh current point.
+              */
+            this.$emit('fetchCurrentPoint')
+            this.resultMessage = this.$t('point.DEPOSIT.SUCCESSFULLY')
+            this.alertFlag = true
+          } else {
+            this.resultMessage = this.$t('point.DEPOSIT.INFAIL')
+            this.alertFlag = true
+            debug('res', res)
+          }          
+        }
+
+        if (this.isRememberedCardExisting) {
           deposit(this.$store, {
             points: 0 - this.depositAmountOnce,
-            token: result.card.prime,
             remember: this.isRememberActive,
-          }).then(res => {
-            if (res === 200) {
-              /**
-                * Deposited successfully. And go refresh current point.
-                */
-              this.$emit('fetchCurrentPoint')
-              this.resultMessage = this.$t('point.DEPOSIT.SUCCESSFULLY')
-              this.alertFlag = true
-            } else {
-              this.resultMessage = this.$t('point.DEPOSIT.INFAIL')
-              this.alertFlag = true
-              debug('res', res)
+            lastfour: this.cdtcLast4,
+          }).then(cb)
+        } else {
+          window.TPDirect && window.TPDirect.card.getPrime(result => {
+            if (result.status !== 0) {
+                debug('get prime error ' + result.msg)
+                return
             }
-          })              
-        })
+            debug('get prime successfully: ' + result.card.prime)  
+            this.isDepositing = false    
+            deposit(this.$store, {
+              points: 0 - this.depositAmountOnce,
+              token: result.card.prime,
+              remember: this.isRememberActive,
+              lastfour: result.card.lastfour,
+            }).then(cb)              
+          })
+        }
+      },
+      resetCardInfo () {
+        this.isRememberedCardExisting = false
+        this.isReadyToDeposit = false
+        this.isRememberActive = false
       },
       showDeposit () {
         debug('show deposit')
@@ -117,74 +132,29 @@
         debug('close deporit')
         this.$emit('update:active', false)
       },
-      initialTappay () {
-        window.TPDirect.setupSDK('12498', 'app_hGqUFjfjhoSQBRTpgGXwmn2c3EI8zDapohyPxhpyyyClar0ryq6XNEkJC7HT', 'sandbox')      
-        window.TPDirect.card.setup({
-          fields: {
-            number: {
-              element: '#card-number',
-              placeholder: this.$t('point.DEPOSIT.PLACEHOLDER.CARD_NUMBER'),
-            },
-            ccv: {
-              element: '#card-ccv',
-              placeholder: this.$t('point.DEPOSIT.PLACEHOLDER.CCV'),
-            },
-            expirationDate: {
-              element: document.getElementById('card-expiration-date'),
-              placeholder: this.$t('point.DEPOSIT.PLACEHOLDER.EXPIRY'),
-            },
-          },
-          styles: {
-            'input': { 'color': 'gray', },
-            'input.cvc': {},
-            'input.expiration-date': {},
-            'input.card-number': {},
-            ':focus': {},
-            '.valid': { 'color': 'black', },
-            '.invalid': { 'color': 'red', },
-            '@media screen and (max-width: 400px)': {
-              'input': { 'color': '#66afe9', },
-            },
-          },
-        })
-        window.TPDirect.card.onUpdate(update => {
-          if (update.canGetPrime) {
-            debug('no wrong data.')
+      checkRememberedCard () {
+        return new Promise(resolve => {
+          /** fetch the remembered card info */
+          this.cdtcLast4 = Cookie.get(`CDTC_LAST4_${this.memberId}`) || null
+          debug('cdtcLast4', this.cdtcLast4)
+
+          /** if the remembered card info exists, dont initialize the tappay */
+          this.isRememberedCardExisting = this.cdtcLast4 ? true : false
+          if (this.isRememberedCardExisting) {
             this.isReadyToDeposit = true
+            this.isRememberActive = true
+            resolve(true)
           } else {
             this.isReadyToDeposit = false
-          }
-          if (update.hasError) {
-            debug('invalid data found.')
-          }
-
-          if (update.status.number === 2) {
-            debug('invalid card number')
-          } else if (update.status.number === 0) {
-            debug('card number: passed.')
-          } else {
-            debug('wating to fill card number.')
-          }
-
-          if (update.status.expiry === 2) {
-            debug('incalid expiry')
-          } else if (update.status.expiry === 0) {
-            debug('expiry: passed')
-          } else {
-            debug('watiing to fill card expiry')
-          }
-
-          if (update.status.cvc === 2) {
-            debug('incalid cvc')
-          } else if (update.status.cvc === 0) {
-            debug('cvc: passed')
-          } else {
-            debug('watiing to fill card cvc')
+            this.isRememberActive = false
+            resolve(false)
           }
         })
-      },    
+      }, 
     },
-    mounted () {},
+    mounted () {
+      this.checkRememberedCard()
+    },
     props: {
       active: {
         default: false,
@@ -199,19 +169,13 @@
           }, 3000)
         }
       },      
-      isTappayLoaded () {
-        debug('Mutation detected: isTappayLoaded.')
-        if (this.isTappayInitialized) { return }
-        this.isTappayLoaded && this.initialTappay()
-        this.isTappayInitialized = true
-      },
       isRememberActive () {
         debug('Mutation detected: toggleRemember', this.isRememberActive)
       },
     },
   }
 </script>
-<style lang="stylus" scoped>
+<style lang="stylus">
   .tappay-deposit  
     &__container
       cursor auto
@@ -314,13 +278,26 @@
         width 50px
         margin-right 10px
         text-align justify
+      .content
+        font-size 0.75rem
+        border-bottom 1px solid #d3d3d3
+        flex 1
       .tpfield
         flex 1
-      &.remember
+      &.toolbox
         font-size 0.75rem
-        justify-content flex-end
-        input
-          margin-right 5px
+        justify-content space-between
+        .remember
+          input
+            margin-right 5px
+        .reset
+          font-weight 300
+          border-bottom 1px solid #b3b3b3
+          padding-bottom 1px
+          color #b3b3b3
+          cursor pointer
+          &:hover
+            color #000
     .tpfield
       height 20px
       width 100%
