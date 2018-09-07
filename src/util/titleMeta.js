@@ -1,6 +1,5 @@
 import { SITE_DOMAIN_DEV, } from '../constants'
 // import { debug } from 'request/request';
-let isStripeSDKLoaded = false
 let isTappaySDKLoaded = false
 const debug = require('debug')('CLIENT:titleMeta')
 
@@ -75,13 +74,7 @@ const clientMetaInfoMixin = {
       /**
        * If Stripe SDK needed.
        */
-      const { isStripeNeeded, isTappayNeeded, } = metaInfo
-      if (isStripeNeeded && !isStripeSDKLoaded) {
-        const script = document.createElement('script')
-        script.setAttribute('src', 'https://checkout.stripe.com/checkout.js')
-        document.head.appendChild(script)
-        isStripeSDKLoaded = true
-      }
+      const { isTappayNeeded, } = metaInfo
 
       /**
        * If Tappays SDK needed.

@@ -14,10 +14,6 @@ const SET_POINT_PERSONAL = (state, { personalPoints, }) => {
   state['personalPoints'] = personalPoints
 }
 
-const SET_STRIPE_REQUIREMENT = (state, { isStripeRequired, }) => {
-  state['isStripeRequired'] = isStripeRequired
-}
-
 const SET_TAPPAY_REQUIREMENT = (state, { isTappayRequired, }) => {
   state['isTappayRequired'] = isTappayRequired
 }
@@ -30,7 +26,6 @@ export {
   SET_CONSUME_FLAG,
   SET_POINT_HISTORIES,
   SET_POINT_PERSONAL,
-  SET_STRIPE_REQUIREMENT,
   SET_TAPPAY_REQUIREMENT,
   SET_TAPPAY_LOADED,
 }

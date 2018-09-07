@@ -27,7 +27,6 @@
   import { get, } from 'lodash'
   const debug = require('debug')('CLIENT:PointManager')
   const fetchCurrPoints = store => store.dispatch('GET_POINT_CURRENT', { params: {}, })
-  const loadStripeSDK = store => store.dispatch('LOAD_STRIPE_SDK')
   const loadTappaySDK = store => store.dispatch('LOAD_TAPPAY_SDK')
 
   export default {
@@ -44,9 +43,6 @@
       },
       isPointsNegative () {
         return this.currentPoints < 0
-      },
-      isStripeNeeded () {
-        return get(this.$store, 'state.isStripeRequired', false)
       },
       isTappayNeeded () {
         return get(this.$store, 'state.isTappayRequired', false)
@@ -73,7 +69,7 @@
       },
     },
     mounted () {
-      fetchCurrPoints(this.$store).then(() => Promise.all([ loadStripeSDK(this.$store), loadTappaySDK(this.$store), ]))
+      fetchCurrPoints(this.$store).then(() => loadTappaySDK(this.$store))
     },
     watch: {
       isStripeNeeded () {
