@@ -213,6 +213,7 @@ function render (req, res, next) {
       DONATION_DEPOSIT_AMOUNT_ONCE: config.DONATION_DEPOSIT_AMOUNT_ONCE,
       HOST: `${config.SERVER_PROTOCOL}://${config.SERVER_HOST}`,
       STRIPE_KEY: config.STRIPE_KEY,
+      TAPPAY: config.TAPPAY,
     } 
   }
   const handleError = err => {

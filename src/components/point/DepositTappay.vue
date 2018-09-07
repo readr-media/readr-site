@@ -6,17 +6,11 @@
           <div class="leading"></div>
           <div class="leading-text"><span v-html="$t('point.DEPOSIT.DESCRIPTION')"></span></div>
         </div>
-        <DepositTappayForm v-if="!isRememberedCardExisting" :isReadyToDeposit.sync="isReadyToDeposit"></DepositTappayForm>
-        <DepositTappayCardRemember :card="cdtcLast4" v-else></DepositTappayCardRemember>
-        <div class="tappay-deposit__item toolbox">
-          <div class="remember">
-            <input type="checkbox" :checked="isRememberActive" id="checkbox-remember" @click.stop="toggleRemember">
-            <label v-text="$t('point.DEPOSIT.REMEMBER')" for="checkbox-remember"></label>
-          </div>
-          <div class="reset" v-if="isRememberedCardExisting" @click.stop="resetCardInfo">
-            <span v-text="$t('point.DEPOSIT.RESET_CARD_INFO')"></span>
-          </div>
-        </div>
+        <DepositTappayForm
+          :status="active"
+          :isReadyToDeposit.sync="isReadyToDeposit"
+          :phone.sync="phoneNumber"
+          :cardHolder.sync="cardHolder"></DepositTappayForm>
         <div class="go-deposit" :class="{ active: isReadyToDeposit, }" @click.stop="goDeposit">
           <span v-text="$t('point.DEPOSIT.CONFIRM_TO_PAY')"></span>
           <Spinner :show="isDepositing"></Spinner>
@@ -28,20 +22,27 @@
   </div>
 </template>
 <script>
-  import Cookie from 'vue-cookie'
+  // import Cookie from 'vue-cookie'
   import DepositTappayForm from 'src/components/point/DepositTappayForm.vue'
-  import DepositTappayCardRemember from 'src/components/point/DepositTappayCardRemember.vue'
   import Spinner from 'src/components/Spinner.vue'
   import { POINT_OBJECT_TYPE, } from 'api/config'
   import { get, } from 'lodash'
   const debug = require('debug')('CLIENT:DepositTappay')
-  const deposit = (store, { objectId, points, token, remember, lastfour, } = {}) => store.dispatch('ADD_REWARD_POINTS_TRANSACTIONS', {
+  const deposit = (store, {
+    objectId,
+    points,
+    token,
+    lastfour,
+    member_phone,
+    member_name,
+  } = {}) => store.dispatch('ADD_REWARD_POINTS_TRANSACTIONS', {
     params: {
       object_type: POINT_OBJECT_TYPE.PROJECT_MEMO,
       object_id: objectId,
       points: points,
       token,
-      remember,
+      member_name,
+      member_phone,
       lastfour,
     },
   })
@@ -49,7 +50,6 @@
     name: 'DepositTappay',
     components: {
       DepositTappayForm,
-      DepositTappayCardRemember,
       Spinner,
     },
     computed: {
@@ -64,10 +64,10 @@
       return {
         alertFlag: false,
         cdtcLast4: null,
+        phoneNumber: '',
+        cardHolder: '',
         isReadyToDeposit: false,
-        isRememberActive: false,
         isDepositing: false,
-        isRememberedCardExisting: true,
         resultMessage: '',
       }
     },
@@ -92,69 +92,33 @@
           }          
         }
 
-        if (this.isRememberedCardExisting) {
+        window.TPDirect && window.TPDirect.card.getPrime(result => {
+          if (result.status !== 0) {
+              debug('get prime error ' + result.msg)
+              return
+          }
+          debug('get prime successfully: ' + result.card.prime)  
+          this.isDepositing = false    
           deposit(this.$store, {
             points: 0 - this.depositAmountOnce,
-            remember: this.isRememberActive,
-            lastfour: this.cdtcLast4,
-          }).then(cb)
-        } else {
-          window.TPDirect && window.TPDirect.card.getPrime(result => {
-            if (result.status !== 0) {
-                debug('get prime error ' + result.msg)
-                return
-            }
-            debug('get prime successfully: ' + result.card.prime)  
-            this.isDepositing = false    
-            deposit(this.$store, {
-              points: 0 - this.depositAmountOnce,
-              token: result.card.prime,
-              remember: this.isRememberActive,
-              lastfour: result.card.lastfour,
-            }).then(cb)              
-          })
-        }
-      },
-      resetCardInfo () {
-        this.isRememberedCardExisting = false
-        this.isReadyToDeposit = false
-        this.isRememberActive = false
+            token: result.card.prime,
+            lastfour: result.card.lastfour,
+            member_name: this.cardHolder,
+            member_phone: this.phoneNumber,
+          }).then(cb)              
+        })
       },
       showDeposit () {
         debug('show deposit')
         this.$emit('update:active', true)
-      },
-      toggleRemember () {
-        this.isRememberActive = !this.isRememberActive
       },
       cancelDefault () { /** do nothing */ },
       closeDeposit () {
         debug('close deporit')
         this.$emit('update:active', false)
       },
-      checkRememberedCard () {
-        return new Promise(resolve => {
-          /** fetch the remembered card info */
-          this.cdtcLast4 = Cookie.get(`CDTC_LAST4_${this.memberId}`) || null
-          debug('cdtcLast4', this.cdtcLast4)
-
-          /** if the remembered card info exists, dont initialize the tappay */
-          this.isRememberedCardExisting = this.cdtcLast4 ? true : false
-          if (this.isRememberedCardExisting) {
-            this.isReadyToDeposit = true
-            this.isRememberActive = true
-            resolve(true)
-          } else {
-            this.isReadyToDeposit = false
-            this.isRememberActive = false
-            resolve(false)
-          }
-        })
-      }, 
     },
-    mounted () {
-      this.checkRememberedCard()
-    },
+    mounted () {},
     props: {
       active: {
         default: false,
@@ -168,9 +132,12 @@
             this.$emit('update:active', false)
           }, 3000)
         }
-      },      
-      isRememberActive () {
-        debug('Mutation detected: toggleRemember', this.isRememberActive)
+      },
+      phoneNumber () {
+        debug('Mutation detected: phoneNumber', this.phoneNumber)
+      },
+      cardHolder () {
+        debug('Mutation detected: cardHolder', this.cardHolder)
       },
     },
   }
@@ -266,15 +233,22 @@
       display flex
       align-items center
       width 100%
-      margin 10px 0
+      margin 2px 0
       &__wrapper
         display flex
         > div:not(:first-child)
           margin-left 10px
           .name
             width auto
+      &.title
+        font-size 1.125rem
+        font-weight bold
+        line-height normal
+        margin 20px 0 10px
+        &:first-child
+          margin-top 0
       .name
-        font-size 0.9375rem
+        font-size 0.875rem
         width 50px
         margin-right 10px
         text-align justify
@@ -302,9 +276,38 @@
       height 20px
       width 100%
       border-bottom 1px solid #d3d3d3
-      margin 5px 0
+      // margin 2px 0
       padding 5px
       border-radius 2px
+      &.input, &.slect
+        display flex
+        justify-content center
+        align-items center
+        border-bottom none
+        input, select
+          vertical-align middle
+          outline none
+          border none
+          width 100%
+          color #808080          
+        input
+          border-bottom 1px solid #d3d3d3
+        
+        select
+          height 30px
+          width 130%
+          font-size 0.75rem
+          background-color transparent
+          background-image none
+          appearance none
+          outline none
+          cursor pointer
+          position relative
+          z-index 2          
+        &.country
+          width 70px
+          flex none
+          border-bottom 1px solid #d3d3d3
     .tappay-field-focus
       border-color #66afe9
       outline 0

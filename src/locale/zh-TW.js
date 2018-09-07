@@ -249,8 +249,13 @@ export default {
       'CONFIRM_TO_PAY': '確認付款',
       'INFAIL': '付款失敗！',
       'SUCCESSFULLY': '付款成功',
-      'REMEMBER': '記住卡號',
+      // 'REMEMBER': '記住卡號',
+      // 'REMEMBER': '記住持卡人資訊',
       'RESET_CARD_INFO': '重設',
+      'TITLE': {
+        'CARD_INFO': '信用卡資訊',
+        'OWNER': '持卡人資訊',
+      },
       'PLACEHOLDER': {
         'CARD_NUMBER': '**** **** **** ****',
         'CCV': '後三碼',
@@ -262,7 +267,10 @@ export default {
         'EXPIRY': '** / **',
       },
       'ITEM': {
+        'CARD_OWNER': '姓&emsp;名',
         'CARD_NUMBER': '卡&emsp;號',
+        'COUNTRY': '國&emsp;&emsp;家',
+        'PHONE_NUMBER': '電&emsp;話',
         'CCV': '檢查碼',
         'EXPIRY': '到期年月',      
       },
