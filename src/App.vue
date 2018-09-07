@@ -149,7 +149,7 @@
     },
     watch: {
       '$route.fullPath': function () {
-        this.sendPageview()
+        process.browser && this.sendPageview()
         const showAbout = !this.getFirstLoginCookie()
         if (this.shouldShowAbout && showAbout) {
           this.$router.push('/about')

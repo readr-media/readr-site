@@ -236,7 +236,7 @@
     name: 'admin-page',
     metaInfo () {
       return {
-        isStripeNeeded: this.isStripeRequired,
+        isTappayNeeded: this.isTappayRequired,
       }
     },    
     components: {
@@ -292,8 +292,8 @@
       isDonationActive () {
         return _.get(this.$store, 'state.setting.DONATION_IS_DEPOSIT_ACTIVE', false)
       },
-      isStripeRequired () {
-        return _.get(this.$store, 'state.isStripeRequired', false)
+      isTappayRequired () {
+        return _.get(this.$store, 'state.isTappayRequired', false)
       },
       itemsSelectedID () {
         const items = []
@@ -676,9 +676,10 @@
       this.showMain = true
     },
     watch: {
-      isStripeRequired () {
+      isTappayRequired () {
+        debug('Mutation detected: isTappayRequired', this.isTappayRequired)
         this.$forceUpdate()
-      },
+      },      
     },
   }
 </script>

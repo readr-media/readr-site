@@ -5,7 +5,8 @@
         <span class="prefix" v-text="$t('point.WORDING_POINTS_AVAILABLE') + '：'"></span>
         <span class="value" :class="{ negative: isPointsNegative, }" v-text="currentPoints"></span>
         <span class="postfix" v-text="$t('point.UNIT')"></span>
-        <Deposit class="deposit" v-if="isStripeNeeded" @fetchCurrentPoint="fetchCurrentPoint"></Deposit>
+        <!--Deposit class="deposit" v-if="isStripeNeeded" @fetchCurrentPoint="fetchCurrentPoint"></Deposit-->
+        <DepositTappay class="deposit" v-if="isTappayNeeded" :active.sync="isDepositActive" @fetchCurrentPoint="fetchCurrentPoint"></DepositTappay>
       </div>
       <div class="point-manager__infobar--switcher">
         <div class="point-record" :class="isActive(0)" @click="check(0)"><span class="radio"></span><span v-text="'點數明細'"></span></div>
@@ -19,18 +20,20 @@
   </div>
 </template>
 <script>
-  import Deposit from 'src/components/point/Deposit.vue'
+  // import Deposit from 'src/components/point/Deposit.vue'
+  import DepositTappay from 'src/components/point/DepositTappay.vue'
   import PointRecord from 'src/components/point/PointRecord.vue'
   import PaymentRecord from 'src/components/point/PaymentRecord.vue'
   import { get, } from 'lodash'
   const debug = require('debug')('CLIENT:PointManager')
   const fetchCurrPoints = store => store.dispatch('GET_POINT_CURRENT', { params: {}, })
-  const loadStripeSDK = store => store.dispatch('LOAD_STRIPE_SDK')
+  const loadTappaySDK = store => store.dispatch('LOAD_TAPPAY_SDK')
 
   export default {
     name: 'PointManager',
     components: {
-      Deposit,
+      // Deposit,
+      DepositTappay,
       PointRecord,
       PaymentRecord,
     },
@@ -41,13 +44,14 @@
       isPointsNegative () {
         return this.currentPoints < 0
       },
-      isStripeNeeded () {
-        return get(this.$store, 'state.isStripeRequired', false)
+      isTappayNeeded () {
+        return get(this.$store, 'state.isTappayRequired', false)
       },
     },
     data () {
       return {
         activeIndex: 0,
+        isDepositActive: false,
       }
     },
     methods: {
@@ -65,11 +69,14 @@
       },
     },
     mounted () {
-      fetchCurrPoints(this.$store).then(() => loadStripeSDK(this.$store))
+      fetchCurrPoints(this.$store).then(() => loadTappaySDK(this.$store))
     },
     watch: {
       isStripeNeeded () {
         debug('Mutation detected: isStripeNeeded', this.isStripeNeeded)
+      },
+      isTappayNeeded () {
+        debug('Mutation detected: isTappayNeeded', this.isTappayNeeded)
       },
     },
   }
