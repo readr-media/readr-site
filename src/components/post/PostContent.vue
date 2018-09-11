@@ -171,7 +171,7 @@
         if (this.postContentWordCountTotal <= this.showContentWordLimit){
           return this.postContent
         } else {
-          const ellipsis = `......${this.$t('homepage.WORDING_HOME_POST_MORE')}`
+          const ellipsis = `......${this.postType === 'normal' ? '' : this.$t('homepage.WORDING_HOME_POST_MORE')}`
           return this.postContent.map((paragraph, index) => {
             if (!this.isReadMoreClicked && index === this.shouldContentStopAtIndex) {
               if (this.isStopParagraphWordCountExceedLimit) {
