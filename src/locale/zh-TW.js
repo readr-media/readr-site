@@ -442,4 +442,5 @@ export default {
     'REPORTS': '報導',
     'LATEST_COMMENTS': '最新留言',
   },
+  'ONLINE': '正式上線',
 }
