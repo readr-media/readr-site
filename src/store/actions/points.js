@@ -41,3 +41,17 @@ export const SWITCH_ON_CONSUME_PANEL = ({ commit, }, { active, item, }) => {
     item,
   })
 }
+
+export const SWITCH_OFF_DONATE_PANEL = ({ commit, }) => {
+  return commit('SET_DONATE_FLAG', {
+    active: false,
+    item: {},
+  })
+}
+
+export const SWITCH_ON_DONATE_PANEL = ({ commit, }, { item, }) => {
+  return commit('SET_DONATE_FLAG', {
+    active: true,
+    item,
+  })
+}
