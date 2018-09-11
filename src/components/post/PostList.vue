@@ -146,7 +146,7 @@ export default {
                     page: this.currPage,  
                   }),
                 ]).then(() => { this.currPage += 1 }),
-                get(this.$route, 'params.subItem')
+                get(this.$route, 'params.subItem')  && get(this.$route, 'params.subItem') !== 'donate'
                   ? fetchMemoSingle(this.$store, get(this.$route, 'params.subItem'))
                   : Promise.resolve(),
               ])
@@ -253,7 +253,7 @@ export default {
       return this.$route.fullPath.split('/')[ 1 ]
     },
     showLightBox () {
-      return typeof(get(this.$route, 'params.subItem')) === 'string'
+      return typeof(get(this.$route, 'params.subItem')) === 'string' && get(this.$route, 'params.subItem') !== 'donate'
     },    
   },
   data () {

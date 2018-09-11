@@ -12,8 +12,12 @@ export function createStore () {
       'customEditors': [],
       'commentCount': [],
       'consumeFlag': {
-        "active": false,
-        "item": {},
+        'active': false,
+        'item': {},
+      },
+      'donateFlag': {
+        'active': false,
+        'item': {},
       },
       'emotionByResource': {
         'memo': {

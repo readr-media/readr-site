@@ -28,10 +28,12 @@
         <!--render else empty block for ss/cs mating-->
       </div>
     </div>  
+    <Donate></Donate>
   </div>
 </template>
 <script>
 import CommentContainer from 'src/components/comment/CommentContainer.vue'
+import Donate from 'src/components/point/Donate.vue'
 import Leading from 'src/components/leading/Leading.vue'
 import PostList from 'src/components/post/PostList.vue'
 import TagNav from 'src/components/tag/TagNav.vue'
@@ -43,6 +45,9 @@ const ASIDE_TYPE = {
   COMMENTS: 'COMMENTS',
   TAGS: 'TAGS',
 }
+
+const debug = require('debug')('CLIENT:PublicPageWithAside')
+
 const getUserFollowing = (store, { id = get(store, 'state.profile.id'), resource, resourceType = '', } = {}) => {
   return store.dispatch('GET_FOLLOWING_BY_USER', {
     id: id,
@@ -55,6 +60,8 @@ const fetchFollowing = (store, params) => {
   return store.dispatch('GET_FOLLOWING_BY_RESOURCE', params)
 }
 
+const switchOn = (store, item) => store.dispatch('SWITCH_ON_DONATE_PANEL', { item, })
+
 export default {
   name: 'PublicPageWithAside',
   props: {
@@ -65,12 +72,20 @@ export default {
   },
   components: {
     CommentContainer,
+    Donate,
     Leading,
     PostList,
     TagNav,
     TagNavAside,
   },
   watch: {
+    isSeriesDonate () {
+      debug('Mutation detected: isSeriesDonate', this.isSeriesDonate)
+      this.donateCheck()
+    },
+    projectSingle () {
+      this.donateCheck()
+    },
     projectSingleTagIds (ids) {
       fetchFollowing(this.$store, { resource: 'tag', ids: ids, })
     },
@@ -91,6 +106,9 @@ export default {
       }
       return assetId      
     },
+    asideType () {
+      return this.route === 'series' ? ASIDE_TYPE.COMMENTS : ASIDE_TYPE.TAGS
+    },
     commentAsset () {
       let asset
       switch (this.route) {
@@ -100,11 +118,14 @@ export default {
       return asset
     },
     isClientSide,
-    asideType () {
-      return this.route === 'series' ? ASIDE_TYPE.COMMENTS : ASIDE_TYPE.TAGS
+    isSeriesDonate () {
+      return this.route === 'series' && get(this.$route, 'params.subItem') === 'donate'
     },
+    route () {
+      return this.$route.fullPath.split('/')[ 1 ]
+    },    
     projectSingle () {
-      return get(this.$store, 'state.publicProjectSingle', {})
+      return get(this.$store, 'state.publicProjectSingle')
     },
     projectSingleTagIds () {
       const tags = this.projectSingle.tags || []
@@ -115,23 +136,28 @@ export default {
         case 'series':
           return this.projectSingle.tags || []
         case 'tag':
-          return get(this.$store, [ 'state', 'itemsByTag', 'items', 0, 'tags', ], []).filter(tag => tag.id === Number(this.$route.params.tagId))
+          return get(this.$store, 'state.itemsByTag.items.0.tags', []).filter(tag => tag.id === Number(this.$route.params.tagId))
         default:
           return []
       }
     },
-    route () {
-      return this.$route.fullPath.split('/')[ 1 ]
-    },
   },
   methods: {
     get,
+    donateCheck () {
+      this.isSeriesDonate && this.projectSingle && switchOn(this.$store, this.projectSingle)
+    },
   },
   beforeMount () {
     getUserFollowing(this.$store, { resource: 'post', })
     getUserFollowing(this.$store, { resource: 'memo', })
     getUserFollowing(this.$store, { resource: 'report', })
     getUserFollowing(this.$store, { resource: 'tag', })
+    debug('isSeriesDonate', this.isSeriesDonate)
+    
+  },
+  mounted () {
+    this.donateCheck()
   },
 }
 </script>

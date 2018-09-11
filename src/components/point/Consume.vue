@@ -33,7 +33,6 @@
   const deductPoints = (store, { objectId, memoPoints, } = {}) => {
     return store.dispatch('ADD_REWARD_POINTS_TRANSACTIONS', {
       params: {
-        member_id: get(store, [ 'state', 'profile', 'id', ]),
         object_type: POINT_OBJECT_TYPE.PROJECT_MEMO,
         object_id: objectId,
         points: memoPoints,
