@@ -32,6 +32,10 @@
         </li>
       </InviteSwitcher>
     </ol>
+    <div class="online">
+      <img class="online__calendar" src="/public/icons/calendar.png" alt="">
+      <p class="online__text" v-text="$t('ONLINE')"></p>
+    </div>
   </nav>
 </template>
 
@@ -102,5 +106,16 @@ export default {
     img
       width 30px
       height 30px
+
+.online
+  margin 12px 0 0 0
+  text-align center
+  &__calendar
+    width 50px
+    box-shadow 0 1px 2px 0 rgba(0, 0, 0, 0.3)
+  &__text
+    margin 5px 0
+    font-size 10px
+    color #444746
 </style>
 
