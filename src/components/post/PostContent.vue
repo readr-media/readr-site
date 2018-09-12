@@ -129,7 +129,7 @@
       postType () {
         if (get(this.post, 'type') === POST_TYPE.NEWS) {
           return 'news'
-        } else if (get(this.post, 'projectId') && get(this.post, 'flag') === 'report') {
+        } else if (get(this.post, 'projectId') && get(this.post, 'slug')) {
           return 'report'
         } else if (get(this.post, 'flag') === 'memo'){
           return 'memo'
