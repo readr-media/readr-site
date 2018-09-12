@@ -23,9 +23,10 @@
 <script>
   import BaseLightBox from 'src/components/BaseLightBox.vue'
   import { ROLE_MAP, } from 'src/constants'
-  import { POINT_OBJECT_TYPE, } from 'api/config'
+  import { POINT_OBJECT_TYPE, DONATION_POINT_MIN_LINE, } from 'api/config'
   import { get, filter, } from 'lodash'
 
+  const DEFAULT_DONATION_POINT_MIN_LINE = DONATION_POINT_MIN_LINE || -100
   const debug = require('debug')('CLIENT:Donate')
   const deductPoints = (store, { objectId, points, } = {}) => {
     const isPointNumeric = typeof(points) === 'number'
@@ -74,7 +75,7 @@
       checkDonateAmount () {
         if (isNaN(this.donateAmount)) {
           this.alertMsg = this.$t('point.DONATE.NOT_NUM')
-        } else if (this.currentPoints < this.donateAmount) {
+        } else if (this.currentPoints - this.donateAmount < DEFAULT_DONATION_POINT_MIN_LINE) {
           /** show alert */
           let message = `${this.$t('point.DONATE.NOT_ENOUGH')}`
           message += `${this.$t('point.DONATE.CURRENT_PREFIX')} `
