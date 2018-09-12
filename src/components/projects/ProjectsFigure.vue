@@ -3,24 +3,16 @@
     <TagNav
       v-if="project.tags && project.tags.length > 0"
       :tags="project.tags"
-      class="projects-figure__tag-nav" />
+      class="projects-figure__tag-nav"
+    />
     <router-link class="projects-figure-content" :to="`/series/${this.project.slug}`">
       <figure>
         <img v-if="project.heroImage" :src="project.heroImage">
         <span v-if="!project.heroImage" v-text="project.title"></span>
       </figure>
       <div class="projects-figure-content__info">
-        <div class="progress">
-          <span v-text="`${progress}%`"></span>
-          <div class="progress__left rect">
-            <div class="circle" :style="{ transform: progress >= 50 ? `rotate(${225 + (progress - 50) / 50 * 180}deg)` : 'rotate(225deg)' }"></div>
-          </div>
-          <div class="progress__right rect">
-            <div class="circle" :style="{ transform: progress >= 50 ? 'rotate(405deg)' : `rotate(${225 + progress / 50 * 180}deg)` }"></div>
-          </div>
-        </div>
         <div class="projects-figure-content__info-title">
-          <p v-text="updatedAtYYYYMMDD(project.updatedAt)"></p>
+          <ProjectsFigureDate :createdAt="project.createdAt" :updatedAt="project.updatedAt"/>
           <h1 v-text="project.title"></h1>
         </div>
         <p class="projects-figure-content__descr" v-text="project.description"></p>
@@ -39,7 +31,7 @@
         <img :src="isFollowed ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="">
         <span v-text="$t('FOLLOWING.FOLLOW')"></span>
       </div>
-      <DonateButton class="donate" :projectSlug="get(project, 'slug')"></DonateButton>
+      <DonateButton class="donate" :projectSlug="get(project, 'slug')"/>
     </div>
   </div>
 </template>
@@ -47,8 +39,8 @@
 <script>
 import DonateButton from 'src/components/point/DonateButton.vue'
 import TagNav from 'src/components/tag/TagNav.vue'
+import ProjectsFigureDate from './ProjectsFigureDate.vue'
 import { get, find, } from 'lodash'
-import { updatedAtYYYYMMDD, } from '../../util/comm'
 import { mapState, } from 'vuex'
 
 const publishAction = (store, data) => store.dispatch('FOLLOW', { params: data, })
@@ -67,6 +59,7 @@ export default {
   components: {
     DonateButton,
     TagNav,
+    ProjectsFigureDate,
   },
   props: {
     project: {
@@ -117,7 +110,6 @@ export default {
 
       toogleFollowingByUserStat(this.$store, { resource: 'project', targetId: this.project.id, })
     },
-    updatedAtYYYYMMDD,
   },
 }
 </script>
@@ -146,7 +138,7 @@ export default {
     margin 0
     color #000
   h1
-    margin-top .5em
+    margin-top 1.2em
     font-size .9375rem
   p
     font-size .75rem
@@ -179,7 +171,7 @@ export default {
     padding 20px 10px
   &__info-title
     flex 1
-    margin-left 10px
+    // margin-left 10px
   &__descr
     max-height 3.34em
     line-height 1.67
