@@ -31,16 +31,9 @@
     <div class="followingListInTab__list">
       <div v-for="follow in followingByUser" :key="follow.id" class="followingListInTab__item" :class="resource">
         <div class="followingListInTab__img">
-          <template v-if="!isProfilePage">
-            <button @click="$_followingListInTab_unfollow(follow.id)">
-              <img src="/public/icons/star-grey.png">
-            </button>
-          </template>
-          <template v-else-if="isProfilePage && isLoggedIn">
-            <button @click="$_followingListInTab_toggleFollow(follow.id, get(followingStats, [ follow.id ], false))">
-              <img :src="get(followingStats, [ follow.id ], false) ? '/public/icons/star-grey.png' : '/public/icons/star-line-grey.png'">
-            </button>
-          </template>
+          <button @click="$_followingListInTab_toggleFollow(follow.id, get(followingStats, [ follow.id ], false))">
+            <img :src="get(followingStats, [ follow.id ], false) ? '/public/icons/star-grey.png' : '/public/icons/star-line-grey.png'">
+          </button>
         </div>
         <div class="followingListInTab__content">
           <h2 v-text="follow.title"></h2>
@@ -229,10 +222,6 @@
         } else {
           publishAction(this.$store, { action: 'follow', resource: this.resource, object: id, })
         }
-        toogleFollowingByUserStat(this.$store, { resource: this.resource, resourceType: this.resourceType, targetId: id, })
-      },
-      $_followingListInTab_unfollow (id) {
-        publishAction(this.$store, { action: 'unfollow', resource: this.resource, object: id, })
         toogleFollowingByUserStat(this.$store, { resource: this.resource, resourceType: this.resourceType, targetId: id, })
       },
     },
