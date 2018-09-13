@@ -130,8 +130,10 @@ export default {
     'JOIN_CONTENT_POINT': '點',
     'PROGRESS': '目前進度',
     'DEPOSIT': '前往儲值',
-    'WARNING_DEPOSIT_PREFIX': '您目前點數不足（餘 ',
-    'WARNING_DEPOSIT_POSTFIX': ' 點）',
+    'WARNING_DEPOSIT_PREFIX': '您目前點數不足，尚需 ',
+    'WARNING_DEPOSIT_POSTFIX': ' 點',
+    'REST_POINT_PREFIX': '您目前尚有點數',
+    'REST_POINT_POSTFIX': '點',
   },
   'HEADER': {
     'LOGIN' : '登入',

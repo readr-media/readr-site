@@ -6,12 +6,20 @@
         <h1 v-text="get(targetItem, 'project.title')"></h1>
         <h2>
           <span v-text="$t('PROJECT.JOIN_CONTENT_2')"></span>
-          <strong v-text="get(targetItem, 'project.memoPoints', 0) || 0"></strong>
+          <strong v-text="pointsNeeded"></strong>
           <span v-text="$t('PROJECT.JOIN_CONTENT_POINT')"></span>
         </h2>
         <h2>
-          <span v-if="isDepositNeeded"
-            v-text="this.$t('PROJECT.WARNING_DEPOSIT_PREFIX') + this.currentPoints + this.$t('PROJECT.WARNING_DEPOSIT_POSTFIX')"></span>
+          <template v-if="isDepositNeeded">
+            <span v-text="$t('PROJECT.WARNING_DEPOSIT_PREFIX')"></span>
+            <span v-text="extraPointsNeeded"></span>
+            <span v-text="$t('PROJECT.WARNING_DEPOSIT_POSTFIX')"></span>
+          </template>
+          <!--template v-else>
+            <span v-text="$t('PROJECT.REST_POINT_PREFIX')"></span>
+            <strong v-text="currentPoints" class="rest-points"></strong>
+            <span v-text="$t('PROJECT.REST_POINT_POSTFIX')"></span>
+          </template-->
         </h2>
         <button v-text="btnWording"
           :disabled="memoDeducting"
@@ -59,7 +67,10 @@
       },
       currentPoints () {
         return get(this.$store, 'state.personalPoints.points', 0)
-      },      
+      },   
+      extraPointsNeeded () {
+        return Math.abs(this.currentPoints - this.pointsNeeded - DEFAULT_DONATION_POINT_MIN_LINE)
+      },   
       isActive () {
         return get(this.$store, 'state.consumeFlag.active', false)
       },
@@ -72,7 +83,10 @@
       isDepositNeeded () {
         debug('this.currentPoints', this.currentPoints)
         debug('DEFAULT_DONATION_POINT_MIN_LINE', DEFAULT_DONATION_POINT_MIN_LINE)
-        return this.isDonationActive && this.currentPoints <= DEFAULT_DONATION_POINT_MIN_LINE
+        return this.isDonationActive && this.currentPoints - this.pointsNeeded <= DEFAULT_DONATION_POINT_MIN_LINE
+      },
+      pointsNeeded () {
+        return get(this.targetItem, 'project.memoPoints', 0) || 0
       },
       targetItem () {
         return get(this.$store, 'state.consumeFlag.item', {})
@@ -143,7 +157,7 @@
       bottom 60px
       h1
         max-width 290px
-        margin 1em 0 0
+        margin 1em 0 10px
         color #fff
         font-size 1.875rem
         font-weight 400
