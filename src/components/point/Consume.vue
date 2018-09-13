@@ -70,6 +70,8 @@
         return get(this.targetItem, 'project.paid')
       },
       isDepositNeeded () {
+        debug('this.currentPoints', this.currentPoints)
+        debug('DEFAULT_DONATION_POINT_MIN_LINE', DEFAULT_DONATION_POINT_MIN_LINE)
         return this.isDonationActive && this.currentPoints <= DEFAULT_DONATION_POINT_MIN_LINE
       },
       targetItem () {

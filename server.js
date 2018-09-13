@@ -212,6 +212,7 @@ function render (req, res, next) {
       DONATION_IS_DEPOSIT_ACTIVE: config.DONATION_IS_DEPOSIT_ACTIVE,
       DONATION_DEPOSIT_AMOUNT_ONCE: config.DONATION_DEPOSIT_AMOUNT_ONCE,
       HOST: `${config.SERVER_PROTOCOL}://${config.SERVER_HOST}`,
+      REGISTRATION_ACTIVE: config.REGISTRATION_ACTIVE,
       STRIPE_KEY: config.STRIPE_KEY,
       TAPPAY: config.TAPPAY,
     } 
