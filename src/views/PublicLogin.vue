@@ -1,31 +1,36 @@
 <template>
-  <div class="login-page" :class="{ 'packing-test': isPackingTest }">
+  <div class="login-page" :class="{ 'packing-test': !registrationActive, }">
     <main class="login-page__main">
-      <!--LoginPanel v-if="isClientSide && !isLoggedIn"></LoginPanel-->
-      <div v-if="isPackingTest" class="logo"><img src="/public/icons/logowithoutreadr.png"></div>
-      <div v-if="isPackingTest" class="message" v-html="$t('PACKING_TEST.WELCOME')"></div>
-      <LoginPanelPackingTest v-if="isClientSide && !isLoggedIn" :isPackingTest="isPackingTest"></LoginPanelPackingTest>
+      <template v-if="registrationActive">
+        <LoginPanel v-if="isClientSide && !isLoggedIn"></LoginPanel>
+      </template>
+      <template v-else>
+        <div class="logo"><img src="/public/icons/logowithoutreadr.png"></div>
+        <div class="message" v-html="$t('PACKING_TEST.WELCOME')"></div>
+        <LoginPanelPackingTest v-if="isClientSide && !isLoggedIn" :isPackingTest="registrationActive"></LoginPanelPackingTest>
+      </template>
     </main>
   </div>
 </template>
 <script>
   import { get, } from 'lodash'
-  // import LoginPanel from '../components/LoginPanel.vue'
+  import LoginPanel from '../components/LoginPanel.vue'
   import LoginPanelPackingTest from 'src/components/LoginPanelPackingTest.vue'
-  import AppHeader from 'src/components/header/AppHeader.vue'
+  // import AppHeader from 'src/components/header/AppHeader.vue'
 
   export default {
     components: {
-      'app-header': AppHeader,
+      // 'app-header': AppHeader,
+      LoginPanel,
       LoginPanelPackingTest,
     },
     computed: {
       isLoggedIn () {
         return get(this.$store, [ 'state', 'isLoggedIn', ], false)
       },
-      isPackingTest () {
-        return true
-      },
+      registrationActive () {
+        return get(this.$store, 'state.setting.REGISTRATION_ACTIVE', false)
+      },      
     },
     data () {
       return {
@@ -49,7 +54,7 @@
 .login-page
   min-height 100vh
   width 100%
-  background-color #fff
+  // background-color #fff
   // &__container
   max-width 1200px
   margin auto
@@ -87,4 +92,8 @@
   &__main
     margin-left 93.5px
     width 950px
+    display flex
+    flex-direction column
+    justify-content center
+    align-items center
 </style>
