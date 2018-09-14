@@ -36,8 +36,7 @@
   </div>
 </template>
 <script>
-  import { ROLE_MAP, } from 'src/constants'
-  import { filter, get, } from 'lodash'
+  import { get, } from 'lodash'
   import TextItem from 'src/components/form/TextItem.vue'
   import validator from 'validator'
 
@@ -82,9 +81,7 @@
             keepAlive: this.$refs[ 'keep-alive' ].checked,
           }, get(this.$store, [ 'state', 'register-token', ])).then((res) => {
             if (res.status === 200) {
-              const memberCenter = get(filter(ROLE_MAP, { key: get(this.$store, [ 'state', 'profile', 'role', ]), }), [ 0, 'route', ], 'member')
-              this.$route.path === '/comment' ? this.$router.push(this.$route.fullPath) : this.$router.push(`/${memberCenter}`)
-              // location.replace(`/${memberCenter}`)
+              this.$route.path === '/comment' ? this.$router.push(this.$route.fullPath) : this.$router.push('/')
             } else {
               this.resMsg = this.$t('login.WORDING_LOGIN_INFAIL_VALIDATION_ISSUE')
             }
