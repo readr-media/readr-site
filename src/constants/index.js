@@ -7,8 +7,8 @@ export const SITE_DOMAIN = 'readr.tw'
 export const SITE_DOMAIN_DEV = 'dev.readr.tw'
 
 export const URL_FB_FANPAGE = 'https://www.facebook.com/readr.tw'
-export const URL_TWITTER = 'https://twitter.com/Readr12544706'
-export const URL_IG = ''
+export const URL_TWITTER = 'https://twitter.com/READr_news'
+export const URL_IG = 'https://www.instagram.com/readrteam_daily/'
 
 export const ANNOUNCEMENT_ACCOUNT_ID = '126'
 
