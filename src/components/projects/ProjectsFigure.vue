@@ -29,7 +29,7 @@
       </div>
       <div v-if="isLoggedIn" class="follow" @click="toogleFollow">
         <img :src="isFollowed ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="">
-        <span v-text="$t('FOLLOWING.FOLLOW')"></span>
+        <span v-text="`${$t('FOLLOWING.FOLLOW')}${$t('FOLLOWING.PROJECT')}`"></span>
       </div>
       <DonateButton class="donate" :projectSlug="get(project, 'slug')"/>
     </div>
