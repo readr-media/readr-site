@@ -7,8 +7,7 @@
   </div>
 </template>
 <script>
-  import { ROLE_MAP, } from 'src/constants'
-  import { filter, get, } from 'lodash'
+  import { get, } from 'lodash'
 
   const debug = require('debug')('CLIENT:FacebookLogin')
   const login = (store, profile, token) => {
@@ -47,10 +46,7 @@
                 /**
                  * use location.replace instead of router.push to server-side render page
                  */
-                // location.replace('/')
-
-                const memberCenter = get(filter(ROLE_MAP, { key: get(this.$store, 'state.profile.role'), }), '0.route', 'member')
-                this.$route.path === '/comment' ? this.$router.push(this.$route.fullPath) : this.$router.push(`/${memberCenter}`)  
+                location.replace('/')
               } else {
                 debug('res', res)
               }
