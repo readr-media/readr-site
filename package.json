@@ -56,7 +56,7 @@
     "pym.js": "^1.3.2",
     "qs": "^6.5.1",
     "readr-comment": "^1.0.16",
-    "readr-web-api": "^1.0.35",
+    "readr-web-api": "^1.0.37",
     "redis-connection-pool": "^1.6.1",
     "request-ip": "^2.0.2",
     "route-cache": "0.4.4",
