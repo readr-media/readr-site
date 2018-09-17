@@ -1,7 +1,7 @@
 <template>
   <div class="project-single-intro" :style="{ backgroundImage: `url(${getImageUrl(get(project, 'heroImage') || '/public/media.jpeg')})`, }">
     <div class="project-single-intro__container">
-      <div v-show="isLoggedIn" class="follow" @click="toogleFollow">
+      <div class="follow" @click="clickFollow">
         <img class="follow__icon" :src="isFollowed ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="">
         <span class="follow__hint" v-text="`${$t('FOLLOWING.FOLLOW')}${$t('FOLLOWING.PROJECT')}`"></span>
       </div>
@@ -79,6 +79,10 @@ export default {
           clearInterval(interval)
         }
       }, 10)
+    },
+    // TODO: Refactor following to a component like ButtonFollow.vue
+    clickFollow () {
+      this.isLoggedIn ? this.toogleFollow() : this.$router.push('/login')
     },
     toogleFollow () {
       if (this.isFollowed) {

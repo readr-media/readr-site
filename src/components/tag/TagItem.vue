@@ -12,10 +12,10 @@
         @mouseout.native="handleMouseEvent"
       >
         <span class="tag__text" v-text="tag.text"></span>
-        <span v-if="isLoggedIn" class="tag__action tag-action">
+        <span class="tag__action tag-action">
           <img
             :src="isFollowed ? starUrlFollowed : starUrlUnFollowed"
-            @click.prevent="toogleFollow"
+            @click.prevent="clickFollow"
           >
           <span
             :class="[ 'tag-action__tooltip', { 'tag-action__tooltip--toogled': showActionTooltip } ]"
@@ -114,6 +114,10 @@ export default {
     },
   },
   methods: {
+    // TODO: Refactor following to a component like ButtonFollow.vue
+    clickFollow () {
+      this.isLoggedIn ? this.toogleFollow() : this.$router.push('/login')
+    },
     toogleFollow () {
       if (this.isFollowed) {
         publishAction(this.$store, {
