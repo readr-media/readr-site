@@ -38,6 +38,12 @@
       </div>
       <button class="profile-edit__save-button" @click="profileEditorSave">{{ $t('profile_editor.WORDING_PROFILEEDIT_SAVE') }}</button>
     </div>
+    <div class="profile-edit__password_alert" v-if="isPasswordAlertActive">
+      <div class="container">
+        <div class="message"><span v-text="$t('profile_editor.PASSWORD_REVISING.SUCCESSUFULLY')"></span></div>
+        <div class="confirm" @click="logout"><span v-text="$t('profile_editor.PASSWORD_REVISING.CONFIRM')"></span></div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -96,6 +102,7 @@ export default {
       inputOldPassword: '',
       inputNewPassword: '',
       inputConfirmPassword: '',
+      isPasswordAlertActive: false,
       advanced: {},
     }
   },
@@ -136,6 +143,9 @@ export default {
       return store.dispatch('FETCH_PERSONAL_SETTONG')
     },
     getImageUrl,
+    logout () {
+      location && location.replace('/')
+    },
     profileEditorUploadThumbnail () {
       const saveImage = (file) => {
         const fd = new FormData()
@@ -212,21 +222,17 @@ export default {
         .then(res => {
           if (res.status === 200) {
             debug('this.inputNewPassword', this.inputNewPassword)
-            updateInfo(this.$store, {
+            return updateInfo(this.$store, {
               edit_mode: 'edit_profile',
               password: this.inputNewPassword,
             }, 'UPDATE_PASSWORD')
             .then(() => {
-              this.inputOldPassword = ''
-              this.inputNewPassword = ''
-              this.inputConfirmPassword = ''
-  
-              logout(this.$store).then(() => {
+              return logout(this.$store).then(() => {
                 const domain = _.get(this.$store, 'state.setting.DOMAIN')
                 return removeToken(domain).then(() => {
-                  location && location.replace('/')
+                  this.isPasswordAlertActive = true
                 })
-              })
+              })              
             })
           } else {
             debug('login fail')
@@ -237,6 +243,7 @@ export default {
             debug('login 401')
             // return false
           }
+          return
         })
       }
 
@@ -247,7 +254,9 @@ export default {
       if (!isOldPasswordEmpty() && isConfirmNewPassword()) {
         process.push(updatePassword())
       }
-      Promise.all(process).then(() => this.$emit('save'))
+      Promise.all(process).then(() => {
+        !this.isPasswordAlertActive && this.$emit('save')
+      })
     },
   },
 }
@@ -283,6 +292,38 @@ export default {
     outline none
     &:hover
       filter brightness(80%)
+  &__password_alert
+    position fixed
+    top 0
+    left 0
+    width 100vw
+    height 100vh
+    background-color rgba(0, 0, 0, 0.5)
+    z-index 99999
+    display flex
+    justify-content center
+    align-items center
+    > .container
+      padding 10px
+      width 300px
+      height 100px
+      background-color #e3e3e3
+      border-radius 2px
+      display flex
+      justify-content center
+      align-items center
+      flex-direction column
+      font-size 0.875rem
+      line-height normal
+      .confirm
+        margin-top 10px
+        padding 2px 10px
+        cursor pointer
+        background-color #4280a2
+        border-radius 2px
+        color #fff
+      .message
+        padding 0 10px
 
 $form__name
   width 90px
