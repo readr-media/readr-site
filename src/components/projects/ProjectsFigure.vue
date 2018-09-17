@@ -27,9 +27,9 @@
         <img src="/public/icons/view-blue.png" alt="">
         <span v-text="project.views || 0"></span>
       </div>
-      <div v-if="isLoggedIn" class="follow" @click="toogleFollow">
+      <div class="follow" @click="clickFollow">
         <img :src="isFollowed ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="">
-        <span v-text="$t('FOLLOWING.FOLLOW')"></span>
+        <span v-text="`${$t('FOLLOWING.FOLLOW')}${$t('FOLLOWING.PROJECT')}`"></span>
       </div>
       <DonateButton class="donate" :projectSlug="get(project, 'slug')"/>
     </div>
@@ -91,6 +91,10 @@ export default {
   },
   methods: {
     get,
+    // TODO: Refactor following to a component like ButtonFollow.vue
+    clickFollow () {
+      this.isLoggedIn ? this.toogleFollow() : this.$router.push('/login')
+    },
     toogleFollow () {
       if (this.isFollowed) {
         publishAction(this.$store, {
