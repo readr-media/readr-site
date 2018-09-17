@@ -49,6 +49,7 @@ import { camelize, } from 'humps'
 import { getImageUrl, } from 'src/util/comm'
 import { removeToken, } from 'src/util/services'
 
+const debug = require('debug')('CLIENT:ProfileEdit')
 const updateInfo = (store, profile, action) => {
   return store.dispatch(action, {
     params: profile,
@@ -184,7 +185,7 @@ export default {
           params = Object.assign(params, this.advanced)
         }
 
-        updateInfo(this.$store, params, 'UPDATE_PROFILE').then(() => {
+        return updateInfo(this.$store, params, 'UPDATE_PROFILE').then(() => {
           return this.fetchPersonalSetting(this.$store)
         })
         // .then(callback)
@@ -202,17 +203,16 @@ export default {
         }
       }
       const updatePassword = () => {
-        checkPassword(this.$store, {
-          email: this.profile.id,
+        debug('this.inputNewPassword', this.inputNewPassword)
+        return checkPassword(this.$store, {
+          email: this.profile.mail,
           password: this.inputOldPassword,
           // keepAlive: this.$refs[ 'keep-alive' ].checked
         })
-        .then((res) => {
+        .then(res => {
           if (res.status === 200) {
-            // console.log('login success')
-            // return true
+            debug('this.inputNewPassword', this.inputNewPassword)
             updateInfo(this.$store, {
-              id: this.profile.id,
               edit_mode: 'edit_profile',
               password: this.inputNewPassword,
             }, 'UPDATE_PASSWORD')
@@ -229,25 +229,25 @@ export default {
               })
             })
           } else {
-            console.log('login fail')
+            debug('login fail')
           }
         })
         .catch((err) => {
           if (err.status === 401) {
-            console.log('login 401')
+            debug('login 401')
             // return false
           }
         })
       }
 
+      const process = []
       if (!(inputNotChange('Nickname') && inputNotChange('Description')) || this.isPersonalSettingMutated) {
-        updateBasicInfo()
+        process.push(updateBasicInfo())
       }
       if (!isOldPasswordEmpty() && isConfirmNewPassword()) {
-        updatePassword()
+        process.push(updatePassword())
       }
-
-      this.$emit('save')
+      Promise.all(process).then(() => this.$emit('save'))
     },
   },
 }
