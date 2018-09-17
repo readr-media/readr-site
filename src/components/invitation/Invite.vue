@@ -77,6 +77,9 @@
       activeItemsCount () {
         return this.inviteableCount
       },
+      currUser () {
+        return get(this.$store, 'state.profile.id')
+      },      
       inputBackgroundColor () {
         return this.isProcessing ? '#f6f6f6' : undefined
       },
@@ -111,7 +114,7 @@
       find,
       goInvite () {
         debug('Go invite and create inviting process.')
-        if (!find(this.emails, email => email)) { return }
+        if (!find(this.emails, email => email) || !this.currUser) { return }
         this.isProcessing = true
         if (this.validate()) {
           invite(this.$store, {
@@ -160,9 +163,6 @@
         }
       },
       quota: function () {
-        debug('this.quota changed')
-        debug('this.quota changed')
-        debug('this.quota changed')
         debug('this.quota changed', this.quota)
         this.inviteableCount = this.quota > 3 ? 3 : this.quota
       },
