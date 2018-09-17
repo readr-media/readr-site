@@ -67,7 +67,7 @@
         }
       },
       shouldRenderCommentError () {
-        return !isEmpty(this.fetchCommentErrorText)
+        return this.me.id && !isEmpty(this.fetchCommentErrorText)
       },
     },
     data () {
@@ -240,7 +240,12 @@
         this.comments_raw = comments
         this.shouldRenderComment = true
       }).catch(({ res, }) => {
-        this.fetchCommentErrorText = res.text
+        debug('this.me', this.me)
+        debug('this.me', this.me)
+        debug('this.me', this.me)
+        debug('this.me', this.me)
+        debug('this.me', this.me)
+        this.me.id && (this.fetchCommentErrorText = res.text)
       })
 
       this.setMutationObserver()

@@ -61,7 +61,7 @@
       },
     },
     beforeMount () {
-      Promise.all([
+      this.currUser && Promise.all([
         fetchNotification(this.$store, { id: this.currUser, }),
       ])
     },
@@ -71,7 +71,7 @@
     },
     watch: {
       currPath () {
-        this.updateNotification()
+        this.currUser && this.updateNotification()
       },
     },
   }

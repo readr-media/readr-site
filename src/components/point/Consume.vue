@@ -67,7 +67,10 @@
       },
       currentPoints () {
         return get(this.$store, 'state.personalPoints.points', 0)
-      },   
+      },  
+      currUser () {
+        return get(this.$store, 'state.profile.id')
+      },           
       extraPointsNeeded () {
         return Math.abs(this.currentPoints - this.pointsNeeded - DEFAULT_DONATION_POINT_MIN_LINE)
       },   
@@ -126,7 +129,7 @@
       },
     },
     mounted () {
-      fetchCurrPoints(this.$store).then(() => {
+      this.currUser && fetchCurrPoints(this.$store).then(() => {
         debug('GOT CURRENT POINT:', this.currentPoints)
       })
     },

@@ -34,14 +34,14 @@
     },
     beforeMount () {
       debug('curr_user beforeMount.')
-      Promise.all([
+      this.curr_user && Promise.all([
         fetchQuota(this.$store),
       ])
     },
     watch: {
       curr_user: function () {
         debug('curr_user change detected.')
-        Promise.all([
+        this.curr_user && Promise.all([
           fetchQuota(this.$store),
         ])
       },
