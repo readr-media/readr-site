@@ -97,6 +97,10 @@ export default {
     'WORDING_PROFILEEDIT_CONFIRMPASSWORD' : '密碼確認',
     'WORDING_PROFILEEDIT_PERSONAL_OPTIONS' : '個人設定',
     'WORDING_PROFILEEDIT_SAVE' : 'SAVE',
+    'PASSWORD_REVISING': {
+      'SUCCESSUFULLY': '已成功修改密碼，請點擊「確認」後重新登入。',
+      'CONFIRM': '確認',
+    },
     'SETTING_PRIVACY' : {
       'PRIVACY' : '隱私設定',
       'HIDE_PROFILE' : '隱藏個人頁面',
