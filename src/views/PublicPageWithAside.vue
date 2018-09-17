@@ -153,6 +153,7 @@ export default {
     getUserFollowing(this.$store, { resource: 'memo', })
     getUserFollowing(this.$store, { resource: 'report', })
     getUserFollowing(this.$store, { resource: 'tag', })
+    getUserFollowing(this.$store, { resource: 'project', })
     debug('isSeriesDonate', this.isSeriesDonate)
     
   },

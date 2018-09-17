@@ -1,6 +1,10 @@
 <template>
   <div class="project-single-intro" :style="{ backgroundImage: `url(${getImageUrl(get(project, 'heroImage') || '/public/media.jpeg')})`, }">
     <div class="project-single-intro__container">
+      <div v-show="isLoggedIn" class="follow" @click="toogleFollow">
+        <img class="follow__icon" :src="isFollowed ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="">
+        <span class="follow__hint" v-text="`${$t('FOLLOWING.FOLLOW')}${$t('FOLLOWING.PROJECT')}`"></span>
+      </div>
       <div class="project-single-intro__title">
         <span v-text="title"></span>
       </div>
@@ -16,22 +20,43 @@
 <script>
 import { get, } from 'lodash'
 import { getImageUrl, } from 'src/util/comm'
+import { mapState, } from 'vuex'
 // const debug = require('debug')('CLIENT:ProjectIntroSingle')
+
+const publishAction = (store, data) => store.dispatch('FOLLOW', { params: data, })
+const toogleFollowingByUserStat = (store, { resource, resourceType = '', targetId, }) => {
+  return store.commit('TOOGLE_FOLLOWING_BY_USER_STAT', {
+    params: {
+      resource,
+      resourceType,
+      targetId,
+    },
+  })
+}
 
 export default {
   name: 'ProjectIntroSingle',
   computed: {
+    ...mapState({
+      projectFollowingByUser: state => get(state.followingByUserStats, [ 'project', ], {}),
+    }),
+    project () {
+      return get(this.$store, 'state.publicProjectSingle', {})
+    },
     targProgress () {
       return get(this.project, 'progress', 0)
     },
     desc () {
       return get(this.project, 'description', '')
     },
-    project () {
-      return get(this.$store, 'state.publicProjectSingle', {})
-    },
     title () {
       return get(this.project, 'title')
+    },
+    isLoggedIn () {
+      return this.$store.state.isLoggedIn
+    },
+    isFollowed () {
+      return this.$store.state.isLoggedIn && get(this.projectFollowingByUser, this.project.id, false)
     },
   },
   data () {
@@ -54,6 +79,25 @@ export default {
           clearInterval(interval)
         }
       }, 10)
+    },
+    toogleFollow () {
+      if (this.isFollowed) {
+        publishAction(this.$store, {
+          action: 'unfollow',
+          resource: 'project',
+          subject: this.$store.state.profile.id,
+          object: this.project.id,
+        })
+      } else {
+        publishAction(this.$store, {
+          action: 'follow',
+          resource: 'project',
+          subject: this.$store.state.profile.id,
+          object: this.project.id,
+        })
+      }
+
+      toogleFollowingByUserStat(this.$store, { resource: 'project', targetId: this.project.id, })
     },
   },
   mounted () {},
@@ -121,4 +165,18 @@ export default {
       color #fff
       font-size 0.625rem
       z-index 998
+
+.follow
+  margin 0
+  &__icon
+    d = 25px
+    width d
+    height d
+    cursor pointer
+  &__hint
+    font-size 14px
+    color #11b8c9
+    margin 0 0 0 5px
+    position relative
+    bottom 2px
 </style>
