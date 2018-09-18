@@ -15,6 +15,10 @@ const SET_PUBLIC_MEMOS = (state, { memos, }) => {
   state['publicMemos'] = memos
 }
 
+const UPDATE_PUBLIC_MEMOS = (state, { memos, }) => {
+  state['publicMemos'] = _.concat(_.get(state, `publicMemos`, []), memos)
+}
+
 const UPDATE_MEMOS = (state, { items, }) => {
   state['memos'] = _.concat(_.get(state, `memos`, []), items)
 }
@@ -24,4 +28,5 @@ export {
   SET_MEMOS,
   SET_PUBLIC_MEMOS,
   UPDATE_MEMOS,
+  UPDATE_PUBLIC_MEMOS,
 }
