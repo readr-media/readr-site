@@ -4,7 +4,7 @@
     <template v-else>
       <div>
         <div><span v-text="$t('POST_CONTENT.NO_PERMISSION')"></span></div>
-        <div class="button" v-if="!me.id"><span v-text="$t('POST_CONTENT.GO_LOGIN')" @click="goLogin"></span></div>
+        <div class="button" v-if="isLoginBtnACtive"><span v-text="$t('POST_CONTENT.GO_LOGIN')" @click="goLogin"></span></div>
       </div>
     </template>
   </div>
@@ -99,6 +99,7 @@ export default {
   data () {
     return {
       isContentEmpty: true,
+      isLoginBtnACtive: false,
     }
   },
   methods: {
@@ -117,12 +118,14 @@ export default {
       debug(this.isMemo && !this.isMemoPaid && !this.isNews)      
       if (this.isMemo && !this.isMemoPaid) {
         this.isContentEmpty = true
+        !this.me.id && (this.isLoginBtnACtive = true)
         switchOnDeductionPanel(this.$store, this.post)
       } else {
         this.isContentEmpty = false
       }
     } else {
       this.isContentEmpty = true
+      !this.me.id && (this.isLoginBtnACtive = true)
     }
   },
   props: {
@@ -136,6 +139,7 @@ export default {
       if (!this.isPostEmpty) {
         if (this.isMemo && !this.isMemoPaid) {
           this.isContentEmpty = true
+          !this.me.id && (this.isLoginBtnACtive = true)
           switchOnDeductionPanel(this.$store, this.post)
         } else {
           switchOffDeductionPanel(this.$store)
@@ -146,6 +150,7 @@ export default {
          * Client may not have the right to fetch this post content.
          */
         this.isContentEmpty = true
+        !this.me.id && (this.isLoginBtnACtive = true)
       }
     },
   },

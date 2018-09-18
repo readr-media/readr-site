@@ -81,6 +81,7 @@
             this.$emit('closeLightBox')
           } else if (pathToRegexp('/series/:id/:subItem?').test(this.$route.path)) {
             const seriesSlug = this.$route.params.slug
+            this.$emit('update:showLightBox', false)
             this.$router.push(seriesSlug ? `/series/${seriesSlug}` : '/')
           } else {
             this.$emit('update:showLightBox', false)
