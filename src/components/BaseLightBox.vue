@@ -77,8 +77,11 @@
         if (this.hadRouteBeenNavigate) {
           this.$router.back()
         } else {
-          if (pathToRegexp('/post/:postId').test(this.$route.path) || pathToRegexp('/series/:id/:subItem?').test(this.$route.path)) {
+          if (pathToRegexp('/post/:postId').test(this.$route.path)) {
             this.$emit('closeLightBox')
+          } else if (pathToRegexp('/series/:id/:subItem?').test(this.$route.path)) {
+            const seriesSlug = this.$route.params.slug
+            this.$router.push(seriesSlug ? `/series/${seriesSlug}` : '/')
           } else {
             this.$emit('update:showLightBox', false)
           }
