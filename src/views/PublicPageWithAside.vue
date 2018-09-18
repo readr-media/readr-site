@@ -61,7 +61,7 @@ const fetchFollowing = (store, params) => {
 }
 
 const switchOn = (store, item) => store.dispatch('SWITCH_ON_DONATE_PANEL', { item, })
-
+ 
 export default {
   name: 'PublicPageWithAside',
   props: {
