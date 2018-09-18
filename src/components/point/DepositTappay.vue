@@ -29,7 +29,6 @@
   import { get, } from 'lodash'
   const debug = require('debug')('CLIENT:DepositTappay')
   const deposit = (store, {
-    objectId,
     points,
     token,
     lastfour,
@@ -37,8 +36,8 @@
     member_name,
   } = {}) => store.dispatch('ADD_REWARD_POINTS_TRANSACTIONS', {
     params: {
-      object_type: POINT_OBJECT_TYPE.PROJECT_MEMO,
-      object_id: objectId,
+      object_type: POINT_OBJECT_TYPE.CLEAR_UP || 3,
+      // object_id: 0,
       points: points,
       token,
       member_name,
