@@ -42,19 +42,28 @@ const GET_MEMOS = ({ commit, }, { params, mode, }) => {
   })
 }
 
-const GET_PUBLIC_MEMOS = ({ commit, }, { params, }) => {
-  return new Promise((resolve, reject) => { 
+const GET_PUBLIC_MEMOS = ({ commit, }, { params, mode, }) => {
+  return new Promise((resolve) => { 
     getPublicMemos({ params, }).then(({ status, body, }) => {
       debug('Get memos!', status, body)
       if (status === 200) {
-        commit('SET_PUBLIC_MEMOS', { memos: body.items, })
+        if (mode == 'set') {
+          commit('SET_PUBLIC_MEMOS', { memos: body.items, })
+        } else if (mode === 'update') {
+          if (_.get(body, 'items', []).length === 0) {
+            resolve({ status: 'end', body, })
+          }
+          commit('UPDATE_PUBLIC_MEMOS', { memos: body.items, })
+        }        
         resolve({ status: 200, res: body, })
       } else {
-        reject({ status: status, })
+        commit('SET_PUBLIC_MEMOS', { items: [], })
+        // reject({ status: status, })
       }
     })
-    .catch((res) => {
-      reject({ status: status, res: res,})
+    .catch(() => {
+      // reject({ status: status, res: res,})
+      commit('SET_PUBLIC_MEMOS', { items: [], })
     })
   })
 }
