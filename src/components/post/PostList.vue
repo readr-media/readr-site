@@ -13,7 +13,7 @@ import BaseLightBox from 'src/components/BaseLightBox.vue'
 import BaseLightBoxPost from 'src/components/BaseLightBoxPost.vue'
 import PostItem from 'src/components/post/PostItem.vue'
 import moment from 'moment'
-import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, REPORT_PUBLISH_STATUS, } from 'api/config'
+import { MEMO_PUBLISH_STATUS, PROJECT_PUBLISH_STATUS, PROJECT_STATUS, REPORT_PUBLISH_STATUS, } from 'api/config'
 import { isScrollBarReachBottom, isElementReachInView, } from 'src/util/comm'
 import { find, get, isEqual, sortBy, union, uniqWith, } from 'lodash'
 
@@ -37,6 +37,29 @@ const fetchMemos = (store, {
       where: {
         memo_publish_status: [ 2, ],
       },
+    },
+    mode,
+  })
+}
+
+const fetchPublicMemos = (store, { 
+  max_result = MAXRESULT_POSTS, 
+  mode = 'set',
+  proj_ids = [],
+  sort = DEFAULT_SORT, 
+  page = DEFAULT_PAGE,
+} = {}) => { 
+  return store.dispatch('GET_PUBLIC_MEMOS', { 
+    params: { 
+      member_id: get(store, 'state.profile.id', -1), 
+      project_id: proj_ids,
+      max_result: max_result, 
+      page,
+      where: { 
+        memo_publish_status: MEMO_PUBLISH_STATUS.PUBLISHED, 
+        project_publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED, 
+      }, 
+      sort: sort, 
     },
     mode,
   })
@@ -136,7 +159,11 @@ export default {
             if (proj) {
               return Promise.all([
                 Promise.all([
-                  fetchMemos(this.$store, {
+                  this.me.id ? fetchMemos(this.$store, {
+                    mode: this.currPage === 1 ? 'set' : 'update',
+                    proj_ids: [ this.currRefId, ],
+                    page: this.currPage,
+                  }) : fetchPublicMemos(this.$store, {
                     mode: this.currPage === 1 ? 'set' : 'update',
                     proj_ids: [ this.currRefId, ],
                     page: this.currPage,
@@ -172,7 +199,7 @@ export default {
       const jobs = []
       switch (this.route) {
         case 'series':
-          jobs.push(fetchMemos(this.$store, {
+          jobs.push(this.me.id ? fetchMemos(this.$store, {
             mode: 'update',
             proj_ids: [ this.currRefId, ],
             page: this.currPage,
@@ -188,6 +215,22 @@ export default {
             if (get(res, 'status') === 'end') {
               this.isLoadMoreEnd = true
             }          
+          }) : fetchPublicMemos(this.$store, {
+            mode: 'update',
+            proj_ids: [ this.currRefId, ],
+            page: this.currPage,
+          }).then(res => {
+            this.currPage += 1
+            debug('Loadmore done. Status', get(res, 'status'))
+            const memoIds = this.posts.map(post => post.id)
+            if (memoIds.length > 0) {
+              fetchFollowing(this.$store, { mode: 'update', resource: 'memo', ids: memoIds, })
+              fetchEmotion(this.$store, { mode: 'update', resource: 'memo', ids: memoIds, emotion: 'like', })
+              fetchEmotion(this.$store, { mode: 'update', resource: 'memo', ids: memoIds, emotion: 'dislike', })
+            }          
+            if (get(res, 'status') === 'end') {
+              this.isLoadMoreEnd = true
+            }
           }))
           break
         case 'tag': {
@@ -217,13 +260,16 @@ export default {
       }
       return jobs      
     },
+    me () {
+      return get(this.$store, 'state.profile', {})
+    },
     postsByTag () {
       return get(this.$store, [ 'state', 'postsByTag', 'items', ], [])
     },
     posts () {
       switch (this.route) {
         case 'series':
-          return sortBy(union(get(this.$store, 'state.memos', []), get(this.$store, 'state.publicReports', [])), [ p => -moment(p.publishedAt), ])
+          return sortBy(union(get(this.$store, this.me.id ? 'state.memos' : 'state.publicMemos', []), get(this.$store, 'state.publicReports', [])), [ p => -moment(p.publishedAt), ])
         case 'tag': {
           return uniqWith(this.$store.state.itemsByTag.items, isEqual)
         }
@@ -282,7 +328,7 @@ export default {
     Promise.all(this.jobs).then(() => {
       if (this.route === 'series') {
         const reportIds = get(this.$store.state, 'publicReports', []).map(report => report.id)
-        const memoIds = get(this.$store.state, 'memos', []).map(memo => memo.id)
+        const memoIds = get(this.$store.state, this.me.id ? 'memos' : 'publicMemos', []).map(memo => memo.id)
         if (reportIds.length > 0) {
           fetchFollowing(this.$store, { resource: 'report', ids: reportIds, })
           fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'like', })

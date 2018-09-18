@@ -131,7 +131,7 @@
           return 'news'
         } else if (get(this.post, 'projectId') && get(this.post, 'slug')) {
           return 'report'
-        } else if (get(this.post, 'flag') === 'memo'){
+        } else if (get(this.post, 'projectId') && !get(this.post, 'slug')){
           return 'memo'
         } else {
           return 'normal'
