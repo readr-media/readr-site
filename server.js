@@ -157,7 +157,7 @@ function render (req, res, next) {
       <script>
         window.fbAsyncInit = function() {
           FB.init({
-            appId            : '143500093073133',
+            appId            : '${config.FB_CLIENT_ID || '143500093073133'}',
             autoLogAppEvents : true,
             xfbml            : true,
             version          : 'v2.9'
