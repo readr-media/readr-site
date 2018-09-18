@@ -206,6 +206,7 @@ export default {
   },
   'POST_CONTENT': {
     'NO_PERMISSION': '此為不存在的內容，或是您沒有權限？',
+    'GO_LOGIN': '登入會員',
     'GO_JOIN_MEMO': '此筆記目前需要點數，點我加入',
   },
   'POST_EDITOR': {

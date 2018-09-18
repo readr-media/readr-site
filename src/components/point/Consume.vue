@@ -104,6 +104,10 @@
     methods: {
       get,
       clickHandler () {
+        debug('CLOSE COMSUME!')
+        debug('CLOSE COMSUME!')
+        debug('CLOSE COMSUME!')
+        debug('CLOSE COMSUME!')
         if (this.isDepositNeeded) {
           switchOffDeductionPanel(this.$store).then(() => {
             this.showMemoDeduction = false

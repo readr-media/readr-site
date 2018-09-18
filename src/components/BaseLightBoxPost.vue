@@ -1,7 +1,12 @@
 <template>
   <div class="baselightbox-post--review no-content" v-if="isContentEmpty">
     <span v-if="isMemo && !isMemoPaid && !isPostEmpty" v-text="$t('POST_CONTENT.GO_JOIN_MEMO')" class="go-join" @click="goJoin"></span>
-    <span v-else v-text="$t('POST_CONTENT.NO_PERMISSION')"></span>
+    <template v-else>
+      <div>
+        <div><span v-text="$t('POST_CONTENT.NO_PERMISSION')"></span></div>
+        <div class="button" v-if="isLoginBtnACtive"><span v-text="$t('POST_CONTENT.GO_LOGIN')" @click="goLogin"></span></div>
+      </div>
+    </template>
   </div>
   <div :class="[ { 'baselightbox-post--review': !isNews && !isMemo }, { 'baselightbox-post--news': isNews || isMemo } ]" v-else>
     <!-- template for post type is news -->
@@ -76,6 +81,9 @@ export default {
     },   
     isMemoPaid () {
       return get(this.post, 'project.paid')
+    },
+    me () {
+      return get(this.$store, 'state.profile', {})
     },    
     postContent () {
       if (!this.post.content || this.post.content.length === 0) { return [] }
@@ -91,6 +99,7 @@ export default {
   data () {
     return {
       isContentEmpty: true,
+      isLoginBtnACtive: false,
     }
   },
   methods: {
@@ -100,18 +109,23 @@ export default {
         switchOnDeductionPanel(this.$store, this.post)
       }      
     },
+    goLogin () {
+      location && location.replace('/login')
+    },
   },
   mounted () {
     if (!this.isPostEmpty) {
       debug(this.isMemo && !this.isMemoPaid && !this.isNews)      
       if (this.isMemo && !this.isMemoPaid) {
         this.isContentEmpty = true
+        !this.me.id && (this.isLoginBtnACtive = true)
         switchOnDeductionPanel(this.$store, this.post)
       } else {
         this.isContentEmpty = false
       }
     } else {
       this.isContentEmpty = true
+      !this.me.id && (this.isLoginBtnACtive = true)
     }
   },
   props: {
@@ -125,6 +139,7 @@ export default {
       if (!this.isPostEmpty) {
         if (this.isMemo && !this.isMemoPaid) {
           this.isContentEmpty = true
+          !this.me.id && (this.isLoginBtnACtive = true)
           switchOnDeductionPanel(this.$store, this.post)
         } else {
           switchOffDeductionPanel(this.$store)
@@ -135,6 +150,7 @@ export default {
          * Client may not have the right to fetch this post content.
          */
         this.isContentEmpty = true
+        !this.me.id && (this.isLoginBtnACtive = true)
       }
     },
   },
@@ -152,6 +168,7 @@ export default {
       display flex
       justify-content center
       align-items center
+      line-height normal
       .go-join
         padding 10px 20px
         background-color #d8ca21
@@ -161,7 +178,19 @@ export default {
         color #fff
         &:hover
           background-color #e8dc4c
-
+      .button
+        width 100%
+        padding 5px 10px
+        margin 10px 0
+        display flex
+        justify-content center
+        align-items center
+        background-color #ddcf21
+        color #fff
+        cursor pointer
+        border-radius 2px
+        &:hover
+          box-shadow 0 0 10px rgba(0,0,0,0.3)
 
     .baselightbox-post
       &__article
