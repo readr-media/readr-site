@@ -6,7 +6,7 @@
         <span class="value" :class="{ negative: isPointsNegative, }" v-text="currentPoints"></span>
         <span class="postfix" v-text="$t('point.UNIT')"></span>
         <!--Deposit class="deposit" v-if="isStripeNeeded" @fetchCurrentPoint="fetchCurrentPoint"></Deposit-->
-        <DepositTappay class="deposit" v-if="isTappayNeeded" :active.sync="isDepositActive" @fetchCurrentPoint="fetchCurrentPoint"></DepositTappay>
+        <!--DepositTappay class="deposit" v-if="isTappayNeeded" :active.sync="isDepositActive" @fetchCurrentPoint="fetchCurrentPoint"></DepositTappay-->
       </div>
       <div class="point-manager__infobar--switcher">
         <div class="point-record" :class="isActive(0)" @click="check(0)"><span class="radio"></span><span v-text="'點數明細'"></span></div>
