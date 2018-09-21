@@ -1,12 +1,15 @@
 <template>
   <div>
+    <div class="post-content__hint">
+      <img class="lock" src="/public/icons/lock.png">
+      <span v-text="$t('homepage.EDITOR_ROOMMATE_ONLY')"></span>
+    </div>
     <h1 class="post-content__title" v-text="post.title"></h1>
     <div class="editor-writing">
       <div class="editor-writing__container" @click="goMemo">
         <template v-for="(p, i) in postContentProcessed">
           <!-- post content for initial display -->
           <p class="editor-writing__paragraph--visible" v-if="i <= shouldContentStopAtIndex" :key="`${post.id}-${i}`">
-            <!-- <span v-html="p"></span> -->
             <span v-if="isImg(p)" class="figure">
               <img v-if="isClientSide" :src="getImgSrc(p)" alt="post-content-img" @load="setContentImageOrientation(getImgSrc(p), $event)">
             </span>
@@ -24,10 +27,6 @@
             :class="`editor-writing__paragraph--${isReadMoreClicked ? 'visible' : 'invisible'}`" 
             :key="`${post.id}-${i}`"></p>
         </template>
-        <!--template v-if="isMemoPaid === false && !isProjectPublished">
-          <span :style="{ marginTop: '20px', display: 'inline-block' }">...... </span>
-          <span class="editor-writing__more" @click.prevent="memoDeductMach" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span>
-        </template-->
       </div>    
     </div>
     <a class="editor-writing-source" v-if="isArticleMain && hasSource" :href="post.link" target="_blank">
@@ -141,4 +140,15 @@
 <style lang="stylus" scoped>
   .editor-writing__container
     cursor pointer
+  .post-content__hint
+    display flex
+    align-items center
+    margin-bottom 5px
+    font-size 0.875rem
+    font-weight 500
+    line-height normal
+    color #808080
+    .lock
+      height 11px
+      margin-right 7px
 </style>
