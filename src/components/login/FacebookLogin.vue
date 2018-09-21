@@ -39,9 +39,11 @@
     name: 'FacebookLogin',
     methods: {
       login () {
+        this.$emit('update:isDoingLogin', true)
         const readyToLogin = (params) => {
           login(this.$store, params, get(this.$store, [ 'state', 'register-token', ]))
             .then((res) => {
+              this.$emit('update:isDoingLogin', false)
               if (res.status === 200) {
                 /**
                  * use location.replace instead of router.push to server-side render page
@@ -93,7 +95,13 @@
         }
       },
     },
-    props: [ 'type', ],
+    props: {
+      type: {},
+      isDoingLogin: {
+        type: Boolean,
+        default: false,
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>

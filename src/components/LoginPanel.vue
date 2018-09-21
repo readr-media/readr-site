@@ -16,7 +16,7 @@
       </div>
       <div class="container">
         <RecoverPassword v-if="isGoingRecoverPwd"></RecoverPassword>
-        <Login v-else-if="isLoginTabAcitve" @goRecoverPwd="goRecoverPwd"></Login>
+        <Login v-else-if="isLoginTabAcitve" @goRecoverPwd="goRecoverPwd" :isDoingLogin.sync="isDoingLogin"></Login>
         <Register v-else></Register>
       </div>
     </div>
@@ -25,10 +25,11 @@
         <span class="login-community active" v-text="''"></span>
       </div>
       <div class="container">
-        <FacebookLogin :type="isLoginTabAcitve ? 'login' : 'register'"></FacebookLogin>
-        <GooglePlusLogin :type="isLoginTabAcitve ? 'login' : 'register'"></GooglePlusLogin>
+        <FacebookLogin :type="isLoginTabAcitve ? 'login' : 'register'" :isDoingLogin.sync="isDoingLogin"></FacebookLogin>
+        <GooglePlusLogin :type="isLoginTabAcitve ? 'login' : 'register'" :isDoingLogin.sync="isDoingLogin"></GooglePlusLogin>
       </div>
     </div>
+    <div class="login-panel__modal" v-show="isDoingLogin"><Spinner :show="true"></Spinner></div>
   </div>
 </template>
 <script>
@@ -37,6 +38,7 @@
   import Login from 'src/components/login/Login.vue'
   import RecoverPassword from 'src/components/login/RecoverPassword.vue'
   import Register from 'src/components/register/Register.vue'
+  import Spinner from 'src/components/Spinner.vue'
 
   const debug = require('debug')('CLIENT:LoginPanel')
   const getDisposableToken = (store) => {
@@ -52,11 +54,13 @@
       Login,
       RecoverPassword,
       Register,
+      Spinner,
     },
     data () {
       return {
         isLoginTabAcitve: true,
         isGoingRecoverPwd: false,
+        isDoingLogin: false,
       }
     },
     name: 'LoginPanel',
@@ -101,15 +105,11 @@
     > div
       width 50%
       height 100%
-      display inline-block
-      // overflow hidden
       vertical-align top
       position relative
       margin 0 auto
       &:first-child
         border-right 1px solid #000
-      &:last-child
-        padding-left 30px
       > .title
         color #fff
         margin 0 auto 15px
@@ -127,10 +127,25 @@
         height calc(100% - 35px)
         margin 0 auto
         padding-right 24px
+    &__left, &__right
+      display inline-block
+    &__right
+      padding-left 30px
     &__left
       > .title
         > span
           cursor pointer
+    &__modal
+      position fixed !important
+      top 0 !important
+      left 0 !important
+      width 100vw !important
+      height 100vh !important
+      background-color rgba(0, 0, 0, 0.7) !important
+      z-index 99999
+      display flex
+      justify-content center
+      align-items center
   @media (min-width 950px)
     .login-panel
       max-width 950px

@@ -40,9 +40,11 @@
     name: 'GooglePlusLogin',
     methods: {
       login () {
+        this.$emit('update:isDoingLogin', true)
         const readyToLogin = (idToken) => {
           login(this.$store, { idToken, login_mode: 'google', }, get(this.$store, [ 'state', 'register-token', ]))
             .then((res) => {
+              this.$emit('update:isDoingLogin', false)
               if (res.status === 200) {
                 /**
                  * use location.replace instead of router.push to server-side render page
@@ -90,7 +92,13 @@
       },
     },
     mounted () {},
-    props: [ 'type', ],
+    props: {
+      type: {},
+      isDoingLogin: {
+        type: Boolean,
+        default: false,
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>

@@ -16,11 +16,9 @@
   import { get, } from 'lodash'
   import LoginPanel from '../components/LoginPanel.vue'
   import LoginPanelPackingTest from 'src/components/LoginPanelPackingTest.vue'
-  // import AppHeader from 'src/components/header/AppHeader.vue'
 
   export default {
     components: {
-      // 'app-header': AppHeader,
       LoginPanel,
       LoginPanelPackingTest,
     },
@@ -54,8 +52,6 @@
 .login-page
   min-height 100vh
   width 100%
-  // background-color #fff
-  // &__container
   max-width 1200px
   margin auto
   padding 25px 0
