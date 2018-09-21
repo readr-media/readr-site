@@ -334,9 +334,19 @@
       .then(() => this.loading = false)
       .catch(() => this.loading = false)
       if (_.get(this.$route, 'params.panel')) {
-        this.activePanel = _.get(this.$route, 'params.panel')
-        if (_.get(this.$route, 'params.tool') === 'point-manager' && this.isDonationActive) {
-          this.defaultTab = 3
+        switch (_.get(this.$route, 'params.panel')) {
+          case 'profile-edit':
+            break
+          default:
+            this.activePanel = _.get(this.$route, 'params.panel')
+        }
+        switch (_.get(this.$route, 'params.tool')) {
+          case 'following':
+            this.defaultTab = 2
+            break
+          case 'point-manager':
+            this.isDonationActive && (this.defaultTab = 3)
+            break
         }
       }      
     },

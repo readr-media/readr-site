@@ -65,7 +65,11 @@
         this.isCurrUser && (this.showLightBox = true)
       },
     },
-    mounted () {},
+    mounted () {
+      if (get(this.$route, 'params.panel') === 'profile-edit') {
+        this.isCurrUser && (this.showLightBox = true)
+      }
+    },
     props: {
       profile: {
         type: Object,

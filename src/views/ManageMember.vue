@@ -56,10 +56,20 @@
     },
     beforeMount () {
       if (get(this.$route, 'params.panel')) {
-        this.activePanel = get(this.$route, 'params.panel')
-        if (get(this.$route, 'params.tool') === 'point-manager' && this.isDonationActive) {
-          this.defaultTab = 1
+        switch (get(this.$route, 'params.panel')) {
+          case 'profile-edit':
+            break
+          default:
+            this.activePanel = get(this.$route, 'params.panel')
         }
+        switch (get(this.$route, 'params.tool')) {
+          case 'following':
+            this.defaultTab = 0
+            break
+          case 'point-manager':
+            this.isDonationActive && (this.defaultTab = 1)
+            break
+        }        
       }      
     },
     watch: {
