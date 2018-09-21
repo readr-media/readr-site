@@ -32,7 +32,8 @@ export default {
     'WORDING_GOOGLE_LOGIN' : '使用 Google 帳號登入',
     'WORDING_GOOGLE_REGISTER' : '使用 Google 帳號註冊',
     'WORDING_BTN_SAVE' : '儲存',
-    'WORDING_CREATE_PWD' : '新增密碼'    ,
+    'WORDING_CREATE_PWD' : '新增密碼',
+    'DUPLICATED_USER': '此 Email 已經是會員囉！請點擊上方登入字樣進行登入。',
   },
   'admin': {
     'SEARCH': '搜尋',

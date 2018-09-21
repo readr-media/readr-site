@@ -97,14 +97,16 @@
               }
             }).catch(({ err, }) => {
               this.shouldShowSpinner = false
-              if (err === 'User Already Existed') {
-                this.alertFlags.mail = true
-                this.alertMsgs.mail = this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED')
+              if (err === 'User Already Existed' || err === 'User Duplicated') {
+                this.alert.mail = {
+                  flag: true,
+                  msg: this.$t('login.DUPLICATED_USER'),
+                }  
                 this.$forceUpdate()
               } else {
                 this.resMsg = this.$t('login.WORDING_REGISTER_INFAIL')
-                window.grecaptcha.reset(this.recaptcha)
               }
+              window.grecaptcha.reset(this.recaptcha)
             })
           }
         })
