@@ -11,6 +11,7 @@ export function createStore () {
     state: {
       'customEditors': [],
       'commentCount': [],
+      'commentsForHome': [],
       'consumeFlag': {
         'active': false,
         'item': {},

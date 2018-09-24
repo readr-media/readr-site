@@ -18,7 +18,7 @@
         <div class="aside-latest-comments__list">
           <HomeAsideLatestComment
             class="aside-latest-comments__list-item"
-            v-for="comment in latestCommentsList"
+            v-for="comment in commentsForHome"
             :key="comment.id"
             :comment="comment"
           />
@@ -131,7 +131,7 @@ const fetchReportsList = (store, {
 //   })
 // }
 
-const fetchComment = (store, { params = {}, } = {}) => store.dispatch('FETCH_COMMENT', {
+const fetchComment = (store, { params = {}, } = {}) => store.dispatch('FETCH_COMMENT_FOR_HOME', {
   params: Object.assign({}, { sort: DEFAULT_SORT_LATEST_COMMENTS, max_result: MAXRESULT_LATEST_COMMENTS, }, params),
 })
 
@@ -238,15 +238,15 @@ export default {
       currentPageLatest: 1,
       endPage: false,
       articlesListMainCategory: this.$route.path !== '/hot' ? '/' : '/hot',
-      latestCommentsList: [],
       hadRouteBeenNavigate: false,
     } 
   },
   computed: {
     ...mapState({
-      postsLatest: state => get(state, [ 'publicPosts', 'items', ], []),
-      postsHot: state => get(state, [ 'publicPostsHot', 'items', ], []),
-      postSingle: state => get(state, [ 'publicPostSingle', 'items', 0, ], {}), // store binding to the post fetched while user visiting /post/:postid
+      commentsForHome: state => get(state, 'commentsForHome', []),
+      postsLatest: state => get(state, 'publicPosts.items', []),
+      postsHot: state => get(state, 'publicPostsHot.items', []),
+      postSingle: state => get(state, 'publicPostSingle.items.0', {}), // store binding to the post fetched while user visiting /post/:postid
       memos: state => get(state, 'publicMemos', []),
       reports: state => get(state, 'publicReports', []),
     }),
@@ -347,10 +347,6 @@ export default {
       })
 
       fetchComment(this.$store)
-      .then((comments) => {
-        this.latestCommentsList = comments
-      })
-
       getUserFollowing(this.$store, { resource: 'post', })
     }
   
