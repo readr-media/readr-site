@@ -76,8 +76,7 @@ export default {
       return get(this.post, 'type', POST_TYPE.REVIEW) === POST_TYPE.NEWS
     }, 
     isMemo () {
-      return get(this.post, 'flag') === 'memo'
-        || (this.$route.fullPath.split('/')[ 1 ] === 'series' && get(this.$route, 'params.slug') && get(this.$route, 'params.subItem'))
+      return get(this.post, 'projectId') && !get(this.post, 'slug')
     },   
     isMemoPaid () {
       return get(this.post, 'project.paid')
@@ -98,7 +97,7 @@ export default {
   },
   data () {
     return {
-      isContentEmpty: true,
+      isContentEmpty: !get(this.post, 'id') || this.isMemo,
       isLoginBtnACtive: false,
     }
   },
@@ -115,7 +114,6 @@ export default {
   },
   mounted () {
     if (!this.isPostEmpty) {
-      debug(this.isMemo && !this.isMemoPaid && !this.isNews)      
       if (this.isMemo && !this.isMemoPaid) {
         this.isContentEmpty = true
         !this.me.id && (this.isLoginBtnACtive = true)
