@@ -257,6 +257,20 @@ export default {
   },
   beforeMount () {
     getUserFollowing(this.$store, { resource: 'post', })
+    if (!get(this.postsLatest, 'length')) {
+      fetchPosts(this.$store).then(() => {
+        if (this.$store.state.isLoggedIn) {
+          const postIdsLatest = get(this.$store.state.publicPosts, 'items', []).map(post => post.id)
+          if (postIdsLatest.length > 0) {
+            fetchEmotion(this.$store, { resource: 'post', ids: postIdsLatest, emotion: 'like', })
+            fetchEmotion(this.$store, { resource: 'post', ids: postIdsLatest, emotion: 'dislike', })
+          } 
+        }
+      })
+    }
+    if (!get(this.commentsForHome, 'length')) {
+      fetchComment(this.$store)
+    }
   },
   mounted () {
     window.onscroll = () => {
