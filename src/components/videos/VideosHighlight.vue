@@ -9,7 +9,7 @@
         <h2 v-text="video.title"></h2>
         <app-share-button class="videosHighlight__share"></app-share-button>
       </div>
-      <CommentContainer class="videosHighlight__info-comment" v-if="showComment" :asset="asset" :assetId="get(video, [ 'id', ])"></CommentContainer>
+      <CommentContainer class="videosHighlight__info-comment" v-if="showComment" :asset="asset" :assetId="get(video, [ 'id', ])" :isPublic="!get(me, 'id')"></CommentContainer>
     </div>
   </section>
 </template>
@@ -36,6 +36,9 @@
       asset () {
         return `${get(this.$store, 'state.setting.HOST')}/post/${get(this.video, [ 'id', ])}`
       },      
+      me () {
+        return get(this.$store, 'state.profile', {})
+      },
       link () {
         if (this.video.link) {
           return this.video.link.split(';')[0]

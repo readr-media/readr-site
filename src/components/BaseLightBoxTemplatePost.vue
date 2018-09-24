@@ -30,6 +30,7 @@
       :asset="asset"
       :assetId="post.id"
       :assetRefId="assetRefId"
+      :isPublic="!get(me, 'id')"
     />  
   </div>
 </template>
@@ -53,6 +54,9 @@
         return `${get(this.$store, 'state.setting.HOST')}/${get(this.post, 'flag') === 'memo' ? `series/${get(this.$route, 'params.slug')}` : 'post'}/${this.post.id}`
       },      
       isClientSide,
+      me () {
+        return get(this.$store, 'state.profile', {})
+      },
       shouldRenderComment () {
         return this.post.id ? true : false
       },
@@ -63,6 +67,7 @@
       }
     },
     methods: {
+      get,
       updatedAtYYYYMMDD,
       toogleComment () {
         this.showComment = !this.showComment
