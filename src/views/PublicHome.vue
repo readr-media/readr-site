@@ -45,6 +45,8 @@ import Invite from 'src/components/invitation/Invite.vue'
 import PostItem from 'src/components/post/PostItem.vue'
 import MemoFigure from 'src/components/projects/MemoFigure.vue'
 import TagNavAside from 'src/components/tag/TagNavAside.vue'
+import sanitizeHtml from 'sanitize-html'
+import truncate from 'html-truncate'
 
 const debug = require('debug')('CLIENT:Home')
 
@@ -135,10 +137,10 @@ export default {
   metaInfo () {
     if (this.$route.params.postId) {
       return {
-        ogTitle: this.postSingle.ogTitle,
-        description: this.postSingle.ogDescription,
+        ogTitle: get(this.postSingle, 'ogTitle') || get(this.postSingle, 'title'),
+        description: get(this.postSingle, 'ogDescription') || truncate(sanitizeHtml(get(this.postSingle, 'content', ''), { allowedTags: [], }), 100),
         metaUrl: this.$route.path,
-        metaImage: this.postSingle.ogImage,
+        metaImage: get(this.postSingle, 'ogImage'),
       }
     } else {
       return {
