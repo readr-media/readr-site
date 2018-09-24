@@ -14,7 +14,12 @@ const SET_COMMENTS_ME = (state, { comments, }) => {
   profile && (profile.comments = comments)
 }
 
+const SET_COMMENTS_FOR_HOME = (state, { comments, }) => {
+  state[ 'commentsForHome' ] = comments
+}
+
 export {
   SET_COMMENT_COUNT,
+  SET_COMMENTS_FOR_HOME,
   SET_COMMENTS_ME,
 }
