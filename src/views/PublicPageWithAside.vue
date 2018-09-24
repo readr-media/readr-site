@@ -20,7 +20,7 @@
       </div>
       <div class="public-page__aside" :class="asideType.toLowerCase()">
         <div class="public-page__aside-container aside-container">
-          <CommentContainer :asset="commentAsset" :assetId="assetId" v-if="asideType === ASIDE_TYPE.COMMENTS"></CommentContainer>
+          <CommentContainer :asset="commentAsset" :assetId="assetId" v-if="asideType === ASIDE_TYPE.COMMENTS" :isPublic="!get(me, 'id')"></CommentContainer>
           <TagNavAside class="aside-container__tag-nav-aside" v-else-if="asideType === ASIDE_TYPE.TAGS" />
         </div>
         <!--render else empty block for ss/cs mating-->
@@ -120,6 +120,9 @@ export default {
     isClientSide,
     isSeriesDonate () {
       return this.route === 'series' && get(this.$route, 'params.subItem') === 'donate'
+    },
+    me () {
+      return get(this.$store, 'state.profile', {})
     },
     route () {
       return this.$route.fullPath.split('/')[ 1 ]

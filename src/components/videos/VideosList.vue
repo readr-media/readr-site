@@ -17,7 +17,7 @@
             <span class="videosList__item-info-icon-count">{{ get(video, [ 'videoViews' ]) || 0 }}</span>
           </div>
         </div>
-        <CommentContainer :class="`videosList__item-comment hidden video-${get(video, [ 'id' ])}`" v-if="showComment" :asset="asset(get(video, [ 'id' ]))" :assetId="get(video, [ 'id' ])"></CommentContainer>
+        <CommentContainer :class="`videosList__item-comment hidden video-${get(video, [ 'id' ])}`" :isPublic="!get(me, 'id')" v-if="showComment" :asset="asset(get(video, [ 'id' ]))" :assetId="get(video, [ 'id' ])"></CommentContainer>
       </div>
     </template>
     <button v-if="hasMore" class="videosList__btn" @click="$_videosList_loadMore">More</button>
@@ -35,6 +35,11 @@
     components: {
       CommentCount,
       CommentContainer,
+    },
+    computed: {
+      me () {
+        return get(this.$store, 'state.profile', {})
+      },
     },
     data () {
       return {

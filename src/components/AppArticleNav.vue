@@ -21,7 +21,7 @@
       </template>
     </nav>
     <slot name="tagNav"></slot>
-    <CommentContainer v-if="shouldShowComment || showComment" :asset="asset" :assetId="postId" :assetRefId="postRefId"></CommentContainer>
+    <CommentContainer v-if="shouldShowComment || showComment" :asset="asset" :assetId="postId" :assetRefId="postRefId" :isPublic="!get(me, 'id')"></CommentContainer>
   </div>
 </template>
 
@@ -120,6 +120,9 @@ export default {
     commentIcon () {
       return this.toogleComment ? '/public/icons/comment-blue.png' : '/public/icons/comment-quote.png'
     },
+    me () {
+      return get(this.$store, 'state.profile', {})
+    },
   },
   data () {
     return {
@@ -127,6 +130,7 @@ export default {
     }
   },
   methods: {
+    get,
     renderComment (event) {
       if (event) event.preventDefault()
       if (this.inLightbox) {
