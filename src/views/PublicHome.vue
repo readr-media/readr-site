@@ -97,63 +97,56 @@ const getUserFollowing = (store, { id = get(store, 'state.profile.id'), resource
   })
 }
 
-const pageJump = ({ store, to, next, }) => {
-  if ('postId' in to.params && to.params.postId) {
-    fetchPost(store, { id: to.params.postId, }).then(({ status, }) => {
-      if (status === 'error') {
-        if (process.browser) {
-          next('/404')
-        } else {
-          const e = new Error()
-          e.massage = 'Page Not Found'
-          e.code = '404'
-          throw e  
-        }
-      } else {
-        next()
-      }
-    })
-  } else {
-    next()
-  }
-}
-
 export default {
   name: 'Home',
-  // Uncomment this when v1.0 is released
-  // asyncData ({ store, route, }) {
-  //   debug('Starting to fetch data by asyncData.')
-  //   let reqs = [ 
-  //     fetchPosts(store),
-  //     fetchPosts(store, { category: 'hot', }),
-  //     fetchProjectsList(store, { max_result: 5, status: PROJECT_STATUS.WIP, }),
-  //     fetchProjectsList(store, { max_result: 2, status: PROJECT_STATUS.DONE, }),
-  //   ] 
-  //   if (route.params.postId) {
-  //     reqs.push(fetchPost(store, { id: route.params.postId, })) 
-  //   }
-  //   return Promise.all(reqs)
-  // },
-  // metaInfo () {
-  //   if (this.$route.params.postId) {
-  //     return {
-  //       ogTitle: this.postSingle.ogTitle,
-  //       description: this.postSingle.ogDescription,
-  //       metaUrl: this.$route.path,
-  //       metaImage: this.postSingle.ogImage,
-  //     }
-  //   } else {
-  //     if (this.$route.path === '/') {
-  //       return {
-  //         ogTitle: '視角',
-  //       }
-  //     } else if (this.$route.path === '/hot') {
-  //       return {
-  //         ogTitle: '焦點',
-  //       }
-  //     }
-  //   }
-  // },
+  asyncData ({ store, route, }) {
+    const jobs = !get(store, 'state.publicPosts.items.length') ? [
+      fetchPosts(store).then(() => {
+        if (store.state.isLoggedIn) {
+          const postIdsLatest = get(store.state.publicPosts, 'items', []).map(post => post.id)
+          if (postIdsLatest.length > 0) {
+            fetchEmotion(store, { resource: 'post', ids: postIdsLatest, emotion: 'like', })
+            fetchEmotion(store, { resource: 'post', ids: postIdsLatest, emotion: 'dislike', })
+          } 
+        }
+      }),
+      fetchComment(store),
+    ] : []
+  
+    if (get(route, 'params.postId')) {
+      jobs.push(fetchPost(store, { id: get(route, 'params.postId'), }).then(({ status, }) => {
+        if (status === 'error') {
+          if (process.browser) {
+            this.$router.push('/404')
+          } else {
+            const e = new Error()
+            e.massage = 'Page Not Found'
+            e.code = '404'
+            throw e  
+          }
+        } else {
+          return
+        }
+      }))
+    }
+
+    return Promise.all(jobs)
+  },
+  metaInfo () {
+    if (this.$route.params.postId) {
+      return {
+        ogTitle: this.postSingle.ogTitle,
+        description: this.postSingle.ogDescription,
+        metaUrl: this.$route.path,
+        metaImage: this.postSingle.ogImage,
+      }
+    } else {
+      return {
+        description: this.$i18n ? this.$t('OG.DESCRIPTION') : '',
+      }
+
+    }
+  },
   components: {
     AppTitledList,
     AppNavExternalLinks,
@@ -251,13 +244,6 @@ export default {
     },
   },
   beforeRouteEnter (to, from, next) {
-    // const store = createStore()
-    debug('Hook: beforeRouteEnter', 'postId' in to.params)
-    debug(to)
-    debug(from)
-    debug(`to`, isCurrentRoutePath(to, '/post/:postId'))
-    debug(`from`, isCurrentRoutePath(from, '/'))
-    // pageJump({ store, to, next, })
     next(vm => {
       if (isCurrentRoutePath(to, '/post/:postId') && !isCurrentRoutePath(from, '/')) {
         vm.hadRouteBeenNavigate = true
@@ -265,51 +251,10 @@ export default {
     })
   },
   beforeRouteUpdate (to, from, next) {
-    debug('Hook: beforeRouteUpdate', 'postId' in to.params)
-    pageJump({ store: this.$store, to, next, })
+    next()
   },
   beforeMount () {
-
-    const process = () => {
-      // Beta version code
-      let reqs = [
-        fetchPosts(this.$store),
-      ]
-      if (this.$route.params.postId) {
-        reqs.push(fetchPost(this.$store, { id: this.$route.params.postId, })) 
-      }
-      Promise.all(reqs).then(() => {
-        if (this.$store.state.isLoggedIn) {
-          const postIdsLatest = get(this.$store.state.publicPosts, 'items', []).map(post => post.id)
-          if (postIdsLatest.length > 0) {
-            fetchEmotion(this.$store, { resource: 'post', ids: postIdsLatest, emotion: 'like', })
-            fetchEmotion(this.$store, { resource: 'post', ids: postIdsLatest, emotion: 'dislike', })
-          } 
-        }
-      })
-
-      fetchComment(this.$store)
-      getUserFollowing(this.$store, { resource: 'post', })
-    }
-  
-    if (get(this.$route, 'params.postId')) {
-      fetchPost(this.$store, { id: get(this.$route, 'params.postId'), }).then(({ status, }) => {
-        if (status === 'error') {
-          if (process.browser) {
-            this.$router.push('/404')
-          } else {
-            const e = new Error()
-            e.massage = 'Page Not Found'
-            e.code = '404'
-            throw e  
-          }
-        } else {
-          process()
-        }
-      })  
-    } else {
-      process()
-    }
+    getUserFollowing(this.$store, { resource: 'post', })
   },
   mounted () {
     window.onscroll = () => {

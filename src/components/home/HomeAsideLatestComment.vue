@@ -1,5 +1,5 @@
 <template>
-  <router-link class="latest-comment" :to="`/${commentResource.route}/${commentResource.param}`">
+  <div class="latest-comment" @click="goPost">
     <div class="latest-comment__info">
       <div class="latest-comment__icon-nickname-container">
         <img class="latest-comment__icon" src="/public/icons/quotation.png" alt="latest-comment__icon">
@@ -11,7 +11,7 @@
       <span class="latest-comment__body" v-html="commentBodyTruncate"></span>
       <span v-if="isCommentBodyExceed" class="latest-comment__more">...<span class="latest-comment__more" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span></span>
     </div>
-  </router-link>
+  </div>
 </template>
 
 <script>
@@ -58,6 +58,11 @@ export default {
     },
     isCommentBodyExceed () {
       return !isEqual(this.commentBody, this.commentBodyTruncate)
+    },
+  },
+  methods: {
+    goPost () {
+      this.$router.push(`/${this.commentResource.route}/${this.commentResource.param}`)
     },
   },
 }
