@@ -30,9 +30,8 @@
 </template>
 
 <script>
-import { get, uniqBy, find, unionBy, } from 'lodash'
+import { get, uniqBy, find, } from 'lodash'
 import { mapState, } from 'vuex'
-import { MEMO_PUBLISH_STATUS, REPORT_PUBLISH_STATUS, PROJECT_PUBLISH_STATUS, } from '../../api/config'
 import { isScrollBarReachBottom, isElementReachInView, isCurrentRoutePath, } from 'src/util/comm'
 // import { createStore, } from '../store'
 import AppTitledList from 'src/components/AppTitledList.vue'
@@ -49,11 +48,8 @@ import TagNavAside from 'src/components/tag/TagNavAside.vue'
 
 const debug = require('debug')('CLIENT:Home')
 
-const MAXRESULT_MEMOS = 3
 const MAXRESULT_POSTS = 10
-const MAXRESULT_REPORTS = 4
 const MAXRESULT_LATEST_COMMENTS = 10
-// const MAXRESULT_VIDEOS = 1
 const DEFAULT_PAGE = 1
 const DEFAULT_SORT = '-published_at'
 const DEFAULT_SORT_LATEST_COMMENTS = '-created_at'
@@ -61,23 +57,6 @@ const DEFAULT_CATEGORY = 'latest'
 
 const fetchEmotion = (store, params) => {
   return store.dispatch('FETCH_EMOTION_BY_RESOURCE', params)
-}
-
-const fetchMemos = (store, {
-  max_result = MAXRESULT_MEMOS,
-  sort = DEFAULT_SORT,
-} = {}) => {
-  return store.dispatch('GET_PUBLIC_MEMOS', {
-    params: {
-      member_id: get(store, 'state.profile.id'),
-      max_result: max_result,
-      where: {
-        memo_publish_status: MEMO_PUBLISH_STATUS.PUBLISHED,
-        project_publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
-      },
-      sort: sort,
-    },
-  })
 }
 
 const fetchPost = (store, { id, }) => {
@@ -105,31 +84,6 @@ const fetchPosts = (store, {
     },
   })
 }
-
-const fetchReportsList = (store, {
-  max_result = MAXRESULT_REPORTS,
-  sort = DEFAULT_SORT,
-} = {}) => {
-  return store.dispatch('GET_PUBLIC_REPORTS', {
-    params: {
-      max_result: max_result,
-      where: {
-        report_publish_status: REPORT_PUBLISH_STATUS.PUBLISHED,
-        project_publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
-      },
-      sort: sort,
-    },
-  })
-}
-
-// const fetchPointHistories = (store, { objectIds, objectType, }) => {
-//   return store.dispatch('GET_POINT_HISTORIES', {
-//     params: {
-//       objectType: objectType,
-//       objectIds: objectIds,
-//     },
-//   })
-// }
 
 const fetchComment = (store, { params = {}, } = {}) => store.dispatch('FETCH_COMMENT_FOR_HOME', {
   params: Object.assign({}, { sort: DEFAULT_SORT_LATEST_COMMENTS, max_result: MAXRESULT_LATEST_COMMENTS, }, params),
@@ -245,27 +199,18 @@ export default {
     ...mapState({
       commentsForHome: state => get(state, 'commentsForHome', []),
       postsLatest: state => get(state, 'publicPosts.items', []),
-      postsHot: state => get(state, 'publicPostsHot.items', []),
       postSingle: state => get(state, 'publicPostSingle.items.0', {}), // store binding to the post fetched while user visiting /post/:postid
-      memos: state => get(state, 'publicMemos', []),
-      reports: state => get(state, 'publicReports', []),
     }),
-    postsHome () {
-      return unionBy(this.postsLatest, this.postsHot, 'id', [])
-    },
     postsMain () {
-      return this.articlesListMainCategory !== '/hot' ? this.postsLatest : this.postsHot
+      return this.postsLatest
     },
     postsMainTagIds () {
       return uniqBy(this.postsMain.map(post => post.tags).filter(tags => tags).reduce((all, tags) => all.concat(tags), []), 'id').map(tag => tag.id)
     },
-    // postsAside () {
-    //   return this.articlesListMainCategory !== '/hot' ? this.postsHot : this.postsLatest
-    // },
     postLightBox () {
       if (this.showLightBox) {
         debug('Going to show lightbox of content for post', get(this.$route, 'params.postId'))
-        const findPostInList = find(this.postsHome, [ 'id', Number(this.$route.params.postId), ])
+        const findPostInList = find(this.postsMain, [ 'id', Number(this.$route.params.postId), ])
         debug('findPostInList', findPostInList)
         debug('this.postSingle', this.postSingle)
         return findPostInList || this.postSingle
@@ -328,10 +273,7 @@ export default {
     const process = () => {
       // Beta version code
       let reqs = [
-        fetchMemos(this.$store),
         fetchPosts(this.$store),
-        fetchPosts(this.$store, { category: 'hot', }),
-        fetchReportsList(this.$store),
       ]
       if (this.$route.params.postId) {
         reqs.push(fetchPost(this.$store, { id: this.$route.params.postId, })) 
