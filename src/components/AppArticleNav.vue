@@ -116,7 +116,6 @@ export default {
       const ids = get(find(get(this.$store, [ 'state', 'emotionByResource', this.resource, 'dislike', ], []), { resourceID: this.postId, }), 'followers', []) || [] 
       return this.$store.state.isLoggedIn && ids.indexOf(this.$store.state.profile.id) !== -1
     },
-
     commentIcon () {
       return this.toogleComment ? '/public/icons/comment-blue.png' : '/public/icons/comment-quote.png'
     },
