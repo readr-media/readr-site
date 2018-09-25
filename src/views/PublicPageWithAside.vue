@@ -16,7 +16,10 @@
     </template>
     <div class="public-page__container">
       <div class="public-page__main">
-        <PostList></PostList>
+        <PostList
+          :fetchPostAndReportByTag="fetchPostAndReportByTag"
+          :fetchPublicMemos="fetchPublicMemos"
+          :fetchReportsList="fetchReportsList"></PostList>
       </div>
       <div class="public-page__aside" :class="asideType.toLowerCase()">
         <div class="public-page__aside-container aside-container">
@@ -40,6 +43,7 @@ import TagNav from 'src/components/tag/TagNav.vue'
 import TagNavAside from 'src/components/tag/TagNavAside.vue'
 import sanitizeHtml from 'sanitize-html'
 import truncate from 'html-truncate'
+import { MEMO_PUBLISH_STATUS, PROJECT_PUBLISH_STATUS, PROJECT_STATUS, REPORT_PUBLISH_STATUS, } from 'api/config'
 import { isClientSide, } from 'src/util/comm'
 import { get, } from 'lodash'
 
@@ -47,6 +51,9 @@ const ASIDE_TYPE = {
   COMMENTS: 'COMMENTS',
   TAGS: 'TAGS',
 }
+const MAXRESULT_POSTS = 10
+const DEFAULT_PAGE = 1
+const DEFAULT_SORT = '-memo_order,-updated_at'
 
 const debug = require('debug')('CLIENT:PublicPageWithAside')
 
@@ -62,27 +69,128 @@ const fetchFollowing = (store, params) => {
   return store.dispatch('GET_FOLLOWING_BY_RESOURCE', params)
 }
 
+const fetchPostAndReportByTag = (store, {
+  tagId,
+  max_result = MAXRESULT_POSTS,
+  page = DEFAULT_PAGE,
+  sort = '-published_at',
+  datetime,
+  nextLink,
+} = {}) => {
+  const time = datetime ? datetime : new Date().toISOString()
+  const sortClean = sort.replace('-', '')
+  return store.dispatch('GET_POST_REPORT_BY_TAG', {
+    tagId,
+    params: {
+      max_result,
+      page,
+      sort,
+      filter: `pnr:${sortClean}<=${time}`,
+    },
+    nextLink,
+  })
+}
+
+
+const fetchProjectSingle = (store, proj_slug) => {
+  return store.dispatch('GET_PUBLIC_PROJECT', {
+    params: {
+      where: {
+        status: [ PROJECT_STATUS.WIP, PROJECT_STATUS.DONE, ],
+        publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
+      },
+      slugs: [ proj_slug, ],
+    },
+  })
+}
+
+const fetchPublicMemos = (store, { 
+  max_result = MAXRESULT_POSTS, 
+  mode = 'set',
+  proj_ids = [],
+  sort = DEFAULT_SORT, 
+  page = DEFAULT_PAGE,
+} = {}) => { 
+  return store.dispatch('GET_PUBLIC_MEMOS', { 
+    params: { 
+      member_id: get(store, 'state.profile.id', -1), 
+      project_id: proj_ids,
+      max_result: max_result, 
+      page,
+      where: { 
+        memo_publish_status: MEMO_PUBLISH_STATUS.PUBLISHED, 
+        project_publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED, 
+      }, 
+      sort: sort, 
+    },
+    mode,
+  })
+}
+
+const fetchReportsList = (store, {
+  max_result = 10,
+  proj_ids = [],
+  sort = '-updated_at',
+} = {}) => {
+  return store.dispatch('GET_PUBLIC_REPORTS', {
+    params: {
+      max_result: max_result,
+      project_id: proj_ids,
+      where: {
+        report_publish_status: REPORT_PUBLISH_STATUS.PUBLISHED,
+      },
+      sort: sort,
+    },
+  })
+}
+
 const switchOn = (store, item) => store.dispatch('SWITCH_ON_DONATE_PANEL', { item, })
  
 export default {
   name: 'PublicPageWithAside',
+  asyncData ({ store, route, }) {
+    const processes = []
+    // if (get(route, 'params.subItem') && get(route, 'params.subItem') !== 'donate') {
+    //   processes.push(fetchMemoSingle(store, get(route, 'params.subItem')))
+    // }
+    if (route.fullPath.split('/')[ 1 ] === 'series' && get(route, 'params.slug')) {
+      processes.push(fetchProjectSingle(store, get(route, 'params.slug')).then(proj => {
+        const projId = get(proj, 'id')
+        return Promise.all([
+          fetchPublicMemos(store, {
+            mode: 'set',
+            proj_ids: [ projId, ],
+            page: 1,
+          }),
+          fetchReportsList(store, {
+            proj_ids: [ projId, ],
+            page: 1,  
+          }),
+        ])
+      }))
+    } else if (route.fullPath.split('/')[ 1 ] === 'tag' && get(route, 'params.tagId')) {
+      processes.push(fetchPostAndReportByTag(store, {
+        tagId: get(route, 'params.tagId'),
+      }))
+    }
+    return processes.length > 0 ? Promise.all(processes) : Promise.resolve()
+  },
   metaInfo () {
     switch (this.route) {
       case 'series':
         if (this.$route.params.subItem) {
-          debug('hihi,', this.postSingle)
-          debug('hihi,', this.postSingle)
-          debug('hihi,', this.postSingle)
-          debug('hihi,', this.postSingle)
-          debug('hihi,', this.postSingle)
+          debug(truncate(sanitizeHtml(get(this.postSingle, 'content', ''), { allowedTags: [], }), 100))
+          debug(truncate(sanitizeHtml(get(this.postSingle, 'content', ''), { allowedTags: [], }), 100))
           return {
-            ogTitle: get(this.postSingle, 'ogTitle') || get(this.postSingle, 'title'),
-            description: get(this.postSingle, 'ogDescription') || truncate(sanitizeHtml(get(this.postSingle, 'content', ''), { allowedTags: [], }), 100),
+            title: get(this.postSingle, 'title'),
+            ogTitle: get(this.postSingle, 'title'),
+            description: truncate(sanitizeHtml(get(this.postSingle, 'content', ''), { allowedTags: [], }), 100),
             metaUrl: this.$route.path,
             metaImage: get(this.postSingle, 'ogImage'),              
           }
         } else {
           return {
+            title: get(this.projectSingle, 'title'),
             ogTitle: get(this.projectSingle, 'ogTitle') || get(this.projectSingle, 'title'),
             description: get(this.postSingle, 'ogDescription') || get(this.projectSingle, 'description'),
             metaUrl: this.$route.path,
@@ -97,21 +205,6 @@ export default {
         metaUrl: this.$route.path,         
        }
     }
-    // if (this.$route.params.postId) {
-    //   return {
-    //     ogTitle: get(this.postSingle, 'ogTitle') || get(this.postSingle, 'title'),
-    //     description: get(this.postSingle, 'ogDescription') || truncate(sanitizeHtml(get(this.postSingle, 'content', ''), { allowedTags: [], }), 100),
-    //     metaUrl: this.$route.path,
-    //     metaImage: get(this.postSingle, 'ogImage'),
-    //   }
-    // } else {
-    //   return {
-    //     description: this.$i18n ? this.$t('OG.DESCRIPTION') : '',
-    //     ogTitle: this.$i18n ? this.$t('OG.TITLE') : '',
-    //     metaUrl: this.$route.path,
-    //     title: this.$i18n ? this.$t('OG.TITLE') : '',
-    //   }
-    // }
   },  
   props: {
     hasLeading: {
@@ -207,6 +300,9 @@ export default {
   },
   methods: {
     get,
+    fetchPublicMemos,
+    fetchReportsList,
+    fetchPostAndReportByTag,
     donateCheck () {
       this.isSeriesDonate && this.projectSingle && switchOn(this.$store, this.projectSingle)
     },
@@ -218,7 +314,6 @@ export default {
     getUserFollowing(this.$store, { resource: 'tag', })
     getUserFollowing(this.$store, { resource: 'project', })
     debug('isSeriesDonate', this.isSeriesDonate)
-    
   },
   mounted () {
     this.donateCheck()
