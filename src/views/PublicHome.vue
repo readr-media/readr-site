@@ -103,15 +103,7 @@ export default {
   name: 'Home',
   asyncData ({ store, route, }) {
     const jobs = !get(store, 'state.publicPosts.items.length') ? [
-      fetchPosts(store).then(() => {
-        if (store.state.isLoggedIn) {
-          const postIdsLatest = get(store.state.publicPosts, 'items', []).map(post => post.id)
-          if (postIdsLatest.length > 0) {
-            fetchEmotion(store, { resource: 'post', ids: postIdsLatest, emotion: 'like', })
-            fetchEmotion(store, { resource: 'post', ids: postIdsLatest, emotion: 'dislike', })
-          } 
-        }
-      }),
+      fetchPosts(store),
       fetchComment(store),
     ] : []
   
@@ -131,7 +123,6 @@ export default {
         }
       }))
     }
-
     return Promise.all(jobs)
   },
   metaInfo () {
@@ -221,6 +212,15 @@ export default {
     closeLightBox () {
       this.$router.push(this.articlesListMainCategory)
     },
+    getEmotion () {
+      if (this.$store.state.isLoggedIn) {
+        const postIdsLatest = get(this.$store.state.publicPosts, 'items', []).map(post => post.id)
+        if (postIdsLatest.length > 0) {
+          fetchEmotion(this.$store, { resource: 'post', ids: postIdsLatest, emotion: 'like', })
+          fetchEmotion(this.$store, { resource: 'post', ids: postIdsLatest, emotion: 'dislike', })
+        } 
+      }
+    },
     loadmoreLatest () {
       fetchPosts(this.$store, {
         mode: 'update',
@@ -259,14 +259,10 @@ export default {
     getUserFollowing(this.$store, { resource: 'post', })
     if (!get(this.postsLatest, 'length')) {
       fetchPosts(this.$store).then(() => {
-        if (this.$store.state.isLoggedIn) {
-          const postIdsLatest = get(this.$store.state.publicPosts, 'items', []).map(post => post.id)
-          if (postIdsLatest.length > 0) {
-            fetchEmotion(this.$store, { resource: 'post', ids: postIdsLatest, emotion: 'like', })
-            fetchEmotion(this.$store, { resource: 'post', ids: postIdsLatest, emotion: 'dislike', })
-          } 
-        }
+        this.getEmotion()
       })
+    } else {
+      this.getEmotion()
     }
     if (!get(this.commentsForHome, 'length')) {
       fetchComment(this.$store)
