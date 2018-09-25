@@ -32,10 +32,10 @@
         </li>
       </InviteSwitcher>
     </ol>
-    <div class="online">
+    <!--div class="online">
       <img class="online__calendar" src="/public/icons/calendar.png" alt="">
       <p class="online__text" v-text="$t('ONLINE')"></p>
-    </div>
+    </div-->
   </nav>
 </template>
 
