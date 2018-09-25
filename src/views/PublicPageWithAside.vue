@@ -38,6 +38,8 @@ import Leading from 'src/components/leading/Leading.vue'
 import PostList from 'src/components/post/PostList.vue'
 import TagNav from 'src/components/tag/TagNav.vue'
 import TagNavAside from 'src/components/tag/TagNavAside.vue'
+import sanitizeHtml from 'sanitize-html'
+import truncate from 'html-truncate'
 import { isClientSide, } from 'src/util/comm'
 import { get, } from 'lodash'
 
@@ -64,6 +66,53 @@ const switchOn = (store, item) => store.dispatch('SWITCH_ON_DONATE_PANEL', { ite
  
 export default {
   name: 'PublicPageWithAside',
+  metaInfo () {
+    switch (this.route) {
+      case 'series':
+        if (this.$route.params.subItem) {
+          debug('hihi,', this.postSingle)
+          debug('hihi,', this.postSingle)
+          debug('hihi,', this.postSingle)
+          debug('hihi,', this.postSingle)
+          debug('hihi,', this.postSingle)
+          return {
+            ogTitle: get(this.postSingle, 'ogTitle') || get(this.postSingle, 'title'),
+            description: get(this.postSingle, 'ogDescription') || truncate(sanitizeHtml(get(this.postSingle, 'content', ''), { allowedTags: [], }), 100),
+            metaUrl: this.$route.path,
+            metaImage: get(this.postSingle, 'ogImage'),              
+          }
+        } else {
+          return {
+            ogTitle: get(this.projectSingle, 'ogTitle') || get(this.projectSingle, 'title'),
+            description: get(this.postSingle, 'ogDescription') || get(this.projectSingle, 'description'),
+            metaUrl: this.$route.path,
+            metaImage: get(this.projectSingle, 'ogImage') || get(this.projectSingle, 'heroImage'),            
+          }
+        }
+      case 'tag':
+       return {
+        description: this.$i18n ? this.$t('OG.DESCRIPTION') : '',
+        ogTitle: this.$i18n ? get(this.tagsForNav, '0.text', this.$t('OG.TITLE')) : '',
+        title: this.$i18n ? get(this.tagsForNav, '0.text', this.$t('OG.TITLE')) : '',
+        metaUrl: this.$route.path,         
+       }
+    }
+    // if (this.$route.params.postId) {
+    //   return {
+    //     ogTitle: get(this.postSingle, 'ogTitle') || get(this.postSingle, 'title'),
+    //     description: get(this.postSingle, 'ogDescription') || truncate(sanitizeHtml(get(this.postSingle, 'content', ''), { allowedTags: [], }), 100),
+    //     metaUrl: this.$route.path,
+    //     metaImage: get(this.postSingle, 'ogImage'),
+    //   }
+    // } else {
+    //   return {
+    //     description: this.$i18n ? this.$t('OG.DESCRIPTION') : '',
+    //     ogTitle: this.$i18n ? this.$t('OG.TITLE') : '',
+    //     metaUrl: this.$route.path,
+    //     title: this.$i18n ? this.$t('OG.TITLE') : '',
+    //   }
+    // }
+  },  
   props: {
     hasLeading: {
       type: Boolean,
@@ -82,6 +131,9 @@ export default {
     isSeriesDonate () {
       debug('Mutation detected: isSeriesDonate', this.isSeriesDonate)
       this.donateCheck()
+    },
+    postSingle () {
+      this.$forceUpdate()
     },
     projectSingle () {
       this.donateCheck()
@@ -126,7 +178,15 @@ export default {
     },
     route () {
       return this.$route.fullPath.split('/')[ 1 ]
-    },    
+    },  
+    postSingle () {
+      switch (this.route) {
+        case 'series':
+          return get(this.$store, 'state.memoSingle', {})
+        default:
+          return
+      }
+    },      
     projectSingle () {
       return get(this.$store, 'state.publicProjectSingle')
     },
