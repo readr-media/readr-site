@@ -41,44 +41,46 @@ const serverMetaInfoMixin = {
   },
 }
 
+const updateMeta = metaInfo => {
+  const title = metaInfo.title
+  const ogTitle = metaInfo.ogTitle
+  const description = metaInfo.description
+  const metaUrl = metaInfo.metaUrl
+  const metaImage = metaInfo.metaImage
+  if (title) {
+    document.title = `${title} - Readr`
+  }
+  if (ogTitle) {
+    document.head.querySelector(`meta[property='og:title']`).content = `${ogTitle} - Readr`
+  }
+  if (description) {
+    document.head.querySelector(`meta[name=description]`).content = description
+    document.head.querySelector(`meta[property='og:description']`).content = description
+  }
+  if (metaUrl) {
+    document.head.querySelector(`meta[property='og:url']`).content = SITE_DOMAIN_DEV + metaUrl
+  }
+  if (metaImage) {
+    document.head.querySelector(`meta[property='og:image']`).content = metaImage
+  }
+}
+
 const clientMetaInfoMixin = {
   mounted () {
     const metaInfo = getMetaInfo(this)
     if (metaInfo) {
-      const title = metaInfo.title
-      const ogTitle = metaInfo.ogTitle
-      const description = metaInfo.description
-      const metaUrl = metaInfo.metaUrl
-      const metaImage = metaInfo.metaImage
-      if (title) {
-        document.title = `${title} - Readr`
-      }
-      if (ogTitle) {
-        document.head.querySelector(`meta[property='og:title']`).content = `${ogTitle} - Readr`
-      }
-      if (description) {
-        document.head.querySelector(`meta[name=description]`).content = description
-        document.head.querySelector(`meta[property='og:description']`).content = description
-      }
-      if (metaUrl) {
-        document.head.querySelector(`meta[property='og:url']`).content = SITE_DOMAIN_DEV + metaUrl
-      }
-      if (metaImage) {
-        document.head.querySelector(`meta[property='og:image']`).content = metaImage
-      }
+      updateMeta(metaInfo)
     }
   },
   updated () {
     const metaInfo = getMetaInfo(this)
     if (metaInfo) {
-      /**
-       * If Stripe SDK needed.
-       */
+      /** update current page's mata */
+      updateMeta(metaInfo)
+
+      /** If Tappays SDK needed. */
       const { isTappayNeeded, } = metaInfo
 
-      /**
-       * If Tappays SDK needed.
-       */
       if (isTappayNeeded && !isTappaySDKLoaded) {
         const script = document.createElement('script')
         script.onload = () => {
