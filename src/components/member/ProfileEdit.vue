@@ -1,57 +1,90 @@
 <template>
-  <div class="profile-edit">
-    <div class="profile-edit__main">
-      <div class="form">
-        <div class="form__item">
-          <span class="form__name">{{ $t('profile_editor.WORDING_PROFILEEDIT_NICKNAME') }}：</span>
-          <input class="form__input" type="text" name="nickname" v-model="inputNickname">
-        </div>
-        <div class="form__item">
-          <span class="form__name--align-start">{{ $t('profile_editor.WORDING_PROFILEEDIT_DESCRIPTION') }}：</span>
-          <textarea class="form__description" name="description" v-model="inputDescription"></textarea>
-        </div>
-        <div class="form__item">
-          <span class="form__name">{{ $t('profile_editor.WORDING_PROFILEEDIT_OLDPASSWORD') }}：</span>
-          <input class="form__input" type="password" name="old_password" v-model="inputOldPassword">
-        </div>
-        <div class="form__item">
-          <span class="form__name">{{ $t('profile_editor.WORDING_PROFILEEDIT_NEWPASSWORD') }}：</span>
-          <input class="form__input" type="password" name="new_password" v-model="inputNewPassword">
-        </div>
-        <div class="form__item">
-          <span class="form__name">{{ $t('profile_editor.WORDING_PROFILEEDIT_CONFIRMPASSWORD') }}：</span>
-          <input class="form__input" type="password" name="confirm_password" v-model="inputConfirmPassword">
-        </div>
-        <div class="form__item">
-          <span class="form__name" v-text="`${$t('profile_editor.WORDING_PROFILEEDIT_PERSONAL_OPTIONS')}：`"></span>
-          <Advanced class="form__field" :values.sync="advanced" :fetchPersonalSetting="fetchPersonalSetting"></Advanced>
-        </div>
-      </div>
-    </div>
-    <div class="profile-edit__aside">
+  <ProfileEditLayout>
+    <template slot="aside">
       <div class="portrait">
         <div class="portrait__container" @click="profileEditorUploadThumbnail">
           <img class="portrait__thumbnail" v-show="thumbnail" :src="getImageUrl(thumbnail)" alt="thumbnail">
           <div class="portrait__upload"></div>
         </div>
-        <div class="portrait__name">{{ staticNickname }}</div>
       </div>
-      <button class="profile-edit__save-button" @click="profileEditorSave">{{ $t('profile_editor.WORDING_PROFILEEDIT_SAVE') }}</button>
-    </div>
-    <div class="profile-edit__password_alert" v-if="isPasswordAlertActive">
-      <div class="container">
-        <div class="message"><span v-text="$t('profile_editor.PASSWORD_REVISING.SUCCESSUFULLY')"></span></div>
-        <div class="confirm" @click="logout"><span v-text="$t('profile_editor.PASSWORD_REVISING.CONFIRM')"></span></div>
+    </template>  
+    <template slot="main">
+      <div class="form">
+        <div class="form__wrapper">
+          <div class="form__item--title"><span v-text="$t('profile_editor.SECTION_PROFILE')"></span></div>
+          <div class="form__item">
+            <span class="form__name" v-text="$t('profile_editor.WORDING_PROFILEEDIT_NICKNAME')"></span>
+            <input class="form__input" type="text" name="nickname" v-model="inputNickname">
+          </div>
+          <div class="form__item">
+            <span class="form__name align-start" v-text="$t('profile_editor.WORDING_PROFILEEDIT_DESCRIPTION')"></span>
+            <textarea class="form__input textarea" name="description" v-model="inputDescription"></textarea>
+          </div>
+        </div>
+        <div class="form__wrapper">
+          <div class="form__item--title"><span v-text="$t('profile_editor.SECTION_NOTIFICATION')"></span></div>
+          <!--div class="form__item switcher">
+            <span class="form__name" v-text="$t('profile_editor.WORDING_PROFILEEDIT_PERSONAL_OPTIONS')"></span>
+            <Advanced class="form__field" :values.sync="advanced" :fetchPersonalSetting="fetchPersonalSetting"></Advanced>
+          </div-->
+          <div class="form__item switcher" v-for="item in SETTING_NOTIFICATION">
+            <ProfileEditSwitchItem :value.sync="settings[ get(item, 'key') ]" :defaultVal="get(personalSetting, camelize(get(item, 'key')))"
+              :title="$t(`profile_editor.SETTING_NOTIFICATION.${get(item, 'name')}.TITLE`)"
+              :desc="$t(`profile_editor.SETTING_NOTIFICATION.${get(item, 'name')}.DESC`)"></ProfileEditSwitchItem>
+          </div>
+        </div>        
+        <div class="form__wrapper">
+          <div class="form__item--title"><span v-text="$t('profile_editor.SECTION_ACCUONT')"></span></div>
+          <div class="form__item switcher" v-for="item in SETTING_ACCOUNT">
+            <ProfileEditSwitchItem :value.sync="settings[ get(item, 'key') ]" :defaultVal="get(personalSetting, camelize(get(item, 'key')))"
+              :title="$t(`profile_editor.SETTING_ACCOUNT.${get(item, 'name')}.TITLE`)"
+              :desc="$t(`profile_editor.SETTING_ACCOUNT.${get(item, 'name')}.DESC`)"></ProfileEditSwitchItem>
+          </div>   
+          <div class="form__item--subtitle"><span v-text="$t('profile_editor.MODIFY_PASSWORD')"></span></div>
+          <div class="form__item">
+            <span class="form__name sub" v-text="$t('profile_editor.WORDING_PROFILEEDIT_OLDPASSWORD')"></span>
+            <TextItem type="password" class="form__input text"
+              height="25px" border="1px solid #d3d3d3" alertPosition="bottom"
+              :alert.sync="alert.old_pwd"
+              :value.sync="inputOldPassword"></TextItem>            
+          </div>
+          <div class="form__item">
+            <span class="form__name sub" v-html="$t('profile_editor.WORDING_PROFILEEDIT_NEWPASSWORD')"></span>
+            <TextItem type="password" class="form__input text"
+              height="25px" border="1px solid #d3d3d3" alertPosition="bottom"
+              :alert.sync="alert.new_pwd"
+              :value.sync="inputNewPassword"></TextItem>             
+          </div>
+          <div class="form__item">
+            <span class="form__name sub" v-text="$t('profile_editor.WORDING_PROFILEEDIT_CONFIRMPASSWORD')"></span>
+            <TextItem type="password" class="form__input text"
+              height="25px" border="1px solid #d3d3d3" alertPosition="bottom"
+              :alert.sync="alert.confirm_pwd"
+              :value.sync="inputConfirmPassword"></TextItem>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
+    </template>
+    <template>
+      <button class="button save" @click="profileEditorSave" v-text="$t('profile_editor.WORDING_PROFILEEDIT_SAVE')"></button>
+      <div class="password_alert" v-if="isPasswordAlertActive">
+        <div class="container">
+          <div class="message"><span v-text="$t('profile_editor.PASSWORD_REVISING.SUCCESSUFULLY')"></span></div>
+          <div class="confirm" @click="logout"><span v-text="$t('profile_editor.PASSWORD_REVISING.CONFIRM')"></span></div>
+        </div>
+      </div>      
+    </template>
+  </ProfileEditLayout>
 </template>
 
 <script>
-import _ from 'lodash'
-import Advanced from 'src/components/member/Advanced.vue'
+import ProfileEditLayout from 'src/components/member/ProfileEditLayout.vue'
+import ProfileEditSwitchItem from 'src/components/member/ProfileEditSwitchItem.vue'
+import TextItem from 'src/components/form/TextItem.vue'
 import validator from 'validator'
+import { SETTING_ACCOUNT, SETTING_NOTIFICATION, } from 'src/constants'
 import { camelize, } from 'humps'
+import { get, map, } from 'lodash'
 import { getImageUrl, } from 'src/util/comm'
 import { removeToken, } from 'src/util/services'
 
@@ -83,7 +116,9 @@ const deleteMemberProfileThumbnails = (store, id) => {
 export default {
   name: 'ProfileEdit',
   components: {
-    Advanced,
+    ProfileEditLayout,
+    ProfileEditSwitchItem,
+    TextItem,
   },
   props: {
     profile: {
@@ -96,32 +131,26 @@ export default {
   },
   data () {
     return {
-      staticNickname : _.get(this.profile, [ 'nickname', ], ''),
-      inputNickname: _.get(this.profile, [ 'nickname', ], ''),
-      inputDescription: _.get(this.profile, [ 'description', ], ''),
+      SETTING_ACCOUNT,
+      SETTING_NOTIFICATION,
+      alert: {},
+      inputNickname: get(this.profile, 'nickname', ''),
+      inputDescription: get(this.profile, 'description', ''),
       inputOldPassword: '',
       inputNewPassword: '',
       inputConfirmPassword: '',
       isPasswordAlertActive: false,
-      advanced: {},
+      isPersonalSettingMutated: false,
+      settings: {},
+      staticNickname : get(this.profile, 'nickname', ''),
     }
   },
   computed: {
-    isPersonalSettingMutated () {
-      let isMutated = false
-      _.map(this.advanced, (v, k) => {
-        const origin = _.get(this.personalSetting, camelize(k))
-        if (origin !== undefined && _.get(this.personalSetting, camelize(k)) !== v) {
-          isMutated = true
-        }
-      })
-      return isMutated
-    },
     personalSetting () {
-      return _.get(this.$store, 'state.personalSetting', {})
+      return get(this.$store, 'state.personalSetting', {})
     }, 
     thumbnail () {
-      return _.get(this.profile, [ 'profileImage', ]) || '/public/icons/exclamation.png'
+      return get(this.profile, 'profileImage') || '/public/icons/exclamation.png'
     },
     thumbnailFilePath () {
       return this.thumbnail.substr(this.thumbnail.lastIndexOf('/') + 1)
@@ -130,19 +159,43 @@ export default {
   watch: {
     showLightBox (value) {
       if (!value) {
-        this.inputNickname = _.get(this.profile, [ 'nickname', ], '')
-        this.inputDescription = _.get(this.profile, [ 'description', ], '')
+        this.inputNickname = get(this.profile, [ 'nickname', ], '')
+        this.inputDescription = get(this.profile, [ 'description', ], '')
         this.inputOldPassword = ''
         this.inputNewPassword = ''
         this.inputConfirmPassword = ''
       }
     },
+    personalSetting () {
+      debug('Mutation detected: personalSetting,', this.personalSetting)
+    },
+    isPersonalSettingMutated () {
+      debug('Mutation detected: isPersonalSettingMutated', this.isPersonalSettingMutated)
+    },
+    settings: {
+      handler () {
+        debug('Mutation detected: settings', this.settings, this.personalSetting)
+        if (this.isPersonalSettingMutated) { return }
+        map(this.settings, (v, k) => {
+          const origin = get(this.personalSetting, camelize(k))
+          if (origin !== undefined && get(this.personalSetting, camelize(k)) !== v) {
+            this.isPersonalSettingMutated = true
+          }
+        })
+      },
+      deep: true,
+    },
+  },
+  mounted () {
+    this.fetchPersonalSetting(this.$store)
   },
   methods: {
+    camelize,
     fetchPersonalSetting: (store) => {
       return store.dispatch('FETCH_PERSONAL_SETTONG')
     },
     getImageUrl,
+    get,
     logout () {
       location && location.replace('/')
     },
@@ -192,9 +245,8 @@ export default {
           params.description = this.inputDescription
         }
         if (this.isPersonalSettingMutated) {
-          params = Object.assign(params, this.advanced)
+          params = Object.assign(params, this.settings)
         }
-
         return updateInfo(this.$store, params, 'UPDATE_PROFILE').then(() => {
           return this.fetchPersonalSetting(this.$store)
         })
@@ -203,12 +255,33 @@ export default {
 
       // Check password which user inputs, and confirm the new password, if two values are equal, update the password
       const isOldPasswordEmpty = () => {
-        return validator.isEmpty(this.inputOldPassword)
+        debug('inputOldPassword', !this.inputOldPassword || validator.isEmpty(this.inputOldPassword))
+        return !this.inputOldPassword || validator.isEmpty(this.inputOldPassword)
       }
       const isConfirmNewPassword = () => {
-        if (!validator.isEmpty(this.inputNewPassword) && !validator.isEmpty(this.inputConfirmPassword)) {
-          return this.inputNewPassword === this.inputConfirmPassword
+        if (this.inputNewPassword && this.inputConfirmPassword && !validator.isEmpty(this.inputNewPassword) && !validator.isEmpty(this.inputConfirmPassword)) {
+          if (this.inputNewPassword === this.inputConfirmPassword) {
+            return true
+          } else {
+            this.alert.confirm_pwd = {
+              flag: true,
+              msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL_NEW'),
+            } 
+            return false
+          }
         } else {
+          if (!this.inputNewPassword || validator.isEmpty(this.inputNewPassword)) {
+            this.alert.new_pwd = {
+              flag: true,
+              msg: this.$t('login.WORDING_REGISTER_PWD_EMPTY'),
+            }
+          }
+          if ((!this.inputConfirmPassword || validator.isEmpty(this.inputConfirmPassword))) {
+            this.alert.confirm_pwd = {
+              flag: true,
+              msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_EMPTY'),
+            }
+          }
           return false
         }
       }
@@ -228,7 +301,7 @@ export default {
             }, 'UPDATE_PASSWORD')
             .then(() => {
               return logout(this.$store).then(() => {
-                const domain = _.get(this.$store, 'state.setting.DOMAIN')
+                const domain = get(this.$store, 'state.setting.DOMAIN')
                 return removeToken(domain).then(() => {
                   this.isPasswordAlertActive = true
                 })
@@ -242,6 +315,10 @@ export default {
           if (err.status === 401) {
             debug('login 401')
             // return false
+            this.alert.old_pwd = {
+              flag: true,
+              msg: this.$t('login.WORDING_LOGIN_INFAIL_VALIDATION_ISSUE'),
+            }             
           }
           return
         })
@@ -261,164 +338,3 @@ export default {
   },
 }
 </script>
-
-
-<style lang="stylus" scoped>
-.profile-edit
-  width 920px
-  height 688px
-  background-color #d8d8d8
-  display flex
-  &__main
-    width 704px
-    padding 30px 0 30px 50px
-  &__aside
-    width 216px
-    height 688px
-    padding 30px 50px 22px 41px
-    display flex
-    flex-direction column
-    justify-content space-between
-  &__save-button
-    width 100%
-    height 35px
-    border-radius 2.5px
-    border none
-    background-color #4280a2
-    font-size 15px
-    font-weight 600
-    color #ffffff
-    cursor pointer
-    outline none
-    &:hover
-      filter brightness(80%)
-  &__password_alert
-    position fixed
-    top 0
-    left 0
-    width 100vw
-    height 100vh
-    background-color rgba(0, 0, 0, 0.5)
-    z-index 99999
-    display flex
-    justify-content center
-    align-items center
-    > .container
-      padding 10px
-      width 300px
-      height 100px
-      background-color #e3e3e3
-      border-radius 2px
-      display flex
-      justify-content center
-      align-items center
-      flex-direction column
-      font-size 0.875rem
-      line-height normal
-      .confirm
-        margin-top 10px
-        padding 2px 10px
-        cursor pointer
-        background-color #4280a2
-        border-radius 2px
-        color #fff
-      .message
-        padding 0 10px
-
-$form__name
-  width 90px
-  height 25px
-  line-height 25px
-  font-size 18px
-  color #808080
-  margin 0 4px 0 0 
-  text-align justify
-  // pseudo class for performing a line break, intend for applying text-align justify on single line text element
-  &:after
-    content ''
-    width 100%
-    display inline-block
-.form
-  display flex
-  flex-direction column
-  align-items flex-end
-  &__item
-    display flex
-    align-items center
-    & + .form__item
-      margin 15px 0 0 0
-  &__name
-    @extends $form__name
-    &--align-start
-      @extends $form__name
-      align-self flex-start
-  form-width = 560px
-  &__field
-    width form-width
-    border 1px solid white
-  &__input
-    width form-width
-    height 35px
-    border 1px solid white
-    padding 0 15px
-  &__description
-    width form-width
-    height 121px
-    border 1px solid white
-    resize none
-    padding 9px 15px
-  &__personal-options
-    width form-width
-    height 300px
-    // height 200px
-    background-color white
-
-$portrait-container-size
-  width 125px
-  height 125px
-$plus-sign
-  content ''
-  background-color white
-  position absolute
-  top 0
-  bottom 0
-  left 0
-  right 0
-  margin auto
-.portrait
-  &__container
-    @extends $portrait-container-size
-    position relative
-    cursor pointer
-  &__thumbnail
-    @extends $portrait-container-size
-    border-radius 50%
-    overflow hidden
-    object-fit cover
-  &__upload
-    r = 38px
-    position absolute
-    bottom 0
-    right 0
-    width r
-    height r
-    background-color #808080
-    border-radius r
-    box-shadow 0 1px 2px 0 rgba(0, 0, 0, 0.5)
-    // CSS based plus sign
-    &:before
-      @extends $plus-sign
-      width 24px
-      height 4px
-    &:after
-      @extends $plus-sign
-      width 4px
-      height 24px
-  &__name
-    font-size 15px
-    font-weight 300
-    text-align center
-    margin 5px 0
-    word-break break-all
-</style>
-
