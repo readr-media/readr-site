@@ -84,7 +84,7 @@ import TextItem from 'src/components/form/TextItem.vue'
 import validator from 'validator'
 import { SETTING_ACCOUNT, SETTING_NOTIFICATION, } from 'src/constants'
 import { camelize, } from 'humps'
-import { get, map, } from 'lodash'
+import { filter, get, map, } from 'lodash'
 import { getImageUrl, } from 'src/util/comm'
 import { removeToken, } from 'src/util/services'
 
@@ -309,6 +309,10 @@ export default {
             })
           } else {
             debug('login fail')
+            this.alert.old_pwd = {
+              flag: true,
+              msg: this.$t('login.WORDING_LOGIN_INFAIL_VALIDATION_ISSUE'),
+            }  
           }
         })
         .catch((err) => {
@@ -332,7 +336,8 @@ export default {
         process.push(updatePassword())
       }
       Promise.all(process).then(() => {
-        !this.isPasswordAlertActive && this.$emit('save')
+        const anyAlert = filter(this.alert, { flag: true, })
+        anyAlert.length === 0 && !this.isPasswordAlertActive && this.$emit('save')
       })
     },
   },
