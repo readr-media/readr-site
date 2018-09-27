@@ -60,8 +60,8 @@ Vue.mixin({
         debug(`Route "to" doesn't have any permission setting. So, go to route "to" without problem.`)
         next()
       }
-    }).catch(({ err, res, }) => {
-      debug(err, res)
+    }).catch(errInfo => {
+      debug('errInfo', errInfo)
       const domain = get(store, 'state.setting.DOMAIN')
       removeToken(domain).then(() => location.replace('/login?t=FADR42345FADS3'))
     })

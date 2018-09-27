@@ -1,5 +1,5 @@
 <template>
-  <div :class="`post-content__${modifier}`">
+  <div :class="`post-content__${modifier}`" :type="`post-content-${postType}`" :key="`post-content-${postType}-${post.id}`">
     <!-- template for post type is news -->
     <template v-if="postType === 'news' && modifier === 'main'">
       <img class="post-content__leading-image" v-if="post.ogImage && isClientSide" :src="getImageUrl(post.ogImage)" alt="" @load="setLeadingImageOrientation(getImageUrl(post.ogImage), $event)">
