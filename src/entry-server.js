@@ -1,7 +1,7 @@
-import { get, } from 'lodash'
-// import { ROLE_MAP, } from './constants'
+import { filter, get, } from 'lodash'
+import { ROLE_MAP, } from './constants'
 import { createApp, } from './app' 
-// import { getProfile, } from './util/services'
+import { getProfile, } from './util/services'
 
 const debug = require('debug')('READR:entry-server')
 const isDev = process.env.NODE_ENV !== 'production'
@@ -16,8 +16,8 @@ export default context => {
     const s = isDev && Date.now()
     const { app, i18n, router, store, } = createApp()
 
-    // const { url, cookie, initmember, setting, error, } = context
-    const { url, initmember, setting, error, } = context
+    const { url, cookie, initmember, setting, error, } = context
+    // const { url, initmember, setting, error, } = context
     const { route, } = router.resolve(url)
     const { fullPath, } = route
 
@@ -25,41 +25,41 @@ export default context => {
       return reject({ url: fullPath, })
     }
 
-    // const preRouteInit = cookie ? [
-    //   getProfile(cookie),
-    // ] : [ new Promise((rslv) => rslv()), ]
+    const preRouteInit = cookie ? [
+      getProfile(cookie),
+    ] : [ new Promise((rslv) => rslv()), ]
 
-    // Promise.all(preRouteInit).then((res) => {
-      // const role = get(filter(ROLE_MAP, { key: get(res, [ 0, 'profile', 'role', ]), }), [ 0, 'route', ], 'visitor')
+    Promise.all(preRouteInit).then((res) => {
+      const role = get(filter(ROLE_MAP, { key: get(res, [ 0, 'profile', 'role', ]), }), [ 0, 'route', ], 'visitor')
       const permission = get(route, 'meta.permission')
       const isInitMember = get(route, 'path') === '/initmember'
       debug('permission:', permission)
       debug('url', url)
 
       let targUrl
-      if (permission || (isInitMember && !initmember)) {
-        store.state.unauthorized = true
-        return reject({ code: 403, })
-      } else {
-        router.push(url)
-        targUrl = url
-      }
-      // if ((permission && (role === 'visitor' || (permission !== role && permission !== 'member'))) || (isInitMember && !initmember)) {
+      // if (permission || (isInitMember && !initmember)) {
       //   store.state.unauthorized = true
-      //   // if (!cookie) {
-      //   //   router.push('/login')
-      //   //   targUrl = '/login'
-      //   //   store.state.targ_url = '/login'
-      //   // } else {
-      //   //   router.push('/')
-      //   //   targUrl = '/'
-      //   //   store.state.targ_url = '/'
-      //   // }
       //   return reject({ code: 403, })
       // } else {
       //   router.push(url)
       //   targUrl = url
       // }
+      if ((permission && (role === 'visitor' || (permission !== role && permission !== 'member'))) || (isInitMember && !initmember)) {
+        store.state.unauthorized = true
+        // if (!cookie) {
+        //   router.push('/login')
+        //   targUrl = '/login'
+        //   store.state.targ_url = '/login'
+        // } else {
+        //   router.push('/')
+        //   targUrl = '/'
+        //   store.state.targ_url = '/'
+        // }
+        return reject({ code: 403, })
+      } else {
+        router.push(url)
+        targUrl = url
+      }
       setting && (store.state.setting = setting)
       error && (store.state.error = error)
 
@@ -92,6 +92,6 @@ export default context => {
           resolve(app)
         }).catch(reject)
       }, reject)
-    // })
+    })
   })
 }
