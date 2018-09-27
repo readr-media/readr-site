@@ -4,40 +4,18 @@
   </section>
 </template>
 <script>
-import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, } from '../../api/config'
 import { get, } from 'lodash'
 import { isScrollBarReachBottom, } from 'src/util/comm'
 import ProjectsFigure from 'src/components/projects/ProjectsFigure.vue'
 
-const debug = require('debug')('CLIENT:SeriesList')
-
 const DEFAULT_PAGE = 1
-const DEFAULT_SORT = 'project_order,-updated_at'
-const MAXRESULT = 9
+const debug = require('debug')('CLIENT:SeriesList')
 
 const getUserFollowing = (store, { id = get(store, 'state.profile.id'), resource, resourceType = '', } = {}) => {
   return store.dispatch('GET_FOLLOWING_BY_USER', {
     id: id,
     resource: resource,
     resource_type: resourceType,
-  })
-}
-
-const fetchProjectsList = (store, {
-  max_result = MAXRESULT,
-  page = DEFAULT_PAGE,
-  sort = DEFAULT_SORT,
-} = {}) => {
-  return store.dispatch('GET_PUBLIC_PROJECTS', {
-    params: {
-      max_result: max_result,
-      page: page,
-      sort: sort,
-      where: {
-        status: [ PROJECT_STATUS.DONE, PROJECT_STATUS.WIP, ],
-        publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
-      },
-    },
   })
 }
 
@@ -66,7 +44,6 @@ export default {
     },
   },
   beforeMount () {
-    fetchProjectsList(this.$store)
     getUserFollowing(this.$store, { resource: 'project', })
     getUserFollowing(this.$store, { resource: 'tag', })
   },
@@ -82,7 +59,7 @@ export default {
     },
     loadmore () {
       const origCount = get(this.projects, 'length', 0) || 0
-      fetchProjectsList(this.$store, { page: this.currentPage + 1, })
+      this.fetchProjectsList(this.$store, { page: this.currentPage + 1, })
       .then(() => {
         if (get(this.projects, 'length', 0) <= origCount) {
           this.endPage = true
@@ -94,6 +71,12 @@ export default {
         debug('error while loadmore, status: ', status)
         debug('error while loadmore, res: ', res)
       })
+    },
+  },
+  props: {
+    fetchProjectsList: {
+      type: Function,
+      default: () => Promise.resolve(),
     },
   },
 }

@@ -1,4 +1,4 @@
-import { SITE_DOMAIN_DEV, } from '../constants'
+import { SITE_DOMAIN_DEV, SITE_NAME, } from '../constants'
 // import { debug } from 'request/request';
 let isTappaySDKLoaded = false
 const debug = require('debug')('CLIENT:titleMeta')
@@ -23,10 +23,10 @@ const serverMetaInfoMixin = {
       const metaImage = metaInfo.metaImage
       
       if (title) {
-        this.$ssrContext.title = `${title} - Readr`
+        this.$ssrContext.title = `${title} - ${SITE_NAME}`
       }
       if (ogTitle) {
-        this.$ssrContext.ogTitle = `${ogTitle} - Readr`
+        this.$ssrContext.ogTitle = `${ogTitle} - ${SITE_NAME}`
       }
       if (description) { 
         this.$ssrContext.description = description 
@@ -48,10 +48,10 @@ const updateMeta = metaInfo => {
   const metaUrl = metaInfo.metaUrl
   const metaImage = metaInfo.metaImage
   if (title) {
-    document.title = `${title} - Readr`
+    document.title = `${title} - ${SITE_NAME}`
   }
   if (ogTitle) {
-    document.head.querySelector(`meta[property='og:title']`).content = `${ogTitle} - Readr`
+    document.head.querySelector(`meta[property='og:title']`).content = `${ogTitle} - ${SITE_NAME}`
   }
   if (description) {
     document.head.querySelector(`meta[name=description]`).content = description
