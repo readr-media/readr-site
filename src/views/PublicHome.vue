@@ -136,8 +136,8 @@ export default {
     } else {
       return {
         description: this.$i18n ? this.$t('OG.DESCRIPTION') : '',
-        ogTitle: this.$i18n ? this.$t('OG.TITLE') : '',
-        title: this.$i18n ? this.$t('OG.TITLE') : '',
+        ogTitle: '',
+        title: '',
         metaUrl: this.$route.path,
       }
 

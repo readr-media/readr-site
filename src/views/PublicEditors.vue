@@ -50,13 +50,25 @@ const fetchFollowing = (store, { ids, }) => {
 
 export default {
   name: 'Editors',
-  // Uncomment this when v1.0 is released
-  // asyncData ({ store, i18n, }) {
-  //   const targ_key = find(ROLE_MAP, { value: i18n.t('editors.WORDING_EDITORS_GUESTEDITOR'), }).key
-  //   return getMembersPublic(store, {
-  //     role: targ_key,
-  //   })
-  // },
+  asyncData ({ store, i18n, }) {
+    const roleNum = find(ROLE_MAP, { value: i18n.t('editors.WORDING_EDITORS_GUESTEDITOR'), }).key
+    return Promise.all([
+      getMembersPublic(store, {
+        role: roleNum,
+      }),
+      getMembersPublic(store, {
+        custom_editor: true,
+      }),
+    ])
+  },
+  metaInfo () {
+    return {
+      description: this.$i18n ? this.$t('OG.DESCRIPTION') : 'Readr',
+      ogTitle: this.$i18n ? this.$t('OG.GUESTEDITORS') : 'Readr',
+      title: this.$i18n ? this.$t('OG.GUESTEDITORS') : 'Readr',
+      metaUrl: this.$route.path,
+    }
+  },  
   components: {
     AppTitledList,
     EditorsIntroListItem,
@@ -74,42 +86,15 @@ export default {
       return get(this.$store, `state.publicMembers[${this.guestEditorRoleValue}].items`, [])
     },
   },
-  beforeMount () {
-    // Beta version code
-    const roleNum = find(ROLE_MAP, { value: this.guestEditorRoleValue, }).key
-    Promise.all([
-      getMembersPublic(this.$store, {
-        role: roleNum,
-      }),
-      getMembersPublic(this.$store, {
-        custom_editor: true,
-      }),
-    ]).then(() => {
-      if (this.$store.state.isLoggedIn) {
-        const customEditorsIds = this.customEditors.map(editor => editor.id)
-        const guestEditorsIds = this.guestEditors.map(member => member.id)
-        const ids = uniq(concat(customEditorsIds, guestEditorsIds))
-        fetchFollowing(this.$store, {
-          ids: ids,
-        })
-      }
-    })
-    // Uncomment this when v1.0 is released
-    // Promise.all([
-    //   getMembersPublic(this.$store, {
-    //     custom_editor: true,
-    //   }),
-    // ]).then(() => {
-    //   if (this.$store.state.isLoggedIn) {
-    //     const customEditorsIds = this.$store.state.customEditors.items.map(editor => editor.id)
-    //     const guestEditorsIds = this.$store.state.publicMembers[this.guestEditorRoleValue].items.map(member => member.id)
-    //     const ids = uniq(concat(customEditorsIds, guestEditorsIds))
-    //     fetchFollowing(this.$store, {
-    //       resource: 'member',
-    //       ids: ids,
-    //     })
-    //   }
-    // })
+  beforeMount () {   
+    if (this.$store.state.isLoggedIn) {
+      const customEditorsIds = this.customEditors.map(editor => editor.id)
+      const guestEditorsIds = this.guestEditors.map(member => member.id)
+      const ids = uniq(concat(customEditorsIds, guestEditorsIds))
+      fetchFollowing(this.$store, {
+        ids: ids,
+      })
+    }
   },
 }
 </script>

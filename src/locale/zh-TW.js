@@ -3,6 +3,7 @@ export default {
     'TITLE': '讀+',
     'DESCRIPTION': '歡迎來到 READr，在這裡，新聞產製將嘗試由 Reporter 、 Engineer 、 Audience 及 Designer 一起共同完成，讓新聞內容更加完善，將以往封閉的新聞編輯室邁向開放的可能，最重要的就是你的參與。',
     'PROJECT_LIST': '專題列表',
+    'GUESTEDITORS': '客座總編列表',
   },
   'login': {
     'WORDING_EMAIL' : '信箱',
