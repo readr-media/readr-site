@@ -1,5 +1,5 @@
 <template>
-  <div class="post-item">
+  <div class="post-item" :id="`post-item-${post.id}`" :key="`post-item-${post.id}`">
     <!--div class="share">
       <AppShareButton :shareUrl="shareUrl" :direction="'down'" :iconColor="'white'" :backgroundColor="'#d3d3d3'"/>
     </div-->
@@ -22,7 +22,7 @@
         </figcaption>
       </figure>
     </div>  
-    <div class="post__content" :style="{ width: `${width}px`, }">
+    <div class="post__content" :style="{ width: `${width}px`, }" :key="`post-content-${post.id}`" :id="`post-content-${post.id}`">
       <PostContent modifier="main" :post="post"></PostContent>
     </div>
   </div>
