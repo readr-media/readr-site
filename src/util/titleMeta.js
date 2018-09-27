@@ -24,9 +24,13 @@ const serverMetaInfoMixin = {
       
       if (title) {
         this.$ssrContext.title = `${title} - ${SITE_NAME}`
+      } else {
+        this.$ssrContext.title = SITE_NAME
       }
       if (ogTitle) {
         this.$ssrContext.ogTitle = `${ogTitle} - ${SITE_NAME}`
+      } else {
+        this.$ssrContext.ogTitle = SITE_NAME
       }
       if (description) { 
         this.$ssrContext.description = description 
@@ -49,9 +53,13 @@ const updateMeta = metaInfo => {
   const metaImage = metaInfo.metaImage
   if (title) {
     document.title = `${title} - ${SITE_NAME}`
+  } else {
+    document.title = SITE_NAME
   }
   if (ogTitle) {
     document.head.querySelector(`meta[property='og:title']`).content = `${ogTitle} - ${SITE_NAME}`
+  } else {
+    document.head.querySelector(`meta[property='og:title']`).content = SITE_NAME
   }
   if (description) {
     document.head.querySelector(`meta[name=description]`).content = description
