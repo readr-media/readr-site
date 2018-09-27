@@ -16,9 +16,9 @@ const PublicAgreement = () => import('../views/PublicAgreement.vue')
 const PublicEditors = () => import('../views/PublicEditors.vue')
 const PublicHome = () => import('../views/PublicHome.vue')
 const PublicLogin = () => import('../views/PublicLogin.vue')
-const PublicPage = () => import('../views/PublicPage.vue')
 const PublicPageWithAside = () => import('../views/PublicPageWithAside.vue')
 const PublicPageNotFound = () => import('../views/PublicPageNotFound.vue')
+const PublicProjectList = () => import('../views/PublicProjectList.vue')
 const PublicProfile = () => import('../views/PublicProfile.vue')
 const PublicSearch = () => import('../views/PublicSearch.vue')
 const PublicServerError = () => import('../views/PublicServerError.vue')
@@ -69,7 +69,7 @@ const router = new Router({
     { path: '/series/:slug/:subItem?', component: PublicPageWithAside, },
     { path: '/profile/:id', component: PublicProfile, },
     { path: '/search/:keyword', component: PublicSearch, },
-    { path: '/series-list', component: PublicPage, },
+    { path: '/series-list', component: PublicProjectList, },
     { path: '/tag/:tagId', component: PublicPageWithAside, props: { hasLeading: false, }, },
     { path: '/setup/:type', component: PublicSetPassword, },
     { path: '/comment', component: PublicComment, props: (route) => ({ resourceURL: route.query.resource_url, }), },
