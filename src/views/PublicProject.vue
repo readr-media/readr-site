@@ -82,6 +82,18 @@ const fetchMemoSingle = (store, memoId) => {
   })
 }
 
+const fetchPublicMemoSingle = (store, memoId) => {
+  return store.dispatch('GET_PUBLIC_MEMO', {
+    params: {
+      memoId,
+      where: { 
+        memo_publish_status: MEMO_PUBLISH_STATUS.PUBLISHED, 
+        project_publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED, 
+      }, 
+    },
+  })
+}
+
 const fetchProjectSingle = (store, proj_slug) => {
   return store.dispatch('GET_PUBLIC_PROJECT', {
     params: {
@@ -139,10 +151,12 @@ const switchOn = (store, item) => store.dispatch('SWITCH_ON_DONATE_PANEL', { ite
 export default {
   name: 'PublicProject',
   asyncData ({ store, route, }) {
-    // if (get(route, 'params.subItem') && get(route, 'params.subItem') !== 'donate') {
-    //   processes.push(fetchMemoSingle(store, get(route, 'params.subItem')))
-    // }
-    return get(route, 'params.slug') ? fetchProjectSingle(store, get(route, 'params.slug')).then(proj => {
+    const processes = []
+    if (get(route, 'params.subItem') && get(route, 'params.subItem') !== 'donate') {
+      processes.push(fetchPublicMemoSingle(store, get(route, 'params.subItem')))
+    }
+    if (get(route, 'params.slug')) {
+      processes.push(fetchProjectSingle(store, get(route, 'params.slug')).then(proj => {
         const projId = get(proj, 'id')
         return Promise.all([
           fetchPublicMemos(store, {
@@ -155,16 +169,23 @@ export default {
             page: 1,  
           }),
         ])
-      }) : Promise.resolve()
+      }))
+    }
+    return processes.length > 0 ? Promise.all(processes) : Promise.resolve()
   },
   metaInfo () {
     if (this.$route.params.subItem) {
+      const isPaid = get(this.postSingle, 'project.paid')
+      const isProjectDone = get(this.postSingle, 'project.status') === PROJECT_STATUS.DONE
+      const desc = isPaid || isProjectDone
+        ? truncate(sanitizeHtml(get(this.postSingle, 'content', ''), { allowedTags: [], }), 100)
+        : truncate(sanitizeHtml(get(this.postSingle, 'content', ''), { allowedTags: [], }), 100) + '...'
       return {
         title: get(this.postSingle, 'title'),
         ogTitle: get(this.postSingle, 'title'),
-        description: truncate(sanitizeHtml(get(this.postSingle, 'content', ''), { allowedTags: [], }), 100),
+        description: desc,
         metaUrl: this.$route.path,
-        metaImage: get(this.postSingle, 'ogImage'),              
+        metaImage: get(this.projectSingle, 'heroImage'),     
       }
     } else {
       return {
@@ -214,7 +235,7 @@ export default {
       return get(this.$store, 'state.profile', {})
     }, 
     postSingle () {
-      return get(this.$store, 'state.memoSingle', {})
+      return get(this.$store, 'state.publicMemoSingle', {})
     },      
     projectSingle () {
       return get(this.$store, 'state.publicProjectSingle')

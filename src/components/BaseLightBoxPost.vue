@@ -1,10 +1,10 @@
 <template>
   <div class="baselightbox-post--review no-content" v-if="isContentEmpty">
-    <span v-if="isMemo && !isMemoPaid && !isPostEmpty" v-text="$t('POST_CONTENT.GO_JOIN_MEMO')" class="go-join" @click="goJoin"></span>
+    <span v-if="isMemo && !isMemoPaid && me.id" v-text="$t('POST_CONTENT.GO_JOIN_MEMO')" class="go-join" @click="goJoin"></span>
     <template v-else>
       <div>
         <div><span v-text="$t('POST_CONTENT.NO_PERMISSION')"></span></div>
-        <div class="button" v-if="isLoginBtnACtive"><span v-text="$t('POST_CONTENT.GO_LOGIN')" @click="goLogin"></span></div>
+        <div class="button" v-if="isLoginBtnActive"><span v-text="$t('POST_CONTENT.GO_LOGIN')" @click="goLogin"></span></div>
       </div>
     </template>
   </div>
@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { POST_TYPE, } from 'api/config'
+import { POST_TYPE, PROJECT_STATUS, } from 'api/config'
 import { get, find, map, isEmpty, } from 'lodash'
 import { getArticleAuthorId, getArticleAuthorNickname, getArticleAuthorThumbnailImg, isClientSide, } from 'src/util/comm'
 import BaseLightBoxTemplateNews from 'src/components/BaseLightBoxTemplateNews.vue'
@@ -81,6 +81,12 @@ export default {
     isMemoPaid () {
       return get(this.post, 'project.paid')
     },
+    isProjectDone () {
+      return get(this.post, 'project.status') === PROJECT_STATUS.DONE
+    },
+    isLoginBtnActive () {
+      return get(this.me, 'id') ? false : true
+    },
     me () {
       return get(this.$store, 'state.profile', {})
     },    
@@ -97,14 +103,26 @@ export default {
   },
   data () {
     return {
-      isContentEmpty: !get(this.post, 'id') || this.isMemo,
-      isLoginBtnACtive: false,
+      isContentEmpty: !get(this.post, 'id') || (this.isMemo && !this.isProjectDone),
     }
   },
   methods: {
+    checkMemoStatus () {
+      if (this.isMemo && !this.isMemoPaid && !this.isProjectDone) {
+        this.isContentEmpty = true
+        if (this.me.id) {
+          switchOnDeductionPanel(this.$store, this.post)
+        } else {
+          switchOffDeductionPanel(this.$store)
+        }
+      } else {
+        this.isContentEmpty = false
+        switchOffDeductionPanel(this.$store)
+      }
+    },
     get,
     goJoin () {
-      if (!this.isPostEmpty && this.isMemo && !this.isMemoPaid) {
+      if (!this.isPostEmpty && this.isMemo && !this.isMemoPaid && !this.isProjectDone) {
         switchOnDeductionPanel(this.$store, this.post)
       }      
     },
@@ -113,18 +131,8 @@ export default {
     },
   },
   mounted () {
-    if (!this.isPostEmpty) {
-      if (this.isMemo && !this.isMemoPaid) {
-        this.isContentEmpty = true
-        !this.me.id && (this.isLoginBtnACtive = true)
-        switchOnDeductionPanel(this.$store, this.post)
-      } else {
-        this.isContentEmpty = false
-      }
-    } else {
-      this.isContentEmpty = true
-      !this.me.id && (this.isLoginBtnACtive = true)
-    }
+    this.isPostEmpty && (this.isContentEmpty = true)
+    this.checkMemoStatus()
   },
   props: {
     post: {
@@ -133,22 +141,14 @@ export default {
   },
   watch: {
     post () {
-      debug('Mutation detected: post', this.post)
+      debug('!this.isPostEmpty', !this.isPostEmpty)
       if (!this.isPostEmpty) {
-        if (this.isMemo && !this.isMemoPaid) {
-          this.isContentEmpty = true
-          !this.me.id && (this.isLoginBtnACtive = true)
-          switchOnDeductionPanel(this.$store, this.post)
-        } else {
-          switchOffDeductionPanel(this.$store)
-          this.isContentEmpty = false
-        }
+        this.checkMemoStatus()
       } else {
         /**
          * Client may not have the right to fetch this post content.
          */
         this.isContentEmpty = true
-        !this.me.id && (this.isLoginBtnACtive = true)
       }
     },
   },

@@ -139,7 +139,11 @@
     },
     watch: {
       isActive () {
-        this.isActive && (this.showMemoDeduction = true)
+        if (this.isActive) {
+          this.showMemoDeduction = true
+        } else {
+          this.showMemoDeduction = false
+        }
       },
       showMemoDeduction () {
         !this.showMemoDeduction && switchOffDeductionPanel(this.$store)

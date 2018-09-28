@@ -125,7 +125,7 @@ export default {
     postSingle () {
       switch (this.route) {
         case 'series':
-          return get(this.$store, 'state.memoSingle', {})
+          return get(this.$store, 'state.memoSingle.id') ? get(this.$store, 'state.memoSingle') : get(this.$store, 'state.publicMemoSingle', {})
         default:
           return
       }
