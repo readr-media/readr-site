@@ -1,13 +1,13 @@
 import _ from 'lodash'
-import { getMemo, getMemos, getPublicMemos, } from 'src/api'
+import * as memoFunc from 'src/api/memo'
 
 const debug = require('debug')('CLIENT:store:actions:memo')
 
 const GET_MEMO = ({ commit, }, { params, }) => {
-  return getMemo({ params, }).then(({ status, body, }) => {
+  return memoFunc.getMemo({ params, }).then(({ status, body, }) => {
     debug('GET_MEMO', body)
     if (status === 200) {
-      commit('SET_MEMO_SINGLE', { item: Object.assign({}, _.get(body, 'items.0', {}), { flag: 'memo', }), })
+      commit('SET_MEMO_SINGLE',  { item: _.get(body, 'items.0', {}), })
     } else {
       commit('SET_MEMO_SINGLE', { item: null, })
     }
@@ -17,7 +17,7 @@ const GET_MEMO = ({ commit, }, { params, }) => {
 }
 
 const GET_MEMOS = ({ commit, }, { params, mode, }) => {
-  return getMemos({ params, }).then(({ status, body, }) => {
+  return memoFunc.getMemos({ params, }).then(({ status, body, }) => {
     if (status === 200) {
       if (mode == 'set') {
         commit('SET_MEMOS', { items: _.map(_.get(body, 'items', []), i => {
@@ -42,9 +42,21 @@ const GET_MEMOS = ({ commit, }, { params, mode, }) => {
   })
 }
 
+const GET_PUBLIC_MEMO = ({ commit, }, { params, }) => {
+  return memoFunc.getPublicMemo({ params, }).then(({ status, body, }) => {
+    if (status === 200) {
+      commit('SET_PUBLIC_MEMO_SINGLE', { item: _.get(body, 'items.0', {}), })
+    } else {
+      commit('SET_PUBLIC_MEMO_SINGLE', { item: null, })
+    }
+  }).catch(() => {
+    commit('SET_PUBLIC_MEMO_SINGLE', { item: null, })
+  })
+}
+
 const GET_PUBLIC_MEMOS = ({ commit, }, { params, mode, }) => {
   return new Promise((resolve) => { 
-    getPublicMemos({ params, }).then(({ status, body, }) => {
+    memoFunc.getPublicMemos({ params, }).then(({ status, body, }) => {
       debug('Get memos!', status, body)
       if (status === 200) {
         if (mode == 'set') {
@@ -71,5 +83,6 @@ const GET_PUBLIC_MEMOS = ({ commit, }, { params, mode, }) => {
 export {
   GET_MEMO,
   GET_MEMOS,
+  GET_PUBLIC_MEMO,
   GET_PUBLIC_MEMOS,
 }

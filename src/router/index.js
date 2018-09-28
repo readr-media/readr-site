@@ -16,13 +16,14 @@ const PublicAgreement = () => import('../views/PublicAgreement.vue')
 const PublicEditors = () => import('../views/PublicEditors.vue')
 const PublicHome = () => import('../views/PublicHome.vue')
 const PublicLogin = () => import('../views/PublicLogin.vue')
-const PublicPageWithAside = () => import('../views/PublicPageWithAside.vue')
 const PublicPageNotFound = () => import('../views/PublicPageNotFound.vue')
 const PublicProjectList = () => import('../views/PublicProjectList.vue')
+const PublicProject = () => import('../views/PublicProject.vue')
 const PublicProfile = () => import('../views/PublicProfile.vue')
 const PublicSearch = () => import('../views/PublicSearch.vue')
 const PublicServerError = () => import('../views/PublicServerError.vue')
 const PublicSetPassword = () => import('../views/PublicSetPassword.vue')
+const PublicTag = () => import('../views/PublicTag.vue')
 const PublicComment = () => import('../views/PublicComment.vue')
 // const PublicVideos = () => import('../views/PublicVideos.vue')
 
@@ -66,11 +67,11 @@ const router = new Router({
     { path: '/guesteditor/:panel?/:tool?', component: ManageGuestEditor, meta: { permission: 'guesteditor', }, },
     { path: '/login', component: PublicLogin, },
     { path: '/member/:panel?/:tool?', component: ManageMember, meta: { permission: 'member', }, },
-    { path: '/series/:slug/:subItem?', component: PublicPageWithAside, },
+    { path: '/series/:slug/:subItem?', component: PublicProject, },
     { path: '/profile/:id', component: PublicProfile, },
     { path: '/search/:keyword', component: PublicSearch, },
     { path: '/series-list', component: PublicProjectList, },
-    { path: '/tag/:tagId', component: PublicPageWithAside, props: { hasLeading: false, }, },
+    { path: '/tag/:tagId', component: PublicTag, },
     { path: '/setup/:type', component: PublicSetPassword, },
     { path: '/comment', component: PublicComment, props: (route) => ({ resourceURL: route.query.resource_url, }), },
     { path: '/404', component: PublicPageNotFound, },

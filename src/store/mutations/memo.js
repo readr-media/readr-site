@@ -1,10 +1,11 @@
 import _ from 'lodash'
-
-const debug = require('debug')('CLIENT:STORE:mutations:memo')
+// const debug = require('debug')('CLIENT:STORE:mutations:memo')
 
 const SET_MEMO_SINGLE = (state, { item, }) => {
-  debug('SET_MEMO_SINGLE', item)
   state['memoSingle'] = item
+}
+const SET_PUBLIC_MEMO_SINGLE = (state, { item, }) => {
+  state['publicMemoSingle'] = item
 }
 
 const SET_MEMOS = (state, { items, }) => {
@@ -27,6 +28,7 @@ export {
   SET_MEMO_SINGLE,
   SET_MEMOS,
   SET_PUBLIC_MEMOS,
+  SET_PUBLIC_MEMO_SINGLE,
   UPDATE_MEMOS,
   UPDATE_PUBLIC_MEMOS,
 }

@@ -214,21 +214,6 @@ export function getMembersCount () {
   return fetchInStrict(url, {})
 }
 
-export function getMemo ({ params, }) {
-  let url = `${host}/api/memo/${_.get(params, 'memoId')}`
-  return fetchInStrict(url, {})
-}
-
-export function getMemos ({ params, }) {
-  let url = `${host}/api/memos`
-  const query = _buildQuery(params)
-  debug('params', params)
-  if (query && (query.length > 0)) {
-    url = url + `?${query}`
-  }
-  return fetchInStrict(url, {})
-}
-
 export function getPublicMember ({ params, }) {
   let url = `${host}/api/public/profile/${params.id}`
   // url = `${url}/profile/${params.id}`
@@ -291,15 +276,6 @@ export function getPostsCount ({ params, }) {
     url = url + `?${query}`
   }
   return fetchInStrict(url, {})
-}
-
-export function getPublicMemos ({ params, }) {
-  let url = `${host}/api/public/memos`
-  const query = _buildQuery(params)
-  if (query && (query.length > 0)) {
-    url = url + `?${query}`
-  }
-  return fetch(url)
 }
 
 export function getPublicPosts ({ params, }) {
