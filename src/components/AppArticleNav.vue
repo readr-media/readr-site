@@ -5,7 +5,7 @@
         <img class="comment-icon__thumbnail" :src="commentIcon" alt="comment">
         <CommentCount class="comment-icon__count" :commentAmount="commentCount" :postId="postId" :type="'publicPostsHot'"></CommentCount>
       </span>
-      <span class="follow-icon" @click="clickFollow($event)">
+      <span v-if="showFollow" class="follow-icon" @click="clickFollow($event)">
         <img class="follow-icon__thumbnail" :src="isFollow ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="follow">
         <span class="follow-icon__hint" v-text="$t('FOLLOWING.FOLLOW')"></span>
       </span>
@@ -218,6 +218,10 @@ export default {
     shouldShowComment: {
       type: Boolean,
       default: false,
+    },
+    showFollow: {
+      type: Boolean,
+      default: true,
     },
   },
 }
