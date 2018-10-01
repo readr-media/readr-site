@@ -62,7 +62,11 @@
     <template v-else-if="get(item, 'event_type') === NOTIFICATION_TYPE.FOLLOW_MEMBER_POST">
       <span class="comment--commenter" v-text="get(item, 'nickname')"></span>
       <span class="comment--action" v-text="$t('NOTIFICATION.PUBLISH')"></span>
-      <span class="comment--post-type" v-text="postType"></span>  
+      <span class="comment--post-type" v-text="postType"></span>
+    </template>
+    <template v-else-if="get(item, 'event_type') === NOTIFICATION_TYPE.FOLLOW_PROJECT_STATUS">
+      <span class="comment--commenter" v-text="get(item, 'nickname')"></span>
+      <span class="comment--action" v-text="$t('NOTIFICATION.UPDATE')"></span>
     </template>
   </div>
 </template>
