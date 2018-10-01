@@ -26,6 +26,7 @@
       </article>
       <div class="nav-container">
         <AppArticleNav
+          :showFollow="false"
           :postId="post.id"
           :postRefId="assetRefId"
           :resource="post.flag"

@@ -9,6 +9,7 @@
         <div class="article-content__paragraph-container" v-html="!isPostEmpty ? post.content : ''"></div>
         <a class="article-content__source-link" :href="post.link" target="_blank" v-text="post.linkTitle"></a>
         <AppArticleNav
+          :showFollow="false"
           :postId="post.id"
           :postRefId="assetRefId"
           :resource="post.flag"
