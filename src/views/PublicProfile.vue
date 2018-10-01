@@ -4,12 +4,6 @@
     <Tab class="profile__tab" :tabs="map(tabs, t => t.name)" :tabCurrIndex.sync="curr_tab">
       <template slot="0" v-if="postsReview.length !== 0">
         <div class="profile__main__review">
-          <!--div class="profile__main__review__filter">
-            <select v-model="filter">
-              <option v-text="$t('PROFILE.FILTER_ALL')" value="all"></option>
-              <option v-for="item in POST_FILTER" v-text="$t(`PROFILE.${item.name}`)" :value="item.code" :selected="item === filter"></option>
-            </select>
-          </div-->
           <div class="profile__main__review__container">
             <div class="item" v-for="post in postsReview" :key="post.id">
               <div class="datetime"><span v-text="dateDiffFromNow(get(post, 'publishedAt'))"></span></div>
@@ -21,12 +15,6 @@
       </template>
       <template :slot="postsReview.length !== 0 ? 1 : 0" v-if="postsNews.length !== 0">
         <div class="profile__main__review">
-          <!--div class="profile__main__review__filter">
-            <select v-model="filter">
-              <option v-text="$t('PROFILE.FILTER_ALL')" value="all"></option>
-              <option v-for="item in POST_FILTER" v-text="$t(`PROFILE.${item.name}`)" :value="item.code" :selected="item === filter"></option>
-            </select>
-          </div-->
           <div class="profile__main__review__container">
             <div class="item" v-for="post in postsNews" :key="post.id">
               <div class="datetime"><span v-text="dateDiffFromNow(get(post, 'publishedAt'))"></span></div>
@@ -105,12 +93,6 @@
     })
   }
 
-  // const getPostsCount = (store, params = {}) => {
-  //   return store.dispatch('GET_POSTS_COUNT', {
-  //     params: params,
-  //   })
-  // }
-
   export default {
     name: 'Profile',
     components: {
@@ -120,27 +102,19 @@
       Tab,
       Spinner,
     },
-    // Uncomment this when v1.0 is released
-    // asyncData ({ store, route, }) {
-    //   debug('profileId', get(route, 'params.id'))
-    //   return Promise.all([
-    //     getPosts(store, {
-    //       where: {
-    //         author: get(route, 'params.id'),
-    //         type: POST_TYPE.REVIEW,
-    //       },
-    //     }),
-    //     getPostsCount(store, {
-    //       where: {
-    //         author: get(route, 'params.id'),
-    //         type: POST_TYPE.REVIEW,
-    //       },
-    //     }),
-    //     getMemberPublic(store, {
-    //       id: get(route, 'params.id'),
-    //     }),
-    //   ])
-    // },
+    asyncData ({ store, route, }) {
+      return getMemberPublic(store, {
+        id: Number(get(route, 'params.id')),
+      })
+    },
+    metaInfo () {
+      return {
+        description: get(this.profile, 'description', ''),
+        ogTitle: get(this.profile, 'nickname', ''),
+        title: get(this.profile, 'nickname', ''),
+        metaUrl: this.$route.path,         
+      }
+    },    
     computed: {
       currUser () {
         return get(this.$store, 'state.profile.id')
@@ -199,10 +173,12 @@
       loadmore () {
         this.shouldShowSpinner = true
         debug(`this.tabs[ this.curr_tab ]`, this.tabs[ this.curr_tab ], this.currTabKey)
+
         /**
          * dont loadmore follow for now
          */
         if (get(this.tabs, [ this.curr_tab, 'key', ], 1) === 'follow') { return }
+
         return getPosts(this.$store, {
           mode: 'update',
           page: get(this.curr_page, this.currTabKey, 1) + 1,
@@ -215,14 +191,6 @@
           this.shouldShowSpinner = false
           debug('Loadmore done. Status', get(res, 'status'), get(res, 'res'))
           if (get(res, 'status') === 200) {
-            // if (this.$store.state.isLoggedIn) {
-            //   const ids = res.items.map(post => `${post.id}`)
-            //   fetchFollowing(this.$store, {
-            //     mode: 'update',
-            //     resource: 'post',
-            //     ids: ids,
-            //   })
-            // }
             get(this.curr_page, this.currTabKey)
               && (this.curr_page[ this.currTabKey ] += 1)
           } else if (get(res, 'status') === 'end') {
@@ -253,7 +221,6 @@
       },
     },
     beforeMount () {
-      // Beta version code
       Promise.all([
         getPosts(this.$store, {
           outputStateTarget: 'publicPostReview',
@@ -268,15 +235,6 @@
             author: Number(get(this.$route, 'params.id')),
             type: [ POST_TYPE.NEWS, ],
           },
-        }),
-        // getPostsCount(this.$store, {
-        //   where: {
-        //     author: get(this.$route, 'params.id'),
-        //     type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ],
-        //   },
-        // }),
-        getMemberPublic(this.$store, {
-          id: Number(get(this.$route, 'params.id')),
         }),
       ])
       .then(() => {
@@ -301,7 +259,7 @@
        debug(`/profile/${this.$route.params.id}`)
       
       /**
-       * check if current user is belone to this profile. If yes, redirect it to member center.
+       * check if current user owns this profile. If yes, redirect it to member center.
        */
       this.routeToMemCenter()
 
