@@ -5,7 +5,7 @@ import { getHost, } from 'src/util/comm'
 const host = getHost()
 
 export function getPublicMemo ({ params, }) {
-  const url = `${host}/api/public/memo/${get(params, 'memoId')}`
+  const url = constructUrlWithQuery(`${host}/api/public/memo/${get(params, 'memoId')}`, params)
   return fetch(url)
 }
 
@@ -16,7 +16,7 @@ export function getPublicMemos ({ params, }) {
 
 
 export function getMemo ({ params, }) {
-  const url = `${host}/api/memo/${get(params, 'memoId')}`
+  const url = constructUrlWithQuery(`${host}/api/memo/${get(params, 'memoId')}`, params)
   return fetchInStrict(url, {})
 }
 
