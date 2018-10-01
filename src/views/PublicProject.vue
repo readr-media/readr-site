@@ -60,7 +60,6 @@ const fetchMemos = (store, {
 }) => {
   return store.dispatch('GET_MEMOS', {
     params: {
-      member_id: get(store, 'state.profile.id'),
       project_id: proj_ids,
       max_result: MAXRESULT_POSTS,
       page,
@@ -76,7 +75,6 @@ const fetchMemos = (store, {
 const fetchMemoSingle = (store, memoId) => {
   return store.dispatch('GET_MEMO', {
     params: {
-      member_id: get(store, 'state.profile.id'),
       memoId,
     },
   })
@@ -115,7 +113,6 @@ const fetchPublicMemos = (store, {
 } = {}) => { 
   return store.dispatch('GET_PUBLIC_MEMOS', { 
     params: { 
-      member_id: get(store, 'state.profile.id', -1), 
       project_id: proj_ids,
       max_result: max_result, 
       page,
@@ -191,7 +188,7 @@ export default {
       return {
         title: get(this.projectSingle, 'title'),
         ogTitle: get(this.projectSingle, 'ogTitle') || get(this.projectSingle, 'title'),
-        description: get(this.postSingle, 'ogDescription') || get(this.projectSingle, 'description'),
+        description: get(this.projectSingle, 'ogDescription') || get(this.projectSingle, 'description'),
         metaUrl: this.$route.path,
         metaImage: get(this.projectSingle, 'ogImage') || get(this.projectSingle, 'heroImage'),            
       }
@@ -270,6 +267,7 @@ export default {
         proj_ids: [ get(this.projectSingle, 'id', 0), ],
         page: 1,
       })      
+      this.$route.params.subItem && fetchMemoSingle(this.$store, this.$route.params.subItem)
     }
     debug('isSeriesDonate', this.isSeriesDonate)
   },
