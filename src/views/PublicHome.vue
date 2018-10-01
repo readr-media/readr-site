@@ -131,7 +131,7 @@ export default {
         ogTitle: get(this.postSingle, 'ogTitle') || get(this.postSingle, 'title'),
         description: get(this.postSingle, 'ogDescription') || truncate(sanitizeHtml(get(this.postSingle, 'content', ''), { allowedTags: [], }), 100),
         metaUrl: this.$route.path,
-        metaImage: get(this.postSingle, 'ogImage'),
+        metaImage: get(this.postSingle, 'ogImage') || '/public/og-image-post.jpg',
       }
     } else {
       return {

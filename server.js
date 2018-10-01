@@ -149,7 +149,7 @@ function render (req, res, next) {
     ogTitle: 'Readr',
     description: 'Readr',
     metaUrl: 'dev.readr.tw',
-    metaImage: '/public/og.png',
+    metaImage: '/public/og-image.jpg',
     url: req.url,
     cookie: cookies.get('csrf'),
     initmember: cookies.get('initmember'),

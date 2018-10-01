@@ -185,7 +185,7 @@ export default {
         ogTitle: get(this.postSingle, 'title'),
         description: desc,
         metaUrl: this.$route.path,
-        metaImage: get(this.projectSingle, 'heroImage'),     
+        metaImage: get(this.projectSingle, 'heroImage') || '/public/og-image-memo.jpg',     
       }
     } else {
       return {
