@@ -40,6 +40,8 @@ const serverMetaInfoMixin = {
       }
       if (metaImage) { 
         this.$ssrContext.metaImage = metaImage
+      } else {
+        this.$ssrContext.metaImage = '/public/og-image.jpg'
       }
     }
   },
@@ -70,6 +72,8 @@ const updateMeta = metaInfo => {
   }
   if (metaImage) {
     document.head.querySelector(`meta[property='og:image']`).content = metaImage
+  } else {
+    document.head.querySelector(`meta[property='og:image']`).content = '/public/og-image.jpg'
   }
 }
 
