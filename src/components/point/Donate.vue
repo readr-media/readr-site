@@ -104,7 +104,7 @@
       },
       get,
       goDonate () {
-        if (this.alertMsg || !get(this.targetItem, 'id') || !this.donateAmount.trim()) { return }
+        if (this.alertMsg || !get(this.targetItem, 'id') || !(`${this.donateAmount}`).trim()) { return }
         deductPoints(this.$store, {
           objectId: get(this.targetItem, 'id'),
           points: this.donateAmount,
