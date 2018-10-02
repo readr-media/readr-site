@@ -321,6 +321,8 @@ export default {
       'NOT_ENOUGH': '您的點數不足，',
       'GO_DEPOSIT': '（點我前往儲值）',
       'NOT_NUM': '請填入數字',
+      'HAVE_TO_LOGIN': '謝謝您願意贊助我們，請先登入 Readr 會員後進行贊助。',
+      'LOG_IN': '會員登入',
     },
   },
   'TAG_LIST': {
