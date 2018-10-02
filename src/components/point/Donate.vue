@@ -2,20 +2,28 @@
   <BaseLightBox borderStyle="nonBorder" :showLightBox.sync="showDonate" @closeLightBox="closeDonate()">
     <div class="donate-panel">
       <div class="donate-panel__container">
-        <div class="donate-panel__content">
-          <div class="appreciate"><span v-text="$t('point.DONATE.APPRECIATE')"></span></div>
-          <div class="project-name"><span v-text="get(targetItem, 'title')"></span></div>
-          <div class="amount">
-            <span v-text="$t('point.DONATE.AMOUNT_PREFIX')"></span>
-            <input class="amount-input" type="text" v-model="donateAmount">
-            <span v-text="$t('point.DONATE.AMOUNT_POSTFIX')"></span>
+        <template v-if="get(me, 'id')">
+          <div class="donate-panel__content">
+            <div class="appreciate"><span v-text="$t('point.DONATE.APPRECIATE')"></span></div>
+            <div class="project-name"><span v-text="get(targetItem, 'title')"></span></div>
+            <div class="amount">
+              <span v-text="$t('point.DONATE.AMOUNT_PREFIX')"></span>
+              <input class="amount-input" type="text" v-model="donateAmount">
+              <span v-text="$t('point.DONATE.AMOUNT_POSTFIX')"></span>
+            </div>
+            <div class="alert">
+              <span v-text="alertMsg"></span>
+              <span v-show="alertMsg" v-text="$t('point.DONATE.GO_DEPOSIT')" class="deposit" @click="goDeposit"></span>
+            </div>
           </div>
-          <div class="alert">
-            <span v-text="alertMsg"></span>
-            <span v-show="alertMsg" v-text="$t('point.DONATE.GO_DEPOSIT')" class="deposit" @click="goDeposit"></span>
+          <div class="donate-panel__confirm" :class="{ block: alertMsg, }" @click="goDonate"><span v-text="$t('point.DONATE.CONFIRM')"></span></div>
+        </template>
+        <template v-else>
+          <div class="donate-panel__content">
+            <div class="appreciate"><span v-text="$t('point.DONATE.HAVE_TO_LOGIN')"></span></div>
           </div>
-        </div>
-        <div class="donate-panel__confirm" :class="{ block: alertMsg, }" @click="goDonate"><span v-text="$t('point.DONATE.CONFIRM')"></span></div>
+          <div class="donate-panel__confirm" @click="goLogin"><span v-text="$t('point.DONATE.LOG_IN')"></span></div>
+        </template>
       </div>
     </div>
   </BaseLightBox>
@@ -57,6 +65,9 @@
       targetItem () {
         return get(this.$store, 'state.donateFlag.item', {})
       },
+      me () {
+        return get(this.$store, 'state.profile', {})
+      },
     },
     data () {
       return {
@@ -93,7 +104,7 @@
       },
       get,
       goDonate () {
-        if (this.alertMsg || !get(this.targetItem, 'id') || !this.donateAmount.trim()) { return }
+        if (this.alertMsg || !get(this.targetItem, 'id') || !(`${this.donateAmount}`).trim()) { return }
         deductPoints(this.$store, {
           objectId: get(this.targetItem, 'id'),
           points: this.donateAmount,
@@ -106,6 +117,9 @@
           const memberCenter = get(filter(ROLE_MAP, { key: get(this.$store, 'state.profile.role'), }), '0.route', 'member')
           this.$router.push(`/${memberCenter}/records/point-manager`)
         })
+      },
+      goLogin () {
+        this.$router.push('/login')
       },
     },
     beforeMount () {

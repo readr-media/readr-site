@@ -39,7 +39,7 @@ const MAXRESULT_POSTS = 10
 const DEFAULT_PAGE = 1
 const DEFAULT_SORT = '-memo_order,-updated_at'
 
-const debug = require('debug')('CLIENT:PublicPageWithAside')
+const debug = require('debug')('CLIENT:PublicProject')
 
 const getUserFollowing = (store, { id = get(store, 'state.profile.id'), resource, resourceType = '', } = {}) => {
   return store.dispatch('GET_FOLLOWING_BY_USER', {
@@ -144,6 +144,7 @@ const fetchReportsList = (store, {
 }
 
 const switchOn = (store, item) => store.dispatch('SWITCH_ON_DONATE_PANEL', { item, })
+const switchOff = store => store.dispatch('SWITCH_OFF_DONATE_PANEL', {})
  
 export default {
   name: 'PublicProject',
@@ -204,17 +205,20 @@ export default {
   },
   watch: {
     isSeriesDonate () {
-      debug('Mutation detected: isSeriesDonate', this.isSeriesDonate)
       this.donateCheck()
     },
     postSingle () {
       this.$forceUpdate()
     },
     projectSingle () {
-      this.donateCheck()
+      debug('Mutation detected: projectSingle')
     },
     projectSingleTagIds (ids) {
       fetchFollowing(this.$store, { resource: 'tag', ids: ids, })
+    },
+    '$route.params.subItem' () {
+      debug('Mutation detected: $route.params.subItem')
+      this.isSeriesDonate = get(this.$route, 'params.subItem') === 'donate'
     },
   },
   computed: {
@@ -225,9 +229,6 @@ export default {
       return `${get(this.$store, 'state.setting.HOST')}/series/${get(this.$route, 'params.slug')}`
     },
     isClientSide,
-    isSeriesDonate () {
-      return get(this.$route, 'params.subItem') === 'donate'
-    },
     me () {
       return get(this.$store, 'state.profile', {})
     }, 
@@ -245,6 +246,11 @@ export default {
       return this.projectSingle.tags || []
     },
   },
+  data () {
+    return {
+      isSeriesDonate: false,
+    }
+  },
   methods: {
     get,
     fetchMemos,
@@ -252,7 +258,11 @@ export default {
     fetchMemoSingle,
     fetchReportsList,
     donateCheck () {
-      this.isSeriesDonate && this.projectSingle && switchOn(this.$store, this.projectSingle)
+      if (this.isSeriesDonate) {
+        this.projectSingle && switchOn(this.$store, this.projectSingle)
+      } else {
+        switchOff(this.$store)
+      }
     },
   },
   beforeMount () {
@@ -269,7 +279,12 @@ export default {
       })      
       this.$route.params.subItem && fetchMemoSingle(this.$store, this.$route.params.subItem)
     }
+    this.isSeriesDonate = get(this.$route, 'params.subItem') === 'donate'
     debug('isSeriesDonate', this.isSeriesDonate)
+  },
+  beforeRouteUpdate (to, from, next) {
+    this.isSeriesDonate = get(to, 'params.subItem') === 'donate'
+    next()
   },
   mounted () {
     this.donateCheck()
