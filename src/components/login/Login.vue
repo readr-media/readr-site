@@ -39,6 +39,7 @@
   import { get, } from 'lodash'
   import TextItem from 'src/components/form/TextItem.vue'
   import validator from 'validator'
+  import VueCookie from 'vue-cookie'
 
   const debug = require('debug')('CLIENT:Login')
   const login = (store, profile, token) => {
@@ -83,7 +84,20 @@
           }, get(this.$store, [ 'state', 'register-token', ])).then((res) => {
             this.$emit('update:isDoingLogin', false)
             if (res.status === 200) {
-              this.$route.path === '/comment' ? this.$router.push(this.$route.fullPath) : this.$router.push('/')
+              const isPublicComment = this.$route.path === '/comment'
+              const from = VueCookie.get('location-replace-from')
+              const isFromPathExist = from !== null
+
+              if (isPublicComment) {
+                this.$router.push(this.$route.fullPath)
+              } else {
+                if (isFromPathExist) {
+                  VueCookie.delete('location-replace-from')
+                  location.replace(from)
+                } else {
+                  location.replace('/')
+                }
+              }
             } else {
               this.resMsg = this.$t('login.WORDING_LOGIN_INFAIL_VALIDATION_ISSUE')
             }
