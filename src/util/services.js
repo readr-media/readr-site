@@ -190,4 +190,12 @@ export function logTrace ({ category, description, eventType, sub, target, usera
     })
 }
 
+export function redirectToLogin (from) {
+  /**
+    * use location.replace instead of router.push to server-side render page
+    */
+  Cookie.set('location-replace-from', from, { expires: '60s', })
+  location && location.replace('/login')
+}
+
 

@@ -46,6 +46,7 @@
 import { get, take, } from 'lodash'
 import TagItemRelatedsListItem from './TagItemRelatedsListItem.vue'
 import { mapState, } from 'vuex'
+import { redirectToLogin, } from 'src/util/services'
 
 const publishAction = (store, data) => store.dispatch('FOLLOW', { params: data, })
 
@@ -116,7 +117,11 @@ export default {
   methods: {
     // TODO: Refactor following to a component like ButtonFollow.vue
     clickFollow () {
-      this.isLoggedIn ? this.toogleFollow() : this.$router.push('/login')
+      if (this.isLoggedIn) {
+        this.toogleFollow()
+      } else {
+        redirectToLogin(this.$route.fullPath)
+      }
     },
     toogleFollow () {
       if (this.isFollowed) {

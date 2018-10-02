@@ -41,6 +41,7 @@ import { getArticleAuthorId, getArticleAuthorNickname, getArticleAuthorThumbnail
 import BaseLightBoxTemplateNews from 'src/components/BaseLightBoxTemplateNews.vue'
 import BaseLightBoxTemplatePost from 'src/components/BaseLightBoxTemplatePost.vue'
 import sanitizeHtml from 'sanitize-html'
+import { redirectToLogin, } from 'src/util/services'
 
 const debug = require('debug')('CLIENT:BaseLightBoxPost')
 const dom = require('xmldom').DOMParser
@@ -127,7 +128,7 @@ export default {
       }      
     },
     goLogin () {
-      location && location.replace('/login')
+      redirectToLogin(this.$route.fullPath)
     },
   },
   mounted () {
