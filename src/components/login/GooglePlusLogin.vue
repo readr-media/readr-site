@@ -8,6 +8,7 @@
 </template>
 <script>
   import { get, } from 'lodash'
+  import VueCookie from 'vue-cookie'
 
   const debug = require('debug')('CLIENT:GooglePlusLogin')
   const login = (store, profile, token) => {
@@ -49,7 +50,14 @@
                 /**
                  * use location.replace instead of router.push to server-side render page
                  */
-                location.replace('/')
+                  const from = VueCookie.get('location-replace-from')
+                  const isFromPathExist = from !== null
+                  if (isFromPathExist) {
+                    VueCookie.delete('location-replace-from')
+                    location.replace(from)
+                  } else {
+                    location.replace('/')
+                  }
               } else {
                 debug('res', res)
               }
