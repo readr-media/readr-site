@@ -318,6 +318,13 @@ export default {
       'CONFIRM': '確認贊助',
       'CURRENT_PREFIX': '尚餘點數',
       'CURRENT_POSTFIX': '點',
+      'DETAIL': {
+        'PAYMENT': '付款明細',
+        'POINT': '點數明細',
+        'REST': '剩餘點數',
+        'CURRENT_DONATION': '本次贊助',
+        'TOTAL': '總計',
+      },
       'LIMIT_PREFIX': '贊助此專題至少需',
       'LIMIT_POSTFIX': '點',
       'NOT_ENOUGH': '您的點數不足，',

@@ -114,6 +114,7 @@ export function isScrollBarReachBottom (ratio = 0) {
 export function isElementReachInView (root, selector, offset = 0) {
   const ele = root.querySelector(selector)
   if (!ele) {
+    debug('ele', false)
     return false
   } else {
     const bottom = ele.getBoundingClientRect().bottom
