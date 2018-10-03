@@ -16,7 +16,7 @@
                 <span v-text="alertMsg"></span>
                 <span v-show="alertMsg" v-text="$t('point.DONATE.GO_DEPOSIT')" class="deposit" @click="goDeposit"></span>
               </div>
-              <DonateDetail :rest="currentPoints" :amount="donateAmount"></DonateDetail>
+              <DonateDetail :rest="currentPoints" :amount="isNaN(donateAmount) ? 0 : typeof(donateAmount) === Number ? donateAmount : Number(donateAmount)"></DonateDetail>
             </div>
             <div class="donate-panel__confirm" :class="{ block: alertMsg, }" @click="goDonate"><span v-text="$t('point.DONATE.CONFIRM')"></span></div>
           </template>
