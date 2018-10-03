@@ -142,8 +142,6 @@ export default {
   },
   mounted () {
     this.isPostEmpty && (this.isContentEmpty = true)
-  },
-  created () {
     this.checkMemoStatus()
   },
   props: {
