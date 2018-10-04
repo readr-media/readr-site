@@ -173,6 +173,50 @@ export default {
     'REVIEW': '評論',
     'FOLLOW_TAG': '已追蹤',
     'UNFOLLOW_TAG': '已取消追蹤',
+    'FILTER': {
+      'all': '全部',
+      'project': '新聞專題',
+      'tag': '關鍵字',
+    },
+    'calendarFormats': {
+      'sameDay': '今天',
+      'lastDay': '昨天',
+      'thisWeek': '本週',
+      'lastWeek': '上週',
+      'thisMonth': '本月',
+      'lastMonth': '上個月',
+      'lastMonthBefore': '上個月之前',
+      'sameElse': '三個月之前',
+    },
+    'TO': {
+      '/': '首頁',
+      '/series-list': '新聞專題',
+    },
+    'LOGIN_HINT': {
+      'login': '登入',
+      'suffix': '後，才可以看到追蹤記錄喔！',
+    },
+    'DATA_EMPTY_HINT': {
+      'PROFILE': {
+        'all': {
+          'prefix': '你目前還沒有追蹤的內容，可以到',
+          'or': '或',
+          'suffix': '瞧瞧！',
+        },
+        'project': {
+          'prefix': '你目前還沒有追蹤的新聞專題，可以到',
+          'suffix': '尋找喔！',
+        },
+        'tag': {
+          'prefix': '你目前還沒有追蹤的關鍵字，可以到',
+          'suffix': '尋找想追蹤的關鍵字喔！',
+        },
+      },
+      'PUBLIC_PROFILE': {
+        'prefix': '目前尚無追蹤的',
+        'and': '與',
+      },
+    },
   },
   'homepage': {
     'WORDING_HOME_POST_MORE' : '更多',

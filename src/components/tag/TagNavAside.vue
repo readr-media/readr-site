@@ -1,6 +1,10 @@
 <template>
   <nav class="tag-nav-aside">
-    <TagNavAsideDropdownOptions class="tag-nav-aside__sort" :picked.sync="currentRadioPicked"/>
+    <AppDropdownOptions
+      class="tag-nav-aside__sort"
+      :picked.sync="currentRadioPicked"
+      :options="radioOptions"
+    />
     <ol class="tag-nav-aside__list">
       <TagItem
         v-for="(tag, i) in tags"
@@ -18,7 +22,7 @@
 import { get, } from 'lodash'
 import { mapState, } from 'vuex'
 import { isElementReachInView, isElementScrollable, } from 'src/util/comm'
-import TagNavAsideDropdownOptions from './TagNavAsideDropdownOptions.vue'
+import AppDropdownOptions from '../AppDropdownOptions.vue'
 import TagItem from './TagItem.vue'
 
 const MAXRESULT = 40
@@ -61,7 +65,7 @@ const getUserFollowing = (store, { id = get(store, 'state.profile.id'), resource
 
 export default {
   components: {
-    TagNavAsideDropdownOptions,
+    AppDropdownOptions,
     TagItem,
   },
   watch: {
@@ -81,6 +85,24 @@ export default {
       hasNextPage: true,
       isLoadingTags: false,
       currentRadioPicked: 'hot',
+      radioOptions: [
+        {
+          text: this.$t('TAG_NAV_ASIDE.TITLE.hot'),
+          key: 'hot',
+        },
+        {
+          text: this.$t('TAG_NAV_ASIDE.TITLE.latest'),
+          key: 'latest',
+        },
+        {
+          text: this.$t('TAG_NAV_ASIDE.TITLE.taggedProjects'),
+          key: 'taggedProjects',
+        },
+        {
+          text: this.$t('TAG_NAV_ASIDE.TITLE.followed'),
+          key: 'followed',
+        },
+      ],
     }
   },
   computed: {

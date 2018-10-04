@@ -1,23 +1,16 @@
 <template>
   <header class="header">
-    <h1 class="header__title">{{ $t(`TAG_NAV_ASIDE.TITLE.${picked}`) }}</h1>
+    <h1 class="header__title" v-text="title"></h1>
     <div class="dropdown">
       <div class="dropdown__icon" @click="toogleDropdown" v-click-outside="closeDropdown"></div>
       <div class="dropdown__options options" v-show="isDropdownToogled">
-        <label class="radio-container">{{ $t('TAG_NAV_ASIDE.TITLE.hot') }}
-          <input type="radio" name="radio" value="hot" :checked="picked === 'hot'" @click="pickRadio('hot')">
-          <span class="radio-container__checkmark"></span>
-        </label>
-        <label class="radio-container">{{ $t('TAG_NAV_ASIDE.TITLE.latest') }}
-          <input type="radio" name="radio" value="latest" :checked="picked === 'latest'" @click="pickRadio('latest')">
-          <span class="radio-container__checkmark"></span>
-        </label>
-        <label class="radio-container">{{ $t('TAG_NAV_ASIDE.TITLE.taggedProjects') }}
-          <input type="radio" name="radio" value="taggedProjects" :checked="picked === 'taggedProjects'" @click="pickRadio('taggedProjects')">
-          <span class="radio-container__checkmark"></span>
-        </label>
-        <label class="radio-container">{{ $t('TAG_NAV_ASIDE.TITLE.followed') }}
-          <input type="radio" name="radio" value="followed" :checked="picked === 'followed'" @click="pickRadio('followed')">
+        <label
+          v-for="option in options"
+          :key="option.key"
+          class="radio-container"
+        >
+          {{ option.text }}
+          <input type="radio" name="radio" :value="option.key" :checked="picked === option.key" @click="pickRadio(option.key)">
           <span class="radio-container__checkmark"></span>
         </label>
       </div>
@@ -26,10 +19,25 @@
 </template>
 
 <script>
+import { find, } from 'lodash'
+
 export default {
   props: {
     picked: {
       type: String,
+      required: true,
+    },
+
+    // options template:
+    // [
+    //   {
+    //     text: '',
+    //     key: '',
+    //   },
+    //   // ...
+    // ]
+    options: {
+      type: Array,
       required: true,
     },
   },
@@ -37,6 +45,11 @@ export default {
     return {
       isDropdownToogled: false,
     }
+  },
+  computed: {
+    title () {
+      return find(this.options, [ 'key', this.picked, ]).text
+    },
   },
   methods: {
     toogleDropdown () {

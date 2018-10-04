@@ -1,323 +1,226 @@
 <template>
-  <section class="followingListInTab">
-    <nav class="followingListInTab__nav">
-      <button
-        :class="{ active: resource === 'post' && resourceType === 'review' }"
-        @click="$_followingListInTab_handleResource('review')"
-        v-text="`${$t('FOLLOWING.FOLLOW')}${$t('FOLLOWING.REVIEW')}`">
-      </button>
-      <button
-        :class="{ active: resource === 'post' && resourceType === 'news' }"
-        @click="$_followingListInTab_handleResource('news')"
-        v-text="`${$t('FOLLOWING.FOLLOW')}${$t('FOLLOWING.NEWS')}`">
-      </button>
-      <button
-        :class="{ active: resource === 'project' }"
-        @click="$_followingListInTab_handleResource('project')"
-        v-text="`${$t('FOLLOWING.FOLLOW')}${$t('FOLLOWING.PROJECT')}`">
-      </button>
-      <button
-        :class="{ active: resource === 'report' }"
-        @click="$_followingListInTab_handleResource('report')"
-        v-text="`${$t('FOLLOWING.FOLLOW')}${$t('FOLLOWING.REPORT')}`">
-      </button>
-      <button
-        :class="{ active: resource === 'memo' }"
-        @click="$_followingListInTab_handleResource('memo')"
-        v-text="`${$t('FOLLOWING.FOLLOW')}${$t('FOLLOWING.MEMO')}`">
-      </button>
-    </nav>
-    <!-- <pagination-nav></pagination-nav> -->
-    <div class="followingListInTab__list">
-      <div v-for="follow in followingByUser" :key="follow.id" class="followingListInTab__item" :class="resource">
-        <div class="followingListInTab__img">
-          <button @click="$_followingListInTab_toggleFollow(follow.id, get(followingStats, [ follow.id ], false))">
-            <img :src="get(followingStats, [ follow.id ], false) ? '/public/icons/star-grey.png' : '/public/icons/star-line-grey.png'">
-          </button>
-        </div>
-        <div class="followingListInTab__content">
-          <h2 v-text="follow.title"></h2>
-          <p v-if="$_followingListInTab_getDescription(follow)" v-text="$_followingListInTab_getDescription(follow)"></p>
-        </div>
-        <div 
-          v-if="resource === 'project' || resource === 'report'" 
-          class="followingListInTab__og"
-          :class="{ 'no-image': !follow.heroImage }"
-          :style="{ backgroundImage: follow.heroImage ? `url(${follow.heroImage})` : `url(/public/icons/exclamation.png)` }">
-        </div>
-      </div>
-      <span v-if="followingByUser.length === 0" v-text="`${$t('FOLLOWING.NO_RECORD')}${alertText}`"></span>
-    </div>
+  <section class="following-list-in-tab">
+    <AppDropdownOptions
+      class="following-list-in-tab__filter"
+      :picked.sync="resource"
+      :options="radioOptions"
+    />
+    <p
+      class="following-list-in-tab__data-empty-hint"
+      v-if="isDataEmpty"
+      :is="dataEmptyHint"
+    >
+    </p>
+    <template
+      v-else
+      v-for="date in calendarFormatsValues"
+    >
+      <FollowingList
+        class="following-list-in-tab__list"
+        :key="date"
+        v-if="date in followingByUserGroupByDate"
+        :date="date"
+        :data="followingByUserGroupByDate[date]"
+      />
+    </template>
   </section>
 </template>
+
 <script>
-  import { get, } from 'lodash'
-  import PaginationNav from './PaginationNav.vue'
+import { get, groupBy, mapValues, sortBy, concat, isEmpty, pickBy, } from 'lodash'
+import moment from 'moment'
+import AppDropdownOptions from './AppDropdownOptions.vue'
+import FollowingList from './FollowingList.vue'
 
-  const getFollowing = (store, { id = get(store, 'state.profile.id'), resource = 'post', resourceType = 'review', } = {}) => {
-    return store.dispatch('GET_FOLLOWING_BY_USER', {
-      id: id,
-      resource: resource,
-      resource_type: resourceType,
-    })
-  }
+const getFollowing = (store, { id = get(store, 'state.profile.id'), resource = 'project', resourceType = '', } = {}) => {
+  return store.dispatch('GET_FOLLOWING_BY_USER', {
+    id: id,
+    resource: resource,
+    resource_type: resourceType,
+  })
+}
 
-  const publishAction = (store, { action, resource = 'post', object, }) => {
-    return store.dispatch('FOLLOW', {
-      params: {
-        action: action,
-        resource: resource,
-        subject: get(store, 'state.profile.id'),
-        object: object,
-      },
-    })
-  }
-
-  const toogleFollowingByUserStat = (store, { resource, resourceType = '', targetId, }) => {
-    return store.commit('TOOGLE_FOLLOWING_BY_USER_STAT', {
-      params: {
-        resource,
-        resourceType,
-        targetId,
-      },
-    })
-  }
-
-  // const updateStoreFollowingByUser = (store, { action, resource = 'post', object, item, }) => {
-  //   return store.dispatch('UPDATE_FOLLOWING_BY_USER', {
-  //     params: {
-  //       action: action,
-  //       resource: resource,
-  //       resourceId: object,
-  //       userId: get(store, 'state.profile.id'),
-  //       item: item,
-  //     },
-  //   })
-  // }
-
-  export default {
-    name: 'FollowingListInTab',
-    components: {
-      'pagination-nav': PaginationNav,
+export default {
+  name: 'FollowingListInTab',
+  components: {
+    AppDropdownOptions,
+    FollowingList,
+  },
+  data () {
+    return {
+      resource: 'all', // all, project or tag (Following list in tab now only display projects or tags which were followed by user)
+      radioOptions: [
+        {
+          text: this.$t('FOLLOWING.FILTER.all'),
+          key: 'all',
+        },
+        {
+          text: this.$t('FOLLOWING.FILTER.project'),
+          key: 'project',
+        },
+        {
+          text: this.$t('FOLLOWING.FILTER.tag'),
+          key: 'tag',
+        },
+      ],
+      calendarFormats: this.$t('FOLLOWING.calendarFormats'),
+    }
+  },
+  computed: {
+    calendarFormatsValues () {
+      return Object.values(this.calendarFormats)
     },
-    data () {
+    isLoggedIn () {
+      return this.$store.state.isLoggedIn
+    },
+    isPublicProfilePage () {
+      return get(this.$route, 'fullPath', '').split('/')[1] === 'profile'
+    },
+    userId () {
+      return this.isPublicProfilePage ? get(this.$route, 'params.id') : get(this.$store, 'state.profile.id')
+    },
+    followingByUser () {
+      // TODO: remove 'resource' key assign by frontend when resource field available in response data
+      const _getFollowingByUserResource = resource => get(this.$store, [ 'state', 'followingByUser', this.userId, resource, ], []).map(element => ({ resource, ...element, }))
+      const followingByUserProjects = _getFollowingByUserResource('project')
+      const followingByUserTags = _getFollowingByUserResource('tag')
+      const followingByUserAll = concat(followingByUserProjects, followingByUserTags)
+
       return {
-        resource: 'post',
-        resourceType: 'review',
+        project: followingByUserProjects,
+        tag: followingByUserTags,
+        all: followingByUserAll,
       }
     },
-    computed: {
-      alertText () {
-        switch (this.resource) {
-          case 'memo':
-            return this.$t('FOLLOWING.MEMO')
-          case 'post':
-            if (this.resourceType === 'review') {
-              return this.$t('FOLLOWING.REVIEW')
-            }
-            return this.$t('FOLLOWING.NEWS')
-          case 'project':
-            return this.$t('FOLLOWING.PROJECT')
-          case 'report':
-            return this.$t('FOLLOWING.REPORT')
-        }
-      },
-      isLoggedIn () {
-        return this.$store.state.isLoggedIn
-      },
-      isProfilePage () {
-        return get(this.$route, 'fullPath', '').split('/')[1] === 'profile'
-      },
-      userId () {
-        return this.isProfilePage ? get(this.$route, 'params.id') : get(this.$store, 'state.profile.id')
-      },
-      followingByUser () {
-        if (this.resource === 'post') {
-          return get(this.$store, [ 'state', 'followingByUser', this.userId, this.resource, this.resourceType, ], [])
-        } else {
-          return get(this.$store, [ 'state', 'followingByUser', this.userId, this.resource, ], [])
-        }
-      },
-      followingStats () {
-        if (this.resource === 'post') {
-          return get(this.$store.state.followingByUserStats, [ this.resource, this.resourceType, ], {})
-        } else {
-          return get(this.$store.state.followingByUserStats, [ this.resource, ], {})
-        }
-      },
+    followingByUserGroupByDate () {
+      const followingByUser = this.followingByUser[this.resource]
+      const grouped = groupBy(followingByUser, followingItem => {
+        const itemFollowedAt = get(followingItem, 'followedAt', '')
+        return moment(itemFollowedAt, 'YYYY-MM-DD').calendar(null, this.calendarFormats)
+      })
+      const sorted = mapValues(grouped, array => sortBy(array, element => -moment(element.followedAt)))
+      const filtered = pickBy(sorted, (value, key) => key !== 'Invalid date')
+
+      return filtered
     },
-    beforeMount () {
-      if (this.isProfilePage) {
-        Promise.all([ getFollowing(this.$store), getFollowing(this.$store, { id: Number(get(this.$route, 'params.id')), }), ])
+    isDataEmpty () {
+      return isEmpty(this.followingByUserGroupByDate)
+    },
+    dataEmptyHint () {
+      const dataEmptyHintNotLoggedIn = {
+        render: (h) => {
+          return h('p', [
+            h('router-link', { props: { to: '/login', }, }, this.$t('FOLLOWING.LOGIN_HINT.login')),
+            this.$t('FOLLOWING.LOGIN_HINT.suffix'),
+          ])
+        },
+      }
+      const dataEmptyHintProfile = (() => {
+        const to = this.resource === 'project' ? '/series-list' : '/'
+        switch (this.resource) {
+          case 'project':
+          case 'tag':
+            return {
+              render: (h) => {
+                return h('p', [
+                  this.$t(`FOLLOWING.DATA_EMPTY_HINT.PROFILE.${this.resource}.prefix`),
+                  h('router-link', { props: { to: to, }, }, this.$t(`FOLLOWING.TO['${to}']`)),
+                  this.$t(`FOLLOWING.DATA_EMPTY_HINT.PROFILE.${this.resource}.suffix`),
+                ])
+              },
+            }
+          default:
+            return {
+              render: (h) => {
+                return h('p', [
+                  this.$t('FOLLOWING.DATA_EMPTY_HINT.PROFILE.all.prefix'),
+                  h('router-link', { props: { to: '/', }, }, this.$t(`FOLLOWING.TO['/']`)),
+                  this.$t('FOLLOWING.DATA_EMPTY_HINT.PROFILE.all.or'),
+                  h('router-link', { props: { to: '/series-list', }, }, this.$t(`FOLLOWING.TO['/series-list']`)),
+                  this.$t('FOLLOWING.DATA_EMPTY_HINT.PROFILE.all.suffix'),
+                ])
+              },
+            }
+        }
+      })()
+      const dataEmptyHintProfilePublic = {
+        render: (h) => {
+          return h('p', [
+            this.resource === 'all' ? 
+            `${this.$t('FOLLOWING.DATA_EMPTY_HINT.PUBLIC_PROFILE.prefix')}${this.$t('FOLLOWING.FILTER.project')}${this.$t('FOLLOWING.DATA_EMPTY_HINT.PUBLIC_PROFILE.and')}${this.$t('FOLLOWING.FILTER.tag')}` :
+            `${this.$t('FOLLOWING.DATA_EMPTY_HINT.PUBLIC_PROFILE.prefix')}${this.$t(`FOLLOWING.FILTER.${this.resource}`)}`,
+          ])
+        },
+      }
+
+      if (!this.isLoggedIn) { return dataEmptyHintNotLoggedIn }
+      if (!this.isPublicProfilePage) { return dataEmptyHintProfile }
+      return dataEmptyHintProfilePublic
+    },
+    followingStatsLoggenInUser () {
+      const data = get(this.$store, [ 'state', 'followingByUserStats', this.resource, ], [])
+      return data
+    },
+  },
+  created () {
+    moment.calendarFormatDefault = Object.assign(moment.calendarFormat)
+
+    // Customize calendarFormat function
+    moment.calendarFormat = function (myMoment, now) {
+      const endOfWeek = moment().endOf('isoWeek')
+      const endOfLastWeek = endOfWeek.clone().subtract(7, 'days')
+      const endOfMonth = moment().endOf('month')
+      const endOfLastMonth = endOfMonth.clone().subtract(1, 'month').endOf('month')
+
+      const diff = (compare) => myMoment.diff(compare, 'days', true)
+
+      const retVal = 
+        diff(now) >= 0 && diff(now) < 1 ? 'sameDay' :
+        diff(now) >= -1 && diff(now) < 0 ? 'lastDay' :
+        diff(endOfWeek) >= -7 ? 'thisWeek' :
+        diff(endOfLastWeek) >= -7 ? 'lastWeek' :
+        diff(endOfMonth) >= -endOfMonth.daysInMonth() ? 'thisMonth' :
+        diff(endOfLastMonth) >= -endOfLastMonth.daysInMonth() ? 'lastMonth' : 'lastMonthBefore'
+
+      return retVal
+    }
+  },
+  destroyed () {
+    // Restore calendarFormat function to default
+    moment.calendarFormat = moment.calendarFormatDefault
+  },
+  beforeMount () {
+    // TODO: loadmore feature
+    if (this.isLoggedIn) {
+      if (this.isPublicProfilePage) {
+        Promise.all([
+          getFollowing(this.$store, { resource: 'project', }),
+          getFollowing(this.$store, { resource: 'tag', }),
+          getFollowing(this.$store, { id: Number(get(this.$route, 'params.id')), resource: 'project', }),
+          getFollowing(this.$store, { id: Number(get(this.$route, 'params.id')), resource: 'tag', }),
+        ])
       } else {
-        getFollowing(this.$store)
+        Promise.all([
+          getFollowing(this.$store, { resource: 'project', }),
+          getFollowing(this.$store, { resource: 'tag', }),
+        ])
       }
-    },
-    methods: {
-      get,
-      $_followingListInTab_getDescription (follow) {
-        switch (this.resource) {
-          case 'project':
-          case 'report': {
-            return get(follow, [ 'description', ])
-          }
-          case 'post':
-          case 'memo': {
-            const parser = new DOMParser()
-            const html = parser.parseFromString(follow.content, 'text/html')
-            const origin = Array.from(html.querySelectorAll('p'))
-              .filter((node) => {
-                return node.innerHTML !== '<br>'
-              })
-              .map((node) => {
-                return node.innerHTML.replace(/<[^>]*>/g, "")
-              })
-              .join('')
-            return origin
-          }
-          default:
-            return ''
-        }
-      },
-      $_followingListInTab_handleResource (type) {
-        switch (type) {
-          case 'review':
-            this.resource = 'post'
-            this.resourceType = 'review'
-            if (this.isProfilePage) {
-              return Promise.all([
-                getFollowing(this.$store, { resource: this.resource, resourceType: this.resourceType, }),
-                getFollowing(this.$store, { id: Number(get(this.$route, 'params.id')), resource: this.resource, resourceType: this.resourceType, }),
-              ])
-            } else {
-              return getFollowing(this.$store, { resource: this.resource, resourceType: this.resourceType, })
-            }
-          case 'news':
-            this.resource = 'post'
-            this.resourceType = 'news'
-            if (this.isProfilePage) {
-              return Promise.all([
-                getFollowing(this.$store, { resource: this.resource, resourceType: this.resourceType, }),
-                getFollowing(this.$store, { id: Number(get(this.$route, 'params.id')), resource: this.resource, resourceType: this.resourceType, }),
-              ])
-            } else {
-              return getFollowing(this.$store, { resource: this.resource, resourceType: this.resourceType, })
-            }
-          default:
-            this.resource = type
-            this.resourceType = ''
-            if (this.isProfilePage) {
-              return Promise.all([
-                getFollowing(this.$store, { resource: this.resource, }),
-                getFollowing(this.$store, { id: Number(get(this.$route, 'params.id')), resource: this.resource, }),
-              ])
-            } else {
-              return getFollowing(this.$store, { resource: this.resource, })
-            }
-        }
-      },
-      $_followingListInTab_toggleFollow (id, isFollow) {
-        if (isFollow) {
-          publishAction(this.$store, { action: 'unfollow', resource: this.resource, object: id, })
-        } else {
-          publishAction(this.$store, { action: 'follow', resource: this.resource, object: id, })
-        }
-        toogleFollowingByUserStat(this.$store, { resource: this.resource, resourceType: this.resourceType, targetId: id, })
-      },
-    },
-  }
+    }
+  },
+}
 </script>
 <style lang="stylus" scoped>
-
-.followingListInTab
-  width 750px
-  margin 0 auto
-  &__nav
-    button
-      height 15px
-      padding 0
-      margin 0 5px
-      color #a8a8a8
-      font-size 15px
-      background transparent
-      border none
-      outline none
-      &.active
-        color #000
-        &::before
-          content ''
-          width 0
-          height 0
-          margin-right 3px
-          font-size 0
-          line-height 0
-          vertical-align super
-          border-style solid
-          border-width 7.5px 0 7.5px 15px
-          border-color transparent transparent transparent #ddcf21
+.following-list-in-tab
+  padding 0 100.5px
+  &__filter
+    float right
+  &__data-empty-hint
+    clear right
+    font-size 18px
+    & >>> a
+      color #4280a2
+      border-bottom 1px solid #4280a2
   &__list
-    margin-top 30px
-    min-height 297px
-    > span
-      font-size 1.125rem
-  &__item
-    display flex
-    align-items flex-start
-    margin-bottom 25px
-    &.review
-      .followingListInTab__img
-        width 25px
-        height 25px
-        text-align left
-      .followingListInTab__content
-        h2
-          height 25px
-          line-height 25px
-  &__img
-      width 60px
-      text-align center
-      > div
-        width 60px
-        height 60px
-        margin-bottom 10px
-        background-position center
-        background-size cover
-        background-repeat no-repeat
-        border 1px solid #979797
-        border-radius 50%
-      > button
-        width 25px
-        height 25px
-        padding 0
-        text-align center
-        background transparent
-        border none
-        outline none
-        img 
-          width 100%
-  &__content
-    flex 1
-    margin-left 10px
-    h2
-      margin 0
-      font-size 18px
-      line-height 20px
-    p
-      max-height 63px
-      margin-top 1em
-      margin-bottom 0
-      font-size 15px
-      text-align justify
-      line-height 1.4
-      overflow hidden
-  &__og
-    width 175px
-    height 92px
-    margin-left 15px
-    background-position center
-    background-size cover
-    background-repeat no-repeat
-    &.no-image
-      background-size contain
-
+    clear right
+    margin 14px 0 0 0
 </style>
