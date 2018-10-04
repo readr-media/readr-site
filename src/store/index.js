@@ -9,6 +9,10 @@ Vue.use(Vuex)
 export function createStore () {
   return new Vuex.Store({
     state: {
+      'clearUpPointsFlag': {
+        'active': false,
+        'item': {},        
+      },
       'customEditors': [],
       'commentCount': [],
       'commentsForHome': [],

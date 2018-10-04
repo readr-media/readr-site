@@ -1,28 +1,28 @@
 <template>
   <div>
-    <div class="tappay-deposit__item title"><span v-text="$t('point.DEPOSIT.TITLE.CARD_INFO')"></span></div>
+    <div class="tappay-deposit__item title"><span v-text="$t('point.CLEAR_UP.TITLE.CARD_INFO')"></span></div>
     <div class="tappay-deposit__item">
-      <div class="name"><span v-html="$t('point.DEPOSIT.ITEM.CARD_NUMBER')"></span></div>
+      <div class="name"><span v-html="$t('point.CLEAR_UP.ITEM.CARD_NUMBER')"></span></div>
       <div class="tpfield" id="card-number"></div>
     </div>
     <div class="tappay-deposit__item__wrapper">
       <div class="tappay-deposit__item">
-        <div class="name"><span v-text="$t('point.DEPOSIT.ITEM.CCV')"></span></div>
+        <div class="name"><span v-text="$t('point.CLEAR_UP.ITEM.CCV')"></span></div>
         <div class="tpfield" id="card-ccv"></div>    
       </div>
       <div class="tappay-deposit__item">
-        <div class="name"><span v-text="$t('point.DEPOSIT.ITEM.EXPIRY')"></span></div>
+        <div class="name"><span v-text="$t('point.CLEAR_UP.ITEM.EXPIRY')"></span></div>
         <div class="tpfield" id="card-expiration-date"></div>
       </div>
     </div>  
-    <div class="tappay-deposit__item title"><span v-text="$t('point.DEPOSIT.TITLE.OWNER')"></span></div>
+    <div class="tappay-deposit__item title"><span v-text="$t('point.CLEAR_UP.TITLE.OWNER')"></span></div>
     <div class="tappay-deposit__item">
-      <div class="name"><span v-html="$t('point.DEPOSIT.ITEM.CARD_OWNER')"></span></div>
+      <div class="name"><span v-html="$t('point.CLEAR_UP.ITEM.CARD_OWNER')"></span></div>
       <div class="tpfield input"><input type="text" v-model="cardContactPerson"></div>
     </div>
     <div class="tappay-deposit__item__wrapper">
       <div class="tappay-deposit__item">
-        <div class="name"><span v-html="$t('point.DEPOSIT.ITEM.PHONE_NUMBER')"></span></div>
+        <div class="name"><span v-html="$t('point.CLEAR_UP.ITEM.PHONE_NUMBER')"></span></div>
         <div class="tpfield input country">
           <select v-model="currCountry">
             <option v-for="{ code, name } in callingCodes" :value="name" v-text="`${name} ${code}`"></option>
@@ -78,15 +78,15 @@
           fields: {
             number: {
               element: '#card-number',
-              placeholder: this.$t('point.DEPOSIT.PLACEHOLDER.CARD_NUMBER'),
+              placeholder: this.$t('point.CLEAR_UP.PLACEHOLDER.CARD_NUMBER'),
             },     
             ccv: {
               element: '#card-ccv',
-              placeholder: this.$t('point.DEPOSIT.PLACEHOLDER.CCV'),
+              placeholder: this.$t('point.CLEAR_UP.PLACEHOLDER.CCV'),
             },
             expirationDate: {
               element: document.getElementById('card-expiration-date'),
-              placeholder: this.$t('point.DEPOSIT.PLACEHOLDER.EXPIRY'),
+              placeholder: this.$t('point.CLEAR_UP.PLACEHOLDER.EXPIRY'),
             },
           },
           styles: {

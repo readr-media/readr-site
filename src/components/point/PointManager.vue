@@ -5,38 +5,23 @@
         <span class="prefix" v-text="$t('point.WORDING_POINTS_AVAILABLE') + '：'"></span>
         <span class="value" :class="{ negative: isPointsNegative, }" v-text="currentPoints"></span>
         <span class="postfix" v-text="$t('point.UNIT')"></span>
-        <!--Deposit class="deposit" v-if="isStripeNeeded" @fetchCurrentPoint="fetchCurrentPoint"></Deposit-->
-        <!--DepositTappay class="deposit" v-if="isTappayNeeded" :active.sync="isDepositActive" @fetchCurrentPoint="fetchCurrentPoint"></DepositTappay-->
       </div>
-      <!--div class="point-manager__infobar--switcher">
-        <div class="point-record" :class="isActive(0)" @click="check(0)"><span class="radio"></span><span v-text="'點數明細'"></span></div>
-        <div class="pay-record" :class="isActive(1)" @click="check(1)"><span class="radio"></span><span v-text="'付款明細'"></span></div>
-      </div-->
     </div>
     <div class="point-manager__point-records">
       <PointRecord></PointRecord>
-      <!--PointRecord v-if="activeIndex === 0"></PointRecord>
-      <PaymentRecord v-if="activeIndex === 1"></PaymentRecord-->
     </div>
   </div>
 </template>
 <script>
-  // import Deposit from 'src/components/point/Deposit.vue'
-
-
-  import DepositTappay from 'src/components/point/DepositTappay.vue'
   import PointRecord from 'src/components/point/PointRecord.vue'
   import PaymentRecord from 'src/components/point/PaymentRecord.vue'
   import { get, } from 'lodash'
   const debug = require('debug')('CLIENT:PointManager')
   const fetchCurrPoints = store => store.dispatch('GET_POINT_CURRENT', { params: {}, })
-  const loadTappaySDK = store => store.dispatch('LOAD_TAPPAY_SDK')
 
   export default {
     name: 'PointManager',
     components: {
-      // Deposit,
-      DepositTappay,
       PointRecord,
       PaymentRecord,
     },
@@ -47,39 +32,26 @@
       isPointsNegative () {
         return this.currentPoints < 0
       },
-      isTappayNeeded () {
-        return get(this.$store, 'state.isTappayRequired', false)
-      },
     },
     data () {
       return {
-        // activeIndex: 0,
         isDepositActive: false,
       }
     },
     methods: {
-      // check (index) {
-      //   this.activeIndex = index
-      // },
       deposit () {
         this.showDepositSlip = true
       },
       fetchCurrentPoint () {
         fetchCurrPoints(this.$store).then()
       },
-      // isActive (index) {
-      //   return [ this.activeIndex === index ? 'active' : '', ]
-      // },
     },
     mounted () {
-      fetchCurrPoints(this.$store).then(() => loadTappaySDK(this.$store))
+      fetchCurrPoints(this.$store)
     },
     watch: {
       isStripeNeeded () {
         debug('Mutation detected: isStripeNeeded', this.isStripeNeeded)
-      },
-      isTappayNeeded () {
-        debug('Mutation detected: isTappayNeeded', this.isTappayNeeded)
       },
     },
   }
@@ -102,18 +74,6 @@
           margin 0 10px
           &.negative
             color #d0021b
-        .deposit
-          position absolute
-          right 0
-          bottom -2px
-          display block
-          height 25px
-          width 20px
-          background-size contain
-          background-position center center
-          background-repeat no-repeat
-          background-image url(/public/icons/encourage.png)
-          cursor pointer
       &--switcher
         display flex
         justify-content space-between

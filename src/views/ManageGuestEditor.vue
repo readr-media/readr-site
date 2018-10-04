@@ -108,12 +108,7 @@
   }
 
   export default {
-    name: 'GuestEditor',
-    metaInfo () {
-      return {
-        isTappayNeeded: this.isTappayRequired,
-      }
-    },      
+    name: 'GuestEditor',     
     components: {
       'alert-panel': AlertPanel,
       'app-about': About,
@@ -156,10 +151,7 @@
     computed: {
       isDonationActive () {
         return _.get(this.$store, 'state.setting.DONATION_IS_DEPOSIT_ACTIVE', false)
-      },    
-      isTappayRequired () {
-        return _.get(this.$store, 'state.isTappayRequired', false)
-      },            
+      },           
       itemsSelectedID () {
         const items = []
         _.forEach(this.itemsSelected, (item) => {
@@ -411,11 +403,6 @@
             break
         }
       },
-    },
-    watch: {
-      isTappayRequired () {
-        this.$forceUpdate()
-      },      
     },
   }
 </script>

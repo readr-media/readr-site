@@ -12,6 +12,12 @@ const SET_DONATE_FLAG = (state, { active, item, }) => {
   state[ 'donateFlag' ].item = item
 }
 
+const SET_TAPPAY_FLAG = (state, { active, item, }) => {
+  debug('SET_TAPPAY_FLAG: Going to do mutation:', { active, item, })
+  state[ 'clearUpPointsFlag' ].active = active
+  state[ 'clearUpPointsFlag' ].item = item
+}
+
 const SET_POINT_HISTORIES = (state, { histories, }) => {
   state['pointHistories'] = histories.items || []
 }
@@ -35,4 +41,5 @@ export {
   SET_POINT_PERSONAL,
   SET_TAPPAY_REQUIREMENT,
   SET_TAPPAY_LOADED,
+  SET_TAPPAY_FLAG,
 }

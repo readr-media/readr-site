@@ -19,12 +19,7 @@
   // const debug = require('debug')('CLIENT:AppMember')
 
   export default {
-    name: 'AppMember',
-    metaInfo () {
-      return {
-        isTappayNeeded: this.isTappayRequired,
-      }
-    },      
+    name: 'AppMember',  
     components: {
       'app-about': About,
       'app-tab': Tab,
@@ -39,10 +34,7 @@
     computed: {
       isDonationActive () {
         return get(this.$store, 'state.setting.DONATION_IS_DEPOSIT_ACTIVE', false)
-      },      
-      isTappayRequired () {
-        return get(this.$store, 'state.isTappayRequired', false)
-      },       
+      },          
       profile () {
         return get(this.$store, 'state.profile', {})
       },
@@ -71,11 +63,6 @@
             break
         }        
       }      
-    },
-    watch: {
-      isTappayRequired () {
-        this.$forceUpdate()
-      },
     },
   }
 </script>

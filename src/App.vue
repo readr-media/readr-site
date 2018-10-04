@@ -13,6 +13,7 @@
         </main>
       </div>
       <Consume></Consume>
+      <DepositTappay v-if="isTappayNeeded" :active.sync="isDepositActive" @fetchCurrentPoint="fetchCurrentPoint"></DepositTappay>
     </div>
     <AlertGDPR v-if="showAlertGDPR" @closeAlertGDPR="showAlertGDPR = false" />
   </div>
@@ -27,9 +28,10 @@
   import AppNavAside from 'src/components/AppNavAside.vue'
   import Consume from 'src/components/point/Consume.vue'
   import Tap from 'tap.js'
+  import DepositTappay from 'src/components/point/DepositTappay.vue'
   import VueCookie from 'vue-cookie'
   
-  // const debug = require('debug')('CLIENT:App')
+  const debug = require('debug')('CLIENT:App')
   const PAGE_TYPE = {
     HOME: 'HOME',
     LOGIN: 'LOGIN',
@@ -38,12 +40,15 @@
     OTHER: 'OTHER',
   }
 
+  const fetchCurrPoints = store => store.dispatch('GET_POINT_CURRENT', { params: {}, })
+
   export default {
     components: {
       AlertGDPR,
       'app-header': AppHeader,
       AppNavAside,
       Consume,
+      DepositTappay,
     },
     computed: {
       currUser () {
@@ -60,6 +65,9 @@
       },
       isHome () {
         return this.$route.path === '/' || this.$route.path.indexOf('/post/') === 0
+      },
+      isTappayNeeded () {
+        return get(this.$store, 'state.isTappayRequired', false)
       },
       shouldShowAbout () {
         return !this.isLoginPage && !this.isAboutPage && !this.isCommentPage
@@ -89,10 +97,15 @@
         doc: {},
         globalTapevent: {},      
         showAlertGDPR: false,  
+        isDepositActive: false,
         isFixedAside: false,
       }
     },
     methods: {
+      fetchCurrentPoint () {
+        debug('fetch current point again!')
+        fetchCurrPoints(this.$store).then()
+      },      
       getFirstLoginCookie () {
         return VueCookie.get('readr-first-login')
       },

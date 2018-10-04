@@ -2,37 +2,44 @@
   <BaseLightBox borderStyle="nonBorder" :showLightBox.sync="showDonate" @closeLightBox="closeDonate()">
     <div class="donate-panel">
       <div class="donate-panel__container">
-        <template v-if="get(me, 'id')">
-          <div class="donate-panel__content">
-            <div class="appreciate"><span v-text="$t('point.DONATE.APPRECIATE')"></span></div>
-            <div class="project-name"><span v-text="get(targetItem, 'title')"></span></div>
-            <div class="amount">
-              <span v-text="$t('point.DONATE.AMOUNT_PREFIX')"></span>
-              <input class="amount-input" type="text" v-model="donateAmount">
-              <span v-text="$t('point.DONATE.AMOUNT_POSTFIX')"></span>
+        <div class="donate-panel__wrapper" :class="{ center: !get(me, 'id') }" ref="content">
+          <template v-if="get(me, 'id')">
+            <div class="donate-panel__content">
+              <div class="appreciate"><span v-text="$t('point.DONATE.APPRECIATE')"></span></div>
+              <div class="project-name"><span v-text="get(targetItem, 'title')"></span></div>
+              <div class="amount">
+                <span v-text="$t('point.DONATE.AMOUNT_PREFIX')"></span>
+                <input class="amount-input" type="text" v-model="donateAmount">
+                <span v-text="$t('point.DONATE.AMOUNT_POSTFIX')"></span>
+              </div>
+              <div class="alert">
+                <span v-text="alertMsg"></span>
+              </div>
+              <DonateDetail
+                :rest="currentPoints"
+                :amount="isNaN(donateAmount) ? 0 : typeof(donateAmount) === Number ? donateAmount : Number(donateAmount)"
+                :type="alertType"></DonateDetail>
             </div>
-            <div class="alert">
-              <span v-text="alertMsg"></span>
-              <span v-show="alertMsg" v-text="$t('point.DONATE.GO_DEPOSIT')" class="deposit" @click="goDeposit"></span>
+            <div class="donate-panel__confirm" v-if="alertType !== 0" :class="{ block: alertMsg, }" @click="goDonate"><span v-text="$t('point.DONATE.CONFIRM')"></span></div>
+            <div class="donate-panel__confirm" v-else @click="goClearUp"><span v-text="$t('point.DONATE.GO_CLEAR_UP')"></span></div>
+          </template>
+          <template v-else>
+            <div class="donate-panel__content">
+              <div class="appreciate"><span v-text="$t('point.DONATE.HAVE_TO_LOGIN')"></span></div>
             </div>
-          </div>
-          <div class="donate-panel__confirm" :class="{ block: alertMsg, }" @click="goDonate"><span v-text="$t('point.DONATE.CONFIRM')"></span></div>
-        </template>
-        <template v-else>
-          <div class="donate-panel__content">
-            <div class="appreciate"><span v-text="$t('point.DONATE.HAVE_TO_LOGIN')"></span></div>
-          </div>
-          <div class="donate-panel__confirm" @click="goLogin"><span v-text="$t('point.DONATE.LOG_IN')"></span></div>
-        </template>
+            <div class="donate-panel__confirm" @click="goLogin"><span v-text="$t('point.DONATE.LOG_IN')"></span></div>
+          </template>
+        </div>
+        <div class="donate-panel__container__continue" :class="{ active: !isBottom && get(me, 'id'), }" @click="goFurther"></div>
       </div>
     </div>
   </BaseLightBox>
 </template>
 <script>
   import BaseLightBox from 'src/components/BaseLightBox.vue'
-  import { ROLE_MAP, } from 'src/constants'
+  import DonateDetail from 'src/components/point/DonateDetail.vue'
   import { POINT_OBJECT_TYPE, DONATION_POINT_MIN_LINE, } from 'api/config'
-  import { get, filter, } from 'lodash'
+  import { get, } from 'lodash'
 
   const DEFAULT_DONATION_POINT_MIN_LINE = DONATION_POINT_MIN_LINE || -100
   const debug = require('debug')('CLIENT:Donate')
@@ -46,11 +53,14 @@
       },
     })
   }    
+  const fetchCurrPoints = store => store.dispatch('GET_POINT_CURRENT', { params: {}, })
   const switchOff = store => store.dispatch('SWITCH_OFF_DONATE_PANEL', {})
+  const switchOnTappay = (store, item) => store.dispatch('SWITCH_ON_TAPPAY_PANEL', { active: true, item, })
   export default {
     name: 'Donate',
     components: {
       BaseLightBox,
+      DonateDetail,
     },
     computed: {
       currentPoints () {
@@ -72,7 +82,9 @@
     data () {
       return {
         alertMsg: '',
+        alertType: 0,
         donateAmount: 0,
+        isBottom: false,
         showDonate: false,
       }
     },
@@ -84,25 +96,50 @@
         })
       },
       checkDonateAmount () {
+        /**
+         *  ## alertType
+         *    0: have to clear up,
+         *    1: donation is too less
+         */
+        this.alertType = 1
         if (isNaN(this.donateAmount)) {
           this.alertMsg = this.$t('point.DONATE.NOT_NUM')
-        } else if (this.currentPoints - this.donateAmount < DEFAULT_DONATION_POINT_MIN_LINE) {
-          /** show alert */
-          let message = `${this.$t('point.DONATE.NOT_ENOUGH')}`
-          message += `${this.$t('point.DONATE.CURRENT_PREFIX')} `
-          message += `${this.currentPoints} `
-          message += `${this.$t('point.DONATE.CURRENT_POSTFIX')}`
-          this.alertMsg = message
         } else if (this.donateAmount < this.defaultAmount) {
           let message = `${this.$t('point.DONATE.LIMIT_PREFIX')} `
           message += `${this.defaultAmount} `
           message += `${this.$t('point.DONATE.LIMIT_POSTFIX')}`
+          this.alertMsg = message
+        } else if (this.currentPoints - this.donateAmount < DEFAULT_DONATION_POINT_MIN_LINE) {
+          let message = `${this.$t('point.DONATE.NOT_ENOUGH_PREFIX')}`
+          this.alertType = 0
+          message += ` ${DEFAULT_DONATION_POINT_MIN_LINE} `
+          message += `${this.$t('point.DONATE.NOT_ENOUGH_POSTFIX')}`
+          message += `${this.$t('point.DONATE.GO_CLEAR_UP_PREFIX')}`
+          message += ` ${Math.abs(this.currentPoints - this.donateAmount)} `
+          message += `${this.$t('point.DONATE.GO_CLEAR_UP_POSTFIX')}`
           this.alertMsg = message
         } else {
           this.alertMsg = ''
         }
       },
       get,
+      goClearUp () {
+        debug('CLEAR UP!!!')
+        switchOnTappay(this.$store, {
+          amount: Math.abs(this.currentPoints - this.donateAmount),
+          callback: () => {
+            Promise.all([
+              deductPoints(this.$store, {
+                objectId: get(this.targetItem, 'id'),
+                points: this.donateAmount,
+              }),
+              switchOff(this.$store),
+            ]).then(() => {
+              this.$router.push(`/series/${get(this.$route, 'params.slug')}`)
+            })
+          },
+        })
+      },
       goDonate () {
         if (this.alertMsg || !get(this.targetItem, 'id') || !(`${this.donateAmount}`).trim()) { return }
         deductPoints(this.$store, {
@@ -112,11 +149,9 @@
           this.closeDonate()
         })
       },
-      goDeposit () {
-        switchOff(this.$store).then(() => {
-          const memberCenter = get(filter(ROLE_MAP, { key: get(this.$store, 'state.profile.role'), }), '0.route', 'member')
-          this.$router.push(`/${memberCenter}/records/point-manager`)
-        })
+      goFurther () {
+        // ToDo: Make it smoothy
+        this.$refs.content.scrollTop = this.$refs.content.scrollTop + 30
       },
       goLogin () {
         this.$router.push('/login')
@@ -127,6 +162,9 @@
     },
     mounted () {
       this.donateAmount = get(this.targetItem, 'memoPoints', 20)
+      this.$refs.content.addEventListener('scroll', event => {
+        this.isBottom = event.target.scrollHeight <= event.target.scrollTop + event.target.clientHeight + 20
+      })
     },
     watch: {
       currentPoints () {
@@ -142,6 +180,7 @@
       },
       isActive () {
         this.showDonate = this.isActive
+        this.showDonate && fetchCurrPoints(this.$store)
       },
     },
   }
@@ -153,22 +192,66 @@
     height 400px
     border 5px solid #fff
     background-color #ddcf21
-    padding 0 53px 0 157px
+    padding 0 35px 0 157px
     background-image url(/public/icons/sponsor2.png)
     background-repeat no-repeat
     background-size auto 200px
     background-position 0 140px
-
     &__container
       display flex
       flex-direction column
       width 100%
       height 100%
       padding 50px 0
+      overflow hidden
+      position relative
+      &__continue
+        cursor pointer
+        background linear-gradient(to top, #ddcf21 0%, rgba(255,255,255,0) 100%)
+        position absolute
+        bottom 45px
+        left 0
+        width 100%
+        height 30px
+        display none
+        justify-content center
+        &.active
+          display flex
+        &::after, &::before
+          content ''
+          display block
+          width 30px
+          height 30px
+        &::before
+          background-color #444746
+          position absolute
+          left 50%
+          top 0
+          margin-left -15px
+          opacity 0.5
+        &::after
+          position relative
+          background-image url(/public/icons/continue.png)
+          background-position center center
+          background-size contain
+          background-repeat no-repeat
+    &__wrapper
+      width 100%
+      height 100%
+      overflow auto
+      padding-bottom 30px
+      &.center
+        display flex
+        flex-direction column
     &__content
       flex 1
       font-size 1.125rem
       line-height normal
+      display flex
+      flex-direction column
+      justify-content center
+      & > div
+        width 100%
       // .appreciate
       .project-name
         margin-top 5px

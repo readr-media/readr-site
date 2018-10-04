@@ -145,6 +145,7 @@ const fetchReportsList = (store, {
 
 const switchOn = (store, item) => store.dispatch('SWITCH_ON_DONATE_PANEL', { item, })
 const switchOff = store => store.dispatch('SWITCH_OFF_DONATE_PANEL', {})
+const loadTappaySDK = store => store.dispatch('LOAD_TAPPAY_SDK')
  
 export default {
   name: 'PublicProject',
@@ -183,7 +184,8 @@ export default {
         ogTitle: get(this.postSingle, 'title'),
         description: desc,
         metaUrl: this.$route.path,
-        metaImage: get(this.projectSingle, 'heroImage') || '/public/og-image-memo.jpg',     
+        metaImage: get(this.projectSingle, 'heroImage') || '/public/og-image-memo.jpg',
+        isTappayNeeded: this.isTappayRequired,
       }
     } else {
       return {
@@ -191,7 +193,8 @@ export default {
         ogTitle: get(this.projectSingle, 'ogTitle') || get(this.projectSingle, 'title'),
         description: get(this.projectSingle, 'ogDescription') || get(this.projectSingle, 'description'),
         metaUrl: this.$route.path,
-        metaImage: get(this.projectSingle, 'ogImage') || get(this.projectSingle, 'heroImage'),            
+        metaImage: get(this.projectSingle, 'ogImage') || get(this.projectSingle, 'heroImage'),
+        isTappayNeeded: this.isTappayRequired,        
       }
     }    
   },  
@@ -207,6 +210,10 @@ export default {
     isSeriesDonate () {
       this.donateCheck()
     },
+    isTappayRequired () {
+      debug('Mutation detected: isTappayRequired', this.isTappayRequired)
+      this.$forceUpdate()
+    },     
     postSingle () {
       this.$forceUpdate()
     },
@@ -229,6 +236,9 @@ export default {
       return `${get(this.$store, 'state.setting.HOST')}/series/${get(this.$route, 'params.slug')}`
     },
     isClientSide,
+    isTappayRequired () {
+      return get(this.$store, 'state.isTappayRequired', false)
+    },    
     me () {
       return get(this.$store, 'state.profile', {})
     }, 
@@ -271,13 +281,14 @@ export default {
     getUserFollowing(this.$store, { resource: 'report', })
     getUserFollowing(this.$store, { resource: 'tag', })
     getUserFollowing(this.$store, { resource: 'project', })
+    loadTappaySDK(this.$store)
     if (get(this.me, 'id')) {
       fetchMemos(this.$store, {
         mode: 'set',
         proj_ids: [ get(this.projectSingle, 'id', 0), ],
         page: 1,
       })      
-      this.$route.params.subItem && fetchMemoSingle(this.$store, this.$route.params.subItem)
+      this.$route.params.subItem && get(this.$route, 'params.subItem') !== 'donate' && fetchMemoSingle(this.$store, this.$route.params.subItem)
     }
     this.isSeriesDonate = get(this.$route, 'params.subItem') === 'donate'
     debug('isSeriesDonate', this.isSeriesDonate)

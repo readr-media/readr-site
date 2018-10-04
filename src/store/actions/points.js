@@ -42,6 +42,20 @@ export const SWITCH_ON_CONSUME_PANEL = ({ commit, }, { active, item, }) => {
   })
 }
 
+export const SWITCH_ON_TAPPAY_PANEL = ({ commit, }, { active, item, }) => {
+  return commit('SET_TAPPAY_FLAG', {
+    active,
+    item,
+  })
+}
+
+export const SWITCH_OFF_TAPPAY_PANEL = ({ commit, }) => {
+  return commit('SET_TAPPAY_FLAG', {
+    active: false,
+    item: {},
+  })
+}
+
 export const SWITCH_OFF_DONATE_PANEL = ({ commit, }) => {
   return commit('SET_DONATE_FLAG', {
     active: false,
