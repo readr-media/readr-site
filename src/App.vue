@@ -278,7 +278,7 @@ button
     width 950px
     height 100%
     margin 0 auto
-    overflow hidden
+    // overflow hidden
   &__aside
     position fixed
     top 3px
