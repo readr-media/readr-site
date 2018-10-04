@@ -20,14 +20,13 @@
             <!-- rest of the post content -->
             <!-- <p :class="`editor-writing__paragraph--${isReadMoreClicked ? 'visible' : 'invisible'}`" v-else v-html="p" :key="`${post.id}-${i}`"></p> -->
           </template>
-          <p class="editor-writing__more--news" v-text="$t('homepage.WORDING_HOME_POST_MORE_NEWS')"></p>
         </router-link>
       </div>
     </template>
     <!-- template for report -->
     <template v-else-if="postType === 'report'">
-      <h1 class="report__title"><a :href="getReportUrl(post.slug)" v-text="get(post, 'title')" target="_blank"></a></h1>
       <a v-if="post.heroImage" class="report__img" :href="getReportUrl(post.slug)"><img :src="getImageUrl(post.heroImage)" alt=""></a>
+      <h1 class="report__title"><a :href="getReportUrl(post.slug)" v-text="get(post, 'title')" target="_blank"></a></h1>
       <p class="report__descr"><a :href="getReportUrl(post.slug)" v-text="get(post, 'description')" target="_blank"></a></p>
     </template>
     <template v-else-if="postType === 'memo'">
@@ -72,7 +71,7 @@
           <h1 class="editor-writing-source__title" v-text="linkTitleTrim"></h1>
           <div class="editor-writing-source__description">
             <p v-text="linkDescriptionTrim"></p>
-            <p class="editor-writing-source__cite" v-if="post.linkName">{{ $t('homepage.WORDING_HOME_POST_SOURCE') }}{{ post.linkName }}</p>
+            <p class="editor-writing-source__cite" v-if="post.linkName">{{ $t('homepage.WORDING_HOME_POST_SOURCE') }}{{ linkNameTrim }}</p>
           </div>
         </div>
         <img class="editor-writing-source__figure" v-if="post.linkImage" :src="post.linkImage" @load="setOgImageOrientation(post.linkImage, $event)">
@@ -123,6 +122,9 @@
       },
       linkDescriptionTrim () {
         return truncate(this.post.linkDescription, 35)
+      },
+      linkNameTrim () {
+        return truncate(this.post.linkName, 20)
       },
       isArticleMain () {
         return this.modifier === 'main'
@@ -319,7 +321,6 @@
         &--news
           margin 18px 0 10px 0
           padding-bottom 4.5px
-          border-bottom solid 0.5px #979797
           p
             color #4a4a4a
           h1
@@ -430,14 +431,15 @@
       .report
         &__title
           font-size 1.125rem
+          margin-top 1em
         &__img
           display block
-          margin-top 1em
           img
             width 100%
         &__descr
           margin 1.5em 0
           font-size .9375rem
+          line-height 1.5
       .editor-writing-no-source
         display block
         margin-bottom 15.5px
