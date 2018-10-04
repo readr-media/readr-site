@@ -1,30 +1,38 @@
 <template>
   <BaseLightBox borderStyle="nonBorder" :showLightBox.sync="showMemoDeduction" @closeLightBox="hideMemoDeduction()">
     <div class="project-memo-alert">
-      <div class="project-memo-alert__content">
-        <h2 v-text="$t('PROJECT.JOIN_CONTENT_1')"></h2>
-        <h1 v-text="get(targetItem, 'project.title')"></h1>
-        <h2>
-          <span v-text="$t('PROJECT.JOIN_CONTENT_2')"></span>
-          <strong v-text="pointsNeeded"></strong>
-          <span v-text="$t('PROJECT.JOIN_CONTENT_POINT')"></span>
-        </h2>
-        <h2>
-          <template v-if="isDepositNeeded">
-            <span v-text="$t('PROJECT.WARNING_DEPOSIT_PREFIX')"></span>
-            <span v-text="extraPointsNeeded"></span>
-            <span v-text="$t('PROJECT.WARNING_DEPOSIT_POSTFIX')"></span>
-          </template>
-          <!--template v-else>
-            <span v-text="$t('PROJECT.REST_POINT_PREFIX')"></span>
-            <strong v-text="currentPoints" class="rest-points"></strong>
-            <span v-text="$t('PROJECT.REST_POINT_POSTFIX')"></span>
-          </template-->
-        </h2>
-        <button v-text="btnWording"
-          :disabled="memoDeducting"
-          @click="clickHandler">
-        </button>
+      <div class="project-memo-alert__content" :class="{ center: !currUser, }">
+        <template v-if="currUser">  
+          <div class="content">
+            <h2 v-text="$t('PROJECT.JOIN_CONTENT_1')"></h2>
+            <h1 v-text="get(targetItem, 'project.title')"></h1>
+            <h2>
+              <span v-text="$t('PROJECT.JOIN_CONTENT_2')"></span>
+              <strong v-text="pointsNeeded"></strong>
+              <span v-text="$t('PROJECT.JOIN_CONTENT_POINT')"></span>
+            </h2>
+            <h2>
+              <template v-if="isDepositNeeded">
+                <span v-text="$t('PROJECT.WARNING_DEPOSIT_PREFIX')"></span>
+                <span v-text="extraPointsNeeded"></span>
+                <span v-text="$t('PROJECT.WARNING_DEPOSIT_POSTFIX')"></span>
+              </template>
+              <!--template v-else>
+                <span v-text="$t('PROJECT.REST_POINT_PREFIX')"></span>
+                <strong v-text="currentPoints" class="rest-points"></strong>
+                <span v-text="$t('PROJECT.REST_POINT_POSTFIX')"></span>
+              </template-->
+            </h2>
+          </div>      
+          <button v-text="btnWording"
+            :disabled="memoDeducting"
+            @click="clickHandler">
+          </button>
+        </template>
+        <template v-else>
+          <div class="content"><span v-text="$t('PROJECT.HAVE_TO_LOGIN')"></span></div>
+          <button v-text="$t('PROJECT.LOG_IN')" @click="goLogin"></button>
+        </template>
       </div>
     </div>
   </BaseLightBox>
@@ -103,6 +111,11 @@
     },
     methods: {
       get,
+      goLogin () {
+        switchOffDeductionPanel(this.$store).then(() => {
+          this.$router.push('/login')
+        })
+      },
       clickHandler () {
         debug('CLOSE COMSUME!')
         debug('CLOSE COMSUME!')
@@ -165,7 +178,20 @@
     &__content
       position absolute
       left 30px
-      bottom 60px
+      top 0
+      width 290px
+      height 100%
+      line-height normal
+      padding 40px 0
+      display flex
+      flex-direction column
+      .content
+        flex 1
+      &.center
+        .content
+          display flex
+          flex-direction column
+          justify-content center
       h1
         max-width 290px
         margin 1em 0 10px
@@ -182,6 +208,7 @@
           font-size 1.875rem
           margin 0 .2em
       button
+        height 64px
         width 290px
         margin-top 30px
         padding 15px 0

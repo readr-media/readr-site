@@ -155,6 +155,8 @@ export default {
     'WARNING_DEPOSIT_POSTFIX': ' 點',
     'REST_POINT_PREFIX': '您目前尚有點數',
     'REST_POINT_POSTFIX': '點',
+    'HAVE_TO_LOGIN': '謝謝您願意贊助我們，請先登入 Readr 會員後進行贊助。',
+    'LOG_IN': '會員登入',
   },
   'HEADER': {
     'LOGIN' : '登入',
