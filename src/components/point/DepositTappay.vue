@@ -1,18 +1,28 @@
 <template>
-  <div class="tappay-deposit" @click="showDeposit">
+  <div class="tappay-deposit">
     <div class="tappay-deposit__container" v-show="active" @click.stop="cancelDefault">
       <div class="tappay-deposit__wrapper">
         <div class="tappay-deposit__header">
           <div class="leading"></div>
-          <div class="leading-text"><span v-html="$t('point.DEPOSIT.DESCRIPTION')"></span></div>
+          <div class="leading-text">
+            <div class="leading-text--wrapper">
+              <span v-text="$t('point.CLEAR_UP.DESCRIPTION_PREFIX')"></span>
+              <span v-text="amount" class="value"></span>
+              <span v-text="$t('point.CLEAR_UP.DESCRIPTION_INFIX')"></span>
+              <span v-text="amount" class="value"></span>
+              <span v-text="$t('point.CLEAR_UP.DESCRIPTION_POSTFIX')"></span> 
+              <span v-text="$t('point.CLEAR_UP.DESCRIPTION_CREADIT_ONLY')"></span>            
+            </div>
+          </div>
         </div>
+
         <DepositTappayForm
           :status="active"
           :isReadyToDeposit.sync="isReadyToDeposit"
           :phone.sync="phoneNumber"
           :cardHolder.sync="cardHolder"></DepositTappayForm>
         <div class="go-deposit" :class="{ active: isReadyToDeposit, }" @click.stop="goDeposit">
-          <span v-text="$t('point.DEPOSIT.CONFIRM_TO_PAY')"></span>
+          <span v-text="$t('point.CLEAR_UP.CONFIRM_TO_PAY')"></span>
           <Spinner :show="isDepositing"></Spinner>
         </div>
         <div class="close" @click.stop="closeDeposit"></div>
@@ -27,6 +37,7 @@
   import Spinner from 'src/components/Spinner.vue'
   import { POINT_OBJECT_TYPE, } from 'api/config'
   import { get, } from 'lodash'
+
   const debug = require('debug')('CLIENT:DepositTappay')
   const deposit = (store, {
     points,
@@ -45,6 +56,10 @@
       lastfour,
     },
   })
+
+  const switchOffTappay = store => store.dispatch('SWITCH_OFF_TAPPAY_PANEL', { active: false, })
+  // const switchOffDonate = store => store.dispatch('SWITCH_OFF_DONATE_PANEL', {})
+
   export default {
     name: 'DepositTappay',
     components: {
@@ -52,6 +67,15 @@
       Spinner,
     },
     computed: {
+      active () {
+        return get(this.$store, 'state.clearUpPointsFlag.active', false)
+      },
+      amount () {
+        return get(this.$store, 'state.clearUpPointsFlag.item.amount', 0)
+      },
+      callback () {
+        return get(this.$store, 'state.clearUpPointsFlag.item.callback', () => {})
+      },
       depositAmountOnce () {
         return get(this.$store, 'state.setting.DONATION_DEPOSIT_AMOUNT_ONCE', 100)
       },
@@ -82,10 +106,11 @@
               * Deposited successfully. And go refresh current point.
               */
             this.$emit('fetchCurrentPoint')
-            this.resultMessage = this.$t('point.DEPOSIT.SUCCESSFULLY')
+            this.resultMessage = this.$t('point.CLEAR_UP.SUCCESSFULLY')
             this.alertFlag = true
+            this.callback()
           } else {
-            this.resultMessage = this.$t('point.DEPOSIT.INFAIL')
+            this.resultMessage = this.$t('point.CLEAR_UP.INFAIL')
             this.alertFlag = true
             debug('res', res)
           }          
@@ -99,7 +124,7 @@
           debug('get prime successfully: ' + result.card.prime)  
           this.isDepositing = false    
           deposit(this.$store, {
-            points: 0 - this.depositAmountOnce,
+            points: 0 - this.amount,
             token: result.card.prime,
             lastfour: result.card.lastfour,
             member_name: this.cardHolder,
@@ -107,28 +132,19 @@
           }).then(cb)              
         })
       },
-      showDeposit () {
-        debug('show deposit')
-        this.$emit('update:active', true)
-      },
       cancelDefault () { /** do nothing */ },
       closeDeposit () {
         debug('close deporit')
-        this.$emit('update:active', false)
+        switchOffTappay(this.$store)
       },
     },
     mounted () {},
-    props: {
-      active: {
-        default: false,
-      },
-    },
     watch: {
       alertFlag () {
         if (this.alertFlag) {
           setTimeout(() => {
             this.alertFlag = false
-            this.$emit('update:active', false)
+            switchOffTappay(this.$store)
           }, 3000)
         }
       },
@@ -142,7 +158,7 @@
   }
 </script>
 <style lang="stylus">
-  .tappay-deposit  
+  .tappay-deposit
     &__container
       cursor auto
       width 100vw
@@ -220,14 +236,18 @@
         position absolute
         z-index 1
       .leading-text
+        &--wrapper
+          display inline
+          border-bottom 1px solid #000
+          padding-bottom 3px
         font-size 0.75rem
         line-height 30px
         margin-bottom 40px
         color #444746
         text-align center
         span
-          border-bottom 1px solid #000
-          padding-bottom 3px
+          &.value
+            margin 0 5px
     &__item
       display flex
       align-items center

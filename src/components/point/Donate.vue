@@ -2,7 +2,7 @@
   <BaseLightBox borderStyle="nonBorder" :showLightBox.sync="showDonate" @closeLightBox="closeDonate()">
     <div class="donate-panel">
       <div class="donate-panel__container">
-        <div class="donate-panel__wrapper" ref="content">
+        <div class="donate-panel__wrapper" :class="{ center: !get(me, 'id') }" ref="content">
           <template v-if="get(me, 'id')">
             <div class="donate-panel__content">
               <div class="appreciate"><span v-text="$t('point.DONATE.APPRECIATE')"></span></div>
@@ -14,11 +14,14 @@
               </div>
               <div class="alert">
                 <span v-text="alertMsg"></span>
-                <span v-show="alertMsg" v-text="$t('point.DONATE.GO_DEPOSIT')" class="deposit" @click="goDeposit"></span>
               </div>
-              <DonateDetail :rest="currentPoints" :amount="isNaN(donateAmount) ? 0 : typeof(donateAmount) === Number ? donateAmount : Number(donateAmount)"></DonateDetail>
+              <DonateDetail
+                :rest="currentPoints"
+                :amount="isNaN(donateAmount) ? 0 : typeof(donateAmount) === Number ? donateAmount : Number(donateAmount)"
+                :type="alertType"></DonateDetail>
             </div>
-            <div class="donate-panel__confirm" :class="{ block: alertMsg, }" @click="goDonate"><span v-text="$t('point.DONATE.CONFIRM')"></span></div>
+            <div class="donate-panel__confirm" v-if="alertType !== 0" :class="{ block: alertMsg, }" @click="goDonate"><span v-text="$t('point.DONATE.CONFIRM')"></span></div>
+            <div class="donate-panel__confirm" v-else @click="goClearUp"><span v-text="$t('point.DONATE.GO_CLEAR_UP')"></span></div>
           </template>
           <template v-else>
             <div class="donate-panel__content">
@@ -27,7 +30,7 @@
             <div class="donate-panel__confirm" @click="goLogin"><span v-text="$t('point.DONATE.LOG_IN')"></span></div>
           </template>
         </div>
-        <div class="donate-panel__container__continue" :class="{ active: !isBottom, }" @click="goFurther"></div>
+        <div class="donate-panel__container__continue" :class="{ active: !isBottom && get(me, 'id'), }" @click="goFurther"></div>
       </div>
     </div>
   </BaseLightBox>
@@ -35,9 +38,8 @@
 <script>
   import BaseLightBox from 'src/components/BaseLightBox.vue'
   import DonateDetail from 'src/components/point/DonateDetail.vue'
-  import { ROLE_MAP, } from 'src/constants'
   import { POINT_OBJECT_TYPE, DONATION_POINT_MIN_LINE, } from 'api/config'
-  import { get, filter, } from 'lodash'
+  import { get, } from 'lodash'
 
   const DEFAULT_DONATION_POINT_MIN_LINE = DONATION_POINT_MIN_LINE || -100
   const debug = require('debug')('CLIENT:Donate')
@@ -51,7 +53,9 @@
       },
     })
   }    
+  const fetchCurrPoints = store => store.dispatch('GET_POINT_CURRENT', { params: {}, })
   const switchOff = store => store.dispatch('SWITCH_OFF_DONATE_PANEL', {})
+  const switchOnTappay = (store, item) => store.dispatch('SWITCH_ON_TAPPAY_PANEL', { active: true, item, })
   export default {
     name: 'Donate',
     components: {
@@ -78,6 +82,7 @@
     data () {
       return {
         alertMsg: '',
+        alertType: 0,
         donateAmount: 0,
         isBottom: false,
         showDonate: false,
@@ -91,25 +96,50 @@
         })
       },
       checkDonateAmount () {
+        /**
+         *  ## alertType
+         *    0: have to clear up,
+         *    1: donation is too less
+         */
+        this.alertType = 1
         if (isNaN(this.donateAmount)) {
           this.alertMsg = this.$t('point.DONATE.NOT_NUM')
-        } else if (this.currentPoints - this.donateAmount < DEFAULT_DONATION_POINT_MIN_LINE) {
-          /** show alert */
-          let message = `${this.$t('point.DONATE.NOT_ENOUGH')}`
-          message += `${this.$t('point.DONATE.CURRENT_PREFIX')} `
-          message += `${this.currentPoints} `
-          message += `${this.$t('point.DONATE.CURRENT_POSTFIX')}`
-          this.alertMsg = message
         } else if (this.donateAmount < this.defaultAmount) {
           let message = `${this.$t('point.DONATE.LIMIT_PREFIX')} `
           message += `${this.defaultAmount} `
           message += `${this.$t('point.DONATE.LIMIT_POSTFIX')}`
+          this.alertMsg = message
+        } else if (this.currentPoints - this.donateAmount < DEFAULT_DONATION_POINT_MIN_LINE) {
+          let message = `${this.$t('point.DONATE.NOT_ENOUGH_PREFIX')}`
+          this.alertType = 0
+          message += ` ${DEFAULT_DONATION_POINT_MIN_LINE} `
+          message += `${this.$t('point.DONATE.NOT_ENOUGH_POSTFIX')}`
+          message += `${this.$t('point.DONATE.GO_CLEAR_UP_PREFIX')}`
+          message += ` ${Math.abs(this.currentPoints - this.donateAmount)} `
+          message += `${this.$t('point.DONATE.GO_CLEAR_UP_POSTFIX')}`
           this.alertMsg = message
         } else {
           this.alertMsg = ''
         }
       },
       get,
+      goClearUp () {
+        debug('CLEAR UP!!!')
+        switchOnTappay(this.$store, {
+          amount: Math.abs(this.currentPoints - this.donateAmount),
+          callback: () => {
+            Promise.all([
+              deductPoints(this.$store, {
+                objectId: get(this.targetItem, 'id'),
+                points: this.donateAmount,
+              }),
+              switchOff(this.$store),
+            ]).then(() => {
+              this.$router.push(`/series/${get(this.$route, 'params.slug')}`)
+            })
+          },
+        })
+      },
       goDonate () {
         if (this.alertMsg || !get(this.targetItem, 'id') || !(`${this.donateAmount}`).trim()) { return }
         deductPoints(this.$store, {
@@ -117,12 +147,6 @@
           points: this.donateAmount,
         }).then(() => {
           this.closeDonate()
-        })
-      },
-      goDeposit () {
-        switchOff(this.$store).then(() => {
-          const memberCenter = get(filter(ROLE_MAP, { key: get(this.$store, 'state.profile.role'), }), '0.route', 'member')
-          this.$router.push(`/${memberCenter}/records/point-manager`)
         })
       },
       goFurther () {
@@ -156,6 +180,7 @@
       },
       isActive () {
         this.showDonate = this.isActive
+        this.showDonate && fetchCurrPoints(this.$store)
       },
     },
   }
@@ -215,10 +240,18 @@
       height 100%
       overflow auto
       padding-bottom 30px
+      &.center
+        display flex
+        flex-direction column
     &__content
       flex 1
       font-size 1.125rem
       line-height normal
+      display flex
+      flex-direction column
+      justify-content center
+      & > div
+        width 100%
       // .appreciate
       .project-name
         margin-top 5px

@@ -234,11 +234,6 @@
 
   export default {
     name: 'admin-page',
-    metaInfo () {
-      return {
-        isTappayNeeded: this.isTappayRequired,
-      }
-    },    
     components: {
       'app-header': AppHeader,
       'app-tab': Tab,
@@ -291,9 +286,6 @@
     computed: {
       isDonationActive () {
         return _.get(this.$store, 'state.setting.DONATION_IS_DEPOSIT_ACTIVE', false)
-      },
-      isTappayRequired () {
-        return _.get(this.$store, 'state.isTappayRequired', false)
       },
       itemsSelectedID () {
         const items = []
@@ -684,12 +676,6 @@
     },
     mounted () {
       this.showMain = true
-    },
-    watch: {
-      isTappayRequired () {
-        debug('Mutation detected: isTappayRequired', this.isTappayRequired)
-        this.$forceUpdate()
-      },      
     },
   }
 </script>

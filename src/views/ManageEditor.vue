@@ -193,12 +193,7 @@
   }
 
   export default {
-    name: 'AppEditor',
-    metaInfo () {
-      return {
-        isTappayNeeded: this.isTappayRequired,
-      }
-    },      
+    name: 'AppEditor',   
     components: {
       'alert-panel': AlertPanelB,
       'app-about': About,
@@ -243,10 +238,7 @@
     computed: {
       isDonationActive () {
         return _.get(this.$store, 'state.setting.DONATION_IS_DEPOSIT_ACTIVE', false)
-      },   
-      isTappayRequired () {
-        return _.get(this.$store, 'state.isTappayRequired', false)
-      },         
+      },      
       itemsSelectedID () {
         const items = []
         _.forEach(this.itemsSelected, (item) => {
@@ -616,11 +608,6 @@
         })
         .then(() => this.loading = false)
         .catch(() => this.loading = false)
-      },
-    },
-    watch: {
-      isTappayRequired () {
-        this.$forceUpdate()
       },
     },
   }

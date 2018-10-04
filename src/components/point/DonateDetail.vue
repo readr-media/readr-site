@@ -1,24 +1,47 @@
 <template>
   <div class="donation-detail">
-    <div class="donation-detail__title"><span v-text="$t('point.DONATE.DETAIL.POINT')"></span></div>
-    <div class="donation-detail__item">
-      <div class="left">
-        <span v-text="$t('point.DONATE.DETAIL.REST')"></span>
+    <template v-if="type === 1">
+      <div class="donation-detail__title">
+        <span v-text="$t('point.DONATE.DETAIL.POINT')"></span>
       </div>
-      <div class="right"><span v-text="rest"></span></div>      
-    </div>
-    <div class="donation-detail__item">
-      <div class="left">
-        <span v-text="$t('point.DONATE.DETAIL.CURRENT_DONATION')"></span>
+      <div class="donation-detail__item">
+        <div class="left">
+          <span v-text="$t('point.DONATE.DETAIL.REST')"></span>
+        </div>
+        <div class="right"><span v-text="rest"></span></div>      
       </div>
-      <div class="right"><span v-text="0 - amount"></span></div>      
-    </div>
-    <div class="donation-detail__item sum">
-      <div class="left">
-        <span v-text="$t('point.DONATE.DETAIL.TOTAL')"></span>
+      <div class="donation-detail__item">
+        <div class="left">
+          <span v-text="$t('point.DONATE.DETAIL.CURRENT_DONATION')"></span>
+        </div>
+        <div class="right"><span v-text="0 - amount"></span></div>      
       </div>
-      <div class="right"><span v-text="sum"></span></div>      
-    </div>
+      <div class="donation-detail__item sum">
+        <div class="left">
+          <span v-text="$t('point.DONATE.DETAIL.TOTAL')"></span>
+        </div>
+        <div class="right"><span v-text="sum"></span></div>      
+      </div>
+    </template>
+    <template v-else-if="type === 0">
+      <div class="donation-detail__title">
+        <span v-text="$t('point.DONATE.DETAIL.PAYMENT')"></span>
+      </div>
+      <div class="donation-detail__item">
+        <div class="left single">
+          <span v-text="$t('point.DONATE.DETAIL.CLEAR_UP_POINT_PREFIX')"></span>
+          <span v-text="Math.abs(sum)" class="value"></span>
+          <span v-text="$t('point.DONATE.DETAIL.CLEAR_UP_POINT_POSTFIX')"></span>
+        </div>     
+      </div>
+      <div class="donation-detail__item">
+        <div class="left single">
+          <span v-text="$t('point.DONATE.DETAIL.CLEAR_UP_AMOUNT_PREFIX')"></span>
+          <span v-text="Math.abs(sum)" class="value"></span>
+          <span v-text="$t('point.DONATE.DETAIL.CLEAR_UP_AMOUNT_POSTFIX')"></span>
+        </div>     
+      </div>
+    </template>
   </div>
 </template>
 <script>
@@ -26,17 +49,21 @@
     name: 'DonateDetail',
     computed: {
       sum () {
-        return this.rest + this.amount
+        return this.rest - this.amount
       },
     },
     props: {
+      amount: {
+        type: Number,
+        default: 0,
+      },
       rest: {
         type: Number,
         default: 0,
       },
-      amount: {
+      type: {
         type: Number,
-        default: 0,
+        default: 1,
       },
     },
   }
@@ -70,6 +97,12 @@
         flex 1
         span
           text-align left
+        &.single
+          span
+            display inline
+            width auto
+            &.value
+              margin 0 5px
       .right
         text-align center
         width 50%
