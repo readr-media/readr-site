@@ -47,7 +47,7 @@ const serverMetaInfoMixin = {
   },
 }
 
-const updateMeta = metaInfo => {
+const updateMeta = (metaInfo, vm) => {
   const title = metaInfo.title
   const ogTitle = metaInfo.ogTitle
   const description = metaInfo.description
@@ -75,36 +75,36 @@ const updateMeta = metaInfo => {
   } else {
     document.head.querySelector(`meta[property='og:image']`).content = '/public/og-image.jpg'
   }
+
+  /** If Tappays SDK needed. */
+  const { isTappayNeeded, } = metaInfo
+
+  if (isTappayNeeded && !isTappaySDKLoaded) {
+    const script = document.createElement('script')
+    script.onload = () => {
+      debug('isTappaySDKLoaded', window.TPDirect)
+      vm.$store.dispatch('SET_TAPPAY_LOADED').then(() => {
+        debug('SET_TAPPAY_LOADED: done!')
+        isTappaySDKLoaded = true
+      })
+    }
+    script.setAttribute('src', 'https://js.tappaysdk.com/tpdirect/v3')
+    document.head.appendChild(script)
+  }  
 }
 
 const clientMetaInfoMixin = {
   mounted () {
     const metaInfo = getMetaInfo(this)
     if (metaInfo) {
-      updateMeta(metaInfo)
+      updateMeta(metaInfo, this)
     }
   },
   updated () {
     const metaInfo = getMetaInfo(this)
     if (metaInfo) {
       /** update current page's mata */
-      updateMeta(metaInfo)
-
-      /** If Tappays SDK needed. */
-      const { isTappayNeeded, } = metaInfo
-
-      if (isTappayNeeded && !isTappaySDKLoaded) {
-        const script = document.createElement('script')
-        script.onload = () => {
-          debug('isTappaySDKLoaded', window.TPDirect)
-          this.$store.dispatch('SET_TAPPAY_LOADED').then(() => {
-            debug('SET_TAPPAY_LOADED: done!')
-            isTappaySDKLoaded = true
-          })
-        }
-        script.setAttribute('src', 'https://js.tappaysdk.com/tpdirect/v3')
-        document.head.appendChild(script)
-      }
+      updateMeta(metaInfo, this)
     }
   },
 }

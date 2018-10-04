@@ -16,6 +16,7 @@
                 <span v-text="alertMsg"></span>
               </div>
               <DonateDetail
+                @resize="checkBottom"
                 :rest="currentPoints"
                 :amount="isNaN(donateAmount) ? 0 : typeof(donateAmount) === Number ? donateAmount : Number(donateAmount)"
                 :type="alertType"></DonateDetail>
@@ -89,10 +90,14 @@
       }
     },
     methods: {
+      checkBottom () {
+        this.isBottom = this.$refs.content.scrollHeight <= this.$refs.content.scrollTop + this.$refs.content.clientHeight + 20
+      },
       closeDonate () {
         // this.showDonate = false
         switchOff(this.$store).then(() => {
           this.$router.push(`/series/${get(this.$route, 'params.slug')}`)
+          // location.replace(`/series/${get(this.targetItem, 'project.slug')}`)
         })
       },
       checkDonateAmount () {
@@ -162,9 +167,8 @@
     },
     mounted () {
       this.donateAmount = get(this.targetItem, 'memoPoints', 20)
-      this.$refs.content.addEventListener('scroll', event => {
-        this.isBottom = event.target.scrollHeight <= event.target.scrollTop + event.target.clientHeight + 20
-      })
+      this.$refs.content.addEventListener('scroll', this.checkBottom)
+      this.checkBottom()
     },
     watch: {
       currentPoints () {
@@ -291,6 +295,7 @@
       align-items center
       box-shadow 0 0 15px rgba(0, 0, 0, 0.15)
       border-radius 5px
+      margin-top 40px
       &:hover
         box-shadow 0 0 15px rgba(255, 255, 255, 0.4)
       &.block
