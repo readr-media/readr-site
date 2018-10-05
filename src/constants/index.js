@@ -6,6 +6,7 @@ export const PROJECTS = projectList
 export const SITE_DOMAIN = 'readr.tw'
 export const SITE_DOMAIN_DEV = 'dev.readr.tw'
 export const SITE_NAME = '讀+ Readr'
+export const SITE_FULL = 'https://www.readr.tw'
 
 export const URL_FB_FANPAGE = 'https://www.facebook.com/readr.tw'
 export const URL_TWITTER = 'https://twitter.com/READr_news'
