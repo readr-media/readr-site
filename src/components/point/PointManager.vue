@@ -6,6 +6,7 @@
         <span class="value" :class="{ negative: isPointsNegative, }" v-text="currentPoints"></span>
         <span class="postfix" v-text="$t('point.UNIT')"></span>
       </div>
+      <router-link class="point-manager__infobar-to-about-points" to="/about/points" v-text="$t('point.TO_ABOUT_POINTS')"></router-link>
     </div>
     <div class="point-manager__point-records">
       <PointRecord></PointRecord>
@@ -103,6 +104,9 @@
                 border-radius 50%
                 background-color #808080
                 display block
-
-
+    &__infobar-to-about-points
+      font-size 0.9375rem
+      color #d0021b
+      font-weight 600
+      text-decoration underline
 </style>
