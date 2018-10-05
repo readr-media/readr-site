@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import { SITE_FULL, } from 'src/constants'
 import { get, uniqBy, find, } from 'lodash'
 import { mapState, } from 'vuex'
 import { isScrollBarReachBottom, isElementReachInView, isCurrentRoutePath, } from 'src/util/comm'
@@ -131,7 +132,7 @@ export default {
         ogTitle: get(this.postSingle, 'ogTitle') || get(this.postSingle, 'title'),
         description: get(this.postSingle, 'ogDescription') || truncate(sanitizeHtml(get(this.postSingle, 'content', ''), { allowedTags: [], }), 100),
         metaUrl: this.$route.path,
-        metaImage: get(this.postSingle, 'ogImage') || '/public/og-image-post.jpg',
+        metaImage: get(this.postSingle, 'ogImage') || `${SITE_FULL}/public/og-image-post.jpg`,
       }
     } else {
       return {

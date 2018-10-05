@@ -31,6 +31,7 @@ import PublicPageWithAside from 'src/components/layout/PublicPageWithAside.vue'
 import TagNav from 'src/components/tag/TagNav.vue'
 import sanitizeHtml from 'sanitize-html'
 import truncate from 'html-truncate'
+import { SITE_FULL, } from 'src/constants'
 import { MEMO_PUBLISH_STATUS, PROJECT_PUBLISH_STATUS, PROJECT_STATUS, REPORT_PUBLISH_STATUS, } from 'api/config'
 import { isClientSide, } from 'src/util/comm'
 import { get, } from 'lodash'
@@ -184,7 +185,7 @@ export default {
         ogTitle: get(this.postSingle, 'title'),
         description: desc,
         metaUrl: this.$route.path,
-        metaImage: get(this.projectSingle, 'heroImage') || '/public/og-image-memo.jpg',
+        metaImage: get(this.projectSingle, 'heroImage') || `${SITE_FULL}/public/og-image-memo.jpg`,
         isTappayNeeded: this.isTappayRequired,
       }
     } else {
