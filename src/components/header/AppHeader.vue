@@ -25,7 +25,7 @@
       <div v-if="isClientSide && !isLoggedIn" class="header__item header--status">
         <!--router-link to="/login" v-text="$t('HEADER.LOGIN')"></router-link-->
         <!--Use Alink for loading facebook/google sdk-->
-        <a href="/login"v-text="$t('HEADER.LOGIN')"></a>
+        <a  href="/login" v-text="$t('HEADER.LOGIN')"></a>
       </div>
       <a href="https://www.mirrormedia.mg/" target="_blank">
         <img class="header__item header__item--border-less" src="/public/icons/mirrormedia.png" alt="">
@@ -83,7 +83,7 @@
         return this.$route.path === '/' || this.$route.path.indexOf('/post/') === 0 || this.$route.path === '/hot'
       },      
       profileImage () {
-        return getImageUrl(get(this.currentUser, 'profileImage', '/public/icons/exclamation.png'))
+        return getImageUrl(get(this.currentUser, 'profileImage', '/public/icons/exclamation.png') || '/public/icons/exclamation.png')
       },
       userNickname () {
         return this.isLoggedIn && get(this.currentUser, 'nickname', get(this.currentUser, 'name', this.$t('HEADER.MEMBER_CENTRE')))

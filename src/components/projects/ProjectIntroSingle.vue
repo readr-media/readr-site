@@ -12,9 +12,6 @@
         <span v-text="desc"></span>
       </div>
     </div>
-    <div class="project-single-intro__progress-bar" :style="{ width: `${targProgress}%` }">
-      <div class="current-progress"><span v-text="`${currProgress}%`"></span></div>
-    </div>
   </div>
 </template>
 <script>
@@ -44,9 +41,6 @@ export default {
     project () {
       return get(this.$store, 'state.publicProjectSingle', {})
     },
-    targProgress () {
-      return get(this.project, 'progress', 0)
-    },
     desc () {
       return get(this.project, 'description', '')
     },
@@ -62,25 +56,12 @@ export default {
   },
   data () {
     return {
-      currProgress: 0,
       isProgressRun: false,
     }
   },
   methods: {
     get,
     getImageUrl,
-    runProgress () {
-      // debug('this.targProgress', this.targProgress)
-      const interval = setInterval(() => {
-        this.currProgress += Math.ceil(this.targProgress / 100)
-        // debug('this.currProgress', this.currProgress)
-        // debug('this.targProgress', this.targProgress)
-        if (this.currProgress >= this.targProgress) {
-          this.currProgress = this.targProgress
-          clearInterval(interval)
-        }
-      }, 10)
-    },
     // TODO: Refactor following to a component like ButtonFollow.vue
     clickFollow () {
       if (this.isLoggedIn) {
@@ -115,14 +96,6 @@ export default {
       type: String,
     },
   },
-  watch: {
-    targProgress () {
-      if (!this.isProgressRun) {
-        this.isProgressRun = true
-        this.runProgress()
-      }
-    },
-  },
 }
 </script>
 <style lang="stylus" scoped>
@@ -153,28 +126,7 @@ export default {
     line-height normal
   &__desc
     width 40%
-  &__progress-bar
-    position absolute
-    height 5px
-    bottom 0
-    left 0
-    background-color #ddcf21
-    transition width 1.5s
-    .current-progress
-      width 28px
-      height 28px
-      position absolute
-      right -14px
-      top -11px
-      background-color #ddcf21
-      border-radius 50%
-      display flex
-      justify-content center
-      align-items center
-      color #fff
-      font-size 0.625rem
-      z-index 998
-
+  
 .follow
   margin 0
   &__icon
