@@ -25,12 +25,11 @@
 <script>
 import { get, filter, } from 'lodash'
 import { ROLE_MAP, } from 'src/constants'
-import { createPointsIntroContent, POINTS_INTRO_CONTENT, FOOTER_MESSAGE, } from 'src/constants/pointsIntro'
+import { createPointsIntroContent, FOOTER_MESSAGE, } from 'src/constants/pointsIntro'
 
 export default {
   data () {
     return {
-      POINTS_INTRO_CONTENT,
       FOOTER_MESSAGE,
     }
   },
