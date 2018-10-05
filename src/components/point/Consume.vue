@@ -134,18 +134,18 @@
       clickHandler () {
         debug('CLOSE COMSUME!')
         if (this.isDepositNeeded) {
+          const slug = get(this.targetItem, 'project.slug')
+          const objectId = get(this.targetItem, 'projectId')
+          const memoPoints = get(this.targetItem, 'project.memoPoints', 0)
           switchOnTappay(this.$store, {
             amount: this.sum,
             callback: () => {
               Promise.all([
-                deductPoints(this.$store, {
-                  objectId: get(this.targetItem, 'projectId'),
-                  points: get(this.targetItem, 'project.memoPoints'),
-                }),
+                deductPoints(this.$store, { objectId, memoPoints, }),
                 switchOffDeductionPanel(this.$store),
               ]).then(() => {
                 // this.$router.push(`/series/${get(this.targetItem, 'project.slug')}`)
-                location.replace(`/series/${get(this.targetItem, 'project.slug')}`)
+                location.replace(`/series/${slug}`)
               })
             },
           })
@@ -179,8 +179,16 @@
       isActive () {
         if (this.isActive) {
           this.showMemoDeduction = true
+          fetchCurrPoints(this.$store)
         } else {
           this.showMemoDeduction = false
+        }
+      },
+      isDepositNeeded () {
+        if (this.isDepositNeeded) {
+          this.alertType = 0
+        } else {
+          this.alertType = 1
         }
       },
       showMemoDeduction () {
