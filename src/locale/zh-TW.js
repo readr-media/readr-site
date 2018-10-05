@@ -385,6 +385,7 @@ export default {
         'CLEAR_UP_AMOUNT_POSTFIX': '元',
         'FOLD_UP': '隱藏',
         'UNFOLD': '開啟',
+        'CURRENT_CLEAR_UP_AMOUNT': '本次結算點數',
       },
       'LIMIT_PREFIX': '贊助此專題至少需',
       'LIMIT_POSTFIX': '點',
