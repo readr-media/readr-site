@@ -25,7 +25,7 @@
       <div v-if="isClientSide && !isLoggedIn" class="header__item header--status">
         <!--router-link to="/login" v-text="$t('HEADER.LOGIN')"></router-link-->
         <!--Use Alink for loading facebook/google sdk-->
-        <a  href="/login"v-text="$t('HEADER.LOGIN')"></a>
+        <a href="/login"v-text="$t('HEADER.LOGIN')"></a>
       </div>
       <a href="https://www.mirrormedia.mg/" target="_blank">
         <img class="header__item header__item--border-less" src="/public/icons/mirrormedia.png" alt="">
@@ -92,10 +92,11 @@
     methods: {
       goMemberCenter () {
         const memberCenter = get(filter(ROLE_MAP, { key: get(this.$store, 'state.profile.role',), }), [ 0, 'route', ], 'member')
-        /**
-         * use location.replace instead of router.push to server-side render page
-         */
-        location && location.replace(`/${memberCenter}`)
+        // /**
+        //  * use location.replace instead of router.push to server-side render page
+        //  */
+        // location && location.replace(`/${memberCenter}`)
+        this.$router.push(`/${memberCenter}`)
       },
       logout () {
         logout(this.$store).then(() => {
