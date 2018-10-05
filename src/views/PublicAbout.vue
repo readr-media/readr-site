@@ -1,5 +1,10 @@
 <template>
-  <AboutContent @clickClose="clickClose"/>
+  <div>
+    <AboutContent @clickClose="clickClose"/>
+    <transition name="fade" mode="out-in">
+      <router-view @clickClose="clickCloseSubpath"></router-view>
+    </transition>
+  </div>
 </template>
 
 <script>
@@ -31,6 +36,7 @@
     data () {
       return {
         routeFrom: undefined,
+        routeUpdateFrom: undefined,
       }
     },
     beforeRouteEnter (to, from, next) {
@@ -38,12 +44,20 @@
         vm.routeFrom = from.path
       })
     },
+    beforeRouteUpdate (to, from, next) {
+      // cache one way navigation /about -> /about/:subpath only
+      if (from.path === '/about') { this.routeUpdateFrom = from.path }
+      next()
+    },
     mounted () {
       VueCookie.set('readr-first-login', 'N', { expires: '1Y', })
     },
     methods: {
       clickClose () {
         this.$router.push({ path: this.routeFrom, })
+      },
+      clickCloseSubpath () {
+        this.$router.push({ path: this.routeUpdateFrom !== undefined ? this.routeUpdateFrom : this.routeFrom, })
       },
     },
   }
