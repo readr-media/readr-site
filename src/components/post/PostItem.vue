@@ -18,7 +18,7 @@
           </router-link>
         </figcaption>
       </figure>
-      <PostShareNav class="post__share-nav" :shareUrl="shareUrl"/>
+      <PostShareNav v-if="isClientSide" class="post__share-nav" :shareUrl="shareUrl"/>
     </div>  
     <div class="post__content" :style="{ width: `${width}px`, }" :key="`post-content-${post.id}`" :id="`post-content-${post.id}`">
       <PostContent modifier="main" :post="post"></PostContent>
