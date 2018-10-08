@@ -3,7 +3,7 @@ import { ROLE_MAP, } from './constants'
 import { createApp, } from './app' 
 import { getProfile, } from './util/services'
 
-const debug = require('debug')('READR:entry-server')
+const debug = require('debug')('READR-API:entry-server')
 const isDev = process.env.NODE_ENV !== 'production'
 
 // This exported function will be called by `bundleRenderer`.
@@ -50,11 +50,11 @@ export default context => {
         // if (!cookie) {
         //   router.push('/login')
         //   targUrl = '/login'
-        //   store.state.targ_url = '/login'
+          // store.state.targ_url = '/login'
         // } else {
         //   router.push('/')
         //   targUrl = '/'
-        //   store.state.targ_url = '/'
+          // store.state.targ_url = '/'
         // }
         return reject({ code: 403, })
       } else {

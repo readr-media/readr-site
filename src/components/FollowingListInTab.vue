@@ -28,6 +28,7 @@
 
 <script>
 import { get, groupBy, mapValues, sortBy, concat, isEmpty, pickBy, } from 'lodash'
+import { isClientSide, } from 'src/util/comm'
 import moment from 'moment'
 import AppDropdownOptions from './AppDropdownOptions.vue'
 import FollowingList from './FollowingList.vue'
@@ -70,6 +71,7 @@ export default {
     calendarFormatsValues () {
       return Object.values(this.calendarFormats)
     },
+    isClientSide,
     isLoggedIn () {
       return this.$store.state.isLoggedIn
     },
@@ -152,9 +154,9 @@ export default {
           ])
         },
       }
-
-      if (!this.isLoggedIn) { return dataEmptyHintNotLoggedIn }
       if (!this.isPublicProfilePage) { return dataEmptyHintProfile }
+      if (!this.isClientSide) { return dataEmptyHintProfilePublic }
+      if (!this.isLoggedIn) { return dataEmptyHintNotLoggedIn }
       return dataEmptyHintProfilePublic
     },
     followingStatsLoggenInUser () {

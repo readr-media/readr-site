@@ -89,7 +89,7 @@ if (window.__INITIAL_STATE__) {
 if (store.state.unauthorized) { 
   debug('entry-client resolved.') 
   delete store.state.unauthorized 
-  router.push(store.state.targ_url) 
+  store.state.targ_url && router.push(store.state.targ_url) 
 }
 
 const { UserAgent, } = require('express-useragent')
