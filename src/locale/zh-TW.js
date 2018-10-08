@@ -42,6 +42,12 @@ export default {
     'WORDING_BTN_SAVE' : '儲存',
     'WORDING_CREATE_PWD' : '新增密碼',
     'DUPLICATED_USER': '此 Email 已經是會員囉！請點擊上方登入字樣進行登入。',
+    'WELCOME' : `
+      <div class="big title">歡迎來到 <span class="yellow">READr</span></div>
+      <div>在這裡，新聞產製將嘗試由 <span class="big yellow">R</span><span class="big">eporter</span> 、 <span class="big yellow">E</span><span class="big">ngineer</span> 、 <span class="big yellow">A</span><span class="big">udience</span> 及 <span class="big yellow">D</span><span class="big">esigner</span> 一起共同完成，</div>
+      <div>讓新聞內容更加完善，將以往封閉的新聞編輯室邁向開放的可能，</div>
+      <div>最重要的就是你的參與。</div>
+    `,
   },
   'admin': {
     'SEARCH': '搜尋',

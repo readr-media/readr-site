@@ -154,6 +154,7 @@
       background-color #ffffff
       outline none
       font-weight 100
+      line-height 35px
       &::-webkit-input-placeholder
         color #bdbdbd
         font-weight 100
