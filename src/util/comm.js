@@ -182,6 +182,14 @@ export function onImageLoaded(url) {
   })
 }
 
+export function getShareUrl (url) {
+  const hostname = location.hostname
+  if (hostname === 'localhost') {
+    return `http://${SITE_DOMAIN_DEV}${url}`
+  }
+  return `${location.protocol}//${location.host}${url}`
+}
+
 export function getPostType (postData) {
   if (_.get(postData, 'type') === POST_TYPE.NEWS) {
     return 'news'
@@ -199,9 +207,9 @@ export function getPostFullUrl (postData) {
   switch (postType) {
     case 'news':
     case 'normal':
-      return getFullUrl(`/post/${_.get(postData, 'id', '')}`)
+      return getShareUrl(`/post/${_.get(postData, 'id', '')}`)
     case 'memo':
-      return getFullUrl(`/series/${_.get(postData, [ 'project', 'slug', ], '')}/${_.get(postData, 'id', '')}`)
+      return getShareUrl(`/series/${_.get(postData, [ 'project', 'slug', ], '')}/${_.get(postData, 'id', '')}`)
     case 'report':
       return getReportUrl(_.get(postData, 'slug', ''))
     default:
