@@ -1,6 +1,6 @@
 <template>
   <section class="post-panel">
-    <div class="post-panel-container">
+    <div class="post-panel-container" v-if="isClientSide">
       <div class="input input--title" :class="{ 'input--error': includes(errors, 'title') }">
         <input v-model="post.title" type="text" :disabled="loading" :placeholder="$t('POST_PANEL.TITLE_PLACEHOLDER')">
         <p v-if="includes(errors, 'title')" v-text="`${$t('POST_PANEL.VALIDATION_MSG')}${$t('POST_PANEL.TITLE')}`"></p>
@@ -81,7 +81,7 @@
       </div>
 
       <div class="post-panel__action">
-        <template v-if="isClientSide && !loading">
+        <template v-if="!loading">
           <button
             v-if="$can('deletePost') && (action === 'edit') && (post.publishStatus !== config.publishStatus.PUBLISHED && post.publishStatus !== config.publishStatus.SCHEDULING)"
             class="button"
@@ -152,6 +152,7 @@
   import { IMAGE_UPLOAD_MAX_SIZE, } from '../constants'
   import { POST_PUBLISH_STATUS, POST_TYPE, } from '../../api/config'
   import { find, get, identity, includes, map, mapKeys, pickBy, snakeCase, truncate, union, xor, } from 'lodash'
+  import { isClientSide, } from 'src/util/comm'
   import AlertPanel from './AlertPanel.vue'
   import BaseLightBox from './BaseLightBox.vue'
   import PostPanelTag from './PostPanelTag.vue'
@@ -235,9 +236,7 @@
       itemForAlert () {
         return [ this.post, ]
       },
-      isClientSide () {
-        return get(this.$store, 'state.isClientSide', false)
-      },
+      isClientSide,
       isReview () {
         return this.editorType === POST_TYPE.REVIEW
       },
