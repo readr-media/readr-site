@@ -1,8 +1,8 @@
 <template>
   <div>
     <img class="baselightbox-post__leading-image" v-if="post.ogImage && isClientSide"
-      :src="getImageUrl(post.ogImage)"
-      @load="setLeadingImageOrientation(getImageUrl(post.ogImage), $event)">
+      :src="getFullUrl(post.ogImage)"
+      @load="setLeadingImageOrientation(getFullUrl(post.ogImage), $event)">
     <div class="baselightbox-post__article-container">
       <article class="baselightbox-post__article">
         <section class="author-info">
@@ -23,6 +23,7 @@
             <p v-else v-html="p"></p>
           </template>
         </section>
+        <PostShareNav class="baselightbox-post__share-nav" :shareUrl="shareUrl"/>
       </article>
       <div class="nav-container">
         <AppArticleNav
@@ -49,22 +50,27 @@
 <script>
   import AppArticleNav from 'src/components/AppArticleNav.vue'
   import TagNav from 'src/components/tag/TagNav.vue'
-  import { isClientSide, updatedAtYYYYMMDD, getImageUrl, onImageLoaded, } from 'src/util/comm'
+  import PostShareNav from 'src/components/post/PostShareNav.vue'
+  import { isClientSide, updatedAtYYYYMMDD, getFullUrl, onImageLoaded, getPostFullUrl, } from 'src/util/comm'
   export default {
     name: 'BaseLightBoxTemplateNews',
     components: {
       AppArticleNav,
       TagNav,
+      PostShareNav,
     },
     computed: {
       isClientSide,
+      shareUrl () {
+        return getPostFullUrl(this.post)
+      },
     },
     methods: {
-      getImageUrl,
+      getFullUrl,
       updatedAtYYYYMMDD,  
       getImgSrc (content) {
         const regexp = /<img.*?src=['"](.*?)['"]/
-        return getImageUrl(regexp.exec(content)[1])
+        return getFullUrl(regexp.exec(content)[1])
       },      
       isImg (content) {
         const regexp = /<img([\w\W]+?)\/>/
@@ -94,3 +100,13 @@
     },
   }
 </script>
+
+<style lang="stylus" scoped>
+.baselightbox-post
+  &__article
+    position relative
+  &__share-nav
+    position absolute
+    top 0
+    right 0
+</style>

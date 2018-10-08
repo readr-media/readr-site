@@ -1,8 +1,5 @@
 <template>
   <div class="post-item" :id="`post-item-${post.id}`" :key="`post-item-${post.id}`">
-    <!--div class="share">
-      <AppShareButton :shareUrl="shareUrl" :direction="'down'" :iconColor="'white'" :backgroundColor="'#d3d3d3'"/>
-    </div-->
     <div class="post">
       <figure class="post__author author">
         <router-link :to="`/profile/${get(post, 'author.id')}`">
@@ -21,6 +18,7 @@
           </router-link>
         </figcaption>
       </figure>
+      <PostShareNav class="post__share-nav" :shareUrl="shareUrl"/>
     </div>  
     <div class="post__content" :style="{ width: `${width}px`, }" :key="`post-content-${post.id}`" :id="`post-content-${post.id}`">
       <PostContent modifier="main" :post="post"></PostContent>
@@ -30,7 +28,8 @@
 <script>
 import AppShareButton from 'src/components/AppShareButton.vue'
 import PostContent from 'src/components/post/PostContent.vue'
-import { dateDiffFromNow, isClientSide, getArticleAuthorNickname, getArticleAuthorThumbnailImg, } from 'src/util/comm'
+import PostShareNav from 'src/components/post/PostShareNav.vue'
+import { dateDiffFromNow, isClientSide, getArticleAuthorNickname, getArticleAuthorThumbnailImg, getPostFullUrl, } from 'src/util/comm'
 import { get, } from 'lodash'
 
 export default {
@@ -38,6 +37,7 @@ export default {
   components: {
     AppShareButton,
     PostContent,
+    PostShareNav,
   },
   computed: {
     dateDiffFromNow () {
@@ -45,7 +45,7 @@ export default {
     },
     isClientSide,
     shareUrl () {
-      return `/post/${this.post.id}`
+      return getPostFullUrl(this.post)
     },
     authorNickname () {
       return getArticleAuthorNickname(this.post)
@@ -92,7 +92,10 @@ export default {
   .post
     width 100%
     height 60px
-    background-color #d3d3d3  
+    background-color #d3d3d3
+    display flex
+    justify-content space-between
+    align-items center
     &__author
       margin 0
       display flex
@@ -100,6 +103,8 @@ export default {
       justify-content flex-start
       align-items center
       position relative
+    &__share-nav
+      padding 0 10px 0 0
     .author
       &__thumbnail
         width 60px

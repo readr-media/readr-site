@@ -17,7 +17,7 @@
 <script>
   import { Comment, } from 'readr-comment'
   import { get, map, isEmpty, } from 'lodash'
-  import { getImageUrl, } from 'src/util/comm'
+  import { getFullUrl, } from 'src/util/comm'
   import { ROLE_MAP, } from 'api/config'
   import { RESOURCE_TYPE, } from 'src/constants'
 
@@ -41,7 +41,7 @@
       commentsSalted () {
         return map(this.comments_raw, c => {
           return Object.assign({}, c, {
-            authorImage: getImageUrl(c.authorImage || '/public/icons/exclamation.png'),
+            authorImage: getFullUrl(c.authorImage || '/public/icons/exclamation.png'),
             authorPage: `/profile/${c.author}`,
           })
         })
@@ -50,7 +50,7 @@
         return {
           id: get(this.$store, 'state.profile.id'),
           nickname: get(this.$store, 'state.profile.nickname'),
-          profileImage: getImageUrl(get(this.$store, 'state.profile.profileImage') || '/public/icons/exclamation.png'),
+          profileImage: getFullUrl(get(this.$store, 'state.profile.profileImage') || '/public/icons/exclamation.png'),
           role: ROLE_MAP.ADMIN === get(this.$store, 'state.profile.role') ? 'admin' : 'member',
         }
       },
@@ -100,7 +100,7 @@
                 this.comments_raw = map(this.comments_raw, c => {
                   if (c.id === get(comment, 'parentId')) {
                     comments && map(comments, sub_c => {
-                      sub_c.authorImage = getImageUrl(sub_c.authorImage || '/public/icons/exclamation.png')
+                      sub_c.authorImage = getFullUrl(sub_c.authorImage || '/public/icons/exclamation.png')
                     })
                     c.replies = comments
                   }
@@ -188,7 +188,7 @@
           this.comments_raw = map(this.comments_raw, c => {
             if (c.id === id) {
               comments && map(comments, sub_c => {
-                sub_c.authorImage = getImageUrl(sub_c.authorImage || '/public/icons/exclamation.png')
+                sub_c.authorImage = getFullUrl(sub_c.authorImage || '/public/icons/exclamation.png')
               })
               c.replies = comments
             }

@@ -10,7 +10,7 @@
       <template v-for="(item, index) in notificationItems">
         <div class="dropbox__item" :class="{ never: !get(item, 'read') }" @click="read(`${index}`)" v-if="isNotificationDefined(item)">
           <div class="dropbox__item__avatar-img">
-            <img :src="getImageUrl(get(item, 'profile_image'), 'mobile')" v-if="isClientSide">
+            <img :src="getFullUrl(get(item, 'profile_image'), 'mobile')" v-if="isClientSide">
           </div>
           <div class="dropbox__item__content">
             <div class="message">
@@ -25,7 +25,7 @@
 </template>
 <script>
   import { NOTIFICATION_TYPE, } from 'src/constants'
-  import { dateDiffFromNow, isClientSide, isDescendant, getImageUrl, } from 'src/util/comm'
+  import { dateDiffFromNow, isClientSide, isDescendant, getFullUrl, } from 'src/util/comm'
   import { get, map, } from 'lodash'
   import NotificationMessage from 'src/components/header/NotificationMessage.vue'
   const debug = require('debug')('CLIENT:NotificationDropbox')
@@ -54,7 +54,7 @@
         return dateDiffFromNow(`${Y}-${M}-${D} ${h}:${m}:${s}`)
       },
       get,
-      getImageUrl,
+      getFullUrl,
       isNotificationDefined (item) {
         debug(`get(NOTIFICATION_TYPE, get(item, 'event_type', '')`, get(NOTIFICATION_TYPE, get(item, 'event_type', '').toUpperCase()), get(item, 'event_type', ''))
         return get(NOTIFICATION_TYPE, get(item, 'event_type', '').toUpperCase()) ? true : false

@@ -2,7 +2,7 @@
   <div :class="`post-content__${modifier}`" :type="`post-content-${postType}`" :key="`post-content-${postType}-${post.id}`">
     <!-- template for post type is news -->
     <template v-if="postType === 'news' && modifier === 'main'">
-      <img class="post-content__leading-image" v-if="post.ogImage && isClientSide" :src="getImageUrl(post.ogImage)" alt="" @load="setLeadingImageOrientation(getImageUrl(post.ogImage), $event)">
+      <img class="post-content__leading-image" v-if="post.ogImage && isClientSide" :src="getFullUrl(post.ogImage)" alt="" @load="setLeadingImageOrientation(getFullUrl(post.ogImage), $event)">
       <h1 class="post-content__title--news" v-text="post.title"></h1>
       <div class="editor-writing--news">
         <router-link :to="targetUrl" class="editor-writing__container">
@@ -25,7 +25,7 @@
     </template>
     <!-- template for report -->
     <template v-else-if="postType === 'report'">
-      <a v-if="post.heroImage" class="report__img" :href="getReportUrl(post.slug)"><img :src="getImageUrl(post.heroImage)" alt=""></a>
+      <a v-if="post.heroImage" class="report__img" :href="getReportUrl(post.slug)"><img :src="getFullUrl(post.heroImage)" alt=""></a>
       <h1 class="report__title"><a :href="getReportUrl(post.slug)" v-text="get(post, 'title')" target="_blank"></a></h1>
       <p class="report__descr"><a :href="getReportUrl(post.slug)" v-text="get(post, 'description')" target="_blank"></a></p>
     </template>
@@ -98,7 +98,7 @@
 <script>
   import { POST_TYPE, } from 'api/config'
   import { get, map, some, findIndex, } from 'lodash'
-  import { onImageLoaded, getImageUrl, getReportUrl, isClientSide, } from 'src/util/comm'
+  import { onImageLoaded, getFullUrl, getReportUrl, isClientSide, } from 'src/util/comm'
   import AppArticleNav from 'src/components/AppArticleNav.vue'
   import PostContentMemo from 'src/components/post/PostContentMemo.vue'
   import TagNav from 'src/components/tag/TagNav.vue'
@@ -272,10 +272,10 @@
       },
       getImgSrc (content) {
         const regexp = /<img.*?src=['"](.*?)['"]/
-        return getImageUrl(regexp.exec(content)[1])
+        return getFullUrl(regexp.exec(content)[1])
       },
       isClientSide,
-      getImageUrl,
+      getFullUrl,
       get,
       getReportUrl,
     },
