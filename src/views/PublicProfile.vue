@@ -1,8 +1,11 @@
 <template>
   <div class="profile">
     <About v-if="profile" :profile="profile"></About>
-    <Tab class="profile__tab" :tabs="map(tabs, t => t.name)" :tabCurrIndex.sync="curr_tab">
-      <template slot="0" v-if="postsReview.length !== 0">
+    <Tab class="profile__tab" :tabs="tabsName" :tabCurrIndex.sync="curr_tab">
+      <template
+        v-if="postsReview.length !== 0"
+        :slot="findIndexOf($t('tab.WORDING_TAB_REVIEW_RECORD'))"
+      >
         <div class="profile__main__review">
           <div class="profile__main__review__container">
             <div class="item" v-for="post in postsReview" :key="post.id">
@@ -13,7 +16,10 @@
           </div>
         </div>
       </template>
-      <template :slot="postsReview.length !== 0 ? 1 : 0" v-if="postsNews.length !== 0">
+      <template
+        v-if="postsNews.length !== 0"
+        :slot="findIndexOf($t('tab.WORDING_TAB_NEWS_RECORD'))"
+      >
         <div class="profile__main__review">
           <div class="profile__main__review__container">
             <div class="item" v-for="post in postsNews" :key="post.id">
@@ -24,7 +30,7 @@
           </div>
         </div>
       </template>
-      <template slot="2">
+      <template :slot="findIndexOf($t('tab.WORDING_TAB_FOLLOW_RECORD'))">
         <FollowingListInTab></FollowingListInTab>
       </template>
     </Tab>
@@ -140,6 +146,9 @@
         tabs.push({ key: 'follow', name: this.$t('tab.WORDING_TAB_FOLLOW_RECORD'), })
         return tabs
       },
+      tabsName () {
+        return map(this.tabs, t => t.name)
+      },
       profileId () {
         return get(this.$route, 'params.id')
       },
@@ -211,13 +220,15 @@
       },
       isElementReachInView,
       isScrollBarReachBottom,
-      map,
       routeToMemCenter () {
         if (this.isCurrUser) {
           const route = get(find(ROLE_MAP, (r) => (r.key === get(this.$store, 'state.profile.role'))), 'route')
           debug('About to route to member center.', route)
           this.$router.push(`/${route}`)
         }
+      },
+      findIndexOf(tabName) {
+        return this.tabsName.indexOf(tabName)
       },
     },
     beforeMount () {
