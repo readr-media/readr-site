@@ -2,6 +2,8 @@
   <div class="login-page" :class="{ 'packing-test': !registrationActive, }">
     <main class="login-page__main">
       <template v-if="registrationActive">
+        <img src="/public/icons/logowithoutreadr.png">
+        <div class="message" v-html="$t('login.WELCOME')"></div>
         <LoginPanel v-if="isClientSide && !isLoggedIn"></LoginPanel>
       </template>
       <template v-else>
@@ -50,12 +52,12 @@
 </script>
 <style lang="stylus" scoped>
 .login-page
-  min-height 100vh
-  width 100%
-  max-width 1200px
-  margin auto
-  padding 25px 0
   display flex
+  justify-content center
+  width 100%
+  min-height 100vh
+  padding 40px 0
+  background-color #444746
   &.packing-test
     background-color #444746
     max-width 100%
@@ -86,10 +88,33 @@
       & >>> div
         margin 16px
   &__main
-    margin-left 93.5px
-    width 950px
     display flex
     flex-direction column
     justify-content center
     align-items center
+    width 950px
+    margin 0 auto
+    > img
+      width 80px
+    .message
+      margin-top .5em
+      color #ffffff
+      font-size .9375rem
+      font-weight 300
+      font-style normal
+      font-stretch normal
+      line-height normal
+      letter-spacing 1px
+      text-align center
+      & >>> .title
+        margin-top 0
+        margin-bottom 1em
+      & >>> .big
+        font-size 1.5625rem
+      & >>> .yellow
+        color #ddcf21
+        font-weight normal
+      & >>> div + div
+        margin-top .5em
+
 </style>

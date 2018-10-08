@@ -3,20 +3,16 @@
     <TextItem class="login__input-email" type="text"
       :placeHolder="$t('login.WORDING_EMAIL_PLACEHOLDER')"
       :alert.sync="alert.mail"
-      :backgroundColor="theme === 'dark' && '#444746'"
-      :border="theme === 'dark' && 'solid 1px #ffffff'"
-      :height="theme === 'dark' && '25px'"
+      :backgroundColor="theme === 'dark' && 'transparent'"
+      :border="theme === 'dark' && 'solid 1px #9b9b9b'"
       :color="theme === 'dark' && '#fff'"
-      :fontSize="theme === 'dark' && '0.9375rem'"
       :value.sync="formData.mail"></TextItem>
     <TextItem class="login__input-pwd" type="password"
       :placeHolder="$t('login.WORDING_PASSWORD')"
       :alert.sync="alert.pwd"
-      :backgroundColor="theme === 'dark' && '#444746'"
-      :border="theme === 'dark' && 'solid 1px #ffffff'"
-      :height="theme === 'dark' && '25px'"
+      :backgroundColor="theme === 'dark' && 'transparent'"
+      :border="theme === 'dark' && 'solid 1px #9b9b9b'"
       :color="theme === 'dark' && '#fff'"
-      :fontSize="theme === 'dark' && '0.9375rem'"
       :value.sync="formData.pwd"></TextItem>
     <div class="login__wrapper">
       <div class="keep-login-alive">
@@ -27,7 +23,7 @@
         <span v-text="$t('login.WORDING_FORGET_PASSWORD')" @click="goRecoverPwd"></span>
       </div>
     </div>
-    <div class="login__msg">
+    <div v-if="resMsg" class="login__msg">
       <div class='content' v-text="resMsg"></div>
     </div>
     <div class="login__btn" @click="login">
@@ -149,15 +145,13 @@
     .login__btn
       background-color #ddcf21
       color #000
-      width 400px
-      height 25px
+      // width 400px
+      height 35px
       font-size 0.9375rem
       &:hover
         background-color #8c8c8c
 
     .login__wrapper
-      font-family PingFangTC
-      font-size 0.75rem
       font-weight normal
       font-style normal
       font-stretch normal
@@ -174,14 +168,14 @@
     width 100%
     height 100%
     position relative
-    padding-bottom 2rem
-    color #000
+    padding-bottom 5px
+    color #fff
     &__input-email, &__input-pwd
-      margin 15px 0
+      margin  0 0 15px
     &__wrapper
       display flex
       justify-content space-between
-      font-size 0.875rem
+      font-size .875rem
       .keep-login-alive
         > input
           vertical-align top
@@ -193,11 +187,12 @@
       text-align right
       color red
     &__btn
-      position absolute
-      bottom 0
-      left 0
+      // position absolute
+      // bottom 0
+      // left 0
       width 100%
       height 35px
+      margin-top 30px
       background-color #444746
       color #ddcf21
       display flex

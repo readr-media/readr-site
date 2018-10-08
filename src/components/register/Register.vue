@@ -4,18 +4,30 @@
       <TextItem class="register-container__input-nickname" type="text"
         :placeHolder="$t('login.WORDING_NICKNAME')"
         :alert.sync="alert.nickname"
+        :backgroundColor="'transparent'"
+        :border="'solid 1px #9b9b9b'"
+        :color="'#fff'"
         :value.sync="formData.nickname"></TextItem>
       <TextItem class="register-container__input-email" type="text"
         :placeHolder="$t('login.WORDING_EMAIL')"
         :alert.sync="alert.mail"
+        :backgroundColor="'transparent'"
+        :border="'solid 1px #9b9b9b'"
+        :color="'#fff'"
         :value.sync="formData.mail"></TextItem>
       <TextItem class="register-container__input-pwd" type="password"
         :placeHolder="$t('login.WORDING_PASSWORD')"
         :alert.sync="alert.pwd"
+        :backgroundColor="'transparent'"
+        :border="'solid 1px #9b9b9b'"
+        :color="'#fff'"
         :value.sync="formData.pwd"></TextItem>
       <TextItem class="register-container__input-pwd-check" type="password"
         :placeHolder="$t('login.WORDING_PASSWORD_CHECK')"
         :alert.sync="alert[ 'pwd-check' ]"
+        :backgroundColor="'transparent'"
+        :border="'solid 1px #9b9b9b'"
+        :color="'#fff'"
         :value.sync="formData[ 'pwd-check' ]"></TextItem>
       <div class="register-container__notice">
         <span class="notice" v-text="$t('login.WORDING_REGISTER_NOTICE')"></span>
@@ -190,22 +202,22 @@
       &__input-nickname, &__input-email, &__input-pwd, &__input-pwd-check
         margin 15px 0
       width 100%
-      height calc(100% - 2rem)
-      padding-bottom 2rem
-      color #000
+      padding-bottom 40px
+      color #fff
       &__notice
         font-size 0.875rem
         text-align right
         > .agreement
-          margin-left 20px
+          margin-left 1em
+          color #11b8c9
           cursor pointer
       &__btn
         position absolute
         left 0
         width 100%
         height 35px
-        background-color #444746
-        color #ddcf21
+        background-color #ddcf21
+        color #444746
         display flex
         justify-content center
         align-items center

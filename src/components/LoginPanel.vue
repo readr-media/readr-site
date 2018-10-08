@@ -16,7 +16,7 @@
       </div>
       <div class="container">
         <RecoverPassword v-if="isGoingRecoverPwd"></RecoverPassword>
-        <Login v-else-if="isLoginTabAcitve" @goRecoverPwd="goRecoverPwd" :isDoingLogin.sync="isDoingLogin"></Login>
+        <Login v-else-if="isLoginTabAcitve" @goRecoverPwd="goRecoverPwd" :isDoingLogin.sync="isDoingLogin" :theme="'dark'"></Login>
         <Register v-else></Register>
       </div>
     </div>
@@ -97,40 +97,34 @@
 </script>
 <style lang="stylus" scoped>
   .login-panel
-    background-color #d8d8d8
-    width 100%
-    height 430px
-    padding 17.5px 30px 23px
     margin 40px auto 0
     > div
-      width 50%
-      height 100%
+      width 360px
       vertical-align top
       position relative
       margin 0 auto
       &:first-child
-        border-right 1px solid #000
+        border-right 1px solid #fff
       > .title
         color #fff
-        margin 0 auto 15px
+        margin 0 auto 10px
         font-size 1.125rem
         font-weight 600
         height 20px
         
         > span
           &.active
-            color #000
+            color #ddcf21
         > span
-          margin 0 24.5px 0 0
+          margin 0 1em 0 0
       > .container
-        width 100%
-        height calc(100% - 35px)
-        margin 0 auto
-        padding-right 24px
+        width 320px
+        margin 0 auto 0 0
+        // padding-right 24px
     &__left, &__right
       display inline-block
     &__right
-      padding-left 30px
+      padding-left 40px
     &__left
       > .title
         > span
