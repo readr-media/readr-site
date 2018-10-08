@@ -23,6 +23,7 @@
             class="baselightbox-post__tags" />
         </AppArticleNav>
       </section>
+      <PostShareNav class="baselightbox-post__share-nav" :shareUrl="shareUrl"/>
     </article>
     <CommentContainer
       v-if="shouldRenderComment"
@@ -39,8 +40,9 @@
   import AppArticleNav from 'src/components/AppArticleNav.vue'
   import CommentContainer from 'src/components/comment/CommentContainer.vue'
   import TagNav from 'src/components/tag/TagNav.vue'
+  import PostShareNav from 'src/components/post/PostShareNav.vue'
   import { get, } from 'lodash'
-  import { isClientSide, updatedAtYYYYMMDD, } from 'src/util/comm'
+  import { isClientSide, updatedAtYYYYMMDD, getPostFullUrl, } from 'src/util/comm'
   const debug = require('debug')('CLIENT:BaseLightBoxTemplatePost')
   export default {
     name: 'BaseLightBoxTemplatePost',
@@ -48,6 +50,7 @@
       AppArticleNav,
       CommentContainer,
       TagNav,
+      PostShareNav,
     },
     computed: {
       asset () {
@@ -60,6 +63,9 @@
       },
       shouldRenderComment () {
         return this.post.id ? true : false
+      },
+      shareUrl () {
+        return getPostFullUrl(this.post)
       },
     },
     data () {
@@ -85,4 +91,13 @@
     },
   }
 </script>
-<style lang="stylus" scoped></style>
+
+<style lang="stylus" scoped>
+.baselightbox-post
+  &__article
+    position relative
+  &__share-nav
+    position absolute
+    top 0
+    right 0
+</style>

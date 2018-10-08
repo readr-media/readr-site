@@ -1,5 +1,5 @@
 <template>
-  <div class="project-single-intro" :style="{ backgroundImage: `url(${getImageUrl(get(project, 'heroImage') || '/public/media.jpeg')})`, }">
+  <div class="project-single-intro" :style="{ backgroundImage: `url(${getFullUrl(get(project, 'heroImage') || '/public/media.jpeg')})`, }">
     <div class="project-single-intro__container">
       <div class="follow" @click="clickFollow">
         <img class="follow__icon" :src="isFollowed ? '/public/icons/star-blue.png' : '/public/icons/star-line-blue.png'" alt="">
@@ -16,7 +16,7 @@
 </template>
 <script>
 import { get, } from 'lodash'
-import { getImageUrl, } from 'src/util/comm'
+import { getFullUrl, } from 'src/util/comm'
 import { mapState, } from 'vuex'
 import { redirectToLogin, } from 'src/util/services'
 // const debug = require('debug')('CLIENT:ProjectIntroSingle')
@@ -61,7 +61,7 @@ export default {
   },
   methods: {
     get,
-    getImageUrl,
+    getFullUrl,
     // TODO: Refactor following to a component like ButtonFollow.vue
     clickFollow () {
       if (this.isLoggedIn) {

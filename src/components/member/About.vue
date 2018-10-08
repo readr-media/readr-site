@@ -1,7 +1,7 @@
 <template>
   <div class="about">
     <div class="about__thumbnail">
-      <img v-show="thumbnail" :src="getImageUrl(thumbnail)">
+      <img v-show="thumbnail" :src="getFullUrl(thumbnail)">
     </div>
     <div class="about__name">
       <span class="name" v-text="name"></span>
@@ -19,7 +19,7 @@
 <script>
   import { filter, get, } from 'lodash'
   import { ROLE_MAP, } from 'src/constants'
-  import { getImageUrl, } from 'src/util/comm'
+  import { getFullUrl, } from 'src/util/comm'
   import BaseLightBox from 'src/components/BaseLightBox.vue'
   import ProfileEdit from 'src/components/member/ProfileEdit.vue'
 
@@ -59,7 +59,7 @@
     },
     name: 'about',
     methods: {
-      getImageUrl,
+      getFullUrl,
       goEdit () {
         debug('isCurrUser', this.isCurrUser)
         this.isCurrUser && (this.showLightBox = true)
