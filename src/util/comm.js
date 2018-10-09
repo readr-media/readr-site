@@ -222,7 +222,7 @@ export function createShareUrl(socialMedia = 'fb', url = SITE_FULL) {
     case 'fb':
       return `${URL_SHARE_FB}?u=${url}`
     case 'line':
-      return `${URL_SHARE_LINE}?${url}`
+      return `${URL_SHARE_LINE}?url=${url}`
     case 'g+':
       return `${URL_SHARE_GOOGLEPLUS}?url=${url}`
     default:
