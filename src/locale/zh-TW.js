@@ -455,9 +455,9 @@ export default {
   },
   'search': {
     'WORDING_SEARCH_FILTER_TITLE' : '篩選搜尋結果',
-    'WORDING_SEARCH_FILTER_VIEW' : '視角',
+    'WORDING_SEARCH_FILTER_VIEW' : '客座評論',
     'WORDING_SEARCH_FILTER_CONVERSATION' : '對話',
-    'WORDING_SEARCH_FILTER_PROJECT' : '專題',
+    'WORDING_SEARCH_FILTER_PROJECT' : '新聞專題',
   },
   'ABOUT': {
     'WELCOME': {
