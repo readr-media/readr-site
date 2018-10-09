@@ -23,7 +23,6 @@
         flag: 'post',
         filters: [
           { key: 'post', name: this.$t('search.WORDING_SEARCH_FILTER_VIEW'), },
-          { key: 'conversation', name: this.$t('search.WORDING_SEARCH_FILTER_CONVERSATION'), },
           { key: 'project', name: this.$t('search.WORDING_SEARCH_FILTER_PROJECT'), },
         ],
       }
