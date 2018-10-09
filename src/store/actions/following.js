@@ -33,7 +33,7 @@ const GET_FOLLOWING_BY_USER = ({ commit, state, }, params) => {
       // commit('SET_FOLLOWING_BY_USER', { following: body.items, userId: params.id, })
       commit('SET_FOLLOWING_BY_USER', { following: body.items, userId: params.id, resource: params.resource, resourceType: params.resource_type, })
       if (params.id === state.profile.id) {
-        commit('SET_FOLLOWING_BY_USER_STATS', { following: body.items, userId: params.id, resource: params.resource, resourceType: params.resource_type, })
+        commit('SET_FOLLOWING_BY_USER_STATS', { following: body.items, userId: params.id, })
       }
     }
   })

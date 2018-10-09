@@ -79,22 +79,24 @@ const SET_FOLLOWING_BY_USER = (state, { following, userId, resource, resourceTyp
   }
 }
 
-const SET_FOLLOWING_BY_USER_STATS = (state, { following, resource, resourceType, }) => {
+const SET_FOLLOWING_BY_USER_STATS = (state, { following, }) => {
   const data = following || []
 
-  data.forEach(item => {
-    if (resource === 'post') {
-      if (!_.isEmpty(resourceType)) {
-        Vue.set(state['followingByUserStats'][resource][resourceType], item.id, true)
+  data.forEach(follow => {
+    const id = _.get(follow, [ 'item', 'id', ], '')
+    const resource = _.get(follow, 'resource', '')
+
+    if (!(id in state['followingByUserStats'][resource])) {
+      if (resource !== 'post') {
+        Vue.set(state['followingByUserStats'][resource], id, true)
       } else {
         const postType = Object.entries(POST_TYPE)
-        const currentResourceType = _.get(_.find(postType, [ 1, item.type, ]), 0, '').toLowerCase()
+        const currentResourceType = _.get(_.find(postType, [ 1, follow.item.type, ]), 0, '').toLowerCase()
+
         if (currentResourceType !== null && currentResourceType in state['followingByUserStats'][resource]) {
-          Vue.set(state['followingByUserStats'][resource][currentResourceType], item.id, true)
+          Vue.set(state['followingByUserStats'][resource][currentResourceType], id, true)
         }
       }
-    } else {
-      Vue.set(state['followingByUserStats'][resource], item.id, true)
     }
   })
 }

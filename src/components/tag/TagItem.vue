@@ -2,7 +2,7 @@
   <li class="tag-item">
     <div class="tag-item__tag tag">
       <router-link
-        :to="`/tag/${tag.id}`" 
+        :to="`/tag/${tagContent.id}`" 
         :class="[
           'tag__header',
           { 'tag__header--has-list': showRelatedsList && isRelatedListExist },
@@ -11,7 +11,7 @@
         @mouseover.native="handleMouseEvent"
         @mouseout.native="handleMouseEvent"
       >
-        <span class="tag__text" v-text="tag.text"></span>
+        <span class="tag__text" v-text="tagContent.text"></span>
         <span class="tag__action tag-action">
           <img
             :src="isFollowed ? starUrlFollowed : starUrlUnFollowed"
@@ -93,25 +93,28 @@ export default {
       tagsFollowingByUser: state => get(state.followingByUserStats, 'tag', {}),
     }),
     isFollowed () {
-      return get(this.tagsFollowingByUser, this.tag.id, false)
+      return get(this.tagsFollowingByUser, this.tagContent.id, false)
     },
     isLoggedIn () {
       return this.$store.state.isLoggedIn
     },
     isRelatedListExist () {
-      return this.relatedListName in this.tag && this.tag[this.relatedListName] !== null
+      return this.relatedListName in this.tagContent && this.tagContent[this.relatedListName] !== null
     },
     relatedListItems () {
-      return take(get(this.tag, this.relatedListName, []), this.relatedListItemLimit)
+      return take(get(this.tagContent, this.relatedListName, []), this.relatedListItemLimit)
     },
     isMouseover () {
-      return get(this.$store.state, [ 'tagsIsMouseover', this.tag.id, ], this.isMouseoverLocal)
+      return get(this.$store.state, [ 'tagsIsMouseover', this.tagContent.id, ], this.isMouseoverLocal)
     },
     starUrlFollowed () {
       return this.isMouseover ? '/public/icons/star-white.png' : '/public/icons/star-blue.png'
     },
     starUrlUnFollowed () {
       return this.isMouseover ? '/public/icons/star-whiteline.png' : '/public/icons/star-line-blue.png'
+    },
+    tagContent () {
+      return this.tag.resource === 'tag' ? get(this.tag, 'item') || {} : this.tag
     },
   },
   methods: {
@@ -129,17 +132,17 @@ export default {
           action: 'unfollow',
           resource: 'tag',
           subject: this.$store.state.profile.id,
-          object: this.tag.id,
+          object: this.tagContent.id,
         })
       } else {
         publishAction(this.$store, {
           action: 'follow',
           resource: 'tag',
           subject: this.$store.state.profile.id,
-          object: this.tag.id,
+          object: this.tagContent.id,
         })
       }
-      toogleFollowingByUserStat(this.$store, { resource: 'tag', targetId: this.tag.id, })
+      toogleFollowingByUserStat(this.$store, { resource: 'tag', targetId: this.tagContent.id, })
       this.toogleFollowTooltip()
     },
     toogleFollowTooltip () {
@@ -153,7 +156,7 @@ export default {
     },
     handleMouseEvent (e) {
       this.isMouseoverLocal = e.type === 'mouseover'
-      this.$store.commit('SET_TAGS_MOUSEEVENT', { id: this.tag.id, value: e.type === 'mouseover', })
+      this.$store.commit('SET_TAGS_MOUSEEVENT', { id: this.tagContent.id, value: e.type === 'mouseover', })
     },
   },
 }
