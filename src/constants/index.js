@@ -13,7 +13,7 @@ export const URL_TWITTER = 'https://twitter.com/READr_news'
 export const URL_IG = 'https://www.instagram.com/readrteam_daily/'
 
 export const URL_SHARE_FB = 'https://www.facebook.com/share.php'
-export const URL_SHARE_LINE = 'https://line.me/R/msg/text/'
+export const URL_SHARE_LINE = 'https://social-plugins.line.me/lineit/share'
 export const URL_SHARE_GOOGLEPLUS = 'https://plus.google.com/share'
 
 export const ANNOUNCEMENT_ACCOUNT_ID = '126'
