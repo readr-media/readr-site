@@ -2,7 +2,7 @@ import _ from 'lodash'
 import Cookie from 'vue-cookie'
 import uuidv4 from 'uuid/v4'
 import pathToRegexp from 'path-to-regexp'
-import { SITE_DOMAIN, SITE_DOMAIN_DEV, SITE_FULL, MM_SITE_DOMAIN, OLD_PROJECTS_SLUGS, URL_SHARE_FB, URL_SHARE_LINE, URL_SHARE_GOOGLEPLUS, } from '../constants'
+import { SITE_DOMAIN, SITE_DOMAIN_DEV, SITE_FULL, MM_SITE_DOMAIN, OLD_PROJECTS_SLUGS, URL_SHARE_FB, URL_SHARE_LINE, } from '../constants'
 import { POST_TYPE, } from 'api/config'
 
 const debug = require('debug')('CLIENT:comm')
@@ -218,14 +218,25 @@ export function getPostFullUrl (postData) {
 }
 
 export function createShareUrl(socialMedia = 'fb', url = SITE_FULL) {
+  const createUTMQueryString = (url, utmSource) => {
+    const urlInstance = new URL(url)
+
+    let params = new URLSearchParams(urlInstance.search.slice(1))
+    params.append('utm_source', utmSource)
+    params.append('utm_medium', 'sharebutton')
+    urlInstance.search = `?${params.toString()}`
+
+    return encodeURIComponent(urlInstance.toString())
+  }
+
   switch (socialMedia) {
     case 'fb':
-      return `${URL_SHARE_FB}?u=${url}`
+      return `${URL_SHARE_FB}?u=${createUTMQueryString(url, 'facebook')}`
     case 'line':
-      return `${URL_SHARE_LINE}?url=${url}`
-    case 'g+':
-      return `${URL_SHARE_GOOGLEPLUS}?url=${url}`
+      return `${URL_SHARE_LINE}?url=${createUTMQueryString(url, 'line')}`
+    // case 'g+':
+      // return `${URL_SHARE_GOOGLEPLUS}?url=${url}`
     default:
-      return `${URL_SHARE_FB}?u=${url}`
+      return `${URL_SHARE_FB}?u=${createUTMQueryString(url, 'facebook')}`
   }
 }
