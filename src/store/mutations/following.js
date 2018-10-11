@@ -46,8 +46,7 @@ const SET_FOLLOWING_BY_RESOURCE = (state, { resourceType, following, }) => {
   state['followingByResource'][resourceType] = following
 }
 
-const SET_FOLLOWING_BY_USER = (state, { following, userId, resource, resourceType, }) => {
-  const data = following || []
+const SET_FOLLOWING_BY_USER = (state, { following = [], userId, }) => {
   if (!(userId in state['followingByUser'])) {
     Vue.set(state['followingByUser'], userId, {
       post: {
@@ -61,28 +60,28 @@ const SET_FOLLOWING_BY_USER = (state, { following, userId, resource, resourceTyp
     })
   }
 
-  if (resource === 'post') {
-    if (!_.isEmpty(resourceType)) {
-      Vue.set(state['followingByUser'][userId][resource], resourceType, data)
-    } else {
-      const postType = Object.entries(POST_TYPE)
-      data.forEach(post => {
-        const currentResourceType = _.get(_.find(postType, [ 1, post.type, ]), 0, '').toLowerCase()
-        if (currentResourceType !== '') {
-          const store = state['followingByUser'][userId][resource][currentResourceType]
-          store.push(post)
+  following.forEach(follow => {
+    const id = _.get(follow, [ 'item', 'id', ], '')
+    const resource = _.get(follow, 'resource', '')
+    const isFollowExist = _.find(state['followingByUser'][userId][resource], follow => _.get(follow, 'resource') === resource && _.get(follow, [ 'item', 'id', ]) === id) !== undefined
+
+    if (!isFollowExist) {
+      if (resource !== 'post') {
+        state['followingByUser'][userId][resource].push(follow)
+      } else {
+        const postType = Object.entries(POST_TYPE)
+        const currentResourceType = _.get(_.find(postType, [ 1, follow.item.type, ]), 0, '').toLowerCase()
+  
+        if (currentResourceType !== null && currentResourceType in state['followingByUser'][userId]) {
+          state['followingByUser'][userId][resource][currentResourceType].push(follow)
         }
-      })
+      }
     }
-  } else {
-    Vue.set(state['followingByUser'][userId], resource, data)
-  }
+  })
 }
 
-const SET_FOLLOWING_BY_USER_STATS = (state, { following, }) => {
-  const data = following || []
-
-  data.forEach(follow => {
+const SET_FOLLOWING_BY_USER_STATS = (state, { following = [], }) => {
+  following.forEach(follow => {
     const id = _.get(follow, [ 'item', 'id', ], '')
     const resource = _.get(follow, 'resource', '')
 

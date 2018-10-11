@@ -33,11 +33,18 @@ import moment from 'moment'
 import AppDropdownOptions from './AppDropdownOptions.vue'
 import FollowingList from './FollowingList.vue'
 
-const getFollowing = (store, { id = get(store, 'state.profile.id'), resource = 'project', resourceType = '', } = {}) => {
+const DEFAULT_MAX_RESULT_INIT = 20
+const DEFAULT_PAGE_INIT = 1
+const DEFAULT_MAX_RESULT_LOADMORE = 10
+const DEFAULT_PAGE_LOADMORE = 3
+
+const getFollowing = (store, { id = get(store, 'state.profile.id'), resource = 'project', resource_type = '', max_result, page, } = {}) => {
   return store.dispatch('GET_FOLLOWING_BY_USER', {
-    id: id,
-    resource: resource,
-    resource_type: resourceType,
+    id,
+    resource,
+    resource_type,
+    max_result,
+    page,
   })
 }
 
@@ -47,9 +54,24 @@ export default {
     AppDropdownOptions,
     FollowingList,
   },
+  watch: {
+    isReachBottom () {
+      if (this.isReachBottom) {
+        this.fetchFollowing(true)
+      }
+    },
+  },
+  props: {
+    isReachBottom: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data () {
     return {
       resource: 'all', // all, project or tag (Following list in tab now only display projects or tags which were followed by user)
+      currentPage: DEFAULT_PAGE_LOADMORE,
+      shouldLoadmore: undefined,
       radioOptions: [
         {
           text: this.$t('FOLLOWING.FILTER.all'),
@@ -82,8 +104,7 @@ export default {
       return this.isPublicProfilePage ? get(this.$route, 'params.id') : get(this.$store, 'state.profile.id')
     },
     followingByUser () {
-      // TODO: remove 'resource' key assign by frontend when resource field available in response data
-      const _getFollowingByUserResource = resource => get(this.$store, [ 'state', 'followingByUser', this.userId, resource, ], []).map(element => ({ resource, ...element, }))
+      const _getFollowingByUserResource = resource => get(this.$store, [ 'state', 'followingByUser', this.userId, resource, ], [])
       const followingByUserProjects = _getFollowingByUserResource('project')
       const followingByUserTags = _getFollowingByUserResource('tag')
       const followingByUserAll = concat(followingByUserProjects, followingByUserTags)
@@ -164,6 +185,44 @@ export default {
       return data
     },
   },
+  methods: {
+    fetchFollowing (isLoadmore) {
+      const _maxResult = isLoadmore ? DEFAULT_MAX_RESULT_LOADMORE : DEFAULT_MAX_RESULT_INIT
+      const _page = isLoadmore ? this.currentPage : DEFAULT_PAGE_INIT
+      const _fetchFollowingPublicProfile = () => {
+        const publicProfileUserId = Number(get(this.$route, 'params.id'))
+        getFollowing(this.$store, { resource: [ 'project', 'tag', ], }),
+        getFollowing(this.$store, { id: publicProfileUserId, resource: [ 'project', 'tag', ], max_result: _maxResult, page: _page, })
+        .then(({ body, }) => {
+          this.shouldLoadmore = body.items.length >= _maxResult
+          if (isLoadmore && this.shouldLoadmore) { this.currentPage += 1 }
+        })
+        .catch(error => {
+          console.log(error)
+          this.shouldLoadmore = false
+        })
+      }
+      const _fetchFollowingMemberCenter = () => {
+        getFollowing(this.$store, { resource: [ 'project', 'tag', ], max_result: _maxResult, page: _page, })
+        .then(({ body, }) => {
+          this.shouldLoadmore = body.items.length >= _maxResult
+          if (isLoadmore && this.shouldLoadmore) { this.currentPage += 1 }
+        })
+        .catch(error => {
+          console.log(error)
+          this.shouldLoadmore = false
+        })
+      }
+
+      if (this.isLoggedIn) {
+        if (this.isPublicProfilePage) {
+          _fetchFollowingPublicProfile()
+        } else {
+          _fetchFollowingMemberCenter()
+        }
+      }
+    },
+  },
   created () {
     moment.calendarFormatDefault = Object.assign(moment.calendarFormat)
 
@@ -192,22 +251,7 @@ export default {
     moment.calendarFormat = moment.calendarFormatDefault
   },
   beforeMount () {
-    // TODO: loadmore feature
-    if (this.isLoggedIn) {
-      if (this.isPublicProfilePage) {
-        Promise.all([
-          getFollowing(this.$store, { resource: 'project', }),
-          getFollowing(this.$store, { resource: 'tag', }),
-          getFollowing(this.$store, { id: Number(get(this.$route, 'params.id')), resource: 'project', }),
-          getFollowing(this.$store, { id: Number(get(this.$route, 'params.id')), resource: 'tag', }),
-        ])
-      } else {
-        Promise.all([
-          getFollowing(this.$store, { resource: 'project', }),
-          getFollowing(this.$store, { resource: 'tag', }),
-        ])
-      }
-    }
+    this.fetchFollowing()
   },
 }
 </script>
