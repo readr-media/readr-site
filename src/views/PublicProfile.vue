@@ -31,7 +31,7 @@
         </div>
       </template>
       <template :slot="findIndexOf($t('tab.WORDING_TAB_FOLLOW_RECORD'))">
-        <FollowingListInTab></FollowingListInTab>
+        <FollowingListInTab :isReachBottom="isReachBottom"></FollowingListInTab>
       </template>
     </Tab>
   </div>
