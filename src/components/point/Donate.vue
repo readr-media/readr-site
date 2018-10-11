@@ -3,7 +3,7 @@
     <div class="donate-panel">
       <div class="donate-panel__container">
         <div class="donate-panel__wrapper" :class="{ center: !get(me, 'id') }" ref="content">
-          <template v-if="get(me, 'id')">
+          <template v-if="isClientSide && get(me, 'id')">
             <div class="donate-panel__content">
               <div class="appreciate"><span v-text="$t('point.DONATE.APPRECIATE')"></span></div>
               <div class="project-name"><span v-text="get(targetItem, 'title')"></span></div>
@@ -40,6 +40,7 @@
   import BaseLightBox from 'src/components/BaseLightBox.vue'
   import DonateDetail from 'src/components/point/DonateDetail.vue'
   import { POINT_OBJECT_TYPE, DONATION_POINT_MIN_LINE, } from 'api/config'
+  import { isClientSide, } from 'src/util/comm'
   import { get, } from 'lodash'
 
   const DEFAULT_DONATION_POINT_MIN_LINE = DONATION_POINT_MIN_LINE || -100
@@ -73,6 +74,7 @@
       isActive () {
         return get(this.$store, 'state.donateFlag.active', false)
       },
+      isClientSide,
       targetItem () {
         return get(this.$store, 'state.donateFlag.item', {})
       },

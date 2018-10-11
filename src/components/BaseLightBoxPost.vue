@@ -1,11 +1,11 @@
 <template>
-  <div class="baselightbox-post--review no-content" v-if="!get(this.post, 'id')">
+  <div class="baselightbox-post--review no-content" v-if="isClientSide && !get(this.post, 'id')">
     <div>
       <div><span v-text="$t('POST_CONTENT.NO_CONTENT')"></span></div>
       <div class="button"><span v-text="$t('POST_CONTENT.GO_HOME')" @click="goHome"></span></div>
     </div>
   </div>
-  <div class="baselightbox-post--review no-content" v-else-if="isContentEmpty">
+  <div class="baselightbox-post--review no-content" v-else-if="isClientSide && isContentEmpty">
     <span v-if="isMemo && !isMemoPaid && me.id" v-text="$t('POST_CONTENT.GO_JOIN_MEMO')" class="go-join" @click="goJoin"></span>
     <template v-else>
       <div>
@@ -15,28 +15,30 @@
     </template>
   </div>
   <div :class="[ { 'baselightbox-post--review': !isNews && !isMemo }, { 'baselightbox-post--news': isNews || isMemo } ]" v-else>
-    <!-- template for post type is news -->
-    <BaseLightBoxTemplateNews
-      v-if="isNews || isMemo"
-      :assetRefId="assetRefId"
-      :authorId="authorId"
-      :authorThumbnailImg="authorThumbnailImg"
-      :authorNickname="authorNickname"
-      :commentCount="commentCount"
-      :isPostEmpty="isPostEmpty"    
-      :post="post"
-      :postContent="postContent"
-    />
-    <!-- template for post type is review and others -->
-    <BaseLightBoxTemplatePost
-      v-else
-      :assetRefId="assetRefId"
-      :authorThumbnailImg="authorThumbnailImg"
-      :authorNickname="authorNickname"
-      :commentCount="commentCount"
-      :isPostEmpty="isPostEmpty"
-      :post="post"
-    />
+      <!-- template for post type is news -->
+      <BaseLightBoxTemplateNews
+        v-if="isNews || isMemo"
+        v-show="isClientSide"
+        :assetRefId="assetRefId"
+        :authorId="authorId"
+        :authorThumbnailImg="authorThumbnailImg"
+        :authorNickname="authorNickname"
+        :commentCount="commentCount"
+        :isPostEmpty="isPostEmpty"    
+        :post="post"
+        :postContent="postContent"
+      />
+      <!-- template for post type is review and others -->
+      <BaseLightBoxTemplatePost
+        v-else
+        v-show="isClientSide"
+        :assetRefId="assetRefId"
+        :authorThumbnailImg="authorThumbnailImg"
+        :authorNickname="authorNickname"
+        :commentCount="commentCount"
+        :isPostEmpty="isPostEmpty"
+        :post="post"
+      />
   </div>
 </template>
 
