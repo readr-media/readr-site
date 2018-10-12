@@ -78,6 +78,7 @@ const GET_PUBLIC_MEMBERS = ({ commit, }, { params, }) => {
         commit('SET_PUBLIC_MEMBERS', { members: body, role: _.find(ROLE_MAP, { key: params.role, }).value, })
       }
     }
+    return { status, body, }
   })
 }
 

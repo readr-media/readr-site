@@ -24,7 +24,6 @@
           />
         </ul>
       </AppTitledList>
-      <!-- reports listing here -->
     </div>
   </div>
 </template>
@@ -33,18 +32,19 @@
 import { ROLE_MAP, } from '../constants'
 import AppTitledList from '../components/AppTitledList.vue'
 import EditorsIntroListItem from '../components/editors/EditorsIntroListItem.vue'
-import { get, find, uniq, concat, } from 'lodash'
+import { isScrollBarReachBottom, } from 'src/util/comm'
+import { get, find, } from 'lodash'
 
 // const debug = require('debug')('CLIENT:Editors')
+
+const DEFAULT_MAX_RESULT_INIT = 20
+const DEFAULT_PAGE_INIT = 1
+const DEFAULT_MAX_RESULT_LOADMORE = 10
+const DEFAULT_PAGE_LOADMORE = 3
+
 const getMembersPublic = (store, params) => {
   return store.dispatch('GET_PUBLIC_MEMBERS', {
     params: params,
-  })
-}
-const fetchFollowing = (store, { ids, }) => {
-  return store.dispatch('GET_FOLLOWING_BY_RESOURCE', {
-    resource: 'member',
-    ids: ids,
   })
 }
 
@@ -55,6 +55,8 @@ export default {
     return Promise.all([
       getMembersPublic(store, {
         role: roleNum,
+        max_result: DEFAULT_MAX_RESULT_INIT,
+        page: DEFAULT_PAGE_INIT,
       }),
       getMembersPublic(store, {
         custom_editor: true,
@@ -73,9 +75,19 @@ export default {
     AppTitledList,
     EditorsIntroListItem,
   },
+  watch: {
+    isReachBottom () {
+      if (this.isReachBottom && this.shouldLoadmore) {
+        this.loadmoreEditors()
+      }
+    },
+  },
   data () {
     return {
       guestEditorRoleValue: this.$t('editors.WORDING_EDITORS_GUESTEDITOR'),
+      isReachBottom: false,
+      currentPage: DEFAULT_PAGE_LOADMORE,
+      shouldLoadmore: true,
     }
   },
   computed: {
@@ -86,15 +98,32 @@ export default {
       return get(this.$store, `state.publicMembers[${this.guestEditorRoleValue}].items`, [])
     },
   },
-  beforeMount () {   
-    if (this.$store.state.isLoggedIn) {
-      const customEditorsIds = this.customEditors.map(editor => editor.id)
-      const guestEditorsIds = this.guestEditors.map(member => member.id)
-      const ids = uniq(concat(customEditorsIds, guestEditorsIds))
-      fetchFollowing(this.$store, {
-        ids: ids,
+  methods: {
+    scrollHandler () {
+      this.isReachBottom = isScrollBarReachBottom()
+    },
+    loadmoreEditors () {
+      const roleNum = find(ROLE_MAP, { value: this.$t('editors.WORDING_EDITORS_GUESTEDITOR'), }).key
+      getMembersPublic(this.$store, {
+        role: roleNum,
+        max_result: DEFAULT_MAX_RESULT_LOADMORE,
+        page: this.currentPage,
       })
-    }
+      .then(({ body, }) => {
+        this.shouldLoadmore = body.items.length >= DEFAULT_MAX_RESULT_LOADMORE
+        if (this.shouldLoadmore) { this.currentPage += 1 }
+      })
+      .catch(error => {
+        console.log(error)
+        this.shouldLoadmore = false
+      })
+    },
+  },
+  mounted () {
+    window.addEventListener('scroll', this.scrollHandler)
+  },
+  destroyed () {
+    window.removeEventListener('scroll', this.scrollHandler)
   },
 }
 </script>
