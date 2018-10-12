@@ -217,13 +217,11 @@ export default {
       this.$router.push(this.articlesListMainCategory)
     },
     getEmotion () {
-      if (this.$store.state.isLoggedIn) {
-        const postIdsLatest = get(this.$store.state.publicPosts, 'items', []).map(post => post.id)
-        if (postIdsLatest.length > 0) {
-          fetchEmotion(this.$store, { resource: 'post', ids: postIdsLatest, emotion: 'like', })
-          fetchEmotion(this.$store, { resource: 'post', ids: postIdsLatest, emotion: 'dislike', })
-        } 
-      }
+      const postIdsLatest = get(this.$store.state.publicPosts, 'items', []).map(post => post.id)
+      if (postIdsLatest.length > 0) {
+        fetchEmotion(this.$store, { resource: 'post', ids: postIdsLatest, emotion: 'like', })
+        fetchEmotion(this.$store, { resource: 'post', ids: postIdsLatest, emotion: 'dislike', })
+      } 
     },
     loadmoreLatest () {
       fetchPosts(this.$store, {
@@ -239,12 +237,12 @@ export default {
           console.log(res)
         } else {
           this.currentPageLatest += 1
-          if (this.$store.state.isLoggedIn) {
-            const ids = res.items.map(post => post.id)
-            // fetchFollowing(this.$store, { mode: 'update', resource: 'post', ids: ids, })
-            fetchEmotion(this.$store, { mode: 'update', resource: 'post', ids: ids, emotion: 'like', })
-            fetchEmotion(this.$store, { mode: 'update', resource: 'post', ids: ids, emotion: 'dislike', })
-          }
+          const ids = res.items.map(post => post.id)
+          fetchEmotion(this.$store, { mode: 'update', resource: 'post', ids: ids, emotion: 'like', })
+          fetchEmotion(this.$store, { mode: 'update', resource: 'post', ids: ids, emotion: 'dislike', })
+          // if (this.$store.state.isLoggedIn) {
+          //   fetchFollowing(this.$store, { mode: 'update', resource: 'post', ids: ids, })
+          // }
         }
       })
     },

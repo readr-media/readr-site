@@ -1,10 +1,10 @@
-import { constructUrlWithQuery, fetchInStrict, post, } from 'src/api/comm'
+import { constructUrlWithQuery, fetch, post, } from 'src/api/comm'
 import { getHost, } from 'src/util/comm'
 const host = getHost()
 
 function fetchEmotionByResource (params) {
-  const url = constructUrlWithQuery(`${host}/api/emotion/resource`, params)
-  return fetchInStrict(url, {})
+  const url = constructUrlWithQuery(`${host}/api/public/emotion`, params)
+  return fetch(url)
 }
 
 function updataEmotion ({ params, }) {
