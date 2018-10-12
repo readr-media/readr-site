@@ -352,6 +352,7 @@ export default {
       'TITLE': {
         'CARD_INFO': '信用卡資訊',
         'OWNER': '持卡人資訊',
+        'INVOICE_INFO': '電子發票',
       },
       'PLACEHOLDER': {
         'CARD_NUMBER': '**** **** **** ****',
@@ -370,6 +371,30 @@ export default {
         'PHONE_NUMBER': '電&emsp;話',
         'CCV': '檢查碼',
         'EXPIRY': '到期年月',      
+      },
+      'INVOICE': {
+        'CARRIER_TYPE': {
+          'EMAIL': {
+            'TITLE': 'Email 載具',
+            'PLACEHOLDER': '如：example@readr.com',
+          },
+          'PHONE': {
+            'TITLE': '手機條碼載具',
+            'PLACEHOLDER': '如：/1234ABC',
+          },
+          'NATURAL': {
+            'TITLE': '自然人憑證條碼',
+            'PLACEHOLDER': '如：AB00001234567890',
+          },
+          'BUSINESS': {
+            'TITLE': '三聯式發票',
+            'PLACEHOLDER': {
+              'TITLE': '請填入您的公司抬頭',
+              'TAX_NO': '請填入您的公司統一編號',
+              'ADDRESS': '請填入您的公司地址',
+            },
+          },
+        },
       },
     },
     'DONATE': {

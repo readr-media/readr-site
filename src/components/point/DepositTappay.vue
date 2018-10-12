@@ -11,7 +11,7 @@
               <span v-text="$t('point.CLEAR_UP.DESCRIPTION_INFIX')"></span>
               <span v-text="amount" class="value"></span>
               <span v-text="$t('point.CLEAR_UP.DESCRIPTION_POSTFIX')"></span> 
-              <span v-text="$t('point.CLEAR_UP.DESCRIPTION_CREADIT_ONLY')"></span>            
+              <!--span v-text="$t('point.CLEAR_UP.DESCRIPTION_CREADIT_ONLY')"></span-->
             </div>
           </div>
         </div>
@@ -20,6 +20,8 @@
           :status="active"
           :isReadyToDeposit.sync="isReadyToDeposit"
           :phone.sync="phoneNumber"
+          :carrierInfo.sync="carrierInfo"
+          :businessInfo.sync="businessInfo"
           :cardHolder.sync="cardHolder"></DepositTappayForm>
         <div class="go-deposit" :class="{ active: isReadyToDeposit, }" @click.stop="goDeposit">
           <span v-text="$t('point.CLEAR_UP.CONFIRM_TO_PAY')"></span>
@@ -42,7 +44,7 @@
   const deposit = (store, {
     points,
     token,
-    lastfour,
+    invoiceItem,
     member_phone,
     member_name,
   } = {}) => store.dispatch('ADD_REWARD_POINTS_TRANSACTIONS', {
@@ -53,7 +55,7 @@
       token,
       member_name,
       member_phone,
-      lastfour,
+      invoiceItem,
     },
   })
 
@@ -86,9 +88,11 @@
     data () {
       return {
         alertFlag: false,
-        cdtcLast4: null,
-        phoneNumber: '',
+        businessInfo: {},
         cardHolder: '',
+        cdtcLast4: null,
+        carrierInfo: {},
+        phoneNumber: '',
         isReadyToDeposit: false,
         isDepositing: false,
         resultMessage: '',
@@ -118,15 +122,24 @@
 
         window.TPDirect && window.TPDirect.card.getPrime(result => {
           if (result.status !== 0) {
-              debug('get prime error ' + result.msg)
-              return
+            debug('get prime error ' + result.msg)
+            return
           }
           debug('get prime successfully: ' + result.card.prime)  
-          this.isDepositing = false    
+          this.isDepositing = false  
+          
           deposit(this.$store, {
+            invoiceItem: {
+              businessTitle: get(this.businessInfo, 'businessTitle'),
+              businessTaxNo: get(this.businessInfo, 'businessTaxNo'),
+              businessAddress: get(this.businessInfo, 'businessAddress'),        
+              carrierType: get(this.carrierInfo, 'carrierType'),
+              carrierNum: get(this.carrierInfo, 'carrierNum'),
+              category: get(this.carrierInfo, 'category'),
+              lastFourNum: result.card.lastfour,
+            },
             points: 0 - this.amount,
             token: result.card.prime,
-            lastfour: result.card.lastfour,
             member_name: this.cardHolder,
             member_phone: this.phoneNumber,
           }).then(cb)              
@@ -173,7 +186,7 @@
       align-items center 
     &__wrapper     
       width 320px
-      height 528px
+      min-height 528px
       padding 25px
       background-color #fff
       display flex
@@ -259,6 +272,27 @@
           margin-left 10px
           .name
             width auto
+      &.depend-on
+        display none
+        &.active
+          display block
+      &.indent
+        padding-left 20px
+        margin 10px 0
+        .input
+          padding-left 25px
+          width 100%
+          font-size 0.75rem
+          & + .input
+            margin-top 10px
+          input
+            width 100%
+            outline none
+            padding 2px 5px
+            color #808080
+            &::-webkit-input-placeholder
+              color #bdbdbd
+              font-weight 100
       &.title
         font-size 1.125rem
         font-weight bold
