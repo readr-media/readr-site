@@ -26,7 +26,11 @@ const SET_PUBLIC_MEMBER = (state, { member, }) => {
 }
 
 const SET_PUBLIC_MEMBERS = (state, { members, role, }) => {
-  Vue.set(state['publicMembers'], role, members)
+  if (!(role in state['publicMembers'])) {
+    Vue.set(state['publicMembers'], role, { items: [], })  
+  }
+
+  _.get(members, 'items', []).forEach(item => { state['publicMembers'][role].items.push(item) })
 }
 
 const UPDATED_PROFILE = (state, { profile, }) => {
