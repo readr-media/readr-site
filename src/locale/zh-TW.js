@@ -102,6 +102,7 @@ export default {
     'FILTER_6M' : '六個月內',
     'FILTER_1Y' : '一年內',
     'FILTER_1YPLUS' : '一年以上',
+    'HIDE_PROFILE': '此個人頁面不公開',
   },
   'profile_editor': {
     'WORDING_PROFILEEDIT_NICKNAME' : '暱稱',
@@ -137,7 +138,7 @@ export default {
     'SETTING_ACCOUNT': {
       'HIDE_PROFILE': {
         'TITLE': '個人頁面觀看權限',
-        'DESC': '其他會員是否看得見你的個人頁面',
+        'DESC': '是否隱藏你的個人頁面',
       },
     },
   },

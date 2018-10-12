@@ -28,6 +28,8 @@ const GET_FOLLOWING_BY_RESOURCE = ({ commit, }, params) => {
 }
 
 const GET_FOLLOWING_BY_USER = ({ commit, state, }, params) => {
+  if (!state.isLoggedIn) return
+  
   return getFollowingByUser(params).then(({ status, body, }) => {
     if (status === 200) {
       commit('SET_FOLLOWING_BY_USER', { following: body.items, userId: params.id, })

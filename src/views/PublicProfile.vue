@@ -1,7 +1,8 @@
 <template>
   <div class="profile">
     <About v-if="profile" :profile="profile"></About>
-    <Tab class="profile__tab" :tabs="tabsName" :tabCurrIndex.sync="curr_tab">
+    <TabHideProfile v-if="isProfileHide" class="profile__hide-profile"/>
+    <Tab v-else class="profile__tab" :tabs="tabsName" :tabCurrIndex.sync="curr_tab">
       <template
         v-if="postsReview.length !== 0"
         :slot="findIndexOf($t('tab.WORDING_TAB_REVIEW_RECORD'))"
@@ -45,6 +46,7 @@
   import FollowingListInTab from '../components/FollowingListInTab.vue'
   import PostContent from 'src/components/post/PostContent.vue'
   import Tab from 'src/components/Tab.vue'
+  import TabHideProfile from 'src/components/TabHideProfile.vue'
   import Spinner from 'src/components/Spinner.vue'
 
   const debug = require('debug')('CLIENT:Profile')
@@ -106,6 +108,7 @@
       FollowingListInTab,
       PostContent,
       Tab,
+      TabHideProfile,
       Spinner,
     },
     asyncData ({ store, route, }) {
@@ -155,6 +158,9 @@
       profile () {
         const profile = get(this.$store, 'state.publicMember', {})
         return get(profile, 'id') == get(this.$route, 'params.id') && profile
+      },
+      isProfileHide () {
+        return get(this.profile, 'hideProfile', false)
       },
     },
     data () {
@@ -232,39 +238,36 @@
       },
     },
     beforeMount () {
-      Promise.all([
-        getPosts(this.$store, {
-          outputStateTarget: 'publicPostReview',
-          where: {
-            author: Number(get(this.$route, 'params.id')),
-            type: [ POST_TYPE.REVIEW, ],
-          },
-        }),
-        getPosts(this.$store, {
-          outputStateTarget: 'publicPostNews',
-          where: {
-            author: Number(get(this.$route, 'params.id')),
-            type: [ POST_TYPE.NEWS, ],
-          },
-        }),
-      ])
-      .then(() => {
-        if (this.$store.state.isLoggedIn) {
-          const postIdsReview = get(this.$store.state.publicPostReview, 'items', []).map(post => post.id)
-          const postIdsNews = get(this.$store.state.publicPostNews, 'items', []).map(post => post.id)
-          const ids = uniq(concat(postIdsReview, postIdsNews))
-          if (ids.length > 0) {
-            fetchEmotion(this.$store, { resource: 'post', ids: ids, emotion: 'like', })
-            fetchEmotion(this.$store, { resource: 'post', ids: ids, emotion: 'dislike', })
+      if (!this.isProfileHide) {
+        Promise.all([
+          getPosts(this.$store, {
+            outputStateTarget: 'publicPostReview',
+            where: {
+              author: Number(get(this.$route, 'params.id')),
+              type: [ POST_TYPE.REVIEW, ],
+            },
+          }),
+          getPosts(this.$store, {
+            outputStateTarget: 'publicPostNews',
+            where: {
+              author: Number(get(this.$route, 'params.id')),
+              type: [ POST_TYPE.NEWS, ],
+            },
+          }),
+        ])
+        .then(() => {
+          if (this.$store.state.isLoggedIn) {
+            const postIdsReview = get(this.$store.state.publicPostReview, 'items', []).map(post => post.id)
+            const postIdsNews = get(this.$store.state.publicPostNews, 'items', []).map(post => post.id)
+            const ids = uniq(concat(postIdsReview, postIdsNews))
+            if (ids.length > 0) {
+              fetchEmotion(this.$store, { resource: 'post', ids: ids, emotion: 'like', })
+              fetchEmotion(this.$store, { resource: 'post', ids: ids, emotion: 'dislike', })
+            }
           }
-        }
-      })
-
-      getUserFollowing(this.$store, { resource: 'post', })
-      getUserFollowing(this.$store, { resource: 'report', })
-      getUserFollowing(this.$store, { resource: 'memo', })
-      getUserFollowing(this.$store, { resource: 'project', })
-      getUserFollowing(this.$store, { resource: 'tag', })
+        })
+        getUserFollowing(this.$store, { resource: [ 'project', 'tag', ], })
+      }
     },
     mounted () {
        debug(`/profile/${this.$route.params.id}`)
@@ -292,7 +295,7 @@
       },
       isReachBottom () {
         debug('Mutation detected: isReachBottom', this.isReachBottom)
-        if (!this.isReachBottom || this.isLoadMoreEnd[ this.currTabKey ]) { return }
+        if (!this.isReachBottom || this.isLoadMoreEnd[ this.currTabKey ] || this.isProfileHide) { return }
         this.loadmore()
       },
     },
@@ -360,6 +363,8 @@
             height 80px
             width 100%
             text-align center            
+    &__hide-profile
+      margin-top 35px
     &__tab
       margin-top 35px
       background-color #fff
