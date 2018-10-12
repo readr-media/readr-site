@@ -56,7 +56,7 @@ export default {
   },
   watch: {
     isReachBottom () {
-      if (this.isReachBottom) {
+      if (this.isReachBottom && this.shouldLoadmore) {
         this.fetchFollowing(true)
       }
     },
