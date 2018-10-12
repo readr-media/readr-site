@@ -213,14 +213,12 @@
           }
         })
         .then(() => {
-          if (this.$store.state.isLoggedIn) {
-            const postIdsReview = get(this.$store.state.publicPostReview, 'items', []).map(post => post.id)
-            const postIdsNews = get(this.$store.state.publicPostNews, 'items', []).map(post => post.id)
-            const ids = uniq(concat(postIdsReview, postIdsNews))
-            if (ids.length > 0) {
-              fetchEmotion(this.$store, { resource: 'post', ids: ids, emotion: 'like', })
-              fetchEmotion(this.$store, { resource: 'post', ids: ids, emotion: 'dislike', })
-            }
+          const postIdsReview = get(this.$store.state.publicPostReview, 'items', []).map(post => post.id)
+          const postIdsNews = get(this.$store.state.publicPostNews, 'items', []).map(post => post.id)
+          const ids = uniq(concat(postIdsReview, postIdsNews))
+          if (ids.length > 0) {
+            fetchEmotion(this.$store, { resource: 'post', ids: ids, emotion: 'like', })
+            fetchEmotion(this.$store, { resource: 'post', ids: ids, emotion: 'dislike', })
           }
         })
       },
@@ -256,14 +254,12 @@
           }),
         ])
         .then(() => {
-          if (this.$store.state.isLoggedIn) {
-            const postIdsReview = get(this.$store.state.publicPostReview, 'items', []).map(post => post.id)
-            const postIdsNews = get(this.$store.state.publicPostNews, 'items', []).map(post => post.id)
-            const ids = uniq(concat(postIdsReview, postIdsNews))
-            if (ids.length > 0) {
-              fetchEmotion(this.$store, { resource: 'post', ids: ids, emotion: 'like', })
-              fetchEmotion(this.$store, { resource: 'post', ids: ids, emotion: 'dislike', })
-            }
+          const postIdsReview = get(this.$store.state.publicPostReview, 'items', []).map(post => post.id)
+          const postIdsNews = get(this.$store.state.publicPostNews, 'items', []).map(post => post.id)
+          const ids = uniq(concat(postIdsReview, postIdsNews))
+          if (ids.length > 0) {
+            fetchEmotion(this.$store, { resource: 'post', ids: ids, emotion: 'like', })
+            fetchEmotion(this.$store, { resource: 'post', ids: ids, emotion: 'dislike', })
           }
         })
         getUserFollowing(this.$store, { resource: [ 'project', 'tag', ], })
