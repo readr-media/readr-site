@@ -123,7 +123,9 @@ export default {
   &__title
     font-size 3.125rem
     font-weight 600
-    line-height normal
+    line-height 1.25
+    max-width 40%
+    text-align justify
   &__desc
     width 40%
   
