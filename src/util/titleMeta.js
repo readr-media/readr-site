@@ -1,4 +1,4 @@
-import { SITE_DOMAIN, SITE_NAME, } from '../constants'
+import { SITE_DOMAIN, SITE_FULL, SITE_NAME, } from '../constants'
 // import { debug } from 'request/request';
 let isTappaySDKLoaded = false
 const debug = require('debug')('CLIENT:titleMeta')
@@ -41,7 +41,7 @@ const serverMetaInfoMixin = {
       if (metaImage) { 
         this.$ssrContext.metaImage = metaImage
       } else {
-        this.$ssrContext.metaImage = '/public/og-image.jpg'
+        this.$ssrContext.metaImage = `${SITE_FULL}/public/og-image.jpg`
       }
     }
   },
@@ -73,7 +73,7 @@ const updateMeta = (metaInfo, vm) => {
   if (metaImage) {
     document.head.querySelector(`meta[property='og:image']`).content = metaImage
   } else {
-    document.head.querySelector(`meta[property='og:image']`).content = '/public/og-image.jpg'
+    document.head.querySelector(`meta[property='og:image']`).content = `${SITE_FULL}/public/og-image.jpg`
   }
 
   /** If Tappays SDK needed. */
