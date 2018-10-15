@@ -11,7 +11,7 @@
         <div class="hamburger__bar"></div>
         <div class="hamburger__bar"></div>
       </div>
-      <div class="header__item header--account">
+      <div class="header__item header--account" v-click-outside="closeDropdown">
         <div @click="toggleDropdown">
           <span v-show="userNickname" v-text="userNickname"></span>
           <img v-if="isClientSide" :src="profileImage" :alt="userNickname">
@@ -58,6 +58,21 @@
       Notification,
       SearchTool,
     },
+    directives: {
+      'click-outside': {
+        bind (el, binding, vnode) {
+          el.clickOutsideEvent = function (event) {
+            if (!(el == event.target || el.contains(event.target))) {
+              vnode.context[binding.expression](event)
+            }
+          }
+          document.body.addEventListener('click', el.clickOutsideEvent)
+        },
+        unbind (el) {
+          document.body.removeEventListener('click', el.clickOutsideEvent)
+        },
+      },
+    },
     data () {
       return {
         openDropdown: false,
@@ -90,6 +105,9 @@
       },
     },
     methods: {
+      closeDropdown () {
+        this.openDropdown = false
+      },
       goMemberCenter () {
         const memberCenter = get(filter(ROLE_MAP, { key: get(this.$store, 'state.profile.role',), }), [ 0, 'route', ], 'member')
         // /**
@@ -97,8 +115,10 @@
         //  */
         // location && location.replace(`/${memberCenter}`)
         this.$router.push(`/${memberCenter}`)
+        this.openDropdown = false
       },
       logout () {
+        this.openDropdown = false
         logout(this.$store).then(() => {
           const domain = get(this.$store, 'state.setting.DOMAIN')
           return removeToken(domain).then(() => {
