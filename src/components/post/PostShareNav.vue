@@ -5,6 +5,7 @@
       class="nav__icon nav__icon--fb"
       :href="createShareUrl('fb', shareUrl)"
       target="_blank"
+      @click="sendShareLog('fb')"
     >
       <img src="/public/icons/fb-square.svg" alt="">
     </a>
@@ -13,6 +14,7 @@
       class="nav__icon nav__icon--line"
       :href="createShareUrl('line', shareUrl)"
       target="_blank"
+      @click="sendShareLog('line')"
     >
       <img src="/public/icons/line.png" alt="">
     </a>
@@ -20,20 +22,55 @@
 </template>
 
 <script>
-import { createShareUrl, isClientSide, } from 'src/util/comm'
+import { get, } from 'lodash'
+import { createShareUrl, isClientSide, getPostType, getPostFullUrl, } from 'src/util/comm'
+import { logTrace, } from 'src/util/services'
 
 export default {
   props: {
-    shareUrl: {
-      type: String,
-      required: true,
+    post: {
+      type: Object,
+      default () {
+        return {}
+      },
     },
   },
   computed: {
     isClientSide,
+    shareUrl () {
+      return getPostFullUrl(this.post)
+    },
+    useragent () {
+      return get(this.$store, 'state.useragent')
+    },
+    currUser () {
+      return get(this.$store, 'state.profile.id')
+    },
+    postType () {
+      return getPostType(this.post)
+    },
   },
   methods: {
     createShareUrl,
+    sendShareLog (socialMedia) {
+      const createShareLog = () => {
+        return {
+          'sharelog-type': this.postType,
+          'sharelog-slug/id': get(this.post, 'slug') || get(this.post, 'id'),
+          'sharelog-fb/line': socialMedia,
+        }
+      }
+
+      logTrace({
+        category: this.$route.fullPath,
+        description: 'sharebutton',
+        eventType: 'click',
+        sub: this.currUser,
+        target: {},
+        useragent: this.useragent,
+        ...createShareLog(),
+      })
+    },
   },
 }
 </script>

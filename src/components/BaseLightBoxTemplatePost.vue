@@ -23,7 +23,7 @@
             class="baselightbox-post__tags" />
         </AppArticleNav>
       </section>
-      <PostShareNav v-if="isClientSide" class="baselightbox-post__share-nav" :shareUrl="shareUrl"/>
+      <PostShareNav v-if="isClientSide" class="baselightbox-post__share-nav" :post="post"/>
     </article>
     <CommentContainer
       v-if="shouldRenderComment"

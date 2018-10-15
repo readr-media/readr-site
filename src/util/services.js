@@ -128,7 +128,7 @@ export function isAlinkDescendant (child) {
   }
   return { isAlink: false, href: '', }
 }
-function constructLog ({ category, description, eventType, sub, target, useragent, }) {
+function constructLog ({ category, description, eventType, sub, target, useragent, ...rest }) {
  return new Promise(resolve => {
     debug('useragent', useragent)
     const innerText = target.innerText ? sanitizeHtml(target.innerText, { allowedTags: [ '', ], }) : ''
@@ -157,11 +157,12 @@ function constructLog ({ category, description, eventType, sub, target, useragen
       'target-window-size': {
         width: document.documentElement.clientWidth || document.body.clientWidth,
         height: document.documentElement.clientWidth || document.body.clientWidth,
-      },  
+      },
+      ...rest,
     })
  })
 }
-export function logTrace ({ category, description, eventType, sub, target, useragent, }) {
+export function logTrace ({ category, description, eventType, sub, target, useragent, ...rest }) {
   if (!sub || !eventType || !target || !description || !category || !useragent) { return }
   constructLog({
     category,
@@ -170,6 +171,7 @@ export function logTrace ({ category, description, eventType, sub, target, usera
     sub,
     target,
     useragent,
+    ...rest,
   })
     .then(log => {
       if (navigator.serviceWorker && navigator.serviceWorker.controller) {
