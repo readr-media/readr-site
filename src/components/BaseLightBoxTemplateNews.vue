@@ -23,7 +23,7 @@
             <p v-else v-html="p"></p>
           </template>
         </section>
-        <PostShareNav v-if="isClientSide" class="baselightbox-post__share-nav" :shareUrl="shareUrl"/>
+        <PostShareNav v-if="isClientSide" class="baselightbox-post__share-nav" :post="post"/>
       </article>
       <div class="nav-container">
         <AppArticleNav
