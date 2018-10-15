@@ -12,7 +12,37 @@ const bar = Vue.prototype.$bar = new Vue(ProgressBar).$mount()
 document.body.appendChild(bar.$el)
 
 const debug = require('debug')('CLIENT:entry-client')
+const { UserAgent, } = require('express-useragent')
 const { app, i18n, router, store, } = createApp()
+
+
+// prime the store with server-initialized state.
+// the state is determined during SSR and inlined in the page markup.
+if (window.__INITIAL_STATE__) {
+  store.replaceState(window.__INITIAL_STATE__)
+}
+
+const exp_localhost = /localhost/
+const exp_dev = /(dev)|(localhost)/
+const exp_mobile = /^m/
+const useragent = new UserAgent().parse(navigator.userAgent)
+const { HOST, HOST_MOBILE, } = get(store, 'state.setting')
+const { host, pathname, search, } = location
+
+if (!exp_localhost.test(host)) {
+  debug('STAGE:', exp_dev.test(host) ? 'DEV' : 'PROD')
+  if (HOST && HOST_MOBILE) {
+    if ((useragent.isMobile || useragent.isTablet) && !exp_mobile.test(host)) {
+      /** Redirect to mobile version */
+      location.replace(`${HOST_MOBILE}${pathname}${search}`)
+    } else if (useragent.isDesktop && exp_mobile.test(host)) {
+      /** Redirect to desktop version */
+      location.replace(`${HOST}${pathname}${search}`)
+    } else {
+      debug('WELL, DO NOTHING!')
+    }
+  }
+}
 
 // import Comments from 'readr-comment'
 // Vue.use(Comments)
@@ -80,20 +110,14 @@ Vue.mixin({
   },
 })
 
-// prime the store with server-initialized state.
-// the state is determined during SSR and inlined in the page markup.
-if (window.__INITIAL_STATE__) {
-  store.replaceState(window.__INITIAL_STATE__)
-}
-
 if (store.state.unauthorized) { 
   debug('entry-client resolved.') 
   delete store.state.unauthorized 
   store.state.targ_url && router.push(store.state.targ_url) 
 }
 
-const { UserAgent, } = require('express-useragent')
-store.state.useragent = new UserAgent().parse(navigator.userAgent)
+
+store.state.useragent = useragent
 
 // wait until router has resolved all async before hooks
 // and async components...
