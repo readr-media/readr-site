@@ -127,14 +127,14 @@
         })
       },
       sendPageview () {
-        logTrace({
+        logTrace(Object.assign({
           category: this.$route.fullPath,
           description: 'pageview',
           eventType: 'pageview',
           sub: this.currUser,
           target: {},
           useragent: this.useragent,
-        })
+        }, this.$route.query))
       },
       setupAsideBehavior () {
         window.addEventListener('scroll', () => {

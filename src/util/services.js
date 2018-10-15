@@ -173,23 +173,23 @@ export function logTrace ({ category, description, eventType, sub, target, usera
     useragent,
     ...rest,
   })
-    .then(log => {
-      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-        debug('send log status to sw.')
-        navigator.serviceWorker.controller.postMessage({
-          url: '/api/trace',
-          params: log,
-          action: 'trace',
-        });
-        return { status: 200, body: null, }
-      } else {
-        debug('Log')
-        return logTraceXHR(log)
-      }
-    })
-    .then(res => {
-      debug('res from logTracing:', res)
-    })
+  .then(log => {
+    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+      debug('send log status to sw.')
+      navigator.serviceWorker.controller.postMessage({
+        url: '/api/trace',
+        params: log,
+        action: 'trace',
+      });
+      return { status: 200, body: null, }
+    } else {
+      debug('Log')
+      return logTraceXHR(log)
+    }
+  })
+  .then(res => {
+    debug('res from logTracing:', res)
+  })
 }
 
 export function redirectToLogin (from) {
