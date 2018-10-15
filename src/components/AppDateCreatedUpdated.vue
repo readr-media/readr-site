@@ -65,13 +65,13 @@ export default {
       border-left 1px solid #d3d3d3
 
 .field
-  padding 0 5px
+  padding 0 10px
   font-size 12px
   color #11b8c9
   display flex
   align-items center
   &:nth-child(1)
-    padding 0 5px 0 0
+    padding 0 10px 0 0
   &--gray
     color #808080
   &__icon

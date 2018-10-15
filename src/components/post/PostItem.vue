@@ -9,7 +9,13 @@
         </router-link>
         <figcaption class="author__meta">
           <div class="author__date">
-            <span v-text="dateDiffFromNow"></span>
+            <AppDateCreatedUpdated
+              v-if="isReportOrMemo"
+              class="author__date-report-memo"
+              :createdAt="post.createdAt"
+              :updatedAt="post.updatedAt"
+            />
+            <span v-else v-text="dateDiffFromNow"></span>
           </div>
           <router-link :to="`/profile/${get(post, 'author.id')}`">
             <div class="author__nickname">
@@ -27,31 +33,33 @@
 </template>
 <script>
 import AppShareButton from 'src/components/AppShareButton.vue'
+import AppDateCreatedUpdated from 'src/components/AppDateCreatedUpdated.vue'
 import PostContent from 'src/components/post/PostContent.vue'
 import PostShareNav from 'src/components/post/PostShareNav.vue'
-import { dateDiffFromNow, isClientSide, getArticleAuthorNickname, getArticleAuthorThumbnailImg, getPostFullUrl, } from 'src/util/comm'
+import { dateDiffFromNow, isClientSide, getArticleAuthorNickname, getArticleAuthorThumbnailImg, getPostType, } from 'src/util/comm'
 import { get, } from 'lodash'
 
 export default {
   name: 'PostItem',
   components: {
     AppShareButton,
+    AppDateCreatedUpdated,
     PostContent,
     PostShareNav,
   },
   computed: {
+    isClientSide,
     dateDiffFromNow () {
       return dateDiffFromNow(this.post.publishedAt)
-    },
-    isClientSide,
-    shareUrl () {
-      return getPostFullUrl(this.post)
     },
     authorNickname () {
       return getArticleAuthorNickname(this.post)
     },
     authorThumbnailImg () {
       return getArticleAuthorThumbnailImg(this.post)
+    },
+    isReportOrMemo () {
+      return getPostType(this.post) === 'report' || getPostType(this.post) === 'memo'
     },
   },  
   methods: {
@@ -120,6 +128,11 @@ export default {
       &__date
         font-size 0.875rem
         font-weight 500
+      &__date-report-memo
+        & >>> .date__field + .date__field
+          border-left 1px solid gray
+        & >>> .field--gray
+          color gray
       &__nickname
         font-size 1.125rem
         color #000
