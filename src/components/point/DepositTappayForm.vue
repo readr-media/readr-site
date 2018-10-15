@@ -18,8 +18,8 @@
     <div class="tappay-deposit__item title"><span v-text="$t('point.CLEAR_UP.TITLE.OWNER')"></span></div>
     <div class="tappay-deposit__item">
       <div class="name"><span v-html="$t('point.CLEAR_UP.ITEM.CARD_OWNER')"></span></div>
-      <div class="tpfield input" :class="{ 'input-alert': get(alertObj, 'CONTACT_PERSON') }"  tabIndex="0">
-        <input type="text" v-model="cardContactPerson">
+      <div class="tpfield input" :class="{ 'input-alert': get(alertObj, 'CONTACT_PERSON') }"  tabIndex="0" @focus="focus('CONTACT_PERSON')">
+        <input type="text" v-model="cardContactPerson" name="CONTACT_PERSON">
         <div class="hint"><span v-text="$t(`point.CLEAR_UP.CARD_INFO.HINT.CONTACT_PERSON`)"></span></div>
       </div>
     </div>
@@ -31,8 +31,8 @@
             <option v-for="{ code, name } in callingCodes" :value="name" v-text="`${name} ${code}`"></option>
           </select>
         </div>
-        <div class="tpfield input" :class="{ 'input-alert': get(alertObj, 'PHONE_NUMBER') }" tabIndex="0">
-          <input type="text" v-model="phoneNumber">
+        <div class="tpfield input" :class="{ 'input-alert': get(alertObj, 'PHONE_NUMBER') }" tabIndex="0" @focus="focus('PHONE_NUMBER')">
+          <input type="text" v-model="phoneNumber" name="PHONE_NUMBER">
           <div class="hint"><span v-text="$t(`point.CLEAR_UP.CARD_INFO.HINT.PHONE_NUMBER`)"></span></div>
         </div>
       </div>
@@ -51,20 +51,20 @@
       </div>  
       <div class="tappay-deposit__item indent depend-on" :class="{ active: carrierSelected == item }">
         <template v-if="key !== 'BUSINESS'">
-          <div class="input" :class="{ 'input-alert': get(alertObj, key) }" tabIndex="0">
-            <input type="text" v-model="carrierNum"
+          <div class="input" :class="{ 'input-alert': get(alertObj, key) }" tabIndex="0" @focus="focus(key)">
+            <input type="text" v-model="carrierNum" :name="key"
               :placeholder="$t(`point.CLEAR_UP.INVOICE.CARRIER_TYPE.${key}.PLACEHOLDER`)">
             <div class="hint"><span v-text="$t(`point.CLEAR_UP.INVOICE.CARRIER_TYPE.${key}.HINT`)"></span></div>
           </div>
         </template>
         <template v-else>
-          <div class="input" :class="{ 'input-alert': get(alertObj, 'BUSINESS_TITLE') }">
-            <input type="text" v-model="businessTitle"
+          <div class="input" :class="{ 'input-alert': get(alertObj, 'BUSINESS_TITLE') }" tabIndex="0" @focus="focus('BUSINESS_TITLE')">
+            <input type="text" v-model="businessTitle" name="BUSINESS_TITLE"
               :placeholder="$t('point.CLEAR_UP.INVOICE.CARRIER_TYPE.BUSINESS.PLACEHOLDER.TITLE')">      
             <div class="hint"><span v-text="$t(`point.CLEAR_UP.INVOICE.CARRIER_TYPE.BUSINESS.HINT.TITLE`)"></span></div>
           </div>        
-          <div class="input" :class="{ 'input-alert': get(alertObj, 'BUSINESS_TAXNO') }">
-            <input type="text" v-model="businessTaxNo"
+          <div class="input" :class="{ 'input-alert': get(alertObj, 'BUSINESS_TAXNO') }" tabIndex="0" @focus="focus('TAX_NO')">
+            <input type="text" v-model="businessTaxNo" name="TAX_NO"
               :placeholder="$t('point.CLEAR_UP.INVOICE.CARRIER_TYPE.BUSINESS.PLACEHOLDER.TAX_NO')">
             <div class="hint"><span v-text="$t(`point.CLEAR_UP.INVOICE.CARRIER_TYPE.BUSINESS.HINT.TAX_NO`)"></span></div>
           </div>
@@ -128,6 +128,9 @@
       }
     },
     methods: {
+      focus (ref) {
+        document.querySelector(`input[name="${ref}"]`).focus()
+      },
       get,
       phoneNumberChanged () {
         this.$emit('update:phone', PhoneNumber( this.phoneNumber, this.currCountry).getNumber())
