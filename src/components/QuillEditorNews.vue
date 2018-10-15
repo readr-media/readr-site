@@ -70,6 +70,7 @@ export default {
             matchVisual: false,
           },
         },
+        bounds: '.post-panel-container',
       },
     }
   },
