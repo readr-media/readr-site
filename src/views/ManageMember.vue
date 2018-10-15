@@ -40,9 +40,9 @@
       },
       tabs () {
         const defaultTabs = [
-          this.$t('tab.WORDING_TAB_FOLLOW_RECORD'),
+          this.$t('TAB.FOLLOW_RECORD'),
         ]
-        this.isDonationActive && defaultTabs.push(this.$t('tab.WORDING_TAB_REWARD_POINTS_RECORD'))
+        this.isDonationActive && defaultTabs.push(this.$t('TAB.POINTS_RECORD'))
         return defaultTabs
       },           
     },
