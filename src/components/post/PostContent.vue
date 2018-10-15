@@ -445,6 +445,8 @@
         margin-bottom 15.5px
         color #808080
         font-size 14px
+        word-break break-all
+
     &__aside
       .post-content
         &__title

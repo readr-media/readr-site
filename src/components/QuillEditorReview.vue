@@ -1,5 +1,5 @@
 <template>
-  <section class="editor review" :class="{ disabled: disabled }">
+  <section id="quill-review" class="editor review" :class="{ disabled: disabled }">
     <div class="editor__heading" v-text="$t('POST_EDITOR.EDITOR')"></div>
     <div
       ref="quillEditor"
@@ -30,13 +30,14 @@ export default {
   data () {
     return {
       editorOption: {
-        formats: [],
+        formats: [ 'link', ],
         modules: {
-          toolbar: false,
+          toolbar: [ 'link', ],
           clipboard: {
             matchVisual: false,
           },
         },
+        bounds: '.post-panel-container',
       },
     }
   },
@@ -66,6 +67,6 @@ export default {
     &__quill
       height 380px
       font-size .9375rem
-      overflow-y auto
+      // overflow-y auto
       
 </style>
