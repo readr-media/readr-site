@@ -285,6 +285,10 @@
           font-size 0.75rem
           & + .input
             margin-top 10px
+          &.input-alert
+            input
+              padding-right 25px
+              border 1px solid #ddcf21
           input
             width 100%
             outline none
@@ -292,7 +296,9 @@
             color #808080
             &::-webkit-input-placeholder
               color #bdbdbd
-              font-weight 100
+              font-weight 100   
+          .hint
+            max-width calc(100% - 25px) 
       &.title
         font-size 1.125rem
         font-weight bold
@@ -325,6 +331,43 @@
           cursor pointer
           &:hover
             color #000
+    .input
+      position relative
+      outline none
+      &.input-alert
+        input
+          &:focus ~ .hint
+            display block
+        &:focus
+          .hint
+            display block
+        &::after
+          content ''
+          position absolute
+          right 3px
+          top 0
+          display block
+          // background-color #ddcf21
+          background-image url(/public/icons/exclamation.png)
+          background-size contain
+          background-position center center
+          background-repeat no-repeat
+          height 100%
+          width 18px      
+      .hint
+        font-size 0.75rem
+        z-index 3
+        display none
+        position absolute
+        top 100%
+        right 0
+        margin-top 2px
+        max-width 100%
+        padding 5px 10px
+        border-radius 3px
+        background-color #ddcf21  
+        line-height normal     
+        box-shadow 0 0 10px rgba(0, 0, 0, 0.2)       
     .tpfield
       height 20px
       width 100%
