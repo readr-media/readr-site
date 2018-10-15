@@ -18,7 +18,10 @@
     <div class="tappay-deposit__item title"><span v-text="$t('point.CLEAR_UP.TITLE.OWNER')"></span></div>
     <div class="tappay-deposit__item">
       <div class="name"><span v-html="$t('point.CLEAR_UP.ITEM.CARD_OWNER')"></span></div>
-      <div class="tpfield input"><input type="text" v-model="cardContactPerson"></div>
+      <div class="tpfield input" :class="{ 'input-alert': get(alertObj, 'CONTACT_PERSON') }"  tabIndex="0">
+        <input type="text" v-model="cardContactPerson">
+        <div class="hint"><span v-text="$t(`point.CLEAR_UP.CARD_INFO.HINT.CONTACT_PERSON`)"></span></div>
+      </div>
     </div>
     <div class="tappay-deposit__item__wrapper">
       <div class="tappay-deposit__item">
@@ -28,7 +31,10 @@
             <option v-for="{ code, name } in callingCodes" :value="name" v-text="`${name} ${code}`"></option>
           </select>
         </div>
-        <div class="tpfield input"><input type="text" v-model="phoneNumber"></div>
+        <div class="tpfield input" :class="{ 'input-alert': get(alertObj, 'PHONE_NUMBER') }" tabIndex="0">
+          <input type="text" v-model="phoneNumber">
+          <div class="hint"><span v-text="$t(`point.CLEAR_UP.CARD_INFO.HINT.PHONE_NUMBER`)"></span></div>
+        </div>
       </div>
     </div>
     <div class="tappay-deposit__item title"><span v-text="$t('point.CLEAR_UP.TITLE.INVOICE_INFO')"></span></div>
@@ -45,19 +51,22 @@
       </div>  
       <div class="tappay-deposit__item indent depend-on" :class="{ active: carrierSelected == item }">
         <template v-if="key !== 'BUSINESS'">
-          <div class="input">
+          <div class="input" :class="{ 'input-alert': get(alertObj, key) }" tabIndex="0">
             <input type="text" v-model="carrierNum"
-              :placeholder="$t(`point.CLEAR_UP.INVOICE.CARRIER_TYPE.${key}.PLACEHOLDER`)">      
+              :placeholder="$t(`point.CLEAR_UP.INVOICE.CARRIER_TYPE.${key}.PLACEHOLDER`)">
+            <div class="hint"><span v-text="$t(`point.CLEAR_UP.INVOICE.CARRIER_TYPE.${key}.HINT`)"></span></div>
           </div>
         </template>
         <template v-else>
-          <div class="input">
+          <div class="input" :class="{ 'input-alert': get(alertObj, 'BUSINESS_TITLE') }">
             <input type="text" v-model="businessTitle"
               :placeholder="$t('point.CLEAR_UP.INVOICE.CARRIER_TYPE.BUSINESS.PLACEHOLDER.TITLE')">      
+            <div class="hint"><span v-text="$t(`point.CLEAR_UP.INVOICE.CARRIER_TYPE.BUSINESS.HINT.TITLE`)"></span></div>
           </div>        
-          <div class="input">
+          <div class="input" :class="{ 'input-alert': get(alertObj, 'BUSINESS_TAXNO') }">
             <input type="text" v-model="businessTaxNo"
               :placeholder="$t('point.CLEAR_UP.INVOICE.CARRIER_TYPE.BUSINESS.PLACEHOLDER.TAX_NO')">
+            <div class="hint"><span v-text="$t(`point.CLEAR_UP.INVOICE.CARRIER_TYPE.BUSINESS.HINT.TAX_NO`)"></span></div>
           </div>
         </template>
       </div>  
@@ -105,6 +114,7 @@
     data () {
       return {
         CARRIER_TYPE,
+        alertObj: {},
         businessTitle: '',
         businessTaxNo: '',
         businessAddress: '-',
@@ -206,26 +216,44 @@
       validate () {
         let isPassed = true
 
-        if (!this.isCardInfoValid
-          || validator.isEmpty(this.cardContactPerson)
-          || validator.isEmpty(this.phoneNumber)
-          || !PhoneNumber( this.phoneNumber, this.currCountry).isValid()) {
+        /** reset alertObj */
+        map(this.alertObj, (obj, key) => { this.alertObj[ key ] = false })
+
+
+        if (validator.isEmpty(this.phoneNumber) || !PhoneNumber( this.phoneNumber, this.currCountry).isValid()) {
+          this.alertObj[ 'PHONE_NUMBER' ] = true
+          isPassed = false
+        }
+        if (validator.isEmpty(this.cardContactPerson)) {
+          this.alertObj[ 'CONTACT_PERSON' ] = true
+          isPassed = false
+        }
+        if (!this.isCardInfoValid) {
           isPassed = false
         }
 
         switch (this.carrierSelected) {
           case 0: {
             const exp_carrier_num_phone = /^\/[A-Z0-9.+-]{7}$/
-            if (!exp_carrier_num_phone.test(this.carrierNum)) { isPassed = false }
+            if (!exp_carrier_num_phone.test(this.carrierNum)) {
+              this.alertObj[ 'PHONE' ] = true
+              isPassed = false
+            }
             break
           }
           case 1: {
             const exp_carrier_num_natural = /^[A-Z]{2}[0-9]{14}$/
-            if (!exp_carrier_num_natural.test(this.carrierNum)) { isPassed = false }
+            if (!exp_carrier_num_natural.test(this.carrierNum)) {
+              this.alertObj[ 'NATURAL' ] = true
+              isPassed = false
+            }
             break            
           }  
           case 2: {
-            if (!this.carrierNum || !validator.isEmail(this.carrierNum)) { isPassed = false }
+            if (!this.carrierNum || !validator.isEmail(this.carrierNum)) {
+              this.alertObj[ 'EMAIL' ] = true
+              isPassed = false
+            }
             break            
           }
           case 3: {
@@ -235,6 +263,12 @@
               || validator.isEmpty(this.businessTitle)
               || validator.isEmpty(this.businessAddress)
               || !exp_taxno.test(this.businessTaxNo)) {
+              if (!exp_taxno.test(this.businessTaxNo)) {
+                this.alertObj[ 'BUSINESS_TAXNO' ] = true
+              }
+              if (validator.isEmpty(this.businessTitle)) {
+                this.alertObj[ 'BUSINESS_TITLE' ] = true
+              }
               isPassed = false
             }
             break

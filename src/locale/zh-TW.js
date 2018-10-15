@@ -364,6 +364,12 @@ export default {
         'CCV': '***',
         'EXPIRY': '** / **',
       },
+      'CARD_INFO': {
+        'HINT': {
+          'PHONE_NUMBER': '請輸入正確的手機號碼。',
+          'CONTACT_PERSON': '請輸入正確的持卡人姓名。',
+        },
+      },
       'ITEM': {
         'CARD_OWNER': '姓&emsp;名',
         'CARD_NUMBER': '卡&emsp;號',
@@ -377,14 +383,17 @@ export default {
           'EMAIL': {
             'TITLE': 'Email 載具',
             'PLACEHOLDER': '如：example@readr.com',
+            'HINT': '請輸入正確的 Email 格式，如：example@readr.com。',
           },
           'PHONE': {
             'TITLE': '手機條碼載具',
             'PLACEHOLDER': '如：/1234ABC',
+            'HINT': '請輸入正確的手機條碼載具格式，如：/1234ABC。',
           },
           'NATURAL': {
             'TITLE': '自然人憑證條碼',
             'PLACEHOLDER': '如：AB00001234567890',
+            'HINT': '請輸入正確的手機條碼載具格式，如：AB00001234567890',
           },
           'BUSINESS': {
             'TITLE': '三聯式發票',
@@ -392,6 +401,10 @@ export default {
               'TITLE': '請填入您的公司抬頭',
               'TAX_NO': '請填入您的公司統一編號',
               'ADDRESS': '請填入您的公司地址',
+            },
+            'HINT': {
+              'TAX_NO': '請輸入正確的公司統一編號，如：AB00001234567890，共 8 碼',
+              'TITLE': '請填寫公司抬頭',
             },
           },
         },
