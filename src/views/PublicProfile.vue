@@ -5,7 +5,7 @@
     <Tab v-else class="profile__tab" :tabs="tabsName" :tabCurrIndex.sync="curr_tab">
       <template
         v-if="postsReview.length !== 0"
-        :slot="findIndexOf($t('tab.WORDING_TAB_REVIEW_RECORD'))"
+        :slot="findIndexOf($t('TAB.REVIEW_RECORD'))"
       >
         <div class="profile__main__review">
           <div class="profile__main__review__container">
@@ -19,7 +19,7 @@
       </template>
       <template
         v-if="postsNews.length !== 0"
-        :slot="findIndexOf($t('tab.WORDING_TAB_NEWS_RECORD'))"
+        :slot="findIndexOf($t('TAB.NEWS_RECORD'))"
       >
         <div class="profile__main__review">
           <div class="profile__main__review__container">
@@ -31,7 +31,7 @@
           </div>
         </div>
       </template>
-      <template :slot="findIndexOf($t('tab.WORDING_TAB_FOLLOW_RECORD'))">
+      <template :slot="findIndexOf($t('TAB.FOLLOW_RECORD'))">
         <FollowingListInTab :isReachBottom="isReachBottom"></FollowingListInTab>
       </template>
     </Tab>
@@ -144,9 +144,9 @@
       },
       tabs () {
         let tabs = []
-        if (this.postsReview.length !== 0) tabs.push({ key: 'review', name: this.$t('tab.WORDING_TAB_REVIEW_RECORD'), })
-        if (this.postsNews.length !== 0) tabs.push({ key: 'news', name: this.$t('tab.WORDING_TAB_NEWS_RECORD'), })
-        tabs.push({ key: 'follow', name: this.$t('tab.WORDING_TAB_FOLLOW_RECORD'), })
+        if (this.postsReview.length !== 0) tabs.push({ key: 'review', name: this.$t('TAB.REVIEW_RECORD'), })
+        if (this.postsNews.length !== 0) tabs.push({ key: 'news', name: this.$t('TAB.NEWS_RECORD'), })
+        tabs.push({ key: 'follow', name: this.$t('TAB.FOLLOW_RECORD'), })
         return tabs
       },
       tabsName () {
