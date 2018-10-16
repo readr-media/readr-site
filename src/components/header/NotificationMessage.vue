@@ -68,6 +68,36 @@
       <span class="comment--commenter" v-text="get(item, 'nickname')"></span>
       <span class="comment--action" v-text="$t('NOTIFICATION.UPDATE')"></span>
     </template>
+    <template v-else-if="get(item, 'event_type') === NOTIFICATION_TYPE.FOLLOW_TAG_PROJECT_STATUS">
+      <span class="comment--owner" v-text="get(item, 'object_name')"></span>
+      <span class="comment--string" v-text="$t('NOTIFICATION.WHOS')"></span>
+      <span class="comment--commenter" v-text="get(item, 'nickname')"></span>
+      <span class="comment--string" v-text="$t('NOTIFICATION.TAGS.SERIES_DONE')"></span>
+    </template>
+    <template v-else-if="get(item, 'event_type') === NOTIFICATION_TYPE.FOLLOW_TAG_PROJECT_PROGRESS">
+      <span class="comment--owner" v-text="get(item, 'object_name')"></span>
+      <span class="comment--string" v-text="$t('NOTIFICATION.WHOS')"></span>
+      <span class="comment--commenter" v-text="get(item, 'nickname')"></span>
+      <span class="comment--string" v-text="$t('NOTIFICATION.TAGS.SERIES_PROGRESS')"></span>
+    </template>
+    <template v-else-if="get(item, 'event_type') === NOTIFICATION_TYPE.FOLLOW_TAG_REPORT">
+      <span class="comment--owner" v-text="get(item, 'object_name')"></span>
+      <span class="comment--string" v-text="$t('NOTIFICATION.TAGS.NEW_REPORT')"></span>
+      <span class="comment--commenter" v-text="get(item, 'nickname')"></span>
+      <span class="comment--string" v-text="$t('NOTIFICATION.TAGS.COME')"></span>
+    </template>
+    <template v-else-if="get(item, 'event_type') === NOTIFICATION_TYPE.FOLLOW_TAG_MEMO">
+      <span class="comment--owner" v-text="get(item, 'object_name')"></span>
+      <span class="comment--string" v-text="$t('NOTIFICATION.TAGS.NEW_MEMO')"></span>
+      <span class="comment--commenter" v-text="get(item, 'nickname')"></span>
+      <span class="comment--string" v-text="$t('NOTIFICATION.TAGS.COME')"></span>
+    </template>
+    <template v-else-if="get(item, 'event_type') === NOTIFICATION_TYPE.FOLLOW_TAG_POST">
+      <span class="comment--owner" v-text="get(item, 'object_name')"></span>
+      <span class="comment--string" v-text="$t('NOTIFICATION.TAGS.NEW_POST')"></span>
+      <span class="comment--commenter" v-text="get(item, 'nickname')"></span>
+      <span class="comment--string" v-text="$t('NOTIFICATION.TAGS.COME')"></span>
+    </template>
   </div>
 </template>
 <script>

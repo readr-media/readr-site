@@ -101,4 +101,9 @@ export const NOTIFICATION_TYPE = {
   FOLLOW_PROJECT_MEMO: 'follow_project_memo',
   FOLLOW_PROJECT_REPORT: 'follow_project_report',
   POST_REPLY: 'post_reply',
+  FOLLOW_TAG_PROJECT_STATUS: 'follow_tag_project_status',
+  FOLLOW_TAG_PROJECT_PROGRESS: 'follow_tag_project_progress',
+  FOLLOW_TAG_REPORT: 'follow_tag_report',
+  FOLLOW_TAG_MEMO: 'follow_tag_memo',
+  FOLLOW_TAG_POST: 'follow_tag_post',
 }
