@@ -8254,9 +8254,9 @@ readdirp@^2.0.0:
     readable-stream "^2.0.2"
     set-immediate-shim "^1.0.1"
 
-readr-comment@^1.0.17:
-  version "1.0.17"
-  resolved "https://registry.yarnpkg.com/readr-comment/-/readr-comment-1.0.17.tgz#82b3d6fa9923cfac337c1bd0e6eb9118bd102246"
+readr-comment@^1.0.19:
+  version "1.0.19"
+  resolved "https://registry.yarnpkg.com/readr-comment/-/readr-comment-1.0.19.tgz#1b3784cad5f0c843745e31d3ef2fce13de43b45b"
   dependencies:
     babel-cli "^6.22.2"
     babel-core "^6.18.2"
