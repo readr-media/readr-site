@@ -109,4 +109,11 @@
     position absolute
     top 0
     right 0
+
+.article-content
+  & >>> blockquote
+    margin 0
+    padding 0 0 0 16px
+    border-left 4px solid #ccc
+    line-height 1
 </style>
