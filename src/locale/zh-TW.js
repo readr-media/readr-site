@@ -286,6 +286,13 @@ export default {
     'GO_HOME': '去首頁',
     'GO_LOGIN': '登入會員',
     'GO_JOIN_MEMO': '此筆記目前需要點數，點我加入',
+    'CONFIRM': '瞭解',
+    'HINT': {
+      'COMMENT_WITH_LOGIN': '要登入才可以「留言」喔！',
+      'LIKE_WITH_LOGIN': '要登入才可以按「讚」喔！',
+      'UNLIKE_WITH_LOGIN': '要登入才可以按「不喜歡」喔！',
+      'FOLLOW_WITH_LOGIN': '要登入才可以「追蹤」喔！',
+    },
   },
   'POST_EDITOR': {
     'EDITOR' : '編輯器',
