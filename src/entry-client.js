@@ -31,12 +31,15 @@ const { host, pathname, search, } = location
 
 if (!exp_localhost.test(host)) {
   debug('STAGE:', exp_dev.test(host) ? 'DEV' : 'PROD')
+  debug('CURR HOST:', host)
   if (HOST && HOST_MOBILE) {
     if ((useragent.isMobile || useragent.isTablet) && !exp_mobile.test(host)) {
       /** Redirect to mobile version */
+      debug('GOING TO', `${HOST_MOBILE}${pathname}${search}`)
       location.replace(`${HOST_MOBILE}${pathname}${search}`)
     } else if (useragent.isDesktop && exp_mobile.test(host)) {
       /** Redirect to desktop version */
+      debug('GOING TO', `${HOST}${pathname}${search}`)
       location.replace(`${HOST}${pathname}${search}`)
     } else {
       debug('WELL, DO NOTHING!')
