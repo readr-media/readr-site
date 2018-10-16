@@ -8,7 +8,7 @@
         <router-link :to="targetUrl" class="editor-writing__container">
           <template v-for="(p, i) in postContentProcessed">
             <!-- post content for initial display -->
-            <p class="editor-writing__paragraph--visible" v-if="i <= shouldContentStopAtIndex" :key="`${post.id}-${i}`">
+            <div class="editor-writing__paragraph editor-writing__paragraph--visible" v-if="i <= shouldContentStopAtIndex" :key="`${post.id}-${i}`">
               <span v-if="isImg(p)" class="figure">
                 <img v-if="isClientSide" :src="getImgSrc(p)" alt="post-content-img" @load="setContentImageOrientation(getImgSrc(p), $event)">
               </span>
@@ -16,11 +16,11 @@
               <span v-if="shouldShowReadMoreButton(i)">
                 <span class="editor-writing__more" @click="toogleReadmore($event)" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span>
               </span>
-            </p>
+            </div>
             <p 
               class="editor-writing__paragraph--visible"
               v-if="i === shouldContentStopAtIndex && hasCustomContentBreak"
-              :key="`${post.id}-${i}`"
+              :key="`${post.id}-${i}-more`"
               v-text="`......${$t('homepage.WORDING_HOME_POST_MORE')}`"
             >
             </p>
@@ -58,7 +58,7 @@
         <router-link :to="targetUrl" class="editor-writing__container">
           <template v-for="(p, i) in postContentProcessed">
             <!-- post content for initial display -->
-            <p class="editor-writing__paragraph--visible" v-if="i <= shouldContentStopAtIndex" :key="`${post.id}-${i}`">
+            <p class="editor-writing__paragraph editor-writing__paragraph--visible" v-if="i <= shouldContentStopAtIndex" :key="`${post.id}-${i}`">
               <!-- <span v-html="p"></span> -->
               <span v-if="isImg(p)" class="figure">
                 <img v-if="isClientSide" :src="getImgSrc(p)" alt="post-content-img" @load="setContentImageOrientation(getImgSrc(p), $event)">
@@ -333,7 +333,7 @@
         &--news
           margin 18px 0 10px 0
           padding-bottom 4.5px
-          p
+          div
             color #4a4a4a
           h1
             font-size 35px
@@ -361,6 +361,11 @@
             width 100%
           .portrait
             width 50%
+          blockquote
+            margin 0
+            padding 0 0 0 16px
+            border-left 4px solid #ccc
+            line-height 1
         &__container 
           // min-height 105px
           // overflow hidden
@@ -395,6 +400,11 @@
             color #11b8c9 !important
             margin-top 24px !important
         &__paragraph
+          font-size 15px
+          font-weight 400
+          text-align justify
+          line-height 1.5
+          margin 6px 0
           &--visible
             display block
           &--invisible
@@ -521,11 +531,4 @@
       border-top 1px solid #d3d3d3
       // > div
       //   margin-top 5px
-
-  .editor-writing--news
-    blockquote
-      margin 0
-      padding 0 0 0 16px
-      border-left 4px solid #ccc
-      line-height 1
 </style>

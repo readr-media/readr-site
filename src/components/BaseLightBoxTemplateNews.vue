@@ -20,7 +20,7 @@
             <figure v-if="isImg(p)">
               <img v-if="isClientSide" :src="getImgSrc(p)" alt="post-content-img" @load="setContentImageOrientation(getImgSrc(p), $event)">
             </figure>
-            <p v-else v-html="p"></p>
+            <div v-else v-html="p"></div>
           </template>
         </section>
         <PostShareNav v-if="isClientSide" class="baselightbox-post__share-nav" :post="post"/>
@@ -111,6 +111,12 @@
     right 0
 
 .article-content
+  & >>> div
+    font-size 15px
+    letter-spacing 0.5px
+    line-height 1.6
+    text-align justify
+    margin 26px 0
   & >>> blockquote
     margin 0
     padding 0 0 0 16px
