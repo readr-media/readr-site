@@ -10,6 +10,7 @@
       :saveComment="saveComment"
       :updateComment="updateComment"
       :comments="commentsSalted"
+      :goLogin="goLogin"
     />
     <p v-if="shouldRenderCommentError" v-text="fetchCommentErrorText" class="alert"></p>
   </div>
@@ -18,6 +19,7 @@
   import { Comment, } from 'readr-comment'
   import { get, map, isEmpty, } from 'lodash'
   import { getFullUrl, } from 'src/util/comm'
+  import { redirectToLogin, } from 'src/util/services'
   import { ROLE_MAP, } from 'api/config'
   import { RESOURCE_TYPE, } from 'src/constants'
 
@@ -80,6 +82,9 @@
       }
     },    
     methods: {
+      goLogin () {
+        redirectToLogin(this.$route.fullPath)
+      },
       queryForRedisUse (comment) {
         return get(comment, 'parentId') ? { 
           sort: 'created_at',
