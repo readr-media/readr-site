@@ -604,6 +604,14 @@ export default {
     },
     'PUBLISH': '發表了新的',
     'UPDATE': '更新了！',
+    'TAGS': {
+      'SERIES_DONE': '完成囉',
+      'SERIES_PROGRESS': '進度更新囉！',
+      'NEW_REPORT': '有新報導',
+      'NEW_MEMO': '有新筆記',
+      'NEW_POST': '有新文章',
+      'COME': '，快來看！',
+    },
   },
   'SECTIONS': {
     'ABOUT': '關於我們',
