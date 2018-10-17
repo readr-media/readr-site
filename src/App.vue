@@ -15,6 +15,7 @@
       <Consume></Consume>
       <DepositTappay v-if="isTappayNeeded" :active.sync="isDepositActive" @fetchCurrentPoint="fetchCurrentPoint"></DepositTappay>
     </div>
+    <LoginAsk></LoginAsk>
     <AlertGDPR v-if="showAlertGDPR" @closeAlertGDPR="showAlertGDPR = false" />
   </div>
 </template>
@@ -27,6 +28,7 @@
   import AppHeader from 'src/components/header/AppHeader.vue'
   import AppNavAside from 'src/components/AppNavAside.vue'
   import Consume from 'src/components/point/Consume.vue'
+  import LoginAsk from 'src/components/LoginAsk.vue'
   import Tap from 'tap.js'
   import DepositTappay from 'src/components/point/DepositTappay.vue'
   import VueCookie from 'vue-cookie'
@@ -49,6 +51,7 @@
       AppNavAside,
       Consume,
       DepositTappay,
+      LoginAsk,
     },
     computed: {
       currUser () {

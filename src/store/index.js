@@ -64,6 +64,10 @@ export function createStore () {
       'isTappayRequired': false,
       'isTappayLoaded': false,
       'itemsByTag': {},
+      'LoginAskFlag': {
+        'active': false,
+        'message': '',
+      },
       'members': [],
       'membersCount': 0,
       'memos': [],
