@@ -19,10 +19,10 @@
     name: 'LoginAsk',
     computed: {
       active () {
-        return get(this.$store, 'state.LoginAskFlag.active', false)
+        return get(this.$store, 'state.loginAskFlag.active', false)
       },
       message () {
-        return get(this.$store, 'state.LoginAskFlag.message', '')
+        return get(this.$store, 'state.loginAskFlag.message', '')
       },
     },
     methods: {

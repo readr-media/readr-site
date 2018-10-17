@@ -64,7 +64,7 @@ export function createStore () {
       'isTappayRequired': false,
       'isTappayLoaded': false,
       'itemsByTag': {},
-      'LoginAskFlag': {
+      'loginAskFlag': {
         'active': false,
         'message': '',
       },

@@ -126,8 +126,6 @@ export default {
   },
   data () {
     return {
-      alertMsg: '',
-      isAlertActive: false,
       showComment: false,
     }
   },
@@ -184,7 +182,6 @@ export default {
           updateEmotion(this.$store, { resource: this.resource, action:'insert', emotion: emotion, object: this.postId, })
         }
       } else {
-        this.isAlertActive = true
         if (emotion === 'like') {
           switchOn(this.$store, this.$t('POST_CONTENT.HINT.LIKE_WITH_LOGIN'))
         } else {
