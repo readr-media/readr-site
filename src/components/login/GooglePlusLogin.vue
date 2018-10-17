@@ -17,25 +17,26 @@
       token,
     })
   }
-
   const register = (store, profile, token) => {
     return store.dispatch('REGISTER', {
       params: profile,
       token,
     })
   }
+  const switchOn = (store, message) => store.dispatch('LOGIN_ASK_TOGGLE', { active: true, message, })
 
   export default {
     computed: {
       labelWording () {
-        switch (this.type) {
-          case 'register':
-            return this.$t('login.WORDING_GOOGLE_REGISTER')
-          case 'login':
-            return this.$t('login.WORDING_GOOGLE_LOGIN')
-          default:
-            return ''
-        }
+        return this.$t('login.WORDING_GOOGLE_LOGIN')
+        // switch (this.type) {
+        //   case 'register':
+        //     return this.$t('login.WORDING_GOOGLE_REGISTER')
+        //   case 'login':
+        //     return this.$t('login.WORDING_GOOGLE_LOGIN')
+        //   default:
+        //     return ''
+        // }
       },
     },
     name: 'GooglePlusLogin',
@@ -64,7 +65,9 @@
             })
         }
         if (window && !window.googleStatus) {
-          gapi && gapi.auth2.getAuthInstance().signIn({ scope: 'profile email', }).then((currUser) => {
+          const auth = gapi && gapi.auth2.getAuthInstance()
+          if (!auth) { return }
+          auth.signIn({ scope: 'profile email', }).then((currUser) => {
             const idToken = currUser.getAuthResponse().id_token
             gapi.client.people.people.get({
               'resourceName': 'people/me',
@@ -75,18 +78,39 @@
                 idToken,
                 nickname: get(response, [ 'result', 'nicknames', 0, 'value', ], null),
                 gender: get(response, [ 'result', 'genders', 0, 'value', ], '').toUpperCase().substr(0, 1),
-                register_mode: 'oauth-goo',
-              }, get(this.$store, [ 'state', 'register-token', ])).then(({ status, }) => {
+                register_mode: 'oauth-goo', }, get(this.$store, [ 'state', 'register-token', ])
+              ).then(({ status, }) => {
                 if (status === 200) {
                   debug('Register successfully.')
-                  readyToLogin(idToken)
+                  // readyToLogin(idToken)
                 }
-              }).catch(({ err, }) => {
-                if (err === 'User Already Existed' || err === 'User Duplicated') {
-                  debug('User Already Existed')
-                  readyToLogin(idToken)
+              }).catch(({ err: error, mode, }) => {
+                if (error === 'User Already Existed' || error === 'User Duplicated') {
+                  const signOutFromApp = () => {
+                    this.$emit('update:isDoingLogin', false)
+                    auth.disconnect()
+                  }
+                  switch (mode) {
+                    case 'oauth-goo': {
+                      readyToLogin(idToken)
+                      break
+                    }
+                    case 'oauth-fb': {
+                      switchOn(this.$store, this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_FACEBOOK'))
+                      .then(signOutFromApp)
+                      break
+                    }
+                    case 'ordinary': {
+                      this.$emit('update:isDoingLogin', false)
+                      switchOn(
+                        this.$store,
+                        `${this.$t('login.REGISTER_G_PLUS_EMAIL')} ${this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_ORDINARY')}`  
+                      ).then(signOutFromApp)
+                      break
+                    }
+                  }
                 } else {
-                  console.log(err)
+                  console.log(error)
                 }
               })
             }, function (reason) {

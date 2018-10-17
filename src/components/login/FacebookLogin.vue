@@ -23,18 +23,20 @@
       token,
     })
   }
+  const switchOn = (store, message) => store.dispatch('LOGIN_ASK_TOGGLE', { active: true, message, })
 
   export default {
     computed: {
       labelWording () {
-        switch (this.type) {
-          case 'register':
-            return this.$t('login.WORDING_FACEBOOK_REGISTER')
-          case 'login':
-            return this.$t('login.WORDING_FACEBOOK_LOGIN')
-          default:
-            return ''
-        }
+        return this.$t('login.WORDING_FACEBOOK_LOGIN')
+        // switch (this.type) {
+        //   case 'register':
+        //     return this.$t('login.WORDING_FACEBOOK_REGISTER')
+        //   case 'login':
+        //     return this.$t('login.WORDING_FACEBOOK_LOGIN')
+        //   default:
+        //     return ''
+        // }
       },
     },
     name: 'FacebookLogin',
@@ -42,7 +44,7 @@
       login () {
         this.$emit('update:isDoingLogin', true)
         const readyToLogin = (params) => {
-          login(this.$store, params, get(this.$store, [ 'state', 'register-token', ]))
+          login(this.$store, params, get(this.$store, 'state.register-token'))
             .then((res) => {
               this.$emit('update:isDoingLogin', false)
               if (res.status === 200) {
@@ -76,20 +78,40 @@
               }, get(this.$store, [ 'state', 'register-token', ])).then(({ status, }) => {
                 if (status === 200) {
                   debug('Registered successfully')
-                  readyToLogin({
-                    id: res.id,
-                    login_mode: 'facebook',
-                  })
+                  // readyToLogin({
+                  //   id: res.id,
+                  //   login_mode: 'facebook',
+                  // })
                 }
-              }).catch(({ err, }) => {
-                if (err === 'User Already Existed' || err === 'User Duplicated') {
-                  debug('User Already Existed')
-                  readyToLogin({
-                    id: res.id,
-                    login_mode: 'facebook',
-                  })
+              }).catch(({ err: error, mode, }) => {
+                if (error === 'User Already Existed' || error === 'User Duplicated') {
+                  const signOutFromApp = () => {
+                    this.$emit('update:isDoingLogin', false)
+                    FB.logout()
+                  }
+                  switch (mode) {
+                    case 'oauth-fb': {
+                      readyToLogin({
+                        id: res.id,
+                        login_mode: 'facebook',
+                      })
+                      break
+                    }
+                    case 'oauth-goo': {
+                      switchOn(this.$store, this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_G_PLUS'))
+                      .then(signOutFromApp)
+                      break
+                    }
+                    case 'ordinary': {
+                      switchOn(
+                        this.$store,
+                        `${this.$t('login.REGISTER_FACEBOOK_EMAIL')} ${this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_ORDINARY')}`  
+                      ).then(signOutFromApp)
+                      break
+                    }
+                  } 
                 } else {
-                  console.log(err)
+                  console.log(error)
                 }
               })
             })

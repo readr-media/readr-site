@@ -32,7 +32,7 @@ import CommentCount from 'src/components/comment/CommentCount.vue'
 import { mapState, } from 'vuex'
 // const debug = require('debug')('CLIENT:AppAritcleNav')
 
-const switchOn = (store, message) => store.dispatch('LOGIN_ASK_TOGGLE', { active: true, message, })
+const switchOn = (store, message) => store.dispatch('LOGIN_ASK_TOGGLE', { active: true, message, type: 'GO_LOGIN', })
 const publishAction = (store, data) => store.dispatch('FOLLOW', { params: data, })
 const updateEmotion = (store, { resource = 'post', action = 'insert', emotion = 'like', object, }) => {
   return store.dispatch('UPDATE_EMOTION', {

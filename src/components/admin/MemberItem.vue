@@ -18,7 +18,7 @@
         </div>
         <div class="actions__update" v-if="$can('updateAccount')" v-text="$t('admin.WORDING_ADMIN_UPDATE')" @click="update(index)"></div>
         <div class="actions__delete" v-if="$can('deleteAccount')" v-text="$t('admin.WORDING_ADMIN_DELETE')" @click="del(index)"></div>
-    </div>
+      </div>
     </template>
   </div>
 </template>

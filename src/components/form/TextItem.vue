@@ -174,13 +174,14 @@
       left calc(100% + 17.5px)
       top 0
       z-index 20
-      font-size 0.625rem
-      line-height calc((10 / 16) * 1.4rem)
-      text-align left
+      font-size 0.75rem
+      font-weight normal
+      line-height normal
+      text-align justify
       color #000
-      font-weight 300
       box-shadow 1px 1px 1px rgba(0, 0, 0, 0.4)
       display none
+      border-radius 5px
       &.long
         width 140px
         white-space normal
