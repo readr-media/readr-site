@@ -42,9 +42,9 @@ import TagNav from 'src/components/tag/TagNav.vue'
 import AppDateCreatedUpdated from 'src/components/AppDateCreatedUpdated.vue'
 import { get, find, } from 'lodash'
 import { mapState, } from 'vuex'
-import { redirectToLogin, } from 'src/util/services'
 
 const publishAction = (store, data) => store.dispatch('FOLLOW', { params: data, })
+const switchOn = (store, message) => store.dispatch('LOGIN_ASK_TOGGLE', { active: true, message, })
 const toogleFollowingByUserStat = (store, { resource, resourceType = '', targetId, }) => {
   return store.commit('TOOGLE_FOLLOWING_BY_USER_STAT', {
     params: {
@@ -97,7 +97,7 @@ export default {
       if (this.isLoggedIn) {
         this.toogleFollow()
       } else {
-        redirectToLogin(this.$route.fullPath)
+        switchOn(this.$store, this.$t('POST_CONTENT.HINT.FOLLOW_WITH_LOGIN'))
       }
     },
     toogleFollow () {
