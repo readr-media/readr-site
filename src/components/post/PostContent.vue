@@ -8,7 +8,7 @@
         <router-link :to="targetUrl" class="editor-writing__container">
           <template v-for="(p, i) in postContentProcessed">
             <!-- post content for initial display -->
-            <div class="editor-writing__paragraph editor-writing__paragraph--visible" v-if="i <= shouldContentStopAtIndex" :key="`${post.id}-${i}`">
+            <div class="editor-writing__paragraph editor-writing__paragraph--news editor-writing__paragraph--visible" v-if="i <= shouldContentStopAtIndex" :key="`${post.id}-${i}`">
               <span v-if="isImg(p)" class="figure">
                 <img v-if="isClientSide" :src="getImgSrc(p)" alt="post-content-img" @load="setContentImageOrientation(getImgSrc(p), $event)">
               </span>
@@ -406,6 +406,8 @@
           text-align justify
           line-height 1.5
           margin 6px 0
+          &--news
+            text-align initial
           &--visible
             display block
           &--invisible
