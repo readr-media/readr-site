@@ -115,7 +115,7 @@
     font-size 15px
     letter-spacing 0.5px
     line-height 1.6
-    text-align justify
+    text-align initial
     margin 26px 0
   & >>> blockquote
     margin 0
