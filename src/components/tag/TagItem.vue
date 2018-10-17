@@ -48,7 +48,7 @@ import { get, take, } from 'lodash'
 import { mapState, } from 'vuex'
 
 const publishAction = (store, data) => store.dispatch('FOLLOW', { params: data, })
-const switchOn = (store, message) => store.dispatch('LOGIN_ASK_TOGGLE', { active: true, message, })
+const switchOn = (store, message) => store.dispatch('LOGIN_ASK_TOGGLE', { active: true, message, type: 'GO_LOGIN', })
 const toogleFollowingByUserStat = (store, { resource, resourceType = '', targetId, }) => {
   return store.commit('TOOGLE_FOLLOWING_BY_USER_STAT', {
     params: {

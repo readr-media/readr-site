@@ -22,7 +22,6 @@ import {
   getPublicVideosCount,
   invite,
   login,
-  register,
   resetPwd,
   resetPwdEmail,
   search,
@@ -93,8 +92,8 @@ export default Object.assign({
       return { status, }
     })
   },
-  LOGIN_ASK_TOGGLE: ({ commit, }, { active, message, }) => {
-    return commit('SWITCH_ON_LOGIN_ASK', { active, message, })
+  LOGIN_ASK_TOGGLE: ({ commit, }, { active, message, type, }) => {
+    return commit('SWITCH_ON_LOGIN_ASK', { active, message, type, })
   },
   LOGOUT: ({ commit, }) => {
     return new Promise((resolve) => {
@@ -105,9 +104,6 @@ export default Object.assign({
   },
   INVITE: ({}, { params, }) => {
     return invite(params)
-  },
-  REGISTER: ({}, { params, token, }) => {
-    return register(params, token)
   },
   RESET_PWD_EMAIL: ({}, { params, token, }) => {
     return resetPwdEmail(params, token)

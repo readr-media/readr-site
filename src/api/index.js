@@ -385,25 +385,6 @@ export function fetchInvitationQuota () {
   })
 }
 
-export function register (params, token) {
-  return new Promise((resolve, reject) => {
-    const url = `${host}/api/register`
-    superagent
-      .post(url)
-      .set('Authorization', `Bearer ${token || getToken()}`)
-      .send(
-        params
-      )
-      .end(function (err, res) {
-        if (err) {
-          reject({ status: res.status, err: res.body.Error, })
-        } else {
-          resolve({ status: res.status, })
-        }
-      })
-  })
-}
-
 export function resetPwd (params) {
   const url = `${host}/api/recoverpwd/set`
   const token = getSetupToken()
