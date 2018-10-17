@@ -93,6 +93,9 @@ export default Object.assign({
       return { status, }
     })
   },
+  LOGIN_ASK_TOGGLE: ({ commit, }, { active, message, }) => {
+    return commit('SWITCH_ON_LOGIN_ASK', { active, message, })
+  },
   LOGOUT: ({ commit, }) => {
     return new Promise((resolve) => {
       commit('SET_LOGGEIN_STATUS', { body: false, })

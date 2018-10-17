@@ -43,13 +43,12 @@
 </template>
 
 <script>
-import { get, take, } from 'lodash'
 import TagItemRelatedsListItem from './TagItemRelatedsListItem.vue'
+import { get, take, } from 'lodash'
 import { mapState, } from 'vuex'
-import { redirectToLogin, } from 'src/util/services'
 
 const publishAction = (store, data) => store.dispatch('FOLLOW', { params: data, })
-
+const switchOn = (store, message) => store.dispatch('LOGIN_ASK_TOGGLE', { active: true, message, })
 const toogleFollowingByUserStat = (store, { resource, resourceType = '', targetId, }) => {
   return store.commit('TOOGLE_FOLLOWING_BY_USER_STAT', {
     params: {
@@ -101,6 +100,9 @@ export default {
     isRelatedListExist () {
       return this.relatedListName in this.tagContent && this.tagContent[this.relatedListName] !== null
     },
+    me () {
+      return get(this.$store, 'state.profile', {})
+    },
     relatedListItems () {
       return take(get(this.tagContent, this.relatedListName, []), this.relatedListItemLimit)
     },
@@ -123,10 +125,11 @@ export default {
       if (this.isLoggedIn) {
         this.toogleFollow()
       } else {
-        redirectToLogin(this.$route.fullPath)
+        switchOn(this.$store, this.$t('POST_CONTENT.HINT.FOLLOW_WITH_LOGIN'))
       }
     },
     toogleFollow () {
+
       if (this.isFollowed) {
         publishAction(this.$store, {
           action: 'unfollow',

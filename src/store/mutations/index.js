@@ -47,6 +47,9 @@ export default Object.assign({
   SET_INVITATION_QUOTA: (state, { quota, }) => {
     state['invitation_quota'] = quota
   },
+  SWITCH_ON_LOGIN_ASK: (state, { active, message, }) => {
+    state['LoginAskFlag'] = { active, message, }
+  },
   /**
    * invitation
    */

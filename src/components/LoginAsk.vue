@@ -1,7 +1,7 @@
 <template>
   <div class="article-nav-login-alert" v-if="active">
     <div class="container">
-      <div class="message"><span v-text="alertMsg"></span></div>
+      <div class="message"><span v-text="message"></span></div>
       <div class="wrapper">
         <div class="confirm" @click="closeAlert"><span v-text="$t('POST_CONTENT.CONFIRM')"></span></div>
         <div class="login" @click="goLogin"><span v-text="$t('POST_CONTENT.GO_LOGIN')"></span></div>
@@ -11,27 +11,29 @@
 </template>
 <script>
   import { redirectToLogin, } from 'src/util/services'
+  import { get, } from 'lodash'
+
+  const switchOff = store => store.dispatch('LOGIN_ASK_TOGGLE', { active: false, message: '', })
+
   export default {
-    name: 'AppAritcleNavAlert',
+    name: 'LoginAsk',
+    computed: {
+      active () {
+        return get(this.$store, 'state.LoginAskFlag.active', false)
+      },
+      message () {
+        return get(this.$store, 'state.LoginAskFlag.message', '')
+      },
+    },
     methods: {
       closeAlert () {
-        this.$emit('update:active', false)
+        switchOff(this.$store)
       },
       goLogin () {
         redirectToLogin(this.$route.fullPath)
       },
     },
     mounted () {},
-    props: {
-      active: {
-        type: Boolean,
-        default: false,
-      },
-      alertMsg: {
-        type: String,
-        default: '',
-      },
-    },
   }
 </script>
 <style lang="stylus" scoped>
