@@ -100,9 +100,6 @@ export default {
     isRelatedListExist () {
       return this.relatedListName in this.tagContent && this.tagContent[this.relatedListName] !== null
     },
-    me () {
-      return get(this.$store, 'state.profile', {})
-    },
     relatedListItems () {
       return take(get(this.tagContent, this.relatedListName, []), this.relatedListItemLimit)
     },
