@@ -109,18 +109,18 @@
               }
             }).catch(({ err: error, mode, }) => {
               this.shouldShowSpinner = false
-              let message = this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED')
-              switch (mode) {
-                case 'oauth-fb': {
-                  message = this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_FACEBOOK')
-                  break
-                }
-                case 'oauth-goo': {
-                  message = this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_G_PLUS')
-                  break
-                }
-              }
               if (error === 'User Already Existed' || error === 'User Duplicated') {
+                let message = this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED')
+                switch (mode) {
+                  case 'oauth-fb': {
+                    message = this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_FACEBOOK')
+                    break
+                  }
+                  case 'oauth-goo': {
+                    message = this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_G_PLUS')
+                    break
+                  }
+                }
                 this.alert.mail = {
                   flag: true,
                   msg: message,

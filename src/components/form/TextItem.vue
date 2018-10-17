@@ -18,8 +18,6 @@
       :disabled="disabled"
       :type="type"
       :placeholder="placeHolder"
-      @focus="focus"
-      @focusout="focusout"
       @keyup="keyup">
     <span class="text-item__alert" @click="doFucus"
       :style="{
@@ -29,7 +27,7 @@
         borderTop: border,
         borderBottom: border,             
       }"></span>
-    <span class="text-item__msg" v-text="msg" v-if="show" :class="{ long: isTooLong, bottom: alertPosition && alertPosition === 'bottom', }"></span>
+    <span class="text-item__msg" v-text="msg" :class="{ long: isTooLong, bottom: alertPosition && alertPosition === 'bottom', }"></span>
   </div>
 </template>
 <script>
@@ -41,7 +39,6 @@
         flag: false,
         isTooLong: false,
         msg: '',
-        show: false,
       }
     },
     name: 'TextItem',
@@ -49,17 +46,10 @@
       doFucus () {
         this.$refs['input'].focus()
       },
-      focus () {
-        this.show = true
-      },
-      focusout () {
-        this.show = false
-      },
       keyup () {
         this.$emit('update:alert', {
           flag: false,
         })
-        this.show = false
       },
     },
     mounted () {
@@ -133,6 +123,8 @@
         border-left 1.5px solid #ddcf21
         height 35px
         width calc(100% - 35px)
+        &:focus ~ .text-item__msg
+          display block
       .text-item__alert
         border-top 1.5px solid #ddcf21
         border-bottom 1.5px solid #ddcf21
@@ -142,8 +134,6 @@
         background-size 22px 22px
         background-repeat no-repeat
         display inline-block
-      .text-item__msg
-        display block
     > input
       border none
       width 100%
