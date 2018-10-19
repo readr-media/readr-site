@@ -93,6 +93,7 @@ const loggingClient = Logging({
 })
 
 app.use('/hello.jpg', (req, res) => {
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')  
   res.sendFile(path.join(__dirname, 'public/icons/hello.jpg'))
 
   const cookies = new Cookies( req, res, {} )
