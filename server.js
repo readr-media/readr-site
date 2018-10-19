@@ -86,6 +86,36 @@ const serve = (path, cache) => express.static(resolve(path), {
   maxAge: cache && isProd ? 1000 * 60 * 60 * 24 * 30 : 0
 })
 
+const Logging = require('@google-cloud/logging')
+const loggingClient = Logging({
+  projectId: config.GCP_PROJECT_ID,
+  keyFilename: config.GCP_KEYFILE,
+})
+
+app.use('/hello.jpg', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public/icons/hello.jpg'))
+
+  const cookies = new Cookies( req, res, {} )
+  const payload_raw = (cookies.get('csrf') || '').split('.')[1]
+  const payload_string = payload_raw && new Buffer(payload_raw, 'base64').toString('binary')
+  const payload = payload_string ? JSON.parse(payload_string) : {}
+
+  const data = Object.assign({}, req.query, {
+    ip: req.clientIp,
+    'client-id': payload.id || undefined
+  }) || {}
+  const log = loggingClient.log(config.GCP_STACKDRIVER_LOG_NAME_FOR_EMAIL)
+  const metadata = { resource: { type: 'global', }, }
+  const entry = log.entry(metadata, data)
+  
+  log.write(entry).then(() => {
+    debug('Logging successfully.')
+  }).catch(err => {
+    console.error('Client info logging error occurred:', err)
+  })
+})
+
+
 app.use(compression({ threshold: 0 }))
 app.use(favicon('./public/favicon.png'))
 app.use('/distribution', serve('./distribution', true))
