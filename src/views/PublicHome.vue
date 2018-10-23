@@ -4,10 +4,10 @@
       <BaseLightBoxPost :showLightBox="showLightBox" :post="postLightBox"/>
     </BaseLightBox>
     <div class="homepage__container">
-      <TagNavAside class="homepage__tag-nav-aside"/>
+      <!--<TagNavAside class="homepage__tag-nav-aside"/>-->
       <div class="homepage__list-main">
         <div class="invitation">
-          <Invite></Invite>
+          <!--<Invite></Invite>-->
         </div>
         <transition-group name="fade" mode="out-in">
           <PostItem v-for="post in postsMain" :post="post" :key="`${post.id}-main`"></PostItem>
@@ -152,10 +152,10 @@ export default {
     HomeAsideLatestComment,
     BaseLightBox,
     BaseLightBoxPost,
-    Invite,
+    //Invite,
     MemoFigure,
     PostItem,
-    TagNavAside,
+    //TagNavAside,
   },
   watch: {
     isReachBottom(isReachBottom) {
