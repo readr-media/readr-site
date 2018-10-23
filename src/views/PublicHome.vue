@@ -346,17 +346,21 @@ export default {
       reqs.push(fetchPost(this.$store, { id: this.$route.params.postId, })) 
     }
     Promise.all(reqs).then(() => {
+	  console.log("fetch start: " + Date.now())
       if (this.$store.state.isLoggedIn) {
         const postIdsLatest = _.get(this.$store.state.publicPosts, 'items', []).map(post => `${post.id}`) 
         const postIdsHot = _.get(this.$store.state.publicPostsHot, 'items', []).map(post => `${post.id}`) 
         // const reportIds = _.get(this.$store.state, 'publicReports', []).map(report => `${report.id}`)
         const ids = _.uniq(_.concat(postIdsLatest, postIdsHot))
         const projectIds = _.uniq(_.get(this.$store, 'state.publicMemos', []).map(memo => memo.projectId))
+	    console.log("fetch follow: " + Date.now())
         if (ids.length !== 0) { 
+	      console.log("fetch follow start: " + Date.now())
           fetchFollowing(this.$store, { 
             resource: 'post', 
             ids: ids, 
           }) 
+	      console.log("fetch follow end: " + Date.now())
         } 
    
         // if (reportIds.length !== 0) { 
