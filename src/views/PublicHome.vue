@@ -7,7 +7,6 @@
       <TagNavAside class="homepage__tag-nav-aside"/>
       <div class="homepage__list-main">
         <div class="invitation">
-          <!--<Invite></Invite>-->
         </div>
         <transition-group name="fade" mode="out-in">
           <template v-if="isClientSide">
@@ -44,7 +43,6 @@ import HomeAsideArticle from 'src/components/home/HomeAsideArticle.vue'
 import HomeAsideLatestComment from 'src/components/home/HomeAsideLatestComment.vue'
 import BaseLightBox from 'src/components/BaseLightBox.vue'
 import BaseLightBoxPost from 'src/components/BaseLightBoxPost.vue'
-// import Invite from 'src/components/invitation/Invite.vue'
 import PostItem from 'src/components/post/PostItem.vue'
 import MemoFigure from 'src/components/projects/MemoFigure.vue'
 import TagNavAside from 'src/components/tag/TagNavAside.vue'
@@ -152,7 +150,6 @@ export default {
     HomeAsideLatestComment,
     BaseLightBox,
     BaseLightBoxPost,
-    //Invite,
     MemoFigure,
     PostItem,
     TagNavAside,
