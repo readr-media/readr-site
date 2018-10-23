@@ -22,6 +22,9 @@ node_modules/
 # Yarn Integrity file
 .yarn-integrity
 
+# Vim
+*.swp
+
 # VisualStudioCode
 .vscode/*
 !.vscode/settings.json
