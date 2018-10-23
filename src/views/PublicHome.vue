@@ -42,7 +42,7 @@ import HomeAsideArticle from 'src/components/home/HomeAsideArticle.vue'
 import HomeAsideLatestComment from 'src/components/home/HomeAsideLatestComment.vue'
 import BaseLightBox from 'src/components/BaseLightBox.vue'
 import BaseLightBoxPost from 'src/components/BaseLightBoxPost.vue'
-import Invite from 'src/components/invitation/Invite.vue'
+// import Invite from 'src/components/invitation/Invite.vue'
 import PostItem from 'src/components/post/PostItem.vue'
 import MemoFigure from 'src/components/projects/MemoFigure.vue'
 import TagNavAside from 'src/components/tag/TagNavAside.vue'
@@ -109,31 +109,29 @@ export default {
     ] : []
   
     if (get(route, 'params.postId')) {
-      jobs.push(fetchPost(store, { id: get(route, 'params.postId'), }).then(({ status, }) => {
-        if (status === 'error') {
-          if (process.browser) {
-            this.$router.push('/404')
-          } else {
-            const e = new Error()
-            e.massage = 'Page Not Found'
-            e.code = '404'
-            throw e  
-          }
-        } else {
-          return
-        }
-      }))
+      jobs.push(fetchPost(store, { id: get(route, 'params.postId'), }))
     }
     return Promise.all(jobs)
   },
   metaInfo () {
     if (this.$route.params.postId) {
-      return {
-        ogTitle: get(this.postSingle, 'ogTitle') || get(this.postSingle, 'title'),
-        description: get(this.postSingle, 'ogDescription') || truncate(sanitizeHtml(get(this.postSingle, 'content', ''), { allowedTags: [], }), 100),
-        metaUrl: this.$route.path,
-        metaImage: get(this.postSingle, 'ogImage') || `${SITE_FULL}/public/og-image-post.jpg`,
-      }
+      if (!get(this.postSingle, 'ogTitle') && !get(this.postSingle, 'title')) {
+        if (process.browser) {
+          this.$router.push('/404')
+        } else {
+          const e = new Error()
+          e.massage = 'Page Not Found'
+          e.code = '404'
+          throw e  
+        }
+      } else {
+        return {
+          ogTitle: get(this.postSingle, 'ogTitle') || get(this.postSingle, 'title'),
+          description: get(this.postSingle, 'ogDescription') || truncate(sanitizeHtml(get(this.postSingle, 'content', ''), { allowedTags: [], }), 100),
+          metaUrl: this.$route.path,
+          metaImage: get(this.postSingle, 'ogImage') || `${SITE_FULL}/public/og-image-post.jpg`,
+        }
+      }      
     } else {
       return {
         description: this.$i18n ? this.$t('OG.DESCRIPTION') : '',

@@ -72,16 +72,20 @@ export function constructUrlWithQuery (url, params) {
 
 export function fetch (url) {
   return new Promise((resolve, reject) => {
+    const s = Date.now()
     superagent
     .get(url)
     .end(function (err, res) {
       if (err) {
+        !process.browser && console.info('err occurred while fetching:', url, 'in', `${Date.now() - s}ms`)
         reject({ err, res, })
       } else {
         // resolve(camelizeKeys(res.body))
         if (res.text === 'not found' || res.status !== 200) {
+          !process.browser && console.info('not found while fetching:', url, 'in', `${Date.now() - s}ms`)
           reject(res.text)
         } else {
+          !process.browser && console.info('fetch:', url, 'in', `${Date.now() - s}ms`)
           resolve({ status: res.status, body: camelizeKeys(res.body), })
         }
       }
@@ -140,14 +144,17 @@ export function del (url, params) {
 
 export function fetchInStrict (url, { cookie, }) {
   return new Promise((resolve, reject) => {
+    const s = Date.now()
     superagent
       .get(url)
       .set('Authorization', `Bearer ${cookie || getToken()}`)
       .end(function (err, res) {
         if (err) {
+          !process.browser && console.info('err occurred while fetching:', url, 'in', `${Date.now() - s}ms`)
           reject({ err, res, })
         } else {
           // resolve(camelizeKeys(res.body))
+          !process.browser && console.info('fetch:', url, 'in', `${Date.now() - s}ms`)
           resolve({ status: res.status, body: camelizeKeys(res.body), })
         }
       })
