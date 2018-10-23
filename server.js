@@ -133,6 +133,7 @@ app.use('/service-worker.js', serve('./distribution/service-worker.js'))
 // app.use(microcache.cacheSeconds(1, req => useMicroCache && req.originalUrl))
 
 function render (req, res, next) {
+  console.info(`request:`, req.url)
   if (req.url.indexOf('/api/') === 0) {
     next()
     return
@@ -308,7 +309,7 @@ function render (req, res, next) {
     
     res.send(html)
     if (!isProd) {
-      console.log(`whole request: ${Date.now() - s}ms`)
+      console.info(`whole request: ${Date.now() - s}ms`)
     }
   })
 }
@@ -334,8 +335,8 @@ module.exports = {
 memwatch.on('leak', function(info) {
   const growth = formatMem(info.growth)
   const mem = process.memoryUsage()
-  console.log('GETING MEMORY LEAK:', [ 'growth ' + growth, 'reason ' + info.reason ].join(', '))
-  console.log('MEMORY STAT(heapUsed):', formatMem(mem.heapUsed))
+  console.error('GETING MEMORY LEAK:', [ 'growth ' + growth, 'reason ' + info.reason ].join(', '))
+  console.error('MEMORY STAT(heapUsed):', formatMem(mem.heapUsed))
 })
 memwatch.on('stats', function(stats) {
   const estBase = formatMem(stats.estimated_base)
