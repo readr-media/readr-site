@@ -4,7 +4,7 @@
       <BaseLightBoxPost :showLightBox="showLightBox" :post="postLightBox"/>
     </BaseLightBox>
     <div class="homepage__container">
-      <!--<TagNavAside class="homepage__tag-nav-aside"/>-->
+      <TagNavAside class="homepage__tag-nav-aside"/>
       <div class="homepage__list-main">
         <div class="invitation">
           <!--<Invite></Invite>-->
@@ -155,7 +155,7 @@ export default {
     //Invite,
     MemoFigure,
     PostItem,
-    //TagNavAside,
+    TagNavAside,
   },
   watch: {
     isReachBottom(isReachBottom) {
