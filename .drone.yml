@@ -14,6 +14,17 @@ pipeline:
     when:
       event: [push]
   
+  restore-cache:
+    image: drillster/drone-volume-cache
+    restore: true
+    mount:
+      - ./.yarn-cache
+      - ./node_modules
+    volumes:
+      - /tmp/cache:/cache
+    when:
+      branch: [master, dev]
+  
   get_config:
     image: gcr.io/mirrormedia-1470651750304/drone-cloud-sdk:latest
     secrets: [google_credentials]
@@ -23,17 +34,17 @@ pipeline:
     - cp default/readr-site/gcskeyfile.json ./gcskeyfile.json
     when:
       event: [push]
+  
   builds:
-    image: alpine:edge
+    image: node:8.12.0-slim
     commands:
-    - apk add --update --repository https://dl-3.alpinelinux.org/alpine/edge/testing/ python build-base make vips-dev fftw-dev nodejs-current yarn
-    - yarn global add node-gyp
+    - apt-get update && apt-get install -y node-gyp
     - yarn install
     - yarn run build
     when:
       event: [push]
       branch: [master, dev]
-
+  
   publish:
     image: plugins/gcr
     repo: mirrormedia-1470651750304/${DRONE_REPO_NAME}
@@ -64,6 +75,17 @@ pipeline:
       event: [push]
       branch: dev
 
+  rebuild-cache:
+    image: drillster/drone-volume-cache
+    rebuild: true
+    mount:
+      - ./.yarn-cache
+      - ./node_modules
+    volumes:
+      - /tmp/cache:/cache
+    when:
+      branch: [master, dev]
+  
   finish_slack:
     image: plugins/slack
     channel: jenkins
