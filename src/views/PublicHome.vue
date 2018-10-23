@@ -10,7 +10,9 @@
           <!--<Invite></Invite>-->
         </div>
         <transition-group name="fade" mode="out-in">
-          <PostItem v-for="post in postsMain" :post="post" :key="`${post.id}-main`"></PostItem>
+          <template v-if="isClientSide">
+            <PostItem v-for="post in postsMain" :post="post" :key="`${post.id}-main`"></PostItem>
+          </template>
         </transition-group>
       </div>
       <div class="homepage__list-aside aside-latest-comments">
@@ -33,7 +35,7 @@
 import { SITE_FULL, } from 'src/constants'
 import { get, uniqBy, find, } from 'lodash'
 import { mapState, } from 'vuex'
-import { isScrollBarReachBottom, isElementReachInView, isCurrentRoutePath, } from 'src/util/comm'
+import { isScrollBarReachBottom, isElementReachInView, isCurrentRoutePath, isClientSide, } from 'src/util/comm'
 // import { createStore, } from '../store'
 import AppTitledList from 'src/components/AppTitledList.vue'
 import AppNavExternalLinks from 'src/components/AppNavExternalLinks.vue'
@@ -184,6 +186,7 @@ export default {
     } 
   },
   computed: {
+    isClientSide,
     ...mapState({
       commentsForHome: state => get(state, 'commentsForHome', []),
       postsLatest: state => get(state, 'publicPosts.items', []),
