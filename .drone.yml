@@ -27,6 +27,7 @@ pipeline:
     image: alpine:edge
     commands:
     - apk add --update --repository https://dl-3.alpinelinux.org/alpine/edge/testing/ python build-base make vips-dev fftw-dev nodejs-current yarn
+    - yarn global add node-gyp
     - yarn install
     - yarn run build
     when:
