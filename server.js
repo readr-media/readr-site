@@ -320,7 +320,8 @@ function render (req, res, next) {
     }
     
     res.send(html)
-    !isProd && console.info(`whole request: ${Date.now() - s}ms`)
+    // !isProd && console.info(`whole request: ${Date.now() - s}ms`)
+    console.info(`whole request: ${Date.now() - s}ms`)
   })
 }
 
