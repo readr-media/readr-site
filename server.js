@@ -9,6 +9,7 @@ const compression = require('compression')
 const maxMemUsageLimit = 1000 * 1024 * 1024
 const memwatch = require('memwatch-next')
 const microcache = require('route-cache')
+const moment = require('moment')
 const requestIp = require('request-ip')
 const resolve = file => path.resolve(__dirname, file)
 const useragent = require('express-useragent')
@@ -133,7 +134,7 @@ app.use('/service-worker.js', serve('./distribution/service-worker.js'))
 // app.use(microcache.cacheSeconds(1, req => useMicroCache && req.originalUrl))
 
 function render (req, res, next) {
-  console.info(`request:`, req.url)
+  console.info(`request:`, req.url, req.clientIp)
   if (req.url.indexOf('/api/') === 0) {
     next()
     return
@@ -259,14 +260,24 @@ function render (req, res, next) {
     let status = err.code || 500
     if (status === 404) {
       isPageNotFound = true
+      console.error(`##########REQUEST URL(404)############\n`,
+      `ERROR OCCURRED WHEN RUNNING renderToString()\n`,
+      `REQUEST URL: ${req.url}\n`,
+      `REQUEST IP: ${req.clientIp}\n`,
+      `REFERER: ${req.headers.referer}\n`,
+      `${err}\n`, '######################')           
     } else if (status === 403) {
       isUnauthorized = true
       res.status(status).send(`<script>location.replace('/login')</script>`)
       return
     } else {
       isErrorOccurred = true
-      console.error(`Error occurred  during render : ${req.url}`)
-      console.error(err) 
+      console.error(`ERROR OCCURRED WHEN RUNNING renderToString()\n`,
+      `REQUEST URL: ${req.url}\n`,
+      `REQUEST IP: ${req.clientIp}\n`,
+      `REFERER: ${req.headers.referer}\n`,
+      `${err}`)
+ 
     }
 
     renderer.renderToString(Object.assign({}, context, { url: `/${status}`, error: err.message }), (e, h) => {
@@ -285,12 +296,12 @@ function render (req, res, next) {
 
   res.on('finish', function () {
     const mem = process.memoryUsage()
-    console.log('MEMORY STAT(heapUsed):', formatMem(mem.heapUsed))
+    console.error('MEMORY STAT(heapUsed):', formatMem(mem.heapUsed), `${moment().format('YYYY-MM-DD HH:mm:SS')}`)
     if (mem.heapUsed > maxMemUsageLimit) {
       for (let i = 0; i < 10; i += 1) {
         console.error('MEMORY WAS RUNNING OUT')
       } 
-      console.error(`KILLING PROCESS IN 1 SECOND(At ${(new Date).toString()})`)
+      console.error(`KILLING PROCESS IN 1 SECOND(At ${moment().format('YYYY-MM-DD HH:mm:SS')})`)
       process.exit(1)
     }
     if (isPageNotFound || isErrorOccurred || isUnauthorized) {
@@ -308,9 +319,7 @@ function render (req, res, next) {
     }
     
     res.send(html)
-    if (!isProd) {
-      console.info(`whole request: ${Date.now() - s}ms`)
-    }
+    !isProd && console.info(`whole request: ${Date.now() - s}ms`)
   })
 }
 
@@ -343,7 +352,8 @@ memwatch.on('stats', function(stats) {
   const currBase = formatMem(stats.current_base)
   const min = formatMem(stats.min)
   const max = formatMem(stats.max)
-  console.log('GC STATs:', [
+  console.info(`=======================================\n`,
+    `GC STATs(${moment().format('YYYY-MM-DD HH:mm:SS')}):\n`, [
     'num_full_gc ' + stats.num_full_gc,
     'num_inc_gc ' + stats.num_inc_gc,
     'heap_compactions ' + stats.heap_compactions,
@@ -352,7 +362,7 @@ memwatch.on('stats', function(stats) {
     'current_base ' + currBase,
     'min ' + min,
     'max ' + max
-  ].join(', '))
+  ].join(', '), `\n=======================================`)
   if (stats.current_base > maxMemUsageLimit) {
     for (let i = 0; i < 10; i += 1) {
       console.error('MEMORY WAS RUNNING OUT')
@@ -365,6 +375,6 @@ memwatch.on('stats', function(stats) {
     }, 1000)
     killTimer.unref()
     server.close()
-    console.error(`GOING TO KILL PROCESS IN 1 SECOND(At ${(new Date).toString()})`)
+    console.error(`GOING TO KILL PROCESS IN 1 SECOND(At ${moment().format('YYYY-MM-DD HH:mm:SS')})`)
   }
 })
