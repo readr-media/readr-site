@@ -27,7 +27,7 @@ pipeline:
     image: node:9.2.0-alpine
     commands:
     - apk update
-    - apk add vips-dev=8.6.0 fftw-dev --update-cache --repository https://dl-3.alpinelinux.org/alpine/edge/testing/
+    - apk add 'vips-dev<8.7.0' fftw-dev --update-cache --repository https://dl-3.alpinelinux.org/alpine/edge/testing/
     - apk add --no-cache python build-base make
     - yarn install
     - yarn run build
