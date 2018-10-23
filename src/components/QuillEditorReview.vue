@@ -43,7 +43,9 @@ export default {
   },
   methods: {
     $_quillEditor_onEditorChange(event) {
-      this.$emit('updateContent', event.html)
+      if (event.html) {
+        this.$emit('updateContent', event.html)
+      }
     },
   },
 }
