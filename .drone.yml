@@ -4,7 +4,7 @@ workspace:
 pipeline:
   start_slack:
     image: plugins/slack
-    channel: ground_control
+    channel: jenkins
     secrets: [slack_webhook]
     username: drone
     icon_url: https://avatars2.githubusercontent.com/u/2181346?s=200&v=4
@@ -13,6 +13,17 @@ pipeline:
       Someone gave *{{build.branch}}* a little push.
     when:
       event: [push]
+  
+  restore-cache:
+    image: drillster/drone-volume-cache
+    restore: true
+    mount:
+      - ./.yarn-cache
+      - ./node_modules
+    volumes:
+      - /tmp/cache:/cache
+    when:
+      branch: [master, dev]
   
   get_config:
     image: gcr.io/mirrormedia-1470651750304/drone-cloud-sdk:latest
@@ -33,7 +44,7 @@ pipeline:
     when:
       event: [push]
       branch: [master, dev]
-
+  
   publish:
     image: plugins/gcr
     repo: mirrormedia-1470651750304/${DRONE_REPO_NAME}
@@ -64,9 +75,20 @@ pipeline:
       event: [push]
       branch: dev
 
+  rebuild-cache:
+    image: drillster/drone-volume-cache
+    rebuild: true
+    mount:
+      - ./.yarn-cache
+      - ./node_modules
+    volumes:
+      - /tmp/cache:/cache
+    when:
+      branch: [master, dev]
+  
   finish_slack:
     image: plugins/slack
-    channel: ground_control
+    channel: jenkins
     secrets: [slack_webhook]
     username: drone
     icon_url: https://avatars2.githubusercontent.com/u/2181346?s=200&v=4
