@@ -255,7 +255,9 @@ function render (req, res, next) {
   const handleError = err => {
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')  
     if (err.url) {
+      console.error('Error occuerred. Redirect to', err.url)
       res.redirect(err.url)
+      return
     }
     let status = err.code || 500
     if (status === 404) {
@@ -277,7 +279,6 @@ function render (req, res, next) {
       `REQUEST IP: ${req.clientIp}\n`,
       `REFERER: ${req.headers.referer}\n`,
       `${err}`)
- 
     }
 
     renderer.renderToString(Object.assign({}, context, { url: `/${status}`, error: err.message }), (e, h) => {
