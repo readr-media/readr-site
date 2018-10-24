@@ -13,7 +13,7 @@
       </div>
       
       <Notification class="header__item"></Notification>
-      <div v-if="isLoggedIn" class="header__item header--account" v-click-outside="closeDropdown">
+      <div v-if="isClientSide && isLoggedIn" class="header__item header--account" v-click-outside="closeDropdown">
         <div @click="toggleDropdown">
           <span v-show="userNickname" v-text="userNickname"></span>
         </div>
@@ -46,7 +46,7 @@
   import { filter, get, } from 'lodash'
   import { ROLE_MAP, } from 'src/constants'
   import { removeToken, redirectToLogin, } from 'src/util/services'
-  import { getFullUrl, } from 'src/util/comm'
+  import { getFullUrl, isClientSide, } from 'src/util/comm'
   import Notification from 'src/components/header/Notification.vue'
   import SearchTool from 'src/components/search/SearchTool.vue'
 
@@ -90,9 +90,7 @@
         const regex = /^(admin|editor|guesteditor|member)$/
         return route.match(regex)
       },
-      isClientSide () {
-        return get(this.$store, 'state.isClientSide', false)
-      },
+      isClientSide,
       isLoggedIn () {
         return get(this.$store, 'state.isLoggedIn',)
       },
