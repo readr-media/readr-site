@@ -1,4 +1,4 @@
-export function createPointsIntroContent (memberCenter) {
+export function createPointsIntroContent (memberCenter = 'member') {
   return [
     `
       <h1>為什麼有 READr 點數？</h1>
@@ -7,7 +7,7 @@ export function createPointsIntroContent (memberCenter) {
     `,
     `
       <h1>READr 點數是什麼？</h1>
-      <p>在 READr 你可以使用點數，閱讀「編輯室專屬」的資料、加入「編輯室專屬」的內容討論、贊助專題報導，幫助 READr 新聞編輯室進行更多深入追蹤報導。</p>
+      <p>在 READr 你可以使用點數，閱讀「編輯室專屬」的資料，也可以給予使用「贊助」功能，給予所認同的編輯室實質鼓勵。幫助 READr 新聞編輯室進行更多深入追蹤報導。</p>
     `,
     `
       <h1>什麼時候需要 READr 點數呢？</h1>
@@ -40,10 +40,15 @@ export function createPointsIntroContent (memberCenter) {
       <p>2.填寫想要贊助的點數</p>
       <p>3.確認贊助點數明細</p>
       <p>4.完成贊助</p>
+      <p>備註：會員單筆最低贊助額為 30 點（新台幣 30 元），最高金額上限為 2000 點（新台幣 2000 元）。</p>
     `,
     `
       <h1>如何查詢 READr 點數餘額？</h1>
       <p>您可進入<a href="/${memberCenter}">會員中心</a>，點選<a href="/${memberCenter}/records/point-manager">點數記錄</a>，即可看到剩餘點數、加入過的編輯室、贊助過的專題。</p>
+    `,
+    `
+      <h1>點數結清後，還可以退費嗎？</h1>
+      <p>一旦任一會員選擇使用贊助功能的同時，本公司即推定該會員係民法上之成年人而具有完全行為能力，訂單一旦成立後，該交易即生效不得撤銷，且會員完成贊助交易後不論任何事由皆不得退款。</p>
     `,
   ]
 }

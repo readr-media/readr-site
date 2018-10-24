@@ -8,13 +8,13 @@
       <ol class="content__articles-list articles-list">
         <li
           class="articles-list__list-item list-item"
-          v-for="order in 6"
-          :key="order"
+          v-for="(content, index) in pointsIntroContent"
+          :key="index"
         >
           <div class="list-item__order">
-            <img :src="`/public/about-points/q${order}.png`" alt=""> 
+            <img :src="`/public/about-points/q${index + 1}.png`" alt=""> 
           </div>
-          <div class="list-item__content" v-html="createPointsIntroContent(memberCenter)[order - 1]"></div>
+          <div class="list-item__content" v-html="content"></div>
         </li>
       </ol>
     </section>
@@ -37,12 +37,14 @@ export default {
     memberCenter () {
       return get(filter(ROLE_MAP, { key: get(this.$store, 'state.profile.role',), }), [ 0, 'route', ], 'member')
     },
+    pointsIntroContent () {
+      return createPointsIntroContent(this.memberCenter)
+    },
   },
   methods: {
     clickClose () {
       this.$emit('clickClose')
     },
-    createPointsIntroContent,
   },
 }
 </script>
