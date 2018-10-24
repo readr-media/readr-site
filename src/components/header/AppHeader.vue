@@ -20,8 +20,8 @@
         <div :class="{ active: openDropdown }" class="dropdown account">
           <div class="dropdown__item logout" @click="logout" v-text="$t('HEADER.LOGOUT')"></div>
           <div class="dropdown__item" @click="goMemberCenter('profile-edit')" v-text="$t('HEADER.SETTING')"></div>
-          <div class="dropdown__item" @click="goMemberCenter('following')" v-text="$t('HEADER.POINT_RECOED')"></div>
-          <div class="dropdown__item" @click="goMemberCenter('point-manager')" v-text="$t('HEADER.FOLLOWING_RECORD')"></div>
+          <div class="dropdown__item" @click="goMemberCenter('following')" v-text="$t('HEADER.FOLLOWING_RECORD')"></div>
+          <div class="dropdown__item" @click="goMemberCenter('point-manager')" v-text="$t('HEADER.POINT_RECOED')"></div>
         </div>
       </div>
       <div v-if="isClientSide && !isLoggedIn" class="header__item header--status">
@@ -114,7 +114,11 @@
         //  * use location.replace instead of router.push to server-side render page
         //  */
         // location && location.replace(`/${memberCenter}`)
-        this.$router.push(`/${memberCenter}/${name}`)
+        if (name === 'profile-edit') {
+          this.$router.push(`/${memberCenter}/${name}`)
+        } else {
+          this.$router.push(`/${memberCenter}/records/${name}`)
+        }
         this.openDropdown = false
       },
       logout () {
