@@ -246,7 +246,7 @@
       return {
         isReadMoreClicked: false,
         customContentBreakTagName: 'hr',
-        allowedTags: [ 'img', 'strong', 'h1', 'h2', 'figcaption', 'em', 'blockquote', ],
+        allowedTags: [ 'img', 'strong', 'h1', 'h2', 'figcaption', 'em', 'blockquote', 'a', ],
       }
     },
     methods: {

@@ -113,7 +113,7 @@ export default {
   data () {
     return {
       isContentEmpty: !get(this.post, 'id') || (this.isMemo && !this.isProjectDone),
-      allowedTags: [ 'img', 'strong', 'h1', 'h2', 'figcaption', 'em', 'blockquote', ],
+      allowedTags: [ 'img', 'strong', 'h1', 'h2', 'figcaption', 'em', 'blockquote', 'a', ],
     }
   },
   methods: {
