@@ -177,10 +177,13 @@ export default {
     'GO_CLEAR_UP': '前往付款',        
   },
   'HEADER': {
+    'FOLLOWING_RECORD': '追蹤紀錄',
     'LOGIN' : '登入',
-    'LOGOUT' : '登出',
+    'LOGOUT' : '會員登出',
     'MEMBER_CENTRE' : '會員中心',
+    'POINT_RECOED': '點數紀錄',
     'SEARCH' : '搜尋',
+    'SETTING': '個人設定',
   },
   'FOLLOWING': {
     'FOLLOW': '追蹤',

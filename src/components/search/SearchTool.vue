@@ -21,7 +21,7 @@
         v-model="currentSearchVal"
         @keyup="setCurrVal"
         @change="checkIsChanged">
-      <span class="search__icon" @click="goSearch"></span>
+      <img src="/public/icons/search-white.png" :alt="$t('HEADER.SEARCH')">
     </div>
   </div>
 </template>
@@ -77,8 +77,12 @@
       height 20px
     &--desktop
       display none
-      background-color #fff
-      padding 0 5px 0 8px
+      background-color transparent
+      padding 0 5px
+      > img
+        width 25px
+        height 25px
+        cursor pointer
     &__input
       outline none
       border none
@@ -136,5 +140,23 @@
       &--mobile
         display none
       &--desktop
-        display block
+        display flex
+        &:hover
+          .search__input
+            display block
+            opacity 1
+            visibility visible
+            transition opacity .5s, visibility 0s .0s
+      &__input
+        height 25px
+        margin-right 10px
+        color #fff
+        background-color transparent
+        border-bottom 1px solid #fff
+        opacity 0
+        visibility hidden
+        transition opacity .5s, visibility 0s .5s
+        &::placeholder
+          color #fff
+    
 </style>
