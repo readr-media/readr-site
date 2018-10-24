@@ -57,9 +57,13 @@
         color #808080
         font-size 0.9375rem
         cursor pointer
+        & + &
+          border-left 1px solid #d3d3d3
         &.active
           background-color #ddcf21
           color #fff
+          &:not(:last-child)
+            border-right 1px solid #d3d3d3
     &__content
       border 5px solid #d8ca21
       padding 20px

@@ -50,13 +50,19 @@
       width 100%
       background-color white
       &__member
+        max-width 610px
+        margin 0 auto
         h3
-          margin 25px 0 20px
+          margin 40px 0
+          font-size 20px
+          letter-spacing .5px
         p
-          padding-left 20px
-          margin 15px 0
+          margin 30px 0
+          font-size 15px
+          line-height 1.6
+          letter-spacing .5px
+          text-align justify
           > span
-            padding-left 20px
             margin 5px 0
             display block
       
