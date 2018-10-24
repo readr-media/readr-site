@@ -11,24 +11,26 @@
         <div class="hamburger__bar"></div>
         <div class="hamburger__bar"></div>
       </div>
-      <div class="header__item header--account" v-click-outside="closeDropdown">
+      
+      <Notification class="header__item"></Notification>
+      <div v-if="isLoggedIn" class="header__item header--account" v-click-outside="closeDropdown">
         <div @click="toggleDropdown">
           <span v-show="userNickname" v-text="userNickname"></span>
-          <img v-if="isClientSide" :src="profileImage" :alt="userNickname">
         </div>
         <div :class="{ active: openDropdown }" class="dropdown account">
-          <div class="dropdown__item" @click="goMemberCenter" v-text="$t('HEADER.MEMBER_CENTRE')"></div>
           <div class="dropdown__item logout" @click="logout" v-text="$t('HEADER.LOGOUT')"></div>
+          <div class="dropdown__item" @click="goMemberCenter('profile-edit')" v-text="$t('HEADER.SETTING')"></div>
+          <div class="dropdown__item" @click="goMemberCenter('following')" v-text="$t('HEADER.POINT_RECOED')"></div>
+          <div class="dropdown__item" @click="goMemberCenter('point-manager')" v-text="$t('HEADER.FOLLOWING_RECORD')"></div>
         </div>
       </div>
-      <Notification class="header__item"></Notification>
       <div v-if="isClientSide && !isLoggedIn" class="header__item header--status">
         <!--router-link to="/login" v-text="$t('HEADER.LOGIN')"></router-link-->
         <!--Use Alink for loading facebook/google sdk-->
         <a  href="/login" v-text="$t('HEADER.LOGIN')"></a>
       </div>
-      <a href="https://www.mirrormedia.mg/" target="_blank">
-        <img class="header__item header__item--border-less" src="/public/icons/mirrormedia.png" alt="">
+      <a href="https://www.mirrormedia.mg/" class="header__item" target="_blank">
+        <img src="/public/icons/mirrormedia.png" alt="">
       </a>
       <section :class="{ open: openMenu }" class="header__menu">
         <ul>
@@ -108,13 +110,13 @@
       closeDropdown () {
         this.openDropdown = false
       },
-      goMemberCenter () {
+      goMemberCenter (name) {
         const memberCenter = get(filter(ROLE_MAP, { key: get(this.$store, 'state.profile.role',), }), [ 0, 'route', ], 'member')
         // /**
         //  * use location.replace instead of router.push to server-side render page
         //  */
         // location && location.replace(`/${memberCenter}`)
-        this.$router.push(`/${memberCenter}`)
+        this.$router.push(`/${memberCenter}/${name}`)
         this.openDropdown = false
       },
       logout () {
@@ -166,11 +168,10 @@
       color #fff
       cursor pointer
     .header__item
-      height 20px
+      height 25px
       padding 0 10px
-      border-left 1px solid #fff
-      &--border-less
-        border-left none
+      > img
+        height 25px
     &__logo
       position absolute
       top 8px
@@ -242,9 +243,9 @@
       span
         display none
         margin-right 10px
-        color #ddcf21
+        color #fff
         font-size .875rem
-        line-height 20px
+        line-height 25px
         vertical-align top
       img
         width 20px
@@ -255,9 +256,9 @@
         border-radius 50%
     &--status
       > a
-        font-size .85rem
+        font-size 1rem
         font-weight 300
-        line-height 20px
+        line-height 25px
         letter-spacing 1px
         user-select none
   .hamburger
@@ -271,7 +272,7 @@
       background-color #fff
   .dropdown
     position absolute
-    top calc(100% + 10px)
+    top calc(100% + 7px)
     right 0
     min-width 100px
     height auto !important
@@ -289,10 +290,10 @@
       padding 5px 10px
       text-align center
       font-size .75rem
+      &:hover
+        background-color #ddcf21
       & + .dropdown__item
         border-top 1px solid #d3d3d3
-    .logout
-      color #11b8c9
 
   @media (min-width 1440px)
     .home
@@ -306,12 +307,11 @@
       &.header--backstage
         .header--account
           border none
+      .header__item
+        padding 0 5px
+        margin 0 5px
       .header__item.header--edit
         display none
-      .header__item.header--search
-        padding 0 20px
-      .header__item.header--account
-        padding 0 20px
       .header__item.hamburger
         display none
       .header__menu
@@ -320,8 +320,8 @@
         span
           display inline
     .dropdown
-      left 10px
-      right auto
+      left 0
+      right 0
       width calc(100% - 20px)
           
 </style>
