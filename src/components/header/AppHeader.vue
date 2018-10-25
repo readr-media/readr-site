@@ -13,15 +13,16 @@
       </div>
       
       <Notification class="header__item"></Notification>
-      <div v-if="isClientSide && isLoggedIn" class="header__item header--account" v-click-outside="closeDropdown">
-        <div @click="toggleDropdown">
+      <div v-if="isClientSide && isLoggedIn" class="header__item header--account">
+        <div>
           <span v-show="userNickname" v-text="userNickname"></span>
         </div>
-        <div :class="{ active: openDropdown }" class="dropdown account">
-          <div class="dropdown__item logout" @click="logout" v-text="$t('HEADER.LOGOUT')"></div>
-          <div class="dropdown__item" @click="goMemberCenter('profile-edit')" v-text="$t('HEADER.SETTING')"></div>
-          <div class="dropdown__item" @click="goMemberCenter('following')" v-text="$t('HEADER.FOLLOWING_RECORD')"></div>
-          <div class="dropdown__item" @click="goMemberCenter('point-manager')" v-text="$t('HEADER.POINT_RECOED')"></div>
+        <div class="dropdown account">
+          <router-link :to="`/${role}`" class="dropdown__item" v-text="$t('HEADER.MEMBER_CENTRE')"></router-link>
+          <router-link :to="`/${role}/profile-edit`" class="dropdown__item" v-text="$t('HEADER.SETTING')"></router-link>
+          <router-link :to="`/${role}/records/following`" class="dropdown__item" v-text="$t('HEADER.FOLLOWING_RECORD')"></router-link>
+          <router-link :to="`/${role}/records/point-manager`" class="dropdown__item" v-text="$t('HEADER.POINT_RECOED')"></router-link>
+          <div class="dropdown__item" @click="logout" v-text="$t('HEADER.LOGOUT')"></div>
         </div>
       </div>
       <div v-if="isClientSide && !isLoggedIn" class="header__item header--status">
@@ -60,24 +61,8 @@
       Notification,
       SearchTool,
     },
-    directives: {
-      'click-outside': {
-        bind (el, binding, vnode) {
-          el.clickOutsideEvent = function (event) {
-            if (!(el == event.target || el.contains(event.target))) {
-              vnode.context[binding.expression](event)
-            }
-          }
-          document.body.addEventListener('click', el.clickOutsideEvent)
-        },
-        unbind (el) {
-          document.body.removeEventListener('click', el.clickOutsideEvent)
-        },
-      },
-    },
     data () {
       return {
-        openDropdown: false,
         openMenu: false,
       }
     },
@@ -100,29 +85,15 @@
       profileImage () {
         return getFullUrl(get(this.currentUser, 'profileImage', '/public/icons/exclamation.png') || '/public/icons/exclamation.png')
       },
+      role () {
+        return get(filter(ROLE_MAP, { key: get(this.$store, 'state.profile.role',), }), [ 0, 'route', ], 'member')
+      },
       userNickname () {
         return this.isLoggedIn && get(this.currentUser, 'nickname', get(this.currentUser, 'name', this.$t('HEADER.MEMBER_CENTRE')))
       },
     },
     methods: {
-      closeDropdown () {
-        this.openDropdown = false
-      },
-      goMemberCenter (name) {
-        const memberCenter = get(filter(ROLE_MAP, { key: get(this.$store, 'state.profile.role',), }), [ 0, 'route', ], 'member')
-        // /**
-        //  * use location.replace instead of router.push to server-side render page
-        //  */
-        // location && location.replace(`/${memberCenter}`)
-        if (name === 'profile-edit') {
-          this.$router.push(`/${memberCenter}/${name}`)
-        } else {
-          this.$router.push(`/${memberCenter}/records/${name}`)
-        }
-        this.openDropdown = false
-      },
       logout () {
-        this.openDropdown = false
         logout(this.$store).then(() => {
           const domain = get(this.$store, 'state.setting.DOMAIN')
           return removeToken(domain).then(() => {
@@ -132,9 +103,6 @@
       },
       openControlBar () {
         this.$emit('openControlBar')
-      },
-      toggleDropdown () {
-        this.openDropdown = !this.openDropdown
       },
       toggleMenu () {
         this.openMenu = !this.openMenu
@@ -239,6 +207,11 @@
         height 20px
     &--account
       position relative
+      &:hover
+        .dropdown
+          visibility visible
+          opacity 1
+          transition opacity .5s, visibility 0s .0s
       > div
         height 20px
         cursor pointer
@@ -284,12 +257,10 @@
     visibility hidden
     opacity 0
     transition opacity .5s, visibility 0s .5s
-    &.active
-      visibility visible
-      opacity 1
-      transition opacity .5s, visibility 0s .0s
     &__item
+      display block
       padding 5px 10px
+      color #444746 !important
       text-align center
       font-size .75rem
       &:hover

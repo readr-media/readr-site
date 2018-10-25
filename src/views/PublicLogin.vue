@@ -2,7 +2,7 @@
   <div class="login-page" :class="{ 'packing-test': !registrationActive, }">
     <main class="login-page__main">
       <template v-if="registrationActive">
-        <img src="/public/icons/logowithoutreadr.png">
+        <router-link to="/"><img src="/public/icons/logowithoutreadr.png"></router-link>
         <div class="message" v-html="$t('login.WELCOME')"></div>
         <LoginPanel v-if="isClientSide && !isLoggedIn"></LoginPanel>
       </template>
@@ -94,7 +94,9 @@
     align-items center
     width 950px
     margin 0 auto
-    > img
+    > a
+      font-size 0
+    img
       width 80px
     .message
       margin-top .5em
