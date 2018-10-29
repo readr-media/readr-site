@@ -1,9 +1,9 @@
 <template>
   <div id="app" :class="`page_${pageType.toLowerCase()}`">
-    <app-header v-if="!isLoginPage && !isCommentPage"></app-header>
+    <app-header v-if="showHeaderAndAsideNav"></app-header>
     <div :class="[ 'app__container', { 'app__container--wide': isLoginPage }, { 'app__container--reset': isCommentPage } ]">
       <div class="app__wrapper" :class="[ `page_${pageType.toLowerCase()}` ]">
-        <aside class="app__aside" :class="{ fixed: isFixedAside, }" v-if="!isLoginPage && !isCommentPage">
+        <aside class="app__aside" :class="{ fixed: isFixedAside, }" v-if="showHeaderAndAsideNav">
           <AppNavAside/>
         </aside>
         <main :class="[ 'app__main', { 'app__main--reset': isCommentPage } ]">
@@ -64,13 +64,16 @@
         return /\/login/.test(this.$route.fullPath)
       },
       isCommentPage () {
-        return this.$route.path === '/comment'
+        return /\/comment/.test(this.$route.fullPath)
       },
       isHome () {
         return this.$route.path === '/' || this.$route.path.indexOf('/post/') === 0
       },
       isTappayNeeded () {
         return get(this.$store, 'state.isTappayRequired', false)
+      },
+      showHeaderAndAsideNav () {
+        return !this.isLoginPage && !this.isCommentPage
       },
       shouldShowAbout () {
         return !this.isLoginPage && !this.isAboutPage && !this.isCommentPage
@@ -302,7 +305,6 @@ button
     padding 20px 5%
     border 5px solid #d8ca21
     background #fff
-  
 
 @media (min-width 768px)
   .view
