@@ -515,6 +515,8 @@ export default {
     'WORDING_SEARCH_FILTER_PROJECT' : '新聞專題',
   },
   'ABOUT': {
+    'COMPANY_ADDRESS': '地址：11070 台北市信義區東興路45號4樓',
+    'COMPANY_NAME': '精鏡傳媒股份有限公司',
     'WELCOME': {
       'PARAGRAPH_1': '親愛的朋友您好，',
       'PARAGRAPH_2': '歡迎你加入 READr ！',
@@ -537,6 +539,7 @@ export default {
       'PARAGRAPH_1': '我們會統計會員對不同新聞或特定類型主題的關心程度，並讓記者針對這些熱門議題進行深度追蹤。',
       'PARAGRAPH_2': '題目形成後，READr 會公布相關的計畫，如果你想看到這個報導產出、或想參與這個報導的製作，可以用點數付費支持，並加入編輯室討論。在報導完成之前，你可以看到記者所蒐集的相關數據資料、採訪筆記，也可以提供記者建議。而這些內容在專題完成之後都會全部公開。',
     },
+    'PHONE_NUMBER': '電話：02-6633-6800',
     'TO_ABOUT_POINTS': '了解點數使用方法',
   },
   'ALERT': {

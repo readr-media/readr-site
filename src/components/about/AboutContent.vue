@@ -48,6 +48,13 @@
         <router-link class="to-about-points" to="points" v-text="$t('ABOUT.TO_ABOUT_POINTS')" append></router-link>
       </div>
     </section>
+    <section class="about__info">
+      <div class="content">
+        <p><strong v-text="$t('ABOUT.COMPANY_NAME')"></strong></p>
+        <p v-text="$t('ABOUT.COMPANY_ADDRESS')"></p>
+        <p v-text="$t('ABOUT.PHONE_NUMBER')"></p>
+      </div>
+    </section>
   </div>
 </template>
 <script>
@@ -182,7 +189,20 @@ export default {
         right -190px
         width 380px
         height 165px
+    &__info
+      padding 15px 0
     
+    .about__info
+      .content
+        width auto
+        text-align center
+        p
+          display inline
+          color #fff
+          font-weight 300
+          & + p
+            margin-left 1.5em
+
     .content
       position relative
       // max-width 50%
