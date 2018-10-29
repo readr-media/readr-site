@@ -64,7 +64,7 @@
             @editPost="showEditorHandler">
           </PostListDetailed>
         </BaseLightBox>
-        <BaseLightBox :showLightBox.sync="showEditor">
+        <BaseLightBox :isEditor="true" :showLightBox.sync="showEditor">
           <PostPanel
             :action="postPanel"
             :editorType="postType"
@@ -314,6 +314,23 @@
       },
       tags () {
         return _.get(this.$store, [ 'state', 'tags', ], [])
+      },
+    },
+    watch: {
+      '$route' (to) {
+        if (to.params.tool) {
+          this.activePanel = to.params.panel
+          switch (to.params.tool) {
+            case 'following':
+              this.activeTab = 'followings'
+              this.defaultTab = 2
+              break
+            case 'point-manager':
+              this.activeTab = 'point-manager'
+              this.isDonationActive && (this.defaultTab = 3)
+              break
+          }
+        }
       },
     },
     beforeMount () {
@@ -610,6 +627,8 @@
           case 2:
             this.activeTab = 'followings'
             break
+          case 3:
+            this.activeTab = 'point-manager'
         }
       },
       updatePostList ({ sort, page, needUpdateCount = false, } = {}) {

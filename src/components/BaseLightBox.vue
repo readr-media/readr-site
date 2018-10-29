@@ -5,10 +5,10 @@
       <button
         class="baseLightBox__btn--close"
         :class="closeButtonClass"
-        @click="$_baseLightBox_close">
+        @click="closeLightBox(false)">
       </button>
     </div>
-    <div class="baseLightBox__curtain" @click="$_baseLightBox_close"></div>
+    <div class="baseLightBox__curtain" @click="closeLightBox(true)"></div>
   </section>
 </template>
 <script>
@@ -46,6 +46,10 @@
       isConversation: {
         default: false,
       },
+      isEditor: {
+        type: Boolean,
+        default: false,
+      },
       hideCloseButton: {
         default: false,
       },
@@ -72,7 +76,7 @@
       this.showLightBox && preventScroll.on()
     },
     methods: {
-      $_baseLightBox_close () {
+      closeLightBox (clickOutside) {
         preventScroll.off()
         if (this.hadRouteBeenNavigate) {
           this.$router.back()
@@ -83,7 +87,7 @@
             const seriesSlug = this.$route.params.slug
             this.$emit('update:showLightBox', false)
             this.$router.push(seriesSlug ? `/series/${seriesSlug}` : '/')
-          } else {
+          } else if (!(clickOutside && this.isEditor)) {
             this.$emit('update:showLightBox', false)
           }
         }

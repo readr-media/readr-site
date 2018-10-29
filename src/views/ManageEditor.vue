@@ -52,7 +52,7 @@
         @editPost="$_editor_showEditor">
       </post-list-detailed>
     </base-light-box>
-    <base-light-box :showLightBox.sync="showEditor">
+    <base-light-box :isEditor="true" :showLightBox.sync="showEditor">
       <post-panel
         :action="postPanel"
         :editorType="postType"
@@ -268,6 +268,23 @@
         return _.get(this.$store, [ 'state', 'tags', ], [])
       },
     },
+    watch: {
+      '$route' (to) {
+        if (to.params.tool) {
+          this.activePanel = to.params.panel
+          switch (to.params.tool) {
+            case 'following':
+              this.activeTab = 'followings'
+              this.defaultTab = 2
+              break
+            case 'point-manager':
+              this.activeTab = 'point-manager'
+              this.isDonationActive && (this.defaultTab = 3)
+              break
+          }
+        }
+      },
+    },
     beforeMount () {
       Promise.all([
         getPostsByUser(this.$store, {
@@ -303,7 +320,6 @@
       }      
     },
     methods: {
-      
       $_editor_addTag (tagName) {
         this.itemsStatus = TAG_ACTIVE.ACTIVE
         this.needConfirm = false

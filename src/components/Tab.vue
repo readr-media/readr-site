@@ -34,6 +34,9 @@
         this.$emit('changeTab', val)
         this.$emit('update:tabCurrIndex', val)
       },
+      defaultTab (val) {
+        this.activeItem = val
+      },
     },
     mounted () {
       this.defaultTab && (this.activeItem = this.defaultTab)

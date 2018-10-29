@@ -50,7 +50,7 @@
     <BaseLightBox :showLightBox.sync="showLightBoxPost">
       <BaseLightBoxPost :showLightBox="showLightBoxPost" :post="post" @closeEditor="post = {}"/>
     </BaseLightBox>
-    <BaseLightBox :showLightBox.sync="showLightBoxEditor">
+    <BaseLightBox :isEditor="true" :showLightBox.sync="showLightBoxEditor">
       <PostPanel
         :action="'edit'"
         :editorType="post.type || POST_TYPE.REVIEW"
