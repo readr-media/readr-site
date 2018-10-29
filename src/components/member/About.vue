@@ -76,6 +76,18 @@
         default: {},
       },
     },
+    watch: {
+      '$route' (to) {
+        if (to.params.panel && to.params.panel === 'profile-edit') {
+          this.isCurrUser && (this.showLightBox = true)
+        }
+      },
+      showLightBox (value) {
+        if (!value) {
+          this.$router.replace(this.$route.fullPath.replace('/profile-edit', ''))
+        }
+      },
+    },
   }
 </script>
 <style lang="stylus" scoped>

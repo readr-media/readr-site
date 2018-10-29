@@ -46,6 +46,23 @@
         return defaultTabs
       },           
     },
+    watch: {
+      '$route' (to) {
+        if (to.params.tool) {
+          this.activePanel = to.params.panel
+          switch (to.params.tool) {
+            case 'following':
+              this.activeTab = 'followings'
+              this.defaultTab = 0
+              break
+            case 'point-manager':
+              this.activeTab = 'point-manager'
+              this.isDonationActive && (this.defaultTab = 1)
+              break
+          }
+        }
+      },
+    },
     beforeMount () {
       if (get(this.$route, 'params.panel')) {
         switch (get(this.$route, 'params.panel')) {
