@@ -644,4 +644,8 @@ export default {
     'SWITCH_ON': '是',
     'SWITCH_OFF': '否',
   },
+  'NOT_FOUND': {
+    'TO_HOME_HINT': '抱歉 找不到這個網址',
+    'TO_HOME_BUTTON': '回首頁',
+  },
 }
