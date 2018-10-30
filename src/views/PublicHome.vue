@@ -247,7 +247,7 @@ export default {
   },
   beforeRouteEnter (to, from, next) {
     next(vm => {
-      if (isCurrentRoutePath(to, '/post/:postId') && !isCurrentRoutePath(from, '/')) {
+      if (isCurrentRoutePath(to, '/post/:postId') && !isCurrentRoutePath(from, '/') && !isCurrentRoutePath(from, '/about')) {
         vm.hadRouteBeenNavigate = true
       }
     })
