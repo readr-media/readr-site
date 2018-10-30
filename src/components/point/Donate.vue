@@ -69,7 +69,7 @@
         return get(this.$store, 'state.personalPoints.points', 0)
       },       
       defaultAmount () {
-        return get(this.targetItem, 'memoPoints', 20)
+        return get(this.targetItem, 'memoPoints', this.donateAmountMin)
       },
       isActive () {
         return get(this.$store, 'state.donateFlag.active', false)
@@ -87,6 +87,7 @@
         alertMsg: '',
         alertType: 0,
         donateAmount: 0,
+        donateAmountMin: 30,
         isBottom: false,
         showDonate: false,
       }
@@ -111,6 +112,14 @@
         this.alertType = 1
         if (isNaN(this.donateAmount)) {
           this.alertMsg = this.$t('point.DONATE.NOT_NUM')
+        } else if (this.donateAmount < this.donateAmountMin) {
+          let message = `${this.$t('point.DONATE.MIN_PREFIX')} `
+          message += `${this.donateAmountMin} `
+          message += `${this.$t('point.DONATE.MIN_POSTFIX')}，`
+          message += `${this.$t('point.DONATE.GREATER_THAN_MIN_PREFIX')} `
+          message += `${this.donateAmountMin} `
+          message += `${this.$t('point.DONATE.GREATER_THAN_MIN_POSTFIX')}`
+          this.alertMsg = message
         } else if (this.donateAmount < this.defaultAmount) {
           let message = `${this.$t('point.DONATE.LIMIT_PREFIX')} `
           message += `${this.defaultAmount} `
@@ -179,10 +188,13 @@
       defaultAmount () {
         this.donateAmount = get(this.targetItem, 'memoPoints', 20)
       },
-      donateAmount () {
-        debug('Mutation detected: donateAmount', this.donateAmount)
-        debug('currentPoints', this.currentPoints)
-        this.checkDonateAmount()
+      donateAmount: {
+        handler () {
+          debug('Mutation detected: donateAmount', this.donateAmount)
+          debug('currentPoints', this.currentPoints)
+          this.checkDonateAmount()
+        },
+        immediate: true,
       },
       isActive () {
         this.showDonate = this.isActive
