@@ -5,7 +5,7 @@
       <img class="post-content__leading-image" v-if="post.ogImage && isClientSide" :src="getFullUrl(post.ogImage)" alt="" @load="setLeadingImageOrientation(getFullUrl(post.ogImage), $event)">
       <h1 class="post-content__title--news" v-text="post.title"></h1>
       <div class="editor-writing--news">
-        <router-link :to="targetUrl" class="editor-writing__container">
+        <div class="editor-writing__container" @click="navigatePost">
           <template v-for="(p, i) in postContentProcessed">
             <!-- post content for initial display -->
             <div class="editor-writing__paragraph editor-writing__paragraph--news editor-writing__paragraph--visible" v-if="i <= shouldContentStopAtIndex" :key="`${post.id}-${i}`">
@@ -14,7 +14,7 @@
               </span>
               <span v-else v-html="p"></span>
               <span v-if="shouldShowReadMoreButton(i)">
-                <span class="editor-writing__more" @click="toogleReadmore($event)" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span>
+                <span class="editor-writing__more" @click.stop="toogleReadmore($event)" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span>
               </span>
             </div>
             <p 
@@ -27,7 +27,7 @@
             <!-- rest of the post content -->
             <!-- <p :class="`editor-writing__paragraph--${isReadMoreClicked ? 'visible' : 'invisible'}`" v-else v-html="p" :key="`${post.id}-${i}`"></p> -->
           </template>
-        </router-link>
+        </div>
       </div>
     </template>
     <!-- template for report -->
@@ -55,7 +55,7 @@
     <template v-else-if="postType === 'normal' || modifier !== 'main'">
       <h1 class="post-content__title" v-text="post.title"></h1>
       <div class="editor-writing">
-        <router-link :to="targetUrl" class="editor-writing__container">
+        <div class="editor-writing__container" @click="navigatePost">
           <template v-for="(p, i) in postContentProcessed">
             <!-- post content for initial display -->
             <p class="editor-writing__paragraph editor-writing__paragraph--visible" v-if="i <= shouldContentStopAtIndex" :key="`${post.id}-${i}`">
@@ -66,13 +66,13 @@
               <span v-else v-html="p"></span>
               <span v-if="shouldShowReadMoreButton(i)">
                 <span>......</span>
-                <span class="editor-writing__more" @click="toogleReadmore($event)" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span>
+                <span class="editor-writing__more" @click.stop="toogleReadmore($event)" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span>
               </span>
             </p>
             <!-- rest of the post content -->
             <p :class="`editor-writing__paragraph--${isReadMoreClicked ? 'visible' : 'invisible'}`" v-else v-html="p" :key="`${post.id}-${i}`"></p>
           </template>
-        </router-link>
+        </div>
       </div>
       <a class="editor-writing-source" v-if="isArticleMain && hasSource" :href="post.link" target="_blank">
         <div class="editor-writing-source__content">
@@ -250,6 +250,9 @@
       }
     },
     methods: {
+      navigatePost (e) {
+        get(e.target, 'tagName', '') === 'A' ? e.stopPropagation() : this.$router.push(this.targetUrl)
+      },
       toogleReadmore (event) {
         if (event) event.preventDefault()
         this.isReadMoreClicked = true
@@ -376,6 +379,7 @@
           color black
           min-width 100%
           min-height 20px
+          cursor pointer
           & > p
             font-size 15px
             font-weight 400
