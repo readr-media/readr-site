@@ -13,7 +13,7 @@
             <span v-if="isImg(p)" class="figure">
               <img v-if="isClientSide" :src="getImgSrc(p)" alt="post-content-img" @load="setContentImageOrientation(getImgSrc(p), $event)">
             </span>
-            <span v-else v-html="p"></span>
+            <span v-else :class="{ 'yt-iframe-container': isElementContentYoutube(p) }" v-html="p"></span>
             <span v-if="isMemoPaid === false && !isProjectPublished && i === shouldContentStopAtIndex">
               <span :style="{ marginTop: '20px', display: 'inline-block' }">...... </span>
               <span class="editor-writing__more" @click.prevent="memoDeductMach" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span>
@@ -137,15 +137,17 @@
       setOgImageOrientation: {
         required: true,
       },
+      isElementContentYoutube: {
+        type: Function,
+        required: true,
+      },
     },
   }
 </script>
 <style lang="stylus" scoped>
   .editor-writing__container
     cursor pointer
-    & >>> iframe
-      width 100%
-      height 343.125px
+
   .post-content__hint
     display flex
     align-items center
@@ -157,4 +159,18 @@
     .lock
       height 11px
       margin-right 7px
+
+  .yt-iframe-container
+    position relative
+    padding-bottom 56.25% // 16:9
+    padding-top 25px
+    width 100%
+    height 0
+    display inline-block
+    iframe
+      position absolute
+      top 0
+      left 0
+      width 100%
+      height 100%
 </style>
