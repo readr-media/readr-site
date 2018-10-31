@@ -101,9 +101,9 @@ export default {
     },    
     postContent () {
       if (!this.post.content || this.post.content.length === 0) { return [] }
-      const wrappedContent = sanitizeHtml(this.post.content, { allowedTags: false, selfClosing: [ 'img', ], })
+      const wrappedContent = sanitizeHtml(this.post.content, { allowedTags: false, allowedAttributes: this.allowedAttributes, allowedIframeHostnames: this.allowedIframeHostnames, selfClosing: [ 'img', ], })
       const doc = new dom().parseFromString(wrappedContent)
-      let postParagraphs = map(get(doc, 'childNodes'), (p) => (sanitizeHtml(new seializer().serializeToString(p), { allowedTags: this.allowedTags, })))
+      let postParagraphs = map(get(doc, 'childNodes'), (p) => (sanitizeHtml(new seializer().serializeToString(p), { allowedTags: this.allowedTags, allowedAttributes: this.allowedAttributes, allowedIframeHostnames: this.allowedIframeHostnames, })))
       return postParagraphs
     },
     commentCount () {
@@ -113,7 +113,9 @@ export default {
   data () {
     return {
       isContentEmpty: !get(this.post, 'id') || (this.isMemo && !this.isProjectDone),
-      allowedTags: [ 'img', 'strong', 'h1', 'h2', 'figcaption', 'em', 'blockquote', 'a', ],
+      allowedTags: [ 'img', 'strong', 'h1', 'h2', 'figcaption', 'em', 'blockquote', 'a', 'iframe', ],
+      allowedAttributes: Object.assign({}, sanitizeHtml.defaults.allowedAttributes, { iframe: [ 'frameborder', 'allowfullscreen', 'src', ], }),
+      allowedIframeHostnames: [ 'www.youtube.com', ],
     }
   },
   methods: {
@@ -330,6 +332,9 @@ export default {
         width 100%
       .portrait
         width 50%
+      iframe
+        width 100%
+        height 337.5px
     .nav-container
       padding 16px 0
   &__tags

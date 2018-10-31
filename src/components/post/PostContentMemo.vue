@@ -143,6 +143,9 @@
 <style lang="stylus" scoped>
   .editor-writing__container
     cursor pointer
+    & >>> iframe
+      width 100%
+      height 343.125px
   .post-content__hint
     display flex
     align-items center
