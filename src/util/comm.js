@@ -240,3 +240,16 @@ export function createShareUrl(socialMedia = 'fb', url = SITE_FULL) {
       return `${URL_SHARE_FB}?u=${createUTMQueryString(url, 'facebook')}`
   }
 }
+
+export function getElementContentSrc (content) {
+  const regexp = /<.*?src=['"](.*?)['"]/
+  const results = regexp.exec(content)
+  return _.get(results, '1', '')
+}
+
+export function isElementContentYoutube (content) {
+  const regexp = /<iframe([\w\W]+?)><\/iframe>/
+  const isIframe = regexp.test(content)
+  const isHostYoutube = getElementContentSrc(content).includes('www.youtube.com')
+  return isIframe && isHostYoutube
+}

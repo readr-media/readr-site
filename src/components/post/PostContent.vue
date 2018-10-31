@@ -12,7 +12,7 @@
               <span v-if="isImg(p)" class="figure">
                 <img v-if="isClientSide" :src="getImgSrc(p)" alt="post-content-img" @load="setContentImageOrientation(getImgSrc(p), $event)">
               </span>
-              <span v-else v-html="p"></span>
+              <span v-else :class="{ 'yt-iframe-container': isElementContentYoutube(p) }" v-html="p"></span>
               <span v-if="shouldShowReadMoreButton(i)">
                 <span class="editor-writing__more" @click.stop="toogleReadmore($event)" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span>
               </span>
@@ -49,7 +49,9 @@
         :isArticleMain="isArticleMain"
         :hasSource="hasSource"
         :setOgImageOrientation="setOgImageOrientation"
-        :post="post"></PostContentMemo>
+        :post="post"
+        :isElementContentYoutube="isElementContentYoutube"
+      />
     </template>
     <!-- template for post type is review and others -->
     <template v-else-if="postType === 'normal' || modifier !== 'main'">
@@ -106,7 +108,7 @@
 <script>
   import { POST_TYPE, } from 'api/config'
   import { get, map, some, findIndex, } from 'lodash'
-  import { onImageLoaded, getFullUrl, getReportUrl, isClientSide, } from 'src/util/comm'
+  import { onImageLoaded, getFullUrl, getReportUrl, isClientSide, getElementContentSrc, isElementContentYoutube, } from 'src/util/comm'
   import AppArticleNav from 'src/components/AppArticleNav.vue'
   import PostContentMemo from 'src/components/post/PostContentMemo.vue'
   import TagNav from 'src/components/tag/TagNav.vue'
@@ -289,9 +291,9 @@
         return regexp.test(content)
       },
       getImgSrc (content) {
-        const regexp = /<img.*?src=['"](.*?)['"]/
-        return getFullUrl(regexp.exec(content)[1])
+        return getFullUrl(getElementContentSrc(content))
       },
+      isElementContentYoutube,
       isClientSide,
       getFullUrl,
       get,
@@ -372,9 +374,6 @@
             padding 0 0 0 16px
             border-left 4px solid #ccc
             line-height 1
-          iframe
-            width 100%
-            height 281.25px
         &__container 
           // min-height 105px
           // overflow hidden
@@ -543,4 +542,18 @@
       border-top 1px solid #d3d3d3
       // > div
       //   margin-top 5px
+
+  .yt-iframe-container
+    position relative
+    padding-bottom 56.25% // 16:9
+    padding-top 25px
+    width 100%
+    height 0
+    display inline-block
+    iframe
+      position absolute
+      top 0
+      left 0
+      width 100%
+      height 100%
 </style>
