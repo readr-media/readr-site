@@ -148,7 +148,7 @@
         height 15px
         z-index 1
     > .notification__dropbox
-      top calc(100% + 24px)
+      top calc(100% + 8px)
       // margin-right -50px
       z-index 2
       cursor default
