@@ -59,10 +59,14 @@ export default {
     isCommentBodyExceed () {
       return !isEqual(this.commentBody, this.commentBodyTruncate)
     },
+    shouldNavigateToNewsProject () {
+      return this.commentResource.route === 'project'
+    },
   },
   methods: {
     goPost () {
-      this.$router.push(`/${this.commentResource.route}/${this.commentResource.param}`)
+      const path = `/${this.commentResource.route}/${this.commentResource.param}`
+      this.shouldNavigateToNewsProject ? window.open(path) : this.$router.push(path)
     },
   },
 }
