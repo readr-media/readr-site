@@ -78,10 +78,10 @@
               }, get(this.$store, [ 'state', 'register-token', ])).then(({ status, }) => {
                 if (status === 200) {
                   debug('Registered successfully')
-                  // readyToLogin({
-                  //   id: res.id,
-                  //   login_mode: 'facebook',
-                  // })
+                  readyToLogin({
+                    id: res.id,
+                    login_mode: 'facebook',
+                  })
                 }
               }).catch(({ err: error, mode, }) => {
                 if (error === 'User Already Existed' || error === 'User Duplicated') {

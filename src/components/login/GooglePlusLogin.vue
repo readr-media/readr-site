@@ -82,7 +82,7 @@
               ).then(({ status, }) => {
                 if (status === 200) {
                   debug('Register successfully.')
-                  // readyToLogin(idToken)
+                  readyToLogin(idToken)
                 }
               }).catch(({ err: error, mode, }) => {
                 if (error === 'User Already Existed' || error === 'User Duplicated') {
