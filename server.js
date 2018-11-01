@@ -162,7 +162,13 @@ function render (req, res, next) {
   }
 
   if (_.filter(PAGE_CACHE_EXCLUDING, (p) => (req.url.indexOf(p) > -1)).length === 0) {
-    !curr_host.match(targ_exp) && res.setHeader('Cache-Control', 'public, max-age=3600')  
+    if (!curr_host.match(targ_exp)) {
+      if (req.url.length !== 1) {
+        res.setHeader('Cache-Control', 'public, max-age=3600')  
+      } else {
+        res.setHeader('Cache-Control', 'public, max-age=300')  
+      }
+    }
   }
   // res.setHeader('Cache-Control', 'public, max-age=3600')  
   res.setHeader("Content-Type", "text/html")
