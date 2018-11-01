@@ -227,6 +227,11 @@
         const stopParagraphWordLength = stopParagraph.length
         return stopParagraphWordLength > this.showContentWordLimit
       },
+      isRemainingParagraphsEmpty () {
+        const hasRemainings = !this.isStopLastParagraphBeforeTruncate
+        const isRemainingsEmpty = this.postContent.slice(this.shouldContentStopAtIndex + 1, this.postContent.length).join('') === ''
+        return hasRemainings && isRemainingsEmpty
+      },
       targetUrl () {
         switch (this.postType) {
           case 'memo':
@@ -269,7 +274,8 @@
           !this.isReadMoreClicked &&
           (!this.isStopLastParagraphBeforeTruncate || this.isStopParagraphWordCountExceedLimit) &&
           this.isLastParagraphAfterTruncate(index) &&
-          !this.hasCustomContentBreak
+          !this.hasCustomContentBreak &&
+          !this.isRemainingParagraphsEmpty
       },
       setOgImageOrientation (src, event) {
         onImageLoaded(src).then(({ width, height, }) => {
