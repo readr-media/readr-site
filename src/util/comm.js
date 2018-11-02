@@ -241,10 +241,34 @@ export function createShareUrl(socialMedia = 'fb', url = SITE_FULL) {
   }
 }
 
-export function getElementContentSrc (content) {
-  const regexp = /<.*?src=['"](.*?)['"]/
+export function isLink (content) {
+  const regexp = /<a([\w\W]+?)><\/a>/
+  return regexp.test(content)
+}
+
+export function isImg (content) {
+  const regexp = /<img([\w\W]+?)\/>/
+  return regexp.test(content)
+}
+
+export function clickImg (content, e) {
+  if (isLink(content)) {
+    e.stopPropagation()
+    const href = getElementContentAttr(content, 'href')
+    const hrefWindow = window.open()
+    hrefWindow.opener = null
+    hrefWindow.location = href
+  }
+}
+
+export function getElementContentAttr (content, attr) {
+  const regexp = new RegExp(`<.*?${attr}=['"](.*?)['"]`)
   const results = regexp.exec(content)
   return _.get(results, '1', '')
+}
+
+export function getElementContentSrc (content) {
+  return getElementContentAttr(content, 'src')
 }
 
 export function isElementContentYoutube (content) {

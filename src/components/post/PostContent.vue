@@ -10,7 +10,7 @@
             <!-- post content for initial display -->
             <div class="editor-writing__paragraph editor-writing__paragraph--news editor-writing__paragraph--visible" v-if="i <= shouldContentStopAtIndex" :key="`${post.id}-${i}`">
               <span v-if="isImg(p)" class="figure">
-                <img v-if="isClientSide" :src="getImgSrc(p)" alt="post-content-img" @load="setContentImageOrientation(getImgSrc(p), $event)">
+                <img v-if="isClientSide" :src="getImgSrc(p)" alt="post-content-img" @load="setContentImageOrientation(getImgSrc(p), $event)" @click="clickImg(p, $event)">
               </span>
               <span v-else :class="{ 'yt-iframe-container': isElementContentYoutube(p) }" v-html="p"></span>
               <span v-if="shouldShowReadMoreButton(i)">
@@ -41,7 +41,6 @@
         :targetUrl="targetUrl"
         :postContentProcessed="postContentProcessed"
         :shouldContentStopAtIndex="shouldContentStopAtIndex"
-        :isImg="isImg"
         :getImgSrc="getImgSrc"
         :setContentImageOrientation="setContentImageOrientation"
         :isClientSide="isClientSide"
@@ -51,6 +50,8 @@
         :setOgImageOrientation="setOgImageOrientation"
         :post="post"
         :isElementContentYoutube="isElementContentYoutube"
+        :isImg="isImg"
+        :clickImg="clickImg"
       />
     </template>
     <!-- template for post type is review and others -->
@@ -108,7 +109,7 @@
 <script>
   import { POST_TYPE, } from 'api/config'
   import { get, map, some, findIndex, } from 'lodash'
-  import { onImageLoaded, getFullUrl, getReportUrl, isClientSide, getElementContentSrc, isElementContentYoutube, } from 'src/util/comm'
+  import { onImageLoaded, getFullUrl, getReportUrl, isClientSide, getElementContentSrc, isElementContentYoutube, isImg, clickImg, } from 'src/util/comm'
   import AppArticleNav from 'src/components/AppArticleNav.vue'
   import PostContentMemo from 'src/components/post/PostContentMemo.vue'
   import TagNav from 'src/components/tag/TagNav.vue'
@@ -292,13 +293,11 @@
           width < height ? event.target.classList.add('portrait') : event.target.classList.add('landscape')
         }).catch(() => { event.target.classList.add('landscape') })
       },
-      isImg (content) {
-        const regexp = /<img([\w\W]+?)\/>/
-        return regexp.test(content)
-      },
+      isImg,
       getImgSrc (content) {
         return getFullUrl(getElementContentSrc(content))
       },
+      clickImg,
       isElementContentYoutube,
       isClientSide,
       getFullUrl,
