@@ -18,7 +18,7 @@
           <h1 v-text="!isPostEmpty ? post.title : ''"></h1>
           <template v-for="p in postContent">
             <figure v-if="isImg(p)">
-              <img v-if="isClientSide" :src="getImgSrc(p)" alt="post-content-img" @load="setContentImageOrientation(getImgSrc(p), $event)">
+              <img :class="{ 'pointer': isLink(p) }" v-if="isClientSide" :src="getImgSrc(p)" alt="post-content-img" @load="setContentImageOrientation(getImgSrc(p), $event)" @click="clickImg(p, $event)">
             </figure>
             <div v-else :class="{ 'yt-iframe-container': isElementContentYoutube(p) }" v-html="p"></div>
           </template>
@@ -51,7 +51,7 @@
   import AppArticleNav from 'src/components/AppArticleNav.vue'
   import TagNav from 'src/components/tag/TagNav.vue'
   import PostShareNav from 'src/components/post/PostShareNav.vue'
-  import { isClientSide, updatedAtYYYYMMDD, getFullUrl, onImageLoaded, getPostFullUrl, getElementContentSrc, isElementContentYoutube, } from 'src/util/comm'
+  import { isClientSide, updatedAtYYYYMMDD, getFullUrl, onImageLoaded, getPostFullUrl, getElementContentSrc, isElementContentYoutube, isImg, isLink, clickImg, } from 'src/util/comm'
   export default {
     name: 'BaseLightBoxTemplateNews',
     components: {
@@ -71,10 +71,9 @@
       getImgSrc (content) {
         return getFullUrl(getElementContentSrc(content))
       },
-      isImg (content) {
-        const regexp = /<img([\w\W]+?)\/>/
-        return regexp.test(content)
-      },
+      isImg,
+      isLink,
+      clickImg,
       isElementContentYoutube,
       setLeadingImageOrientation (src, event) {
         onImageLoaded(src).then(({ width, height, }) => {
@@ -135,4 +134,7 @@
     left 0
     width 100%
     height 100%
+
+.pointer
+  cursor pointer
 </style>
