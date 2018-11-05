@@ -5,7 +5,7 @@
       <img class="post-content__leading-image" v-if="post.ogImage && isClientSide" :src="getFullUrl(post.ogImage)" alt="" @load="setLeadingImageOrientation(getFullUrl(post.ogImage), $event)">
       <h1 class="post-content__title--news" v-text="post.title"></h1>
       <div class="editor-writing--news">
-        <div class="editor-writing__container" @click="navigatePost">
+        <div class="editor-writing__container editor-writing__container--pointer" @click="navigatePost">
           <template v-for="(p, i) in postContentProcessed">
             <!-- post content for initial display -->
             <div class="editor-writing__paragraph editor-writing__paragraph--news editor-writing__paragraph--visible" v-if="i <= shouldContentStopAtIndex" :key="`${post.id}-${i}`">
@@ -261,7 +261,13 @@
     },
     methods: {
       navigatePost (e) {
-        get(e.target, 'tagName', '') === 'A' ? e.stopPropagation() : this.$router.push(this.targetUrl)
+        if (get(e.target, 'tagName', '') === 'A') {
+          e.stopPropagation()
+        } else {
+          if (this.postType !== 'normal') {
+            this.$router.push(this.targetUrl)
+          }
+        }
       },
       toogleReadmore (event) {
         if (event) event.preventDefault()
@@ -388,7 +394,8 @@
           color black
           min-width 100%
           min-height 20px
-          cursor pointer
+          &--pointer
+            cursor pointer
           & > p
             font-size 15px
             font-weight 400
