@@ -3,7 +3,7 @@
     <h1 class="list-container__date" v-text="date"></h1>
     <ol class="list-container__list list">
       <FollowingListItem
-        :class="[ 'list__list-item',  { 'list__list-item--less-padding': item.resource === 'tag' } ]"
+        class="list__list-item"
         v-for="item in data"
         :key="`${item.resource}-${getItemContent(item).id}`"
         :resource="item.resource"
@@ -17,6 +17,7 @@
           :to="`/tag/${getItemContent(item).id}`"
         >
         </router-link>
+        
         <!-- slot template in FollowingListItem for project -->
         <div
           v-else-if="item.resource === 'project'"
@@ -26,10 +27,8 @@
             <img :src="getItemContent(item).heroImage" alt="">
           </router-link>
           <div class="report__info">
-            <div>
-              <p class="report__category" v-text="$t('FOLLOWING.PROJECT')"></p>
-              <router-link class="report__title" :to="`/series/${getItemContent(item).slug}`" v-text="getItemContent(item).title"></router-link>
-            </div>
+            <p class="report__category" v-text="$t('FOLLOWING.PROJECT')"></p>
+            <router-link class="report__title" :to="`/series/${getItemContent(item).slug}`" v-text="getItemContent(item).title"></router-link>
             <p class="report__tags" v-text="getTags(item)"></p>
           </div>
         </div>
@@ -73,6 +72,7 @@ export default {
   &__date
     font-size 12px
     color #808080
+    margin 15px 0
 
 .list
   margin 11px 0 0 0
@@ -81,11 +81,9 @@ export default {
     border-bottom 1px solid #d3d3d3
     &:nth-child(1)
       border-top 1px solid #d3d3d3
-    &--less-padding
-      padding 6px 0 6px 13px !important
 
 .tag
-  font-size 12px
+  font-size 15px
   font-weight 500
   color black
   margin 0
@@ -109,14 +107,14 @@ export default {
   &__category, &__title, &__tags
     margin 0
   &__category
-    margin 0 0 8px 0
     font-size 12px
     color #808080
   &__title
-    font-size 18px
+    font-size 15px
     font-weight 600
     color black
   &__tags
     font-size 12px
+    min-height 16px
 </style>
 
