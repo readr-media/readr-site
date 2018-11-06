@@ -1,5 +1,5 @@
 <template>
-  <div class="post-item" :id="`post-item-${post.id}`" :key="`post-item-${post.id}`">
+  <div v-show="!isReportOrMemo" class="post-item" :id="`post-item-${post.id}`" :key="`post-item-${post.id}`">
     <div class="post">
       <figure class="post__author author">
         <router-link :to="`/profile/${get(post, 'author.id')}`">

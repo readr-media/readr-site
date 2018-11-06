@@ -193,9 +193,9 @@ export function getShareUrl (url) {
 export function getPostType (postData) {
   if (_.get(postData, 'type') === POST_TYPE.NEWS) {
     return 'news'
-  } else if (_.get(postData, 'projectId') && _.get(postData, 'slug')) {
+  } else if (_.get(postData, 'type') === 4) { // TODOS: remove hardcode
     return 'report'
-  } else if (_.get(postData, 'projectId') && !_.get(postData, 'slug')){
+  } else if (_.get(postData, 'type') === 5) { // TODOS: remove hardcode
     return 'memo'
   } else {
     return 'normal'
