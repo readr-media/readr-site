@@ -129,13 +129,13 @@
         return this.post.linkTitle
       },
       linkTitleTrim () {
-        return truncate(this.post.linkTitle, 15)
+        return truncate(this.post.linkTitle || '', 15)
       },
       linkDescriptionTrim () {
-        return truncate(this.post.linkDescription, 35)
+        return truncate(this.post.linkDescription || '', 35)
       },
       linkNameTrim () {
-        return truncate(this.post.linkName, 20)
+        return truncate(this.post.linkName || '', 20)
       },
       isArticleMain () {
         return this.modifier === 'main'
