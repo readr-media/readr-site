@@ -51,7 +51,8 @@
   import AppArticleNav from 'src/components/AppArticleNav.vue'
   import TagNav from 'src/components/tag/TagNav.vue'
   import PostShareNav from 'src/components/post/PostShareNav.vue'
-  import { isClientSide, updatedAtYYYYMMDD, getFullUrl, onImageLoaded, getPostFullUrl, getElementContentSrc, isElementContentYoutube, isImg, isLink, clickImg, } from 'src/util/comm'
+  import { isClientSide, updatedAtYYYYMMDD, getFullUrl, onImageLoaded, getElementContentSrc, isElementContentYoutube, isImg, isLink, clickImg, } from 'src/util/comm'
+  import { getPostFullUrl, } from 'src/util/post/index'
   export default {
     name: 'BaseLightBoxTemplateNews',
     components: {
