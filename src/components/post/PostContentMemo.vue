@@ -29,22 +29,11 @@
         </template>
       </div>    
     </div>
-    <a class="editor-writing-source" v-if="isArticleMain && hasSource" :href="post.link" target="_blank">
-      <div class="editor-writing-source__content">
-        <h1 class="editor-writing-source__title" v-text="linkTitleTrim"></h1>
-        <div class="editor-writing-source__description">
-          <p v-text="linkDescriptionTrim"></p>
-          <p class="editor-writing-source__cite" v-if="post.linkName">{{ $t('homepage.WORDING_HOME_POST_SOURCE') }}{{ linkNameTrim }}</p>
-        </div>
-      </div>
-      <img class="editor-writing-source__figure" v-if="post.linkImage" :src="post.linkImage" @load="setOgImageOrientation(post.linkImage, $event)">
-    </a>
   </div>
 </template>
 <script>
   import { PROJECT_STATUS, } from 'api/config'
   import { get, } from 'lodash'
-  import truncate from 'html-truncate'
 
   const switchOnDeductionPanel = (store, item) => store.dispatch('SWITCH_ON_CONSUME_PANEL', { active: true, item, })
 
@@ -53,15 +42,6 @@
     computed: {
       isMemoPaid () {
         return get(this.post, 'project.paid')
-      },
-      linkTitleTrim () {
-        return truncate(this.post.linkTitle, 20)
-      },
-      linkDescriptionTrim () {
-        return truncate(this.post.linkDescription, 45)
-      },
-      linkNameTrim () {
-        return truncate(this.post.linkName, 20)
       },
       isProjectPublished () {
         return get(this.post, 'project.status') === PROJECT_STATUS.DONE
