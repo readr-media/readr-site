@@ -32,9 +32,11 @@
     </template>
     <!-- template for report -->
     <template v-else-if="postType === 'report'">
-      <a v-if="post.heroImage" class="report__img" :href="getReportUrl(post.slug)"><img :src="getFullUrl(post.heroImage)" alt=""></a>
-      <h1 class="report__title"><a :href="getReportUrl(post.slug)" v-text="get(post, 'title')" target="_blank"></a></h1>
-      <p class="report__descr"><a :href="getReportUrl(post.slug)" v-text="get(post, 'description')" target="_blank"></a></p>
+      <template v-if="isClientSide">
+        <a v-if="getReportHeroImageUrl(post)" class="report__img" :href="getReportLink(post)"><img :src="getReportHeroImage(post)" alt=""></a>
+      </template>
+      <h1 class="report__title"><a :href="getReportLink(post)" v-text="get(post, 'title')" target="_blank"></a></h1>
+      <p class="report__descr"><a :href="getReportLink(post)" v-text="getReportContent(post)" target="_blank"></a></p>
     </template>
     <template v-else-if="postType === 'memo'">
       <PostContentMemo
@@ -109,12 +111,16 @@
 <script>
   import { POST_TYPE, } from 'api/config'
   import { get, map, some, findIndex, } from 'lodash'
-  import { onImageLoaded, getFullUrl, getReportUrl, isClientSide, getElementContentSrc, isElementContentYoutube, isImg, clickImg, } from 'src/util/comm'
+  import { onImageLoaded, getFullUrl, isClientSide, getElementContentSrc, isElementContentYoutube, isImg, clickImg, currEnv, } from 'src/util/comm'
+  import { getPostType, } from 'src/util/post/index'
+  import { getReportContent, getReportLink, getReportHeroImage, getReportHeroImageUrl, } from 'src/util/post/report'
+  import { SITE_DOMAIN, SITE_DOMAIN_DEV, } from 'src/constants'
   import AppArticleNav from 'src/components/AppArticleNav.vue'
   import PostContentMemo from 'src/components/post/PostContentMemo.vue'
   import TagNav from 'src/components/tag/TagNav.vue'
   import sanitizeHtml from 'sanitize-html'
   import truncate from 'html-truncate'
+  import pathToRegexp from 'path-to-regexp'
 
   const dom = require('xmldom').DOMParser
   const seializer  = require('xmldom').XMLSerializer
@@ -141,15 +147,7 @@
         return this.modifier === 'main'
       },
       postType () {
-        if (get(this.post, 'type') === POST_TYPE.NEWS) {
-          return 'news'
-        } else if (get(this.post, 'projectId') && get(this.post, 'slug')) {
-          return 'report'
-        } else if (get(this.post, 'projectId') && !get(this.post, 'slug')){
-          return 'memo'
-        } else {
-          return 'normal'
-        }
+        return getPostType(this.post)
       },
       resourceType () {
         switch (get(this.post, 'type')) {
@@ -234,16 +232,24 @@
         return hasRemainings && isRemainingsEmpty
       },
       targetUrl () {
-        switch (this.postType) {
-          case 'memo':
+        if (this.postType === 'memo') {
+          const link = get(this.post, 'link')
+          if (link) {
+            const re = pathToRegexp(`${this.SITE_DOMAIN}/series/:projectSlug/:memoId`)
+            const projectSlug = get(re.exec(link), '1')
+            const memoId = get(re.exec(link), '2')
+            return `/series/${projectSlug}/${memoId}`
+          } else {
             return `/series/${get(this.$route, 'params.slug')}/${get(this.post, 'id')}`
-          default:
-            return `/post/${get(this.post, 'id')}`
+          }
+        } else {
+          return `/post/${get(this.post, 'id')}`
         }
       },
       postLinkDecoded () {
         return decodeURI(this.post.link)
       },
+      isClientSide,
     },
     components: {
       AppArticleNav,
@@ -257,9 +263,14 @@
         allowedTags: [ 'img', 'strong', 'h1', 'h2', 'figcaption', 'em', 'blockquote', 'a', 'iframe', ],
         allowedAttributes: Object.assign({}, sanitizeHtml.defaults.allowedAttributes, { iframe: [ 'frameborder', 'allowfullscreen', 'src', ], }),
         allowedIframeHostnames: [ 'www.youtube.com', ],
+        SITE_DOMAIN: currEnv() === 'dev' ? `http://${SITE_DOMAIN_DEV}` : `https://${SITE_DOMAIN}`,
       }
     },
     methods: {
+      getReportHeroImageUrl,
+      getReportHeroImage,
+      getReportContent,
+      getReportLink,
       navigatePost (e) {
         if (get(e.target, 'tagName', '') === 'A') {
           e.stopPropagation()
@@ -305,10 +316,8 @@
       },
       clickImg,
       isElementContentYoutube,
-      isClientSide,
       getFullUrl,
       get,
-      getReportUrl,
     },
     mounted () {},
     props: {

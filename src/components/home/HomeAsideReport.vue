@@ -2,11 +2,11 @@
   <section class="home-project-aside">
     <template v-for="report in reports">
       <div :key="report.id" class="home-project-aside__container">
-        <a class="home-project-aside__content" :href="getReportUrl(report.slug)" target="_blank">
+        <a class="home-project-aside__content" :href="getReportLink(report)" target="_blank">
           <h3 v-if="report.project.title" v-text="report.project.title"></h3>
           <h1 class="home-project-aside__project-title" v-text="report.title"></h1>
         </a>
-        <a :href="getReportUrl(report.slug)" target="_blank"><img class="home-project-aside__project-image" :src="report.heroImage ? report.heroImage : '/public/icons/readr-logo.png'"></a>
+        <a :href="getReportLink(report)" target="_blank"><img class="home-project-aside__project-image" :src="report.heroImage ? report.heroImage : '/public/icons/readr-logo.png'"></a>
         <div class="home-project-aside__comment">
           <AppArticleNav :resource="'report'" :postId="report.id" :commentCount="report.commentAmount || 0" :toogleComment="false"/>
         </div>
@@ -18,7 +18,7 @@
 <script>
 import AppArticleNav from 'src/components/AppArticleNav.vue'
 import { get, } from 'lodash'
-import { getReportUrl, } from 'src/util/comm'
+import { getReportLink, } from 'src/util/post/report'
 
 export default {
   name: 'HomeAsideReport',
@@ -31,7 +31,7 @@ export default {
     },
   },
   methods: {
-    getReportUrl,
+    getReportLink,
   },
 }
 </script>

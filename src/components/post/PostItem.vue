@@ -1,5 +1,5 @@
 <template>
-  <div v-show="!isReportOrMemo" class="post-item" :id="`post-item-${post.id}`" :key="`post-item-${post.id}`">
+  <div class="post-item" :id="`post-item-${post.id}`" :key="`post-item-${post.id}`">
     <div class="post">
       <figure class="post__author author">
         <router-link :to="`/profile/${get(post, 'author.id')}`">
@@ -36,8 +36,10 @@ import AppShareButton from 'src/components/AppShareButton.vue'
 import AppDateCreatedUpdated from 'src/components/AppDateCreatedUpdated.vue'
 import PostContent from 'src/components/post/PostContent.vue'
 import PostShareNav from 'src/components/post/PostShareNav.vue'
-import { dateDiffFromNow, isClientSide, getArticleAuthorNickname, getArticleAuthorThumbnailImg, getPostType, } from 'src/util/comm'
+import { dateDiffFromNow, isClientSide, getArticleAuthorNickname, getArticleAuthorThumbnailImg, } from 'src/util/comm'
+import { getPostType, } from 'src/util/post/index'
 import { get, } from 'lodash'
+import { isAnnouncementAccountId, } from 'src/util/post/index'
 
 export default {
   name: 'PostItem',
@@ -52,14 +54,20 @@ export default {
     dateDiffFromNow () {
       return dateDiffFromNow(this.post.publishedAt)
     },
-    authorNickname () {
-      return getArticleAuthorNickname(this.post)
-    },
-    authorThumbnailImg () {
-      return getArticleAuthorThumbnailImg(this.post)
-    },
     isReportOrMemo () {
       return getPostType(this.post) === 'report' || getPostType(this.post) === 'memo'
+    },
+    isAnnouncementAccountId () {
+      return isAnnouncementAccountId(get(this.post, 'author.id'))
+    },
+    authorNickname () {
+      return this.isAnnouncementAccountId ? get(this.memberDataAnnouncement, 'nickname') : getArticleAuthorNickname(this.post)
+    },
+    authorThumbnailImg () {
+      return this.isAnnouncementAccountId ? get(this.memberDataAnnouncement, 'profileImage') : getArticleAuthorThumbnailImg(this.post)
+    },
+    memberDataAnnouncement () {
+      return get(this.$store.state, 'publicMemberAnnouncement', {})
     },
   },  
   methods: {

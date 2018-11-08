@@ -23,8 +23,11 @@
 
 <script>
 import { get, } from 'lodash'
-import { createShareUrl, isClientSide, getPostType, getPostFullUrl, } from 'src/util/comm'
+import { isClientSide, } from 'src/util/comm'
 import { logTrace, } from 'src/util/services'
+
+import { getPostType, getPostFullUrl, } from 'src/util/post/index'
+import { createShareUrl, } from 'src/util/post/share'
 
 export default {
   props: {

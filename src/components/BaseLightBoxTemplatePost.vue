@@ -42,7 +42,8 @@
   import TagNav from 'src/components/tag/TagNav.vue'
   import PostShareNav from 'src/components/post/PostShareNav.vue'
   import { get, } from 'lodash'
-  import { isClientSide, updatedAtYYYYMMDD, getPostFullUrl, } from 'src/util/comm'
+  import { isClientSide, updatedAtYYYYMMDD, } from 'src/util/comm'
+  import { getPostFullUrl, } from 'src/util/post/index'
   const debug = require('debug')('CLIENT:BaseLightBoxTemplatePost')
   export default {
     name: 'BaseLightBoxTemplatePost',

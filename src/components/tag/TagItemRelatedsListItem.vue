@@ -13,7 +13,8 @@
 
 <script>
 import { get, } from 'lodash'
-import { getReportUrl, getFullUrl, } from 'src/util/comm'
+import { getFullUrl, } from 'src/util/comm'
+import { getReportLink, } from 'src/util/post/report'
 
 export default {
   props: {
@@ -30,7 +31,7 @@ export default {
       return getFullUrl(get(this.data, 'heroImage', ''))
     },
     url () {
-      return getReportUrl(get(this.data, 'slug', ''))
+      return getReportLink(this.data)
     },
   },
 }

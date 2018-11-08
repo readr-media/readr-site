@@ -25,6 +25,11 @@ const SET_PUBLIC_MEMBER = (state, { member, }) => {
   debug('SET_PUBLIC_MEMBER', state['publicMember'])
 }
 
+const SET_PUBLIC_MEMBER_ANNOUNCEMENT = (state, { member, }) => {
+  state['publicMemberAnnouncement'] = _.get(member, [ 'items', 0, ])
+  debug('SET_PUBLIC_MEMBER_ANNOUNCEMENT', state['publicMemberAnnouncement'])
+}
+
 const SET_PUBLIC_MEMBERS = (state, { members, role, }) => {
   if (!(role in state['publicMembers'])) {
     Vue.set(state['publicMembers'], role, { items: [], })  
@@ -48,6 +53,7 @@ export {
   SET_PERSONAL_SETTING,
   SET_PROFILE,
   SET_PUBLIC_MEMBER,
+  SET_PUBLIC_MEMBER_ANNOUNCEMENT,
   SET_PUBLIC_MEMBERS,
   UPDATED_PROFILE,
 }

@@ -2,8 +2,7 @@ import _ from 'lodash'
 import Cookie from 'vue-cookie'
 import uuidv4 from 'uuid/v4'
 import pathToRegexp from 'path-to-regexp'
-import { SITE_DOMAIN, SITE_DOMAIN_DEV, SITE_FULL, MM_SITE_DOMAIN, OLD_PROJECTS_SLUGS, URL_SHARE_FB, URL_SHARE_LINE, } from '../constants'
-import { POST_TYPE, } from 'api/config'
+import { SITE_DOMAIN, SITE_DOMAIN_DEV, } from '../constants'
 
 const debug = require('debug')('CLIENT:comm')
 
@@ -151,9 +150,6 @@ export function isClientSide () {
   return _.get(this.$store, 'state.isClientSide', false)
 }
 
-export function getReportUrl (slug) {
-  return OLD_PROJECTS_SLUGS.includes(slug) ? `https://${MM_SITE_DOMAIN}/projects/${slug}` : `https://${SITE_DOMAIN}/project/${slug}`
-}
 
 export function isDescendant (child, { parent = document.body, }) {
   let node = child.parentNode
@@ -188,57 +184,6 @@ export function getShareUrl (url) {
     return `http://${SITE_DOMAIN_DEV}${url}`
   }
   return `${location.protocol}//${location.host}${url}`
-}
-
-export function getPostType (postData) {
-  if (_.get(postData, 'type') === POST_TYPE.NEWS) {
-    return 'news'
-  } else if (_.get(postData, 'type') === 4) { // TODOS: remove hardcode
-    return 'report'
-  } else if (_.get(postData, 'type') === 5) { // TODOS: remove hardcode
-    return 'memo'
-  } else {
-    return 'normal'
-  }
-}
-
-export function getPostFullUrl (postData) {
-  const postType = getPostType(postData)
-  switch (postType) {
-    case 'news':
-    case 'normal':
-      return getShareUrl(`/post/${_.get(postData, 'id', '')}`)
-    case 'memo':
-      return getShareUrl(`/series/${_.get(postData, [ 'project', 'slug', ], '')}/${_.get(postData, 'id', '')}`)
-    case 'report':
-      return getReportUrl(_.get(postData, 'slug', ''))
-    default:
-      return SITE_FULL
-  }
-}
-
-export function createShareUrl(socialMedia = 'fb', url = SITE_FULL) {
-  const createUTMQueryString = (url, utmSource) => {
-    const urlInstance = new URL(url)
-
-    let params = new URLSearchParams(urlInstance.search.slice(1))
-    params.append('utm_source', utmSource)
-    params.append('utm_medium', 'sharebutton')
-    urlInstance.search = `?${params.toString()}`
-
-    return encodeURIComponent(urlInstance.toString())
-  }
-
-  switch (socialMedia) {
-    case 'fb':
-      return `${URL_SHARE_FB}?u=${createUTMQueryString(url, 'facebook')}`
-    case 'line':
-      return `${URL_SHARE_LINE}?url=${createUTMQueryString(url, 'line')}`
-    // case 'g+':
-      // return `${URL_SHARE_GOOGLEPLUS}?url=${url}`
-    default:
-      return `${URL_SHARE_FB}?u=${createUTMQueryString(url, 'facebook')}`
-  }
 }
 
 export function isLink (content) {

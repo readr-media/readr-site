@@ -89,6 +89,7 @@ export function createStore () {
       'publicPostReview': [],
       'publicPostNews': [],
       'publicMember': {},
+      'publicMemberAnnouncement': {},
       'publicMembers': {},
       'publicMemoSingle': {},
       'publicMemos': [],

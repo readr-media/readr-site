@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { SITE_FULL, } from 'src/constants'
+import { SITE_FULL, ANNOUNCEMENT_ACCOUNT_ID, } from 'src/constants'
 import { get, uniqBy, find, } from 'lodash'
 import { mapState, } from 'vuex'
 import { isScrollBarReachBottom, isElementReachInView, isCurrentRoutePath, } from 'src/util/comm'
@@ -95,6 +95,12 @@ const getUserFollowing = (store, { id = get(store, 'state.profile.id'), resource
     id: id,
     resource: resource,
     resource_type: resourceType,
+  })
+}
+
+const getMemberPublic = (store, params) => {
+  return store.dispatch('GET_PUBLIC_MEMBER', {
+    params: params,
   })
 }
 
@@ -264,6 +270,8 @@ export default {
     if (!get(this.commentsForHome, 'length')) {
       fetchComment(this.$store)
     }
+    
+    getMemberPublic(this.$store, { id: Number(ANNOUNCEMENT_ACCOUNT_ID), })
   },
   mounted () {
     window.onscroll = () => {
