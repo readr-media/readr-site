@@ -1,4 +1,5 @@
 /*eslint no-empty-pattern: 0*/
+import { get, } from 'lodash'
 import * as postFunc from 'src/api/post'
 import { POST_PUBLISH_STATUS, POST_TYPE, } from 'api/config'
 import {
@@ -101,6 +102,7 @@ const GET_PUBLIC_POSTS = ({ commit, }, { params, outputStateTarget = 'publicPost
     getPublicPosts({ params, })
     .then(({ status, body, }) => {
       if (status === 200 && body.items) {
+        body.items = get(body, 'items', []).filter(post => post.publishStatus === POST_PUBLISH_STATUS.PUBLISHED)
         if (params.mode === 'set') {
           if (params.category === 'hot') {
             commit('SET_PUBLIC_POSTS', { posts: body, outputStateTarget: 'publicPostsHot', })
