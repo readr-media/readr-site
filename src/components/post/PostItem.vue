@@ -10,7 +10,7 @@
         <figcaption class="author__meta">
           <div class="author__date">
             <AppDateCreatedUpdated
-              v-if="isReportOrMemo"
+              v-if="isReportOrMemo && shouldShowMultipleDate"
               class="author__date-report-memo"
               :createdAt="post.createdAt"
               :updatedAt="post.updatedAt"
@@ -52,7 +52,7 @@ export default {
   computed: {
     isClientSide,
     dateDiffFromNow () {
-      return dateDiffFromNow(this.post.publishedAt)
+      return dateDiffFromNow(this.post.updatedAt)
     },
     isReportOrMemo () {
       return getPostType(this.post) === 'report' || getPostType(this.post) === 'memo'
@@ -86,6 +86,10 @@ export default {
       },
     },
     width: {},
+    shouldShowMultipleDate: {
+      type: Boolean,
+      default: true,
+    },
   },
 }
 </script>

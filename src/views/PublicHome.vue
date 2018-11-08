@@ -9,7 +9,12 @@
         <div class="invitation">
         </div>
         <transition-group name="fade" mode="out-in">
-          <PostItem v-for="post in postsMain" :post="post" :key="`${post.id}-main`"></PostItem>
+          <PostItem
+            v-for="post in postsMain"
+            :key="`${post.id}-main`"
+            :post="post"
+            :shouldShowMultipleDate="false"
+          />
         </transition-group>
       </div>
       <div class="homepage__list-aside aside-latest-comments">
@@ -230,7 +235,7 @@ export default {
         category: 'latest',
         max_result: MAXRESULT_POSTS,
         page: this.currentPageLatest + 1,
-        sort: '-published_at',
+        sort: '-updated_at',
       }).then(({ status, res, }) => {
         if (status === 'end') {
           this.endPage = true

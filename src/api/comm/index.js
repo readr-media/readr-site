@@ -38,6 +38,10 @@ export function _buildQuery (params = {}) {
     'url',
     'tagged_resources',
     'tagging_type',
+    'show_author',
+    'show_updater',
+    'show_tag',
+    'show_comment',
   ]
   const snakeCaseParams = mapKeys(params, (value, key) => snakeCase(key))
   whitelist.forEach((ele) => {
