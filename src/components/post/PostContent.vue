@@ -111,9 +111,10 @@
 <script>
   import { POST_TYPE, } from 'api/config'
   import { get, map, some, findIndex, } from 'lodash'
-  import { onImageLoaded, getFullUrl, isClientSide, getElementContentSrc, isElementContentYoutube, isImg, clickImg, } from 'src/util/comm'
+  import { onImageLoaded, getFullUrl, isClientSide, getElementContentSrc, isElementContentYoutube, isImg, clickImg, currEnv, } from 'src/util/comm'
   import { getPostType, } from 'src/util/post/index'
   import { getReportContent, getReportLink, getReportHeroImage, getReportHeroImageUrl, } from 'src/util/post/report'
+  import { SITE_DOMAIN, SITE_DOMAIN_DEV, } from 'src/constants'
   import AppArticleNav from 'src/components/AppArticleNav.vue'
   import PostContentMemo from 'src/components/post/PostContentMemo.vue'
   import TagNav from 'src/components/tag/TagNav.vue'
@@ -234,7 +235,7 @@
         if (this.postType === 'memo') {
           const link = get(this.post, 'link')
           if (link) {
-            const re = pathToRegexp(`*/series/:projectSlug/:memoId`)
+            const re = pathToRegexp(`${this.SITE_DOMAIN}/series/:projectSlug/:memoId`)
             const projectSlug = get(re.exec(link), '1')
             const memoId = get(re.exec(link), '2')
             return `/series/${projectSlug}/${memoId}`
@@ -262,6 +263,7 @@
         allowedTags: [ 'img', 'strong', 'h1', 'h2', 'figcaption', 'em', 'blockquote', 'a', 'iframe', ],
         allowedAttributes: Object.assign({}, sanitizeHtml.defaults.allowedAttributes, { iframe: [ 'frameborder', 'allowfullscreen', 'src', ], }),
         allowedIframeHostnames: [ 'www.youtube.com', ],
+        SITE_DOMAIN: currEnv() === 'dev' ? `http://${SITE_DOMAIN_DEV}` : `https://www.${SITE_DOMAIN}`,
       }
     },
     methods: {
