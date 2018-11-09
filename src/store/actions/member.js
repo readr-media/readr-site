@@ -1,7 +1,7 @@
 /*eslint no-empty-pattern: 0*/
 import * as memberFunc from 'src/api/member'
 import _ from 'lodash'
-import { ROLE_MAP, ANNOUNCEMENT_ACCOUNT_ID, } from 'src/constants'
+import { ROLE_MAP, } from 'src/constants'
 import {
   addMember,
   deleteMemberProfileThumbnails,
@@ -64,11 +64,7 @@ const GET_PUBLIC_MEMBER = ({ commit, }, { params, }) => {
   return getPublicMember({ params, }).then(({ status, body, }) => {
     debug('GET_PUBLIC_MEMBER', body)
     if (status === 200) {
-      if (params.id === Number(ANNOUNCEMENT_ACCOUNT_ID)) {
-        commit('SET_PUBLIC_MEMBER_ANNOUNCEMENT', { member: body, })
-      } else {
-        commit('SET_PUBLIC_MEMBER', { member: body, })
-      }
+      commit('SET_PUBLIC_MEMBER', { member: body, })
     }
   })
 }
