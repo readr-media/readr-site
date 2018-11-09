@@ -652,4 +652,8 @@ export default {
     'TO_HOME_HINT': '抱歉 找不到這個網址',
     'TO_HOME_BUTTON': '回首頁',
   },
+  'COMMENTS': {
+    'LOADMORE_PREFIX': '看另外',
+    'LOADMORE_SUFFIX': '則留言',
+  },
 }
