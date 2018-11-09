@@ -7,6 +7,7 @@
     <CommentContainer
       :asset="resourceURL"
       :isPublic="true"
+      :isPublicCommentView="true"
       @heightChanged="sendHeight"
     />
   </div>

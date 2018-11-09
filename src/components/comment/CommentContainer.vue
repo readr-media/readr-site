@@ -1,5 +1,5 @@
 <template>
-  <div ref="comment-container">
+  <div class="comment-container" ref="comment-container">
     <Comment
       v-if="shouldRenderComment"
       :me="me"
@@ -12,7 +12,14 @@
       :comments="commentsSalted"
       :goLogin="goLogin"
     />
-    <p v-if="shouldRenderCommentError" v-text="fetchCommentErrorText" class="alert"></p>
+    <p
+      v-show="showLoadmoreComment"
+      class="comment-container__loadmore"
+      @click="fetchCommentAll"
+      v-text="`${$t('COMMENTS.LOADMORE_PREFIX')} ${commentsCountRemaining} ${$t('COMMENTS.LOADMORE_SUFFIX')}`"
+    >
+    </p>
+    <p v-if="shouldRenderCommentError" v-text="fetchCommentErrorText" class="comment-container__alert"></p>
   </div>
 </template>
 <script>
@@ -70,6 +77,12 @@
       },
       shouldRenderCommentError () {
         return this.me.id && !isEmpty(this.fetchCommentErrorText)
+      },
+      commentsCountRemaining () {
+        return this.commentAmount - this.commentsSalted.length
+      },
+      showLoadmoreComment () {
+        return this.commentsCountRemaining > 0
       },
     },
     data () {
@@ -229,31 +242,36 @@
             return ''
         }
       },
+      fetchCommentAll () {
+        const fetchComment = this.isPublic && !this.$store.state.isLoggedin ? fetchCommentPublic : fetchCommentStrict
+        fetchComment(this.$store, {
+          params: {
+            resource: [ this.asset, ],
+            resource_id: this.assetRefId,
+          },
+        }).then((comments) => {
+          debug('comments', comments)
+          this.comments_raw = comments
+        }).catch(({ res, }) => {
+          debug('this.me', this.me)
+          debug('this.me', this.me)
+          debug('this.me', this.me)
+          debug('this.me', this.me)
+          debug('this.me', this.me)
+          this.me.id && (this.fetchCommentErrorText = res.text)
+        })
+      },
     },
     created () {
       this.resourceName = this.getResourceName()
     },
     mounted () {
-      const fetchComment = this.isPublic && !this.$store.state.isLoggedin ? fetchCommentPublic : fetchCommentStrict
-      fetchComment(this.$store, {
-        params: {
-          resource: [ this.asset, ],
-          resource_id: this.assetRefId,
-        },
-      }).then((comments) => {
-        debug('comments', comments)
-        this.comments_raw = comments
-        this.shouldRenderComment = true
-      }).catch(({ res, }) => {
-        debug('this.me', this.me)
-        debug('this.me', this.me)
-        debug('this.me', this.me)
-        debug('this.me', this.me)
-        debug('this.me', this.me)
-        this.me.id && (this.fetchCommentErrorText = res.text)
-      })
-
-      this.setMutationObserver()
+      if (this.isPublicCommentView || !this.isNotLightbox) {
+        this.fetchCommentAll()
+      } else {
+        this.comments_raw = this.commentsLatest
+      }
+      this.shouldRenderComment = true
     },
     updated () {
       this.$emit('heightChanged')
@@ -272,6 +290,24 @@
       isPublic: {
         type: Boolean,
         default: false,
+      },
+      isPublicCommentView: {
+        type: Boolean,
+        default: false,
+      },
+      isNotLightbox: {
+        type: Boolean,
+        default: false,
+      },
+      commentsLatest: {
+        type: Array,
+        default () {
+          return []
+        },
+      },
+      commentAmount: {
+        type: Number,
+        default: 0,
       },
     },
     watch: {
@@ -303,7 +339,11 @@
   }
 </script>
 <style lang="stylus" scoped>
-    .alert
-      margin-top 20px
-      color #d4d4d4
+.comment-container
+  &__loadmore
+    cursor pointer
+    color #11b8c9
+  &__alert
+    margin-top 20px
+    color #d4d4d4
 </style>

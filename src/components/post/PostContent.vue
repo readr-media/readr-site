@@ -99,12 +99,16 @@
       :resourceType="resourceType"
       :slug="get(post, 'flag') === 'report'? post.slug : ''"
       :tags="post.tags"
-      :commentCount="commentCount">
+      :commentCount="commentCount"
+      :commentsLatest="post.comments"
+      :isNotLightbox="true"
+    >
       <TagNav
         v-if="post.tags && post.tags.length > 0"
         slot="tagNav"
         :tags="post.tags"
-        class="post-content__tag-nav" />
+        class="post-content__tag-nav"
+      />
     </AppArticleNav>
   </div>
 </template>
