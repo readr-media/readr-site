@@ -111,6 +111,10 @@
           ],
           type: [ POST_TYPE.REVIEW, POST_TYPE.NEWS, ],
         },
+        show_author: true,
+        show_updater: true,
+        show_tag: true,
+        show_comment: true,
       },
     })
   }
