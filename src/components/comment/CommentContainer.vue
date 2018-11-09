@@ -79,7 +79,9 @@
         return this.me.id && !isEmpty(this.fetchCommentErrorText)
       },
       commentsCountRemaining () {
-        return this.commentAmount - this.commentsSalted.length
+        const commentsCountLatestLevel1 = this.commentsSalted.length
+        const commentsCountLatestLevel2 = this.commentsSalted.reduce((acc, curr) => acc + get(curr, 'commentAmount', 0), 0)
+        return this.commentAmount - commentsCountLatestLevel1 - commentsCountLatestLevel2
       },
       showLoadmoreComment () {
         return this.commentsCountRemaining > 0
