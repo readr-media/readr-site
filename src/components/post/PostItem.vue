@@ -39,7 +39,6 @@ import PostShareNav from 'src/components/post/PostShareNav.vue'
 import { dateDiffFromNow, isClientSide, getArticleAuthorNickname, getArticleAuthorThumbnailImg, } from 'src/util/comm'
 import { getPostType, } from 'src/util/post/index'
 import { get, } from 'lodash'
-import { isAnnouncementAccountId, } from 'src/util/post/index'
 
 export default {
   name: 'PostItem',
@@ -57,17 +56,11 @@ export default {
     isReportOrMemo () {
       return getPostType(this.post) === 'report' || getPostType(this.post) === 'memo'
     },
-    isAnnouncementAccountId () {
-      return isAnnouncementAccountId(get(this.post, 'author.id'))
-    },
     authorNickname () {
-      return this.isAnnouncementAccountId ? get(this.memberDataAnnouncement, 'nickname') : getArticleAuthorNickname(this.post)
+      return getArticleAuthorNickname(this.post)
     },
     authorThumbnailImg () {
-      return this.isAnnouncementAccountId ? get(this.memberDataAnnouncement, 'profileImage') : getArticleAuthorThumbnailImg(this.post)
-    },
-    memberDataAnnouncement () {
-      return get(this.$store.state, 'publicMemberAnnouncement', {})
+      return getArticleAuthorThumbnailImg(this.post)
     },
   },  
   methods: {
