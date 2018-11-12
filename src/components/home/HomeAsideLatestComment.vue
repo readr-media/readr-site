@@ -62,11 +62,17 @@ export default {
     shouldNavigateToNewsProject () {
       return this.commentResource.route === 'project'
     },
+    hasParentId () {
+      const parentId = get(this.comment, 'parentId')
+      return parentId !== null && typeof parentId === 'number'
+    },
   },
   methods: {
     goPost () {
       const path = `/${this.commentResource.route}/${this.commentResource.param}`
-      this.shouldNavigateToNewsProject ? window.open(path) : this.$router.push(path)
+      // this.shouldNavigateToNewsProject ? window.open(path) : this.$router.push(path)
+      const location = this.hasParentId ? { path, query: { parentid: get(this.comment, 'parentId'), }, } : { path, }
+      this.shouldNavigateToNewsProject ? window.open(path) : this.$router.push(location)
     },
   },
 }

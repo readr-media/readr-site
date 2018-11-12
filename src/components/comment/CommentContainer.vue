@@ -24,7 +24,7 @@
 </template>
 <script>
   import { Comment, } from 'readr-comment'
-  import { get, map, isEmpty, } from 'lodash'
+  import { get, map, isEmpty, isNaN, } from 'lodash'
   import { getFullUrl, } from 'src/util/comm'
   import { redirectToLogin, } from 'src/util/services'
   import { ROLE_MAP, } from 'api/config'
@@ -85,6 +85,15 @@
       },
       showLoadmoreComment () {
         return this.commentsCountRemaining > 0
+      },
+      parentId () {
+        return Number(get(this.$route, [ 'query', 'parentid', ]))
+      },
+      hasParentId () {
+        return this.parentId !== undefined && !isNaN(this.parentId)
+      },
+      showSubComment () {
+        return this.hasParentId && !this.isNotLightbox
       },
     },
     data () {
@@ -246,7 +255,7 @@
       },
       fetchCommentAll () {
         const fetchComment = this.isPublic && !this.$store.state.isLoggedin ? fetchCommentPublic : fetchCommentStrict
-        fetchComment(this.$store, {
+        return fetchComment(this.$store, {
           params: {
             resource: [ this.asset, ],
             resource_id: this.assetRefId,
@@ -270,6 +279,9 @@
     mounted () {
       if (this.isPublicCommentView || !this.isNotLightbox) {
         this.fetchCommentAll()
+        .then(() => {
+          if (this.showSubComment) { this.refreshSubComment(this.parentId) }
+        })
       } else {
         this.comments_raw = this.commentsLatest
       }
