@@ -229,7 +229,6 @@ export default {
         category: 'latest',
         max_result: MAXRESULT_POSTS,
         page: this.currentPageLatest + 1,
-        sort: '-updated_at',
       }).then(({ status, res, }) => {
         if (status === 'end') {
           this.endPage = true
