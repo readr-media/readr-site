@@ -15,7 +15,9 @@
           :resource="post.flag"
           :resourceType="'review'"
           :commentCount="commentCount"
-          :inLightbox="true" @toogleComment="toogleComment">
+          :inLightbox="true"
+          @toogleComment="toogleComment"
+        >
           <TagNav
             v-if="post.tags && post.tags.length > 0"
             slot="tagNav"

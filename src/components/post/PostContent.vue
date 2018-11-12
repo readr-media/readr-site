@@ -102,6 +102,7 @@
       :commentCount="commentCount"
       :commentsLatest="post.comments"
       :isNotLightbox="true"
+      :shouldShowComment="true"
     >
       <TagNav
         v-if="post.tags && post.tags.length > 0"
