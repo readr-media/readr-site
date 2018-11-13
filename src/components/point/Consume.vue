@@ -46,6 +46,7 @@
   import { POINT_OBJECT_TYPE, DONATION_POINT_MIN_LINE, } from 'api/config'
   import { get, } from 'lodash'
   import { isClientSide, } from 'src/util/comm'
+  import { redirectToLogin, } from 'src/util/services'
 
   const DEFAULT_DONATION_POINT_MIN_LINE = DONATION_POINT_MIN_LINE || -100
 
@@ -130,7 +131,7 @@
       },
       goLogin () {
         switchOffDeductionPanel(this.$store).then(() => {
-          this.$router.push('/login')
+           redirectToLogin(this.$route.fullPath)
         })
       },
       clickHandler () {
