@@ -25,6 +25,7 @@
     "@google-cloud/pubsub": "^0.16.2",
     "@google-cloud/storage": "^1.6.0",
     "awesome-phonenumber": "^2.2.6",
+    "big-integer": "^1.6.36",
     "body-parser": "^1.18.2",
     "compression": "^1.7.0",
     "cookies": "^0.7.1",

@@ -23,7 +23,7 @@
 <script>
   import { get, } from 'lodash'
   import { currentYPosition, elmYPosition, } from 'kc-scroll'
-  import { isAlinkDescendant, logTrace, } from 'src/util/services'
+  import { isAlink, isABTest, logTrace, } from 'src/util/services'
   import AlertGDPR from 'src/components/AlertGDPR.vue'
   import AppHeader from 'src/components/header/AppHeader.vue'
   import AppNavAside from 'src/components/AppNavAside.vue'
@@ -121,14 +121,18 @@
       launchLogger () {
         this.globalTapevent = new Tap(this.doc)
         this.doc.addEventListener('tap', (event) => {
-          const { isAlink, } = isAlinkDescendant(event.target)
-          isAlink && logTrace({
+          const checkAlink = isAlink(event.target)
+          const checkABTest = isABTest(event.target)
+          const sendLog = isAlink || isABTest
+          sendLog && logTrace({
             category: 'whole-site',
             description: 'ele clicked',
             eventType: 'click',
             sub: this.currUser,
             target: event.target,
             useragent: this.useragent,
+            isAlink: checkAlink,
+            isABTest: checkABTest,
           })
         })
       },
