@@ -1597,6 +1597,10 @@ better-assert@~1.0.0:
   dependencies:
     callsite "1.0.0"
 
+big-integer@^1.6.36:
+  version "1.6.36"
+  resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.36.tgz#78631076265d4ae3555c04f85e7d9d2f3a071a36"
+
 big.js@^3.1.3:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/big.js/-/big.js-3.2.0.tgz#a5fc298b81b9e0dca2e458824784b65c52ba588e"
@@ -8273,9 +8277,9 @@ readr-comment@^1.0.19:
     prevent-scroll "^2.0.0"
     sanitize-html "^1.18.2"
 
-readr-web-api@^1.0.53:
-  version "1.0.53"
-  resolved "https://registry.yarnpkg.com/readr-web-api/-/readr-web-api-1.0.53.tgz#2f0a92d1490dad3ebc9a1f820ddda72daaffb950"
+readr-web-api@^1.0.55:
+  version "1.0.55"
+  resolved "https://registry.yarnpkg.com/readr-web-api/-/readr-web-api-1.0.55.tgz#5f5270f7db0a2dd17db4a979951c040dfba633f4"
   dependencies:
     "@google-cloud/logging" "^1.2.0"
     "@google-cloud/pubsub" "^0.18.0"

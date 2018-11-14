@@ -97,42 +97,46 @@ export function getProfile (cookie) {
 }
 function logTraceXHR (params) {
   return new Promise(resolve => {
-    const token = getToken()
-    if (token) {
-      const url = `${host}/api/trace`
-      superagent
-      .post(url)
-      .set('Authorization', `Bearer ${token}`)
-      .send(params)
-      .end(function (err, res) {
-        if (err) {
-          debug(err)
-          resolve(err)
-        } else {
-          debug({ status: res.status, body: camelizeKeys(res.body), })
-          resolve({ status: res.status, body: camelizeKeys(res.body), })
-        }
-      })
-    } else {
-      resolve()
-    }    
+    const url = `${host}/api/trace`
+    superagent
+    .post(url)
+    .send(params)
+    .end(function (err, res) {
+      if (err) {
+        debug(err)
+        resolve(err)
+      } else {
+        debug({ status: res.status, body: camelizeKeys(res.body), })
+        resolve({ status: res.status, body: camelizeKeys(res.body), })
+      }
+    })
   })
 }
-export function isAlinkDescendant (child) {
-  let node = child.parentNode
-  while (node !== null && node !== undefined) {
+
+export function isAlink (node) {
+  while (node && node.tagName && node.tagName !== 'HTML') {
     if (node.tagName === 'A') {
-      return { isAlink: true, href: node.href, }
+      return { href: node.href, }
     }
     node = node.parentNode
   }
-  return { isAlink: false, href: '', }
+  return false
 }
-function constructLog ({ category, description, eventType, sub, target, useragent, ...rest }) {
+
+export function isABTest (node) {
+  while (node && node.tagName && node.tagName !== 'HTML') {
+    if (node.getAttribute('test-name')) {
+      return { name: node.getAttribute('test-name'), group: node.getAttribute('test-group'), }
+    }
+    node = node.parentNode
+  }
+  return false
+}
+
+function constructLog ({ category, description, eventType, sub, target, useragent, isAlink, isABTest, ...rest }) {
  return new Promise(resolve => {
     debug('useragent', useragent)
     const innerText = target.innerText ? sanitizeHtml(target.innerText, { allowedTags: [ '', ], }) : ''
-    const isAlinkCheck = target.tagName === 'A' ? { isAlink: true, href: target.href, } : isAlinkDescendant(target)
     const dt = Date.now()
     if (!window.mmThisRuntimeClientId) {
       window.mmThisRuntimeClientId = uuidv4()
@@ -148,8 +152,8 @@ function constructLog ({ category, description, eventType, sub, target, useragen
       'datetime': moment(Date.now()).format('YYYY.MM.DD HH:mm:ss'),
       'description': description,
       'event-type': eventType,
-      'redirect-to': isAlinkCheck.isAlink ? isAlinkCheck.href : undefined,
-      'referrer': get(rest, 'referrer') || (isAlinkCheck.isAlink ? location.href : undefined),
+      'redirect-to': isAlink ? isAlink.href : undefined,
+      'referrer': get(rest, 'referrer') || (isAlink ? location.href : undefined),
       'target-tag-name': target.tagName,
       'target-tag-class': target.className,
       'target-tag-id': target.id,
@@ -158,12 +162,14 @@ function constructLog ({ category, description, eventType, sub, target, useragen
         width: document.documentElement.clientWidth || document.body.clientWidth,
         height: document.documentElement.clientWidth || document.body.clientWidth,
       },
-      ...rest,
+      'test-name': isABTest ? isABTest.name : undefined,
+      'test-group': isABTest ? isABTest.group : undefined,
+      ...rest,  
     })
  })
 }
 export function logTrace ({ category, description, eventType, sub, target, useragent, ...rest }) {
-  if (!sub || !eventType || !target || !description || !category || !useragent) { return }
+  if (!eventType || !target || !description || !category || !useragent) { return }
   constructLog({
     category,
     description,
@@ -173,25 +179,24 @@ export function logTrace ({ category, description, eventType, sub, target, usera
     useragent,
     ...rest,
   })
-  .then(log => {
-    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-      debug('send log status to sw.')
-      navigator.serviceWorker.controller.postMessage({
-        url: '/api/trace',
-        params: log,
-        action: 'trace',
-      });
-      return { status: 200, body: null, }
-    } else {
-      debug('Log')
-      return logTraceXHR(log)
-    }
-  })
-  .then(res => {
-    debug('res from logTracing:', res)
-  })
+    .then(log => {
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        debug('send log status to sw.')
+        navigator.serviceWorker.controller.postMessage({
+          url: '/api/trace',
+          params: log,
+          action: 'trace',
+        });
+        return { status: 200, body: null, }
+      } else {
+        debug('Log')
+        return logTraceXHR(log)
+      }
+    })
+    .then(res => {
+      debug('res from logTracing:', res)
+    })
 }
-
 export function redirectToLogin (from) {
   /**
     * use location.replace instead of router.push to server-side render page
@@ -199,5 +204,3 @@ export function redirectToLogin (from) {
   Cookie.set('location-replace-from', from, { expires: '60s', })
   location && location.replace('/login')
 }
-
-
