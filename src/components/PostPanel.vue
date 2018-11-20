@@ -353,6 +353,7 @@
                   this.post.link_image = get(res, [ 'body', 'items', 0, 'ogInfo', 'ogImage', ]) || ''
                   return resolve()
                 })
+                .catch(() => resolve())
             } else {
               return resolve()
             }
