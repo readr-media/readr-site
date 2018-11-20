@@ -150,6 +150,8 @@
       params: {
         max_result: maxResult,
         page: page,
+        show_author: true,
+        show_updater: true,
         sort: sort,
         where: where,
       },
@@ -166,6 +168,8 @@
       params: {
         max_result: maxResult,
         page: page,
+        show_author: true,
+        show_updater: true,
         sort: sort,
         where: where,
       },
