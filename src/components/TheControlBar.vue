@@ -70,20 +70,6 @@
       <button slot="0" class="controlBar--btn" @click="$_controlBar_openPanel($event, 'videos')" v-text="`${$t('CONTROL_BAR.VIDEO')}${$t('CONTROL_BAR.MANAGE')}`"></button>
       <button slot="1" class="controlBar--subBtn" v-text="$t('CONTROL_BAR.ADD_VIDEO')" @click="$_controlBar_clickHandler('addVideo')"></button>
     </control-bar-button-box> -->
-    <control-bar-button
-      v-if="$can('addAccount') && viewport > 767"
-      class="controlBar--btn"
-      @changeBtnAmount="$_controlBar_btnAmountHandler"
-      @click="$_controlBar_clickHandler('addAccount')"
-      :text="$t('CONTROL_BAR.ADD_ACCOUNT')">
-    </control-bar-button>
-    <control-bar-button
-      v-if="$can('memberManage') && viewport > 767"
-      class="controlBar--btn"
-      @changeBtnAmount="$_controlBar_btnAmountHandler"
-      @click="$_controlBar_openPanel($event, 'accounts')"
-      :text="`${$t('CONTROL_BAR.ACCOUNT')}${$t('CONTROL_BAR.MANAGE')}`">
-    </control-bar-button>
   </section>
 </template>
 <script>

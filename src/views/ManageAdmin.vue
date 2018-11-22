@@ -4,7 +4,6 @@
       <About :profile="profile"></About>
       <template v-if="showMain">
         <TheControlBar
-          @addAccount="addMember"
           @addNews="showEditorHandler({ postPanel: 'add', postType: config.type.NEWS })"
           @addReview="showEditorHandler({ postPanel: 'add', postType: config.type.REVIEW })"
           @addVideo="showEditorHandler({ postPanel: 'add', postType: config.type.VIDEO })"
@@ -12,10 +11,7 @@
           @editReview="showDraftListHandler(config.type.REVIEW)"
           @openPanel="openPanel">
         </TheControlBar>
-        <template v-if="activePanel === 'accounts'">
-          <MembersPanel v-if="$can('memberManage')" @filterChanged="filterChanged"></MembersPanel>
-        </template>
-        <template v-else-if="activePanel === 'records'">
+        <template v-if="activePanel === 'records'">
           <app-tab class="backstage__tab" :tabs="tabs" @changeTab="tabHandler" :defaultTab="defaultTab">
             <PostListInTab
               slot="0"
@@ -49,14 +45,6 @@
             @filterChanged="filterChanged"
             @updateTagList="updateTagList({})" />
         </template>
-        <BaseLightBox borderStyle="nonBorder" :showLightBox.sync="showLightBox" :isConversation="true">
-          <MemberAccountEditor
-            action="add"
-            :shouldShow="showLightBox"
-            :title="$t('admin.WORDING_ADMIN_MEMBER_EDITOR_ADD_MEMBER')"
-            @updated="filterChanged">
-          </MemberAccountEditor>
-        </BaseLightBox>
         <BaseLightBox :showLightBox.sync="showDraftList">
           <PostListDetailed
             :posts="postsDraft"
@@ -99,8 +87,6 @@
   import AppHeader from '../components/header/AppHeader.vue'
   import BaseLightBox from '../components/BaseLightBox.vue'
   import FollowingListInTab from '../components/FollowingListInTab.vue'
-  import MemberAccountEditor from '../components/admin/MemberAccountEditor.vue'
-  import MembersPanel from '../components/admin/MembersPanel.vue'
   import PointManager from 'src/components/point/PointManager.vue'
   import PostListDetailed from '../components/PostListDetailed.vue'
   import PostListInTab from '../components/PostListInTab.vue'
@@ -212,26 +198,6 @@
     })
   }
 
-  const getMembers = (store, { page, sort, keyword, type, }) => {
-    const fields = keyword && [ 'mail', 'role', 'custom_editor', ]
-    return store.dispatch('GET_MEMBERS', {
-      params: {
-        max_result: MAXRESULT,
-        page: page || DEFAULT_PAGE,
-        sort: sort || DEFAULT_SORT,
-        keyword,
-        fields,
-      },
-      type,
-    })
-  }
-
-  const getMembersCount = (store, params = {}) => {
-    return store.dispatch('GET_MEMBERS_COUNT', {
-      params,
-    })
-  }
-
   const publishPosts = (store, params) => { 
     return store.dispatch('PUBLISH_POSTS', { params, }) 
   } 
@@ -245,8 +211,6 @@
       AlertPanel,
       BaseLightBox,
       FollowingListInTab,
-      MemberAccountEditor,
-      MembersPanel,
       PointManager,
       PostListDetailed,
       PostListInTab,
@@ -258,7 +222,7 @@
     },
     data () {
       return {
-        activePanel: 'accounts',
+        activePanel: 'records',
         activeTab: 'reviews',
         alertType: 'post',
         config: {
@@ -340,12 +304,23 @@
     beforeMount () {
       this.loading = true
       debug('Admin beforeMount')
-      this.$can('memberManage') && Promise.all([
-        getMembers(this.$store, { type: 'normal', }),
-        getMembersCount(this.$store),
+      Promise.all([
+        getPostsByUser(this.$store, {
+          where: {
+            author: _.get(this.profile, [ 'id', ]),
+            type: POST_TYPE.REVIEW,
+          },
+        }),
+        getPostsCount(this.$store, {
+          where: {
+            author: _.get(this.profile, [ 'id', ]),
+            type: POST_TYPE.REVIEW,
+          },
+        }),
       ])
       .then(() => this.loading = false)
       .catch(() => this.loading = false)
+
       if (_.get(this.$route, 'params.panel')) {
         switch (_.get(this.$route, 'params.panel')) {
           case 'profile-edit':
@@ -364,9 +339,6 @@
       }      
     },
     methods: {
-      addMember () {
-        this.showLightBox = true
-      },
       addTag (tagName) {
         this.itemsStatus = TAG_ACTIVE.ACTIVE
         this.needConfirm = false
@@ -421,28 +393,11 @@
         this.currSort = filter.sort || this.currSort
         const { keyword, } = filter
         switch (this.activePanel) {
-          case 'accounts':
-            if (!keyword) {
-              this.lastSearchType !== 'normal' && (this.currPage = 1)
-              this.lastSearchType = 'normal'
-              return Promise.all([
-                getMembers(this.$store, { page: this.currPage, sort: this.currSort, type: this.lastSearchType, }),
-                getMembersCount(this.$store),
-              ])
-            } else {
-              this.lastSearchType !== 'byname' && (this.currPage = 1)
-              this.lastSearchType = 'byname'
-              return Promise.all([
-                getMembers(this.$store, { page: this.currPage, sort: this.currSort, keyword, type: this.lastSearchType, }),
-                getMembersCount(this.$store),
-              ])
-            }
           case 'records':
           case 'videos':
             return this.updatePostList({ page: this.currPage, sort: this.currSort, })
           case 'tags':
             return this.updateTagList({ keyword: keyword, page: this.currPage, sort: this.currSort, needUpdateCount: true, })
-          
         }
       },
       openPanel (panel) {
