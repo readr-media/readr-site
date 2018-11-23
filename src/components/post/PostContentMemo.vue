@@ -18,6 +18,11 @@
               <span :style="{ marginTop: '20px', display: 'inline-block' }">...... </span>
               <span class="editor-writing__more" @click.prevent="memoDeductMach" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span>
             </span>
+            <!-- read more button appeared in Home -->
+            <span v-else-if="hasSource">
+              <span :style="{ marginTop: '20px', display: 'inline-block' }">...... </span>
+              <span class="editor-writing__more" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span>
+            </span>
             <span v-else-if="shouldShowReadMoreButton(i)">
               <span class="editor-writing__more" @click.prevent="toogleReadmore" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span>
             </span>
@@ -65,7 +70,7 @@
            */
           switchOnDeductionPanel(this.$store, this.post)
         }
-      },      
+      },
       toogleReadmore () {
         if (this.isMemoPaid !== false) {
           this.isReadMoreClicked = true
