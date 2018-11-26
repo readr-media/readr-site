@@ -416,6 +416,8 @@
             line-height 1.5
             margin 0
             // text-overflow: ellipsis;
+          p > a
+            border-bottom 1px solid #000
           p > br
             display none
           p > img, p img
