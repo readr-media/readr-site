@@ -85,7 +85,10 @@
               const from = VueCookie.get('location-replace-from')
               const isFromPathExist = from !== null
 
-              if (isPublicComment) {
+              if (this.panelType === 'WINDOW') {
+                window.opener.location.reload()
+                window.close()
+              } else if (isPublicComment) {
                 this.$router.push(this.$route.fullPath)
               } else {
                 if (isFromPathExist) {
@@ -135,12 +138,11 @@
       theme: {
         default: () => 'normal',
       },
-      props: {
-        isDoingLogin: {
-          type: Boolean,
-          default: false,
-        },
+      isDoingLogin: {
+        type: Boolean,
+        default: false,
       },
+      panelType: {},
     },
   }
 </script>

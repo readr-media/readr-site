@@ -46,7 +46,10 @@
                  */
                 const from = VueCookie.get('location-replace-from')
                 const isFromPathExist = from !== null
-                if (isFromPathExist) {
+                if (this.panelType === 'WINDOW') {
+                  window.opener.location.reload()
+                  window.close()
+                } else if (isFromPathExist) {
                   VueCookie.delete('location-replace-from')
                   this.$router.push(from)
                 } else {
@@ -127,6 +130,7 @@
         default: false,
       },
       theme: {},
+      panelType: {},
     },
   }
 </script>
