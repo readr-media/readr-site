@@ -31,6 +31,7 @@
   </div>
 </template>
 <script>
+  import Cookie from 'vue-cookie'
   import FacebookLogin from './FacebookLogin.vue'
   import GooglePlusLogin from './GooglePlusLogin.vue'
   import Login from './Login.vue'
@@ -75,6 +76,7 @@
       active () {
         if (this.active) {
           preventScroll.on()
+          Cookie.set('location-replace-from', this.$route.fullPath, { expires: '60s', })
           Promise.all([
             getDisposableToken(this.$store),
             loadRecaptcha(this.$store),
@@ -83,6 +85,8 @@
           ])
         } else {
           preventScroll.off()
+          Cookie.delete('location-replace-from')
+          this.$forceUpdate()
         }
       },
     },

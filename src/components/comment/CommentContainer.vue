@@ -107,7 +107,7 @@
     },    
     methods: {
       goLogin () {
-        redirectToLogin(this.$route.fullPath)
+        redirectToLogin(this.$route.fullPath, this.$router)
       },
       queryForRedisUse (comment) {
         return get(comment, 'parentId') ? { 

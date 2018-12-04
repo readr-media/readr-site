@@ -97,7 +97,7 @@
         logout(this.$store).then(() => {
           const domain = get(this.$store, 'state.setting.DOMAIN')
           return removeToken(domain).then(() => {
-            redirectToLogin(this.$route.fullPath)
+            redirectToLogin(this.$route.fullPath, this.$router)
           })
         })
       },
