@@ -90,9 +90,9 @@
               } else {
                 if (isFromPathExist) {
                   VueCookie.delete('location-replace-from')
-                  location.replace(from)
+                  this.$router.push(from)
                 } else {
-                  location.replace('/')
+                  this.$router.push('/')
                 }
               }
 

@@ -131,7 +131,7 @@
       },
       goLogin () {
         switchOffDeductionPanel(this.$store).then(() => {
-           redirectToLogin(this.$route.fullPath)
+           redirectToLogin(this.$route.fullPath, this.$router)
         })
       },
       clickHandler () {
