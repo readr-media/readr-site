@@ -33,9 +33,9 @@ const DELETE_POST_SELF = ({}, { id, }) => {
   return deletePostSelf(id)
 }
 
-const GET_POST = ({ commit, }, { params, }) => {
+const GET_POST = ({ commit, }, { id, params, }) => {
   return new Promise((resolve) => {
-    getPost({ params, }).then(({ status, body, }) => {
+    getPost({ id, params, }).then(({ status, body, }) => {
       if (status === 200) {
         commit('SET_PUBLIC_POST_SINGLE', { posts: body, })
         resolve({ status: 200, })
