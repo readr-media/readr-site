@@ -7,7 +7,7 @@
         <h2 class="article-content__author-nickname" v-text="authorNickname"></h2>
         <h1 class="article-content__title" v-text="!isPostEmpty ? post.title : ''"></h1>
         <div class="article-content__paragraph-container" v-html="!isPostEmpty ? post.content : ''"></div>
-        <a class="article-content__source-link" :href="post.link" target="_blank" v-text="post.linkTitle"></a>
+        <a class="article-content__source-link" :href="post.link" target="_blank" v-text="post.linkTitle ? post.linkTitle : post.link"></a>
         <AppArticleNav
           :showFollow="false"
           :postId="post.id"
