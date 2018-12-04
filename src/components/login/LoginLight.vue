@@ -1,18 +1,18 @@
 <template>
-  <div class="login-light" v-if="active" @click="turnOffThis">
+  <div class="login-light" v-if="active" @click="turnOffThis" :class="{ window: TYPE.WINDOW === type, }">
     <div class="login-light__panel" @click.stop="() => {}">
       <div class="login-light__close" @click.stop="turnOffThis"></div>
       <div class="login-light__logo"><img src="/public/icons/readr-logo.png"></div>
       <div class="login-light__container">
         <template v-if="!isRegistering">        
           <div class="login-by-social-media">
-            <FacebookLogin type="mix" :isDoingLogin.sync="isProcessing" theme="light"></FacebookLogin>
-            <GooglePlusLogin type="mix" :isDoingLogin.sync="isProcessing" theme="light"></GooglePlusLogin>
+            <FacebookLogin type="mix" :isDoingLogin.sync="isProcessing" theme="light" :panelType="type"></FacebookLogin>
+            <GooglePlusLogin type="mix" :isDoingLogin.sync="isProcessing" theme="light" :panelType="type"></GooglePlusLogin>
           </div>
           <div class="login-msg"><span v-text="message"></span></div>
           <div class="login-by-email">
             <div class="hint-text"><span v-text="$t('login.USE_EMAIL_INSTEAD')"></span></div>
-            <Login :isDoingLogin.sync="isProcessing" theme="dark"></Login>
+            <Login :isDoingLogin.sync="isProcessing" theme="dark" :panelType="type"></Login>
           </div>
         </template>
         <template v-else>
@@ -45,6 +45,9 @@
   const switchOff = store => store.dispatch('LOGIN_ASK_TOGGLE', { active: false, message: '', })
   const getDisposableToken = store => store.dispatch('DISPOSABLE_TOKEN', { type: 'register', })
   // const debug = require('debug')('CLIENT:LoginLight')
+  const TYPE = {
+    WINDOW: 'WINDOW',
+  }
   export default {
     name: 'LoginLight',
     components: {
@@ -60,10 +63,14 @@
       },      
       message () {
         return get(this.$store, 'state.loginAskFlag.message', this.$t('login.REGISTER_BONUS'))
-      },      
+      },   
+      type () {
+        return get(this.$store, 'state.loginAskFlag.type', 'confirm')
+      },   
     },
     data () {
       return {
+        TYPE,
         isProcessing: false,
         isRegistering: false,
       }
@@ -109,6 +116,10 @@
     display flex
     justify-content center
     align-items center
+    &.window
+      background-color #444746
+      .login-light__close
+        display none
     &__panel
       width 100%
       max-width 480px

@@ -26,6 +26,7 @@ const PublicServerError = () => import('../views/PublicServerError.vue')
 const PublicSetPassword = () => import('../views/PublicSetPassword.vue')
 const PublicTag = () => import('../views/PublicTag.vue')
 const PublicComment = () => import('../views/PublicComment.vue')
+const PublicLoginPanel = () => import('../views/PublicLoginPanel.vue')
 // const PublicVideos = () => import('../views/PublicVideos.vue')
 
 const router = new Router({
@@ -75,6 +76,7 @@ const router = new Router({
     { path: '/editors', component: PublicEditors, },
     { path: '/guesteditor/:panel?/:tool?', component: ManageGuestEditor, meta: { permission: 'guesteditor', }, },
     { path: '/login', component: PublicLogin, },
+    { path: '/login-panel', component: PublicLoginPanel, },
     { path: '/member/:panel?/:tool?', component: ManageMember, meta: { permission: 'member', }, },
     { path: '/series/:slug/:subItem?', component: PublicProject, },
     { path: '/profile/:id', component: PublicProfile, },

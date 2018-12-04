@@ -107,7 +107,11 @@
     },    
     methods: {
       goLogin () {
-        switchOn(this.$store)
+        if (!this.isPublicCommentView) {
+          switchOn(this.$store)
+        } else {
+          window.open('/login-panel', '_blank', 'width=480,height=600')
+        }
       },
       queryForRedisUse (comment) {
         return get(comment, 'parentId') ? { 
