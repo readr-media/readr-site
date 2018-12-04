@@ -15,7 +15,7 @@
       <Consume></Consume>
       <DepositTappay v-if="isTappayNeeded" :active.sync="isDepositActive" @fetchCurrentPoint="fetchCurrentPoint"></DepositTappay>
     </div>
-    <!--LoginAsk></LoginAsk-->
+    <Conversation></Conversation>
     <LoginLight></LoginLight>
     <AlertGDPR v-if="showAlertGDPR" @closeAlertGDPR="showAlertGDPR = false" />
   </div>
@@ -29,7 +29,7 @@
   import AppHeader from 'src/components/header/AppHeader.vue'
   import AppNavAside from 'src/components/AppNavAside.vue'
   import Consume from 'src/components/point/Consume.vue'
-  // import LoginAsk from 'src/components/LoginAsk.vue'
+  import Conversation from 'src/components/Conversation.vue'
   import LoginLight from 'src/components/login/LoginLight.vue'
   import Tap from 'tap.js'
   import DepositTappay from 'src/components/point/DepositTappay.vue'
@@ -53,7 +53,7 @@
       AppNavAside,
       Consume,
       DepositTappay,
-      // LoginAsk,
+      Conversation,
       LoginLight,
     },
     computed: {

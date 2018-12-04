@@ -53,7 +53,7 @@
                   location.replace('/')
                 }
 
-                // involke switchOffLoginAsk for LoginLight
+                // revolke switchOffLoginAsk for LoginLight
                 switchOffLoginAsk(this.$store)                
               } else {
                 debug('res', res)

@@ -23,7 +23,8 @@
       token,
     })
   }
-  const switchOn = (store, message) => store.dispatch('LOGIN_ASK_TOGGLE', { active: true, message, })
+  const switchConversation = (store, message) => store.dispatch('CONVERSATION_TOGGLE', { active: true, message, })  
+  const switchOffLoginAsk = store => store.dispatch('LOGIN_ASK_TOGGLE', { active: false, message: '', })
 
   export default {
     computed: {
@@ -59,6 +60,8 @@
                 } else {
                   location.replace('/')
                 }
+                // revolke switchOffLoginAsk for LoginLight
+                switchOffLoginAsk(this.$store)                 
               } else {
                 debug('res', res)
               }
@@ -98,12 +101,12 @@
                       break
                     }
                     case 'oauth-goo': {
-                      switchOn(this.$store, this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_G_PLUS'))
+                      switchConversation(this.$store, this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_G_PLUS'))
                       .then(signOutFromApp)
                       break
                     }
                     case 'ordinary': {
-                      switchOn(
+                      switchConversation(
                         this.$store,
                         `${this.$t('login.REGISTER_FACEBOOK_EMAIL')} ${this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_ORDINARY')}`  
                       ).then(signOutFromApp)

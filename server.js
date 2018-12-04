@@ -17,7 +17,7 @@ const uuidv4 = require('uuid/v4')
 const { createBundleRenderer } = require('vue-server-renderer')
 
 const config = require('./api/config') 
-const { PAGE_CACHE_EXCLUDING, GOOGLE_CLIENT_ID, TALK_SERVER } = require('./api/config')
+const { PAGE_CACHE_EXCLUDING } = require('./api/config')
 const { SERVER_PROTOCOL_MOBILE, SERVER_HOST_MOBILE, SERVER_PORT_MOBILE } = require('./api/config')
 const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT } = require('./api/config')
 
@@ -29,7 +29,6 @@ const serverInfo =
   `vue-server-renderer/${require('vue-server-renderer/package.json').version}`
 
 const app = express()
-const superagent = require('superagent')
 
 const formatMem = (bytes) => {
   return (bytes / 1024 / 1024).toFixed(2) + ' Mb'
@@ -193,39 +192,13 @@ function render (req, res, next) {
     url: req.url,
     cookie: cookies.get('csrf'),
     initmember: cookies.get('initmember'),
-    includ_fbsdk: req.url.match(targ_exp_login) ? `
-      <script>
-        window.fbAsyncInit = function() {
-          FB.init({
-            appId            : '${config.FB_CLIENT_ID || '143500093073133'}',
-            autoLogAppEvents : true,
-            xfbml            : true,
-            version          : 'v2.9'
-          });
-          FB.AppEvents.logPageView();
-          FB.getLoginStatus(function(response) {
-            if (response.status === 'connected') {
-              window.fbStatus = {
-                status: 'connected',
-                uid: response.authResponse.userID
-              };
-            }
-          })
-        };
-        (function(d, s, id){
-            var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) {return;}
-            js = d.createElement(s); js.id = id;
-            js.src = "//connect.facebook.net/zh_TW/sdk.js";
-            fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
-      </script>`: '',
     setting: { 
       TALK_SERVER: config.TALK_SERVER_PROXY || config.TALK_SERVER,
       POST_TYPE: config.POST_TYPE, 
       PROJECT_STATUS: config.PROJECT_STATUS, 
       TAG_ACTIVE: config.TAG_ACTIVE, 
-      GOOGLE_CLIENT_ID,
+      FB_CLIENT_ID: config.FB_CLIENT_ID,
+      GOOGLE_CLIENT_ID: config.GOOGLE_CLIENT_ID,
       GOOGLE_RECAPTCHA_SITE_KEY: config.GOOGLE_RECAPTCHA_SITE_KEY,
       DOMAIN: config.DOMAIN,
       DONATION_IS_DEPOSIT_ACTIVE: config.DONATION_IS_DEPOSIT_ACTIVE,

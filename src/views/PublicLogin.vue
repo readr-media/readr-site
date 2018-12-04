@@ -16,7 +16,7 @@
 </template>
 <script>
   import { get, } from 'lodash'
-  import { loadRecaptcha, loadGapiSDK, } from 'src/util/comm'
+  import { loadRecaptcha, loadGapiSDK, loadFbSDK, } from 'src/util/comm'
   import LoginPanel from '../components/LoginPanel.vue'
   import LoginPanelPackingTest from 'src/components/LoginPanelPackingTest.vue'
 
@@ -45,8 +45,11 @@
       if (this.isLoggedIn) {
         this.$router.push('/')
       } else {
-        loadRecaptcha(this.$store)
-        loadGapiSDK(this.$store)
+        Promise.all([
+          loadRecaptcha(this.$store),
+          loadGapiSDK(this.$store),
+          loadFbSDK(this.$store),       
+        ])
       }
     },
     watch: {

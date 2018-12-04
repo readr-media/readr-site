@@ -96,7 +96,7 @@
                 }
               }
 
-              // involke switchOffLoginAsk for LoginLight
+              // revolke switchOffLoginAsk for LoginLight
               switchOffLoginAsk(this.$store)
             } else {
               this.resMsg = this.$t('login.WORDING_LOGIN_INFAIL_VALIDATION_ISSUE')

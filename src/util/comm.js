@@ -6,6 +6,7 @@ import { SITE_DOMAIN, SITE_DOMAIN_DEV, } from '../constants'
 
 const debug = require('debug')('CLIENT:comm')
 let isRecaptchaLoaded = false
+let isFbSDKLoaded = false
 let isGapiLoaded = false
 
 export function currEnv () {
@@ -226,49 +227,93 @@ export function isElementContentYoutube (content) {
 }
 
 export function loadRecaptcha (store) {
-  if (isRecaptchaLoaded) { return }
-  const script = document.createElement('script')
-  debug('GOIN TO LOAD RECAPTCHA')
-  debug('GOIN TO LOAD RECAPTCHA')
-  debug('GOIN TO LOAD RECAPTCHA')
-  debug('GOIN TO LOAD RECAPTCHA')
-  script.onload = () => {
-    store.dispatch('SET_RECAPTCHA_LOADED').then(() => {
-      debug('SET_RECAPTCHA_LOADED: done!')
-      isRecaptchaLoaded = true
-    })
-  }
-  script.setAttribute('src', 'https://www.google.com/recaptcha/api.js')
-  document.head.appendChild(script)  
+  return new Promise(resolve => {
+    if (isRecaptchaLoaded) { return resolve() }
+    const script = document.createElement('script')
+    debug('GOIN TO LOAD RECAPTCHA')
+    debug('GOIN TO LOAD RECAPTCHA')
+    debug('GOIN TO LOAD RECAPTCHA')
+    debug('GOIN TO LOAD RECAPTCHA')
+    script.onload = () => {
+      store.dispatch('SET_RECAPTCHA_LOADED').then(() => {
+        debug('SET_RECAPTCHA_LOADED: done!')
+        isRecaptchaLoaded = true
+      })
+    }
+    script.setAttribute('src', 'https://www.google.com/recaptcha/api.js')
+    document.head.appendChild(script)    
+    resolve()
+  })  
 }
 
 export function loadGapiSDK (store) {
-  if (isGapiLoaded) { return }
-  const scriptGapiSDK = document.createElement('script')
-  scriptGapiSDK.onload = () => {
-    const scriptInitGapi = document.createElement('script')
-    scriptInitGapi.innerHTML = `
-      var gapiLoadedHandler = function () {
-        window.gapi.client.init({
-          discoveryDocs: [ 'https://people.googleapis.com/$discovery/rest?version=v1' ],
-          clientId: "${_.get(store, 'state.setting.GOOGLE_CLIENT_ID', '')}",
-          scope: 'profile'
-        }).then((res) => {
-          const isSignedIn = window.gapi.auth2.getAuthInstance().isSignedIn.get()
-          if (isSignedIn) {
-            var currUser = window.gapi.auth2.getAuthInstance().currentUser.get()
-            window.googleStatus = {
-              status: 'singedIn',
-              idToken: currUser && (currUser.getAuthResponse().id_token)
+  return new Promise(resolve => {
+    if (isGapiLoaded) { return resolve() }
+    const scriptGapiSDK = document.createElement('script')
+    scriptGapiSDK.onload = () => {
+      const scriptInitGapi = document.createElement('script')
+      scriptInitGapi.innerHTML = `
+        var gapiLoadedHandler = function () {
+          window.gapi.client.init({
+            discoveryDocs: [ 'https://people.googleapis.com/$discovery/rest?version=v1' ],
+            clientId: "${_.get(store, 'state.setting.GOOGLE_CLIENT_ID', '')}",
+            scope: 'profile'
+          }).then((res) => {
+            const isSignedIn = window.gapi.auth2.getAuthInstance().isSignedIn.get()
+            if (isSignedIn) {
+              var currUser = window.gapi.auth2.getAuthInstance().currentUser.get()
+              window.googleStatus = {
+                status: 'singedIn',
+                idToken: currUser && (currUser.getAuthResponse().id_token)
+              }
             }
+          })
+        } 
+        window.gapi && window.gapi.load('client', this.gapiLoadedHandler);
+      `
+      document.head.appendChild(scriptInitGapi)
+      isGapiLoaded = true
+    }
+    scriptGapiSDK.setAttribute('src', 'https://apis.google.com/js/api.js')
+    document.head.appendChild(scriptGapiSDK)    
+    resolve()
+  })
+}
+
+export function loadFbSDK (store) {
+  return new Promise(resolve => {
+    if (isFbSDKLoaded) { return resolve() }
+    const scriptFbSDK = document.createElement('script')
+    scriptFbSDK.innerHTML = `
+      console.log('${_.get(store, 'state.setting.FB_CLIENT_ID')}')
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId            : '${_.get(store, 'state.setting.FB_CLIENT_ID')}',
+          autoLogAppEvents : true,
+          xfbml            : true,
+          version          : 'v2.9'
+        });
+        FB.AppEvents.logPageView();
+        FB.getLoginStatus(function(response) {
+          if (response.status === 'connected') {
+            window.fbStatus = {
+              status: 'connected',
+              uid: response.authResponse.userID
+            };
           }
-        })
-      } 
-      window.gapi && window.gapi.load('client', this.gapiLoadedHandler);
+        });
+        console.log('FB INIT!')
+      };
+      (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) {return;}
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/zh_TW/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+      }(document, 'script', 'facebook-jssdk'));
     `
-    document.head.appendChild(scriptInitGapi)
-    isGapiLoaded = true
-  }
-  scriptGapiSDK.setAttribute('src', 'https://apis.google.com/js/api.js')
-  document.head.appendChild(scriptGapiSDK)
+    document.head.appendChild(scriptFbSDK)
+    isFbSDKLoaded = true
+    resolve()    
+  })
 }

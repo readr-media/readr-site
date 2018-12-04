@@ -38,7 +38,7 @@
   import Spinner from 'src/components/Spinner.vue'
   import preventScroll from 'prevent-scroll'
   import { get, } from 'lodash'
-  import { loadRecaptcha, loadGapiSDK, } from 'src/util/comm'
+  import { loadRecaptcha, loadGapiSDK, loadFbSDK, } from 'src/util/comm'
   const switchOff = store => store.dispatch('LOGIN_ASK_TOGGLE', { active: false, message: '', })
   const getDisposableToken = store => store.dispatch('DISPOSABLE_TOKEN', { type: 'register', })
   // const debug = require('debug')('CLIENT:LoginLight')
@@ -75,9 +75,12 @@
       active () {
         if (this.active) {
           preventScroll.on()
-          getDisposableToken(this.$store)
-          loadRecaptcha(this.$store)
-          loadGapiSDK(this.$store)
+          Promise.all([
+            getDisposableToken(this.$store),
+            loadRecaptcha(this.$store),
+            loadGapiSDK(this.$store),
+            loadFbSDK(this.$store),         
+          ])
         } else {
           preventScroll.off()
         }
