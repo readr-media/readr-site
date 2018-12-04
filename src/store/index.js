@@ -20,6 +20,10 @@ export function createStore () {
         'active': false,
         'item': {},
       },
+      'conversationFlag': {
+        'active': false,
+        'message': '',
+      },        
       'donateFlag': {
         'active': false,
         'item': {},
@@ -61,13 +65,14 @@ export function createStore () {
       'invitation_quota': 0,
       'isClientSide': false,
       'isLoggedIn': false,
+      'isRecaptchaLoaded': false,      
       'isTappayRequired': false,
       'isTappayLoaded': false,
       'itemsByTag': {},
       'loginAskFlag': {
         'active': false,
         'message': '',
-      },
+      },    
       'members': [],
       'membersCount': 0,
       'memos': [],

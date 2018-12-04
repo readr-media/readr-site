@@ -14,6 +14,9 @@ export default Object.assign({
   SET_CLIENT_SIDE: (state) => {
     state['isClientSide'] = true
   },
+  SWITCH_CONVERSATION: (state, { active, message, type, }) => {
+    state['conversationFlag'] = { active, message, type, }
+  },  
   SET_CUSTOM_EDITORS: (state, { members, }) => {
     state['customEditors'] = members
   },
@@ -38,6 +41,9 @@ export default Object.assign({
   },
   SET_PUBLIC_VIDEOS_COUNT: (state, { meta, }) => {
     state['publicVideosCount'] = meta.total
+  },
+  SET_RECAPTCHA_LOADED: (state, { isLoaded, }) => {
+    state['isRecaptchaLoaded'] = isLoaded
   },
   SET_SEARCH: (state, { searchResult, }) => {
     debug('searchResult:')
