@@ -165,6 +165,9 @@ export default {
         this.loadmoreLatest()
       }
     },
+    me() {
+      getUserFollowing(this.$store, { resource: 'post', })
+    },
     '$route' (to, from) {
       this.articlesListMainCategory = isCurrentRoutePath(this.$route, '/post/:postId') ? from.path : to.path
     },
@@ -190,6 +193,7 @@ export default {
   computed: {
     ...mapState({
       commentsForHome: state => get(state, 'commentsForHome', []),
+      me: state => get(state, 'profile', {}),
       postsLatest: state => get(state, 'publicPosts.items', []),
       postSingle: state => get(state, 'publicPostSingle.items.0', {}), // store binding to the post fetched while user visiting /post/:postid
     }),
