@@ -57,6 +57,7 @@ export default {
     'USE_EMAIL_INSTEAD': '或使用 email 登入',
     'NOT_MEMBER_YET': '還不是會員嗎？',
     'MEMBER_ALREAY': '已經是會員了嗎？',
+    'REGISTER_BONUS': '加入會員即可獲得價值 NT 100 元的點數！',
   },
   'admin': {
     'SEARCH': '搜尋',

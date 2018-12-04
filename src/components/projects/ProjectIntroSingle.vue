@@ -67,7 +67,7 @@ export default {
       if (this.isLoggedIn) {
         this.toogleFollow()
       } else {
-        switchOn(this.$store, this.$t('POST_CONTENT.HINT.FOLLOW_WITH_LOGIN'))
+        switchOn(this.$store)
       }
     },
     toogleFollow () {
