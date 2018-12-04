@@ -42,6 +42,12 @@ export function _buildQuery (params = {}) {
     'show_updater',
     'show_tag',
     'show_comment',
+    'embed',
+    'start_at',
+    'status',
+    'active',
+    'poll_id',
+    'created_at',
   ]
   const snakeCaseParams = mapKeys(params, (value, key) => snakeCase(key))
   whitelist.forEach((ele) => {

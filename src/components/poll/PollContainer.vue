@@ -1,0 +1,231 @@
+<template>
+  <div class="poll">
+    <template v-if="poll">
+      <!-- <img v-if="poll.image" src="" :alt="poll.title"> -->
+      <h1 v-text="poll.title"></h1>
+      <p v-text="poll.description"></p>
+      <p class="small"><span v-if="poll.createdBy.nickname">{{ `${$t('POLL.CREATED_BY')}：${poll.createdBy.nickname}` }}</span><span>{{ `${$t('POLL.START_AT')}：${moment(poll.startAt).format('YYYY/M/D HH:mm')}` }}</span></p>
+      <!-- <p class="small">#</p> -->
+      <div v-if="choices.length > 0" class="poll__choices">
+        <PollChoice
+          v-for="(choice, index) in choices"
+          :key="`${choice.pollId}-${choice.id}`"
+          :choice="choice"
+          :chosenChoices="chosenChoices"
+          :ending="ending"
+          :index="index"
+          :poll="poll"
+          :showResult="showResult"
+          @end="end"
+          @unvote="unvote"
+          @vote="vote" />
+      </div>
+      <div class="poll__end">
+        <p class="small">{{ `${moment(poll.endAt).format('YYYY/M/D HH:mm')} ${$t('POLL.END_AT')}` }}</p>
+        <p class="small">{{ `${poll.totalVote} ${$t('POLL.VOTES')}` }}</p>
+      </div>
+    </template>
+  </div>
+</template>
+<script>
+import PollChoice from './PollChoice.vue'
+import moment from 'moment'
+import { POLL_FREQUENCY, } from 'api/config'
+
+const fetchChosenChoices = (store, params) => store.dispatch('FETCH_CHOSEN_CHOICES', params)
+
+const vote = (store, {
+  choiceId,
+  pollId,
+} = {}) => {
+  return store.dispatch('VOTE', {
+    action: 'add',
+    active: true,
+    choiceId: choiceId,
+    memberId: store.state.profile.id,
+    pollId: pollId,
+  })
+}
+
+const unvote = (store, {
+  id,
+  choiceId,
+  pollId,
+} = {}) => {
+  return store.dispatch('UNVOTE', {
+    action: 'minus',
+    active: false,
+    choiceId: choiceId,
+    id: id,
+    memberId: store.state.profile.id,
+    pollId: pollId,
+  })
+}
+
+export default {
+  name: 'PollContainer',
+  components: {
+    PollChoice,
+  },
+  props: {
+    initialPoll: {
+      type: Object,
+    },
+  },
+  data () {
+    return {
+      ending: false,
+      poll: this.initialPoll,
+      showResult: false,
+    }
+  },
+  computed: {
+    choices () {
+      return (this.poll ? this.poll.choices : []) || []
+    },
+    choicesStyle () {
+      const hasImage = this.choices.find(choice => choice.image)
+      if (hasImage) {
+        return 'image'
+      }
+      // else if (!hasImage && this.choices.length === 2) {
+      //   return 'pk'
+      // }
+      return ''
+    },
+    chosenChoices () {
+      return this.$store.state.chosenChoices || []
+    },
+    frequencyStartTime () {
+      if (this.poll.frequency === POLL_FREQUENCY.WEEKLY) {
+        return moment().startOf('week').toISOString()
+      } else if (this.poll.frequency === POLL_FREQUENCY.DAILY) {
+        return moment().startOf('day').toISOString()
+      }
+      return
+    },
+    frequencyEndTime () {
+      if (this.poll.frequency === POLL_FREQUENCY.WEEKLY) {
+        return moment().endOf('week').toISOString()
+      } else if (this.poll.frequency === POLL_FREQUENCY.DAILY) {
+        return moment().endOf('day').toISOString()
+      }
+      return
+    },
+  },
+  watch: {
+    chosenChoices (value) {
+      // correct poll's total vote amount 
+      if (this.poll.totalVote < value.length) {
+        this.poll.totalVote = value.length
+      }
+      if (value.length > 0) {
+        value.map(chosenChoice => {
+          const choiceInfoFromPoll = this.poll.choices.find(choice => choice.id === chosenChoice.choiceId)
+          if (choiceInfoFromPoll.totalVote < 1) {
+            choiceInfoFromPoll.totalVote += 1
+          }
+        })
+        this.showResult = true
+      } 
+    },
+  },
+  beforeMount () {
+    const now = new Date()
+    const end = new Date(this.poll.endAt)
+    if (now >= end) {
+      this.ending = true
+      this.showResult = true
+    }
+    if (this.$store.state.profile.id) {
+      fetchChosenChoices(this.$store, this.buildChosenChoicesParams())
+    }
+  },
+  methods: {
+    moment,
+    buildChosenChoicesParams () {
+      const params = {
+        active: 1,
+        memberId: this.$store.state.profile.id,
+        pollId: `in:[${this.poll.id}]`,
+      }
+      if (this.poll.frequency !== POLL_FREQUENCY.ONCE) {
+        params.createdAt = `gte:${this.frequencyStartTime},lt:${this.frequencyEndTime}`
+      }
+      return params
+    },
+    end () {
+      this.showResult = true
+      this.ending = true
+    },
+    vote (choiceId) {
+      vote(this.$store, { choiceId: choiceId, pollId: this.poll.id, })
+      .then(() => {
+        this.showResult = true
+        setTimeout(() => {
+          fetchChosenChoices(this.$store, this.buildChosenChoicesParams())
+        }, 1000)
+      })
+    },
+    unvote (id, choiceId) {
+      unvote(this.$store, { id: id, choiceId: choiceId, pollId: this.poll.id, })
+      .then(() => {
+        setTimeout(() => {
+          fetchChosenChoices(this.$store, this.buildChosenChoicesParams())
+        }, 1000)
+      })
+    },
+  },
+}
+</script>
+<style lang="stylus" scoped>
+template-color = #11b8c9
+
+.poll
+  width 100%
+  height 100%
+  padding 20px 15px
+  color #fff
+  text-align justify
+  line-height 1.67
+  background-color template-color
+  > img
+    margin-bottom 30px
+  > h1
+    margin 0 0 15px
+    font-size .9375rem
+    font-weight 500
+  p
+    margin 0
+    font-size .8125rem
+    & + p
+      margin-top 1em
+    &.small
+      font-size .75rem
+      line-height 1
+      + p
+        margin-top .5em
+      span
+        & + span
+          margin-left 1em
+  &__choices
+    margin-top 25px
+    // &.pk
+    //   display flex
+  &__end
+    display flex
+    justify-content space-between
+    margin-top 15px
+    p.small
+      & + p
+        margin-top 0
+
+@media (min-width 500px)
+  .poll
+    width 500px
+    margin 0 auto
+    > h1
+      font-size 1.125rem
+    p
+      font-size 1rem
+</style>

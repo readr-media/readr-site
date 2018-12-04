@@ -103,6 +103,13 @@ export default {
     'WORDING_AGREEMENT_IPR' : '著作權、智慧財產權政策',
     'WORDING_AGREEMENT_PRIVACY' : '隱私權政策',
   },
+  'POLL': {
+    'CHOICE': '選項',
+    'CREATED_BY': '發起人',
+    'END_AT': '截止',
+    'START_AT': '發起時間',
+    'VOTES': 'votes',
+  },
   'PROFILE': {
     'FILTER_ALL' : '所有',
     'FILTER_1D' : '一日內',

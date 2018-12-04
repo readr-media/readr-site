@@ -1,23 +1,30 @@
 <template>
   <div id="app" :class="`page_${pageType.toLowerCase()}`">
-    <app-header v-if="showHeaderAndAsideNav"></app-header>
-    <div :class="[ 'app__container', { 'app__container--wide': isLoginPage }, { 'app__container--reset': isCommentPage || isPluginsPage } ]">
-      <div class="app__wrapper" :class="[ `page_${pageType.toLowerCase()}` ]">
-        <aside class="app__aside" :class="{ fixed: isFixedAside, }" v-if="showHeaderAndAsideNav">
-          <AppNavAside/>
-        </aside>
-        <main :class="[ 'app__main', { 'app__main--reset': isCommentPage || isPluginsPage } ]">
-          <transition name="fade" mode="out-in">
-            <router-view class="view"></router-view>
-          </transition>
-        </main>
+    <template v-if="isEmbed">
+      <transition name="fade" mode="out-in">
+        <router-view class="view"></router-view>
+      </transition>
+    </template>
+    <template v-else>
+      <app-header v-if="showHeaderAndAsideNav"></app-header>
+      <div :class="[ 'app__container', { 'app__container--wide': isLoginPage }, { 'app__container--reset': isCommentPage || isPluginsPage } ]">
+        <div class="app__wrapper" :class="[ `page_${pageType.toLowerCase()}` ]">
+          <aside class="app__aside" :class="{ fixed: isFixedAside, }" v-if="showHeaderAndAsideNav">
+            <AppNavAside/>
+          </aside>
+          <main :class="[ 'app__main', { 'app__main--reset': isCommentPage || isPluginsPage } ]">
+            <transition name="fade" mode="out-in">
+              <router-view class="view"></router-view>
+            </transition>
+          </main>
+        </div>
+        <Consume></Consume>
+        <DepositTappay v-if="isTappayNeeded" :active.sync="isDepositActive" @fetchCurrentPoint="fetchCurrentPoint"></DepositTappay>
       </div>
-      <Consume></Consume>
-      <DepositTappay v-if="isTappayNeeded" :active.sync="isDepositActive" @fetchCurrentPoint="fetchCurrentPoint"></DepositTappay>
-    </div>
-    <Conversation></Conversation>
-    <LoginLight></LoginLight>
-    <AlertGDPR v-if="showAlertGDPR" @closeAlertGDPR="showAlertGDPR = false" />
+      <Conversation></Conversation>
+      <LoginLight></LoginLight>
+      <AlertGDPR v-if="showAlertGDPR" @closeAlertGDPR="showAlertGDPR = false" />
+    </template>
   </div>
 </template>
 
@@ -42,6 +49,7 @@
     COMMENT: 'COMMENT',
     PLUGINS: 'PLUGINS',
     HOT: 'HOT',
+    EMBED: 'EMBED',
     OTHER: 'OTHER',
   }
 
@@ -63,6 +71,9 @@
       },
       isAboutPage () {
         return /\/about/.test(this.$route.fullPath)
+      },
+      isEmbed () {
+        return /\/embed\//.test(this.$route.fullPath)
       },
       isLoginPage () {
         return /\/login/.test(this.$route.fullPath)
@@ -102,6 +113,8 @@
           return PAGE_TYPE.PLUGINS
         } else if (this.isHOT) {
           return PAGE_TYPE.HOT
+        } else if (this.isEmbed) {
+          return PAGE_TYPE.EMBED
         } else {
           return PAGE_TYPE.OTHER
         }
@@ -293,6 +306,10 @@ button
 .fade-enter, .fade-leave-active
   opacity 0
 
+.page
+  &_embed
+    height 100vh
+    background-color #11b8c9 !important
 .backstage
   width 100%
   min-height 100vh

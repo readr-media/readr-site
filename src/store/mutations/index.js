@@ -4,6 +4,7 @@ import * as mutationsFollowing from 'src/store/mutations/following'
 import * as mutationsMember from 'src/store/mutations/member'
 import * as mutationsMemo from 'src/store/mutations/memo'
 import * as mutationsPoints from 'src/store/mutations/points'
+import * as mutationsPoll from 'src/store/mutations/poll'
 import * as mutationsPost from 'src/store/mutations/post'
 import * as mutationsProject from 'src/store/mutations/project'
 import * as mutationsTag from 'src/store/mutations/tag'
@@ -65,4 +66,4 @@ export default Object.assign({
   INVITATION_SWITCH_OFF: (state) => {
     state['invitation_switch_status'] = false
   },
-}, mutationsComment, mutationsEmotion, mutationsFollowing, mutationsMember, mutationsMemo, mutationsPoints, mutationsTag, mutationsPost, mutationsProject)
+}, mutationsComment, mutationsEmotion, mutationsFollowing, mutationsMember, mutationsMemo, mutationsPoints, mutationsPoll, mutationsPost, mutationsProject, mutationsTag)

@@ -7,12 +7,13 @@ Vue.use(Router)
 Vue.use(ReadrPerm)
 
 // route-level code splitting
+const AboutContentPoints = () => import('src/components/about/AboutContentPoints.vue')
+const EmbedPoll = () => import('../views/EmbedPoll.vue')
 const ManageAdmin = () => import('../views/ManageAdmin.vue')
 const ManageEditor = () => import('../views/ManageEditor.vue')
 const ManageGuestEditor = () => import('../views/ManageGuestEditor.vue')
 const ManageMember = () => import('../views/ManageMember.vue')
 const PublicAbout = () => import('../views/PublicAbout.vue')
-const AboutContentPoints = () => import('src/components/about/AboutContentPoints.vue')
 const PublicAgreement = () => import('../views/PublicAgreement.vue')
 const PublicEditors = () => import('../views/PublicEditors.vue')
 const PublicHome = () => import('../views/PublicHome.vue')
@@ -80,6 +81,7 @@ const router = new Router({
     { path: '/login-panel', component: PublicLoginPanel, },
     { path: '/member/:panel?/:tool?', component: ManageMember, meta: { permission: 'member', }, },
     { path: '/series/:slug/:subItem?', component: PublicProject, },
+    { path: '/embed/poll/:id', component: EmbedPoll, },
     { path: '/profile/:id', component: PublicProfile, },
     { path: '/search/:keyword', component: PublicSearch, },
     { path: '/series-list', component: PublicProjectList, },
