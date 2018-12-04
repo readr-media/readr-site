@@ -132,6 +132,9 @@ export default Object.assign({
     debug('Got a action call to upload image.')
     return uploadImage(file, type)
   },
+  SET_RECAPTCHA_LOADED: ({ commit, }) => {
+    return commit('SET_RECAPTCHA_LOADED', { isLoaded: true, })
+  },  
   VERIFY_RECAPTCHA_TOKEN: ({}, { token, }) => {
     return verifyRecaptchaToken(token)
   },

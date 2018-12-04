@@ -38,6 +38,7 @@
   import VueCookie from 'vue-cookie'
 
   const debug = require('debug')('CLIENT:Login')
+  const switchOffLoginAsk = store => store.dispatch('LOGIN_ASK_TOGGLE', { active: false, message: '', })
   const login = (store, profile, token) => {
     return store.dispatch('LOGIN', {
       params: {
@@ -94,6 +95,9 @@
                   location.replace('/')
                 }
               }
+
+              // involke switchOffLoginAsk for LoginLight
+              switchOffLoginAsk(this.$store)
             } else {
               this.resMsg = this.$t('login.WORDING_LOGIN_INFAIL_VALIDATION_ISSUE')
             }

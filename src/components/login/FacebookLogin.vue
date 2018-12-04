@@ -1,5 +1,5 @@
 <template>
-  <div class="facebook-login" @click="login">
+  <div class="facebook-login" :class="{ light: theme === 'light' }" @click="login">
     <div class="facebook-login__container">
       <i class="icon"></i>
       <span class="wording" v-text="labelWording"></span>
@@ -131,6 +131,7 @@
         type: Boolean,
         default: false,
       },
+      theme: {},
     },
   }
 </script>
@@ -144,9 +145,16 @@
     padding 5px 34px
     background-color transparent
     border 1px solid #9b9b9b
-
     font-size 1.125rem
     color #9b9b9b
+
+    &.light
+      background-color #3c5a99
+      border none
+      color #fff
+      .facebook-login__container
+        > .icon
+          background-image url(/public/icons/fb-white-square.png)
 
     margin-bottom 15px
     &__container

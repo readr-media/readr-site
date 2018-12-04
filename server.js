@@ -241,7 +241,6 @@ function render (req, res, next) {
         } 
         window.gapi && window.gapi.load('client', this.gapiLoadedHandler);
       </script>` : '',
-    include_recaptcha: req.url.match(targ_exp_login) ? `<script src='https://www.google.com/recaptcha/api.js'></script>` : '',
     setting: { 
       TALK_SERVER: config.TALK_SERVER_PROXY || config.TALK_SERVER,
       POST_TYPE: config.POST_TYPE, 

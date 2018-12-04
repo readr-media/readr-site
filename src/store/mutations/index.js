@@ -39,6 +39,9 @@ export default Object.assign({
   SET_PUBLIC_VIDEOS_COUNT: (state, { meta, }) => {
     state['publicVideosCount'] = meta.total
   },
+  SET_RECAPTCHA_LOADED: (state, { isLoaded, }) => {
+    state['isRecaptchaLoaded'] = isLoaded
+  },
   SET_SEARCH: (state, { searchResult, }) => {
     debug('searchResult:')
     debug(searchResult)

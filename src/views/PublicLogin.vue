@@ -16,6 +16,7 @@
 </template>
 <script>
   import { get, } from 'lodash'
+  import { loadRecaptcha, } from 'src/util/comm'
   import LoginPanel from '../components/LoginPanel.vue'
   import LoginPanelPackingTest from 'src/components/LoginPanelPackingTest.vue'
 
@@ -26,7 +27,7 @@
     },
     computed: {
       isLoggedIn () {
-        return get(this.$store, [ 'state', 'isLoggedIn', ], false)
+        return get(this.$store, 'state.isLoggedIn', false)
       },
       registrationActive () {
         return get(this.$store, 'state.setting.REGISTRATION_ACTIVE', false)
@@ -37,11 +38,15 @@
         isClientSide: false,
       }
     },
-    name: 'login-page',
+    name: 'Login',
     methods: {},
     mounted () {
       this.isClientSide = true
-      this.isLoggedIn && this.$router.push('/')
+      if (this.isLoggedIn) {
+        this.$router.push('/')
+      } else {
+        loadRecaptcha(this.$store)
+      }
     },
     watch: {
       isLoggedIn: function () {

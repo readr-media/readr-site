@@ -1,5 +1,5 @@
 <template>
-  <div class="google-plus-login" @click="login">
+  <div class="google-plus-login" :class="{ light: theme === 'light' }" @click="login">
     <div class="google-plus-login__container">
       <i class="icon"></i>
       <span class="wording" v-text="labelWording"></span>
@@ -130,6 +130,7 @@
         type: Boolean,
         default: false,
       },
+      theme: {},
     },
   }
 </script>
@@ -142,9 +143,13 @@
     padding 5px 34px
     background-color transparent
     border 1px solid #9b9b9b
-
     font-size 1.125rem
     color #9b9b9b
+
+    &.light
+      background-color #fff
+      border none
+      color #000
 
     margin-bottom 15px
 

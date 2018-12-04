@@ -5,6 +5,7 @@ import pathToRegexp from 'path-to-regexp'
 import { SITE_DOMAIN, SITE_DOMAIN_DEV, } from '../constants'
 
 const debug = require('debug')('CLIENT:comm')
+let isRecaptchaLoaded = false
 
 export function currEnv () {
   if (process.env.VUE_ENV === 'client') {
@@ -221,4 +222,21 @@ export function isElementContentYoutube (content) {
   const isIframe = regexp.test(content)
   const isHostYoutube = getElementContentSrc(content).includes('www.youtube.com')
   return isIframe && isHostYoutube
+}
+
+export function loadRecaptcha (store) {
+  if (isRecaptchaLoaded) { return }
+  const script = document.createElement('script')
+  debug('GOIN TO LOAD RECAPTCHA')
+  debug('GOIN TO LOAD RECAPTCHA')
+  debug('GOIN TO LOAD RECAPTCHA')
+  debug('GOIN TO LOAD RECAPTCHA')
+  script.onload = () => {
+    store.dispatch('SET_RECAPTCHA_LOADED').then(() => {
+      debug('SET_RECAPTCHA_LOADED: done!')
+      isRecaptchaLoaded = true
+    })
+  }
+  script.setAttribute('src', 'https://www.google.com/recaptcha/api.js')
+  document.head.appendChild(script)  
 }

@@ -54,6 +54,9 @@ export default {
       <div>讓新聞內容更加完善，將以往封閉的新聞編輯室邁向開放的可能，</div>
       <div>最重要的就是你的參與。</div>
     `,
+    'USE_EMAIL_INSTEAD': '或使用 email 登入',
+    'NOT_MEMBER_YET': '還不是會員嗎？',
+    'MEMBER_ALREAY': '已經是會員了嗎？',
   },
   'admin': {
     'SEARCH': '搜尋',

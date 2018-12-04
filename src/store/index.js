@@ -61,6 +61,7 @@ export function createStore () {
       'invitation_quota': 0,
       'isClientSide': false,
       'isLoggedIn': false,
+      'isRecaptchaLoaded': false,      
       'isTappayRequired': false,
       'isTappayLoaded': false,
       'itemsByTag': {},
