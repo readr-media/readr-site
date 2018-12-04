@@ -58,6 +58,7 @@
   const fetchCurrPoints = store => store.dispatch('GET_POINT_CURRENT', { params: {}, })
   const switchOff = store => store.dispatch('SWITCH_OFF_DONATE_PANEL', {})
   const switchOnTappay = (store, item) => store.dispatch('SWITCH_ON_TAPPAY_PANEL', { active: true, item, })
+  const switchOnLoginLight = (store, message) => store.dispatch('LOGIN_ASK_TOGGLE', { active: true, message, type: 'GO_LOGIN', })
   export default {
     name: 'Donate',
     components: {
@@ -170,7 +171,7 @@
         this.$refs.content.scrollTop = this.$refs.content.scrollTop + 30
       },
       goLogin () {
-        this.$router.push('/login')
+        switchOnLoginLight(this.$store)
       },
     },
     beforeMount () {
@@ -199,6 +200,9 @@
       isActive () {
         this.showDonate = this.isActive
         this.showDonate && fetchCurrPoints(this.$store)
+        if (this.isActive && !get(this.me, 'id')) {
+          switchOnLoginLight(this.$store)
+        }
       },
     },
   }

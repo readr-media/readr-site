@@ -1,8 +1,8 @@
 <template>
   <BaseLightBox borderStyle="nonBorder" :showLightBox.sync="showMemoDeduction" @closeLightBox="hideMemoDeduction()">
     <div class="project-memo-alert">
-      <div class="project-memo-alert__content" :class="{ center: !currUser, }" ref="content">
-        <template v-if="isClientSide && currUser">  
+      <div class="project-memo-alert__content" :class="{ center: !get(me, 'id'), }" ref="content">
+        <template v-if="isClientSide && get(me, 'id')">  
           <div class="content">
             <h2 v-text="$t('PROJECT.JOIN_CONTENT_1')"></h2>
             <h1 v-text="get(targetItem, 'project.title')"></h1>
@@ -36,7 +36,7 @@
           <button v-text="$t('PROJECT.LOG_IN')" @click="goLogin"></button>
         </template>
       </div>
-      <div class="project-memo-alert__continue" :class="{ active: !isBottom && currUser, }" @click="goFurther"></div>
+      <div class="project-memo-alert__continue" :class="{ active: !isBottom && get(this.me, 'id'), }" @click="goFurther"></div>
     </div>
   </BaseLightBox>
 </template>
@@ -46,7 +46,6 @@
   import { POINT_OBJECT_TYPE, DONATION_POINT_MIN_LINE, } from 'api/config'
   import { get, } from 'lodash'
   import { isClientSide, } from 'src/util/comm'
-  import { redirectToLogin, } from 'src/util/services'
 
   const DEFAULT_DONATION_POINT_MIN_LINE = DONATION_POINT_MIN_LINE || -100
 
@@ -63,7 +62,7 @@
   const fetchCurrPoints = store => store.dispatch('GET_POINT_CURRENT', { params: {}, })
   const switchOnTappay = (store, item) => store.dispatch('SWITCH_ON_TAPPAY_PANEL', { active: true, item, })
   const switchOffDeductionPanel = store => store.dispatch('SWITCH_OFF_CONSUME_PANEL', { active: false, })
-  
+  const switchOnLoginLight = (store, message) => store.dispatch('LOGIN_ASK_TOGGLE', { active: true, message, type: 'GO_LOGIN', })
   export default {
     name: 'Consume',
     components: {
@@ -80,9 +79,6 @@
       },
       currentPoints () {
         return get(this.$store, 'state.personalPoints.points', 0)
-      },  
-      currUser () {
-        return get(this.$store, 'state.profile.id')
       },           
       extraPointsNeeded () {
         return Math.abs(this.currentPoints - this.pointsNeeded - DEFAULT_DONATION_POINT_MIN_LINE)
@@ -101,6 +97,9 @@
         debug('this.currentPoints', this.currentPoints)
         debug('DEFAULT_DONATION_POINT_MIN_LINE', DEFAULT_DONATION_POINT_MIN_LINE)
         return this.isDonationActive && this.currentPoints - this.pointsNeeded <= DEFAULT_DONATION_POINT_MIN_LINE
+      },
+      me () {
+        return get(this.$store, 'state.profile', {})
       },
       pointsNeeded () {
         return get(this.targetItem, 'project.memoPoints', 0) || 0
@@ -130,9 +129,7 @@
         this.$refs.content.scrollTop = this.$refs.content.scrollTop + 30
       },
       goLogin () {
-        switchOffDeductionPanel(this.$store).then(() => {
-           redirectToLogin(this.$route.fullPath, this.$router)
-        })
+        switchOnLoginLight(this.$store)
       },
       clickHandler () {
         debug('CLOSE COMSUME!')
@@ -172,7 +169,7 @@
       },
     },
     mounted () {
-      this.currUser && fetchCurrPoints(this.$store).then(() => {
+      get(this.me, 'id') && fetchCurrPoints(this.$store).then(() => {
         debug('GOT CURRENT POINT:', this.currentPoints)
       })
       this.$refs.content.addEventListener('scroll', this.checkBottom)      
@@ -182,7 +179,11 @@
       isActive () {
         if (this.isActive) {
           this.showMemoDeduction = true
-          fetchCurrPoints(this.$store)
+          if (this.isActive && !get(this.me, 'id')) {
+            switchOnLoginLight(this.$store)
+          } else {
+            fetchCurrPoints(this.$store)
+          }
         } else {
           this.showMemoDeduction = false
         }
