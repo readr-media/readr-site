@@ -220,32 +220,12 @@ function render (req, res, next) {
             fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));
       </script>`: '',
-    include_gapi: req.url.match(targ_exp_login) ? `
-      <script src="https://apis.google.com/js/api.js"></script>
-      <script>
-        var gapiLoadedHandler = function () {
-          window.gapi.client.init({
-            discoveryDocs: [ 'https://people.googleapis.com/$discovery/rest?version=v1' ],
-            clientId: "${GOOGLE_CLIENT_ID}",
-            scope: 'profile'
-          }).then((res) => {
-            const isSignedIn = window.gapi.auth2.getAuthInstance().isSignedIn.get()
-            if (isSignedIn) {
-              var currUser = window.gapi.auth2.getAuthInstance().currentUser.get()
-              window.googleStatus = {
-                status: 'singedIn',
-                idToken: currUser && (currUser.getAuthResponse().id_token)
-              }
-            }
-          })
-        } 
-        window.gapi && window.gapi.load('client', this.gapiLoadedHandler);
-      </script>` : '',
     setting: { 
       TALK_SERVER: config.TALK_SERVER_PROXY || config.TALK_SERVER,
       POST_TYPE: config.POST_TYPE, 
       PROJECT_STATUS: config.PROJECT_STATUS, 
       TAG_ACTIVE: config.TAG_ACTIVE, 
+      GOOGLE_CLIENT_ID,
       GOOGLE_RECAPTCHA_SITE_KEY: config.GOOGLE_RECAPTCHA_SITE_KEY,
       DOMAIN: config.DOMAIN,
       DONATION_IS_DEPOSIT_ACTIVE: config.DONATION_IS_DEPOSIT_ACTIVE,

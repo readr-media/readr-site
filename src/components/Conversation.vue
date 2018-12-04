@@ -17,19 +17,19 @@
     CONFIRM: 'CONFIRM',
     GO_LOGIN: 'GO_LOGIN',
   }
-  const switchOff = store => store.dispatch('LOGIN_ASK_TOGGLE', { active: false, message: '', })
+  const switchOff = store => store.dispatch('CONVERSATION_TOGGLE', { active: false, message: '', })
 
   export default {
-    name: 'LoginAsk',
+    name: 'Conversation',
     computed: {
       active () {
-        return get(this.$store, 'state.loginAskFlag.active', false)
+        return get(this.$store, 'state.conversationFlag.active', false)
       },
       message () {
-        return get(this.$store, 'state.loginAskFlag.message', '')
+        return get(this.$store, 'state.conversationFlag.message', '')
       },
       type () {
-        return get(this.$store, 'state.loginAskFlag.type', 'confirm')
+        return get(this.$store, 'state.conversationFlag.type', 'confirm')
       },
     },
     data () {

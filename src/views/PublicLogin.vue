@@ -16,7 +16,7 @@
 </template>
 <script>
   import { get, } from 'lodash'
-  import { loadRecaptcha, } from 'src/util/comm'
+  import { loadRecaptcha, loadGapiSDK, } from 'src/util/comm'
   import LoginPanel from '../components/LoginPanel.vue'
   import LoginPanelPackingTest from 'src/components/LoginPanelPackingTest.vue'
 
@@ -46,6 +46,7 @@
         this.$router.push('/')
       } else {
         loadRecaptcha(this.$store)
+        loadGapiSDK(this.$store)
       }
     },
     watch: {

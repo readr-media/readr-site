@@ -6,6 +6,7 @@ import { SITE_DOMAIN, SITE_DOMAIN_DEV, } from '../constants'
 
 const debug = require('debug')('CLIENT:comm')
 let isRecaptchaLoaded = false
+let isGapiLoaded = false
 
 export function currEnv () {
   if (process.env.VUE_ENV === 'client') {
@@ -239,4 +240,35 @@ export function loadRecaptcha (store) {
   }
   script.setAttribute('src', 'https://www.google.com/recaptcha/api.js')
   document.head.appendChild(script)  
+}
+
+export function loadGapiSDK (store) {
+  if (isGapiLoaded) { return }
+  const scriptGapiSDK = document.createElement('script')
+  scriptGapiSDK.onload = () => {
+    const scriptInitGapi = document.createElement('script')
+    scriptInitGapi.innerHTML = `
+      var gapiLoadedHandler = function () {
+        window.gapi.client.init({
+          discoveryDocs: [ 'https://people.googleapis.com/$discovery/rest?version=v1' ],
+          clientId: "${_.get(store, 'state.setting.GOOGLE_CLIENT_ID', '')}",
+          scope: 'profile'
+        }).then((res) => {
+          const isSignedIn = window.gapi.auth2.getAuthInstance().isSignedIn.get()
+          if (isSignedIn) {
+            var currUser = window.gapi.auth2.getAuthInstance().currentUser.get()
+            window.googleStatus = {
+              status: 'singedIn',
+              idToken: currUser && (currUser.getAuthResponse().id_token)
+            }
+          }
+        })
+      } 
+      window.gapi && window.gapi.load('client', this.gapiLoadedHandler);
+    `
+    document.head.appendChild(scriptInitGapi)
+    isGapiLoaded = true
+  }
+  scriptGapiSDK.setAttribute('src', 'https://apis.google.com/js/api.js')
+  document.head.appendChild(scriptGapiSDK)
 }

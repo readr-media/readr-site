@@ -20,6 +20,10 @@ export function createStore () {
         'active': false,
         'item': {},
       },
+      'conversationFlag': {
+        'active': false,
+        'message': '',
+      },        
       'donateFlag': {
         'active': false,
         'item': {},
@@ -68,7 +72,7 @@ export function createStore () {
       'loginAskFlag': {
         'active': false,
         'message': '',
-      },
+      },    
       'members': [],
       'membersCount': 0,
       'memos': [],

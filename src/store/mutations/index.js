@@ -14,6 +14,9 @@ export default Object.assign({
   SET_CLIENT_SIDE: (state) => {
     state['isClientSide'] = true
   },
+  SWITCH_CONVERSATION: (state, { active, message, type, }) => {
+    state['conversationFlag'] = { active, message, type, }
+  },  
   SET_CUSTOM_EDITORS: (state, { members, }) => {
     state['customEditors'] = members
   },
