@@ -1,4 +1,4 @@
-import truncate from 'html-truncate'
+import truncate from 'truncate-html'
 import { get, isEmpty, } from 'lodash'
 
 import { POST_TYPE, } from 'api/config'
