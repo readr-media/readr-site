@@ -26,7 +26,6 @@
   import { Comment, } from 'readr-comment'
   import { get, map, isEmpty, isNaN, } from 'lodash'
   import { getFullUrl, } from 'src/util/comm'
-  import { redirectToLogin, } from 'src/util/services'
   import { ROLE_MAP, } from 'api/config'
   import { RESOURCE_TYPE, } from 'src/constants'
 
@@ -39,6 +38,7 @@
   const reportComment = (store, { params, }) => store.dispatch('ADD_COMMENT_REPORT', { params, })
   const updateComment = (store, { params, }) => store.dispatch('UPDATE_COMMENT', { params, })
   const fetchReportsListBySlugs = (store, slugs = []) => store.dispatch('GET_PUBLIC_REPORTS', { params: { report_slugs: slugs, }, })
+  const switchOn = (store, message) => store.dispatch('LOGIN_ASK_TOGGLE', { active: true, message, type: 'GO_LOGIN', })
   const debug = require('debug')('CLIENT:CommentContainer')
 
   export default {
@@ -107,7 +107,7 @@
     },    
     methods: {
       goLogin () {
-        redirectToLogin(this.$route.fullPath, this.$router)
+        switchOn(this.$store)
       },
       queryForRedisUse (comment) {
         return get(comment, 'parentId') ? { 
