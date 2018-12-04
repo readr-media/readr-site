@@ -50,7 +50,7 @@ import PostItem from 'src/components/post/PostItem.vue'
 import MemoFigure from 'src/components/projects/MemoFigure.vue'
 import TagNavAside from 'src/components/tag/TagNavAside.vue'
 import sanitizeHtml from 'sanitize-html'
-import truncate from 'html-truncate'
+import truncate from 'truncate-html'
 
 const debug = require('debug')('CLIENT:Home')
 

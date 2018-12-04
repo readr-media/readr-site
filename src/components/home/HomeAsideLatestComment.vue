@@ -19,7 +19,7 @@ import { getArticleAuthorNickname, currEnv, dateDiffFromNow, } from 'src/util/co
 import { SITE_DOMAIN, SITE_DOMAIN_DEV, } from 'src/constants'
 import { get, isEqual, } from 'lodash'
 import pathToRegexp from 'path-to-regexp'
-import truncate from 'html-truncate'
+import truncate from 'truncate-html'
 
 export default {
   props: {

@@ -1,11 +1,13 @@
 <template>
-  <div class="content content--memo content--pointer">
-    <div class="content__memo-hint memo-hint">
-      <img class="memo-hint__lock-icon" src="/public/icons/lock.png" alt="">
-      <span class="memo-hint__text" v-text="$t('homepage.EDITOR_ROOMMATE_ONLY')"></span>
-    </div>
+  <div class="content content--news content--pointer" @click="navigatePost">
+    <img
+      v-if="post.ogImage && isClientSide"
+      class="content__hero-image"
+      :src="getFullUrl(post.ogImage)"
+      @load="setLeadingImageOrientation(getFullUrl(post.ogImage), $event)"
+    >
     <h1 class="content__title" v-text="post.title"></h1>
-    <div class="content__post-content post-content" @click="goMemo">
+    <div class="content__post-content post-content">
       <template
         v-for="(p, i) in postContentStringsTruncate"
       >
@@ -31,8 +33,8 @@
         </template>
       </template>
       <span
+        v-show="showReadMore"
         class="post-content__read-more read-more"
-        @click.prevent="memoDeductMach"
       >
         ......<span class="read-more__text" v-text="$t('homepage.WORDING_HOME_POST_MORE')"></span>
       </span>
@@ -41,8 +43,6 @@
 </template>
 
 <script>
-import { PROJECT_STATUS, } from 'api/config'
-import pathToRegexp from 'path-to-regexp'
 import { get, } from 'lodash'
 import {
   isClientSide,
@@ -54,8 +54,6 @@ import {
   clickImg,
 } from 'src/util/comm'
 
-const switchOnDeductionPanel = (store, item) => store.dispatch('SWITCH_ON_CONSUME_PANEL', { active: true, item, })
-
 export default {
   props: {
     post: {
@@ -65,32 +63,31 @@ export default {
   },
   computed: {
     isClientSide,
+    postContentStrings () {
+      return get(this.post, [ 'processed', 'postContentStrings', ], [])
+    },
     postContentStringsTruncate () {
       return get(this.post, [ 'processed', 'postContentStringsTruncate', ], [])
     },
-    isMemoPaid () {
-      return get(this.post, 'project.paid')
-    },
-    isProjectPublished () {
-      return get(this.post, 'project.status') === PROJECT_STATUS.DONE
-    },
-    targetUrl () {
-      // Remove hostname and port from url using regular expression
-      const link = (get(this.post, 'link') || '').replace( /^[a-zA-Z]{3,5}:\/{2}[a-zA-Z0-9_.:-]+/, '' )
-      if (link !== '') {
-        const re = pathToRegexp(`/series/:projectSlug/:memoId`)
-        const projectSlug = get(re.exec(link), '1')
-        const memoId = get(re.exec(link), '2')
-        return `/series/${projectSlug}/${memoId}`
-      } else {
-        return `/series/${get(this.$route, 'params.slug')}/${get(this.post, 'id')}`
-      }
+    showReadMore () {
+      const isNothingTruncate = this.postContentStrings.join('') === this.postContentStringsTruncate.join('')
+      return !isNothingTruncate
     },
   },
   methods: {
-    isImg,
     isElementContentYoutube,
+    isImg,
+    getFullUrl,
     clickImg,
+    setLeadingImageOrientation (src, event) {
+      onImageLoaded(src)
+      .then(({ width, height, }) => {
+        width < height ? event.target.style.objectFit = 'contain' : event.target.style.objectFit = 'cover'
+      })
+      .catch(() => {
+        event.target.style.objectFit = 'cover'
+      })
+    },
     setContentImageOrientation (src, event) {
       onImageLoaded(src)
       .then(({ width, height, }) => {
@@ -100,23 +97,15 @@ export default {
         event.target.classList.add('landscape')
       })
     },
-    getImgSrc (content) {
-      return getFullUrl(getElementContentSrc(content))
-    },
-    goMemo (e) {
+    navigatePost (e) {
       if (get(e.target, 'tagName', '') === 'A') {
         e.stopPropagation()
-      } else if (this.isMemoPaid !== false || this.isProjectPublished) {
-        this.$router.push(this.targetUrl)
+      } else {
+        this.$router.push(`/post/${get(this.post, 'id')}`)
       }
     },
-    memoDeductMach () {
-      if (this.isMemoPaid === false) {
-        /**
-         * Go open deduction lightbox.
-         */
-        switchOnDeductionPanel(this.$store, this.post)
-      }
+    getImgSrc (content) {
+      return getFullUrl(getElementContentSrc(content))
     },
   },
 }
@@ -126,25 +115,19 @@ export default {
 .content
   &--pointer
     cursor pointer
+  &__hero-image
+    width 100%
+    height auto
+    background-color #444746
+    margin-bottom 22px
   &__title
-    font-size 18px
-    font-weight 600
-    margin 0
+    font-size 20px
+    font-weight 700
+    margin 0 0 11px
     line-height 1.5
+    color #4a4a4a
   &__post-content
-    margin 18px 0
-
-.memo-hint
-  display flex
-  align-items center
-  margin-bottom 5px
-  font-size 0.875rem
-  font-weight 500
-  line-height normal
-  color #808080
-  &__lock-icon
-    height 11px
-    margin-right 7px
+      margin 18px 0
 
 .post-content
   &__paragraph
@@ -178,6 +161,9 @@ export default {
       line-height 1.5
       font-weight bold
       margin 23.5px 0 15px 0
+    >>> a
+      color black
+      border-bottom 1px solid black
     >>> figcaption
       font-size 14px
       line-height 1.71

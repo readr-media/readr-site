@@ -5,7 +5,7 @@ import Cookie from 'vue-cookie'
 import superagent from 'superagent'
 import moment from 'moment'
 import sanitizeHtml from 'sanitize-html'
-import truncate from 'html-truncate'
+import truncate from 'truncate-html'
 import uuidv4 from 'uuid/v4'
 
 const debug = require('debug')('CLIENT:services')
