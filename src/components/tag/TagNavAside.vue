@@ -78,6 +78,9 @@ export default {
       this.resetLoadmore()
       this.fetchTags()
     },
+    me () {
+      getUserFollowing(this.$store, { resource: 'tag', })
+    },
   },
   data () {
     return {
@@ -107,6 +110,7 @@ export default {
   },
   computed: {
     ...mapState({
+      me: state => get(state, 'profile', {}),
       tagsPublic: state => state.publicTags,
       tagsFollowed: state => get(state.followingByUser, [ state.profile.id, 'tag', ], [],),
     }),

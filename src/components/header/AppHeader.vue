@@ -46,7 +46,7 @@
 <script>
   import { filter, get, } from 'lodash'
   import { ROLE_MAP, } from 'src/constants'
-  import { removeToken, redirectToLogin, } from 'src/util/services'
+  import { removeToken, } from 'src/util/services'
   import { getFullUrl, isClientSide, } from 'src/util/comm'
   import Notification from 'src/components/header/Notification.vue'
   import SearchTool from 'src/components/search/SearchTool.vue'
@@ -97,7 +97,7 @@
         logout(this.$store).then(() => {
           const domain = get(this.$store, 'state.setting.DOMAIN')
           return removeToken(domain).then(() => {
-            redirectToLogin(this.$route.fullPath, this.$router)
+            location.replace('/login')
           })
         })
       },
