@@ -35,7 +35,7 @@
     name: 'GooglePlusLogin',
     methods: {
       login () {
-        this.$emit('update:isDoingLogin', true)
+        
         const readyToLogin = (idToken) => {
           login(this.$store, { idToken, login_mode: 'google', }, get(this.$store, [ 'state', 'register-token', ]))
             .then((res) => {
@@ -67,6 +67,7 @@
           const auth = gapi && gapi.auth2.getAuthInstance()
           if (!auth) { return }
           auth.signIn({ scope: 'profile email', }).then((currUser) => {
+            this.$emit('update:isDoingLogin', true)
             const idToken = currUser.getAuthResponse().id_token
             gapi.client.people.people.get({
               'resourceName': 'people/me',
@@ -118,6 +119,7 @@
           })
         } else {
           debug('Already authorized.')
+          this.$emit('update:isDoingLogin', true)
           readyToLogin(window.googleStatus.idToken)
         }
       },

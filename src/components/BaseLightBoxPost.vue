@@ -49,7 +49,6 @@ import { getArticleAuthorId, getArticleAuthorNickname, getArticleAuthorThumbnail
 import BaseLightBoxTemplateNews from 'src/components/BaseLightBoxTemplateNews.vue'
 import BaseLightBoxTemplatePost from 'src/components/BaseLightBoxTemplatePost.vue'
 import sanitizeHtml from 'sanitize-html'
-import { redirectToLogin, } from 'src/util/services'
 
 const debug = require('debug')('CLIENT:BaseLightBoxPost')
 const dom = require('xmldom').DOMParser
@@ -57,6 +56,7 @@ const seializer  = require('xmldom').XMLSerializer
 
 const switchOnDeductionPanel = (store, item) => store.dispatch('SWITCH_ON_CONSUME_PANEL', { active: true, item, })
 const switchOffDeductionPanel = store => store.dispatch('SWITCH_OFF_CONSUME_PANEL', { active: false, })
+const switchOnLoginLight = (store, message) => store.dispatch('LOGIN_ASK_TOGGLE', { active: true, message, type: 'GO_LOGIN', })
 
 export default {
   name: 'BaseLightBoxPost',
@@ -139,7 +139,7 @@ export default {
       }      
     },
     goLogin () {
-      redirectToLogin(this.$route.fullPath, this.$router)
+      switchOnLoginLight(this.$store)
     },
     goHome () {
       this.$router.replace('/')
@@ -148,6 +148,9 @@ export default {
   mounted () {
     this.isPostEmpty && (this.isContentEmpty = true)
     this.checkMemoStatus()
+    if (this.isMemo && !this.isMemoPaid && this.isLoginBtnActive) {
+      switchOnLoginLight(this.$store)
+    }
   },
   props: {
     post: {
@@ -155,6 +158,12 @@ export default {
     },
   },
   watch: {
+    isLoginBtnActive () {
+      debug('isLoginBtnActive', this.isLoginBtnActive)
+      if (this.isMemo && !this.isMemoPaid && this.isLoginBtnActive) {
+        switchOnLoginLight(this.$store)
+      }
+    },
     post () {
       debug('!this.isPostEmpty', !this.isPostEmpty)
       if (!this.isPostEmpty) {
