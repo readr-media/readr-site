@@ -214,7 +214,10 @@ export default {
     isTappayRequired () {
       debug('Mutation detected: isTappayRequired', this.isTappayRequired)
       this.$forceUpdate()
-    },     
+    }, 
+    me () {
+      this.runJobs()
+    },    
     postSingle () {
       this.$forceUpdate()
     },
@@ -275,22 +278,25 @@ export default {
         switchOff(this.$store)
       }
     },
+    runJobs () {
+      getUserFollowing(this.$store, { resource: 'post', })
+      getUserFollowing(this.$store, { resource: 'memo', })
+      getUserFollowing(this.$store, { resource: 'report', })
+      getUserFollowing(this.$store, { resource: 'tag', })
+      getUserFollowing(this.$store, { resource: 'project', })
+      loadTappaySDK(this.$store)
+      if (get(this.me, 'id')) {
+        fetchMemos(this.$store, {
+          mode: 'set',
+          proj_ids: [ get(this.projectSingle, 'id', 0), ],
+          page: 1,
+        })      
+        this.$route.params.subItem && get(this.$route, 'params.subItem') !== 'donate' && fetchMemoSingle(this.$store, this.$route.params.subItem)
+      }
+    },
   },
   beforeMount () {
-    getUserFollowing(this.$store, { resource: 'post', })
-    getUserFollowing(this.$store, { resource: 'memo', })
-    getUserFollowing(this.$store, { resource: 'report', })
-    getUserFollowing(this.$store, { resource: 'tag', })
-    getUserFollowing(this.$store, { resource: 'project', })
-    loadTappaySDK(this.$store)
-    if (get(this.me, 'id')) {
-      fetchMemos(this.$store, {
-        mode: 'set',
-        proj_ids: [ get(this.projectSingle, 'id', 0), ],
-        page: 1,
-      })      
-      this.$route.params.subItem && get(this.$route, 'params.subItem') !== 'donate' && fetchMemoSingle(this.$store, this.$route.params.subItem)
-    }
+    this.runJobs()
     this.isSeriesDonate = get(this.$route, 'params.subItem') === 'donate'
     debug('isSeriesDonate', this.isSeriesDonate)
   },

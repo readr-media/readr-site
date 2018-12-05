@@ -172,37 +172,40 @@ export default {
         this.shouldShowSpinner = false
       })
     },
+    runJobs () {
+      if (this.route === 'series') {
+        const reportIds = get(this.$store.state, 'publicReports', []).map(report => report.id)
+        const memoIds = get(this.$store.state, this.me.id ? 'memos' : 'publicMemos', []).map(memo => memo.id)
+        if (reportIds.length > 0) {
+          fetchFollowing(this.$store, { resource: 'report', ids: reportIds, })
+          fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'like', })
+          fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'dislike', })
+        }
+        if (memoIds.length > 0) {
+          fetchFollowing(this.$store, { resource: 'memo', ids: memoIds, })
+          fetchEmotion(this.$store, { resource: 'memo', ids: memoIds, emotion: 'like', })
+          fetchEmotion(this.$store, { resource: 'memo', ids: memoIds, emotion: 'dislike', })
+        }
+      } else if (this.route === 'tag') {
+        const postIds = this.posts.filter(post => !post.projectId).map(post => post.id)
+        const reportIds = this.posts.filter(report => report.projectId).map(report => report.id)
+        if (postIds.length > 0) {
+          fetchFollowing(this.$store, { resource: 'post', ids: postIds, })
+          fetchEmotion(this.$store, { resource: 'post', ids: postIds, emotion: 'like', })
+          fetchEmotion(this.$store, { resource: 'post', ids: postIds, emotion: 'dislike', })
+        }
+        if (reportIds.length > 0) {
+          fetchFollowing(this.$store, { resource: 'report', ids: reportIds, })
+          fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'like', })
+          fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'dislike', })
+        }
+      }      
+    },
     isElementReachInView,
     isScrollBarReachBottom, 
   },
   beforeMount () {
-    if (this.route === 'series') {
-      const reportIds = get(this.$store.state, 'publicReports', []).map(report => report.id)
-      const memoIds = get(this.$store.state, this.me.id ? 'memos' : 'publicMemos', []).map(memo => memo.id)
-      if (reportIds.length > 0) {
-        fetchFollowing(this.$store, { resource: 'report', ids: reportIds, })
-        fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'like', })
-        fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'dislike', })
-      }
-      if (memoIds.length > 0) {
-        fetchFollowing(this.$store, { resource: 'memo', ids: memoIds, })
-        fetchEmotion(this.$store, { resource: 'memo', ids: memoIds, emotion: 'like', })
-        fetchEmotion(this.$store, { resource: 'memo', ids: memoIds, emotion: 'dislike', })
-      }
-    } else if (this.route === 'tag') {
-      const postIds = this.posts.filter(post => !post.projectId).map(post => post.id)
-      const reportIds = this.posts.filter(report => report.projectId).map(report => report.id)
-      if (postIds.length > 0) {
-        fetchFollowing(this.$store, { resource: 'post', ids: postIds, })
-        fetchEmotion(this.$store, { resource: 'post', ids: postIds, emotion: 'like', })
-        fetchEmotion(this.$store, { resource: 'post', ids: postIds, emotion: 'dislike', })
-      }
-      if (reportIds.length > 0) {
-        fetchFollowing(this.$store, { resource: 'report', ids: reportIds, })
-        fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'like', })
-        fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'dislike', })
-      }
-    }
+    this.runJobs()
   },   
   mounted () {
     window.addEventListener('scroll', () => {
@@ -239,6 +242,9 @@ export default {
       debug('Mutation detected: isReachBottom', this.isReachBottom, this.isLoadMoreEnd)
       if (!this.isReachBottom || this.isLoadMoreEnd) { return }
       this.loadmore()
+    },
+    me () {
+      this.runJobs()
     },
     '$route' (to, from) {
       debug('Mutation detected: $route', to, from)
