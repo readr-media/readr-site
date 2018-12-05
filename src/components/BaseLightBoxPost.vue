@@ -148,7 +148,7 @@ export default {
   mounted () {
     this.isPostEmpty && (this.isContentEmpty = true)
     this.checkMemoStatus()
-    if (this.isLoginBtnActive) {
+    if (this.isMemo && !this.isMemoPaid && this.isLoginBtnActive) {
       switchOnLoginLight(this.$store)
     }
   },
@@ -160,7 +160,7 @@ export default {
   watch: {
     isLoginBtnActive () {
       debug('isLoginBtnActive', this.isLoginBtnActive)
-      if (this.isLoginBtnActive) {
+      if (this.isMemo && !this.isMemoPaid && this.isLoginBtnActive) {
         switchOnLoginLight(this.$store)
       }
     },
