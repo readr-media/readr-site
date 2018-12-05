@@ -80,6 +80,8 @@
         this.isRegistering = !this.isRegistering
       },
       turnOffThis () {
+        /** if isProcessing is true, user is not allowed to close the this comp */
+        if (this.isProcessing) { return }
         switchOff(this.$store)
       },
     },

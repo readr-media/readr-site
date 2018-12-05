@@ -35,7 +35,6 @@
     name: 'FacebookLogin',
     methods: {
       login () {
-        this.$emit('update:isDoingLogin', true)
         const readyToLogin = (params) => {
           login(this.$store, params, get(this.$store, 'state.register-token'))
             .then((res) => {
@@ -62,57 +61,69 @@
         debug('Checking fb status before login...', window.fbStatus)
         if (window && !window.fbStatus) {
           debug('Never Authorized.')
-          FB.login(() => {
-            FB.api('/me', { fields: 'id,name,gender,email', }, (res) => {
-              register(this.$store, {
-                nickname: get(res, 'name'),
-                email: res.email,
-                gender: get(res, 'genders', '').toUpperCase().substr(0, 1),
-                register_mode: 'oauth-fb',
-                social_id: res.id,
-              }, get(this.$store, [ 'state', 'register-token', ])).then(({ status, }) => {
-                if (status === 200) {
-                  debug('Registered successfully')
-                  readyToLogin({
-                    id: res.id,
-                    login_mode: 'facebook',
-                  })
-                }
-              }).catch(({ err: error, mode, }) => {
-                if (error === 'User Already Existed' || error === 'User Duplicated') {
-                  const signOutFromApp = () => {
-                    this.$emit('update:isDoingLogin', false)
-                    FB.logout()
-                  }
-                  switch (mode) {
-                    case 'oauth-fb': {
+          FB.login(response => {
+            if (response.authResponse) {
+              this.$emit('update:isDoingLogin', true)
+              FB.api('/me', { fields: 'id,name,gender,email', }, res => {
+                if (!res || res.error) {
+                  console.log(`Err occurred when fetch user's info from facebook`)
+                  this.$emit('update:isDoingLogin', false)
+                } else {
+                  register(this.$store, {
+                    nickname: get(res, 'name'),
+                    email: res.email,
+                    gender: get(res, 'genders', '').toUpperCase().substr(0, 1),
+                    register_mode: 'oauth-fb',
+                    social_id: res.id,
+                  }, get(this.$store, [ 'state', 'register-token', ])).then(({ status, }) => {
+                    if (status === 200) {
+                      debug('Registered successfully')
                       readyToLogin({
                         id: res.id,
                         login_mode: 'facebook',
                       })
-                      break
                     }
-                    case 'oauth-goo': {
-                      switchConversation(this.$store, this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_G_PLUS'))
-                      .then(signOutFromApp)
-                      break
+                  }).catch(({ err: error, mode, }) => {
+                    if (error === 'User Already Existed' || error === 'User Duplicated') {
+                      const signOutFromApp = () => {
+                        this.$emit('update:isDoingLogin', false)
+                        FB.logout()
+                      }
+                      switch (mode) {
+                        case 'oauth-fb': {
+                          readyToLogin({
+                            id: res.id,
+                            login_mode: 'facebook',
+                          })
+                          break
+                        }
+                        case 'oauth-goo': {
+                          switchConversation(this.$store, this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_G_PLUS'))
+                          .then(signOutFromApp)
+                          break
+                        }
+                        case 'ordinary': {
+                          switchConversation(
+                            this.$store,
+                            `${this.$t('login.REGISTER_FACEBOOK_EMAIL')} ${this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_ORDINARY')}`  
+                          ).then(signOutFromApp)
+                          break
+                        }
+                      } 
+                    } else {
+                      console.log(error)
+                      this.$emit('update:isDoingLogin', false)
                     }
-                    case 'ordinary': {
-                      switchConversation(
-                        this.$store,
-                        `${this.$t('login.REGISTER_FACEBOOK_EMAIL')} ${this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_ORDINARY')}`  
-                      ).then(signOutFromApp)
-                      break
-                    }
-                  } 
-                } else {
-                  console.log(error)
+                  })
                 }
               })
-            })
+            } else {
+              console.log('User cancelled login or did not fully authorize.')
+            }
           }, { scope: 'public_profile,email', })
         } else {
           debug('Already authorized.')
+          this.$emit('update:isDoingLogin', true)
           readyToLogin({
             id: window.fbStatus.uid,
             login_mode: 'facebook',
