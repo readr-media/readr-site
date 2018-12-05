@@ -177,6 +177,8 @@ export default {
       padding 0 0 0 16px
       border-left 4px solid #ccc
       line-height 1
+    >>> img
+      width 100%
 
 .landscape
   width 100%
