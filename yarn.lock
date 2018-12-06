@@ -8368,9 +8368,9 @@ readdirp@^2.0.0:
     readable-stream "^2.0.2"
     set-immediate-shim "^1.0.1"
 
-readr-comment@^1.0.19:
-  version "1.0.19"
-  resolved "https://registry.yarnpkg.com/readr-comment/-/readr-comment-1.0.19.tgz#1b3784cad5f0c843745e31d3ef2fce13de43b45b"
+readr-comment@^1.0.21:
+  version "1.0.21"
+  resolved "https://registry.yarnpkg.com/readr-comment/-/readr-comment-1.0.21.tgz#c511af4a28bad3df5a438685c7f1415709464228"
   dependencies:
     babel-cli "^6.22.2"
     babel-core "^6.18.2"
@@ -8381,6 +8381,7 @@ readr-comment@^1.0.19:
     babel-preset-es2015 "^6.18.0"
     babel-runtime "^6.22.0"
     debug "^3.1.0"
+    decode-uri-component "^0.2.0"
     ismobilejs "^0.4.1"
     lodash "^4.17.10"
     moment "^2.22.1"
