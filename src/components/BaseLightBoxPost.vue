@@ -85,7 +85,10 @@ export default {
       return get(this.post, 'type', POST_TYPE.REVIEW) === POST_TYPE.NEWS
     }, 
     isMemo () {
-      return get(this.post, 'projectId') && !get(this.post, 'slug')
+      debug(`get(this.post, 'type')`, get(this.post, 'type'))
+      debug('POST_TYPE.MEMO', POST_TYPE.MEMO)
+      return this.post && get(this.post, 'type') === POST_TYPE.MEMO
+      // return get(this.post, 'projectId') && !get(this.post, 'slug')
     },   
     isMemoPaid () {
       return get(this.post, 'project.paid')
