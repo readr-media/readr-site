@@ -5,7 +5,7 @@
       :showFollow="false"
       :postId="post.id"
       :postRefId="get(post, 'project.id')"
-      :resource="post.flag"
+      :resource="post.flag || get(postInstance, [ 'processed', 'postType' ])"
       :resourceType="resourceType"
       :slug="get(post, 'flag') === 'report'? post.slug : ''"
       :tags="post.tags"
