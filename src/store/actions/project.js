@@ -1,6 +1,6 @@
 import _ from 'lodash'
 import { PROJECT_STATUS, } from 'api/config'
-import { getPublicProjectsList, } from 'src/api'
+import { getPublicProjectsList, getPublicProjectContents, getProjectContents, } from 'src/api'
 
 const debug = require('debug')('CLIENT:store:actions:project')
 
@@ -55,8 +55,54 @@ const GET_PUBLIC_PROJECTS = ({ commit, state, }, { params, }) => {
   })
 }
 
+const GET_PUBLIC_PROJECT_CONTENTS = ({ commit, }, { mode = 'set', project_id = '' , params, }) => {
+  return getPublicProjectContents({ project_id, params, })
+    .then(({ status, body, }) => {
+      if (status === 200) {
+        const items = _.get(body, 'items')
+        if (mode === 'set') {
+          commit('SET_PUBLIC_PROJECT_CONTENTS', items)
+        } else if (mode === 'update') {
+          commit('UPDATE_PUBLIC_PROJECT_CONTENTS', items)
+        }
+
+        if (items.length === 0) { return { status: 'end', } }
+        return { status, body, }
+      } else {
+        return { status, }
+      }
+    })
+    .catch((res) => {
+      console.error(res)
+    })
+}
+
+const GET_PROJECT_CONTENTS = ({ commit, }, { mode = 'set', project_id = '' , params, }) => {
+  return getProjectContents({ project_id, params, })
+    .then(({ status, body, }) => {
+      if (status === 200) {
+        const items = _.get(body, 'items')
+        if (mode === 'set') {
+          commit('SET_PROJECT_CONTENTS', items)
+        } else if (mode === 'update') {
+          commit('UPDATE_PROJECT_CONTENTS', items)
+        }
+
+        if (items.length === 0) { return { status: 'end', } }
+        return { status, body, }
+      } else {
+        return { status, }
+      }
+    })
+    .catch((res) => {
+      console.error(res)
+    })
+}
+
 export {
   GET_PUBLIC_PROJECT,
   GET_PUBLIC_PROJECTS,
+  GET_PUBLIC_PROJECT_CONTENTS,
+  GET_PROJECT_CONTENTS,
 }
 

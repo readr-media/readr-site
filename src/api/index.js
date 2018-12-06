@@ -305,6 +305,24 @@ export function getPublicProjectsList ({ params, }) {
   return fetch(url)
 }
 
+export function getPublicProjectContents ({ project_id = '' , params, }) {
+  let url = `${host}/api/public/project/contents/${project_id}`
+  const query = _buildQuery(params)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }
+  return fetch(url)
+}
+
+export function getProjectContents ({ project_id = '' , params, }) {
+  let url = `${host}/api/project/contents/${project_id}`
+  const query = _buildQuery(params)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }
+  return fetchInStrict(url, {})
+}
+
 export function getPublicReportsList ({ params, }) {
   let url = `${host}/api/public/reports`
   const query = _buildQuery(params)

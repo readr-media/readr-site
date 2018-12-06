@@ -11,7 +11,10 @@
           :fetchMemos="fetchMemos"
           :fetchMemoSingle="fetchMemoSingle"
           :fetchPublicMemos="fetchPublicMemos"
-          :fetchReportsList="fetchReportsList"></PostList>
+          :fetchReportsList="fetchReportsList"
+          :fetchProjectContents="fetchProjectContents"
+          :fetchPublicProjectContents="fetchPublicProjectContents"
+        />
       </div>
       <div class="public-page__aside comments">
         <div class="public-page__aside-container aside-container">
@@ -144,6 +147,38 @@ const fetchReportsList = (store, {
   })
 }
 
+const fetchProjectContents = (store, {
+  mode = 'set',
+  project_id,
+  max_result = MAXRESULT_POSTS,
+  page = DEFAULT_PAGE,
+} = {}) => {
+  return store.dispatch('GET_PROJECT_CONTENTS', {
+    mode,
+    project_id,
+    params: {
+      max_result,
+      page,
+    },
+  })
+}
+
+const fetchPublicProjectContents = (store, {
+  mode = 'set',
+  project_id,
+  max_result = MAXRESULT_POSTS,
+  page = DEFAULT_PAGE,
+} = {}) => {
+  return store.dispatch('GET_PUBLIC_PROJECT_CONTENTS', {
+    mode,
+    project_id,
+    params: {
+      max_result,
+      page,
+    },
+  })
+}
+
 const switchOn = (store, item) => store.dispatch('SWITCH_ON_DONATE_PANEL', { item, })
 const switchOff = store => store.dispatch('SWITCH_OFF_DONATE_PANEL', {})
 const loadTappaySDK = store => store.dispatch('LOAD_TAPPAY_SDK')
@@ -158,17 +193,7 @@ export default {
     if (get(route, 'params.slug')) {
       processes.push(fetchProjectSingle(store, get(route, 'params.slug')).then(proj => {
         const projId = get(proj, 'id')
-        return Promise.all([
-          fetchPublicMemos(store, {
-            mode: 'set',
-            proj_ids: [ projId, ],
-            page: 1,
-          }),
-          fetchReportsList(store, {
-            proj_ids: [ projId, ],
-            page: 1,  
-          }),
-        ])
+        return fetchPublicProjectContents(store, { project_id: projId, })
       }))
     }
     return processes.length > 0 ? Promise.all(processes) : Promise.resolve()
@@ -271,6 +296,8 @@ export default {
     fetchPublicMemos,
     fetchMemoSingle,
     fetchReportsList,
+    fetchProjectContents,
+    fetchPublicProjectContents,
     donateCheck () {
       if (this.isSeriesDonate) {
         this.projectSingle && switchOn(this.$store, this.projectSingle)
@@ -286,11 +313,7 @@ export default {
       getUserFollowing(this.$store, { resource: 'project', })
       loadTappaySDK(this.$store)
       if (get(this.me, 'id')) {
-        fetchMemos(this.$store, {
-          mode: 'set',
-          proj_ids: [ get(this.projectSingle, 'id', 0), ],
-          page: 1,
-        })      
+        fetchProjectContents(this.$store, { project_id: get(this.projectSingle, 'id', 0), })
         this.$route.params.subItem && get(this.$route, 'params.subItem') !== 'donate' && fetchMemoSingle(this.$store, this.$route.params.subItem)
       }
     },
