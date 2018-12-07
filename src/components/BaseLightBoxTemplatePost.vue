@@ -12,8 +12,8 @@
           :showFollow="false"
           :postId="post.id"
           :postRefId="assetRefId"
-          :resource="post.flag"
-          :resourceType="'review'"
+          :resource="post.flag || get(postInstance, [ 'processed', 'postType' ])"
+          :resourceType="get(postInstance, [ 'processed', 'resourceType', ], '')"
           :commentCount="commentCount"
           :inLightbox="true"
           @toogleComment="toogleComment"
@@ -46,6 +46,8 @@
   import { get, } from 'lodash'
   import { isClientSide, updatedAtYYYYMMDD, } from 'src/util/comm'
   import { getPostFullUrl, } from 'src/util/post/index'
+  import { createPost, } from 'src/util/post'
+
   const debug = require('debug')('CLIENT:BaseLightBoxTemplatePost')
   export default {
     name: 'BaseLightBoxTemplatePost',
@@ -69,6 +71,9 @@
       },
       shareUrl () {
         return getPostFullUrl(this.post)
+      },
+      postInstance () {
+        return createPost(this.post)
       },
     },
     data () {

@@ -179,6 +179,10 @@ const fetchPublicProjectContents = (store, {
   })
 }
 
+const fetchEmotion = (store, params) => {
+  return store.dispatch('FETCH_EMOTION_BY_RESOURCE', params)
+}
+
 const switchOn = (store, item) => store.dispatch('SWITCH_ON_DONATE_PANEL', { item, })
 const switchOff = store => store.dispatch('SWITCH_OFF_DONATE_PANEL', {})
 const loadTappaySDK = store => store.dispatch('LOAD_TAPPAY_SDK')
@@ -188,7 +192,11 @@ export default {
   asyncData ({ store, route, }) {
     const processes = []
     if (get(route, 'params.subItem') && get(route, 'params.subItem') !== 'donate') {
-      processes.push(fetchPublicMemoSingle(store, get(route, 'params.subItem')))
+      processes.push(fetchPublicMemoSingle(store, get(route, 'params.subItem')).then(memo => {
+        const memoIds = [ get(memo, 'id'), ]
+        fetchEmotion(store, { mode: 'update', resource: 'memo', ids: memoIds, emotion: 'like', })
+        fetchEmotion(store, { mode: 'update', resource: 'memo', ids: memoIds, emotion: 'dislike', })
+      }))
     }
     if (get(route, 'params.slug')) {
       processes.push(fetchProjectSingle(store, get(route, 'params.slug')).then(proj => {
@@ -314,7 +322,15 @@ export default {
       loadTappaySDK(this.$store)
       if (get(this.me, 'id')) {
         fetchProjectContents(this.$store, { project_id: get(this.projectSingle, 'id', 0), })
-        this.$route.params.subItem && get(this.$route, 'params.subItem') !== 'donate' && fetchMemoSingle(this.$store, this.$route.params.subItem)
+
+        this.$route.params.subItem &&
+        get(this.$route, 'params.subItem') !== 'donate' &&
+        fetchMemoSingle(this.$store, this.$route.params.subItem)
+        .then(memo => {
+          const memoIds = [ get(memo, 'id'), ]
+          fetchEmotion(this.$store, { mode: 'update', resource: 'memo', ids: memoIds, emotion: 'like', })
+          fetchEmotion(this.$store, { mode: 'update', resource: 'memo', ids: memoIds, emotion: 'dislike', })
+        })
       }
     },
   },
