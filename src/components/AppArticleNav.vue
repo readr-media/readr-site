@@ -11,11 +11,11 @@
       </span>
       <template v-if="resource !== 'project'">
         <span class="like-icon" @click="toggleEmotion('like')">
-          <img :src="isLike ? '/public/icons/like-blue.png' : '/public/icons/like-line-blue.png'" alt="like">
+          <img v-if="isClientSide" :src="isLike ? '/public/icons/like-blue.png' : '/public/icons/like-line-blue.png'" alt="like">
           <span v-text="emotionLikeCount"></span>
         </span>
         <span class="like-icon dislike" @click="toggleEmotion('dislike')">
-          <img :src="isDislike ? '/public/icons/like-blue.png' : '/public/icons/like-line-blue.png'" alt="unlike">
+          <img v-if="isClientSide" :src="isDislike ? '/public/icons/like-blue.png' : '/public/icons/like-line-blue.png'" alt="unlike">
           <span v-text="emotionDislikeCount"></span>
         </span>
       </template>
@@ -39,6 +39,7 @@ import { find, get, } from 'lodash'
 import CommentContainer from 'src/components/comment/CommentContainer.vue'
 import CommentCount from 'src/components/comment/CommentCount.vue'
 import { mapState, } from 'vuex'
+import { isClientSide, } from 'src/util/comm'
 // const debug = require('debug')('CLIENT:AppAritcleNav')
 
 const switchOn = (store, message) => store.dispatch('LOGIN_ASK_TOGGLE', { active: true, message, type: 'GO_LOGIN', })
@@ -74,6 +75,7 @@ export default {
     CommentCount,
   },
   computed: {
+    isClientSide,
     ...mapState({
       userId: state => state.profile.id,
       postsFollowingByUser: state => get(state.followingByUserStats, [ 'post', ], {}),
