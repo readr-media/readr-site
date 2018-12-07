@@ -25,6 +25,22 @@ export function getPostType (post) {
   }
 }
 
+export function getResource (post) {
+  const type = get(post, 'type')
+  const projectId = get(post, 'projectId')
+  const slug = get(post, 'slug')
+
+  if (type === POST_TYPE.NEWS) {
+    return 'post'
+  } else if (type === POST_TYPE.REPORT || (projectId && slug)) {
+    return 'report'
+  } else if (type === POST_TYPE.MEMO || (projectId && !slug)) {
+    return 'memo'
+  } else {
+    return 'post'
+  }
+}
+
 export function getResourceType (post) {
   switch (get(post, 'type')) {
     case POST_TYPE.NEWS:
@@ -63,6 +79,7 @@ export function createPost (post = {}) {
     ...post,
     processed: {
       postType: getPostType(post),
+      resource: getResource(post),
       resourceType: getResourceType(post),
       commentCount: get(post, 'commentAmount') || 0,
       hasSource: post.linkTitle,
