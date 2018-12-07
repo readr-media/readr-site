@@ -56,7 +56,7 @@ export default {
                     this.isLoadMoreEnd = true
                   } else {
                     const items = get(res, [ 'body', 'items', ], [])
-                    this.fetchSeriesPostsResources(items)
+                    this.fetchSeriesPostsResources(items, 'update')
                   }
                 })
             } else {
@@ -68,6 +68,9 @@ export default {
 
                   if (get(res, 'status') === 'end') {
                     this.isLoadMoreEnd = true
+                  } else {
+                    const items = get(res, [ 'body', 'items', ], [])
+                    this.fetchSeriesPostsResources(items, 'update')
                   }
                 })
             }
@@ -171,24 +174,24 @@ export default {
         this.shouldShowSpinner = false
       })
     },
-    fetchSeriesPostsResources (postItems) {
+    fetchSeriesPostsResources (postItems, mode = 'set') {
         const posts = postItems.map(item => createPost(item)).map(item => ({ postType: get(item, [ 'processed', 'postType', ], ''), id: item.id, }))
         const reportIds = posts.filter(item => item.postType === 'report').map(item => item.id)
         const memoIds = posts.filter(item => item.postType === 'memo').map(item => item.id)
         if (reportIds.length > 0) {
           // fetchFollowing(this.$store, { resource: 'report', ids: reportIds, })
-          fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'like', })
-          fetchEmotion(this.$store, { resource: 'report', ids: reportIds, emotion: 'dislike', })
+          fetchEmotion(this.$store, { mode, resource: 'report', ids: reportIds, emotion: 'like', })
+          fetchEmotion(this.$store, { mode, resource: 'report', ids: reportIds, emotion: 'dislike', })
         }
         if (memoIds.length > 0) {
           // fetchFollowing(this.$store, { resource: 'memo', ids: memoIds, })
-          fetchEmotion(this.$store, { resource: 'memo', ids: memoIds, emotion: 'like', })
-          fetchEmotion(this.$store, { resource: 'memo', ids: memoIds, emotion: 'dislike', })
+          fetchEmotion(this.$store, { mode, resource: 'memo', ids: memoIds, emotion: 'like', })
+          fetchEmotion(this.$store, { mode, resource: 'memo', ids: memoIds, emotion: 'dislike', })
         }
     },
     runJobs () {
       if (this.route === 'series') {
-        this.fetchSeriesPostsResources(this.posts)
+        this.fetchSeriesPostsResources(this.posts, 'update')
       } else if (this.route === 'tag') {
         const postIds = this.posts.filter(post => !post.projectId).map(post => post.id)
         const reportIds = this.posts.filter(report => report.projectId).map(report => report.id)

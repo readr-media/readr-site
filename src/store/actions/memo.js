@@ -8,6 +8,7 @@ const GET_MEMO = ({ commit, }, { params, }) => {
     debug('GET_MEMO', body)
     if (status === 200) {
       commit('SET_MEMO_SINGLE',  { item: _.get(body, 'items.0', {}), })
+      return _.get(body, 'items.0', {})
     } else {
       commit('SET_MEMO_SINGLE', { item: null, })
     }
@@ -46,6 +47,7 @@ const GET_PUBLIC_MEMO = ({ commit, }, { params, }) => {
   return memoFunc.getPublicMemo({ params, }).then(({ status, body, }) => {
     if (status === 200) {
       commit('SET_PUBLIC_MEMO_SINGLE', { item: _.get(body, 'items.0', {}), })
+      return _.get(body, 'items.0', {})
     } else {
       commit('SET_PUBLIC_MEMO_SINGLE', { item: null, })
     }

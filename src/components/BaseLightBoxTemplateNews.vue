@@ -30,8 +30,8 @@
           :showFollow="false"
           :postId="post.id"
           :postRefId="assetRefId"
-          :resource="post.flag"
-          :resourceType="'news'"
+          :resource="post.flag || get(postInstance, [ 'processed', 'postType' ])"
+          :resourceType="get(postInstance, [ 'processed', 'resourceType', ], '')"
           :commentCount="commentCount"
           :tags="post.tags"
           :shouldShowComment="true"
@@ -52,7 +52,8 @@
   import TagNav from 'src/components/tag/TagNav.vue'
   import PostShareNav from 'src/components/post/PostShareNav.vue'
   import { isClientSide, updatedAtYYYYMMDD, getFullUrl, onImageLoaded, getElementContentSrc, isElementContentYoutube, isImg, isLink, clickImg, } from 'src/util/comm'
-  import { getPostFullUrl, } from 'src/util/post/index'
+  import { getPostFullUrl, createPost, } from 'src/util/post/index'
+  import { get, } from 'lodash'
   export default {
     name: 'BaseLightBoxTemplateNews',
     components: {
@@ -65,8 +66,12 @@
       shareUrl () {
         return getPostFullUrl(this.post)
       },
+      postInstance () {
+        return createPost(this.post)
+      },
     },
     methods: {
+      get,
       getFullUrl,
       updatedAtYYYYMMDD,
       getImgSrc (content) {
