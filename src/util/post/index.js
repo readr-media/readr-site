@@ -10,11 +10,13 @@ import { truncatePostContent, } from './truncate'
 import { getPostContentDOM, getPostContentStrings, } from './content'
 
 export function getPostType (post) {
-  const type = get(post, 'type')
+  const type = get(post, 'contentType') || get(post, 'type')
   const projectId = get(post, 'projectId')
   const slug = get(post, 'slug')
 
-  if (type === POST_TYPE.NEWS) {
+  if (type === POST_TYPE.REVIEW) {
+    return 'normal'
+  } else if (type === POST_TYPE.NEWS) {
     return 'news'
   } else if (type === POST_TYPE.REPORT || (projectId && slug)) {
     return 'report'
@@ -26,11 +28,13 @@ export function getPostType (post) {
 }
 
 export function getResource (post) {
-  const type = get(post, 'type')
+  const type = get(post, 'contentType') || get(post, 'type')
   const projectId = get(post, 'projectId')
   const slug = get(post, 'slug')
 
-  if (type === POST_TYPE.NEWS) {
+  if (type === POST_TYPE.REVIEW) {
+    return 'post'
+  } else if (type === POST_TYPE.NEWS) {
     return 'post'
   } else if (type === POST_TYPE.REPORT || (projectId && slug)) {
     return 'report'
