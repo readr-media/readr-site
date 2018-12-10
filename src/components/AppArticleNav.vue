@@ -84,12 +84,20 @@ export default {
     }),
     asset () {
       switch (this.resource) {
-        case 'memo':
-          return `${get(this.$store, 'state.setting.HOST')}/series/${get(this.$route, 'params.slug')}/${this.postId}`
+        case 'memo': {
+          const resourceValue = `${get(this.$store, 'state.setting.HOST')}/series/${get(this.$route, 'params.slug')}/${this.postId}`
+          const resourceValueRelatedPost = `${get(this.$store, 'state.setting.HOST')}/post/${this.postId}`
+          const isRelatedPostAtHome = this.link
+          return `${ isRelatedPostAtHome ? resourceValueRelatedPost : resourceValue }`
+        }
         case 'project':
           return `${get(this.$store, 'state.setting.HOST')}/series/${this.postId}`
-        case 'report':
-          return `${get(this.$store, 'state.setting.HOST')}/project/${this.slug}`
+        case 'report': {
+          const resourceValue = `${this.link || get(this.$store, 'state.setting.HOST')}/project/${this.slug}`
+          const resourceValueRelatedPost = `${get(this.$store, 'state.setting.HOST')}/post/${this.postId}`
+          const isRelatedPostAtHome = this.link
+          return `${ isRelatedPostAtHome ? resourceValueRelatedPost : resourceValue }`
+        }
         default: 
           return `${get(this.$store, 'state.setting.HOST')}/${this.resource}/${this.postId}`
 
@@ -225,6 +233,10 @@ export default {
     slug: {
       // For report use.
       type: String,
+    },
+    link: {
+      type: String,
+      default: '',
     },
     tags: {
       default: () => [],
