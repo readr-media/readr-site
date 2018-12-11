@@ -51,7 +51,7 @@ export default {
   computed: {
     isClientSide,
     dateDiffFromNow () {
-      return dateDiffFromNow(this.post.updatedAt)
+      return dateDiffFromNow(this.post.publishedAt)
     },
     isReportOrMemo () {
       return getPostType(this.post) === 'report' || getPostType(this.post) === 'memo'
