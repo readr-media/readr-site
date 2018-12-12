@@ -106,6 +106,7 @@ Vue.mixin({
       asyncData({
         store: this.$store,
         route: to,
+        router: this.$router,
       }).then(next).catch(next)
     } else {
       next()
@@ -113,13 +114,11 @@ Vue.mixin({
   },
 })
 
-if (store.state.unauthorized) { 
-  debug('entry-client resolved.') 
-  delete store.state.unauthorized 
-  store.state.targ_url && router.push(store.state.targ_url) 
+debug('store.state.server_url', store.state.server_url)
+debug('pathname', pathname)
+if (store.state.server_url !== pathname) {
+  router.push(store.state.server_url) 
 }
-
-
 store.state.useragent = useragent
 
 // wait until router has resolved all async before hooks
