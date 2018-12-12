@@ -1,7 +1,7 @@
 <template>
   <div class="homepage">
     <BaseLightBox v-show="showLightBox" :showLightBox="showLightBox" :hadRouteBeenNavigate="hadRouteBeenNavigate" @closeLightBox="closeLightBox">
-      <BaseLightBoxPost :showLightBox="showLightBox" :post="postLightBox"/>
+      <BaseLightBoxPost :showLightBox="showLightBox" :post="postLightBox" />
     </BaseLightBox>
     <div class="homepage__container">
       <TagNavAside class="homepage__tag-nav-aside"/>
@@ -65,9 +65,10 @@ const fetchEmotion = (store, params) => {
   return store.dispatch('FETCH_EMOTION_BY_RESOURCE', params)
 }
 
-const fetchPost = (store, { id, }) => {
+const fetchPost = (store, { id, isPreview, }) => {
   return store.dispatch('GET_POST', {
-    id: id,
+    id,
+    isPreview,
     params: {
       showAuthor: true,
     },
@@ -114,19 +115,29 @@ export default {
     ] : []
   
     if (get(route, 'params.postId')) {
-      jobs.push(fetchPost(store, { id: get(route, 'params.postId'), }))
+      jobs.push(fetchPost(store, {
+        id: get(route, 'params.postId'),
+      }).catch(e => {
+        /** Post Not Found */
+        debug('Error', e)
+      }))
     }
     return Promise.all(jobs)
   },
   metaInfo () {
     if (this.$route.params.postId) {
       if (!get(this.postSingle, 'ogTitle') && !get(this.postSingle, 'title')) {
+
+        /** If preview, dont redirect to 404 */
+        if (get(this.$route, 'query.preview')) { return }
+
         if (process.browser) {
           this.$router.push('/404')
         } else {
+          debug('Going to throw 404 Error')
           const e = new Error()
           e.massage = 'Page Not Found'
-          e.code = '404'
+          e.code = 404
           throw e  
         }
       } else {
@@ -273,6 +284,12 @@ export default {
     }
     if (!get(this.commentsForHome, 'length')) {
       fetchComment(this.$store)
+    }
+    if (get(this.$route, 'params.postId') && get(this.$route, 'query.preview')) {
+      fetchPost(this.$store, {
+        id: get(this.$route, 'params.postId'),
+        isPreview: get(this.$route, 'query.preview'),
+      })
     }
     
   },
