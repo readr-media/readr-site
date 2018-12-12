@@ -160,7 +160,8 @@ function render (req, res, next) {
     }
   }
 
-  if (_.filter(PAGE_CACHE_EXCLUDING, (p) => (req.url.indexOf(p) > -1)).length === 0) {
+  const isPreview = req.url.indexOf('preview=true') > -1
+  if (_.filter(PAGE_CACHE_EXCLUDING, (p) => (req.url.indexOf(p) > -1)).length === 0 || !isPreview) {
     if (!curr_host.match(targ_exp)) {
       if (req.url.length !== 1) {
         res.setHeader('Cache-Control', 'public, max-age=3600')  
@@ -238,7 +239,6 @@ function render (req, res, next) {
       `REFERER: ${req.headers.referer}\n`,
       `${err}`)
     }
-
     renderer.renderToString(Object.assign({}, context, { url: `/${status}`, error: err.message }), (e, h) => {
       if (!e) {
         res.status(status).send(h)

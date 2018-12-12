@@ -264,6 +264,15 @@ export function getPost ({ id, params, }) {
   return fetch(url, {})
 }
 
+export function getPostStrict ({ id, params, }) {
+  let url = `${host}/api/post/${id}`
+  const query = _buildQuery(params)
+  if (query && (query.length > 0)) {
+    url = url + `?${query}`
+  }
+  return fetchInStrict(url, {})
+}
+
 export function getPosts ({ params, }) {
   let url = `${host}/api/posts`
   const query = _buildQuery(params)
