@@ -38,28 +38,12 @@ export default context => {
       debug('fullPath', fullPath)
 
       let targUrl
-      // if (permission || (isInitMember && !initmember)) {
-      //   store.state.unauthorized = true
-      //   return reject({ code: 403, })
-      // } else {
-      //   router.push(url)
-      //   targUrl = url
-      // }
       if ((permission && (role === 'visitor' || (permission !== role && permission !== 'member'))) || (isInitMember && !initmember)) {
-        store.state.unauthorized = true
-        // if (!cookie) {
-        //   router.push('/login')
-        //   targUrl = '/login'
-          // store.state.targ_url = '/login'
-        // } else {
-        //   router.push('/')
-        //   targUrl = '/'
-          // store.state.targ_url = '/'
-        // }
         return reject({ code: 403, })
       } else {
         router.push(url)
         targUrl = url
+        store.state.server_url = url
       }
       setting && (store.state.setting = setting)
       error && (store.state.error = error)
@@ -84,6 +68,7 @@ export default context => {
           i18n,
           store,
           route: router.currentRoute,
+          router,
         }))
         Promise.all(jobs).then(() => {
           // isDev && console.log(`data pre-fetch: ${Date.now() - s}ms`)

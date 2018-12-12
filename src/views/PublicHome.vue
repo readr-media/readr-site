@@ -108,7 +108,7 @@ const getUserFollowing = (store, { id = get(store, 'state.profile.id'), resource
 
 export default {
   name: 'Home',
-  asyncData ({ store, route, }) {
+  asyncData ({ store, route, router, }) {
     const jobs = !get(store, 'state.publicPosts.items.length') ? [
       fetchPosts(store),
       fetchComment(store),
@@ -119,35 +119,41 @@ export default {
         id: get(route, 'params.postId'),
       }).catch(e => {
         /** Post Not Found */
-        debug('Error', e)
+        debug('Error:', e)
+        if (e === 'Not Found') {
+          if (!get(store, 'state.publicPostSingle.items.0.ogTitle') && !get(store, 'state.publicPostSingle.items.0.title')) {
+
+            /** If preview, dont redirect to 404 */
+            if (get(route, 'query.preview')) { return }
+
+            if (process.browser) {
+              router.push('/404')
+            } else {
+              debug('Going to throw 404 Error')
+              const err = new Error()
+              err.massage = 'Page Not Found'
+              err.code = 404
+              throw err  
+            }
+          }          
+        } else {
+          const err = new Error()
+          err.massage = e
+          err.code = 404
+          throw err 
+        }
       }))
     }
     return Promise.all(jobs)
   },
   metaInfo () {
-    if (this.$route.params.postId) {
-      if (!get(this.postSingle, 'ogTitle') && !get(this.postSingle, 'title')) {
-
-        /** If preview, dont redirect to 404 */
-        if (get(this.$route, 'query.preview')) { return }
-
-        if (process.browser) {
-          this.$router.push('/404')
-        } else {
-          debug('Going to throw 404 Error')
-          const e = new Error()
-          e.massage = 'Page Not Found'
-          e.code = 404
-          throw e  
-        }
-      } else {
-        return {
-          ogTitle: get(this.postSingle, 'ogTitle') || get(this.postSingle, 'title'),
-          description: get(this.postSingle, 'ogDescription') || truncate(sanitizeHtml(get(this.postSingle, 'content', ''), { allowedTags: [], }), 100),
-          metaUrl: this.$route.path,
-          metaImage: get(this.postSingle, 'ogImage') || `${SITE_FULL}/public/og-image-post.jpg`,
-        }
-      }      
+    if (this.$route.params.postId) {  
+      return {
+        ogTitle: get(this.postSingle, 'ogTitle') || get(this.postSingle, 'title'),
+        description: get(this.postSingle, 'ogDescription') || truncate(sanitizeHtml(get(this.postSingle, 'content', ''), { allowedTags: [], }), 100),
+        metaUrl: this.$route.path,
+        metaImage: get(this.postSingle, 'ogImage') || `${SITE_FULL}/public/og-image-post.jpg`,
+      }
     } else {
       return {
         description: this.$i18n ? this.$t('OG.DESCRIPTION') : '',
@@ -268,6 +274,11 @@ export default {
       if (isCurrentRoutePath(to, '/post/:postId') && !isCurrentRoutePath(from, '/') && !isCurrentRoutePath(from, '/about')) {
         vm.hadRouteBeenNavigate = true
       }
+      // if (get(vm.$route, 'params.postId') && !get(vm.$route, 'query.preview')) {
+      //   if (!get(vm.postSingle, 'ogTitle') && !get(vm.postSingle, 'title')) {
+      //     vm.$router.push('/404')
+      //   }     
+      // }
     })
   },
   beforeRouteUpdate (to, from, next) {

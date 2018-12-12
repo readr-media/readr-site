@@ -39,15 +39,16 @@ const GET_POST = ({ commit, }, { id, isPreview, params, }) => {
     const fetcher = isPreview ? getPostStrict : getPost
     debug('isPreview', isPreview)
     fetcher({ id, params, })
-    .then(({ status, body, }) => {
+    .then(response => {
+      const { status, body, } = response
       debug('Get fetching result. status:', status, body)
       if (status === 200) {
         commit('SET_PUBLIC_POST_SINGLE', { posts: body, })
         resolve({ status: 200, })
       } else {
-        reject({ status: 'error', body, })
+        reject(response)
       }
-    }).catch((err) => {
+    }).catch(err => {
       debug('Get fetching error.', { status: 'error', res: err,})
       reject({ status: 'error', res: err,})
     })
