@@ -15,6 +15,7 @@
       :isNotLightbox="true"
       :shouldShowComment="true"
     >
+      <AppShareButton v-if="enableShareFeature" slot="share" :shareUrl="shareUrl" class="wrapper__share" />
       <TagNav
         v-if="post.tags && post.tags.length > 0"
         slot="tagNav"
@@ -27,8 +28,10 @@
 
 <script>
 import AppArticleNav from 'src/components/AppArticleNav.vue'
+import AppShareButton from 'src/components/AppShareButton.vue'
 import TagNav from 'src/components/tag/TagNav.vue'
 import { get, } from 'lodash'
+import { getPostFullUrl, } from 'src/util/post/index'
 import { createPost, } from 'src/util/post'
 
 export default {
@@ -40,6 +43,7 @@ export default {
   },
   components: {
     AppArticleNav,
+    AppShareButton,
     TagNav,
   },
   computed: {
@@ -52,6 +56,12 @@ export default {
     commentCount () {
       return get(this.postInstance, [ 'processed', 'commentCount', ], 0)
     },
+    enableShareFeature () {
+      return this.$route.path.split('/')[1] === 'profile'
+    },
+    shareUrl () {
+      return getPostFullUrl(this.post)
+    },
   },
   methods: {
     get,
@@ -61,6 +71,8 @@ export default {
 
 <style lang="stylus" scoped>
 .wrapper
+  &__share
+    margin 0 0 0 auto
   &__tag-nav
     margin-top 20px
     padding-top 10px

@@ -33,7 +33,7 @@ import { ROLE_MAP, } from '../constants'
 import AppTitledList from '../components/AppTitledList.vue'
 import EditorsIntroListItem from '../components/editors/EditorsIntroListItem.vue'
 import { isScrollBarReachBottom, } from 'src/util/comm'
-import { get, find, } from 'lodash'
+import { get, find, uniqBy, } from 'lodash'
 
 // const debug = require('debug')('CLIENT:Editors')
 
@@ -95,7 +95,7 @@ export default {
       return get(this.$store, 'state.customEditors.items', [])
     },
     guestEditors () {
-      return get(this.$store, `state.publicMembers[${this.guestEditorRoleValue}].items`, [])
+      return uniqBy(get(this.$store, `state.publicMembers[${this.guestEditorRoleValue}].items`, []), 'id')
     },
   },
   methods: {
