@@ -18,6 +18,7 @@
           <img v-if="isClientSide" :src="isDislike ? '/public/icons/like-blue.png' : '/public/icons/like-line-blue.png'" alt="unlike">
           <span v-text="emotionDislikeCount"></span>
         </span>
+        <slot name="share"></slot>
       </template>
     </nav>
     <slot name="tagNav"></slot>
@@ -277,6 +278,7 @@ export default {
   display flex
   flex-direction column
   &__nav-btns
+    display flex
     height 25px
     margin-top auto // for automatically placing nav to the botom of the container
   &__tags

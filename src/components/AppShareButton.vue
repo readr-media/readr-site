@@ -1,9 +1,9 @@
 <template>
   <div :class="`app-share-button${isToogle ? '--toogle' : ''} ${direction}`">
     <button class="app-share-button__share-icon" :style="{ backgroundImage: `url(/public/icons/share-${iconColor}.png)`, backgroundColor: backgroundColor }"  @click="toogleShare"></button>
-    <a class="app-share-button__item--fb" :href="`https://www.facebook.com/share.php?u=www.readr.tw${shareUrl}`" target="_blank"></a>
+    <a class="app-share-button__item--fb" :href="`https://www.facebook.com/share.php?u=${shareUrl}`" target="_blank"></a>
     <a class="app-share-button__item--line" :href="`https://line.me/R/msg/text/?${shareUrl}`" target="_blank"></a>
-    <router-link class="app-share-button__item--link" :to="shareUrl"></router-link>
+    <!-- <router-link class="app-share-button__item--link" :to="shareUrl"></router-link> -->
   </div>
 </template>
 
@@ -13,7 +13,7 @@ export default {
     shareUrl: {
       type: String,
       // required: true
-      default: 'www.google.com',
+      default: 'www.readr.tw',
     },
     direction: { // options: up, down, left, right
       type: String,
@@ -46,6 +46,7 @@ $app-share-button
   // position absolute
   // top 15.5px
   // right 22.5px
+  position relative
   width 25px
   height 25px
 $app-share-button__item

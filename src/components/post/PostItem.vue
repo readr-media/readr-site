@@ -32,7 +32,6 @@
   </div>
 </template>
 <script>
-import AppShareButton from 'src/components/AppShareButton.vue'
 import AppDateCreatedUpdated from 'src/components/AppDateCreatedUpdated.vue'
 import PostContent from 'src/components/post/PostContent.vue'
 import PostShareNav from 'src/components/post/PostShareNav.vue'
@@ -43,7 +42,6 @@ import { get, } from 'lodash'
 export default {
   name: 'PostItem',
   components: {
-    AppShareButton,
     AppDateCreatedUpdated,
     PostContent,
     PostShareNav,
