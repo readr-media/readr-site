@@ -1,12 +1,12 @@
 <template>
   <div id="app" :class="`page_${pageType.toLowerCase()}`">
     <app-header v-if="showHeaderAndAsideNav"></app-header>
-    <div :class="[ 'app__container', { 'app__container--wide': isLoginPage }, { 'app__container--reset': isCommentPage } ]">
+    <div :class="[ 'app__container', { 'app__container--wide': isLoginPage }, { 'app__container--reset': isCommentPage || isPluginsPage } ]">
       <div class="app__wrapper" :class="[ `page_${pageType.toLowerCase()}` ]">
         <aside class="app__aside" :class="{ fixed: isFixedAside, }" v-if="showHeaderAndAsideNav">
           <AppNavAside/>
         </aside>
-        <main :class="[ 'app__main', { 'app__main--reset': isCommentPage } ]">
+        <main :class="[ 'app__main', { 'app__main--reset': isCommentPage || isPluginsPage } ]">
           <transition name="fade" mode="out-in">
             <router-view class="view"></router-view>
           </transition>
@@ -40,6 +40,7 @@
     HOME: 'HOME',
     LOGIN: 'LOGIN',
     COMMENT: 'COMMENT',
+    PLUGINS: 'PLUGINS',
     HOT: 'HOT',
     OTHER: 'OTHER',
   }
@@ -69,6 +70,9 @@
       isCommentPage () {
         return /\/comment/.test(this.$route.fullPath)
       },
+      isPluginsPage () {
+        return /\/plugins/.test(this.$route.fullPath)
+      },
       isHome () {
         return this.$route.path === '/' || this.$route.path.indexOf('/post/') === 0
       },
@@ -76,10 +80,10 @@
         return get(this.$store, 'state.isTappayRequired', false)
       },
       showHeaderAndAsideNav () {
-        return !this.isLoginPage && !this.isCommentPage
+        return !this.isLoginPage && !this.isCommentPage && !this.isPluginsPage
       },
       shouldShowAbout () {
-        return !this.isLoginPage && !this.isAboutPage && !this.isCommentPage
+        return !this.isLoginPage && !this.isAboutPage && !this.isCommentPage && !this.isPluginsPage
       },
       isHOT () {
         return this.$route.path === '/hot'
@@ -94,6 +98,8 @@
           return PAGE_TYPE.HOME
         } else if (this.isCommentPage) {
           return PAGE_TYPE.COMMENT
+        } else if (this.isPluginsPage) {
+          return PAGE_TYPE.PLUGINS
         } else if (this.isHOT) {
           return PAGE_TYPE.HOT
         } else {
@@ -171,7 +177,7 @@
       this.$store.dispatch('UPDATE_CLIENT_SIDE')
       this.launchLogger()
       this.sendPageview()
-      this.showAlertGDPR = !this.getGDPRCookie() && !this.isCommentPage
+      this.showAlertGDPR = !this.getGDPRCookie() && !this.isCommentPage && !this.isPluginsPage
       this.setupAsideBehavior()
     },
     watch: {
@@ -204,6 +210,9 @@ $container
     padding 40px 0
     display flex
     position relative
+    // &--reset
+    //   max-width initial
+    //   padding 0
 
   &__container
     @extends $container
@@ -313,6 +322,15 @@ button
     padding 20px 5%
     border 5px solid #d8ca21
     background #fff
+
+// reset style for plugins page
+#app.page_plugins
+  background-color white
+  .app__wrapper
+    max-width initial
+    padding 0
+  .view
+    background-color white
 
 @media (min-width 768px)
   .view

@@ -27,6 +27,7 @@ const PublicSetPassword = () => import('../views/PublicSetPassword.vue')
 const PublicTag = () => import('../views/PublicTag.vue')
 const PublicComment = () => import('../views/PublicComment.vue')
 const PublicLoginPanel = () => import('../views/PublicLoginPanel.vue')
+const PublicPlugins = () => import('../views/PublicPlugins.vue')
 // const PublicVideos = () => import('../views/PublicVideos.vue')
 
 const router = new Router({
@@ -85,6 +86,7 @@ const router = new Router({
     { path: '/tag/:tagId', component: PublicTag, },
     { path: '/setup/:type', component: PublicSetPassword, },
     { path: '/comment', component: PublicComment, props: (route) => ({ resourceURL: route.query.resource_url, }), },
+    { path: '/plugins/:pluginName', component: PublicPlugins, },
     { path: '/404', component: PublicPageNotFound, },
     { path: '/500', component: PublicServerError, },
     // { path: '/videos', component: PublicVideos },

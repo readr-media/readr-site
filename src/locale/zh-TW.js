@@ -660,4 +660,8 @@ export default {
     'LOADMORE_PREFIX': '看另外',
     'LOADMORE_SUFFIX': '則留言',
   },
+  'PLUGINS': {
+    'CUSTOM_EDITORS': '本週客座總編',
+    'LATEST_PROJECTS': '最新專題',
+  },
 }
