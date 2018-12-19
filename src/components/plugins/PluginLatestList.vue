@@ -7,6 +7,7 @@
         v-for="(item, i) in listItems"
         :key="i"
         :item="item"
+        :listItemImgSize="listItemImgSize"
       />
     </ul>
   </div>
@@ -26,6 +27,10 @@ export default {
       default () {
         return []
       },
+    },
+    listItemImgSize: {
+      type: String,
+      default: 'square',
     },
   },
   components: {

@@ -9,11 +9,13 @@
       class="latest__list"
       :title="$t('PLUGINS.CUSTOM_EDITORS')"
       :listItems="customEditors"
+      :listItemImgSize="'square'"
     />
     <PluginLatestList
       class="latest__list"
       :title="$t('PLUGINS.LATEST_PROJECTS')"
       :listItems="publicProjects"
+      :listItemImgSize="'rect'"
     />
   </div>
 </template>
