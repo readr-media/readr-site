@@ -5085,6 +5085,11 @@ iferr@^0.1.5:
   version "0.1.5"
   resolved "https://registry.yarnpkg.com/iferr/-/iferr-0.1.5.tgz#c60eed69e6d8fdb6b3104a1fcbca1c192dc5b501"
 
+iframe-resizer@^3.6.3:
+  version "3.6.3"
+  resolved "https://registry.yarnpkg.com/iframe-resizer/-/iframe-resizer-3.6.3.tgz#77f474180e9b0accd7454c37b6f71bf6ff5482c5"
+  integrity sha512-yp5DLJxZm7xTRfQVidWB+h36YPPJ8eaKOB0mGFXG5IB5aOHGftnlBroGd66nlHZ3E5UyyohNOrdH4z+dXuJCxw==
+
 ignore@^3.3.3, ignore@^3.3.5:
   version "3.3.7"
   resolved "https://registry.yarnpkg.com/ignore/-/ignore-3.3.7.tgz#612289bfb3c220e186a58118618d5be8c1bab021"
@@ -8388,9 +8393,10 @@ readr-comment@^1.0.21:
     prevent-scroll "^2.0.0"
     sanitize-html "^1.18.2"
 
-readr-web-api@^1.0.64:
-  version "1.0.64"
-  resolved "https://registry.yarnpkg.com/readr-web-api/-/readr-web-api-1.0.64.tgz#30d89f61d97adc98ad3db5e7ae379124fa40cfe2"
+readr-web-api@^1.0.65:
+  version "1.0.65"
+  resolved "https://registry.yarnpkg.com/readr-web-api/-/readr-web-api-1.0.65.tgz#72f78aae8d3ba2ad6cb11000fbe8eacef07eb498"
+  integrity sha512-NPc4OYL2SI2aXcFnUrhu5Q/mjtPvIfWCTwR/OW/tJcLVmK8po4N3GV9CsZpD8EdQMW+zt5pM9E9I72jw0hTAzw==
   dependencies:
     "@google-cloud/logging" "^1.2.0"
     "@google-cloud/pubsub" "^0.18.0"

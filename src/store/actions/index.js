@@ -8,6 +8,7 @@ import * as actionsMember from 'src/store/actions/member'
 import * as actionsMemo from 'src/store/actions/memo'
 import * as actionsMeta from 'src/store/actions/meta'
 import * as actionsNotification from 'src/store/actions/notification'
+import * as actionsPoll from 'src/store/actions/poll'
 import * as actionsPost from 'src/store/actions/post'
 import * as actionsProject from 'src/store/actions/project'
 import * as actionsReport from 'src/store/actions/report'
@@ -150,4 +151,4 @@ export default Object.assign({
   INVITATION_SWITCH_OFF: ({ commit, }, {}) => {
     commit('INVITATION_SWITCH_OFF', {})
   },
-}, actionPoints, actionsComment, actionsEmotion, actionsFollowing, actionsMember, actionsMemo, actionsMeta, actionsNotification, actionsPost, actionsProject, actionsReport, actionsTag)
+}, actionPoints, actionsComment, actionsEmotion, actionsFollowing, actionsMember, actionsMemo, actionsMeta, actionsNotification, actionsPoll, actionsPost, actionsProject, actionsReport, actionsTag)
