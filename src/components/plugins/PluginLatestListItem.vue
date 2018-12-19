@@ -1,7 +1,7 @@
 <template>
   <li class="list-item">
     <a class="list-item__wrapper wrapper" :href="href" target="_blank">
-      <div class="wrapper__img-wrapper img-wrapper">
+      <div :class="`wrapper__img-wrapper img-wrapper img-wrapper--${listItemImgSize}`">
         <img :src="img" class="img-wrapper__img">
       </div>
       <p class="wrapper__title" v-text="title"></p>
@@ -21,6 +21,10 @@ export default {
       default () {
         return {}
       },
+    },
+    listItemImgSize: {
+      type: String,
+      default: 'square',
     },
   },
   computed: {
@@ -53,14 +57,17 @@ export default {
 
 .img-wrapper
   position relative
-  padding-bottom 67.25% /* 57.5 / 85.5 */
   height 0
   background-color #444746
+  &--square
+    padding-bottom 100% /* 1 / 1 */
+  &--rect
+    padding-bottom 52.5% /* 630 / 1200 */
   &__img
     position absolute
     top 0
     left 0
     width 100%
     height 100%
-    object-fit contain
+    object-fit cover
 </style>
