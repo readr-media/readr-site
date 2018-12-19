@@ -24,6 +24,10 @@
         <p class="small">{{ `${moment(poll.endAt).format('YYYY/M/D HH:mm')} ${$t('POLL.END_AT')}` }}</p>
         <p class="small">{{ `${poll.totalVote} ${$t('POLL.VOTES')}` }}</p>
       </div>
+      <div :class="{ open: openShare }" class="poll__share">
+        <button @click="openShare = !openShare" v-text="$t('POLL.SHARE')"></button>
+        <input type="text" v-model="iframeCode" readonly @click="selectAll">
+      </div>
     </template>
   </div>
 </template>
@@ -75,6 +79,7 @@ export default {
   data () {
     return {
       ending: false,
+      openShare: false,
       poll: this.initialPoll,
       showResult: false,
     }
@@ -111,6 +116,9 @@ export default {
         return moment().endOf('day').toISOString()
       }
       return
+    },
+    iframeCode () {
+      return `<iframe width="540" height="300" src="https://www.readr.tw/embed/poll/${this.poll.id}" frameborder="0"></iframe>`
     },
   },
   watch: {
@@ -158,18 +166,21 @@ export default {
       this.showResult = true
       this.ending = true
     },
-    vote (choiceId) {
-      vote(this.$store, { choiceId: choiceId, pollId: this.poll.id, })
+    selectAll (e) {
+      e.target.select()
+    },
+    unvote (id, choiceId) {
+      unvote(this.$store, { id: id, choiceId: choiceId, pollId: this.poll.id, })
       .then(() => {
-        this.showResult = true
         setTimeout(() => {
           fetchChosenChoices(this.$store, this.buildChosenChoicesParams())
         }, 1000)
       })
     },
-    unvote (id, choiceId) {
-      unvote(this.$store, { id: id, choiceId: choiceId, pollId: this.poll.id, })
+    vote (choiceId) {
+      vote(this.$store, { choiceId: choiceId, pollId: this.poll.id, })
       .then(() => {
+        this.showResult = true
         setTimeout(() => {
           fetchChosenChoices(this.$store, this.buildChosenChoicesParams())
         }, 1000)
@@ -219,6 +230,36 @@ template-color = #11b8c9
     p.small
       & + p
         margin-top 0
+  &__share
+    display flex
+    justify-content center
+    flex-wrap wrap
+    margin-top 50px
+    &.open
+      button
+        color #11b8c9
+        background-color #fff
+      input
+        display inline-block
+    button
+      padding .5em 1em
+      color #fff
+      font-size .75rem
+      letter-spacing 1px
+      background-color transparent
+      border 1px solid #fff
+      outline none
+    input
+      display none
+      width 100%
+      padding .2em
+      margin-top 20px
+      color #9b9b9b
+      text-align left
+      font-size .5625rem
+      background-color #fff
+      cursor pointer
+      outline none
 
 @media (min-width 500px)
   .poll
