@@ -45,7 +45,7 @@ export default {
 <style lang="stylus" scoped>
 .wrapper
   &__title
-    font-size 10px
+    font-size 16px
     line-height 1.5
     text-align center
     color #000000
