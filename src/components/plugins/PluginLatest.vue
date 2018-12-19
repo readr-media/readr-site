@@ -100,5 +100,5 @@ export default {
   align-items center
   margin 0 0 10px 0
   &__logo
-    width 30px
+    height 50px
 </style>

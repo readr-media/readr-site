@@ -37,8 +37,8 @@ export default {
 <style lang="stylus" scoped>
 .list-wrapper
   &__title
-    font-size 10px
-    line-height 18px
+    font-size 14.4px
+    line-height 1.8
     font-weight 400
     text-align center
     color #ffffff
