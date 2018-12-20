@@ -30,7 +30,7 @@ pipeline:
     secrets: [google_credentials]
     commands:
     - gcloud source repos clone default ../default
-    - cp ../default/readr-site/config.js ./api/
+    - cp ../default/readr-site/dev/config.js ./api/
     - cp ../default/keystone/gcskeyfile.json ./gcskeyfile.json
     when:
       event: [push]
