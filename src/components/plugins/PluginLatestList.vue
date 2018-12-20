@@ -7,7 +7,8 @@
         v-for="(item, i) in listItems"
         :key="i"
         :item="item"
-        :listItemImgSize="listItemImgSize"
+        :listItemType="listItemType"
+        @click.native="sendMessage(i)"
       />
     </ul>
   </div>
@@ -15,6 +16,7 @@
 
 <script>
 import PluginLatestListItem from 'src/components/plugins/PluginLatestListItem.vue'
+import { sendGAMessageToMM, } from 'src/util/plugins'
 
 export default {
   props: {
@@ -28,13 +30,19 @@ export default {
         return []
       },
     },
-    listItemImgSize: {
+    listItemType: {
       type: String,
-      default: 'square',
+      default: 'editor',
     },
   },
   components: {
     PluginLatestListItem,
+  },
+  methods: {
+    sendMessage (index) {
+      const label = `${this.listItemType}${index + 1}`
+      sendGAMessageToMM({ category: 'article', action: 'click', label, })
+    },
   },
 }
 </script>
