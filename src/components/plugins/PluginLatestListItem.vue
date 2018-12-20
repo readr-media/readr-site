@@ -32,7 +32,7 @@ export default {
       return this.listItemType === 'editor'
     },
     href () {
-      return this.isEditorsProfile ? `${SITE_FULL}/profile/${get(this.item, 'id', '')}` : `${SITE_FULL}/series/${get(this.item, 'slug', '')}`
+      return this.isEditorsProfile ? `${SITE_FULL}/profile/${get(this.item, 'id', '')}?rref=mmarticle` : `${SITE_FULL}/series/${get(this.item, 'slug', '')}?rref=mmarticle`
     },
     title () {
       const title = get(this.item, 'title', '')

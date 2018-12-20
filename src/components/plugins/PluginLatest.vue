@@ -1,7 +1,7 @@
 <template>
   <div class="latest">
     <div class="latest__logo-wrapper logo-wrapper">
-      <a :href="SITE_FULL" target="_blank" @click="sendGAMessageToMM({ category: 'article', action: 'click', label: 'logo-readr', })">
+      <a :href="`${SITE_FULL}?rref=mmarticle`" target="_blank" @click="sendGAMessageToMM({ category: 'article', action: 'click', label: 'logo-readr', })">
         <img class="logo-wrapper__logo" src="/public/icons/readr-logo-dark.svg" alt="">
       </a>
     </div>
