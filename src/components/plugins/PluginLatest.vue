@@ -1,7 +1,7 @@
 <template>
   <div class="latest">
     <div class="latest__logo-wrapper logo-wrapper">
-      <a :href="SITE_FULL" target="_blank">
+      <a :href="SITE_FULL" target="_blank" @click="sendGAMessageToMM({ category: 'article', action: 'click', label: 'logo-readr', })">
         <img class="logo-wrapper__logo" src="/public/icons/readr-logo-dark.svg" alt="">
       </a>
     </div>
@@ -9,13 +9,13 @@
       class="latest__list"
       :title="$t('PLUGINS.CUSTOM_EDITORS')"
       :listItems="customEditors"
-      :listItemImgSize="'square'"
+      :listItemType="'editor'"
     />
     <PluginLatestList
       class="latest__list"
       :title="$t('PLUGINS.LATEST_PROJECTS')"
       :listItems="publicProjects"
-      :listItemImgSize="'rect'"
+      :listItemType="'project'"
     />
   </div>
 </template>
@@ -25,6 +25,7 @@ import { get, take, } from 'lodash'
 import { mapState, } from 'vuex'
 import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, } from '../../../api/config'
 import { SITE_FULL, } from 'src/constants'
+import { sendGAMessageToMM, } from 'src/util/plugins'
 import PluginLatestList from 'src/components/plugins/PluginLatestList.vue'
 
 const DEFAULT_PAGE = 1
@@ -74,6 +75,9 @@ export default {
         return take(get(state, [ 'publicProjects', 'normal', ], []), this.limitPublicProjects)
       },
     }),
+  },
+  methods: {
+    sendGAMessageToMM,
   },
   beforeMount () {
     getMembersPublic(this.$store, {

@@ -1,7 +1,7 @@
 <template>
   <li class="list-item">
     <a class="list-item__wrapper wrapper" :href="href" target="_blank">
-      <div :class="`wrapper__img-wrapper img-wrapper img-wrapper--${listItemImgSize}`">
+      <div :class="`wrapper__img-wrapper img-wrapper img-wrapper--${listItemType}`">
         <img :src="img" class="img-wrapper__img">
       </div>
       <p class="wrapper__title" v-text="title"></p>
@@ -22,14 +22,14 @@ export default {
         return {}
       },
     },
-    listItemImgSize: {
+    listItemType: {
       type: String,
-      default: 'square',
+      default: 'editor',
     },
   },
   computed: {
     isEditorsProfile () {
-      return get(this.item, 'nickname', '') !== ''
+      return this.listItemType === 'editor'
     },
     href () {
       return this.isEditorsProfile ? `${SITE_FULL}/profile/${get(this.item, 'id', '')}` : `${SITE_FULL}/series/${get(this.item, 'slug', '')}`
@@ -59,9 +59,9 @@ export default {
   position relative
   height 0
   background-color #444746
-  &--square
+  &--editor
     padding-bottom 100% /* 1 / 1 */
-  &--rect
+  &--project
     padding-bottom 52.5% /* 630 / 1200 */
   &__img
     position absolute
