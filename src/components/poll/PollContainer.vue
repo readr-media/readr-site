@@ -35,6 +35,8 @@
 import PollChoice from './PollChoice.vue'
 import moment from 'moment'
 import { POLL_FREQUENCY, } from 'api/config'
+import { SITE_DOMAIN, SITE_DOMAIN_DEV, } from 'src/constants'
+import { currEnv, } from 'src/util/comm'
 
 const fetchChosenChoices = (store, params) => store.dispatch('FETCH_CHOSEN_CHOICES', params)
 
@@ -118,7 +120,8 @@ export default {
       return
     },
     iframeCode () {
-      return `<iframe width="540" height="300" src="https://www.readr.tw/embed/poll/${this.poll.id}" frameborder="0"></iframe>`
+      const domain = currEnv() === 'dev' ? `http://${SITE_DOMAIN_DEV}` : `https://${SITE_DOMAIN}`
+      return `<iframe width="540" height="400" src="${domain}/embed/poll/${this.poll.id}" frameborder="0"></iframe>`
     },
   },
   watch: {
