@@ -1,11 +1,9 @@
 import { fetchChosenChoices, fetchPublicPolls, insertChosenChoice, updateChosenChoice, } from 'src/api/poll'
 
-// const debug = require('debug')('CLIENT:store:actions:poll')
-
 const FETCH_CHOSEN_CHOICES = ({ commit, }, params) => {
   return fetchChosenChoices(params).then(({ status, body, }) => {
     if (status === 200) {
-      return commit('SET_CHOSEN_CHOICES', { body, })
+      return commit('SET_CHOSEN_CHOICES', { chosenChoices: body.items, })
     }
     return Promise.reject()
   })
@@ -26,7 +24,10 @@ const UNVOTE = ({ commit, }, params) => {
   return updateChosenChoice(params)
 }
 
-const VOTE = ({ commit, }, params) => {
+const VOTE = ({ commit, state, }, params) => {
+  const chosenChoices = state.chosenChoices || []
+  chosenChoices.push(params)
+  commit('SET_CHOSEN_CHOICES', { chosenChoices: chosenChoices, })
   commit('UPDATE_POLL', params)
   return insertChosenChoice(params)
 }

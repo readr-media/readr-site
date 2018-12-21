@@ -1,5 +1,5 @@
-const SET_CHOSEN_CHOICES = (state, { body, }) => {
-  state['chosenChoices'] = body.items
+const SET_CHOSEN_CHOICES = (state, { chosenChoices, }) => {
+  state['chosenChoices'] = chosenChoices
 }
 
 const SET_EMBED_POLL = (state, { body, }) => {
