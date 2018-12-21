@@ -108,7 +108,7 @@ export default {
     'CREATED_BY': '發起人',
     'END_AT': '截止',
     'SHARE': '分享',
-    'START_AT': '發起時間',
+    'START_AT': '開始',
     'VOTES': 'votes',
   },
   'PROFILE': {
