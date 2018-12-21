@@ -174,7 +174,8 @@ export default {
     align-items center
     width 50px
     color #fff
-
+    font-family Monaco, Consolas
+    
 // .choice.pk
 //   &.selected
 //     .choice__progress

@@ -4,7 +4,8 @@
       <!-- <img v-if="poll.image" src="" :alt="poll.title"> -->
       <h1 v-text="poll.title"></h1>
       <p v-text="poll.description"></p>
-      <p class="small"><span v-if="poll.createdBy.nickname">{{ `${$t('POLL.CREATED_BY')}：${poll.createdBy.nickname}` }}</span><span>{{ `${$t('POLL.START_AT')}：${moment(poll.startAt).format('YYYY/M/D HH:mm')}` }}</span></p>
+      <p v-if="poll.createdBy.nickname" class="small" v-text="`${$t('POLL.CREATED_BY')}：${poll.createdBy.nickname}`"></p>
+      <p class="small" v-text="`${moment(poll.startAt).format('YYYY/MM/DD HH:mm')} ${$t('POLL.START_AT')}`"></p>
       <!-- <p class="small">#</p> -->
       <div v-if="choices.length > 0" class="poll__choices">
         <PollChoice
@@ -21,7 +22,7 @@
           @vote="vote" />
       </div>
       <div class="poll__end">
-        <p class="small">{{ `${moment(poll.endAt).format('YYYY/M/D HH:mm')} ${$t('POLL.END_AT')}` }}</p>
+        <p class="small">{{ `${moment(poll.endAt).format('YYYY/MM/DD HH:mm')} ${$t('POLL.END_AT')}` }}</p>
         <p class="small">{{ `${poll.totalVote} ${$t('POLL.VOTES')}` }}</p>
       </div>
       <div :class="{ open: openShare }" class="poll__share">
@@ -217,11 +218,9 @@ template-color = #11b8c9
     &.small
       font-size .75rem
       line-height 1
+      font-family Monaco, Consolas
       + p
         margin-top .5em
-      span
-        & + span
-          margin-left 1em
   &__choices
     margin-top 25px
     // &.pk
