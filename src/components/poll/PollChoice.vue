@@ -15,10 +15,10 @@
     <div class="choice__text" @click="select(choice.id)">
       <span>{{ `${$t('POLL.CHOICE')} ${index + 1}` }}</span>
       <span v-text="choice.choice"></span>
-      <div :style="[showResult ? { width: `${choice.totalVote ? choice.totalVote / poll.totalVote * 100 : 0 }%` } : {}]" class="progress"></div>
+      <div :style="[showResult ? { width: `${ratio}%` } : {}]" class="progress"></div>
     </div>
     <div class="choice__result">
-      {{ showResult ? `${choice.totalVote ? Math.round(choice.totalVote / poll.totalVote * 100) : 0 } %` : '' }} 
+      {{ showResult ? `${ratio} %` : '' }} 
     </div>
   </div>
 </template>
@@ -79,6 +79,12 @@ export default {
     maxChoice () {
       return this.poll.maxChoice || 0
     },
+    ratio () {
+      if (this.choice.totalVote > 0 && this.poll.totalVote > 0) {
+        return Math.round(this.choice.totalVote / this.poll.totalVote * 100) > 100 ? 100 : Math.round(this.choice.totalVote / this.poll.totalVote * 100)
+      }
+      return 0
+    },
     startAt () {
       return new Date(this.poll.startAt) || null
     },
@@ -97,7 +103,7 @@ export default {
           if ((this.chosenChoices.length < this.maxChoice) && !this.selected) {
             this.selected = true
             this.$emit('vote', choiceId)
-          } else if (this.frequency === POLL_FREQUENCY.ONCE && this.changeable && this.selected) {
+          } else if (this.chosenChoice && this.chosenChoice.id && this.frequency === POLL_FREQUENCY.ONCE && this.changeable && this.selected) {
             this.selected = false
             this.$emit('unvote', this.chosenChoice.id, choiceId)
           }
