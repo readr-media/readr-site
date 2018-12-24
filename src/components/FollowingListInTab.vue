@@ -38,6 +38,8 @@ const DEFAULT_PAGE_INIT = 1
 const DEFAULT_MAX_RESULT_LOADMORE = 10
 const DEFAULT_PAGE_LOADMORE = 3
 
+const switchOn = (store, message) => store.dispatch('LOGIN_ASK_TOGGLE', { active: true, message, type: 'GO_LOGIN', })
+
 const getFollowing = (store, { id = get(store, 'state.profile.id'), resource = 'project', resource_type = '', max_result, page, } = {}) => {
   return store.dispatch('GET_FOLLOWING_BY_USER', {
     id,
@@ -55,6 +57,11 @@ export default {
     FollowingList,
   },
   watch: {
+    isLoggedIn (val, oldVal) {
+      if (!oldVal && val) {
+        this.fetchFollowing()
+      }
+    },
     isReachBottom () {
       if (this.isReachBottom && this.shouldLoadmore) {
         this.fetchFollowing(true)
@@ -133,7 +140,7 @@ export default {
       const dataEmptyHintNotLoggedIn = {
         render: (h) => {
           return h('p', [
-            h('router-link', { props: { to: '/login', }, }, this.$t('FOLLOWING.LOGIN_HINT.login')),
+            h('span',{ on: { click: () => { switchOn(this.$store) }, }, }, this.$t('FOLLOWING.LOGIN_HINT.login')),
             this.$t('FOLLOWING.LOGIN_HINT.suffix'),
           ])
         },
@@ -263,7 +270,8 @@ export default {
   &__data-empty-hint
     clear right
     font-size 18px
-    & >>> a
+    & >>> a, & >>> span
+      cursor pointer
       color #4280a2
       border-bottom 1px solid #4280a2
   &__list
