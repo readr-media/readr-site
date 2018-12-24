@@ -277,6 +277,10 @@
         this.isReachBottom = this.isElementReachInView(this.$el, '.profile > .tab', 0.5) || this.isScrollBarReachBottom()
       })
     },
+    destroyed () {
+      this.$store.commit('SET_PUBLIC_POSTS', { posts: [], outputStateTarget: 'publicPostReview', })
+      this.$store.commit('SET_PUBLIC_POSTS', { posts: [], outputStateTarget: 'publicPostNews', })
+    },
     watch: {
       currUser () {
         debug('currUser changed', this.currUser)
