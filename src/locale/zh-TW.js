@@ -246,6 +246,8 @@ export default {
           'prefix': '你目前還沒有追蹤的關鍵字，可以到',
           'suffix': '尋找想追蹤的關鍵字喔！',
         },
+        'review': '目前尚未發表評論，敬請期待！',
+        'news': '目前尚未發表文章，敬請期待！',
       },
       'PUBLIC_PROFILE': {
         'prefix': '目前尚無追蹤的',
