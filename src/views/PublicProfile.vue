@@ -3,34 +3,41 @@
     <About v-if="profile" :profile="profile"></About>
     <TabHideProfile v-if="isProfileHide" class="profile__hide-profile"/>
     <Tab v-else class="profile__tab" :tabs="tabsName" :tabCurrIndex.sync="curr_tab">
-      <template
-        v-if="postsReview.length !== 0"
-        :slot="findIndexOf($t('TAB.REVIEW_RECORD'))"
-      >
+      <!-- reviews tab -->
+      <template :slot="findIndexOf($t('TAB.REVIEW_RECORD'))">
         <div class="profile__main__review">
           <div class="profile__main__review__container">
-            <div class="item" v-for="post in postsReview" :key="post.id">
-              <div class="datetime"><span v-text="dateDiffFromNow(get(post, 'publishedAt'))"></span></div>
-              <PostContent :modifier="'main'" :post="post"></PostContent>
-            </div>
+            <template v-if="postsReview.length <= 0">
+              <p class="data-empty-hint" v-text="$t('FOLLOWING.DATA_EMPTY_HINT.PROFILE.review')"></p>
+            </template>
+            <template v-else>
+              <div class="item" v-for="post in postsReview" :key="post.id">
+                <div class="datetime"><span v-text="dateDiffFromNow(get(post, 'publishedAt'))"></span></div>
+                <PostContent :modifier="'main'" :post="post"></PostContent>
+              </div>
+            </template>
             <div class="spinner"><Spinner :show="shouldShowSpinner" :height="'100px'"></Spinner></div>
           </div>
         </div>
       </template>
-      <template
-        v-if="postsNews.length !== 0"
-        :slot="findIndexOf($t('TAB.NEWS_RECORD'))"
-      >
+      <!-- news tab -->
+      <template :slot="findIndexOf($t('TAB.NEWS_RECORD'))">
         <div class="profile__main__review">
           <div class="profile__main__review__container">
-            <div class="item" v-for="post in postsNews" :key="post.id">
-              <div class="datetime"><span v-text="dateDiffFromNow(get(post, 'publishedAt'))"></span></div>
-              <PostContent :modifier="'main'" :post="post"></PostContent>
-            </div>
+            <template v-if="postsNews.length <= 0">
+              <p class="data-empty-hint" v-text="$t('FOLLOWING.DATA_EMPTY_HINT.PROFILE.news')"></p>
+            </template>
+            <template v-else>
+              <div class="item" v-for="post in postsNews" :key="post.id">
+                <div class="datetime"><span v-text="dateDiffFromNow(get(post, 'publishedAt'))"></span></div>
+                <PostContent :modifier="'main'" :post="post"></PostContent>
+              </div>
+            </template>
             <div class="spinner"><Spinner :show="shouldShowSpinner" :height="'100px'"></Spinner></div>
           </div>
         </div>
       </template>
+      <!-- followings tab -->
       <template :slot="findIndexOf($t('TAB.FOLLOW_RECORD'))">
         <FollowingListInTab :isReachBottom="isReachBottom"></FollowingListInTab>
       </template>
@@ -143,10 +150,11 @@
         return get(this.$store, 'state.publicPostNews.items') || []
       },
       tabs () {
-        let tabs = []
-        if (this.postsReview.length !== 0) tabs.push({ key: 'review', name: this.$t('TAB.REVIEW_RECORD'), })
-        if (this.postsNews.length !== 0) tabs.push({ key: 'news', name: this.$t('TAB.NEWS_RECORD'), })
-        tabs.push({ key: 'follow', name: this.$t('TAB.FOLLOW_RECORD'), })
+        let tabs = [
+          { key: 'review', name: this.$t('TAB.REVIEW_RECORD'), },
+          { key: 'news', name: this.$t('TAB.NEWS_RECORD'), },
+          { key: 'follow', name: this.$t('TAB.FOLLOW_RECORD'), },
+        ]
         return tabs
       },
       tabsName () {
@@ -369,5 +377,7 @@
       margin-top 35px
       background-color #fff
 
+  .data-empty-hint
+    font-size 18px
 
 </style>
