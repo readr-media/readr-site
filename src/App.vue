@@ -145,8 +145,7 @@
         this.doc.addEventListener('tap', (event) => {
           const checkAlink = isAlink(event.target)
           const checkABTest = isABTest(event.target)
-          const sendLog = isAlink || isABTest
-          sendLog && logTrace({
+          logTrace({
             category: 'whole-site',
             description: 'ele clicked',
             eventType: 'click',
