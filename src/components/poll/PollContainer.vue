@@ -106,17 +106,17 @@ export default {
     },
     frequencyStartTime () {
       if (this.poll.frequency === POLL_FREQUENCY.WEEKLY) {
-        return moment().startOf('week').toISOString()
+        return moment().startOf('week').toISOString().replace('.000', '')
       } else if (this.poll.frequency === POLL_FREQUENCY.DAILY) {
-        return moment().startOf('day').toISOString()
+        return moment().startOf('day').toISOString().replace('.000', '')
       }
       return
     },
     frequencyEndTime () {
       if (this.poll.frequency === POLL_FREQUENCY.WEEKLY) {
-        return moment().endOf('week').toISOString()
+        return moment().endOf('week').toISOString().replace('.999', '')
       } else if (this.poll.frequency === POLL_FREQUENCY.DAILY) {
-        return moment().endOf('day').toISOString()
+        return moment().endOf('day').toISOString().replace('.999', '')
       }
       return
     },
