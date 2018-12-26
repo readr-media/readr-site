@@ -12,17 +12,14 @@
         @mouseout.native="handleMouseEvent"
       >
         <span class="tag__text" v-text="tagContent.text"></span>
-        <span class="tag__action tag-action">
-          <img
-            :src="isFollowed ? starUrlFollowed : starUrlUnFollowed"
-            @click.prevent="clickFollow"
-          >
-          <span
-            :class="[ 'tag-action__tooltip', { 'tag-action__tooltip--toogled': showActionTooltip } ]"
-            v-text="isFollowed ? $t('FOLLOWING.FOLLOW_TAG') : $t('FOLLOWING.UNFOLLOW_TAG') "
-          >
-          </span>
-        </span>
+        <Tooltip
+          class="tag__action"
+          :tooltipTexts="{ active: $t('FOLLOWING.FOLLOW_TAG'), deactive: $t('FOLLOWING.UNFOLLOW_TAG') }"
+          :isActive="isFollowed"
+          @toggle="clickFollow"
+        >
+          <img :src="isFollowed ? starUrlFollowed : starUrlUnFollowed">
+        </Tooltip>
       </router-link>
       <ul
         v-if="showRelatedsList && isRelatedListExist"
@@ -44,6 +41,7 @@
 
 <script>
 import TagItemRelatedsListItem from './TagItemRelatedsListItem.vue'
+import Tooltip from 'src/components/Tooltip.vue'
 import { get, take, } from 'lodash'
 import { mapState, } from 'vuex'
 
@@ -77,10 +75,10 @@ export default {
   },
   components: {
     TagItemRelatedsListItem,
+    Tooltip,
   },
   data () {
     return {
-      showActionTooltip: false,
       isMouseoverLocal: false, // For preserving mouseover effect when tag's isMouseover status is not exist
       relatedListName: 'taggedReports',
       relatedListItemLimit: 3,
@@ -118,7 +116,9 @@ export default {
   },
   methods: {
     // TODO: Refactor following to a component like ButtonFollow.vue
-    clickFollow () {
+    clickFollow (e) {
+      e.preventDefault()
+
       if (this.isLoggedIn) {
         this.toogleFollow()
       } else {
@@ -126,7 +126,6 @@ export default {
       }
     },
     toogleFollow () {
-
       if (this.isFollowed) {
         publishAction(this.$store, {
           action: 'unfollow',
@@ -143,16 +142,6 @@ export default {
         })
       }
       toogleFollowingByUserStat(this.$store, { resource: 'tag', targetId: this.tagContent.id, })
-      this.toogleFollowTooltip()
-    },
-    toogleFollowTooltip () {
-      this.showActionTooltip = true
-      if (this._timer) {
-        clearTimeout(this._timer)
-      }
-      this._timer = setTimeout(() => {
-        this.showActionTooltip = false
-      }, 1000)
     },
     handleMouseEvent (e) {
       this.isMouseoverLocal = e.type === 'mouseover'
@@ -209,7 +198,7 @@ export default {
     text-overflow ellipsis
   &__action
     margin-left 5px
-    > img
+    >>> img
       position relative
       top 2px
       width 20px
@@ -272,47 +261,6 @@ export default {
     background-color #ddcf21
     user-select none
     cursor default
-.tag-action
-  position relative
-  &__tooltip
-    pointer-events none
-    padding 1px 2px
-    position absolute
-    top 5%
-    left 30px
-    width max-content
-    height 90%
-    font-size 10px
-    color #444746
-    background-color white
-    border 1px solid #d3d3d3
-    z-index 100
-    display flex
-    align-items center
-    opacity 0
-    transition opacity .25s
-    &:before
-      position absolute
-      top 2.5px
-      left -10px
-      content ''
-      width 0
-      height 0
-      border-style solid
-      border-width 7px 10px 7px 0
-      border-color transparent #d3d3d3 transparent transparent
-    &:after
-      position absolute
-      top 3.5px
-      left -9px
-      content ''
-      width 0
-      height 0
-      border-style solid
-      border-width 6px 9px 6px 0
-      border-color transparent white transparent transparent
-    &--toogled
-      opacity 1
 </style>
 
 
