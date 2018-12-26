@@ -6,7 +6,11 @@
       <div
         v-for="(p, i) in postContent"
         :key="i"
-        class="post-content__paragraph"
+        :class="[
+          'post-content__paragraph',
+          { 'post-content__paragraph--youtube': isElementContentYoutube(p) },
+          { 'post-content__paragraph--iframe': isElementContentIframe(p) }
+        ]"
         v-html="p"
       >
       </div>
@@ -27,6 +31,10 @@
 
 <script>
 import { get, } from 'lodash'
+import {
+  isElementContentIframe,
+  isElementContentYoutube,
+} from 'src/util/comm'
 import PostContentNormalSource from './PostContentNormalSource.vue'
 
 export default {
@@ -59,6 +67,10 @@ export default {
       return this.showReadMore ? this.postContentStringsTruncate : this.postContentStrings
     },
   },
+  methods: {
+    isElementContentIframe,
+    isElementContentYoutube,
+  },
 }
 </script>
 
@@ -84,7 +96,22 @@ export default {
     >>> a
       color black
       border-bottom 1px solid black
-
+    &--iframe
+      >>> iframe
+        width 100% !important
+    &--youtube
+      position relative
+      padding-bottom 56.25% // 16:9
+      padding-top 25px
+      width 100%
+      height 0
+      display inline-block
+      & >>> iframe
+        position absolute
+        top 0
+        left 0
+        width 100%
+        height 100%
 .read-more
   font-size 15px
   &__text

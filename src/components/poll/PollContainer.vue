@@ -84,6 +84,7 @@ export default {
   data () {
     return {
       ending: false,
+      iframeHeight: 400,
       locked: false,
       openShare: false,
       poll: this.initialPoll,
@@ -125,7 +126,7 @@ export default {
     },
     iframeCode () {
       const domain = currEnv() === 'dev' ? `http://${SITE_DOMAIN_DEV}` : `https://${SITE_DOMAIN}`
-      return `<iframe width="540" height="400" src="${domain}/embed/poll/${this.poll.id}" frameborder="0"></iframe>`
+      return `<iframe width="100%" height="${this.iframeHeight}" src="${domain}/embed/poll/${this.poll.id}" frameborder="0"></iframe>`
     },
   },
   watch: {
@@ -155,6 +156,10 @@ export default {
     if (this.$store.state.profile.id) {
       fetchChosenChoices(this.$store, this.buildChosenChoicesParams())
     }
+  },
+  mounted () {
+    const poll = document.querySelector('.poll')
+    this.iframeHeight = poll.offsetHeight + 50 || 400
   },
   methods: {
     moment,
@@ -219,7 +224,6 @@ template-color = #11b8c9
 
 .poll
   width 100%
-  height 100%
   padding 20px 15px
   color #fff
   text-align justify

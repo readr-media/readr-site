@@ -219,6 +219,12 @@ export function getElementContentSrc (content) {
   return getElementContentAttr(content, 'src')
 }
 
+export function isElementContentIframe (content) {
+  const regexp = /<iframe([\w\W]+?)><\/iframe>/
+  const isIframe = regexp.test(content)
+  return isIframe
+}
+
 export function isElementContentYoutube (content) {
   const regexp = /<iframe([\w\W]+?)><\/iframe>/
   const isIframe = regexp.test(content)

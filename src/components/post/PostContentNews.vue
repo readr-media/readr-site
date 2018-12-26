@@ -17,7 +17,8 @@
           :key="i"
           :class="[
             'post-content__paragraph',
-            { 'post-content__paragraph--youtube': isElementContentYoutube(p) }
+            { 'post-content__paragraph--youtube': isElementContentYoutube(p) },
+            { 'post-content__paragraph--iframe': isElementContentIframe(p) }
           ]"
           v-html="p"
         >
@@ -46,6 +47,7 @@
 import { get, } from 'lodash'
 import {
   isClientSide,
+  isElementContentIframe,
   isElementContentYoutube,
   isImg,
   getFullUrl,
@@ -75,6 +77,7 @@ export default {
     },
   },
   methods: {
+    isElementContentIframe,
     isElementContentYoutube,
     isImg,
     getFullUrl,
@@ -139,6 +142,10 @@ export default {
     color #4a4a4a
     &:last-of-type
       display inline
+    &--iframe
+      display inline-block !important
+      >>> iframe
+        width 100% !important
     &--youtube
       position relative
       padding-bottom 56.25% // 16:9
