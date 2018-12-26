@@ -17,6 +17,8 @@ export function createShareUrl (socialMedia = 'fb', url = SITE_FULL) {
       return `${URL_SHARE_FB}?u=${createUTMQueryString(url, 'facebook')}`
     case 'line':
       return `${URL_SHARE_LINE}?url=${createUTMQueryString(url, 'line')}`
+    case 'copylink':
+      return `${url}?rref=copylinkshare`
     default:
       return `${URL_SHARE_FB}?u=${createUTMQueryString(url, 'facebook')}`
   }

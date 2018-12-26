@@ -674,4 +674,5 @@ export default {
     'CUSTOM_EDITORS': '本週客座總編',
     'LATEST_PROJECTS': '最新專題',
   },
+  'COPY_LINK': '複製連結成功',
 }
