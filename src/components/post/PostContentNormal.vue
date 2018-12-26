@@ -112,6 +112,30 @@ export default {
         left 0
         width 100%
         height 100%
+    >>> h1
+      font-size 35px
+      line-height 1.5
+      margin 16.5px 0 21px 0
+    >>> h2
+      font-size 25px
+      line-height 1.5
+      font-weight bold
+      margin 23.5px 0 15px 0
+    >>> figcaption
+      font-size 14px
+      line-height 1.71
+      letter-spacing 0.5px
+      color #808080
+      margin-top 4.5px
+      text-align center
+      margin-bottom 28px
+    >>> blockquote
+      margin 0
+      padding 0 0 0 16px
+      border-left 4px solid #ccc
+      line-height 1
+    >>> img
+      width 100%
 .read-more
   font-size 15px
   &__text
