@@ -18,6 +18,14 @@
     >
       <img src="/public/icons/line.png" alt="">
     </a>
+    <Tooltip
+      v-if="isClientSide"
+      class="nav__icon nav__icon--copy-link"
+      :tooltipTexts="{ active: $t('COPY_LINK') }"
+      @toggle="copyToClipboard(createShareUrl('copylink', shareUrl))"
+    >
+      <img src="/public/icons/copylink.png" alt="">
+    </Tooltip>
   </nav>
 </template>
 
@@ -28,6 +36,9 @@ import { logTrace, } from 'src/util/services'
 
 import { getPostType, getPostFullUrl, } from 'src/util/post/index'
 import { createShareUrl, } from 'src/util/post/share'
+import { copyToClipboard, } from 'src/util/comm'
+
+import Tooltip from 'src/components/Tooltip.vue'
 
 export default {
   props: {
@@ -37,6 +48,9 @@ export default {
         return {}
       },
     },
+  },
+  components: {
+    Tooltip,
   },
   computed: {
     isClientSide,
@@ -55,6 +69,7 @@ export default {
   },
   methods: {
     createShareUrl,
+    copyToClipboard,
     sendShareLog (socialMedia) {
       const createShareLog = () => {
         return {
@@ -99,5 +114,9 @@ export default {
       background-color #00b900
       img
         width 70%
+    &--copy-link
+      cursor pointer
+      img
+        width 100%
 </style>
 
