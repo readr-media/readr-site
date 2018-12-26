@@ -15,11 +15,13 @@
           :chosenChoices="chosenChoices"
           :ending="ending"
           :index="index"
+          :locked="locked"
           :poll="poll"
           :showResult="showResult"
           @end="end"
           @unvote="unvote"
-          @vote="vote" />
+          @vote="vote"
+          @voteAndUnvote="voteAndUnvote" />
       </div>
       <div class="poll__end">
         <p class="small">{{ `${moment(poll.endAt).format('YYYY/MM/DD HH:mm')} ${$t('POLL.END_AT')}` }}</p>
@@ -82,6 +84,7 @@ export default {
   data () {
     return {
       ending: false,
+      locked: false,
       openShare: false,
       poll: this.initialPoll,
       showResult: false,
@@ -174,19 +177,37 @@ export default {
       e.target.select()
     },
     unvote (id, choiceId) {
+      this.locked = true
       unvote(this.$store, { id: id, choiceId: choiceId, pollId: this.poll.id, })
       .then(() => {
         setTimeout(() => {
           fetchChosenChoices(this.$store, this.buildChosenChoicesParams())
+          .then(() => this.locked = false)
         }, 1000)
       })
     },
     vote (choiceId) {
+      this.locked = true
       vote(this.$store, { choiceId: choiceId, pollId: this.poll.id, })
       .then(() => {
         this.showResult = true
         setTimeout(() => {
           fetchChosenChoices(this.$store, this.buildChosenChoicesParams())
+          .then(() => this.locked = false)
+        }, 1000)
+      })
+    },
+    voteAndUnvote (id, unvoteChoiceId, voteChoiceId) {
+      this.locked = true
+      
+      Promise.all([
+        unvote(this.$store, { id: id, choiceId: unvoteChoiceId, pollId: this.poll.id, }),
+        vote(this.$store, { choiceId: voteChoiceId, pollId: this.poll.id, }),
+      ]).then(() => {
+        this.showResult = true
+        setTimeout(() => {
+          fetchChosenChoices(this.$store, this.buildChosenChoicesParams())
+          .then(() => this.locked = false)
         }, 1000)
       })
     },
