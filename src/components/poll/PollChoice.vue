@@ -44,6 +44,9 @@ export default {
     index: {
       type: Number,
     },
+    locked: {
+      type: Boolean,
+    },
     poll: {
       type: Object,
     },
@@ -100,10 +103,13 @@ export default {
       if (isLogin) {
         const now = new Date()
         if (now < this.endAt && now >= this.startAt) {
-          if ((this.chosenChoices.length < this.maxChoice) && !this.selected) {
+          
+          if (!this.locked && this.chosenChoices.length === 1 && this.maxChoice === 1 && this.changeable && !this.selected) {
+            this.$emit('voteAndUnvote', this.chosenChoices[0].id, this.chosenChoices[0].choiceId, choiceId)
+          } else if (!this.locked && (this.chosenChoices.length < this.maxChoice) && !this.selected) {
             this.selected = true
             this.$emit('vote', choiceId)
-          } else if (this.chosenChoice && this.chosenChoice.id && this.frequency === POLL_FREQUENCY.ONCE && this.changeable && this.selected) {
+          } else if (!this.locked && this.chosenChoice && this.chosenChoice.id && this.frequency === POLL_FREQUENCY.ONCE && this.changeable && this.selected) {
             this.selected = false
             this.$emit('unvote', this.chosenChoice.id, choiceId)
           }

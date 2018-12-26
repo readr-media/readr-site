@@ -19,7 +19,13 @@ const FETCH_EMBED_POLL = ({ commit, }, params) => {
   })
 }
 
-const UNVOTE = ({ commit, }, params) => {
+const UNVOTE = ({ commit, state, }, params) => {
+  const chosenChoices = state.chosenChoices || []
+  const choiceIndex = chosenChoices.findIndex(choice => choice.id === params.id)
+  if (choiceIndex > -1) {
+    chosenChoices.splice(choiceIndex, 1)
+  }
+  commit('SET_CHOSEN_CHOICES', { chosenChoices: chosenChoices, })
   commit('UPDATE_POLL', params)
   return updateChosenChoice(params)
 }
