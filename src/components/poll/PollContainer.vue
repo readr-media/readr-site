@@ -125,7 +125,7 @@ export default {
       return
     },
     iframeCode () {
-      const domain = currEnv() === 'dev' ? `http://${SITE_DOMAIN_DEV}` : `https://${SITE_DOMAIN}`
+      const domain = currEnv() === 'dev' ? `http://${SITE_DOMAIN_DEV}` : `https://www.${SITE_DOMAIN}`
       return `<iframe width="100%" height="${this.iframeHeight}" src="${domain}/embed/poll/${this.poll.id}" frameborder="0"></iframe>`
     },
   },
