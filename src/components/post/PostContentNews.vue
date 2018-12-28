@@ -143,7 +143,7 @@ export default {
     &:last-of-type
       display inline
     &--iframe
-      display inline-block !important
+      display block !important
       >>> iframe
         width 100% !important
     &--youtube
