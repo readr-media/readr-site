@@ -104,8 +104,11 @@ export default {
     },    
     postContent () {
       if (!this.post.content || this.post.content.length === 0) { return [] }
+      console.log('--- post.content', this.post.content)
       const wrappedContent = sanitizeHtml(this.post.content, { allowedTags: false, allowedAttributes: this.allowedAttributes, allowedIframeHostnames: this.allowedIframeHostnames, selfClosing: [ 'img', ], })
+      console.log('--- wrappedContent', wrappedContent)
       const doc = new dom().parseFromString(wrappedContent)
+      console.log('--- doc', doc)
       let postParagraphs = map(get(doc, 'childNodes'), (p) => (sanitizeHtml(new seializer().serializeToString(p), { allowedTags: this.allowedTags, allowedAttributes: this.allowedAttributes, allowedIframeHostnames: this.allowedIframeHostnames, })))
       return postParagraphs
     },
