@@ -18,7 +18,11 @@
           <h1 v-text="!isPostEmpty ? post.title : ''"></h1>
           <template v-for="p in postContent">
             <figure v-if="isImg(p)">
-              <img :class="{ 'pointer': isLink(p) }" v-if="isClientSide" :src="getImgSrc(p)" alt="post-content-img" @load="setContentImageOrientation(getImgSrc(p), $event)" @click="clickImg(p, $event)">
+              <img :class="{ 'pointer': isLink(p) }" v-if="isClientSide" alt="post-content-img"
+                :src="getImgSrc(p)"  
+                :srcset="getElementContentAttr(p, 'srcset')"
+                @load="setContentImageOrientation(getImgSrc(p), $event)"
+                @click="clickImg(p, $event)">
             </figure>
             <div v-else :class="{ 'yt-iframe-container': isElementContentYoutube(p) }" v-html="p"></div>
           </template>
@@ -51,7 +55,7 @@
   import AppArticleNav from 'src/components/AppArticleNav.vue'
   import TagNav from 'src/components/tag/TagNav.vue'
   import PostShareNav from 'src/components/post/PostShareNav.vue'
-  import { isClientSide, updatedAtYYYYMMDD, getFullUrl, onImageLoaded, getElementContentSrc, isElementContentYoutube, isImg, isLink, clickImg, } from 'src/util/comm'
+  import { isClientSide, updatedAtYYYYMMDD, getFullUrl, onImageLoaded, getElementContentAttr, getElementContentSrc, isElementContentYoutube, isImg, isLink, clickImg, } from 'src/util/comm'
   import { getPostFullUrl, createPost, } from 'src/util/post/index'
   import { get, } from 'lodash'
   export default {
@@ -77,6 +81,7 @@
       getImgSrc (content) {
         return getFullUrl(getElementContentSrc(content))
       },
+      getElementContentAttr,
       isImg,
       isLink,
       clickImg,
