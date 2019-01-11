@@ -117,7 +117,7 @@ export default {
     return {
       isContentEmpty: !get(this.post, 'id') || (this.isMemo && !this.isProjectDone),
       allowedTags: [ 'img', 'strong', 'h1', 'h2', 'figcaption', 'em', 'blockquote', 'a', 'iframe', ],
-      allowedAttributes: Object.assign({}, sanitizeHtml.defaults.allowedAttributes, { iframe: [ 'frameborder', 'allowfullscreen', 'src', 'width', 'height', ], }),
+      allowedAttributes: Object.assign({}, sanitizeHtml.defaults.allowedAttributes, { iframe: [ 'frameborder', 'allowfullscreen', 'src', 'width', 'height', ], img: [ 'src', 'srcset', ], }),
       allowedIframeHostnames: [ 'www.youtube.com', 'dev.readr.tw', 'www.readr.tw', 'cloud.highcharts.com', ],
     }
   },
@@ -332,6 +332,8 @@ export default {
         display flex
         flex-direction column
         align-items center
+        img
+          max-width 100%  
       figcaption
         font-size 14px
         line-height 1.71
