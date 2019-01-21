@@ -13,7 +13,6 @@
       <div class="button" @click="select(choice.id)"></div>
     </div>
     <div class="choice__text" @click="select(choice.id)">
-      <span>{{ `${$t('POLL.CHOICE')} ${index + 1}` }}</span>
       <span v-text="choice.choice"></span>
       <div :style="[showResult ? { width: `${ratio}%` } : {}]" class="progress"></div>
     </div>
