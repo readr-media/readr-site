@@ -1,7 +1,7 @@
 <template>
   <section class="videosHighlight">
     <div class="videosHighlight__video">
-      <iframe :src="link" frameborder="0" allowfullscreen></iframe>
+      <iframe :src="link" frameborder="0" allowfullscreen="allowfullscreen"></iframe>
     </div>
     <div class="videosHighlight__info">
       <div class="videosHighlight__info-title">

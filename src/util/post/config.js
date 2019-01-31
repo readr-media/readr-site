@@ -5,6 +5,16 @@ export const sanitizeHtmlOptions = {
   allowedIframeHostnames: [ 'www.youtube.com', 'dev.readr.tw', 'www.readr.tw', 'cloud.highcharts.com', ],
   allowedTags: [ 'img', 'strong', 'h1', 'h2', 'figcaption', 'em', 'blockquote', 'a', 'iframe', ],
   customContentBreakTagName: 'hr',
+  transformTags: {
+    'iframe': function(tagName, attribs) {
+      return {
+        tagName,
+        attribs: Object.assign(attribs, {
+          allowfullscreen: 'allowfullscreen',
+        }),
+      }
+    },
+  },
 }
 
 export const truncateDefaults = {

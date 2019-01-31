@@ -48,7 +48,9 @@ export function getFullUrl (url) {
   if (browser) {
     hostname = location.hostname
   }
-  if (hostname === 'localhost') {
+
+  const exp_protocol = /^http(s?):\/\//
+  if (hostname === 'localhost' && !exp_protocol.test(url)) {
     return `http://${SITE_DOMAIN_DEV}${url}`
   }
   return url
