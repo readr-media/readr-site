@@ -9,6 +9,7 @@ const {
   allowedIframeHostnames,
   allowedTags,
   customContentBreakTagName,
+  transformTags,
 } = sanitizeHtmlOptions
 
 export function getPostContentDOM (post) {
@@ -17,6 +18,7 @@ export function getPostContentDOM (post) {
     allowedAttributes,
     allowedIframeHostnames,
     selfClosing: [ 'img', customContentBreakTagName, ],
+    transformTags,
   }
   const wrappedContent = sanitizeHtml(post.content, options)
   const doc = new dom().parseFromString(wrappedContent)
@@ -30,6 +32,7 @@ export function getPostContentStrings (post) {
     allowedTags,
     allowedAttributes,
     allowedIframeHostnames,
+    transformTags,
   }
   const postParagraphs = map(get(getPostContentDOM(post), 'childNodes'), (p) => (sanitizeHtml(new seializer().serializeToString(p), options)))
   return postParagraphs

@@ -104,9 +104,16 @@ export default {
     },    
     postContent () {
       if (!this.post.content || this.post.content.length === 0) { return [] }
-      const wrappedContent = sanitizeHtml(this.post.content, { allowedTags: false, allowedAttributes: this.allowedAttributes, allowedIframeHostnames: this.allowedIframeHostnames, selfClosing: [ 'img', ], })
+      const options = {
+        allowedTags: false,
+        allowedAttributes: this.allowedAttributes, 
+        allowedIframeHostnames: this.allowedIframeHostnames, 
+        selfClosing: [ 'img', ],
+        transformTags: this.transformTags,
+      }
+      const wrappedContent = sanitizeHtml(this.post.content, options)
       const doc = new dom().parseFromString(wrappedContent)
-      let postParagraphs = map(get(doc, 'childNodes'), (p) => (sanitizeHtml(new seializer().serializeToString(p), { allowedTags: this.allowedTags, allowedAttributes: this.allowedAttributes, allowedIframeHostnames: this.allowedIframeHostnames, })))
+      let postParagraphs = map(get(doc, 'childNodes'), p => sanitizeHtml(new seializer().serializeToString(p), Object.assign(options, { allowedTags: this.allowedTags, })))
       return postParagraphs
     },
     commentCount () {
@@ -119,6 +126,16 @@ export default {
       allowedTags: [ 'img', 'strong', 'h1', 'h2', 'figcaption', 'em', 'blockquote', 'a', 'iframe', ],
       allowedAttributes: Object.assign({}, sanitizeHtml.defaults.allowedAttributes, { iframe: [ 'frameborder', 'allowfullscreen', 'src', 'width', 'height', ], img: [ 'src', 'srcset', ], }),
       allowedIframeHostnames: [ 'www.youtube.com', 'dev.readr.tw', 'www.readr.tw', 'cloud.highcharts.com', ],
+      transformTags: {
+        'iframe': function(tagName, attribs) {
+          return {
+            tagName: 'iframe',
+            attribs: Object.assign(attribs, {
+              allowfullscreen: 'allowfullscreen',
+            }),
+          }
+        },
+      },
     }
   },
   methods: {
