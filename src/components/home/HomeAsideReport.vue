@@ -8,7 +8,11 @@
         </a>
         <a :href="getReportLink(report)" target="_blank"><img class="home-project-aside__project-image" :src="report.heroImage ? report.heroImage : '/public/icons/readr-logo.png'"></a>
         <div class="home-project-aside__comment">
-          <AppArticleNav :resource="'report'" :postId="report.id" :commentCount="report.commentAmount || 0" :toogleComment="false"/>
+          <AppArticleNav
+            :resource="'report'"
+            :postId="report.id"
+            :commentCount="report.commentAmount || 0"
+            :toogleComment="false"/>
         </div>
       </div>
     </template>

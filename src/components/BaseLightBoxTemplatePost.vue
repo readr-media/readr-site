@@ -12,6 +12,7 @@
           :showFollow="false"
           :postId="post.id"
           :postRefId="assetRefId"
+          :projectInfo="get(post, 'project')"
           :resource="get(postInstance, [ 'processed', 'resource' ])"
           :resourceType="get(postInstance, [ 'processed', 'resourceType', ], '')"
           :commentCount="commentCount"
