@@ -1,9 +1,14 @@
 import sanitizeHtml from 'sanitize-html'
 
 export const sanitizeHtmlOptions = {
-  allowedAttributes: Object.assign({}, sanitizeHtml.defaults.allowedAttributes, { iframe: [ 'frameborder', 'allowfullscreen', 'src', 'style', 'width', 'height', ], img: [ 'src', 'srcset', ], }),
+  allowedAttributes: Object.assign({}, sanitizeHtml.defaults.allowedAttributes, {
+    iframe: [ 'frameborder', 'allowfullscreen', 'src', 'style', 'width', 'height', 'allow', ],
+    img: [ 'src', 'srcset', 'alt', ],
+    div: [ 'class', ],
+    script: [ 'src', ],
+  }),
   allowedIframeHostnames: [ 'www.youtube.com', 'dev.readr.tw', 'www.readr.tw', 'cloud.highcharts.com', ],
-  allowedTags: [ 'img', 'strong', 'h1', 'h2', 'figcaption', 'em', 'blockquote', 'a', 'iframe', ],
+  allowedTags: [ 'img', 'strong', 'h1', 'h2', 'figcaption', 'em', 'blockquote', 'a', 'iframe', 'div', 'script', ],
   customContentBreakTagName: 'hr',
   transformTags: {
     'iframe': function(tagName, attribs) {
