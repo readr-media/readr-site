@@ -23,6 +23,7 @@
                 :srcset="getElementContentAttr(p, 'srcset')"
                 @load="setContentImageOrientation(getImgSrc(p), $event)"
                 @click="clickImg(p, $event)">
+              <span class="caption" v-text="getElementContentAttr(p, 'alt')"></span>
             </figure>
             <div v-else :class="{ 'yt-iframe-container': isElementContentYoutube(p) }" v-html="p"></div>
           </template>

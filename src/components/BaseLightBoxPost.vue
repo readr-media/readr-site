@@ -110,11 +110,22 @@ export default {
         allowedAttributes: this.allowedAttributes, 
         allowedIframeHostnames: this.allowedIframeHostnames, 
         selfClosing: [ 'img', ],
-        transformTags: this.transformTags,
+        transformTags: Object.assign({}, this.transformTags, {
+          /**
+           * Have to insert a node here to avoid wrong serializing from XMLSerializer.
+           * And this node will be remove later.
+           */
+          'script': function (tagName, attribs) { return { tagName, text: 'THIS TEXT WOULD BE REMOVED LATER', attribs, } },
+        }),
       }
       const wrappedContent = sanitizeHtml(this.post.content, options)
       const doc = new dom().parseFromString(wrappedContent)
-      let postParagraphs = map(get(doc, 'childNodes'), p => sanitizeHtml(new seializer().serializeToString(p), Object.assign(options, { allowedTags: this.allowedTags, })))
+      let postParagraphs = map(get(doc, 'childNodes'), p => sanitizeHtml(new seializer().serializeToString(p), Object.assign(options, {
+        allowedTags: this.allowedTags,
+        transformTags: {
+          'script': function (tagName, attribs) { return { tagName, text: '', attribs, } },
+        },
+      })))
       return postParagraphs
     },
     commentCount () {
@@ -361,4 +372,19 @@ export default {
     margin-top 10px
     > div
       margin-top 5px
+.readme-embed
+  display flex
+  flex-direction column
+  align-items center
+.article-content
+  figure
+    > img
+      width 100%
+    > span.caption
+      display block
+      margin-top 10px
+      font-size 0.875rem
+      font-weight normal
+      line-height normal
+      color #a8a8a8
 </style>
