@@ -83,7 +83,7 @@ if (isProd) {
 }
 
 const serve = (path, cache) => express.static(resolve(path), {
-  maxAge: cache && isProd ? 1000 * 60 * 60 * 24 * 30 : 0
+  maxAge: cache && isProd ? 1000 * 60 * 60 : 0
 })
 
 const Logging = require('@google-cloud/logging')
@@ -116,13 +116,13 @@ app.use('/hello.jpg', (req, res) => {
   })
 })
 
-
+const staticNotFound = (req, res) => res.status(404).send('Not Found')
 app.use(compression({ threshold: 0 }))
 app.use(favicon('./public/favicon.png'))
-app.use('/distribution', serve('./distribution', true))
-app.use('/public', serve('./public', true))
-app.use('/manifest.json', serve('./manifest.json', true))
-app.use('/service-worker.js', serve('./distribution/service-worker.js'))
+app.use('/distribution', serve('./distribution', true), staticNotFound)
+app.use('/public', serve('./public', true), staticNotFound)
+app.use('/manifest.json', serve('./manifest.json', true), staticNotFound)
+app.use('/service-worker.js', serve('./distribution/service-worker.js'), staticNotFound)
 
 // since this app has no user-specific content, every page is micro-cacheable.
 // if your app involves user-specific content, you need to implement custom

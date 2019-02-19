@@ -222,9 +222,6 @@ $container
     padding 40px 0
     display flex
     position relative
-    // &--reset
-    //   max-width initial
-    //   padding 0
 
   &__container
     @extends $container
