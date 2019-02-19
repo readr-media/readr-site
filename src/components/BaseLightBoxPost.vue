@@ -110,22 +110,17 @@ export default {
         allowedAttributes: this.allowedAttributes, 
         allowedIframeHostnames: this.allowedIframeHostnames, 
         selfClosing: [ 'img', ],
-        transformTags: Object.assign({}, this.transformTags, {
-          /**
-           * Have to insert a node here to avoid wrong serializing from XMLSerializer.
-           * And this node will be remove later.
-           */
-          'script': function (tagName, attribs) { return { tagName, text: 'THIS TEXT WOULD BE REMOVED LATER', attribs, } },
-        }),
+        transformTags: this.transformTags,
       }
       const wrappedContent = sanitizeHtml(this.post.content, options)
       const doc = new dom().parseFromString(wrappedContent)
-      let postParagraphs = map(get(doc, 'childNodes'), p => sanitizeHtml(new seializer().serializeToString(p), Object.assign(options, {
-        allowedTags: this.allowedTags,
-        transformTags: {
-          'script': function (tagName, attribs) { return { tagName, text: '', attribs, } },
-        },
-      })))
+      let postParagraphs = map(get(doc, 'childNodes'), p => {
+        let pHtmlStr = new seializer().serializeToString(p)
+        const exp = /<(iframe|script)\b[^>]*\/>/g
+        return sanitizeHtml(pHtmlStr.replace(exp, '$&</$1>'), Object.assign(options, {
+          allowedTags: this.allowedTags,
+        }))
+      })
       return postParagraphs
     },
     commentCount () {
@@ -375,7 +370,7 @@ export default {
 .readme-embed
   display flex
   flex-direction column
-  align-items center
+  align-items center  
 .article-content
   figure
     > img
@@ -387,4 +382,15 @@ export default {
       font-weight normal
       line-height normal
       color #a8a8a8
+.readme-image
+  img
+    width 100%
+  &:after
+    display block
+    content attr(text)
+    margin-top 10px
+    font-size 0.875rem
+    font-weight normal
+    line-height normal
+    color #a8a8a8  
 </style>

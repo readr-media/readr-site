@@ -4,10 +4,10 @@ export const sanitizeHtmlOptions = {
   allowedAttributes: Object.assign({}, sanitizeHtml.defaults.allowedAttributes, {
     iframe: [ 'frameborder', 'allowfullscreen', 'src', 'style', 'width', 'height', 'allow', ],
     img: [ 'src', 'srcset', 'alt', ],
-    div: [ 'class', ],
+    div: [ 'class', 'text', ],
     script: [ 'src', ],
   }),
-  allowedIframeHostnames: [ 'www.youtube.com', 'dev.readr.tw', 'www.readr.tw', 'cloud.highcharts.com', ],
+  allowedIframeHostnames: [ 'www.youtube.com', 'dev.readr.tw', 'www.readr.tw', 'cloud.highcharts.com', 'public.flourish.studio', ],
   allowedTags: [ 'img', 'strong', 'h1', 'h2', 'figcaption', 'em', 'blockquote', 'a', 'iframe', 'div', 'script', ],
   customContentBreakTagName: 'hr',
   transformTags: {
