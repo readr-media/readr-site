@@ -69,8 +69,7 @@ export default {
   background-color white
   padding 15px 0px 12.5px 0px
   border-bottom .5px solid #979797
-  // &__author
-  //   display flex
+
   &__content
     display flex
     flex-direction column
