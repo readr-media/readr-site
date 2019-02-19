@@ -17,7 +17,6 @@ export default context => {
     const { app, i18n, router, store, } = createApp()
 
     const { url, cookie, initmember, setting, error, } = context
-    // const { url, initmember, setting, error, } = context
     const { route, } = router.resolve(url)
     const { fullPath, } = route
 
