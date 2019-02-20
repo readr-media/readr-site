@@ -18,9 +18,9 @@ export function getPostType (post) {
     return 'normal'
   } else if (type === POST_TYPE.NEWS) {
     return 'news'
-  } else if (type === POST_TYPE.REPORT || (projectId && slug)) {
+  } else if (type === POST_TYPE.REPORT) {
     return 'report'
-  } else if (type === POST_TYPE.MEMO || (projectId && !slug)) {
+  } else if (type === POST_TYPE.MEMO) {
     return 'memo'
   } else {
     return 'normal'
