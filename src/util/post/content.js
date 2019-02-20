@@ -34,6 +34,10 @@ export function getPostContentStrings (post) {
     allowedIframeHostnames,
     transformTags,
   }
-  const postParagraphs = map(get(getPostContentDOM(post), 'childNodes'), (p) => (sanitizeHtml(new seializer().serializeToString(p), options)))
+  const postParagraphs = map(get(getPostContentDOM(post), 'childNodes'), p => {
+    const pHtmlStr = new seializer().serializeToString(p)
+    const exp = /<([a-zA-Z0-9]*)\b[^>]*\/>/g
+    return sanitizeHtml(pHtmlStr.replace(exp, '$&</$1>'), options)
+  })
   return postParagraphs
 }

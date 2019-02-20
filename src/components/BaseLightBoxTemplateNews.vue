@@ -17,15 +17,6 @@
         <section class="article-content">
           <h1 v-text="!isPostEmpty ? post.title : ''"></h1>
           <template v-for="p in postContent">
-            <!--figure v-if="isImg(p)">
-              <img :class="{ 'pointer': isLink(p) }" v-if="isClientSide" alt="post-content-img"
-                :src="getImgSrc(p)"  
-                :srcset="getElementContentAttr(p, 'srcset')"
-                @load="setContentImageOrientation(getImgSrc(p), $event)"
-                @click="clickImg(p, $event)">
-              <span class="caption" v-text="getElementContentAttr(p, 'alt')"></span>
-            </figure>
-            <div v-else :class="{ 'yt-iframe-container': isElementContentYoutube(p) }" v-html="p"></div-->
             <div :class="{ 'yt-iframe-container': isElementContentYoutube(p) }" v-html="p"></div>
           </template>
         </section>
