@@ -115,7 +115,7 @@ export default {
       const wrappedContent = sanitizeHtml(this.post.content, options)
       const doc = new dom().parseFromString(wrappedContent)
       let postParagraphs = map(get(doc, 'childNodes'), p => {
-        let pHtmlStr = new seializer().serializeToString(p)
+        const pHtmlStr = new seializer().serializeToString(p)
         const exp = /<([a-zA-Z0-9]*)\b[^>]*\/>/g
         return sanitizeHtml(pHtmlStr.replace(exp, '$&</$1>'), Object.assign(options, {
           allowedTags: this.allowedTags,
@@ -372,6 +372,9 @@ export default {
   flex-direction column
   align-items center  
 .article-content
+  > div
+    > img
+      width 100%
   figure
     > img
       width 100%
