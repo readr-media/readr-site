@@ -116,7 +116,7 @@ export default {
       const doc = new dom().parseFromString(wrappedContent)
       let postParagraphs = map(get(doc, 'childNodes'), p => {
         let pHtmlStr = new seializer().serializeToString(p)
-        const exp = /<(iframe|script)\b[^>]*\/>/g
+        const exp = /<([a-zA-Z0-9]*)\b[^>]*\/>/g
         return sanitizeHtml(pHtmlStr.replace(exp, '$&</$1>'), Object.assign(options, {
           allowedTags: this.allowedTags,
         }))
