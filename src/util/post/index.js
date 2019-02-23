@@ -11,8 +11,6 @@ import { getPostContentDOM, getPostContentStrings, } from './content'
 
 export function getPostType (post) {
   const type = get(post, 'contentType') || get(post, 'type')
-  const projectId = get(post, 'projectId')
-  const slug = get(post, 'slug')
 
   if (type === POST_TYPE.REVIEW) {
     return 'normal'

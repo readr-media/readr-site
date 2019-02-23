@@ -107,3 +107,14 @@ export const NOTIFICATION_TYPE = {
   FOLLOW_TAG_MEMO: 'follow_tag_memo',
   FOLLOW_TAG_POST: 'follow_tag_post',
 }
+
+export const IMAGE_SIZE = [ 'mobile@2x', 'mobile@3x', 'mobile@4x', 'tablet@1x', 'tablet@2x', 'desktop@1x', 'desktop@2x', ]
+export const IMAGE_SIZE_RESOLUTION = [
+  { target: 'mobile@4x', width: 1500, },
+  { target: 'mobile@3x', width: 1200, },
+  { target: 'mobile@2x', width: 800, },
+  { target: 'tablet@2x', width: 2700, },
+  { target: 'tablet@1x', width: 1000, },
+  { target: 'desktop@2x', width: 3000, },
+  { target: 'desktop@1x', width: 2000, },
+]

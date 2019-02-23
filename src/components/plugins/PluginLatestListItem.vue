@@ -40,7 +40,13 @@ export default {
       return this.isEditorsProfile ? nickname : title
     },
     img () {
-      return this.isEditorsProfile ? getArticleAuthorThumbnailImg(this.item) : this.item.heroImage
+      const src = this.isEditorsProfile ? getArticleAuthorThumbnailImg(this.item) : this.item.heroImage
+      const exp_destination = /^([A-Za-z0-9.:_\-/]*readr.tw\/assets\/images\/)([A-Za-z0-9.:_\-/]*)\/\2.\b([A-Za-z0-9]*)$/
+
+      const dest = src ? get(src.match(exp_destination), '1') : ''
+      const assetId = src ? get(src.match(exp_destination), '2') : ''
+      const ext = src ? get(src.match(exp_destination), '3') : ''
+      return src && dest && assetId && ext ? `${dest}${assetId}/${assetId}-mobile@2x.${ext}` : src
     },
   },
 }
