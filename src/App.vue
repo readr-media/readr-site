@@ -178,12 +178,6 @@
         })
       },   
     },
-    beforeMount () {
-      const showAbout = !this.getFirstLoginCookie()
-      if (this.shouldShowAbout && showAbout) {
-        this.$router.push('/about')
-      }
-    },
     mounted () {
       this.doc = document
       this.$store.dispatch('UPDATE_CLIENT_SIDE')
@@ -196,10 +190,6 @@
       '$route.fullPath': function () {
         if (!process.browser) { return }
         this.sendPageview()
-        const showAbout = !this.getFirstLoginCookie()
-        if (this.shouldShowAbout && showAbout) {
-          this.$router.push('/about')
-        }
       },
     },
   }
