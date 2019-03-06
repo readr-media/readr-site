@@ -1340,6 +1340,12 @@ babel-plugin-transform-remove-undefined@^0.0.5:
   version "0.0.5"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-remove-undefined/-/babel-plugin-transform-remove-undefined-0.0.5.tgz#12ef11805e06e861dd2eb0c7cc041d2184b8f410"
 
+babel-plugin-transform-runtime@^6.23.0:
+  version "6.23.0"
+  resolved "https://registry.yarnpkg.com/babel-plugin-transform-runtime/-/babel-plugin-transform-runtime-6.23.0.tgz#88490d446502ea9b8e7efb0fe09ec4d99479b1ee"
+  dependencies:
+    babel-runtime "^6.22.0"
+
 babel-plugin-transform-simplify-comparison-operators@^6.8.1:
   version "6.9.4"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-simplify-comparison-operators/-/babel-plugin-transform-simplify-comparison-operators-6.9.4.tgz#f62afe096cab0e1f68a2d753fdf283888471ceb9"
@@ -8392,9 +8398,9 @@ readr-comment@^1.0.21:
     prevent-scroll "^2.0.0"
     sanitize-html "^1.18.2"
 
-readr-web-api@^1.0.66:
-  version "1.0.66"
-  resolved "https://registry.yarnpkg.com/readr-web-api/-/readr-web-api-1.0.66.tgz#4df6a13d3e6f0df1d436b0440b56cea949d0fc07"
+readr-web-api@^1.0.67:
+  version "1.0.67"
+  resolved "https://registry.yarnpkg.com/readr-web-api/-/readr-web-api-1.0.67.tgz#6ea11c4acfacca94d19508c1009548c1022b5cff"
   dependencies:
     "@google-cloud/logging" "^1.2.0"
     "@google-cloud/pubsub" "^0.18.0"

@@ -30,7 +30,15 @@
     methods: {
       change (key) {
         this.flag = key
-        this.$emit('searchChange', key)
+        this.$emit('update:filter', key)
+      },
+    },
+    props: {
+      filter: {},
+    },
+    watch: {
+      filter () {
+        this.flag = this.filter
       },
     },
   }

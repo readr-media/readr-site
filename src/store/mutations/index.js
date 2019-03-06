@@ -49,7 +49,7 @@ export default Object.assign({
   SET_SEARCH: (state, { searchResult, }) => {
     debug('searchResult:')
     debug(searchResult)
-    state['searchResult']['items'] = searchResult[ 'items' ]
+    state['searchResult'] = searchResult
   },
   SET_INVITATION_QUOTA: (state, { quota, }) => {
     state['invitation_quota'] = quota

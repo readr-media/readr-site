@@ -538,9 +538,11 @@ export function publishPosts ({ params, }) {
 }
 
 export function search (keyword = '', params = {}) {
-  let url = `${host}/api/search`
+  const hitsPerPage = _.get(params, 'max_results', 12)
+  const page = _.get(params, 'page', 1)
+  const objectType = _.get(params, 'object_type', 'post')
+  const url = `${host}/api/search?keyword=${encodeURIComponent(`"${keyword}"`)}&hitsPerPage=${hitsPerPage}&page=${page}&objectType=${objectType}`
   debug('keyword', keyword)
-  url = `${url}?query=${encodeURIComponent(`"${keyword}"`)}&hitsPerPage=${params.max_results}&page=${params.page - 1}`
   return fetch(url)
 }
 
