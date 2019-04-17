@@ -82,6 +82,10 @@ export default {
         const projectSlug = get(re.exec(link), '1')
         const memoId = get(re.exec(link), '2')
         return `/series/${projectSlug}/${memoId}`
+      } else if (get(this.post, 'project')) {
+        const projectSlug = get(this.post, 'project.slug')
+        const memoId = get(this.post, 'id')
+        return `/series/${projectSlug}/${memoId}`
       } else {
         return `/series/${get(this.$route, 'params.slug')}/${get(this.post, 'id')}`
       }
