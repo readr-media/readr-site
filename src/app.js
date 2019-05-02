@@ -9,8 +9,10 @@ import * as filters from './util/filters'
 import ZHTW from 'src/locale/zh-TW'
 import EN from 'src/locale/en'
 import VueI18n from 'vue-i18n'
+import VueLazyload from 'vue-lazyload'
 
 Vue.use(VueI18n)
+Vue.use(VueLazyload)
 
 // Quill Editor
 if (process.browser) {

@@ -1,350 +1,154 @@
 <template>
-  <div class="homepage">
-    <BaseLightBox v-show="showLightBox" :showLightBox="showLightBox" :hadRouteBeenNavigate="hadRouteBeenNavigate" @closeLightBox="closeLightBox">
-      <BaseLightBoxPost :showLightBox="showLightBox" :post="postLightBox" />
-    </BaseLightBox>
-    <div class="homepage__container">
-      <TagNavAside class="homepage__tag-nav-aside"/>
-      <div class="homepage__list-main">
-        <div class="invitation">
-        </div>
-        <transition-group name="fade" mode="out-in">
-          <PostItem
-            v-for="post in postsMain"
-            :key="`${post.id}-main`"
-            :post="post"
-            :shouldShowMultipleDate="false"
-          />
-        </transition-group>
-      </div>
-      <div class="homepage__list-aside aside-latest-comments">
-        <h1 class="aside-latest-comments__title" v-text="$t('homepage.WORDING_HOME_ASIDE_TITLE')"></h1>
-        <div class="aside-latest-comments__list">
-          <HomeAsideLatestComment
-            class="aside-latest-comments__list-item"
-            v-for="comment in commentsForHome"
-            :key="comment.id"
-            :comment="comment"
-          />
-        </div>
-        <AppNavExternalLinks/>
-      </div>
+  <section class="section">
+    <div
+      v-if="publicProjectsRecommends.length > 0"
+      class="section__block block"
+    >
+      <h1 class="block__title">
+        為您推薦
+      </h1>
+      <SeriesList
+        :items="publicProjectsRecommends"
+      />
     </div>
-  </div>   
+    <div
+      v-if="publicProjectsTrends.length > 0"
+      class="section__block block"
+    >
+      <h1 class="block__title block__title--decorated">
+        最熱門系列
+      </h1>
+      <SeriesListWide
+        :items="publicProjectsTrends"
+      />
+    </div>
+    <div class="section__block block">
+      <h1 class="block__title block__title--decorated">
+        系列報導 
+      </h1>
+      <SeriesList
+        :items="publicProjectsNormal"
+        :theme="'narrow'"
+      />
+    </div>
+  </section>
 </template>
 
 <script>
-import { SITE_FULL, } from 'src/constants'
-import { get, uniqBy, find, } from 'lodash'
+import { get, } from 'lodash'
 import { mapState, } from 'vuex'
-import { isScrollBarReachBottom, isElementReachInView, isCurrentRoutePath, } from 'src/util/comm'
-// import { createStore, } from '../store'
-import AppTitledList from 'src/components/AppTitledList.vue'
-import AppNavExternalLinks from 'src/components/AppNavExternalLinks.vue'
-import HomeAsideReport from 'src/components/home/HomeAsideReport.vue'
-import HomeAsideArticle from 'src/components/home/HomeAsideArticle.vue'
-import HomeAsideLatestComment from 'src/components/home/HomeAsideLatestComment.vue'
-import BaseLightBox from 'src/components/BaseLightBox.vue'
-import BaseLightBoxPost from 'src/components/BaseLightBoxPost.vue'
-import PostItem from 'src/components/post/PostItem.vue'
-import MemoFigure from 'src/components/projects/MemoFigure.vue'
-import TagNavAside from 'src/components/tag/TagNavAside.vue'
-import sanitizeHtml from 'sanitize-html'
-import truncate from 'truncate-html'
+import { PROJECT_STATUS, PROJECT_PUBLISH_STATUS, } from '../../api/config'
+import { isScrollBarReachBottom, } from '../util/comm'
 
-const debug = require('debug')('CLIENT:Home')
+import SeriesList from 'src/components/SeriesList/List.vue'
+import SeriesListWide from 'src/components/SeriesListWide/List.vue'
 
-const MAXRESULT_POSTS = 10
-const MAXRESULT_LATEST_COMMENTS = 10
 const DEFAULT_PAGE = 1
-const DEFAULT_SORT = '-published_at'
-const DEFAULT_SORT_LATEST_COMMENTS = '-created_at'
-const DEFAULT_CATEGORY = 'latest'
+const DEFAULT_SORT = 'project_order,-updated_at'
+const MAX_RESULT = 12
 
-const fetchEmotion = (store, params) => {
-  return store.dispatch('FETCH_EMOTION_BY_RESOURCE', params)
-}
-
-const fetchPost = (store, { id, isPreview, }) => {
-  return store.dispatch('GET_POST', {
-    id,
-    isPreview,
-    params: {
-      showAuthor: true,
-    },
-  })
-}
-
-const fetchPosts = (store, {
-  max_result = MAXRESULT_POSTS,
-  mode = 'set',
-  category = DEFAULT_CATEGORY,
+const fetchProjectsList = (store, {
+  max_result = MAX_RESULT,
   page = DEFAULT_PAGE,
   sort = DEFAULT_SORT,
 } = {}) => {
-  return store.dispatch('GET_PUBLIC_POSTS', {
+  return store.dispatch('publicHome/GET_PUBLIC_PROJECTS', {
     params: {
-      mode: mode,
-      category: category,
       max_result: max_result,
       page: page,
-      showAuthor: true,
       sort: sort,
+      where: {
+        status: [ PROJECT_STATUS.DONE, PROJECT_STATUS.WIP, ],
+        publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
+      },
     },
-  })
-}
-
-const fetchComment = (store, { params = {}, } = {}) => store.dispatch('FETCH_COMMENT_FOR_HOME', {
-  params: Object.assign({}, { sort: DEFAULT_SORT_LATEST_COMMENTS, max_result: MAXRESULT_LATEST_COMMENTS, }, params),
-})
-
-const getUserFollowing = (store, { id = get(store, 'state.profile.id'), resource, resourceType = '', } = {}) => {
-  return store.dispatch('GET_FOLLOWING_BY_USER', {
-    id: id,
-    resource: resource,
-    resource_type: resourceType,
   })
 }
 
 export default {
-  name: 'Home',
-  asyncData ({ store, route, router, }) {
-    const jobs = !get(store, 'state.publicPosts.items.length') ? [
-      fetchPosts(store),
-      fetchComment(store),
-    ] : []
-  
-    if (get(route, 'params.postId')) {
-      jobs.push(fetchPost(store, {
-        id: get(route, 'params.postId'),
-      }).catch(e => {
-        /** Post Not Found */
-        debug('Error:', e)
-        if (e === 'Not Found') {
-          if (!get(store, 'state.publicPostSingle.items.0.ogTitle') && !get(store, 'state.publicPostSingle.items.0.title')) {
-
-            /** If preview, dont redirect to 404 */
-            if (get(route, 'query.preview')) { return }
-
-            if (process.browser) {
-              router.push('/404')
-            } else {
-              debug('Going to throw 404 Error')
-              const err = new Error()
-              err.massage = 'Page Not Found'
-              err.code = 404
-              throw err  
-            }
-          }          
-        } else {
-          const err = new Error()
-          err.massage = e
-          err.code = 404
-          throw err 
-        }
-      }))
-    }
-    return Promise.all(jobs)
-  },
-  metaInfo () {
-    if (this.$route.params.postId) {  
-      return {
-        ogTitle: get(this.postSingle, 'ogTitle') || get(this.postSingle, 'title'),
-        description: get(this.postSingle, 'ogDescription') || truncate(sanitizeHtml(get(this.postSingle, 'content', ''), { allowedTags: [], }), 100),
-        metaUrl: this.$route.path,
-        metaImage: get(this.postSingle, 'ogImage') || `${SITE_FULL}/public/og-image-post.jpg`,
-      }
-    } else {
-      return {
-        description: this.$i18n ? this.$t('OG.DESCRIPTION') : '',
-        ogTitle: '',
-        title: '',
-        metaUrl: this.$route.path,
-      }
-
-    }
-  },
   components: {
-    AppTitledList,
-    AppNavExternalLinks,
-    HomeAsideReport,
-    HomeAsideArticle,
-    HomeAsideLatestComment,
-    BaseLightBox,
-    BaseLightBoxPost,
-    MemoFigure,
-    PostItem,
-    TagNavAside,
+    SeriesList,
+    SeriesListWide,
   },
-  watch: {
-    isReachBottom(isReachBottom) {
-      if (isReachBottom && !this.endPage && this.$route.path !== '/hot') {
-        this.loadmoreLatest()
-      }
-    },
-    me() {
-      getUserFollowing(this.$store, { resource: 'post', })
-    },
-    '$route' (to, from) {
-      this.articlesListMainCategory = isCurrentRoutePath(this.$route, '/post/:postId') ? from.path : to.path
-    },
-    postLightBox () {
-      debug('Mutation detected: postLightBox', this.postLightBox)
-    },
-    postSingle () {
-      debug('Mutation detected: postSingle', this.postSingle)
-    },
-    // postsMainTagIds (ids) {
-    //   fetchFollowing(this.$store, { resource: 'tag', ids: ids, })
-    // },
+  asyncData ({ store, }) {
+    return fetchProjectsList(store)
   },
   data () {
     return {
-      isReachBottom: false,
-      currentPageLatest: 1,
-      endPage: false,
-      articlesListMainCategory: this.$route.path !== '/hot' ? '/' : '/hot',
-      hadRouteBeenNavigate: false,
-    } 
+      currentPage: DEFAULT_PAGE,
+      hasMore: true,
+      loading: false,
+    }
   },
   computed: {
     ...mapState({
-      commentsForHome: state => get(state, 'commentsForHome', []),
-      me: state => get(state, 'profile', {}),
-      postsLatest: state => get(state, 'publicPosts.items', []),
-      postSingle: state => get(state, 'publicPostSingle.items.0', {}), // store binding to the post fetched while user visiting /post/:postid
+      publicProjects: state => state.publicHome.publicProjects,
     }),
-    postsMain () {
-      return this.postsLatest
+    publicProjectsRecommends () {
+      // return this.publicProjects.recommends
+      return this.publicProjects.normal
     },
-    postsMainTagIds () {
-      return uniqBy(this.postsMain.map(post => post.tags).filter(tags => tags).reduce((all, tags) => all.concat(tags), []), 'id').map(tag => tag.id)
+    publicProjectsTrends () {
+      // return this.publicProjects.trends
+      return this.publicProjects.normal
     },
-    postLightBox () {
-      if (this.showLightBox) {
-        debug('Going to show lightbox of content for post', get(this.$route, 'params.postId'))
-        const findPostInList = find(this.postsMain, [ 'id', Number(this.$route.params.postId), ])
-        debug('findPostInList', findPostInList)
-        debug('this.postSingle', this.postSingle)
-        return findPostInList || this.postSingle
-      } else {
-        return {}
-      }
+    publicProjectsNormal () {
+      return this.publicProjects.normal
     },
-    showLightBox () {
-      return isCurrentRoutePath(this.$route, '/post/:postId')
-    },
-  },
-  methods: {
-    closeLightBox () {
-      this.$router.push(this.articlesListMainCategory)
-    },
-    getEmotion () {
-      const postIdsLatest = get(this.$store.state.publicPosts, 'items', []).map(post => post.id)
-      if (postIdsLatest.length > 0) {
-        fetchEmotion(this.$store, { resource: 'post', ids: postIdsLatest, emotion: 'like', })
-        fetchEmotion(this.$store, { resource: 'post', ids: postIdsLatest, emotion: 'dislike', })
-      } 
-    },
-    loadmoreLatest () {
-      fetchPosts(this.$store, {
-        mode: 'update',
-        category: 'latest',
-        max_result: MAXRESULT_POSTS,
-        page: this.currentPageLatest + 1,
-      }).then(({ status, res, }) => {
-        if (status === 'end') {
-          this.endPage = true
-        } else if (status === 'error') {
-          console.log(res)
-        } else {
-          this.currentPageLatest += 1
-          const ids = res.items.map(post => post.id)
-          fetchEmotion(this.$store, { mode: 'update', resource: 'post', ids: ids, emotion: 'like', })
-          fetchEmotion(this.$store, { mode: 'update', resource: 'post', ids: ids, emotion: 'dislike', })
-          // if (this.$store.state.isLoggedIn) {
-          //   fetchFollowing(this.$store, { mode: 'update', resource: 'post', ids: ids, })
-          // }
-        }
-      })
-    },
-  },
-  beforeRouteEnter (to, from, next) {
-    next(vm => {
-      if (isCurrentRoutePath(to, '/post/:postId') && !isCurrentRoutePath(from, '/') && !isCurrentRoutePath(from, '/about')) {
-        vm.hadRouteBeenNavigate = true
-      }
-      // if (get(vm.$route, 'params.postId') && !get(vm.$route, 'query.preview')) {
-      //   if (!get(vm.postSingle, 'ogTitle') && !get(vm.postSingle, 'title')) {
-      //     vm.$router.push('/404')
-      //   }     
-      // }
-    })
-  },
-  beforeRouteUpdate (to, from, next) {
-    next()
-  },
-  beforeMount () {
-    getUserFollowing(this.$store, { resource: 'post', })
-    if (!get(this.postsLatest, 'length')) {
-      fetchPosts(this.$store).then(() => {
-        this.getEmotion()
-      })
-    } else {
-      this.getEmotion()
-    }
-    if (!get(this.commentsForHome, 'length')) {
-      fetchComment(this.$store)
-    }
-    if (get(this.$route, 'params.postId') && get(this.$route, 'query.preview')) {
-      fetchPost(this.$store, {
-        id: get(this.$route, 'params.postId'),
-        isPreview: get(this.$route, 'query.preview'),
-      })
-    }
-    
   },
   mounted () {
-    window.onscroll = () => {
-      this.isReachBottom = isElementReachInView(this.$el, '.homepage__list-main', 0.5) || isScrollBarReachBottom()
-    }
+    window.addEventListener('scroll', this.loadMore)
+  },
+  beforeDestroy () {
+    window.removeEventListener('scroll', this.loadMore)
+  },
+  methods: {
+    loadMore () {
+      if (this.hasMore && !this.loading && isScrollBarReachBottom(1/3)) {
+        const origCount = get(this.projects, [ 'length', ], 0)
+        this.loading = true
+        fetchProjectsList(this.$store, { page: this.currentPage + 1, })
+        .then(() => {
+          this.currentPage += 1
+          get(this.projects, [ 'length', ], 0) <= origCount ? this.hasMore = false : true
+          this.loading = false
+        })
+      }
+    },
   },
 }
 </script>
 
 <style lang="stylus" scoped>
-.homepage
-  &__container
+.section
+  padding 152px 0 128px 0
+  max-width 1400px
+  margin 0 auto
+
+.block
+  & + &
+    margin 65px 0 0 0
+  &__title
+    font-size 30px
+    font-weight 600
+    margin 0 0 24px 0
+    text-align center
     display flex
     justify-content center
-    align-items flex-start
-  &__list-main
-    max-width 540px
-    width 540px
-    margin 0 0 0 27px
-  &__list-aside
-    // margin-left 35px
-    flex 1
-    position fixed
-    top 35px
-    right 0
-    height calc(100vh - 35px)
-    background-color white
-    overflow-y scroll
-  &__project-container, &__report-container
-    >>> .app-titled-list__content
-      padding 0
-
-.aside-latest-comments
-  width 240px
-  padding 20px
-  &__title
-    font-size 18px
-    font-weight 600
-    margin 0 0 5px 0
-
-@media (max-width 1440px)
-  .homepage
-    &__container
-      padding-right 240px
+    align-items center
+    &--decorated
+      &:before
+        content ''
+        display block
+        flex 1 1 auto
+        height 1px
+        background-color #979797
+        margin 0 25px 0 0
+      &:after
+        content ''
+        display block
+        flex 1 1 auto
+        height 1px
+        background-color #979797
+        margin 0 0 0 25px
 </style>

@@ -11,6 +11,7 @@ export const SITE_FULL = 'https://www.readr.tw'
 export const URL_FB_FANPAGE = 'https://www.facebook.com/readr.tw'
 export const URL_TWITTER = 'https://twitter.com/READr_news'
 export const URL_IG = 'https://www.instagram.com/readrteam_daily/'
+export const URL_MM = 'https://www.mirrormedia.mg/'
 
 export const URL_SHARE_FB = 'https://www.facebook.com/share.php'
 export const URL_SHARE_LINE = 'https://social-plugins.line.me/lineit/share'
