@@ -4,13 +4,19 @@
       class="navs__nav"
       to="/"
     >
-      <img src="/public/2.0/icons/search-white.png" alt="">
+      <img 
+        src="/public/2.0/icons/search-white.png" 
+        alt=""
+      >
     </router-link>
     <router-link
       class="navs__nav"
       to="/"
     >
-      <img src="/public/2.0/icons/follow-white.png" alt="">
+      <img 
+        src="/public/2.0/icons/follow-white.png" 
+        alt=""
+      >
     </router-link>
     <router-link
       class="navs__nav"

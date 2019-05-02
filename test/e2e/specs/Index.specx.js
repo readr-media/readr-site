@@ -7,5 +7,5 @@ module.exports = {
       .page.loginPanel().facebookLoginShouldBeVisiblee()
       .page.loginPanel().googlePlusLoginShouldBeVisiblee()
       .end()
-  }
+  },
 }

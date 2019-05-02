@@ -1,7 +1,7 @@
 process.env.NODE_ENV = 'test'
 
 const getExpressApp = require('../helpers/getExpressApp')
-const { SERVER_HOST } = require('../../../api/config')
+const { SERVER_HOST, } = require('../../../api/config')
 const app = getExpressApp()
 
 const chai = require('chai')
@@ -72,7 +72,7 @@ describe('/POST/login', () => {
     .send({
       'email': 'wonderwomen@wonderwomen.com',
       'password': 'wonderwomen@wonderwomen.com',
-      'register_mode': 'ordinary'
+      'register_mode': 'ordinary',
     })
     .end(function (err, res) {
       if (err) return console.log(err)
@@ -91,7 +91,7 @@ describe('/POST/login', () => {
     .send({
       'email': 'wonderwomen@wonderwomen.com',
       'password': 'wonderwomen@wonderwomen.com',
-      'register_mode': 'ordinary'
+      'register_mode': 'ordinary',
     })
     .end(function (err, res) {
       if (err) return console.log(err)

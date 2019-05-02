@@ -24,7 +24,7 @@ module.exports = function setupDevServer (app, templatePath, cb) {
       ready()
       cb(bundle, {
         template,
-        clientManifest
+        clientManifest,
       })
     }
   }
@@ -38,7 +38,7 @@ module.exports = function setupDevServer (app, templatePath, cb) {
   })
 
   // modify client config to work with hot middleware
-  clientConfig.entry.app = ['webpack-hot-middleware/client', clientConfig.entry.app]
+  clientConfig.entry.app = [ 'webpack-hot-middleware/client', clientConfig.entry.app, ]
   clientConfig.output.filename = '[name].js'
   clientConfig.plugins.push(
     new webpack.HotModuleReplacementPlugin(),
@@ -49,7 +49,7 @@ module.exports = function setupDevServer (app, templatePath, cb) {
   const clientCompiler = webpack(clientConfig)
   const devMiddleware = require('webpack-dev-middleware')(clientCompiler, {
     publicPath: clientConfig.output.publicPath,
-    noInfo: true
+    noInfo: true,
   })
   app.use(devMiddleware)
   clientCompiler.plugin('done', stats => {
@@ -65,7 +65,7 @@ module.exports = function setupDevServer (app, templatePath, cb) {
   })
 
   // hot middleware
-  app.use(require('webpack-hot-middleware')(clientCompiler, { heartbeat: 5000 }))
+  app.use(require('webpack-hot-middleware')(clientCompiler, { heartbeat: 5000, }))
 
   // watch and update server renderer
   const serverCompiler = webpack(serverConfig)

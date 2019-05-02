@@ -6,8 +6,8 @@
     ]"
   >
     <router-link
-      class="list-item__link link"
       :to="link"
+      class="list-item__link link"
     >
       <div
         :class="[
@@ -17,8 +17,8 @@
         ]"
       >
         <img
-          class="img-wrapper__img"
           v-lazy="img"
+          class="img-wrapper__img"
           alt=""
         >
       </div>

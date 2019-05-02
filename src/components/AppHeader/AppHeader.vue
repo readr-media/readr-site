@@ -10,7 +10,9 @@
         class="header__logo"
         to="/"
       >
-        <img src="/public/2.0/logos/readr-logo-light.svg" alt="">
+        <img 
+          src="/public/2.0/logos/readr-logo-light.svg" 
+          alt="">
       </router-link>
       <AppHeaderNavsDefault
         v-show="layout === 'default'"
@@ -24,8 +26,8 @@
       />
     </div>
     <AppHeaderSidebar
+      :show-sidebar.sync="showSidebar"
       class="header__sidebar"
-      :showSidebar.sync="showSidebar"
     >
       <div>
         {{ sidebarSlot }}
@@ -66,13 +68,6 @@ export default {
     AppHeaderNavsSeries,
     AppHeaderSidebar,
   },
-  watch: {
-    layout () {
-      if (this.layout === 'default' && this.showSidebar) {
-        this.showSidebar = false
-      }
-    },
-  },
   data () {
     return {
       showSidebar: false,
@@ -90,6 +85,29 @@ export default {
     ...mapGetters({
       layout: 'appHeader/layout',
     }),
+  },
+  watch: {
+    layout () {
+      if (this.layout === 'default' && this.showSidebar) {
+        this.showSidebar = false
+      }
+    },
+  },
+  mounted () {
+    window.addEventListener('message', e => {
+      // if (e.origin !== window.origin) { return }
+      const { data = '', } = e
+      switch (data) {
+        case 'scrolldown':
+          this.SET_HIDE_HEADER(true)
+          break;
+        case 'scrollup':
+          this.SET_HIDE_HEADER(false)
+          break;
+        default:
+          break;
+      }
+    })
   },
   methods: {
     toggleNavSeries (nav) {
@@ -113,22 +131,6 @@ export default {
     ...mapMutations({
       SET_HIDE_HEADER: 'appHeader/SET_HIDE',
     }),
-  },
-  mounted () {
-    window.addEventListener('message', e => {
-      // if (e.origin !== window.origin) { return }
-      const { data = '', } = e
-      switch (data) {
-        case 'scrolldown':
-          this.SET_HIDE_HEADER(true)
-          break;
-        case 'scrollup':
-          this.SET_HIDE_HEADER(false)
-          break;
-        default:
-          break;
-      }
-    })
   },
 }
 </script>

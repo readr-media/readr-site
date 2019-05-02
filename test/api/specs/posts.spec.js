@@ -1,6 +1,6 @@
 process.env.NODE_ENV = 'test'
 
-const { SERVER_HOST } = require('../../../api/config')
+const { SERVER_HOST, } = require('../../../api/config')
 const getExpressApp = require('../helpers/getExpressApp')
 const app = getExpressApp()
 
@@ -10,13 +10,13 @@ const should = chai.should()
 const supertest = require('supertest')
 
 const updatedData = {
-  ids: [ 12, 97 ],
-  updated_by: 'wonderwomen@wonderwomen.com'
+  ids: [ 12, 97, ],
+  updated_by: 'wonderwomen@wonderwomen.com',
 }
 
 const deletedData = {
-  ids: [ 72, 68 ],
-  updated_by: 'wonderwomen@wonderwomen.com'
+  ids: [ 72, 68, ],
+  updated_by: 'wonderwomen@wonderwomen.com',
 }
 
 let disposableToken

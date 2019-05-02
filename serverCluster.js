@@ -2,7 +2,7 @@ const cluster = require('cluster')
 const numCPUs = require('os').cpus().length
 
 cluster.setupMaster({
-  exec : './server.js'
+  exec : './server.js',
 })
 
 for (let i = 0; i < numCPUs; i++) { 

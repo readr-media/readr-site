@@ -1,8 +1,12 @@
 <template>
-  <div id="app" class="app">
+  <div 
+    id="app" 
+    class="app">
     <AppHeader class="app__header" />
-    <transition name="fade" mode="out-in">
-      <router-view class="view"></router-view>
+    <transition 
+      name="fade" 
+      mode="out-in">
+      <router-view class="view"/>
     </transition>
     <AppFooter class="app__footer" />
   </div>
