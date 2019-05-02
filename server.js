@@ -14,12 +14,12 @@ const requestIp = require('request-ip')
 const resolve = file => path.resolve(__dirname, file)
 const useragent = require('express-useragent')
 const uuidv4 = require('uuid/v4')
-const { createBundleRenderer } = require('vue-server-renderer')
+const { createBundleRenderer, } = require('vue-server-renderer')
 
 const config = require('./api/config') 
-const { PAGE_CACHE_EXCLUDING } = require('./api/config')
-const { SERVER_PROTOCOL_MOBILE, SERVER_HOST_MOBILE, SERVER_PORT_MOBILE } = require('./api/config')
-const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT } = require('./api/config')
+const { PAGE_CACHE_EXCLUDING, } = require('./api/config')
+const { SERVER_PROTOCOL_MOBILE, SERVER_HOST_MOBILE, SERVER_PORT_MOBILE, } = require('./api/config')
+const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT, } = require('./api/config')
 
 const debug = require('debug')('READR:server')
 const isProd = process.env.NODE_ENV === 'production'
@@ -40,12 +40,12 @@ function createRenderer (bundle, options) {
     // for component caching
     cache: LRU({
       max: 1000,
-      maxAge: 1000 * 60 * 15
+      maxAge: 1000 * 60 * 15,
     }),
     // this is only needed when vue-server-renderer is npm-linked
     basedir: resolve('./distribution'),
     // recommended for performance
-    runInNewContext: false
+    runInNewContext: false,
   }))
 }
 
@@ -68,7 +68,7 @@ if (isProd) {
   const clientManifest = require('./distribution/vue-ssr-client-manifest.json')
   renderer = createRenderer(bundle, {
     template,
-    clientManifest
+    clientManifest,
   })
 } else {
   // In development: setup the dev server with watch and hot-reload,
@@ -83,7 +83,7 @@ if (isProd) {
 }
 
 const serve = (path, cache) => express.static(resolve(path), {
-  maxAge: cache && isProd ? 1000 * 60 * 60 : 0
+  maxAge: cache && isProd ? 1000 * 60 * 60 : 0,
 })
 
 const Logging = require('@google-cloud/logging')
@@ -103,7 +103,7 @@ app.use('/hello.jpg', (req, res) => {
 
   const data = Object.assign({}, req.query, {
     ip: req.clientIp,
-    'client-id': payload.id || undefined
+    'client-id': payload.id || undefined,
   }) || {}
   const log = loggingClient.log(config.GCP_STACKDRIVER_LOG_NAME_FOR_EMAIL)
   const metadata = { resource: { type: 'global', }, }
@@ -117,7 +117,7 @@ app.use('/hello.jpg', (req, res) => {
 })
 
 const staticNotFound = (req, res) => res.status(404).send('Not Found')
-app.use(compression({ threshold: 0 }))
+app.use(compression({ threshold: 0, }))
 app.use(favicon('./public/favicon.png'))
 app.use('/distribution', serve('./distribution', true), staticNotFound)
 app.use('/public', serve('./public', true), staticNotFound)
@@ -180,7 +180,7 @@ function render (req, res, next) {
     cookies.set('readrid', uuidv4(), {
       httpOnly: false,
       domain: config.DOMAIN,
-      expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+      expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
     })
   }
 
@@ -210,7 +210,7 @@ function render (req, res, next) {
       STRIPE_KEY: config.STRIPE_KEY,
       TAPPAY: config.TAPPAY,
     },
-    is404
+    is404,
   }
   const handleError = err => {
     res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')  
@@ -292,13 +292,13 @@ module.exports = {
     server.close()
   },
   ready: readyPromise,
-  app: server
+  app: server,
 }
 
 memwatch.on('leak', function(info) {
   const growth = formatMem(info.growth)
   const mem = process.memoryUsage()
-  console.error('GETING MEMORY LEAK:', [ 'growth ' + growth, 'reason ' + info.reason ].join(', '))
+  console.error('GETING MEMORY LEAK:', [ 'growth ' + growth, 'reason ' + info.reason, ].join(', '))
   console.error('MEMORY STAT(heapUsed):', formatMem(mem.heapUsed))
 })
 memwatch.on('stats', function(stats) {
@@ -315,7 +315,7 @@ memwatch.on('stats', function(stats) {
     'estimated_base ' + estBase,
     'current_base ' + currBase,
     'min ' + min,
-    'max ' + max
+    'max ' + max,
   ].join(', '), `\n=======================================`)
   if (stats.current_base > maxMemUsageLimit) {
     for (let i = 0; i < 10; i += 1) {

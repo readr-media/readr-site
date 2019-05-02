@@ -1,8 +1,8 @@
 <template>
   <section class="section">
     <iframe
-      class="section__iframe iframe"
       :src="`http://dev.readr.tw/project/${slug}`"
+      class="section__iframe iframe"
       frameborder="0"
     />
   </section>

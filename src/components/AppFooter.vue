@@ -9,42 +9,50 @@
       <ul class="footer__links-icon-list links-icon-list">
         <li class="links-icon-list__list-item">
           <a
-            class="link"
             :href="URL_FB_FANPAGE"
+            class="link"
             target="_blank"
             rel="noopener"
           >
-            <img v-lazy="'/public/2.0/icons/fb.png'" alt="">
+            <img 
+              v-lazy="'/public/2.0/icons/fb.png'" 
+              alt="">
           </a>
         </li>
         <li class="links-icon-list__list-item">
           <a
-            class="link"
             :href="URL_TWITTER"
+            class="link"
             target="_blank"
             rel="noopener"
           >
-            <img v-lazy="'/public/2.0/icons/twitter.png'" alt="">
+            <img 
+              v-lazy="'/public/2.0/icons/twitter.png'" 
+              alt="">
           </a>
         </li>
         <li class="links-icon-list__list-item">
           <a
-            class="link"
             :href="URL_IG"
+            class="link"
             target="_blank"
             rel="noopener"
           >
-            <img v-lazy="'/public/2.0/icons/ig.png'" alt="">
+            <img 
+              v-lazy="'/public/2.0/icons/ig.png'" 
+              alt="">
           </a>
         </li>
         <li class="links-icon-list__list-item">
           <a
-            class="link"
             :href="URL_MM"
+            class="link"
             target="_blank"
             rel="noopener"
           >
-            <img v-lazy="'/public/2.0/icons/mm.png'" alt="">
+            <img 
+              v-lazy="'/public/2.0/icons/mm.png'" 
+              alt="">
           </a>
         </li>
       </ul>
@@ -107,14 +115,6 @@ import {
 } from 'src/constants'
 
 export default {
-  watch: {
-    '$route.name': {
-      handler (value) {
-        this.SET_HIDE_FOOTER(value === 'report')
-      },
-      immediate: true,
-    },
-  },
   data () {
     return {
       URL_FB_FANPAGE,
@@ -128,10 +128,13 @@ export default {
       shouldHideFooter: state => state.appFooter.shouldHide,
     }),
   },
-  methods: {
-    ...mapMutations({
-      SET_HIDE_FOOTER: 'appFooter/SET_HIDE',
-    }),
+  watch: {
+    '$route.name': {
+      handler (value) {
+        this.SET_HIDE_FOOTER(value === 'report')
+      },
+      immediate: true,
+    },
   },
   mounted () {
     window.addEventListener('message', e => {
@@ -148,6 +151,11 @@ export default {
           break;
       }
     })
+  },
+  methods: {
+    ...mapMutations({
+      SET_HIDE_FOOTER: 'appFooter/SET_HIDE',
+    }),
   },
 }
 </script>

@@ -1,11 +1,11 @@
 <template>
   <ol class="list">
     <ListItem
-      class="list__list-item"
       v-for="(item, i) in items"
       :key="i"
       :item="item"
       :theme="theme"
+      class="list__list-item"
     />
   </ol>
 </template>

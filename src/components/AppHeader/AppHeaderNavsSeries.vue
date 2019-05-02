@@ -10,19 +10,28 @@
       class="navs__nav"
       @click="$emit('follow')"
     >
-      <img src="/public/2.0/icons/follow-white.png" alt="">
+      <img 
+        src="/public/2.0/icons/follow-white.png" 
+        alt=""
+      >
     </div>
     <div
       class="navs__nav"
       @click="$emit('comment')"
     >
-      <img src="/public/2.0/icons/comment-white.png" alt="">
+      <img 
+        src="/public/2.0/icons/comment-white.png" 
+        alt=""
+      >
     </div>
     <div
       class="navs__nav"
       @click="$emit('donate')"
     >
-      <img src="/public/2.0/icons/donate-white.png" alt="">
+      <img 
+        src="/public/2.0/icons/donate-white.png" 
+        alt=""
+      >
     </div>
     <AppHeaderNavsSeriesShare
       class="navs__nav"

@@ -11,11 +11,11 @@ const config = merge(base, {
   },
   resolve: {
     alias: {
-    }
+    },
   },
   plugins: [
     new CopyWebpackPlugin([
-      { from:'./src/trace-worker.js', to:'trace-worker.js' },
+      { from:'./src/trace-worker.js', to:'trace-worker.js', },
     ]),    
     new webpack.ProvidePlugin({
       'window.Quill': 'quill',
@@ -24,7 +24,7 @@ const config = merge(base, {
     // strip dev-only code in Vue source
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-      'process.env.VUE_ENV': '"client"'
+      'process.env.VUE_ENV': '"client"',
     }),
     // extract vendor chunks for better caching
     new webpack.optimize.CommonsChunkPlugin({
@@ -37,15 +37,15 @@ const config = merge(base, {
           // and not a CSS file (due to extract-text-webpack-plugin limitation)
           !/\.css$/.test(module.request)
         )
-      }
+      },
     }),
     // extract webpack runtime & manifest to avoid vendor chunk hash changing
     // on every build.
     new webpack.optimize.CommonsChunkPlugin({
-      name: 'manifest'
+      name: 'manifest',
     }),
-    new VueSSRClientPlugin()
-  ]
+    new VueSSRClientPlugin(),
+  ],
 })
 
 if (process.env.NODE_ENV === 'production') {
@@ -55,18 +55,18 @@ if (process.env.NODE_ENV === 'production') {
       cacheId: 'readr-site',
       filename: 'service-worker.js',
       importScripts: [
-        { filename: 'trace-worker.js' },
+        { filename: 'trace-worker.js', },
         // { chunkName: 'trace-worker' },
       ],
       minify: true,
       dontCacheBustUrlsMatching: /./,
-      staticFileGlobsIgnorePatterns: [/\.map$/, /\.json$/],
+      staticFileGlobsIgnorePatterns: [ /\.map$/, /\.json$/, ],
       runtimeCaching: [
         {
           urlPattern: '/',
-          handler: 'networkFirst'
-        }
-      ]
+          handler: 'networkFirst',
+        },
+      ],
     })
   )
 }

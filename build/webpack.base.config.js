@@ -13,15 +13,15 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, '../distribution'),
     publicPath: '/distribution/',
-    filename: '[name].[chunkhash].js'
+    filename: '[name].[chunkhash].js',
   },
   resolve: {
     alias: {
       'public': path.resolve(__dirname, '../public'),
       'src': path.resolve(__dirname, '../src'),
       'components': path.resolve(__dirname, '../src/components'),
-      'api': path.resolve(__dirname, '../api')
-    }
+      'api': path.resolve(__dirname, '../api'),
+    },
   },
   module: {
     noParse: /es6-promise\.js$/, // avoid webpack shimming process
@@ -29,47 +29,47 @@ module.exports = {
       {
         test: /\.vue$/,
         loader: 'vue-loader',
-        options: vueConfig
+        options: vueConfig,
       },
       {
         test: /\.js$/,
         loader: 'babel-loader',
-        exclude: /node_modules/
+        exclude: /node_modules/,
       },
       {
         test: /\.(png|jpg|gif|svg)$/,
         loader: 'url-loader',
         options: {
           limit: 10000,
-          name: '[name].[ext]?[hash]'
-        }
+          name: '[name].[ext]?[hash]',
+        },
       },
       {
         test: /\.css$/,
         use: isProd
           ? ExtractTextPlugin.extract({
               use: 'css-loader?minimize',
-              fallback: 'vue-style-loader'
+              fallback: 'vue-style-loader',
             })
-          : ['vue-style-loader', 'css-loader']
-      }
-    ]
+          : [ 'vue-style-loader', 'css-loader', ],
+      },
+    ],
   },
   performance: {
     maxEntrypointSize: 300000,
-    hints: isProd ? 'warning' : false
+    hints: isProd ? 'warning' : false,
   },
   plugins: isProd
     ? [
         new webpack.optimize.UglifyJsPlugin({
-          compress: { warnings: false }
+          compress: { warnings: false, },
         }),
         new webpack.optimize.ModuleConcatenationPlugin(),
         new ExtractTextPlugin({
-          filename: 'common.[chunkhash].css'
-        })
+          filename: 'common.[chunkhash].css',
+        }),
       ]
     : [
-        new FriendlyErrorsPlugin()
-      ]
+        new FriendlyErrorsPlugin(),
+      ],
 }

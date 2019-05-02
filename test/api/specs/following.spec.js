@@ -1,6 +1,6 @@
 process.env.NODE_ENV = 'test'
 
-const { SERVER_HOST } = require('../../../api/config')
+const { SERVER_HOST, } = require('../../../api/config')
 const getExpressApp = require('../helpers/getExpressApp')
 const app = getExpressApp()
 
@@ -11,12 +11,12 @@ const supertest = require('supertest')
 
 const testDataByUser = {
   subject: 'wonderwomen2@wonderwomen.com',
-  resource: 'post'
+  resource: 'post',
 }
 
 const testDataByResource = {
   resource: 'post',
-  ids: [ 'wonderwomen2@wonderwomen.com' ]
+  ids: [ 'wonderwomen2@wonderwomen.com', ],
 }
 
 let disposableToken

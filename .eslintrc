@@ -2,19 +2,18 @@
   "root": true,
   "extends": [
     "eslint:recommended",
-    "plugin:vue/base"
+    "plugin:vue/recommended"
   ],
   "parserOptions": {
     "parser": "babel-eslint"
   },
   "plugins": [
-      "vue",
       "import"
   ],
   "rules": { 
     "array-bracket-spacing": [ 2, "always" ],
     "camelcase": [ 0, "" ],
-    "comma-dangle": [ 2, "always" ],
+    "comma-dangle": [ 2, "always" ],  
     "no-console": 1,
     "yoda": [ 0, "never" ]
   },

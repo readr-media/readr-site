@@ -1,6 +1,6 @@
 <template>
   <div class="error-container">
-    <div v-text="error"></div>
+    <div v-text="error"/>
   </div>
 </template>
 <script>
@@ -12,8 +12,8 @@
         error: JSON.stringify(get(this.$store, 'state.error') || {}),
       }
     },
-    methods: {},
     mounted () {},
+    methods: {},
   }
 </script>
 <style lang="stylus" scoped>

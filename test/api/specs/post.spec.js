@@ -1,6 +1,6 @@
 process.env.NODE_ENV = 'test'
 
-const { SERVER_HOST } = require('../../../api/config')
+const { SERVER_HOST, } = require('../../../api/config')
 const getExpressApp = require('../helpers/getExpressApp')
 const app = getExpressApp()
 
@@ -14,14 +14,14 @@ const testData = {
   author: 'Faker',
   title: 'This is test',
   content: '<p>This is test content<p>',
-  link: 'https://www.mirrormedia.mg/'
+  link: 'https://www.mirrormedia.mg/',
 }
 
 const updatedData = {
   id: 3,
   title: 'This is test 2',
   content: '<p>This is test content 2<p>',
-  link: 'https://dev.readr.tw/'
+  link: 'https://dev.readr.tw/',
 }
 
 let disposableToken

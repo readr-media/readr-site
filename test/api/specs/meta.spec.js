@@ -1,6 +1,6 @@
 process.env.NODE_ENV = 'test'
 
-const { SERVER_HOST } = require('../../../api/config')
+const { SERVER_HOST, } = require('../../../api/config')
 const getExpressApp = require('../helpers/getExpressApp')
 const app = getExpressApp()
 
