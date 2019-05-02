@@ -4,10 +4,21 @@ import actions from './actions'
 import mutations from './mutations'
 import getters from './getters'
 
+import appHeader from './modules/appHeader'
+import appFooter from './modules/appFooter'
+import publicHome from './modules/publicHome'
+import publicReport from './modules/publicReport'
+
 Vue.use(Vuex)
 
 export function createStore () {
   return new Vuex.Store({
+    modules: {
+      appHeader,
+      appFooter,
+      publicHome,
+      publicReport,
+    },
     state: {
       'chosenChoices': [],
       'clearUpPointsFlag': {
@@ -101,7 +112,13 @@ export function createStore () {
       'publicMembers': {},
       'publicMemoSingle': {},
       'publicMemos': [],
-      'publicProjects': {},
+      'publicProjects': {
+        inProgress: [],
+        done: [],
+        normal: [],
+        recommends: [],
+        trends: [],
+      },
       'publicProjectSingle': {},
       'publicProjectContents': [],
       'publicReports': [],
