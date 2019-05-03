@@ -6,15 +6,9 @@ import {
 export default {
   namespaced: true,
   state: {
-    shouldHide: false,
-    layoutSeriesRouteNames: [ 'report', ],
     publicProjectContents: [],
   },
   mutations: {
-    SET_HIDE (state, value) { 
-      state.shouldHide = value
-    },
-
     SET_PUBLIC_PROJECT_CONTENTS (state, items) {
       state['publicProjectContents'] = items
     },
@@ -23,7 +17,7 @@ export default {
     },
   },
   actions: {
-    GET_PUBLIC_PROJECT_CONTENTS ({ commit, }, { mode = 'set', project_id = '' , params, }) {
+    FETCH ({ commit, }, { mode = 'set', project_id = '' , params, }) {
       return getPublicProjectContents({ project_id, params, })
         .then(({ status, body, }) => {
           if (status === 200) {
@@ -43,15 +37,6 @@ export default {
         .catch((res) => {
           console.error(res)
         })
-    },
-  },
-  getters: {
-    layout (state, getters, rootState) {
-      if (state.layoutSeriesRouteNames.includes(rootState.route.name)) {
-        return 'series'
-      } else {
-        return 'default'
-      }
     },
   },
 }

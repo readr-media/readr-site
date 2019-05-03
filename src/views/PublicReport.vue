@@ -11,26 +11,9 @@
 <script>
 import _ from 'lodash'
 
-import {
-  PROJECT_PUBLISH_STATUS,
-  PROJECT_STATUS,
-} from 'api/config'
-
-const fetchProjectSingle = (store, proj_slug) => {
-  return store.dispatch('publicReport/GET_SERIES_DATA', {
-    params: {
-      where: {
-        status: [ PROJECT_STATUS.WIP, PROJECT_STATUS.DONE, ],
-        publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
-      },
-      slugs: [ proj_slug, ],
-    },
-  })
-}
-
 export default {
   asyncData ({ store, route, }) {
-    return fetchProjectSingle(store, _.get(route, 'params.slug'))
+    return store.dispatch('DataSeries/FETCH', { slugs: [ _.get(route, 'params.slug'), ], })
   },
   computed: {
     slug () {

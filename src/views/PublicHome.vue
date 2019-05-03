@@ -37,33 +37,10 @@
 <script>
 import { get, } from 'lodash'
 import { mapState, } from 'vuex'
-import { PROJECT_STATUS, PROJECT_PUBLISH_STATUS, } from '../../api/config'
 import { isScrollBarReachBottom, } from '../util/comm'
 
 import SeriesList from 'src/components/SeriesList/List.vue'
 import SeriesListWide from 'src/components/SeriesListWide/List.vue'
-
-const DEFAULT_PAGE = 1
-const DEFAULT_SORT = 'project_order,-updated_at'
-const MAX_RESULT = 12
-
-const fetchProjectsList = (store, {
-  max_result = MAX_RESULT,
-  page = DEFAULT_PAGE,
-  sort = DEFAULT_SORT,
-} = {}) => {
-  return store.dispatch('publicHome/GET_PUBLIC_PROJECTS', {
-    params: {
-      max_result: max_result,
-      page: page,
-      sort: sort,
-      where: {
-        status: [ PROJECT_STATUS.DONE, PROJECT_STATUS.WIP, ],
-        publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
-      },
-    },
-  })
-}
 
 export default {
   components: {
@@ -71,18 +48,18 @@ export default {
     SeriesListWide,
   },
   asyncData ({ store, }) {
-    return fetchProjectsList(store)
+    return store.dispatch('DataSeries/FETCH')
   },
   data () {
     return {
-      currentPage: DEFAULT_PAGE,
+      currentPage: 1,
       hasMore: true,
       loading: false,
     }
   },
   computed: {
     ...mapState({
-      publicProjects: state => state.publicHome.publicProjects,
+      publicProjects: state => state.DataSeries.publicProjects,
     }),
     publicProjectsRecommends () {
       // return this.publicProjects.recommends
@@ -107,7 +84,7 @@ export default {
       if (this.hasMore && !this.loading && isScrollBarReachBottom(1/3)) {
         const origCount = get(this.projects, [ 'length', ], 0)
         this.loading = true
-        fetchProjectsList(this.$store, { page: this.currentPage + 1, })
+        this.$store.dispatch('DataSeries/FETCH', { page: this.currentPage + 1, })
         .then(() => {
           this.currentPage += 1
           get(this.projects, [ 'length', ], 0) <= origCount ? this.hasMore = false : true

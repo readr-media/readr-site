@@ -1,7 +1,11 @@
 import Vue from 'vue'
 import _ from 'lodash'
-import { PROJECT_STATUS, } from 'api/config'
+import { PROJECT_STATUS, PROJECT_PUBLISH_STATUS, } from 'api/config'
 import { getPublicProjectsList, } from 'src/api'
+
+const DEFAULT_PAGE = 1
+const DEFAULT_SORT = 'project_order,-updated_at'
+const MAX_RESULT = 12
 
 export default {
   namespaced: true,
@@ -56,6 +60,26 @@ export default {
         .catch((res) => {
           reject({ status: status, res: res,})
         })
+      })
+    },
+
+    FETCH ({ dispatch, }, {
+      max_result = MAX_RESULT,
+      page = DEFAULT_PAGE,
+      sort = DEFAULT_SORT,
+      slugs = [],
+    } = {}) {
+      return dispatch('GET_PUBLIC_PROJECTS', {
+        params: {
+          max_result: max_result,
+          page: page,
+          sort: sort,
+          slugs,
+          where: {
+            status: [ PROJECT_STATUS.DONE, PROJECT_STATUS.WIP, ],
+            publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
+          },
+        },
       })
     },
   },

@@ -4,20 +4,20 @@ import actions from './actions'
 import mutations from './mutations'
 import getters from './getters'
 
-import appHeader from './modules/appHeader'
-import appFooter from './modules/appFooter'
-import publicHome from './modules/publicHome'
-import publicReport from './modules/publicReport'
+import DataSeries from './modules/DataSeries'
+import DataSeriesContents from './modules/DataSeriesContents'
+import UIAppFooter from './modules/UIAppFooter'
+import UIAppHeader from './modules/UIAppHeader'
 
 Vue.use(Vuex)
 
 export function createStore () {
   return new Vuex.Store({
     modules: {
-      appHeader,
-      appFooter,
-      publicHome,
-      publicReport,
+      DataSeries,
+      DataSeriesContents,
+      UIAppFooter,
+      UIAppHeader,
     },
     state: {
       'chosenChoices': [],

@@ -12,7 +12,8 @@
       >
         <img 
           src="/public/2.0/logos/readr-logo-light.svg" 
-          alt="">
+          alt=""
+        >
       </router-link>
       <AppHeaderNavsDefault
         v-show="layout === 'default'"
@@ -44,24 +45,6 @@ import AppHeaderNavsDefault from './AppHeaderNavsDefault.vue'
 import AppHeaderNavsSeries from './AppHeaderNavsSeries.vue'
 import AppHeaderSidebar from './AppHeaderSidebar.vue'
 
-const MAXRESULT_POSTS = 10
-const DEFAULT_PAGE = 1
-const fetchPublicProjectContents = (store, {
-  mode = 'set',
-  project_id,
-  max_result = MAXRESULT_POSTS,
-  page = DEFAULT_PAGE,
-} = {}) => {
-  return store.dispatch('appHeader/GET_PUBLIC_PROJECT_CONTENTS', {
-    mode,
-    project_id,
-    params: {
-      max_result,
-      page,
-    },
-  })
-}
-
 export default {
   components: {
     AppHeaderNavsDefault,
@@ -76,14 +59,14 @@ export default {
   },
   computed: {
     ...mapState({
-      shouldHideHeader: state => state.appHeader.shouldHide,
-      seriesData: state => state.publicReport.seriesData,
+      shouldHideHeader: state => state.UIAppHeader.shouldHide,
+      seriesData: state => _.get(state.DataSeries.publicProjects.normal, 0, []),
     }),
     seriesId () {
       return _.get(this.seriesData, 'id', '')
     },
     ...mapGetters({
-      layout: 'appHeader/layout',
+      layout: 'UIAppHeader/layout',
     }),
   },
   watch: {
@@ -118,7 +101,7 @@ export default {
 
       this.sidebarSlot = nav
       if (this.sidebarSlot === 'series') {
-        fetchPublicProjectContents(this.$store, { project_id: this.seriesId, })
+        this.$store.dispatch('DataSeriesContents/FETCH', { project_id: this.seriesId, })
       }
       if (!this.showSidebar) {
         this.showSidebar = true
@@ -129,7 +112,7 @@ export default {
     },
 
     ...mapMutations({
-      SET_HIDE_HEADER: 'appHeader/SET_HIDE',
+      SET_HIDE_HEADER: 'UIAppHeader/SET_HIDE',
     }),
   },
 }

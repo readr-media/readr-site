@@ -125,7 +125,7 @@ export default {
   },
   computed: {
     ...mapState({
-      shouldHideFooter: state => state.appFooter.shouldHide,
+      shouldHideFooter: state => state.UIAppFooter.shouldHide,
     }),
   },
   watch: {
@@ -154,7 +154,7 @@ export default {
   },
   methods: {
     ...mapMutations({
-      SET_HIDE_FOOTER: 'appFooter/SET_HIDE',
+      SET_HIDE_FOOTER: 'UIAppFooter/SET_HIDE',
     }),
   },
 }
