@@ -15,56 +15,55 @@
           alt=""
         >
       </router-link>
-      <AppHeaderNavsDefault
+      <NavsDefault
         v-show="layout === 'default'"
         class="header__navs"
       />
-      <AppHeaderNavsSeries
+      <NavsSeries
         v-show="layout === 'series'"
         class="header__navs"
-        @series="toggleNavSeries('series')"
+        @series="toggleNavSeries('seriesContents')"
         @comment="toggleNavSeries('comment')"
       />
     </div>
-    <AppHeaderSidebar
+    <Sidebar
+      v-if="layout === 'series'"
       :show-sidebar.sync="showSidebar"
       class="header__sidebar"
     >
-      <div>
-        {{ sidebarSlot }}
-      </div>
-    </AppHeaderSidebar>
+      <SidebarSeriesContents v-show="currentSidebarSlot === 'seriesContents'" />
+      <SidebarComment v-show="currentSidebarSlot === 'comment'" />
+    </Sidebar>
   </header>
 </template>
 
 <script>
-import _ from 'lodash'
 import { mapState, mapMutations, mapGetters, } from 'vuex'
 
-import AppHeaderNavsDefault from './AppHeaderNavsDefault.vue'
-import AppHeaderNavsSeries from './AppHeaderNavsSeries.vue'
-import AppHeaderSidebar from './AppHeaderSidebar.vue'
+import NavsDefault from './NavsDefault.vue'
+import NavsSeries from './NavsSeries.vue'
+import Sidebar from './Sidebar.vue'
+import SidebarSeriesContents from './SidebarSeriesContents.vue'
+import SidebarComment from './SidebarComment.vue'
 
 export default {
   components: {
-    AppHeaderNavsDefault,
-    AppHeaderNavsSeries,
-    AppHeaderSidebar,
+    NavsDefault,
+    NavsSeries,
+    Sidebar,
+    SidebarSeriesContents,
+    SidebarComment,
   },
   data () {
     return {
       showSidebar: false,
-      sidebarSlot: 'series',
+      currentSidebarSlot: 'seriesContents',
     }
   },
   computed: {
     ...mapState({
       shouldHideHeader: state => state.UIAppHeader.shouldHide,
-      seriesData: state => _.get(state.DataSeries.publicProjects.normal, 0, []),
     }),
-    seriesId () {
-      return _.get(this.seriesData, 'id', '')
-    },
     ...mapGetters({
       layout: 'UIAppHeader/layout',
     }),
@@ -93,16 +92,13 @@ export default {
     })
   },
   methods: {
-    toggleNavSeries (nav) {
-      if (this.sidebarSlot === nav && this.showSidebar) {
+    toggleNavSeries (navClicked) {
+      if (this.currentSidebarSlot === navClicked && this.showSidebar) {
         this.showSidebar = false
         return
       }
 
-      this.sidebarSlot = nav
-      if (this.sidebarSlot === 'series') {
-        this.$store.dispatch('DataSeriesContents/FETCH', { project_id: this.seriesId, })
-      }
+      this.currentSidebarSlot = navClicked
       if (!this.showSidebar) {
         this.showSidebar = true
       }

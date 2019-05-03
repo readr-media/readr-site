@@ -76,6 +76,7 @@ export default {
 
 .sidebar
   padding 80px 0
+  overflow-y scroll
   &__wrapper
     width 640px
     margin 0 auto

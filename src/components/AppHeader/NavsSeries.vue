@@ -33,18 +33,18 @@
         alt=""
       >
     </div>
-    <AppHeaderNavsSeriesShare
+    <NavsSeriesShare
       class="navs__nav"
     />
   </nav>
 </template>
 
 <script>
-import AppHeaderNavsSeriesShare from './AppHeaderNavsSeriesShare.vue'
+import NavsSeriesShare from './NavsSeriesShare.vue'
 
 export default {
   components: {
-    AppHeaderNavsSeriesShare,
+    NavsSeriesShare,
   },
 }
 </script>

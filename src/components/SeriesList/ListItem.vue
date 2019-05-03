@@ -68,7 +68,7 @@ export default {
   },
   computed: {
     link () {
-      return '/'
+      return `/report/${get(this.item, 'slug', '')}`
     },
     img () {
       return get(this.item, 'heroImage', '')
