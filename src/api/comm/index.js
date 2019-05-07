@@ -121,13 +121,12 @@ export function post (url, params, token) {
       .post(url)
       .set('Authorization', `Bearer ${token || getToken()}`)
       .send(params)
-      .end(function (err, res) {
-        if (err) {
-          debug(err)
-          reject(err)
-        } else {
-          resolve({ status: res.status, body: camelizeKeys(res.body), })
-        }
+      .then(res => {
+        resolve({ status: res.status, body: camelizeKeys(res.body), })
+      })
+      .catch(err => {
+        debug(err)
+        reject(err)
       })
   })
 }
@@ -138,12 +137,11 @@ export function put (url, params) {
       .put(url)
       .set('Authorization', `Bearer ${getToken()}`)
       .send(params)
-      .end(function (err, res) {
-        if (err) {
-          reject(err)
-        } else {
-          resolve({ status: res.status, body: camelizeKeys(res.body), })
-        }
+      .then(res => {
+        resolve({ status: res.status, body: camelizeKeys(res.body), })
+      })
+      .catch(err => {
+        reject(err)
       })
   })
 }
@@ -154,12 +152,11 @@ export function del (url, params) {
       .delete(url)
       .send(params || {})
       .set('Authorization', `Bearer ${getToken()}`)
-      .end(function (err, res) {
-        if (err) {
-          reject(err)
-        } else {
-          resolve({ status: res.status, body: camelizeKeys(res.body), })
-        }
+      .then(res => {
+        resolve({ status: res.status, body: camelizeKeys(res.body), })
+      })
+      .catch(err => {
+        reject(err)
       })
   })
 }

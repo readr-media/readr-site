@@ -23,6 +23,7 @@ pipeline:
     volumes:
       - /tmp/cache:/cache
     when:
+      event: [push]
       branch: [dev, stage]
   
   get_dev_config:
@@ -49,8 +50,9 @@ pipeline:
       branch: stage
 
   builds:
-    image: gcr.io/mirrormedia-1470651750304/node:8.12.0-slim-gyp
+    image: node:10.15-slim
     commands:
+    - apt-get update && apt-get install -y node-gyp
     - yarn install
     - yarn run build
     when:
