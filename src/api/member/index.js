@@ -27,12 +27,11 @@ export function register (params, token) {
       .post(url)
       .set('Authorization', `Bearer ${token || getToken()}`)
       .send(params)
-      .end((error, response) => {
-        if (error) {
-          reject({ status: response.status, err: response.body.Error, mode: response.body.Mode, })
-        } else {
-          resolve({ status: response.status, })
-        }
+      .then(response => {
+        resolve({ status: response.status, })
+      })
+      .catch(error => {
+        reject({ status: error.status, err: error.body.Error, mode: error.body.Mode, })
       })
   })
 }

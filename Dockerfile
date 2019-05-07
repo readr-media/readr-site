@@ -1,10 +1,13 @@
-FROM gcr.io/mirrormedia-1470651750304/node:8.12.0-slim-gyp
+FROM node:10.15-slim
 
 ENV NODE_SOURCE /usr/src
 
 RUN groupadd user && useradd --create-home --home-dir /home/user -g user user
 
 WORKDIR $NODE_SOURCE
+
+RUN apt-get update \
+    && apt-get install -y node-gyp
 
 ADD . $NODE_SOURCE/
 

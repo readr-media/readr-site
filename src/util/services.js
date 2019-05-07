@@ -81,14 +81,13 @@ export function getProfile (cookie) {
       superagent
       .get(url)
       .set('Authorization', `Bearer ${token}`)
-      .end(function (err, res) {
-        if (err) {
-          debug(err)
-          resolve({ status: res.status, err, })
-        } else {
-          debug({ status: res.status, body: camelizeKeys(res.body), })
-          resolve({ profile: camelizeKeys(res.body), status: res.status, })
-        }
+      .then(res => {
+        debug({ status: res.status, body: camelizeKeys(res.body), })
+        resolve({ profile: camelizeKeys(res.body), status: res.status, })
+      })
+      .catch(err => {
+        debug(err)
+        resolve({ status: err.status, err, })
       })
     } else {
       resolve()
@@ -101,14 +100,13 @@ function logTraceXHR (params) {
     superagent
     .post(url)
     .send(params)
-    .end(function (err, res) {
-      if (err) {
-        debug(err)
-        resolve(err)
-      } else {
-        debug({ status: res.status, body: camelizeKeys(res.body), })
-        resolve({ status: res.status, body: camelizeKeys(res.body), })
-      }
+    .then(res => {
+      debug({ status: res.status, body: camelizeKeys(res.body), })
+      resolve({ status: res.status, body: camelizeKeys(res.body), })
+    })
+    .catch(err => {
+      debug(err)
+      resolve(err)
     })
   })
 }

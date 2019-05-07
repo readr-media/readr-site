@@ -7,8 +7,8 @@ const express = require('express')
 const favicon = require('serve-favicon')
 const compression = require('compression')
 const maxMemUsageLimit = 1000 * 1024 * 1024
-const memwatch = require('memwatch-next')
-const microcache = require('route-cache')
+const memwatch = require('node-memwatch')
+// const microcache = require('route-cache')
 const moment = require('moment')
 const requestIp = require('request-ip')
 const resolve = file => path.resolve(__dirname, file)
@@ -19,11 +19,11 @@ const { createBundleRenderer, } = require('vue-server-renderer')
 const config = require('./api/config') 
 const { PAGE_CACHE_EXCLUDING, } = require('./api/config')
 const { SERVER_PROTOCOL_MOBILE, SERVER_HOST_MOBILE, SERVER_PORT_MOBILE, } = require('./api/config')
-const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT, } = require('./api/config')
+// const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT, } = require('./api/config')
 
 const debug = require('debug')('READR:server')
 const isProd = process.env.NODE_ENV === 'production'
-const useMicroCache = process.env.MICRO_CACHE !== 'false'
+// const useMicroCache = process.env.MICRO_CACHE !== 'false'
 const serverInfo =
   `express/${require('express/package.json').version} ` +
   `vue-server-renderer/${require('vue-server-renderer/package.json').version}`
@@ -38,7 +38,7 @@ function createRenderer (bundle, options) {
   // https://github.com/vuejs/vue/blob/dev/packages/vue-server-renderer/README.md#why-use-bundlerenderer
   return createBundleRenderer(bundle, Object.assign(options, {
     // for component caching
-    cache: LRU({
+    cache: new LRU({
       max: 1000,
       maxAge: 1000 * 60 * 15,
     }),
