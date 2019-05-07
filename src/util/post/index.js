@@ -1,10 +1,12 @@
+// TODO: Rewrite this file to ES6 class will be better
+
 import truncate from 'truncate-html'
 import { get, isEmpty } from 'lodash'
 
 import { POST_TYPE } from 'api/config'
 import { SITE_FULL, ANNOUNCEMENT_ACCOUNT_ID } from 'src/constants'
 
-import { getShareUrl } from 'src/util/comm'
+import { getShareUrl, getFullUrl } from 'src/util/comm'
 import { getReportLink } from './report'
 import { truncatePostContent } from './truncate'
 import { getPostContentStrings } from './content'
@@ -61,6 +63,19 @@ export function getPostFullUrl (postData) {
   return createPostUrl[postType] || SITE_FULL
 }
 
+export function getPostOgImgUrl (post) {
+  const ogImgPathDefault = {
+    normal: '/public/2.0/og-images/og-image-post.jpg',
+    news: '/public/2.0/og-images/og-image.jpg',
+    report: '/public/2.0/og-images/og-image.jpg',
+    memo: '/public/2.0/og-images/og-image-memo.jpg',
+  }
+  const ogImage = get(post, 'ogImage') || ''
+  const postType = getPostType(post)
+
+  return ogImage !== '' ? getFullUrl(ogImage) : ogImgPathDefault[postType]
+}
+
 export function isAnnouncementAccountId (id) {
   const idString = (id || '').toString()
   return idString === ANNOUNCEMENT_ACCOUNT_ID
@@ -73,8 +88,8 @@ export function createPost (post = {}) {
     ...post,
     contentProcessed: getPostContentStrings(post),
     contentTruncateWithoutHtml: truncate(truncatePostContent(post), { length: 35, ellipsis: '...', stripTags: true }),
-    typeProcessed: getPostType(post)
-    // processed: {
+    typeProcessed: getPostType(post),
+    processed: {
     //   postType: getPostType(post),
     //   resource: getResource(post),
     //   resourceType: getResourceType(post),
@@ -86,6 +101,7 @@ export function createPost (post = {}) {
     //   postContentDOM: getPostContentDOM(post),
     //   postContentStrings: getPostContentStrings(post),
     //   postContentStringsTruncate: truncatePostContent(post)
-    // }
+      ogImgUrl: getPostOgImgUrl(post)
+    }
   }
 }

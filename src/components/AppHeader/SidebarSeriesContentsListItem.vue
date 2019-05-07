@@ -16,7 +16,7 @@
           {{ title }}
         </h1>
         <p>
-          {{ content }}
+          {{ description }}
         </p>
       </div>
     </router-link>
@@ -25,8 +25,8 @@
 
 <script>
 import _ from 'lodash'
-import sanitizeHtml from 'sanitize-html'
-import truncate from 'truncate-html'
+
+import { createPost, } from 'src/util/post'
 
 export default {
   props: {
@@ -37,21 +37,22 @@ export default {
     }
   },
   computed: {
+    post () {
+      return createPost(this.item)
+    },
     id () {
-      return _.get(this.item, 'id', '')
+      return _.get(this.post, 'id', '')
     },
     image () {
-      return _.get(this.item, 'ogImage', '')
+      return _.get(this.post, [ 'processed', 'ogImgUrl', ], '')
     },
     title () {
-      return _.get(this.item, 'title', '')
+      return _.get(this.item, 'ogTitle', '') || _.get(this.item, 'title', '')
     },
-    content () {
-      const sanitized = sanitizeHtml(_.get(this.item, 'content', { allowedTags: [ 'div', 'p', 'a' ] }))
-      const truncated = truncate(sanitized, 70)
-      return truncated
-    }
-  }
+    description () {
+      return _.get(this.post, 'ogDescription', '')
+    },
+  },
 }
 </script>
 
