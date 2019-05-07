@@ -9,13 +9,15 @@ const MAX_RESULT = 12
 
 export default {
   namespaced: true,
-  state: {
-    publicProjects: {
-      inProgress: [],
-      done: [],
-      normal: [],
-      recommends: [],
-      trends: []
+  state () {
+    return {
+      publicProjects: {
+        inProgress: [],
+        done: [],
+        normal: [],
+        recommends: [],
+        trends: [],
+      },
     }
   },
   mutations: {

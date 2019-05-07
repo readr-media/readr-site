@@ -12,6 +12,9 @@
 import _ from 'lodash'
 
 export default {
+  asyncData ({ store, route, }) {
+    return store.dispatch('DataReport/FETCH', { slugs: [ _.get(route, 'params.slug'), ], })
+  },
   computed: {
     slug () {
       return this.$route.params.slug

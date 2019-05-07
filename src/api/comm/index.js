@@ -32,6 +32,7 @@ export function _buildQuery (params = {}) {
     'report_slugs',
     'member_id',
     'memo_publish_status',
+    'project_publish_status',
     'emotion',
     'fields',
     'pay_type',

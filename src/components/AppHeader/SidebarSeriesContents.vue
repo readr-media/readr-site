@@ -27,12 +27,12 @@ export default {
   },
   computed: {
     ...mapState({
-      seriesData: state => _.get(state.DataSeries.publicProjects.normal, 0, []),
-      seriesContentsData: state => state.DataSeriesContents.publicProjectContents
+      seriesData: state => _.get(state.DataReport.reports, 0, []),
+      seriesContentsData : state => state.DataSeriesContents.publicProjectContents,
     }),
     seriesId () {
-      return _.get(this.seriesData, 'id', '')
-    }
+      return _.get(this.seriesData, 'projectId', '')
+    },
   },
   watch: {
     seriesId: {

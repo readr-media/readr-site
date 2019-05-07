@@ -7,6 +7,8 @@ import getters from './getters'
 import DataPost from './modules/DataPost'
 import DataSeries from './modules/DataSeries'
 import DataSeriesContents from './modules/DataSeriesContents'
+import DataReport from './modules/DataReport'
+import DataComment from './modules/DataComment'
 import UIAppFooter from './modules/UIAppFooter'
 import UIAppHeader from './modules/UIAppHeader'
 
@@ -18,6 +20,8 @@ export function createStore () {
       DataPost,
       DataSeries,
       DataSeriesContents,
+      DataReport,
+      DataComment,
       UIAppFooter,
       UIAppHeader
     },

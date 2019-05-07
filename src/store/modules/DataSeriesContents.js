@@ -4,8 +4,10 @@ import {
 
 export default {
   namespaced: true,
-  state: {
-    publicProjectContents: []
+  state () {
+    return {
+      publicProjectContents: [],
+    }
   },
   mutations: {
     RESET_PUBLIC_PROJECT_CONTENTS (state) {

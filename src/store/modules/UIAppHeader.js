@@ -1,8 +1,10 @@
 export default {
   namespaced: true,
-  state: {
-    shouldHide: false,
-    layoutSeriesRouteNames: [ 'report' ]
+  state () {
+    return {
+      shouldHide: false,
+      layoutSeriesRouteNames: [ 'report', ],
+    }
   },
   mutations: {
     SET_HIDE (state, value) {
