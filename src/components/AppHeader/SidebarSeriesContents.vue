@@ -3,7 +3,7 @@
     <h1>系列內容</h1>
     <SidebarSeriesContentsList :items="seriesContentsData" />
     <NoSSR>
-      <InfiniteLoading @infinite="infiniteHandler" />
+      <infinite-loading @infinite="infiniteHandler" />
     </NoSSR>
   </div>
 </template>
@@ -14,13 +14,11 @@ import { mapState, mapMutations } from 'vuex'
 
 import SidebarSeriesContentsList from './SidebarSeriesContentsList.vue'
 import NoSSR from 'vue-no-ssr'
-import InfiniteLoading from 'vue-infinite-loading'
 
 export default {
   components: {
     SidebarSeriesContentsList,
     NoSSR,
-    InfiniteLoading
   },
   data () {
     return {

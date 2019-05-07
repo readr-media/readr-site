@@ -11,11 +11,21 @@ import EN from 'src/locale/en'
 import VueI18n from 'vue-i18n'
 import VueMeta from 'vue-meta'
 import VueLazyload from 'vue-lazyload'
+import InfiniteLoading from 'vue-infinite-loading'
 
 Vue.use(VueI18n)
 Vue.use(VueMeta)
 Vue.use(VueLazyload, {
   lazyComponent: true
+})
+Vue.use(InfiniteLoading, {
+  props: {
+    spinner: 'spiral',
+  },
+  slots: {
+    noResults: '',
+    noMore: '',
+  },
 })
 
 // Quill Editor
