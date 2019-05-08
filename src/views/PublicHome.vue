@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import { SITE_NAME, } from '../constants'
 import { get, } from 'lodash'
 import { mapState, } from 'vuex'
 import { isScrollBarReachBottom, } from '../util/comm'
@@ -46,6 +47,10 @@ export default {
   components: {
     SeriesList,
     SeriesListWide,
+  },
+  metaInfo: {
+    title: SITE_NAME,
+    titleTemplate: null,
   },
   asyncData ({ store, }) {
     return store.dispatch('DataSeries/FETCH')
