@@ -63,6 +63,7 @@ api/config.js
 /tmp
 gcskeyfile.json
 archives
+package-lock.json
 
 test/unit/coverage/*
 test/e2e/reports/*
