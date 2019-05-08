@@ -3,16 +3,20 @@ import App from './App.vue'
 import { createStore, } from './store'
 import { createRouter, } from './router'
 import { sync, } from 'vuex-router-sync'
-import titleMetaMixin from './util/titleMeta'
+// import titleMetaMixin from './util/titleMeta'
 import * as filters from './util/filters'
 
 import ZHTW from 'src/locale/zh-TW'
 import EN from 'src/locale/en'
 import VueI18n from 'vue-i18n'
+import VueMeta from 'vue-meta'
 import VueLazyload from 'vue-lazyload'
 
 Vue.use(VueI18n)
-Vue.use(VueLazyload)
+Vue.use(VueMeta)
+Vue.use(VueLazyload, {
+  lazyComponent: true,
+})
 
 // Quill Editor
 if (process.browser) {
@@ -45,7 +49,7 @@ if (process.browser) {
 }
 
 // mixin for handling title
-Vue.mixin(titleMetaMixin)
+// Vue.mixin(titleMetaMixin)
 
 // register global utility filters.
 Object.keys(filters).forEach(key => {
