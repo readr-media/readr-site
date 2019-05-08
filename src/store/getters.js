@@ -1,9 +1,9 @@
-import { get, map, } from 'lodash'
+import { get, map } from 'lodash'
 export default {
   // ids of the items that should be currently displayed based on
   // current list type and current pagination
   activeIds (state) {
-    const { activeType, itemsPerPage, lists, } = state
+    const { activeType, itemsPerPage, lists } = state
 
     if (!activeType) {
       return []
@@ -22,9 +22,9 @@ export default {
     return getters.activeIds.map(id => state.items[id]).filter(_ => _)
   },
   searchResultNormalized: state => {
-    return map(state.searchResult.items, item => Object.assign({ id: get(item, 'id'), }, get(item, 'source')))
+    return map(state.searchResult.items, item => Object.assign({ id: get(item, 'id') }, get(item, 'source')))
   },
   searchResultTotalCount: state => {
     return get(state.searchResult, 'body.hits.total', 0)
-  },  
+  }
 }

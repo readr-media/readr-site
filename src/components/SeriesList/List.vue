@@ -15,18 +15,18 @@ import ListItem from './ListItem.vue'
 
 export default {
   components: {
-    ListItem,
+    ListItem
   },
   props: {
     items: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
     theme: {
       type: String,
-      default: 'normal',
-    },
-  },
+      default: 'normal'
+    }
+  }
 }
 </script>
 

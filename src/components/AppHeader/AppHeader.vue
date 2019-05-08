@@ -10,8 +10,8 @@
         class="header__logo"
         to="/"
       >
-        <img 
-          src="/public/2.0/logos/readr-logo-light.svg" 
+        <img
+          src="/public/2.0/logos/readr-logo-light.svg"
           alt=""
         >
       </router-link>
@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters, } from 'vuex'
+import { mapState, mapMutations, mapGetters } from 'vuex'
 
 import NavsDefault from './NavsDefault.vue'
 import NavsSeries from './NavsSeries.vue'
@@ -52,42 +52,42 @@ export default {
     NavsSeries,
     Sidebar,
     SidebarSeriesContents,
-    SidebarComment,
+    SidebarComment
   },
   data () {
     return {
       showSidebar: false,
-      currentSidebarSlot: 'seriesContents',
+      currentSidebarSlot: 'seriesContents'
     }
   },
   computed: {
     ...mapState({
-      shouldHideHeader: state => state.UIAppHeader.shouldHide,
+      shouldHideHeader: state => state.UIAppHeader.shouldHide
     }),
     ...mapGetters({
-      layout: 'UIAppHeader/layout',
-    }),
+      layout: 'UIAppHeader/layout'
+    })
   },
   watch: {
     layout () {
       if (this.layout === 'default' && this.showSidebar) {
         this.showSidebar = false
       }
-    },
+    }
   },
   mounted () {
     window.addEventListener('message', e => {
       // if (e.origin !== window.origin) { return }
-      const { data = '', } = e
+      const { data = '' } = e
       switch (data) {
         case 'scrolldown':
           this.SET_HIDE_HEADER(true)
-          break;
+          break
         case 'scrollup':
           this.SET_HIDE_HEADER(false)
-          break;
+          break
         default:
-          break;
+          break
       }
     })
   },
@@ -108,9 +108,9 @@ export default {
     },
 
     ...mapMutations({
-      SET_HIDE_HEADER: 'UIAppHeader/SET_HIDE',
-    }),
-  },
+      SET_HIDE_HEADER: 'UIAppHeader/SET_HIDE'
+    })
+  }
 }
 </script>
 

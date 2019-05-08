@@ -1,20 +1,20 @@
 <template>
   <div class="error-container">
-    <div v-text="error"/>
+    <div v-text="error" />
   </div>
 </template>
 <script>
-  import { get, } from 'lodash'
-  export default {
-    name: 'ServerError',
-    data () {
-      return {
-        error: JSON.stringify(get(this.$store, 'state.error') || {}),
-      }
-    },
-    mounted () {},
-    methods: {},
-  }
+import { get } from 'lodash'
+export default {
+  name: 'ServerError',
+  data () {
+    return {
+      error: JSON.stringify(get(this.$store, 'state.error') || {})
+    }
+  },
+  mounted () {},
+  methods: {}
+}
 </script>
 <style lang="stylus" scoped>
   .error-container

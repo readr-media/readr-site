@@ -7,7 +7,7 @@ import MembersPanel from 'src/components/admin/MembersPanel.vue'
 import TheBaseControlBar from 'src/components/TheBaseControlBar.vue'
 import Vue from 'vue'
 import sinon from 'sinon'
-import { mount, } from 'avoriaz'
+import { mount } from 'avoriaz'
 
 describe('Admin.vue', () => {
   sinon.stub(Admin, 'beforeMount')

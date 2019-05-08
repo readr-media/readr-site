@@ -2,8 +2,8 @@ import _ from 'lodash'
 import About from 'src/components/member/About.vue'
 import BaseLightBox from 'src/components/BaseLightBox.vue'
 import BaseLightBoxProfileEdit from 'src/components/BaseLightBoxProfileEdit.vue'
-import { ROLE_MAP, } from 'src/constants'
-import { mount, } from 'avoriaz'
+import { ROLE_MAP } from 'src/constants'
+import { mount } from 'avoriaz'
 
 describe('About.vue', () => {
   const AboutComponent = mount(About)
@@ -23,18 +23,18 @@ describe('About.vue', () => {
       nickname: 'Justin BB',
       description: '先速不生間發，處水是車內可紅，這在心相日價得推會當術重而而地後，把人司小一活整資為，家身無就好空人算請著營種的變車商突：臉我安以可吃結出而技冷水新戰口都紀！通快低死事媽兩建子那與的畫語了係來站車外。',
       profileImage: 'https://dev.readr.tw/assets/images/justinbb.png',
-      role: 1,
+      role: 1
     }
     const AboutWithProfile = mount(About)
     AboutWithProfile.setProps({
-      profile,
+      profile
     })
     const nameWithProfile = AboutWithProfile.find('.about__name > .name')[0]
     const roleWithProfile = AboutWithProfile.find('.about__name > .role')[0]
     const introductionWithProfile = AboutWithProfile.find('.about__introduction')[0]
     const imageWithProfile = AboutWithProfile.find('.about__thumbnail > img')[0]
     expect(nameWithProfile.text()).to.be.string(profile.nickname)
-    expect(roleWithProfile.text()).to.be.string(_.get(_.filter(ROLE_MAP, { key: profile.role, }), [ 0, 'value', ]))
+    expect(roleWithProfile.text()).to.be.string(_.get(_.filter(ROLE_MAP, { key: profile.role }), [ 0, 'value' ]))
     expect(introductionWithProfile.text()).to.be.string(profile.description)
     expect(imageWithProfile.getAttribute('src')).to.be.string(profile.profileImage)
   })
@@ -43,11 +43,11 @@ describe('About.vue', () => {
       nickname: 'Mr. NoProfileImage',
       description: '沒有大頭貼先生',
       profileImage: undefined,
-      role: 1,
+      role: 1
     }
     const AboutWithProfile = mount(About)
     AboutWithProfile.setProps({
-      profile,
+      profile
     })
     const imageWithProfile = AboutWithProfile.find('.about__thumbnail > img')[0]
     expect(imageWithProfile.getAttribute('src')).to.be.string('/public/icons/exclamation.png')

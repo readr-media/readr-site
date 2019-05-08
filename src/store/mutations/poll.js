@@ -1,12 +1,12 @@
-const SET_CHOSEN_CHOICES = (state, { chosenChoices, }) => {
+const SET_CHOSEN_CHOICES = (state, { chosenChoices }) => {
   state['chosenChoices'] = chosenChoices
 }
 
-const SET_EMBED_POLL = (state, { body, }) => {
+const SET_EMBED_POLL = (state, { body }) => {
   state['embedPoll'] = body.items ? body.items[0] : null
 }
 
-const UPDATE_POLL = (state, { action, choiceId, }) => {
+const UPDATE_POLL = (state, { action, choiceId }) => {
   const choiceIndex = state['embedPoll'].choices.findIndex(choice => choice.id === choiceId)
   if (action === 'add') {
     state['embedPoll'].totalVote += 1
@@ -20,5 +20,5 @@ const UPDATE_POLL = (state, { action, choiceId, }) => {
 export {
   SET_CHOSEN_CHOICES,
   SET_EMBED_POLL,
-  UPDATE_POLL,
+  UPDATE_POLL
 }

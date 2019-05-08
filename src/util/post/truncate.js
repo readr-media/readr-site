@@ -1,22 +1,22 @@
 import truncate from 'truncate-html'
-import { get, findIndex, take, } from 'lodash'
-import { truncateDefaults, } from './config'
-import { getPostContentDOM, getPostContentStrings, } from './content'
+import { get, findIndex, take } from 'lodash'
+import { truncateDefaults } from './config'
+import { getPostContentDOM, getPostContentStrings } from './content'
 
 const {
   defaultLimitLine,
   defaultLimitLineCustomBreakTag,
-  defaultLimitWord,
+  defaultLimitWord
 } = truncateDefaults
 
 truncate.setup({
   length: defaultLimitWord,
   ellipsis: '',
-  keepWhitespaces: true,
+  keepWhitespaces: true
 })
 
 function findCustomBreak (postContentDOM) {
-  return findIndex(get(postContentDOM, 'childNodes'), [ 'tagName', defaultLimitLineCustomBreakTag, ])
+  return findIndex(get(postContentDOM, 'childNodes'), [ 'tagName', defaultLimitLineCustomBreakTag ])
 }
 
 function getLineBreak (postContentDOM) {

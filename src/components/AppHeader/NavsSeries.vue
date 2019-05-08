@@ -10,8 +10,8 @@
       class="navs__nav"
       @click="$emit('follow')"
     >
-      <img 
-        src="/public/2.0/icons/follow-white.png" 
+      <img
+        src="/public/2.0/icons/follow-white.png"
         alt=""
       >
     </div>
@@ -19,8 +19,8 @@
       class="navs__nav"
       @click="$emit('comment')"
     >
-      <img 
-        src="/public/2.0/icons/comment-white.png" 
+      <img
+        src="/public/2.0/icons/comment-white.png"
         alt=""
       >
     </div>
@@ -28,8 +28,8 @@
       class="navs__nav"
       @click="$emit('donate')"
     >
-      <img 
-        src="/public/2.0/icons/donate-white.png" 
+      <img
+        src="/public/2.0/icons/donate-white.png"
         alt=""
       >
     </div>
@@ -44,8 +44,8 @@ import NavsSeriesShare from './NavsSeriesShare.vue'
 
 export default {
   components: {
-    NavsSeriesShare,
-  },
+    NavsSeriesShare
+  }
 }
 </script>
 

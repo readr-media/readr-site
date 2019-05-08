@@ -1,7 +1,7 @@
 import ProfileEdit from 'src/components/ProfileEdit.vue'
 import Vue from 'vue'
 import Vuex from 'vuex'
-import { mount, } from 'avoriaz'
+import { mount } from 'avoriaz'
 import sinon from 'sinon'
 
 Vue.use(Vuex)
@@ -13,11 +13,11 @@ describe('ProfileEdit.vue', () => {
     actions = {
       UPDATE_PROFILE: sinon.stub(),
       CHECK_PASSWORD: sinon.stub(),
-      UPDATE_PASSWORD: sinon.stub(),
+      UPDATE_PASSWORD: sinon.stub()
     }
     store = new Vuex.Store({
       state: {},
-      actions,
+      actions
     })
   })
 
@@ -27,10 +27,10 @@ describe('ProfileEdit.vue', () => {
       nickname: 'Justin BB',
       mail: 'justinbb@justinbb.com',
       description: '先速不生間發，處水是車內可紅，這在心相日價得推會當術重而而地後，把人司小一活整資為，家身無就好空人算請著營種的變車商突：臉我安以可吃結出而技冷水新戰口都紀！通快低死事媽兩建子那與的畫語了係來站車外。',
-      profileImage: 'https://dev.readr.tw/assets/images/justinbb.png',
+      profileImage: 'https://dev.readr.tw/assets/images/justinbb.png'
     }
     ProfileEditComponent.setProps({
-      profile,
+      profile
     })
     const inputNickname = ProfileEditComponent.find('input[name=nickname]')[0]
     const inputDescription = ProfileEditComponent.find('textarea[name=description]')[0]
@@ -42,15 +42,15 @@ describe('ProfileEdit.vue', () => {
   })
 
   it('should dispatch action when user is update their nickname, description', () => {
-    const ProfileEditComponent = mount(ProfileEdit, { store, })
+    const ProfileEditComponent = mount(ProfileEdit, { store })
     const profile = {
       nickname: 'Justin BB',
       mail: 'justinbb@justinbb.com',
       description: '先速不生間發，處水是車內可紅，這在心相日價得推會當術重而而地後，把人司小一活整資為，家身無就好空人算請著營種的變車商突：臉我安以可吃結出而技冷水新戰口都紀！通快低死事媽兩建子那與的畫語了係來站車外。',
-      profileImage: 'https://dev.readr.tw/assets/images/justinbb.png',
+      profileImage: 'https://dev.readr.tw/assets/images/justinbb.png'
     }
     ProfileEditComponent.setProps({
-      profile,
+      profile
     })
     // const inputNickname = ProfileEditComponent.find('input[name=nickname]')[0]
     const save = ProfileEditComponent.find('.save-button')[0]
@@ -61,15 +61,15 @@ describe('ProfileEdit.vue', () => {
   })
 
   it('should not dispatch action when save button has been clicked but user\'s nickname, description is remaining the same as initial', () => {
-    const ProfileEditComponent = mount(ProfileEdit, { store, })
+    const ProfileEditComponent = mount(ProfileEdit, { store })
     const profile = {
       nickname: 'Justin BB',
       mail: 'justinbb@justinbb.com',
       description: '先速不生間發，處水是車內可紅，這在心相日價得推會當術重而而地後，把人司小一活整資為，家身無就好空人算請著營種的變車商突：臉我安以可吃結出而技冷水新戰口都紀！通快低死事媽兩建子那與的畫語了係來站車外。',
-      profileImage: 'https://dev.readr.tw/assets/images/justinbb.png',
+      profileImage: 'https://dev.readr.tw/assets/images/justinbb.png'
     }
     ProfileEditComponent.setProps({
-      profile,
+      profile
     })
     const save = ProfileEditComponent.find('.save-button')[0]
 
@@ -80,7 +80,7 @@ describe('ProfileEdit.vue', () => {
   })
 
   it('should not update user\'s password if old password input is empty, but new/confirm password input is not', () => {
-    const ProfileEditComponent = mount(ProfileEdit, { store, })
+    const ProfileEditComponent = mount(ProfileEdit, { store })
     const save = ProfileEditComponent.find('.save-button')[0]
 
     ProfileEditComponent.vm.inputOldPassword = ''
@@ -91,7 +91,7 @@ describe('ProfileEdit.vue', () => {
   })
 
   it('should not update user\'s password if new/confirm password inputs both are empty, but old password input is not', () => {
-    const ProfileEditComponent = mount(ProfileEdit, { store, })
+    const ProfileEditComponent = mount(ProfileEdit, { store })
     const save = ProfileEditComponent.find('.save-button')[0]
 
     ProfileEditComponent.vm.inputOldPassword = 'this_is_a_old_password123456'

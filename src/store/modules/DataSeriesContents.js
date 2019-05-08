@@ -1,11 +1,11 @@
 import {
-  getPublicProjectContents,
+  getPublicProjectContents
 } from 'src/api'
 
 export default {
   namespaced: true,
   state: {
-    publicProjectContents: [],
+    publicProjectContents: []
   },
   mutations: {
     RESET_PUBLIC_PROJECT_CONTENTS (state) {
@@ -13,11 +13,11 @@ export default {
     },
     PUSH_PUBLIC_PROJECT_CONTENTS (state, items = []) {
       state['publicProjectContents'].push(...items)
-    },
+    }
   },
   actions: {
-    FETCH ({ commit, }, { project_id = '' , params, }) {
-      return getPublicProjectContents({ project_id, params, })
+    FETCH ({ commit }, { projectId = '', params }) {
+      return getPublicProjectContents({ projectId, params })
         .then(res => {
           commit('PUSH_PUBLIC_PROJECT_CONTENTS', res.body.items)
           return res
@@ -25,6 +25,6 @@ export default {
         .catch((res) => {
           console.error(res)
         })
-    },
-  },
+    }
+  }
 }

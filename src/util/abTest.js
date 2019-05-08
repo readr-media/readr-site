@@ -3,8 +3,8 @@ import bigInt from 'big-integer'
 import uuidv4 from 'uuid/v4'
 
 const DEFAULT_DISTRIBUTION = [
-  { id: 'A', weight: 50, },
-  { id: 'B', weight: 50, },
+  { id: 'A', weight: 50 },
+  { id: 'B', weight: 50 }
 ]
 
 function getCookie () {
@@ -25,7 +25,7 @@ function getDistributionWeight (distribution) {
 }
 
 function setCookie () {
-  VueCookie.set('readrid', uuidv4(), { expires: '1Y', })
+  VueCookie.set('readrid', uuidv4(), { expires: '1Y' })
 }
 
 function uuidToLargeNumber (uuid) {
@@ -44,7 +44,7 @@ export function getIndicator (distribution = DEFAULT_DISTRIBUTION) {
   const readrIdConverted = uuidToLargeNumber(readrId)
   const identifier = parseInt(readrIdConverted.substr(readrIdConverted.length - 2))
   const weights = getDistributionWeight(distribution)
-  for (let [ index, value, ] of weights.entries()) {
+  for (let [ index, value ] of weights.entries()) {
     if (value > identifier) {
       return distribution[index].id
     }

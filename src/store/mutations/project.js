@@ -1,14 +1,14 @@
 import Vue from 'vue'
 
-const SET_PROJECTS_LIST = (state, { projectsList, }) => {
+const SET_PROJECTS_LIST = (state, { projectsList }) => {
   state['projectsList'] = projectsList
 }
 
-const SET_PUBLIC_PROJECT_SINGLE = (state, { item, }) => {
+const SET_PUBLIC_PROJECT_SINGLE = (state, { item }) => {
   state['publicProjectSingle'] = item
 }
 
-const SET_PUBLIC_PROJECTS = (state, { status, publicProjects, }) => {
+const SET_PUBLIC_PROJECTS = (state, { status, publicProjects }) => {
   Vue.set(state['publicProjects'], status, publicProjects)
 }
 
@@ -35,5 +35,5 @@ export {
   SET_PUBLIC_PROJECT_CONTENTS,
   SET_PROJECT_CONTENTS,
   UPDATE_PUBLIC_PROJECT_CONTENTS,
-  UPDATE_PROJECT_CONTENTS,
+  UPDATE_PROJECT_CONTENTS
 }

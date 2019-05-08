@@ -1,6 +1,6 @@
-import { camelizeKeys, } from 'humps'
-import { filter, get, } from 'lodash'
-import { getHost, } from './comm'
+import { camelizeKeys } from 'humps'
+import { filter, get } from 'lodash'
+import { getHost } from './comm'
 import Cookie from 'vue-cookie'
 import superagent from 'superagent'
 import moment from 'moment'
@@ -31,7 +31,7 @@ export function getSetupToken () {
     return token
   } else {
     return undefined
-  }  
+  }
 }
 
 export function delInitMemToken () {
@@ -53,7 +53,7 @@ ReadrPerm.install = (Vue) => {
   Vue.mixin({
     created () {
       readrPerm.init(this.$store)
-    },
+    }
   })
 
   Vue.prototype.$can = (comp) => readrPerm.permVerify(comp)
@@ -64,7 +64,7 @@ export function removeToken (domain) {
     debug('domain', domain)
     if (window) {
       if (domain) {
-        Cookie.delete('csrf', { domain, })
+        Cookie.delete('csrf', { domain })
       } else {
         Cookie.delete('csrf')
       }
@@ -79,16 +79,16 @@ export function getProfile (cookie) {
     if (token) {
       const url = `${host}/api/profile`
       superagent
-      .get(url)
-      .set('Authorization', `Bearer ${token}`)
-      .then(res => {
-        debug({ status: res.status, body: camelizeKeys(res.body), })
-        resolve({ profile: camelizeKeys(res.body), status: res.status, })
-      })
-      .catch(err => {
-        debug(err)
-        resolve({ status: err.status, err, })
-      })
+        .get(url)
+        .set('Authorization', `Bearer ${token}`)
+        .then(res => {
+          debug({ status: res.status, body: camelizeKeys(res.body) })
+          resolve({ profile: camelizeKeys(res.body), status: res.status })
+        })
+        .catch(err => {
+          debug(err)
+          resolve({ status: err.status, err })
+        })
     } else {
       resolve()
     }
@@ -98,23 +98,23 @@ function logTraceXHR (params) {
   return new Promise(resolve => {
     const url = `${host}/api/trace`
     superagent
-    .post(url)
-    .send(params)
-    .then(res => {
-      debug({ status: res.status, body: camelizeKeys(res.body), })
-      resolve({ status: res.status, body: camelizeKeys(res.body), })
-    })
-    .catch(err => {
-      debug(err)
-      resolve(err)
-    })
+      .post(url)
+      .send(params)
+      .then(res => {
+        debug({ status: res.status, body: camelizeKeys(res.body) })
+        resolve({ status: res.status, body: camelizeKeys(res.body) })
+      })
+      .catch(err => {
+        debug(err)
+        resolve(err)
+      })
   })
 }
 
 export function isAlink (node) {
   while (node && node.tagName && node.tagName !== 'HTML') {
     if (node.tagName === 'A') {
-      return { href: node.href, }
+      return { href: node.href }
     }
     node = node.parentNode
   }
@@ -124,7 +124,7 @@ export function isAlink (node) {
 export function isABTest (node) {
   while (node && node.tagName && node.tagName !== 'HTML') {
     if (node.getAttribute('test-name')) {
-      return { name: node.getAttribute('test-name'), group: node.getAttribute('test-group'), }
+      return { name: node.getAttribute('test-name'), group: node.getAttribute('test-group') }
     }
     node = node.parentNode
   }
@@ -132,9 +132,9 @@ export function isABTest (node) {
 }
 
 function constructLog ({ category, description, eventType, sub, target, useragent, isAlink, isABTest, ...rest }) {
- return new Promise(resolve => {
+  return new Promise(resolve => {
     debug('useragent', useragent)
-    const innerText = target.innerText ? sanitizeHtml(target.innerText, { allowedTags: [ '', ], }) : ''
+    const innerText = target.innerText ? sanitizeHtml(target.innerText, { allowedTags: [ '' ] }) : ''
     const dt = Date.now()
     if (!window.mmThisRuntimeClientId) {
       window.mmThisRuntimeClientId = uuidv4()
@@ -158,13 +158,13 @@ function constructLog ({ category, description, eventType, sub, target, useragen
       'target-text': truncate(innerText, 100),
       'target-window-size': {
         width: document.documentElement.clientWidth || document.body.clientWidth,
-        height: document.documentElement.clientWidth || document.body.clientWidth,
+        height: document.documentElement.clientWidth || document.body.clientWidth
       },
       'test-name': isABTest ? isABTest.name : undefined,
       'test-group': isABTest ? isABTest.group : undefined,
-      ...rest,  
+      ...rest
     })
- })
+  })
 }
 export function logTrace ({ category, description, eventType, sub, target, useragent, ...rest }) {
   if (!eventType || !target || !description || !category || !useragent) { return }
@@ -175,30 +175,30 @@ export function logTrace ({ category, description, eventType, sub, target, usera
     sub,
     target,
     useragent,
-    ...rest,
+    ...rest
   })
-  .then(log => {
-    if (navigator.serviceWorker && navigator.serviceWorker.controller) {
-      debug('send log status to sw.')
-      navigator.serviceWorker.controller.postMessage({
-        url: '/api/trace',
-        params: log,
-        action: 'trace',
-      });
-      return { status: 200, body: null, }
-    } else {
-      debug('Log')
-      return logTraceXHR(log)
-    }
-  })
-  .then(res => {
-    debug('res from logTracing:', res)
-  })
+    .then(log => {
+      if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+        debug('send log status to sw.')
+        navigator.serviceWorker.controller.postMessage({
+          url: '/api/trace',
+          params: log,
+          action: 'trace'
+        })
+        return { status: 200, body: null }
+      } else {
+        debug('Log')
+        return logTraceXHR(log)
+      }
+    })
+    .then(res => {
+      debug('res from logTracing:', res)
+    })
 }
 export function redirectToLogin (from, router) {
   /**
     * use location.replace instead of router.push to server-side render page
     */
-  Cookie.set('location-replace-from', from, { expires: '60s', })
+  Cookie.set('location-replace-from', from, { expires: '60s' })
   router.push('/login')
 }

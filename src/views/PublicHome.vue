@@ -24,7 +24,7 @@
     </div>
     <div class="section__block block">
       <h1 class="block__title block__title--decorated">
-        系列報導 
+        系列報導
       </h1>
       <SeriesList
         :items="publicProjectsNormal"
@@ -35,10 +35,10 @@
 </template>
 
 <script>
-import { SITE_NAME, } from '../constants'
-import { get, } from 'lodash'
-import { mapState, } from 'vuex'
-import { isScrollBarReachBottom, } from '../util/comm'
+import { SITE_NAME } from '../constants'
+import { get } from 'lodash'
+import { mapState } from 'vuex'
+import { isScrollBarReachBottom } from '../util/comm'
 
 import SeriesList from 'src/components/SeriesList/List.vue'
 import SeriesListWide from 'src/components/SeriesListWide/List.vue'
@@ -46,25 +46,25 @@ import SeriesListWide from 'src/components/SeriesListWide/List.vue'
 export default {
   components: {
     SeriesList,
-    SeriesListWide,
+    SeriesListWide
   },
   metaInfo: {
     title: SITE_NAME,
-    titleTemplate: null,
-  },
-  asyncData ({ store, }) {
-    return store.dispatch('DataSeries/FETCH')
+    titleTemplate: null
   },
   data () {
     return {
       currentPage: 1,
       hasMore: true,
-      loading: false,
+      loading: false
     }
+  },
+  asyncData ({ store }) {
+    return store.dispatch('DataSeries/FETCH')
   },
   computed: {
     ...mapState({
-      publicProjects: state => state.DataSeries.publicProjects,
+      publicProjects: state => state.DataSeries.publicProjects
     }),
     publicProjectsRecommends () {
       // return this.publicProjects.recommends
@@ -76,7 +76,7 @@ export default {
     },
     publicProjectsNormal () {
       return this.publicProjects.normal
-    },
+    }
   },
   mounted () {
     window.addEventListener('scroll', this.loadMore)
@@ -86,18 +86,18 @@ export default {
   },
   methods: {
     loadMore () {
-      if (this.hasMore && !this.loading && isScrollBarReachBottom(1/3)) {
-        const origCount = get(this.projects, [ 'length', ], 0)
+      if (this.hasMore && !this.loading && isScrollBarReachBottom(1 / 3)) {
+        const origCount = get(this.projects, [ 'length' ], 0)
         this.loading = true
-        this.$store.dispatch('DataSeries/FETCH', { page: this.currentPage + 1, })
-        .then(() => {
-          this.currentPage += 1
-          get(this.projects, [ 'length', ], 0) <= origCount ? this.hasMore = false : true
-          this.loading = false
-        })
+        this.$store.dispatch('DataSeries/FETCH', { page: this.currentPage + 1 })
+          .then(() => {
+            this.currentPage += 1
+            get(this.projects, [ 'length' ], 0) <= origCount ? this.hasMore = false : this.hasMore = true
+            this.loading = false
+          })
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

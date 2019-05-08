@@ -25,15 +25,15 @@
 </template>
 
 <script>
-import { get, } from 'lodash'
+import { get } from 'lodash'
 import moment from 'moment'
 
 export default {
   props: {
     item: {
       type: Object,
-      default: () => {},
-    },
+      default: () => {}
+    }
   },
   computed: {
     link () {
@@ -51,8 +51,8 @@ export default {
     },
     description () {
       return get(this.item, 'description', '')
-    },
-  },
+    }
+  }
 }
 </script>
 

@@ -32,9 +32,9 @@ export default {
     showSidebar: {
       type: Boolean,
       default: false,
-      required: true,
-    },
-  },
+      required: true
+    }
+  }
 }
 </script>
 

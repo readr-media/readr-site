@@ -1,4 +1,4 @@
-import { SITE_FULL, URL_SHARE_FB, URL_SHARE_LINE, } from 'src/constants'
+import { SITE_FULL, URL_SHARE_FB, URL_SHARE_LINE } from 'src/constants'
 
 export function createShareUrl (socialMedia = 'fb', url = SITE_FULL) {
   const createUTMQueryString = (url, utmSource) => {

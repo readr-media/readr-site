@@ -1,4 +1,4 @@
-import { mount, } from 'avoriaz'
+import { mount } from 'avoriaz'
 import BaseLightBox from 'src/components/BaseLightBox.vue'
 
 describe('BaseLightBox.vue', () => {

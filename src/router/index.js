@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import { ReadrPerm, } from '../util/services'
+import { ReadrPerm } from '../util/services'
 
 Vue.use(Router)
 Vue.use(ReadrPerm)
@@ -19,16 +19,16 @@ const router = new Router({
     if (savedPosition) {
       return savedPosition
     } else {
-      return { y: 0, }
+      return { y: 0 }
     }
   },
   routes: [
-    { name: 'home', path: '/', component: PublicHome, },
-    { name: 'report', path: '/report/:slug', component: PublicReport, },
-    { path: '/404', component: PublicPageNotFound, },
-    { path: '/500', component: PublicServerError, },
-    { path: '*', component: PublicPageNotFound, },
-  ],
+    { name: 'home', path: '/', component: PublicHome },
+    { name: 'report', path: '/report/:slug', component: PublicReport },
+    { path: '/404', component: PublicPageNotFound },
+    { path: '/500', component: PublicServerError },
+    { path: '*', component: PublicPageNotFound }
+  ]
 })
 
 export function createRouter () {

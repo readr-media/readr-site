@@ -1,14 +1,14 @@
-import { constructUrlWithQuery, fetchInStrict, post, } from 'src/api/comm'
-import { getHost, } from 'src/util/comm'
+import { constructUrlWithQuery, fetchInStrict, post } from 'src/api/comm'
+import { getHost } from 'src/util/comm'
 // const debug = require('debug')('CLIENT:api:point')
 const host = getHost()
 
-export function getPointHistories ({ params, }) {
+export function getPointHistories ({ params }) {
   let url = constructUrlWithQuery(`${host}/api/points${params.objectType ? '/' + params.objectType : ''}`, params)
   return fetchInStrict(url, {})
 }
 
-export function getPointCurrent ({ params, }) {
+export function getPointCurrent ({ params }) {
   let url = constructUrlWithQuery(`${host}/api/points/current`, params)
   return fetchInStrict(url, {})
 }

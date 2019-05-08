@@ -1,13 +1,13 @@
 import truncate from 'truncate-html'
-import { get, isEmpty, } from 'lodash'
+import { get, isEmpty } from 'lodash'
 
-import { POST_TYPE, } from 'api/config'
-import { SITE_FULL, ANNOUNCEMENT_ACCOUNT_ID, } from 'src/constants'
+import { POST_TYPE } from 'api/config'
+import { SITE_FULL, ANNOUNCEMENT_ACCOUNT_ID } from 'src/constants'
 
-import { getShareUrl, } from 'src/util/comm'
-import { getReportLink, } from './report'
-import { truncatePostContent, } from './truncate'
-import { getPostContentDOM, getPostContentStrings, } from './content'
+import { getShareUrl } from 'src/util/comm'
+import { getReportLink } from './report'
+import { truncatePostContent } from './truncate'
+import { getPostContentDOM, getPostContentStrings } from './content'
 
 export function getPostType (post) {
   const type = get(post, 'contentType') || get(post, 'type')
@@ -59,9 +59,9 @@ export function getPostFullUrl (postData) {
   switch (postType) {
     case 'news':
     case 'normal':
-    return getShareUrl(`/post/${get(postData, 'id', '')}`)
+      return getShareUrl(`/post/${get(postData, 'id', '')}`)
     case 'memo':
-    return get(postData, 'link') || getShareUrl(`/series/${get(postData, [ 'project', 'slug', ], '')}/${get(postData, 'id', '')}`)
+      return get(postData, 'link') || getShareUrl(`/series/${get(postData, [ 'project', 'slug' ], '')}/${get(postData, 'id', '')}`)
     case 'report':
       return get(postData, 'link') || getReportLink(postData)
     default:
@@ -76,7 +76,7 @@ export function isAnnouncementAccountId (id) {
 
 export function createPost (post = {}) {
   if (isEmpty(post)) { return {} }
-  
+
   return {
     ...post,
     processed: {
@@ -90,7 +90,7 @@ export function createPost (post = {}) {
       linkNameTrim: truncate(post.linkName || '', 20),
       postContentDOM: getPostContentDOM(post),
       postContentStrings: getPostContentStrings(post),
-      postContentStringsTruncate: truncatePostContent(post),
-    },
+      postContentStringsTruncate: truncatePostContent(post)
+    }
   }
 }

@@ -10,7 +10,7 @@
 
 <script>
 import _ from 'lodash'
-import { mapState, mapMutations, } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 
 import SidebarSeriesContentsList from './SidebarSeriesContentsList.vue'
 import NoSSR from 'vue-no-ssr'
@@ -20,21 +20,21 @@ export default {
   components: {
     SidebarSeriesContentsList,
     NoSSR,
-    InfiniteLoading,
+    InfiniteLoading
   },
   data () {
     return {
-      page: 1,
+      page: 1
     }
   },
   computed: {
     ...mapState({
       seriesData: state => _.get(state.DataSeries.publicProjects.normal, 0, []),
-      seriesContentsData : state => state.DataSeriesContents.publicProjectContents,
+      seriesContentsData: state => state.DataSeriesContents.publicProjectContents
     }),
     seriesId () {
       return _.get(this.seriesData, 'id', '')
-    },
+    }
   },
   watch: {
     seriesId: {
@@ -42,12 +42,12 @@ export default {
         this.RESET_PUBLIC_PROJECT_CONTENTS()
         this.page = 1
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   methods: {
     ...mapMutations({
-      RESET_PUBLIC_PROJECT_CONTENTS: 'DataSeriesContents/RESET_PUBLIC_PROJECT_CONTENTS',
+      RESET_PUBLIC_PROJECT_CONTENTS: 'DataSeriesContents/RESET_PUBLIC_PROJECT_CONTENTS'
     }),
 
     infiniteHandler ($state) {
@@ -55,7 +55,7 @@ export default {
         'DataSeriesContents/FETCH',
         {
           project_id: this.seriesId,
-          params: { page: this.page, },
+          params: { page: this.page }
         }
       ).then(res => {
         if (res.body.items.length) {
@@ -65,8 +65,8 @@ export default {
           $state.complete()
         }
       })
-    },
-  },
+    }
+  }
 }
 </script>
 

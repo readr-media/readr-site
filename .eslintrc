@@ -1,7 +1,7 @@
 {
   "root": true,
   "extends": [
-    "eslint:recommended",
+    "standard",
     "plugin:vue/recommended"
   ],
   "parserOptions": {
@@ -10,13 +10,6 @@
   "plugins": [
       "import"
   ],
-  "rules": { 
-    "array-bracket-spacing": [ 2, "always" ],
-    "camelcase": [ 0, "" ],
-    "comma-dangle": [ 2, "always" ],  
-    "no-console": 1,
-    "yoda": [ 0, "never" ]
-  },
   "globals": {
     "Coral": true,
     "FB": true,

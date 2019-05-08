@@ -44,26 +44,26 @@
 </template>
 
 <script>
-import { get, truncate, } from 'lodash'
+import { get, truncate } from 'lodash'
 import moment from 'moment'
 
 export default {
   props: {
     item: {
       type: Object,
-      default: () => {},
+      default: () => {}
     },
     theme: {
       type: String,
-      default: 'normal',
-    },
+      default: 'normal'
+    }
   },
   data () {
     return {
       descriptionLimit: {
         normal: 70,
-        narrow: 50,
-      },
+        narrow: 50
+      }
     }
   },
   computed: {
@@ -81,9 +81,9 @@ export default {
       return moment(date).format('YYYY-MM-DD')
     },
     description () {
-      return truncate(get(this.item, 'description', ''), { length: this.descriptionLimit[this.theme], })
-    },
-  },
+      return truncate(get(this.item, 'description', ''), { length: this.descriptionLimit[this.theme] })
+    }
+  }
 }
 </script>
 

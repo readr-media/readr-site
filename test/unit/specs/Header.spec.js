@@ -1,15 +1,15 @@
 import AppHeader from 'src/components/header/AppHeader.vue'
 // import Vue from 'vue'
-import { WORDING_HEADER_LOGIN, WORDING_HEADER_LOGOUT, WORIDNG_HEADER_MEMBER_CENTRE, } from 'src/constants'
-import { mount, } from 'avoriaz'
+import { WORDING_HEADER_LOGIN, WORDING_HEADER_LOGOUT, WORIDNG_HEADER_MEMBER_CENTRE } from 'src/constants'
+import { mount } from 'avoriaz'
 
 describe('AppHeader.vue', () => {
   const HeaderComponent = mount(AppHeader, {
     data () {
       return {
-        isClientSide: true,
+        isClientSide: true
       }
-    },
+    }
   })
   const headerTop = HeaderComponent.find('.header__top')[0]
   const headerBtm = HeaderComponent.find('.header__bottom')[0]
@@ -46,14 +46,14 @@ describe('AppHeader.vue', () => {
       'celebrity-talk': '名人聊新聞',
       'hot-talk': '熱門評論',
       'chief-editor-list': '總編列表',
-      'projects': '新聞專題',
+      'projects': '新聞專題'
     }
 
     // act
     // HeaderComponent.vm.sections = sections
     // HeaderComponent.update()
     HeaderComponent.setProps({
-      sections,
+      sections
     })
     // const navChildren = nav.find('a')
     // console.log(navChildren)
@@ -73,13 +73,13 @@ describe('AppHeader.vue', () => {
       computed: {
         isLoggedIn: () => {
           return false
-        },
+        }
       },
       data () {
         return {
-          isClientSide: true,
+          isClientSide: true
         }
-      },
+      }
     })
     const loginBtn = HeaderComponentForLogin.find('.login-status__login-btn')[0]
     const logoutBtn = HeaderComponentForLogin.find('.login-status__logout-btn')[0]
@@ -100,13 +100,13 @@ describe('AppHeader.vue', () => {
         },
         userNickname: () => {
           return nicknameText
-        },
+        }
       },
       data () {
         return {
-          isClientSide: true,
+          isClientSide: true
         }
-      },
+      }
     })
     const loginBtn = HeaderComponentForLogout.find('.login-status__login-btn')[0]
     const logoutBtn = HeaderComponentForLogout.find('.login-status__logout-btn')[0]
@@ -121,9 +121,9 @@ describe('AppHeader.vue', () => {
     const basicSet = {
       data () {
         return {
-          isClientSide: true,
+          isClientSide: true
         }
-      },
+      }
     }
     const nicknameText = 'GotNickname'
     const HeaderComponentForNicknameExisting = mount(AppHeader, Object.assign({}, basicSet, {
@@ -131,10 +131,10 @@ describe('AppHeader.vue', () => {
         isLoggedIn: () => (true),
         currentUser: () => {
           return {
-            nickname: nicknameText,
+            nickname: nicknameText
           }
-        },
-      },
+        }
+      }
     }))
     let nickname = HeaderComponentForNicknameExisting.find('.login-status__nickname')[0]
     expect(nickname.text()).to.be.string(nicknameText)
@@ -145,10 +145,10 @@ describe('AppHeader.vue', () => {
         isLoggedIn: () => (true),
         currentUser: () => {
           return {
-            name: nameText,
+            name: nameText
           }
-        },
-      },
+        }
+      }
     }))
     nickname = HeaderComponentForNicknameNoneButNameExisting.find('.login-status__nickname')[0]
     expect(nickname.text()).to.be.string(nameText)
@@ -158,8 +158,8 @@ describe('AppHeader.vue', () => {
         isLoggedIn: () => (true),
         currentUser: () => {
           return {}
-        },
-      },
+        }
+      }
     }))
     nickname = HeaderComponentForNicknameAndNameNone.find('.login-status__nickname')[0]
     expect(nickname.text()).to.be.string(WORIDNG_HEADER_MEMBER_CENTRE)

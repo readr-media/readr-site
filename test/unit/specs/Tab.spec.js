@@ -1,5 +1,5 @@
 import Tab from 'src/components/Tab.vue'
-import { mount, } from 'avoriaz'
+import { mount } from 'avoriaz'
 
 describe('Tab.vue', () => {
   const TabComp = mount(Tab)

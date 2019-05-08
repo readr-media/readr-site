@@ -14,9 +14,10 @@
             target="_blank"
             rel="noopener"
           >
-            <img 
-              v-lazy="'/public/2.0/icons/fb.png'" 
-              alt="">
+            <img
+              v-lazy="'/public/2.0/icons/fb.png'"
+              alt=""
+            >
           </a>
         </li>
         <li class="links-icon-list__list-item">
@@ -26,9 +27,10 @@
             target="_blank"
             rel="noopener"
           >
-            <img 
-              v-lazy="'/public/2.0/icons/twitter.png'" 
-              alt="">
+            <img
+              v-lazy="'/public/2.0/icons/twitter.png'"
+              alt=""
+            >
           </a>
         </li>
         <li class="links-icon-list__list-item">
@@ -38,9 +40,10 @@
             target="_blank"
             rel="noopener"
           >
-            <img 
-              v-lazy="'/public/2.0/icons/ig.png'" 
-              alt="">
+            <img
+              v-lazy="'/public/2.0/icons/ig.png'"
+              alt=""
+            >
           </a>
         </li>
         <li class="links-icon-list__list-item">
@@ -50,9 +53,10 @@
             target="_blank"
             rel="noopener"
           >
-            <img 
-              v-lazy="'/public/2.0/icons/mm.png'" 
-              alt="">
+            <img
+              v-lazy="'/public/2.0/icons/mm.png'"
+              alt=""
+            >
           </a>
         </li>
       </ul>
@@ -105,13 +109,13 @@
 </template>
 
 <script>
-import { mapState, mapMutations, } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
 
 import {
   URL_FB_FANPAGE,
   URL_TWITTER,
   URL_IG,
-  URL_MM,
+  URL_MM
 } from 'src/constants'
 
 export default {
@@ -120,43 +124,43 @@ export default {
       URL_FB_FANPAGE,
       URL_TWITTER,
       URL_IG,
-      URL_MM,
+      URL_MM
     }
   },
   computed: {
     ...mapState({
-      shouldHideFooter: state => state.UIAppFooter.shouldHide,
-    }),
+      shouldHideFooter: state => state.UIAppFooter.shouldHide
+    })
   },
   watch: {
     '$route.name': {
       handler (value) {
         this.SET_HIDE_FOOTER(value === 'report')
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   mounted () {
     window.addEventListener('message', e => {
       // if (e.origin !== window.origin) { return }
-      const { data = '', } = e
+      const { data = '' } = e
       switch (data) {
         case 'scrollReachBottom':
           this.SET_HIDE_FOOTER(false)
-          break;
+          break
         case 'scrollLeaveBottom':
           this.SET_HIDE_FOOTER(true)
-          break;
+          break
         default:
-          break;
+          break
       }
     })
   },
   methods: {
     ...mapMutations({
-      SET_HIDE_FOOTER: 'UIAppFooter/SET_HIDE',
-    }),
-  },
+      SET_HIDE_FOOTER: 'UIAppFooter/SET_HIDE'
+    })
+  }
 }
 </script>
 

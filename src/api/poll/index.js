@@ -1,6 +1,6 @@
-import { constructUrlWithQuery, fetch, fetchInStrict, post, put, } from 'src/api/comm'
-import { getHost, } from 'src/util/comm'
-import { decamelizeKeys, } from 'humps'
+import { constructUrlWithQuery, fetch, fetchInStrict, post, put } from 'src/api/comm'
+import { getHost } from 'src/util/comm'
+import { decamelizeKeys } from 'humps'
 
 const host = getHost()
 
@@ -28,5 +28,5 @@ export {
   fetchChosenChoices,
   fetchPublicPolls,
   insertChosenChoice,
-  updateChosenChoice,
+  updateChosenChoice
 }
