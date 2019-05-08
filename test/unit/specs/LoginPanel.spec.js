@@ -5,8 +5,8 @@ import GooglePlusLogin from 'src/components/login/GooglePlusLogin.vue'
 import Register from 'src/components/register/Register.vue'
 import Vue from 'vue'
 import sinon from 'sinon'
-import { get, } from 'lodash'
-import { mount, } from 'avoriaz'
+import { get } from 'lodash'
+import { mount } from 'avoriaz'
 
 import VueI18n from 'vue-i18n'
 import ZHTW from 'src/locale/zh-TW'
@@ -16,11 +16,11 @@ describe('LoginPanel.vue', () => {
   let i18n
   beforeEach(() => {
     const messages = {
-      'zh-TW': ZHTW,
+      'zh-TW': ZHTW
     }
     i18n = new VueI18n({
       locale: 'zh-TW', // set locale
-      messages, // set locale messages
+      messages // set locale messages
     })
   })
 
@@ -30,16 +30,16 @@ describe('LoginPanel.vue', () => {
 
   const mockRouterLink = {
     name: 'router-link',
-    render: h => h('div'),
+    render: h => h('div')
   }
   Vue.component('router-link', mockRouterLink)
   sinon.stub(LoginPanel, 'beforeMount')
 
   it('should display two blocks: left and right', () => {
-    LoginPanelComponent = mount(LoginPanel, { i18n, })
+    LoginPanelComponent = mount(LoginPanel, { i18n })
     blockLeft = LoginPanelComponent.find('.login-panel__left')[0]
     blockRight = LoginPanelComponent.find('.login-panel__right')[0]
-  
+
     expect(blockLeft).to.not.be.undefined
     expect(blockRight).to.not.be.undefined
   })
@@ -76,9 +76,9 @@ describe('LoginPanel.vue', () => {
       i18n,
       data () {
         return {
-          isLoginTabAcitve: false,
+          isLoginTabAcitve: false
         }
-      },
+      }
     })
     blockLeftRegister = LoginPanelComponentRegister.find('.login-panel__left')[0]
     blockRightRegister = LoginPanelComponentRegister.find('.login-panel__right')[0]

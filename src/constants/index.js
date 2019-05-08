@@ -1,5 +1,5 @@
-import { ROLE_MAP as ROLE_MAP_CONF, } from 'api/config'
-import { get, } from 'lodash'
+import { ROLE_MAP as ROLE_MAP_CONF } from 'api/config'
+import { get } from 'lodash'
 import projectList from './projectList'
 export const PROJECTS = projectList
 
@@ -20,10 +20,10 @@ export const URL_SHARE_GOOGLEPLUS = 'https://plus.google.com/share'
 export const ANNOUNCEMENT_ACCOUNT_ID = '126'
 
 export const ROLE_MAP = [
-  { key: get(ROLE_MAP_CONF, 'ADMIN'), value: '管理員', route: 'admin', },
-  { key: get(ROLE_MAP_CONF, 'EDITOR'), value: '編輯', route: 'editor', },
-  { key: get(ROLE_MAP_CONF, 'GUESTEDITOR'), value: '總編', route: 'guesteditor', },
-  { key: get(ROLE_MAP_CONF, 'MEMBER'), value: '會員', route: 'member', },
+  { key: get(ROLE_MAP_CONF, 'ADMIN'), value: '管理員', route: 'admin' },
+  { key: get(ROLE_MAP_CONF, 'EDITOR'), value: '編輯', route: 'editor' },
+  { key: get(ROLE_MAP_CONF, 'GUESTEDITOR'), value: '總編', route: 'guesteditor' },
+  { key: get(ROLE_MAP_CONF, 'MEMBER'), value: '會員', route: 'member' }
 ]
 
 export const SECTIONS_DEFAULT = [
@@ -32,17 +32,17 @@ export const SECTIONS_DEFAULT = [
   'HOT_TALK',
   'CHIEF_EDITOR_LIST',
   'PROJECTS',
-  'PROJECTS_IN_PROGRESS',
+  'PROJECTS_IN_PROGRESS'
 ]
 
 export const SETTING_NOTIFICATION = [
   // { name: 'COMMENT_PUSH', key: 'comment_push', },
-  // { name: 'KEYWORD_PUSH', key: 'xxxxx', },  
-  { name: 'DAILY_PUSH', key: 'daily_push', },  
-  { name: 'POST_PUSH', key: 'post_push', },
+  // { name: 'KEYWORD_PUSH', key: 'xxxxx', },
+  { name: 'DAILY_PUSH', key: 'daily_push' },
+  { name: 'POST_PUSH', key: 'post_push' }
 ]
 export const SETTING_ACCOUNT = [
-  { name: 'HIDE_PROFILE', key: 'hide_profile', },
+  { name: 'HIDE_PROFILE', key: 'hide_profile' }
 ]
 
 export const MM_SITE_DOMAIN = 'mirrormedia.mg'
@@ -74,7 +74,7 @@ export const OLD_PROJECTS_SLUGS = [
   'rent-king',
   'rent-house',
   // 'political-contribution',
-  'fertility',
+  'fertility'
 ]
 
 // Image upload max size 30 MB
@@ -85,7 +85,7 @@ export const RESOURCE_TYPE = {
   POST: 'post',
   RPOJECT: 'series',
   MEMO: 'memo',
-  REPORT: 'project',
+  REPORT: 'project'
 }
 
 export const NOTIFICATION_TYPE = {
@@ -106,16 +106,16 @@ export const NOTIFICATION_TYPE = {
   FOLLOW_TAG_PROJECT_PROGRESS: 'follow_tag_project_progress',
   FOLLOW_TAG_REPORT: 'follow_tag_report',
   FOLLOW_TAG_MEMO: 'follow_tag_memo',
-  FOLLOW_TAG_POST: 'follow_tag_post',
+  FOLLOW_TAG_POST: 'follow_tag_post'
 }
 
-export const IMAGE_SIZE = [ 'mobile@2x', 'mobile@3x', 'mobile@4x', 'tablet@1x', 'tablet@2x', 'desktop@1x', 'desktop@2x', ]
+export const IMAGE_SIZE = [ 'mobile@2x', 'mobile@3x', 'mobile@4x', 'tablet@1x', 'tablet@2x', 'desktop@1x', 'desktop@2x' ]
 export const IMAGE_SIZE_RESOLUTION = [
-  { target: 'mobile@4x', width: 1500, },
-  { target: 'mobile@3x', width: 1200, },
-  { target: 'mobile@2x', width: 800, },
-  { target: 'tablet@2x', width: 2700, },
-  { target: 'tablet@1x', width: 1000, },
-  { target: 'desktop@2x', width: 3000, },
-  { target: 'desktop@1x', width: 2000, },
+  { target: 'mobile@4x', width: 1500 },
+  { target: 'mobile@3x', width: 1200 },
+  { target: 'mobile@2x', width: 800 },
+  { target: 'tablet@2x', width: 2700 },
+  { target: 'tablet@1x', width: 1000 },
+  { target: 'desktop@2x', width: 3000 },
+  { target: 'desktop@1x', width: 2000 }
 ]

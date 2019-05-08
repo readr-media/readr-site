@@ -1,15 +1,15 @@
-import { get, map, } from 'lodash'
+import { get, map } from 'lodash'
 import sanitizeHtml from 'sanitize-html'
-import { sanitizeHtmlOptions, } from './config'
-const dom = require('xmldom').DOMParser
-const seializer  = require('xmldom').XMLSerializer
+import { sanitizeHtmlOptions } from './config'
+const DOMParser = require('xmldom').DOMParser
+const XMLSerializer = require('xmldom').XMLSerializer
 
 const {
   allowedAttributes,
   allowedIframeHostnames,
   allowedTags,
   customContentBreakTagName,
-  transformTags,
+  transformTags
 } = sanitizeHtmlOptions
 
 export function getPostContentDOM (post) {
@@ -17,11 +17,11 @@ export function getPostContentDOM (post) {
     allowedTags: false,
     allowedAttributes,
     allowedIframeHostnames,
-    selfClosing: [ 'img', customContentBreakTagName, ],
-    transformTags,
+    selfClosing: [ 'img', customContentBreakTagName ],
+    transformTags
   }
   const wrappedContent = sanitizeHtml(post.content, options)
-  const doc = new dom().parseFromString(wrappedContent)
+  const doc = new DOMParser().parseFromString(wrappedContent)
   return doc
 }
 
@@ -32,10 +32,10 @@ export function getPostContentStrings (post) {
     allowedTags,
     allowedAttributes,
     allowedIframeHostnames,
-    transformTags,
+    transformTags
   }
   const postParagraphs = map(get(getPostContentDOM(post), 'childNodes'), p => {
-    const pHtmlStr = new seializer().serializeToString(p)
+    const pHtmlStr = new XMLSerializer().serializeToString(p)
     const exp = /<([a-zA-Z0-9]*)\b[^>]*\/>/g
     return sanitizeHtml(pHtmlStr.replace(exp, '$&</$1>'), options)
   })

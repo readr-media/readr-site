@@ -17,43 +17,43 @@ export function createStore () {
       DataSeries,
       DataSeriesContents,
       UIAppFooter,
-      UIAppHeader,
+      UIAppHeader
     },
     state: {
       'chosenChoices': [],
       'clearUpPointsFlag': {
         'active': false,
-        'item': {},        
+        'item': {}
       },
       'customEditors': [],
       'commentCount': [],
       'commentsForHome': [],
       'consumeFlag': {
         'active': false,
-        'item': {},
+        'item': {}
       },
       'conversationFlag': {
         'active': false,
-        'message': '',
-      },        
+        'message': ''
+      },
       'donateFlag': {
         'active': false,
-        'item': {},
+        'item': {}
       },
       'embedPoll': {},
       'emotionByResource': {
         'memo': {
           'like': [],
-          'dislike': [],
+          'dislike': []
         },
         'post': {
           'like': [],
-          'dislike': [],
+          'dislike': []
         },
         'report': {
           'like': [],
-          'dislike': [],
-        },
+          'dislike': []
+        }
       },
       'followingByResource': {
         'member': [],
@@ -61,31 +61,31 @@ export function createStore () {
         'post': [],
         'project': [],
         'report': [],
-        'tag': [],
+        'tag': []
       },
       'followingByUser': {},
       'followingByUserStats': {
         post: {
           review: {},
-          news: {},
+          news: {}
         },
         report: {},
         memo: {},
         project: {},
-        tag: {},
+        tag: {}
       },
       'invitation_switch_status': false,
       'invitation_quota': 0,
       'isClientSide': false,
       'isLoggedIn': false,
-      'isRecaptchaLoaded': false,      
+      'isRecaptchaLoaded': false,
       'isTappayRequired': false,
       'isTappayLoaded': false,
       'itemsByTag': {},
       'loginAskFlag': {
         'active': false,
-        'message': '',
-      },    
+        'message': ''
+      },
       'members': [],
       'membersCount': 0,
       'memos': [],
@@ -117,7 +117,7 @@ export function createStore () {
         done: [],
         normal: [],
         recommends: [],
-        trends: [],
+        trends: []
       },
       'publicProjectSingle': {},
       'publicProjectContents': [],
@@ -127,14 +127,14 @@ export function createStore () {
       'publicVideosCount': 0,
       'register-token': '',
       'searchResult': {
-        'items': [],
+        'items': []
       },
       'tags': [],
       'tagsIsMouseover': {},
-      'tagsCount': 0,
+      'tagsCount': 0
     },
     actions,
     mutations,
-    getters,
+    getters
   })
 }

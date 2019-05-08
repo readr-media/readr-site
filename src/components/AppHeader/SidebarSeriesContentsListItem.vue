@@ -6,8 +6,8 @@
     >
       <div class="list-item__img-wrapper img-wrapper">
         <img
-          v-lazy="image"
           :key="image"
+          v-lazy="image"
           alt=""
         >
       </div>
@@ -31,8 +31,8 @@ export default {
     item: {
       type: Object,
       default: () => {},
-      required: true,
-    },
+      required: true
+    }
   },
   computed: {
     id () {
@@ -45,11 +45,11 @@ export default {
       return _.get(this.item, 'title', '')
     },
     content () {
-      const sanitized = sanitizeHtml(_.get(this.item, 'content', { allowedTags: [ 'div', 'p', 'a', ], }))
+      const sanitized = sanitizeHtml(_.get(this.item, 'content', { allowedTags: [ 'div', 'p', 'a' ] }))
       const truncated = truncate(sanitized, 70)
       return truncated
-    },
-  },
+    }
+  }
 }
 </script>
 

@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import 'es6-promise/auto'
-import { ROLE_MAP, } from './constants'
-import { createApp, } from './app'
-import { filter, get, } from 'lodash'
-import { getToken, removeToken, } from './util/services'
+import { ROLE_MAP } from './constants'
+import { createApp } from './app'
+import { filter, get } from 'lodash'
+import { getToken, removeToken } from './util/services'
 import ProgressBar from './components/ProgressBar.vue'
 // import(/* webpackChunkName: "trace-worker" */ './trace-worker.js')
 
@@ -12,9 +12,8 @@ const bar = Vue.prototype.$bar = new Vue(ProgressBar).$mount()
 document.body.appendChild(bar.$el)
 
 const debug = require('debug')('CLIENT:entry-client')
-const { UserAgent, } = require('express-useragent')
-const { app, i18n, router, store, } = createApp()
-
+const { UserAgent } = require('express-useragent')
+const { app, i18n, router, store } = createApp()
 
 // prime the store with server-initialized state.
 // the state is determined during SSR and inlined in the page markup.
@@ -22,22 +21,22 @@ if (window.__INITIAL_STATE__) {
   store.replaceState(window.__INITIAL_STATE__)
 }
 
-const exp_localhost = /localhost/
-const exp_dev = /(dev)|(localhost)/
-const exp_mobile = /^m/
+const expLocalhost = /localhost/
+const expDev = /(dev)|(localhost)/
+const expMobile = /^m/
 const useragent = new UserAgent().parse(navigator.userAgent)
-const { HOST, HOST_MOBILE, } = get(store, 'state.setting')
-const { host, pathname, search, } = location
+const { HOST, HOST_MOBILE } = get(store, 'state.setting')
+const { host, pathname, search } = location
 
-if (!exp_localhost.test(host)) {
-  debug('STAGE:', exp_dev.test(host) ? 'DEV' : 'PROD')
+if (!expLocalhost.test(host)) {
+  debug('STAGE:', expDev.test(host) ? 'DEV' : 'PROD')
   debug('CURR HOST:', host)
   if (HOST && HOST_MOBILE) {
-    if ((useragent.isMobile || useragent.isTablet) && !exp_mobile.test(host)) {
+    if ((useragent.isMobile || useragent.isTablet) && !expMobile.test(host)) {
       /** Redirect to mobile version */
       debug('GOING TO', `${HOST_MOBILE}${pathname}${search}`)
       location.replace(`${HOST_MOBILE}${pathname}${search}`)
-    } else if (useragent.isDesktop && exp_mobile.test(host)) {
+    } else if (useragent.isDesktop && expMobile.test(host)) {
       /** Redirect to desktop version */
       debug('GOING TO', `${HOST}${pathname}${search}`)
       location.replace(`${HOST}${pathname}${search}`)
@@ -52,30 +51,30 @@ if (!exp_localhost.test(host)) {
 
 // a global mixin that calls `asyncData` when a route component's params change
 Vue.mixin({
-  beforeRouteEnter (to, from, next) {    
+  beforeRouteEnter (to, from, next) {
     const cookie = getToken()
-    const permission = get(to, [ 'meta', 'permission', ])
+    const permission = get(to, [ 'meta', 'permission' ])
     const preRouteInit = cookie
       ? !get(store, 'state.profile.role') || !get(store, 'state.isLoggedIn')
-      ? [
-          store.dispatch('CHECK_LOGIN_STATUS', { params: { cookie, }, }).then(() => debug('CHECKT LOGGIN STATUS')),
-          store.dispatch('GET_PROFILE', { params: { cookie, }, }).then(() => debug('FETCH DATA')),
+        ? [
+          store.dispatch('CHECK_LOGIN_STATUS', { params: { cookie } }).then(() => debug('CHECKT LOGGIN STATUS')),
+          store.dispatch('GET_PROFILE', { params: { cookie } }).then(() => debug('FETCH DATA'))
         ]
-      : [ new Promise((rslv) => rslv()), ]
-      : [ new Promise((rslv) => rslv()), ]
-    
+        : [ new Promise((resolve) => resolve()) ]
+      : [ new Promise((resolve) => resolve()) ]
+
     debug('router link enter somewhere.', to, from)
     debug('permission', permission)
     debug('cookie', cookie)
     Promise.all([
-      ...preRouteInit,
+      ...preRouteInit
     ]).then(() => {
       debug(get(store, 'state.profile.role'))
       debug(get(store, 'state.isLoggedIn'))
       if (permission) {
-        next(vm => { 
+        next(vm => {
           if (cookie) {
-            const role = get(filter(ROLE_MAP, { key: get(vm, '$store.state.profile.role'), }), [ 0, 'route', ], 'visitor') 
+            const role = get(filter(ROLE_MAP, { key: get(vm, '$store.state.profile.role') }), [ 0, 'route' ], 'visitor')
             debug('role', role)
             if (role === 'visitor' || (permission !== 'member' && permission !== role)) {
               /** User doesn't have the right to go to route "to". So, go back to route "from" */
@@ -85,9 +84,9 @@ Vue.mixin({
           } else {
             /** Cookie doesn't exist or fetching the profile in fail. So, go back to route "from". */
             debug(`Cookie doesn't exist or fetching the profile in fail. So, go back to route "/login".`)
-            next('/login')            
+            next('/login')
           }
-        }) 
+        })
       } else {
         /** Route "to" doesn't have any permission setting. So, go to route "to" without problem. */
         debug(`Route "to" doesn't have any permission setting. So, go to route "to" without problem.`)
@@ -101,23 +100,23 @@ Vue.mixin({
   },
   beforeRouteUpdate (to, from, next) {
     debug('router link to somewhere.', to.fullPath)
-    const { asyncData, } = this.$options
+    const { asyncData } = this.$options
     if (asyncData) {
       asyncData({
         store: this.$store,
         route: to,
-        router: this.$router,
+        router: this.$router
       }).then(next).catch(next)
     } else {
       next()
     }
-  },
+  }
 })
 
 debug('store.state.server_url', store.state.server_url)
 debug('pathname', pathname)
 if (store.state.server_url !== pathname) {
-  router.push(store.state.server_url) 
+  router.push(store.state.server_url)
 }
 store.state.useragent = useragent
 
@@ -141,7 +140,7 @@ router.onReady(() => {
     }
 
     bar.start()
-    Promise.all(asyncDataHooks.map(hook => hook({ store, route: to, i18n, })))
+    Promise.all(asyncDataHooks.map(hook => hook({ store, route: to, i18n })))
       .then(() => {
         bar.finish()
         next()
@@ -154,7 +153,7 @@ router.onReady(() => {
 })
 
 // service worker
-if ('https:' === location.protocol && navigator.serviceWorker) {
+if (location.protocol === 'https:' && navigator.serviceWorker) {
   navigator.serviceWorker.register('/service-worker.js')
   navigator.serviceWorker.ready.then(() => debug('Ready!', navigator.serviceWorker))
   navigator.serviceWorker.addEventListener('message', event => debug('Got Msg from dervice-worker!' + event.data))

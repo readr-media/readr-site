@@ -15,47 +15,47 @@ export default Object.assign({
   SET_CLIENT_SIDE: (state) => {
     state['isClientSide'] = true
   },
-  SWITCH_CONVERSATION: (state, { active, message, type, }) => {
-    state['conversationFlag'] = { active, message, type, }
-  },  
-  SET_CUSTOM_EDITORS: (state, { members, }) => {
+  SWITCH_CONVERSATION: (state, { active, message, type }) => {
+    state['conversationFlag'] = { active, message, type }
+  },
+  SET_CUSTOM_EDITORS: (state, { members }) => {
     state['customEditors'] = members
   },
-  SET_LOGGEIN_STATUS: (state, { body, }) => {
+  SET_LOGGEIN_STATUS: (state, { body }) => {
     state['isLoggedIn'] = body
   },
-  SET_TOKEN: (state, { token, type, }) => {
+  SET_TOKEN: (state, { token, type }) => {
     switch (type) {
       case 'register':
         state['register-token'] = token
         break
     }
   },
-  SET_NOTIFICATION: (state, { items, }) => {
+  SET_NOTIFICATION: (state, { items }) => {
     state['notification'] = items
   },
-  SET_PUBLIC_REPORTS: (state, { reports, }) => {
+  SET_PUBLIC_REPORTS: (state, { reports }) => {
     state['publicReports'] = reports
   },
-  SET_PUBLIC_VIDEOS: (state, { videos, }) => {
+  SET_PUBLIC_VIDEOS: (state, { videos }) => {
     state['publicVideos'] = videos.items
   },
-  SET_PUBLIC_VIDEOS_COUNT: (state, { meta, }) => {
+  SET_PUBLIC_VIDEOS_COUNT: (state, { meta }) => {
     state['publicVideosCount'] = meta.total
   },
-  SET_RECAPTCHA_LOADED: (state, { isLoaded, }) => {
+  SET_RECAPTCHA_LOADED: (state, { isLoaded }) => {
     state['isRecaptchaLoaded'] = isLoaded
   },
-  SET_SEARCH: (state, { searchResult, }) => {
+  SET_SEARCH: (state, { searchResult }) => {
     debug('searchResult:')
     debug(searchResult)
     state['searchResult'] = searchResult
   },
-  SET_INVITATION_QUOTA: (state, { quota, }) => {
+  SET_INVITATION_QUOTA: (state, { quota }) => {
     state['invitation_quota'] = quota
   },
-  SWITCH_ON_LOGIN_ASK: (state, { active, message, type, }) => {
-    state['loginAskFlag'] = { active, message, type, }
+  SWITCH_ON_LOGIN_ASK: (state, { active, message, type }) => {
+    state['loginAskFlag'] = { active, message, type }
   },
   /**
    * invitation
@@ -65,5 +65,5 @@ export default Object.assign({
   },
   INVITATION_SWITCH_OFF: (state) => {
     state['invitation_switch_status'] = false
-  },
+  }
 }, mutationsComment, mutationsEmotion, mutationsFollowing, mutationsMember, mutationsMemo, mutationsPoints, mutationsPoll, mutationsPost, mutationsProject, mutationsTag)

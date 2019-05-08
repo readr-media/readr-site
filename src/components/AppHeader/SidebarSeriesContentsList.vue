@@ -14,15 +14,15 @@ import ListItem from './SidebarSeriesContentsListItem.vue'
 
 export default {
   components: {
-    ListItem,
+    ListItem
   },
   props: {
     items: {
       type: Array,
       default: () => [],
-      required: true,
-    },
-  },
+      required: true
+    }
+  }
 }
 </script>
 

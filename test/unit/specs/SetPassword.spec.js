@@ -1,7 +1,7 @@
 import SetPassword from 'src/views/SetPassword.vue'
 import AppHeader from 'src/components/header/AppHeader.vue'
 import InitBasicProfile from 'src/components/register/InitBasicProfile.vue'
-import { mount, } from 'avoriaz'
+import { mount } from 'avoriaz'
 
 describe('SetPassword.vue', () => {
   const SetPasswordComponent = mount(SetPassword)

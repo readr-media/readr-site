@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import App from './App.vue'
-import { createStore, } from './store'
-import { createRouter, } from './router'
-import { sync, } from 'vuex-router-sync'
+import { createStore } from './store'
+import { createRouter } from './router'
+import { sync } from 'vuex-router-sync'
 // import titleMetaMixin from './util/titleMeta'
 import * as filters from './util/filters'
 
@@ -15,7 +15,7 @@ import VueLazyload from 'vue-lazyload'
 Vue.use(VueI18n)
 Vue.use(VueMeta)
 Vue.use(VueLazyload, {
-  lazyComponent: true,
+  lazyComponent: true
 })
 
 // Quill Editor
@@ -25,7 +25,7 @@ if (process.browser) {
   const Block = VueQuillEditor.Quill.import('blots/block')
   const BlockEmbed = VueQuillEditor.Quill.import('blots/block/embed')
   class Hr extends BlockEmbed {
-    static create(value) {
+    static create (value) {
       const node = super.create(value)
       return node
     }
@@ -34,7 +34,7 @@ if (process.browser) {
   Hr.tagName = 'hr'
 
   class Figcaption extends Block {
-    static create() {
+    static create () {
       let node = super.create()
       node.innerText = node.innerText || `請在此輸入圖說`
       return node
@@ -43,8 +43,8 @@ if (process.browser) {
   Figcaption.blotName = 'figcaption'
   Figcaption.tagName = 'figcaption'
 
-  VueQuillEditor.Quill.register({ 'formats/hr': Hr, })
-  VueQuillEditor.Quill.register({ 'formats/figcaption': Figcaption, })
+  VueQuillEditor.Quill.register({ 'formats/hr': Hr })
+  VueQuillEditor.Quill.register({ 'formats/figcaption': Figcaption })
   Vue.use(VueQuillEditor)
 }
 
@@ -65,11 +65,11 @@ export function createApp () {
 
   const messages = {
     'zh-TW': ZHTW,
-    'en': EN,
+    'en': EN
   }
   const i18n = new VueI18n({
     locale: 'zh-TW', // set locale
-    messages, // set locale messages
+    messages // set locale messages
   })
 
   // sync the router with the vuex store.
@@ -83,11 +83,11 @@ export function createApp () {
     i18n,
     router,
     store,
-    render: h => h(App),
+    render: h => h(App)
   })
 
   // expose the app, the router and the store.
   // note we are not mounting the app here, since bootstrapping will be
   // different depending on whether we are in a browser or on the server.
-  return { app, i18n, router, store, }
+  return { app, i18n, router, store }
 }

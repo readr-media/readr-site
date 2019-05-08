@@ -1,14 +1,14 @@
 <template>
-  <div 
-    id="app" 
+  <div
+    id="app"
     class="app"
   >
     <AppHeader class="app__header" />
-    <transition 
-      name="fade" 
+    <transition
+      name="fade"
       mode="out-in"
     >
-      <router-view class="view"/>
+      <router-view class="view" />
     </transition>
     <AppFooter class="app__footer" />
   </div>
@@ -18,19 +18,19 @@
 import AppHeader from 'src/components/AppHeader/AppHeader.vue'
 import AppFooter from 'src/components/AppFooter.vue'
 
-import { SITE_FULL, SITE_NAME, } from './constants'
+import { SITE_FULL, SITE_NAME } from './constants'
 
 export default {
   components: {
     AppHeader,
-    AppFooter,
+    AppFooter
   },
   metaInfo: {
     titleTemplate: `%s - ${SITE_NAME}`,
     meta: [
-      { name: 'og:image', content: `${SITE_FULL}/public/og-image.jpg`, },
-    ],
-  },
+      { name: 'og:image', content: `${SITE_FULL}/public/og-image.jpg` }
+    ]
+  }
 }
 </script>
 
@@ -70,6 +70,5 @@ pre
     position fixed
     top 0
     left 0
-
 
 </style>

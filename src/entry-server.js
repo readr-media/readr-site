@@ -1,7 +1,7 @@
-import { filter, get, } from 'lodash'
-import { ROLE_MAP, } from './constants'
-import { createApp, } from './app' 
-import { getProfile, } from './util/services'
+import { filter, get } from 'lodash'
+import { ROLE_MAP } from './constants'
+import { createApp } from './app'
+import { getProfile } from './util/services'
 
 const debug = require('debug')('READR-API:entry-server')
 const isDev = process.env.NODE_ENV !== 'production'
@@ -14,24 +14,24 @@ const isDev = process.env.NODE_ENV !== 'production'
 export default context => {
   return new Promise((resolve, reject) => {
     const s = isDev && Date.now()
-    const { app, i18n, router, store, } = createApp()
+    const { app, i18n, router, store } = createApp()
 
     const meta = app.$meta()
 
-    const { url, cookie, initmember, setting, error, } = context
-    const { route, } = router.resolve(url)
-    const { fullPath, } = route
+    const { url, cookie, initmember, setting, error } = context
+    const { route } = router.resolve(url)
+    const { fullPath } = route
 
     if (fullPath !== url) {
-      return reject({ url: fullPath, })
+      return reject(new Error({ url: fullPath }))
     }
 
     const preRouteInit = cookie ? [
-      getProfile(cookie),
-    ] : [ new Promise((rslv) => rslv()), ]
+      getProfile(cookie)
+    ] : [ new Promise((resolve) => resolve()) ]
 
     Promise.all(preRouteInit).then((res) => {
-      const role = get(filter(ROLE_MAP, { key: get(res, [ 0, 'profile', 'role', ]), }), [ 0, 'route', ], 'visitor')
+      const role = get(filter(ROLE_MAP, { key: get(res, [ 0, 'profile', 'role' ]) }), [ 0, 'route' ], 'visitor')
       const permission = get(route, 'meta.permission')
       const isInitMember = get(route, 'path') === '/initmember'
       debug('permission:', permission)
@@ -40,7 +40,7 @@ export default context => {
 
       let targUrl
       if ((permission && (role === 'visitor' || (permission !== role && permission !== 'member'))) || (isInitMember && !initmember)) {
-        return reject({ code: 403, })
+        return reject(new Error({ code: 403 }))
       } else {
         router.push(url)
         targUrl = url
@@ -55,21 +55,21 @@ export default context => {
         // const matchedComponents = get(route, [ 'matched' ], [])
         // no matched routes
         if (!matchedComponents.length) {
-          return reject({ code: 404, })
+          return reject(new Error({ code: 404 }))
         } else {
-          if (typeof(matchedComponents[ 0 ]) === 'function') {
-            return reject({ url: fullPath, })
+          if (typeof (matchedComponents[ 0 ]) === 'function') {
+            return reject(new Error({ url: fullPath }))
           }
         }
         // Call fetchData hooks on components matched by the route.
         // A preFetch hook dispatches a store action and returns a Promise,
         // which is resolved when the action is complete and store state has been
         // updated.
-        const jobs = matchedComponents.map(({ asyncData, }) => asyncData && asyncData({
+        const jobs = matchedComponents.map(({ asyncData }) => asyncData && asyncData({
           i18n,
           store,
           route: router.currentRoute,
-          router,
+          router
         }))
         Promise.all(jobs).then(() => {
           // isDev && console.log(`data pre-fetch: ${Date.now() - s}ms`)

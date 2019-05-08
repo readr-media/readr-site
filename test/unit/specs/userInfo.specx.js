@@ -1,5 +1,5 @@
 import chai from 'chai'
-import { fetchUser, } from 'src/api'
+import { fetchUser } from 'src/api'
 
 chai.should()
 describe('Api: fetchUser', () => {
@@ -7,7 +7,7 @@ describe('Api: fetchUser', () => {
     // arrange
     const expected = {
       id: '',
-      email: '',
+      email: ''
     }
 
     // act

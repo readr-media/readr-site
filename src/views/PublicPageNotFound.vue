@@ -2,19 +2,19 @@
   <div class="page-not-found">
     <div class="page-not-found__top top">
       <div class="top__back-to-home back-to-home">
-        <img 
-          class="back-to-home__404-img" 
-          src="/public/404.png" 
+        <img
+          class="back-to-home__404-img"
+          src="/public/404.png"
           alt=""
         >
         <div class="back-to-home__to-home to-home">
-          <p 
-            class="to-home__hint" 
+          <p
+            class="to-home__hint"
             v-text="$t('NOT_FOUND.TO_HOME_HINT')"
           />
-          <button 
-            class="to-home__button" 
-            @click="$router.push('/')" 
+          <button
+            class="to-home__button"
+            @click="$router.push('/')"
             v-text="$t('NOT_FOUND.TO_HOME_BUTTON')"
           />
         </div>
@@ -29,20 +29,20 @@
         >
           <router-link :to="project.slug ? `/series/${project.slug}` : '/'">
             <template v-if="isClientSide">
-              <img 
-                v-if="project.heroImage" 
-                :src="getFullUrl(get(project, 'heroImage', ''))" 
-                class="list-item__project-img" 
+              <img
+                v-if="project.heroImage"
+                :src="getFullUrl(get(project, 'heroImage', ''))"
+                class="list-item__project-img"
                 alt=""
               >
-              <div 
-                v-else 
-                class="list-item__project-img list-item__project-img--no-img" 
+              <div
+                v-else
+                class="list-item__project-img list-item__project-img--no-img"
                 v-text="get(project, 'title', '')"
               />
             </template>
-            <p 
-              class="list-item__project-title" 
+            <p
+              class="list-item__project-title"
               v-text="get(project, 'title', '')"
             />
           </router-link>
@@ -53,54 +53,54 @@
 </template>
 
 <script>
-import { get, take, } from 'lodash'
-import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS, } from 'api/config'
-import { getFullUrl, isClientSide, } from 'src/util/comm'
+import { get, take } from 'lodash'
+import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS } from 'api/config'
+import { getFullUrl, isClientSide } from 'src/util/comm'
 
 const DEFAULT_PAGE = 1
 const DEFAULT_SORT = 'project_order,-updated_at'
 const MAXRESULT = 9
 // const debug = require('debug')('CLIENT:404')
 const fetchProjectsList = (store, {
-  max_result = MAXRESULT,
+  maxResult = MAXRESULT,
   page = DEFAULT_PAGE,
-  sort = DEFAULT_SORT,
+  sort = DEFAULT_SORT
 } = {}) => {
   return store.dispatch('GET_PUBLIC_PROJECTS', {
     params: {
-      max_result: max_result,
+      max_result: maxResult,
       page: page,
       sort: sort,
       where: {
-        status: [ PROJECT_STATUS.DONE, PROJECT_STATUS.WIP, ],
-        publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED,
-      },
-    },
+        status: [ PROJECT_STATUS.DONE, PROJECT_STATUS.WIP ],
+        publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED
+      }
+    }
   })
 }
 
 export default {
   name: 'PageNotFound',
-  asyncData ({ store, }) {
-    return fetchProjectsList(store)
-  },
   data () {
     return {
-      projectLimit: 3,
+      projectLimit: 3
     }
   },
   computed: {
     projects () {
-      return take(get(this.$store.state, [ 'publicProjects', 'normal', ], []), this.projectLimit)
+      return take(get(this.$store.state, [ 'publicProjects', 'normal' ], []), this.projectLimit)
     },
-    isClientSide,
+    isClientSide
+  },
+  asyncData ({ store }) {
+    return fetchProjectsList(store)
   },
   methods: {
     get,
     getFullUrl (url) {
       return url.includes('http') ? url : getFullUrl(url)
-    },
-  },
+    }
+  }
 }
 </script>
 

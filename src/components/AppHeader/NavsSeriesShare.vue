@@ -4,9 +4,10 @@
       class="wrapper__share"
       @click="toggleNavs"
     >
-      <img 
-        src="/public/2.0/icons/share-white.png" 
-        alt="">
+      <img
+        src="/public/2.0/icons/share-white.png"
+        alt=""
+      >
     </div>
     <nav
       :class="[
@@ -32,18 +33,18 @@ import ShareLine from 'src/components/Share/ShareLine.vue'
 export default {
   components: {
     ShareFacebook,
-    ShareLine,
+    ShareLine
   },
   data () {
     return {
-      showNavs: false,
+      showNavs: false
     }
   },
   methods: {
     toggleNavs () {
       this.showNavs = !this.showNavs
-    },
-  },
+    }
+  }
 }
 </script>
 

@@ -1,10 +1,10 @@
-import { SITE_FULL, SITE_NAME, } from '../constants'
+import { SITE_FULL, SITE_NAME } from '../constants'
 // import { debug } from 'request/request';
 let isTappaySDKLoaded = false
 const debug = require('debug')('CLIENT:titleMeta')
 
 function getMetaInfo (vm) {
-  const { metaInfo, } = vm.$options
+  const { metaInfo } = vm.$options
   if (metaInfo) {
     return typeof metaInfo === 'function'
       ? metaInfo.call(vm)
@@ -21,7 +21,7 @@ const serverMetaInfoMixin = {
       const description = metaInfo.description
       const metaUrl = metaInfo.metaUrl
       const metaImage = metaInfo.metaImage
-      
+
       if (title) {
         this.$ssrContext.title = `${title} - ${SITE_NAME}`
       } else {
@@ -32,19 +32,19 @@ const serverMetaInfoMixin = {
       } else {
         this.$ssrContext.ogTitle = SITE_NAME
       }
-      if (description) { 
-        this.$ssrContext.description = description 
+      if (description) {
+        this.$ssrContext.description = description
       }
       if (metaUrl) {
         this.$ssrContext.metaUrl = `${SITE_FULL}${metaUrl}`
       }
-      if (metaImage) { 
+      if (metaImage) {
         this.$ssrContext.metaImage = metaImage
       } else {
         this.$ssrContext.metaImage = `${SITE_FULL}/public/og-image.jpg`
       }
     }
-  },
+  }
 }
 
 const updateMeta = (metaInfo, vm) => {
@@ -77,7 +77,7 @@ const updateMeta = (metaInfo, vm) => {
   }
 
   /** If Tappays SDK needed. */
-  const { isTappayNeeded, } = metaInfo
+  const { isTappayNeeded } = metaInfo
 
   if (isTappayNeeded && !isTappaySDKLoaded) {
     const script = document.createElement('script')
@@ -90,7 +90,7 @@ const updateMeta = (metaInfo, vm) => {
     }
     script.setAttribute('src', 'https://js.tappaysdk.com/tpdirect/v3')
     document.head.appendChild(script)
-  }  
+  }
 }
 
 const clientMetaInfoMixin = {
@@ -106,7 +106,7 @@ const clientMetaInfoMixin = {
       /** update current page's mata */
       updateMeta(metaInfo, this)
     }
-  },
+  }
 }
 
 export default process.env.VUE_ENV === 'server'

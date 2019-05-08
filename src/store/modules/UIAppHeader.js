@@ -2,12 +2,12 @@ export default {
   namespaced: true,
   state: {
     shouldHide: false,
-    layoutSeriesRouteNames: [ 'report', ],
+    layoutSeriesRouteNames: [ 'report' ]
   },
   mutations: {
-    SET_HIDE (state, value) { 
+    SET_HIDE (state, value) {
       state.shouldHide = value
-    },
+    }
   },
   actions: {
 
@@ -19,6 +19,6 @@ export default {
       } else {
         return 'default'
       }
-    },
-  },
+    }
+  }
 }
