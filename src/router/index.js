@@ -6,6 +6,7 @@ Vue.use(Router)
 Vue.use(ReadrPerm)
 
 // route-level code splitting
+const AppPost = () => import('../views/AppPost.vue')
 const PublicHome = () => import('../views/PublicHome.vue')
 const PublicReport = () => import('../views/PublicReport.vue')
 
@@ -24,6 +25,7 @@ const router = new Router({
   },
   routes: [
     { name: 'home', path: '/', component: PublicHome },
+    { name: 'post', path: '/post/:postId?', component: AppPost },
     { name: 'report', path: '/report/:slug', component: PublicReport },
     { path: '/404', component: PublicPageNotFound },
     { path: '/500', component: PublicServerError },

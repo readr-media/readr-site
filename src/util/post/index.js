@@ -7,22 +7,18 @@ import { SITE_FULL, ANNOUNCEMENT_ACCOUNT_ID } from 'src/constants'
 import { getShareUrl } from 'src/util/comm'
 import { getReportLink } from './report'
 import { truncatePostContent } from './truncate'
-import { getPostContentDOM, getPostContentStrings } from './content'
+import { getPostContentStrings } from './content'
+
+const postType = {
+  [ POST_TYPE.REVIEW ]: 'normal',
+  [ POST_TYPE.NEWS ]: 'news',
+  [ POST_TYPE.REPORT ]: 'report',
+  [ POST_TYPE.MEMO ]: 'memo'
+}
 
 export function getPostType (post) {
   const type = get(post, 'contentType') || get(post, 'type')
-
-  if (type === POST_TYPE.REVIEW) {
-    return 'normal'
-  } else if (type === POST_TYPE.NEWS) {
-    return 'news'
-  } else if (type === POST_TYPE.REPORT) {
-    return 'report'
-  } else if (type === POST_TYPE.MEMO) {
-    return 'memo'
-  } else {
-    return 'normal'
-  }
+  return postType[type] || 'normal'
 }
 
 export function getResource (post) {
@@ -56,17 +52,13 @@ export function getResourceType (post) {
 
 export function getPostFullUrl (postData) {
   const postType = getPostType(postData)
-  switch (postType) {
-    case 'news':
-    case 'normal':
-      return getShareUrl(`/post/${get(postData, 'id', '')}`)
-    case 'memo':
-      return get(postData, 'link') || getShareUrl(`/series/${get(postData, [ 'project', 'slug' ], '')}/${get(postData, 'id', '')}`)
-    case 'report':
-      return get(postData, 'link') || getReportLink(postData)
-    default:
-      return SITE_FULL
+  const createPostUrl = {
+    'news': getShareUrl(`/post/${get(postData, 'id', '')}`),
+    'normal': getShareUrl(`/post/${get(postData, 'id', '')}`),
+    'memo': get(postData, 'link') || getShareUrl(`/series/${get(postData, [ 'project', 'slug' ], '')}/${get(postData, 'id', '')}`),
+    'report': get(postData, 'link') || getReportLink(postData)
   }
+  return createPostUrl[postType] || SITE_FULL
 }
 
 export function isAnnouncementAccountId (id) {
@@ -79,18 +71,21 @@ export function createPost (post = {}) {
 
   return {
     ...post,
-    processed: {
-      postType: getPostType(post),
-      resource: getResource(post),
-      resourceType: getResourceType(post),
-      commentCount: get(post, 'commentAmount') || 0,
-      hasSource: post.linkTitle,
-      linkTitleTrim: truncate(post.linkTitle || '', 15),
-      linkDescriptionTrim: truncate(post.linkDescription || '', 35),
-      linkNameTrim: truncate(post.linkName || '', 20),
-      postContentDOM: getPostContentDOM(post),
-      postContentStrings: getPostContentStrings(post),
-      postContentStringsTruncate: truncatePostContent(post)
-    }
+    contentProcessed: getPostContentStrings(post),
+    contentTruncateWithoutHtml: truncate(truncatePostContent(post), { length: 35, ellipsis: '...', stripTags: true }),
+    typeProcessed: getPostType(post)
+    // processed: {
+    //   postType: getPostType(post),
+    //   resource: getResource(post),
+    //   resourceType: getResourceType(post),
+    //   commentCount: get(post, 'commentAmount') || 0,
+    //   hasSource: post.linkTitle,
+    //   linkTitleTrim: truncate(post.linkTitle || '', 15),
+    //   linkDescriptionTrim: truncate(post.linkDescription || '', 35),
+    //   linkNameTrim: truncate(post.linkName || '', 20),
+    //   postContentDOM: getPostContentDOM(post),
+    //   postContentStrings: getPostContentStrings(post),
+    //   postContentStringsTruncate: truncatePostContent(post)
+    // }
   }
 }
