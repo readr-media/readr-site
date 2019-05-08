@@ -70,5 +70,10 @@ pre
     position fixed
     top 0
     left 0
+  &-content-area
+    width 60%
+    max-width 800px
+    margin-left auto
+    margin-right auto
 
 </style>

@@ -183,11 +183,12 @@ export function onImageLoaded (url) {
 }
 
 export function getShareUrl (url) {
-  const hostname = location.hostname
-  if (hostname === 'localhost') {
-    return `http://${SITE_DOMAIN_DEV}${url}`
+  if (process.env.VUE_ENV === 'client') {
+    return location.hostname === 'localhost'
+      ? `http://${SITE_DOMAIN_DEV}${url}`
+      : `${location.protocol}//${location.host}${url}`
   }
-  return `${location.protocol}//${location.host}${url}`
+  return `http://${SITE_DOMAIN_DEV}${url}`
 }
 
 export function isLink (content) {

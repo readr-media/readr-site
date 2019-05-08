@@ -1,4 +1,4 @@
-import { get, map } from 'lodash'
+import { filter, get, map } from 'lodash'
 import sanitizeHtml from 'sanitize-html'
 import { sanitizeHtmlOptions } from './config'
 const DOMParser = require('xmldom').DOMParser
@@ -34,10 +34,22 @@ export function getPostContentStrings (post) {
     allowedIframeHostnames,
     transformTags
   }
-  const postParagraphs = map(get(getPostContentDOM(post), 'childNodes'), p => {
+  const contentDOMChildNodes = get(getPostContentDOM(post), 'childNodes')
+  const paragraphsWithoutEmptyOrBreak = filter(contentDOMChildNodes, p => {
     const pHtmlStr = new XMLSerializer().serializeToString(p)
-    const exp = /<([a-zA-Z0-9]*)\b[^>]*\/>/g
-    return sanitizeHtml(pHtmlStr.replace(exp, '$&</$1>'), options)
+    return sanitizeHtml(pHtmlStr, options)
   })
-  return postParagraphs
+
+  const paragraphsHtmlString = map(paragraphsWithoutEmptyOrBreak, p => {
+    const regexHtmlTag = /<[^>]*>/g
+    const regexSpecificHtmlTag = /<(a|em|strong|pre)[^>]*>/g
+    const regexErrorSelfClosingTag = /<(iframe*)\b[^>]*\/>/g
+    let pHtmlStr = new XMLSerializer().serializeToString(p).replace(/&lt;/g, '<')
+    if (pHtmlStr.match(regexErrorSelfClosingTag)) {
+      pHtmlStr = pHtmlStr.replace(regexErrorSelfClosingTag, '$&</$1>').replace('/></iframe', '></iframe')
+    }
+    const sanitize = sanitizeHtml(pHtmlStr, options)
+    return (!sanitize.match(regexHtmlTag) || sanitize.match(regexSpecificHtmlTag)) ? pHtmlStr : sanitize
+  })
+  return paragraphsHtmlString
 }
