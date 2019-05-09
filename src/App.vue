@@ -49,6 +49,7 @@ h2
 p
   font-size 1rem
   &.small
+    color #4a4a4a
     font-size .875rem
 a
   text-decoration none
@@ -70,10 +71,24 @@ pre
     position fixed
     top 0
     left 0
+  &-list
+    h1, p
+      line-height 1.3
+    h1, p, figure
+      & + h1, & + p
+        margin-top .5em
+    h1
+      font-size 1.5rem
+      font-weight normal
+    figure
+      background-color #979797
   &-content-area
     width 60%
     max-width 800px
     margin-left auto
     margin-right auto
+
+.view
+  padding 50px 0 0
 
 </style>
