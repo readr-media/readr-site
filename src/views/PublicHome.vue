@@ -1,34 +1,30 @@
 <template>
-  <section class="section">
-    <div
-      v-if="publicProjectsRecommends.length > 0"
-      class="section__block block"
-    >
-      <h1 class="block__title">
+  <section class="home">
+    <div v-if="publicProjectsRecommends.length > 0">
+      <h1>
         為您推薦
       </h1>
       <SeriesList
         :items="publicProjectsRecommends"
+        class="home__list recommend"
       />
     </div>
-    <div
-      v-if="publicProjectsTrends.length > 0"
-      class="section__block block"
-    >
-      <h1 class="block__title block__title--decorated">
+    <div v-if="publicProjectsTrends.length > 0">
+      <h1 class="decorated">
         最熱門系列
       </h1>
-      <SeriesListWide
+      <SeriesList
         :items="publicProjectsTrends"
+        class="home__list highlight"
       />
     </div>
-    <div class="section__block block">
-      <h1 class="block__title block__title--decorated">
+    <div>
+      <h1 class="decorated">
         系列報導
       </h1>
       <SeriesList
         :items="publicProjectsNormal"
-        :theme="'narrow'"
+        class="home__list narrow"
       />
     </div>
   </section>
@@ -40,13 +36,12 @@ import { get } from 'lodash'
 import { mapState } from 'vuex'
 import { isScrollBarReachBottom } from '../util/comm'
 
-import SeriesList from 'src/components/SeriesList/List.vue'
-import SeriesListWide from 'src/components/SeriesListWide/List.vue'
+import SeriesList from 'src/components/Series/SeriesList.vue'
 
 export default {
+  name: 'AppHome',
   components: {
-    SeriesList,
-    SeriesListWide
+    SeriesList
   },
   metaInfo: {
     title: SITE_NAME,
@@ -68,11 +63,11 @@ export default {
     }),
     publicProjectsRecommends () {
       // return this.publicProjects.recommends
-      return this.publicProjects.normal
+      return this.publicProjects.normal.slice(0, 3)
     },
     publicProjectsTrends () {
       // return this.publicProjects.trends
-      return this.publicProjects.normal
+      return this.publicProjects.normal.slice(0, 1)
     },
     publicProjectsNormal () {
       return this.publicProjects.normal
@@ -102,23 +97,21 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.section
-  padding 152px 0 128px 0
-  max-width 1400px
-  margin 0 auto
 
-.block
-  & + &
-    margin 65px 0 0 0
-  &__title
-    font-size 30px
-    font-weight 600
-    margin 0 0 24px 0
+.home
+  width 80%
+  max-width 1040px
+  margin 0 auto
+  padding 100px 0
+  > div
+    & + div
+      margin 70px 0 0
+  h1
     text-align center
-    display flex
-    justify-content center
-    align-items center
-    &--decorated
+    &.decorated
+      display flex
+      justify-content center
+      align-items center
       &:before
         content ''
         display block
@@ -133,4 +126,34 @@ export default {
         height 1px
         background-color #979797
         margin 0 0 0 25px
+  &__list
+    display flex
+    flex-wrap wrap
+    margin-top 1em
+    &.recommend
+      >>> .list-item
+        width calc((100% - 120px) / 3)
+        margin 0 20px
+        background-color transparent
+    &.highlight
+      justify-content center
+      >>> .list-item
+        width 80%
+        max-width 900px
+        margin 0
+        background-color transparent
+        h1, p
+          text-align center
+    &.narrow
+      >>> .list-item
+        width calc((100% - 180px) / 4)
+        margin 60px 20px 0
+        padding-bottom 1em
+        background-color #fff
+        &:nth-child(1), &:nth-child(2), &:nth-child(3), &:nth-child(4)
+          margin-top 14px
+        h1, p
+          width 90%
+          margin-left auto
+          margin-right auto
 </style>
