@@ -86,7 +86,7 @@ export default {
 
       switch (routeName) {
         case 'report': {
-          const seriesSlug = _.get(rootState.DataReport, [ 'reports', 0, 'project', 'slug', ], '')
+          const seriesSlug = _.get(rootState.DataPost, [ 'post', 'project', 'slug', ], '')
           return `${host}/series/${seriesSlug}`
         }
         default:

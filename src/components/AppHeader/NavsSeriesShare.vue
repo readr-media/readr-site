@@ -4,8 +4,8 @@
       class="wrapper__share"
       @click="toggleNavs"
     >
-      <img
-        src="/public/2.0/icons/share-white.png"
+      <img 
+        src="/public/2.0/icons/share-white.png" 
         alt=""
       >
     </div>

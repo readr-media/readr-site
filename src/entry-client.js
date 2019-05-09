@@ -53,12 +53,13 @@ if (!expLocalhost.test(host)) {
 Vue.mixin({
   beforeRouteEnter (to, from, next) {
     const cookie = getToken()
-    const permission = get(to, [ 'meta', 'permission' ])
+    debug('cookie:', cookie)
+    const permission = get(to, [ 'meta', 'permission', ])
     const preRouteInit = cookie
-      ? !get(store, 'state.profile.role') || !get(store, 'state.isLoggedIn')
-        ? [
-          store.dispatch('CHECK_LOGIN_STATUS', { params: { cookie } }).then(() => debug('CHECKT LOGGIN STATUS')),
-          store.dispatch('GET_PROFILE', { params: { cookie } }).then(() => debug('FETCH DATA'))
+      ? !get(store, 'state.DataUser.profile.role') || !get(store, 'state.DataUser.isLoggedIn')
+      ? [
+          store.dispatch('DataUser/CHECK_LOGIN_STATUS', { params: { cookie, }, }).then(() => debug('CHECKT LOGGIN STATUS')),
+          store.dispatch('DataUser/GET_PROFILE', { params: { cookie, }, }).then(() => debug('FETCH DATA')),
         ]
         : [ new Promise((resolve) => resolve()) ]
       : [ new Promise((resolve) => resolve()) ]
@@ -69,12 +70,12 @@ Vue.mixin({
     Promise.all([
       ...preRouteInit
     ]).then(() => {
-      debug(get(store, 'state.profile.role'))
-      debug(get(store, 'state.isLoggedIn'))
+      debug(get(store, 'state.DataUser.profile.role'))
+      debug(get(store, 'state.DataUser.isLoggedIn'))
       if (permission) {
         next(vm => {
           if (cookie) {
-            const role = get(filter(ROLE_MAP, { key: get(vm, '$store.state.profile.role') }), [ 0, 'route' ], 'visitor')
+            const role = get(filter(ROLE_MAP, { key: get(vm, '$store.state.DataUser.profile.role'), }), [ 0, 'route', ], 'visitor') 
             debug('role', role)
             if (role === 'visitor' || (permission !== 'member' && permission !== role)) {
               /** User doesn't have the right to go to route "to". So, go back to route "from" */

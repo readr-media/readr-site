@@ -6,15 +6,9 @@
     >
       <p>系列內容</p>
     </div>
-    <div
+    <NavsSeriesFollow
       class="navs__nav"
-      @click="$emit('follow')"
-    >
-      <img
-        src="/public/2.0/icons/follow-white.png"
-        alt=""
-      >
-    </div>
+    />
     <div
       class="navs__nav"
       @click="$emit('comment')"
@@ -40,12 +34,14 @@
 </template>
 
 <script>
+import NavsSeriesFollow from './NavsSeriesFollow.vue'
 import NavsSeriesShare from './NavsSeriesShare.vue'
 
 export default {
   components: {
-    NavsSeriesShare
-  }
+    NavsSeriesFollow,
+    NavsSeriesShare,
+  },
 }
 </script>
 

@@ -27,7 +27,7 @@ export default {
   },
   computed: {
     ...mapState({
-      seriesData: state => _.get(state.DataReport.reports, 0, []),
+      seriesData: state => _.get(state.DataPost, 'post', {}),
       seriesContentsData : state => state.DataSeriesContents.publicProjectContents,
     }),
     seriesId () {

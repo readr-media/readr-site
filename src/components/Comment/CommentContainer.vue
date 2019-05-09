@@ -1,7 +1,8 @@
 <template>
   <div 
     ref="comment-container" 
-    class="comment-container">
+    class="comment-container"
+  >
     <Comment
       v-if="shouldRenderComment"
       :me="me"
@@ -23,7 +24,8 @@
     <p 
       v-if="shouldRenderCommentError" 
       class="comment-container__alert" 
-      v-text="fetchCommentErrorText"/>
+      v-text="fetchCommentErrorText"
+    />
   </div>
 </template>
 <script>
@@ -42,7 +44,7 @@
   const reportComment = (store, { params, }) => store.dispatch('ADD_COMMENT_REPORT', { params, })
   const updateComment = (store, { params, }) => store.dispatch('UPDATE_COMMENT', { params, })
   const fetchReportsListBySlugs = (store, slugs = []) => store.dispatch('GET_PUBLIC_REPORTS', { params: { report_slugs: slugs, }, })
-  const switchOn = (store, message) => store.dispatch('LOGIN_ASK_TOGGLE', { active: true, message, type: 'GO_LOGIN', })
+  const switchOn = (store, message) => store.dispatch('UILoginLightbox/LOGIN_ASK_TOGGLE', { active: true, message, type: 'GO_LOGIN', })
   const debug = require('debug')('CLIENT:CommentContainer')
 
   export default {
