@@ -54,9 +54,6 @@ export default {
       loading: false
     }
   },
-  asyncData ({ store }) {
-    return store.dispatch('DataSeries/FETCH')
-  },
   computed: {
     ...mapState({
       publicProjects: state => state.DataSeries.publicProjects
@@ -72,6 +69,9 @@ export default {
     publicProjectsNormal () {
       return this.publicProjects.normal
     }
+  },
+  asyncData ({ store }) {
+    return store.dispatch('DataSeries/FETCH')
   },
   mounted () {
     window.addEventListener('scroll', this.loadMore)

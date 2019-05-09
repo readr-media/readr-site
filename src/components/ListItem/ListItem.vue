@@ -1,11 +1,29 @@
 <template>
-  <router-link :to="href" :target="target" class="list-item app-list">
+  <router-link
+    :to="href"
+    :target="target"
+    class="list-item app-list"
+  >
     <figure v-if="image">
-      <img :src="image" :alt="title">
+      <img
+        :src="image"
+        :alt="title"
+      >
     </figure>
-    <h1 v-if="title" v-text="title"></h1>
-    <p v-if="date" class="date small" v-text="date"></p>
-    <p v-if="description" class="description" v-text="description"></p>
+    <h1
+      v-if="title"
+      v-text="title"
+    />
+    <p
+      v-if="date"
+      class="date small"
+      v-text="date"
+    />
+    <p
+      v-if="description"
+      class="description"
+      v-text="description"
+    />
   </router-link>
 </template>
 <script>
@@ -13,24 +31,28 @@ export default {
   name: 'ListItem',
   props: {
     date: {
-      type: String
+      type: String,
+      default: ''
     },
     description: {
-      type: String
+      type: String,
+      default: ''
     },
     href: {
       type: String,
       required: true
     },
     image: {
-      type: String
+      type: String,
+      default: ''
     },
     target: {
       type: String,
       default: ''
     },
     title: {
-      type: String
+      type: String,
+      default: ''
     }
   }
 }
