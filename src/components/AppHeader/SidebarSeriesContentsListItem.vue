@@ -15,7 +15,9 @@
         <h1>
           {{ title }}
         </h1>
-        <p v-html="content" />
+        <p>
+          {{ content }}
+        </p>
       </div>
     </router-link>
   </li>

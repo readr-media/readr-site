@@ -18,14 +18,14 @@ import dayjs from 'dayjs'
 
 export default {
   name: 'SeriesList',
+  components: {
+    ListItem
+  },
   props: {
     items: {
       type: Array,
       default: () => []
     }
-  },
-  components: {
-    ListItem
   },
   methods: {
     dayjs

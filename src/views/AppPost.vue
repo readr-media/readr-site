@@ -7,7 +7,7 @@
         v-text="dayjs(post.publishedAt).format('YYYY/MM/DD')"
       />
       <h1 v-text="post.title || post.ogTitle" />
-      <article v-html="postContentProcessed" />
+      <article>{{ postContentProcessed }}</article>
     </main>
     <lazy-component class="post-bottom">
       <DonateWithShare :url="getPostFullUrl(post)" />
