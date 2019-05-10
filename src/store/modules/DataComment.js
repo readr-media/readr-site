@@ -81,17 +81,9 @@ export default {
   },
   getters: {
     resourceUrl (state, getters, rootState) {
-      const routeName = _.get(rootState, [ 'route', 'name', ], '')
       const host = _.get(rootState, [ 'setting', 'HOST', ], '')
-
-      switch (routeName) {
-        case 'report': {
-          const seriesSlug = _.get(rootState.DataPost, [ 'post', 'project', 'slug', ], '')
-          return `${host}/series/${seriesSlug}`
-        }
-        default:
-          return ''
-      }
+      const postId = _.get(rootState.DataPost.post, 'id', '')
+      return `${host}/post/${postId}`
     },
   },
 }

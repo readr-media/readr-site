@@ -108,10 +108,10 @@
       },
       me () {
         return {
-          id: get(this.$store, 'state.profile.id'),
-          nickname: get(this.$store, 'state.profile.nickname'),
-          profileImage: getFullUrl(get(this.$store, 'state.profile.profileImage') || '/public/icons/exclamation.png'),
-          role: ROLE_MAP.ADMIN === get(this.$store, 'state.profile.role') ? 'admin' : 'member',
+          id: get(this.$store, 'state.DataUser.profile.id'),
+          nickname: get(this.$store, 'state.DataUser.profile.nickname'),
+          profileImage: getFullUrl(get(this.$store, 'state.DataUser.profile.profileImage') || '/public/icons/exclamation.png'),
+          role: ROLE_MAP.ADMIN === get(this.$store, 'state.DataUser.profile.role') ? 'admin' : 'member',
         }
       },
       resourceURLParam () {

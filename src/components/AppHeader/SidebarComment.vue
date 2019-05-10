@@ -1,6 +1,6 @@
 <template>
   <div class="comment">
-    <h1>x 則留言</h1>
+    <h1>{{ commentAmount }} 則留言</h1>
     <CommentContainer
       :asset="resourceUrl"
       :is-public="true"
@@ -10,7 +10,7 @@
 </template>
 
 <script>
-import { mapGetters, } from 'vuex'
+import { mapState, mapGetters, } from 'vuex'
 import CommentContainer from 'src/components/Comment/CommentContainer.vue'
 
 export default {
@@ -20,6 +20,9 @@ export default {
   computed: {
     ...mapGetters({
       resourceUrl: 'DataComment/resourceUrl',
+    }),
+    ...mapState({
+      commentAmount: state => state.DataPost.post.commentAmount || 0,
     }),
   },
 }
