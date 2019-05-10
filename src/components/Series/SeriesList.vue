@@ -3,8 +3,9 @@
     <ListItem
       v-for="item in items"
       :key="item.id"
+      :class="itemStyle"
       :date="dayjs(item.publishedAt).format('YYYY/MM/DD')"
-      :description="item.ogDescription || item.description"
+      :description="truncate(item.ogDescription || item.description)"
       :href="`/series/${item.slug}`"
       :image="item.ogImage ||item.heroImage || ' '"
       :target="'_blank'"
@@ -15,6 +16,7 @@
 <script>
 import ListItem from '../ListItem/ListItem.vue'
 import dayjs from 'dayjs'
+import { truncate } from 'lodash'
 
 export default {
   name: 'SeriesList',
@@ -22,13 +24,24 @@ export default {
     ListItem
   },
   props: {
+    descriptionLength: {
+      type: Number,
+      default: 50
+    },
+    itemStyle: {
+      type: String,
+      default: ''
+    },
     items: {
       type: Array,
       default: () => []
     }
   },
   methods: {
-    dayjs
+    dayjs,
+    truncate (description) {
+      return description ? truncate(description, { length: this.descriptionLength }) : description
+    }
   }
 }
 </script>
