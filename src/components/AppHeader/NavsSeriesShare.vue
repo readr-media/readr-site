@@ -4,10 +4,7 @@
       class="wrapper__share"
       @click="toggleNavs"
     >
-      <img 
-        src="/public/2.0/icons/share-white.png" 
-        alt=""
-      >
+      <IconShare :height="30" />
     </div>
     <nav
       :class="[
@@ -29,11 +26,13 @@
 <script>
 import ShareFacebook from 'src/components/Share/ShareFacebook.vue'
 import ShareLine from 'src/components/Share/ShareLine.vue'
+import IconShare from 'src/components/Icons/Share.vue'
 
 export default {
   components: {
     ShareFacebook,
-    ShareLine
+    ShareLine,
+    IconShare,
   },
   data () {
     return {

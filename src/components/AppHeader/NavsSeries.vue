@@ -13,19 +13,13 @@
       class="navs__nav"
       @click="$emit('comment')"
     >
-      <img
-        src="/public/2.0/icons/comment-white.png"
-        alt=""
-      >
+      <IconComment :height="30" />
     </div>
     <div
       class="navs__nav"
       @click="$emit('donate')"
     >
-      <img
-        src="/public/2.0/icons/donate-white.png"
-        alt=""
-      >
+      <IconDonate :height="30" />
     </div>
     <NavsSeriesShare
       class="navs__nav"
@@ -36,11 +30,15 @@
 <script>
 import NavsSeriesFollow from './NavsSeriesFollow.vue'
 import NavsSeriesShare from './NavsSeriesShare.vue'
+import IconComment from 'src/components/Icons/Comment.vue'
+import IconDonate from 'src/components/Icons/Donate.vue'
 
 export default {
   components: {
     NavsSeriesFollow,
     NavsSeriesShare,
+    IconComment,
+    IconDonate,
   },
 }
 </script>

@@ -20,7 +20,7 @@ export default {
   ],
   data () {
     return {
-      defaultWidth: 16,
+      defaultWidth: 20,
       defaultHeight: 24,
     }
   },
@@ -29,8 +29,8 @@ export default {
 
 <style lang="stylus" scoped>
 .icon
-  -webkit-mask-image url(/public/2.0/icons/follow-white.png)
-  mask-image url(/public/2.0/icons/follow-white.png)
+  -webkit-mask-image url(/public/2.0/icons/comment-white.png)
+  mask-image url(/public/2.0/icons/comment-white.png)
   mask-size cover
   transition background-color .25s ease-out
 </style>
