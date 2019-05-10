@@ -5,8 +5,9 @@
         為您推薦
       </h1>
       <SeriesList
+        :item-style="'recommend'"
         :items="publicProjectsRecommends"
-        class="home__list recommend"
+        class="home__list"
       />
     </div>
     <div v-if="publicProjectsTrends.length > 0">
@@ -14,6 +15,7 @@
         最熱門系列
       </h1>
       <SeriesList
+        :item-style="'highlight'"
         :items="publicProjectsTrends"
         class="home__list highlight"
       />
@@ -23,8 +25,9 @@
         系列報導
       </h1>
       <SeriesList
+        :item-style="'comm-narrow'"
         :items="publicProjectsNormal"
-        class="home__list narrow"
+        class="home__list"
       />
     </div>
   </section>
@@ -130,30 +133,22 @@ export default {
     display flex
     flex-wrap wrap
     margin-top 1em
-    &.recommend
-      >>> .list-item
-        width calc((100% - 120px) / 3)
-        margin 0 20px
-        background-color transparent
     &.highlight
       justify-content center
-      >>> .list-item
-        width 80%
-        max-width 900px
-        margin 0
-        background-color transparent
-        h1, p
-          text-align center
-    &.narrow
-      >>> .list-item
-        width calc((100% - 180px) / 4)
-        margin 60px 20px 0
-        padding-bottom 1em
-        background-color #fff
-        &:nth-child(1), &:nth-child(2), &:nth-child(3), &:nth-child(4)
-          margin-top 14px
-        h1, p
-          width 90%
-          margin-left auto
-          margin-right auto
+    >>> .list-item.comm-narrow
+      width calc((100% - 180px) / 4)
+      margin 60px 20px 0
+      &:nth-child(1), &:nth-child(2), &:nth-child(3), &:nth-child(4)
+        margin-top 14px
+    >>> .list-item.recommend
+      width calc((100% - 120px) / 3)
+      margin 0 20px
+    >>> .list-item.highlight
+      width 80%
+      max-width 900px
+      margin 0
+      background-color transparent
+      h1, p
+        text-align center
+
 </style>

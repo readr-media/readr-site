@@ -77,4 +77,12 @@ export default {
       overflow hidden
     .description
       text-align justify
+
+  .list-item.comm-narrow
+    padding-bottom 1em
+    background-color #fff
+    h1, p
+      width 90%
+      margin-left auto
+      margin-right auto
 </style>
