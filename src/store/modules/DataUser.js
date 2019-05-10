@@ -3,6 +3,8 @@ import {
   updateMember,
   login,
   checkLoginStatus,
+  getFollowingByUser,
+  follow,
 } from 'src/api'
 
 const { camelize, } = require('humps')
@@ -13,6 +15,11 @@ export default {
     return {
       profile: {},
       isLoggedIn: false,
+      isFollowing: {
+        post: [],
+        project: [],
+        tag: [],
+      },
     }
   },
   mutations: {
@@ -29,6 +36,15 @@ export default {
     },
     SET_LOGGEIN_STATUS (state, { body, }) {
       state['isLoggedIn'] = body
+    },
+
+    PUSH_FOLLOWING_IDS (state, { resource, ids = [], }) {
+      const idsIsFollowingAlready = state.isFollowing[resource]
+      ids.forEach(id => {
+        if (!idsIsFollowingAlready.includes(id)) {
+          state.isFollowing[resource].push(id)
+        }
+      })
     },
   },
   actions: {
@@ -52,11 +68,33 @@ export default {
       })
     },
 
-    CHECK_LOGIN_STATUS: ({ commit, }, { params, }) => {
+    CHECK_LOGIN_STATUS ({ commit, }, { params, }) {
       return checkLoginStatus({ params, }).then(({ status, body, }) => {
         commit('SET_LOGGEIN_STATUS', { status, body, })
         return { status, body, }
       })
+    },
+
+    CHECK_IS_FOLLOWING ({ commit, }, { params, }) {
+      return getFollowingByUser({ mode: 'id', ...params, }).then(({ status, body, }) => {
+        const items = body.items
+        if (!items) { return { status, body, } }
+
+        const { resource, } = params
+        commit('PUSH_FOLLOWING_IDS', { resource, ids: items, })
+      })
+    },
+    FOLLOW (context, { action, resource, subject, object, }) { 
+      return new Promise((resolve, reject) => {
+        follow({ params: { action, resource, subject, object, }, })
+        .then(({ status, }) => { 
+          if (status === 200) { 
+            resolve() 
+          } 
+        }).catch(() => { 
+          reject() 
+        })
+      }) 
     },
   },
 }

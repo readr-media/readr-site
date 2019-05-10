@@ -24,6 +24,10 @@
 </template>
 
 <script>
+import _ from 'lodash'
+import { mapState, mapActions, } from 'vuex'
+import { createPost, } from 'src/util/post'
+
 import IconFollow from 'src/components/Icons/Follow.vue'
 
 export default {
@@ -33,17 +37,71 @@ export default {
   data () {
     return {
       showTooltip: false,
-      isFollow: false,
+      // isFollow: false,
+    }
+  },
+  computed: {
+    ...mapState({
+      dataUser: state => state.DataUser,
+    }),
+    userFollowing () {
+      return this.dataUser.isFollowing
+    },
+    userLoggedIn () {
+      return this.dataUser.isLoggedIn
+    },
+    userProfile () {
+      return this.dataUser.profile
+    },
+    userId () {
+      return _.get(this.userProfile, 'id')
+    },
+
+    ...mapState({
+      dataPost: state => state.DataPost.post,
+    }),
+    post () {
+      return createPost(this.dataPost)
+    },
+    postId () {
+      return _.get(this.post, 'id')
+    },
+    postResource () {
+      return _.get(this.post, [ 'processed', 'resource', ], 'post')
+    },
+
+    isFollow () {
+      return _.get(this.userFollowing, this.postResource, []).includes(this.postId)
+    },
+  },
+  beforeMount () {
+    if (this.userLoggedIn) {
+      this.CHECK_IS_FOLLOWING({
+        params: {
+          id: this.userId,
+          resource: this.postResource,
+          target_ids: [ this.postId, ],
+        },
+      })
     }
   },
   methods: {
+    ...mapActions({
+      FOLLOW: 'DataUser/FOLLOW',
+    }),
     toggleFollow () {
-      this.isFollow = !this.isFollow
-      if (this.isFollow) {
-        this.toggleTooltipShow()
-      } else {
-        this.toggleTooltipHide()
-      }
+      this.FOLLOW({
+        action: 'follow',
+        resource: this.postResource,
+        subject: this.userId,
+        object: this.postId,
+      })
+      // this.isFollow = !this.isFollow
+      // if (this.isFollow) {
+      //   this.toggleTooltipShow()
+      // } else {
+      //   this.toggleTooltipHide()
+      // }
     },
     toggleTooltipShow () {
       this.showTooltip = true
@@ -57,6 +115,11 @@ export default {
       }
       this.showTooltip = false
     },
+
+    ...mapActions({
+      CHECK_IS_FOLLOWING: 'DataUser/CHECK_IS_FOLLOWING',
+      FOLLOW: 'DataUser/FOLLOW',
+    }),
   },
 }
 </script>
