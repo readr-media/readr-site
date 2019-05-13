@@ -72,6 +72,10 @@ export default {
     isFollow () {
       return _.get(this.userFollowing, this.postResource, []).includes(this.postId)
     },
+
+    ...mapState({
+      isLoggedIn: state => state.DataUser.isLoggedIn,
+    }),
   },
   beforeMount () {
     if (this.userLoggedIn) {
@@ -89,6 +93,11 @@ export default {
       PUBSUB_ACTION: 'DataUser/PUBSUB_ACTION',
     }),
     toggleFollow () {
+      if (!this.isLoggedIn) {
+        this.login()
+        return
+      }
+
       const action = this.isFollow ? 'unfollow' : 'follow'
       this.PUBSUB_ACTION({
         action,
@@ -118,8 +127,17 @@ export default {
 
     ...mapActions({
       CHECK_IS_FOLLOWING: 'DataUser/CHECK_IS_FOLLOWING',
-      FOLLOW: 'DataUser/FOLLOW',
     }),
+
+    ...mapActions({
+      LOGIN_ASK_TOGGLE: 'UILoginLightbox/LOGIN_ASK_TOGGLE',
+    }),
+    switchOnLoginPanel () {
+      this.LOGIN_ASK_TOGGLE({ active: 'on', message: '', })
+    },
+    login () {
+      this.switchOnLoginPanel()
+    },
   },
 }
 </script>
