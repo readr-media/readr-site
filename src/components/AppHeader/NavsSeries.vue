@@ -1,7 +1,7 @@
 <template>
   <nav class="navs">
     <div
-      class="navs__nav navs__nav--square"
+      class="navs__nav navs__nav--square navs__nav--series-contents"
       @click="$emit('series')"
     >
       <p>系列內容</p>
@@ -55,6 +55,10 @@ export default {
     &--square
       width 38px
       height 38px
+    &--series-contents
+      &:hover
+        p
+          color #ddcf21
     & + &
       margin 0 0 0 40px
     img
@@ -64,4 +68,5 @@ export default {
       margin 0
       color white
       user-select none
+      transition color .25s ease-out
 </style>

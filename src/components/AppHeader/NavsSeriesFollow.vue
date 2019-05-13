@@ -149,6 +149,7 @@ export default {
 .tooltip
   background-color white
   padding 10px 5px
+  z-index 1000
   p
     margin 0
 </style>
