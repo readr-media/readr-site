@@ -37,7 +37,6 @@ export default {
   data () {
     return {
       showTooltip: false,
-      // isFollow: false,
     }
   },
   computed: {
@@ -87,21 +86,22 @@ export default {
   },
   methods: {
     ...mapActions({
-      FOLLOW: 'DataUser/FOLLOW',
+      PUBSUB_ACTION: 'DataUser/PUBSUB_ACTION',
     }),
     toggleFollow () {
-      this.FOLLOW({
-        action: 'follow',
+      const action = this.isFollow ? 'unfollow' : 'follow'
+      this.PUBSUB_ACTION({
+        action,
         resource: this.postResource,
         subject: this.userId,
         object: this.postId,
       })
-      // this.isFollow = !this.isFollow
-      // if (this.isFollow) {
-      //   this.toggleTooltipShow()
-      // } else {
-      //   this.toggleTooltipHide()
-      // }
+
+      if (this.isFollow) {
+        this.toggleTooltipShow()
+      } else {
+        this.toggleTooltipHide()
+      }
     },
     toggleTooltipShow () {
       this.showTooltip = true

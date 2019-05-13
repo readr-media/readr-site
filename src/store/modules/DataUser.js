@@ -1,3 +1,6 @@
+import _ from 'lodash'
+import Vue from 'vue'
+
 import {
   getProfile,
   updateMember,
@@ -16,7 +19,11 @@ export default {
       profile: {},
       isLoggedIn: false,
       isFollowing: {
-        post: [],
+        // post: [],
+        review: [],
+        news: [],
+        report: [],
+        memo: [],
         project: [],
         tag: [],
       },
@@ -39,12 +46,17 @@ export default {
     },
 
     PUSH_FOLLOWING_IDS (state, { resource, ids = [], }) {
-      const idsIsFollowingAlready = state.isFollowing[resource]
+      const idsIsFollowingAlready = _.get(state.isFollowing, resource, [])
       ids.forEach(id => {
         if (!idsIsFollowingAlready.includes(id)) {
           state.isFollowing[resource].push(id)
         }
       })
+    },
+    DROP_FOLLOWING_IDS (state, { resource, ids = [], }) {
+      const idsIsFollowingAlready = _.get(state.isFollowing, resource, [])
+      const filtered = idsIsFollowingAlready.filter(id => !ids.includes(id))
+      Vue.set(state.isFollowing, resource, filtered)
     },
   },
   actions: {
@@ -84,7 +96,14 @@ export default {
         commit('PUSH_FOLLOWING_IDS', { resource, ids: items, })
       })
     },
-    FOLLOW (context, { action, resource, subject, object, }) { 
+
+    PUBSUB_ACTION ({ commit, }, { action, resource, subject, object, }) {
+      if (action === 'follow') {
+        commit('PUSH_FOLLOWING_IDS', { resource, ids: [ object, ], })
+      } else if (action === 'unfollow') {
+        commit('DROP_FOLLOWING_IDS', { resource, ids: [ object, ], })
+      }
+
       return new Promise((resolve, reject) => {
         follow({ params: { action, resource, subject, object, }, })
         .then(({ status, }) => { 
