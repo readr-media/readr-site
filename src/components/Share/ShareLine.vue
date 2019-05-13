@@ -1,14 +1,32 @@
 <template>
-  <button class="button">
+  <a
+    class="wrapper"
+    :href="url"
+    target="_blank"
+    rel="noopener"
+  >
     <img
       src="/public/2.0/icons/line.png"
       alt=""
     >
-  </button>
+  </a>
 </template>
 
+<script>
+import { URL_SHARE_LINE, SITE_FULL, } from 'src/constants'
+
+export default {
+  props: {
+    url: {
+      type: String,
+      default: `${URL_SHARE_LINE}/?url=${SITE_FULL}`,
+    },
+  },
+}
+</script>
+
 <style lang="stylus" scoped>
-.button
+.wrapper
   margin 0
   padding 0
   background-color #00b900

@@ -10,6 +10,7 @@ import { getShareUrl, getFullUrl } from 'src/util/comm'
 import { getReportLink } from './report'
 import { truncatePostContent } from './truncate'
 import { getPostContentStrings } from './content'
+import { createShareUrl, } from './share'
 
 const postType = {
   [ POST_TYPE.REVIEW ]: 'normal',
@@ -81,6 +82,17 @@ export function isAnnouncementAccountId (id) {
   return idString === ANNOUNCEMENT_ACCOUNT_ID
 }
 
+export function getFullUrlPost (postData) {
+  const postType = getPostType(postData)
+
+  switch (postType) {
+    case 'report':
+      return getFullUrl(`/report/${get(postData, 'slug', '')}`)
+    default:
+      return getFullUrl(`/post/${get(postData, 'id', '')}`)
+  }
+}
+
 export function createPost (post = {}) {
   if (isEmpty(post)) { return {} }
 
@@ -101,7 +113,11 @@ export function createPost (post = {}) {
     //   postContentDOM: getPostContentDOM(post),
     //   postContentStrings: getPostContentStrings(post),
     //   postContentStringsTruncate: truncatePostContent(post)
-      ogImgUrl: getPostOgImgUrl(post)
+      ogImgUrl: getPostOgImgUrl(post),
+      fullUrl: getFullUrlPost(post),
+      shareUrlFB: createShareUrl('fb', getFullUrlPost(post)),
+      shareUrlLine: createShareUrl('line', getFullUrlPost(post)),
+      shareUrlCopylink: createShareUrl('copylink', getFullUrlPost(post)),
     }
   }
 }
