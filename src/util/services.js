@@ -2,8 +2,8 @@ import { camelizeKeys } from 'humps'
 import { filter, get } from 'lodash'
 import { getHost } from './comm'
 import Cookie from 'vue-cookie'
+import dayjs from 'dayjs'
 import superagent from 'superagent'
-import moment from 'moment'
 import sanitizeHtml from 'sanitize-html'
 import truncate from 'truncate-html'
 import uuidv4 from 'uuid/v4'
@@ -138,7 +138,7 @@ function constructLog ({ category, description, eventType, sub, target, useragen
     const dt = Date.now()
     if (!window.mmThisRuntimeClientId) {
       window.mmThisRuntimeClientId = uuidv4()
-      window.mmThisRuntimeDatetimeStart = moment(dt).format('YYYY.MM.DD HH:mm:ss')
+      window.mmThisRuntimeDatetimeStart = dayjs(dt).format('YYYY.MM.DD HH:mm:ss')
     }
     resolve({
       'useragent': useragent,
@@ -147,7 +147,7 @@ function constructLog ({ category, description, eventType, sub, target, useragen
       'current-runtime-id': window.mmThisRuntimeClientId,
       'current-runtime-start': window.mmThisRuntimeDatetimeStart,
       'curr-url': window.location.href,
-      'datetime': moment(Date.now()).format('YYYY.MM.DD HH:mm:ss'),
+      'datetime': dayjs(Date.now()).format('YYYY.MM.DD HH:mm:ss'),
       'description': description,
       'event-type': eventType,
       'redirect-to': isAlink ? isAlink.href : undefined,

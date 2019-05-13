@@ -5,9 +5,8 @@ import { ReadrPerm } from '../util/services'
 Vue.use(Router)
 Vue.use(ReadrPerm)
 
-// route-level code splitting
 const AppPost = () => import('../views/AppPost.vue')
-const PublicHome = () => import('../views/PublicHome.vue')
+const AppHome = () => import('../views/AppHome.vue')
 const PublicReport = () => import('../views/PublicReport.vue')
 
 const PublicPageNotFound = () => import('../views/PublicPageNotFound.vue')
@@ -24,7 +23,7 @@ const router = new Router({
     }
   },
   routes: [
-    { name: 'home', path: '/', component: PublicHome },
+    { name: 'home', path: '/', component: AppHome },
     { name: 'post', path: '/post/:postId?', component: AppPost },
     { name: 'report', path: '/report/:slug', component: PublicReport },
     { path: '/404', component: PublicPageNotFound },

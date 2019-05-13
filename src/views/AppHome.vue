@@ -50,6 +50,9 @@ export default {
     title: SITE_NAME,
     titleTemplate: null
   },
+  serverPrefetch () {
+    this.$store.dispatch('DataSeries/FETCH')
+  },
   data () {
     return {
       currentPage: 1,
@@ -72,9 +75,6 @@ export default {
     publicProjectsNormal () {
       return this.publicProjects.normal
     }
-  },
-  asyncData ({ store }) {
-    return store.dispatch('DataSeries/FETCH')
   },
   mounted () {
     window.addEventListener('scroll', this.loadMore)

@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const Cookies = require('cookies')
+const dayjs = require('dayjs')
 const fs = require('fs')
 const path = require('path')
 const LRU = require('lru-cache')
@@ -9,16 +10,15 @@ const compression = require('compression')
 const maxMemUsageLimit = 1000 * 1024 * 1024
 const memwatch = require('node-memwatch')
 // const microcache = require('route-cache')
-const moment = require('moment')
 const requestIp = require('request-ip')
 const resolve = file => path.resolve(__dirname, file)
 const useragent = require('express-useragent')
 const uuidv4 = require('uuid/v4')
-const { createBundleRenderer, } = require('vue-server-renderer')
+const { createBundleRenderer } = require('vue-server-renderer')
 
-const config = require('./api/config') 
-const { PAGE_CACHE_EXCLUDING, } = require('./api/config')
-const { SERVER_PROTOCOL_MOBILE, SERVER_HOST_MOBILE, SERVER_PORT_MOBILE, } = require('./api/config')
+const config = require('./api/config')
+const { PAGE_CACHE_EXCLUDING } = require('./api/config')
+const { SERVER_PROTOCOL_MOBILE, SERVER_HOST_MOBILE, SERVER_PORT_MOBILE } = require('./api/config')
 // const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT, } = require('./api/config')
 
 const debug = require('debug')('READR:server')
@@ -40,12 +40,12 @@ function createRenderer (bundle, options) {
     // for component caching
     cache: new LRU({
       max: 1000,
-      maxAge: 1000 * 60 * 15,
+      maxAge: 1000 * 60 * 15
     }),
     // this is only needed when vue-server-renderer is npm-linked
     basedir: resolve('./distribution'),
     // recommended for performance
-    runInNewContext: false,
+    runInNewContext: false
   }))
 }
 
@@ -68,7 +68,7 @@ if (isProd) {
   const clientManifest = require('./distribution/vue-ssr-client-manifest.json')
   renderer = createRenderer(bundle, {
     template,
-    clientManifest,
+    clientManifest
   })
 } else {
   // In development: setup the dev server with watch and hot-reload,
@@ -83,32 +83,32 @@ if (isProd) {
 }
 
 const serve = (path, cache) => express.static(resolve(path), {
-  maxAge: cache && isProd ? 1000 * 60 * 60 : 0,
+  maxAge: cache && isProd ? 1000 * 60 * 60 : 0
 })
 
 const Logging = require('@google-cloud/logging')
 const loggingClient = Logging({
   projectId: config.GCP_PROJECT_ID,
-  keyFilename: config.GCP_KEYFILE,
+  keyFilename: config.GCP_KEYFILE
 })
 
 app.use('/hello.jpg', (req, res) => {
-  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')  
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
   res.sendFile(path.join(__dirname, 'public/icons/hello.jpg'))
 
-  const cookies = new Cookies( req, res, {} )
-  const payload_raw = (cookies.get('csrf') || '').split('.')[1]
-  const payload_string = payload_raw && new Buffer(payload_raw, 'base64').toString('binary')
-  const payload = payload_string ? JSON.parse(payload_string) : {}
+  const cookies = new Cookies(req, res, {})
+  const payloadRaw = (cookies.get('csrf') || '').split('.')[1]
+  const payloadString = payloadRaw && Buffer.from(payloadRaw, 'base64').toString('binary')
+  const payload = payloadString ? JSON.parse(payloadString) : {}
 
   const data = Object.assign({}, req.query, {
     ip: req.clientIp,
-    'client-id': payload.id || undefined,
+    'client-id': payload.id || undefined
   }) || {}
   const log = loggingClient.log(config.GCP_STACKDRIVER_LOG_NAME_FOR_EMAIL)
-  const metadata = { resource: { type: 'global', }, }
+  const metadata = { resource: { type: 'global' } }
   const entry = log.entry(metadata, data)
-  
+
   log.write(entry).then(() => {
     debug('Logging successfully.')
   }).catch(err => {
@@ -117,7 +117,7 @@ app.use('/hello.jpg', (req, res) => {
 })
 
 const staticNotFound = (req, res) => res.status(404).send('Not Found')
-app.use(compression({ threshold: 0, }))
+app.use(compression({ threshold: 0 }))
 app.use(favicon('./public/favicon.png'))
 app.use('/distribution', serve('./distribution', true), staticNotFound)
 app.use('/public', serve('./public', true), staticNotFound)
@@ -142,18 +142,18 @@ function render (req, res, next) {
   const s = Date.now()
   let isUnauthorized = false
   let isPageNotFound = false
-  let isErrorOccurred = false  
+  let isErrorOccurred = false
 
-  const curr_host = _.get(req, 'headers.host') || ''
-  const targ_exp = /(dev)|(localhost)/
-  const targ_localhost_exp = /(localhost)/
-  const targ_exp_login = /(\/login)/
-  debug('Current client host:', curr_host, !curr_host.match(targ_exp))
-  debug('Requested page:', req.url, req.url.match(targ_exp_login))
+  const currHost = _.get(req, 'headers.host') || ''
+  const targExp = /(dev)|(localhost)/
+  const targLocalhostExp = /(localhost)/
+  const targExpLogin = /(\/login)/
+  debug('Current client host:', currHost, !currHost.match(targExp))
+  debug('Requested page:', req.url, req.url.match(targExpLogin))
   debug('isMobile', req.useragent.isMobile)
   debug('isTablet', req.useragent.isTablet)
 
-  if ((req.useragent.isMobile || req.useragent.isTablet) && !curr_host.match(targ_localhost_exp)) {
+  if ((req.useragent.isMobile || req.useragent.isTablet) && !currHost.match(targLocalhostExp)) {
     if (SERVER_PROTOCOL_MOBILE && SERVER_HOST_MOBILE) {
       res.redirect(302, `${SERVER_PROTOCOL_MOBILE}://${SERVER_HOST_MOBILE}${SERVER_PORT_MOBILE ? ':' + SERVER_PORT_MOBILE : ''}${req.url}`)
       return
@@ -163,24 +163,24 @@ function render (req, res, next) {
   const isPreview = req.url.indexOf('preview=true') > -1
   const is404 = req.url.indexOf('/404') === 0
   if (_.filter(PAGE_CACHE_EXCLUDING, (p) => (req.url.indexOf(p) > -1)).length === 0 && !isPreview && !is404) {
-    if (!curr_host.match(targ_exp)) {
+    if (!currHost.match(targExp)) {
       if (req.url.length !== 1) {
-        res.setHeader('Cache-Control', 'public, max-age=3600')  
+        res.setHeader('Cache-Control', 'public, max-age=3600')
       } else {
-        res.setHeader('Cache-Control', 'public, max-age=300')  
+        res.setHeader('Cache-Control', 'public, max-age=300')
       }
     }
   }
-  res.setHeader("Content-Type", "text/html")
-  res.setHeader("Server", serverInfo)
+  res.setHeader('Content-Type', 'text/html')
+  res.setHeader('Server', serverInfo)
 
-  const cookies = new Cookies( req, res, {} )
+  const cookies = new Cookies(req, res, {})
   const readrid = cookies.get('readrid')
   if (!readrid) {
     cookies.set('readrid', uuidv4(), {
       httpOnly: false,
       domain: config.DOMAIN,
-      expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+      expires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
     })
   }
 
@@ -193,11 +193,11 @@ function render (req, res, next) {
     url: req.url,
     cookie: cookies.get('csrf'),
     initmember: cookies.get('initmember'),
-    setting: { 
+    setting: {
       TALK_SERVER: config.TALK_SERVER_PROXY || config.TALK_SERVER,
-      POST_TYPE: config.POST_TYPE, 
-      PROJECT_STATUS: config.PROJECT_STATUS, 
-      TAG_ACTIVE: config.TAG_ACTIVE, 
+      POST_TYPE: config.POST_TYPE,
+      PROJECT_STATUS: config.PROJECT_STATUS,
+      TAG_ACTIVE: config.TAG_ACTIVE,
       FB_CLIENT_ID: config.FB_CLIENT_ID,
       GOOGLE_CLIENT_ID: config.GOOGLE_CLIENT_ID,
       GOOGLE_RECAPTCHA_SITE_KEY: config.GOOGLE_RECAPTCHA_SITE_KEY,
@@ -208,53 +208,53 @@ function render (req, res, next) {
       HOST_MOBILE: `${config.SERVER_PROTOCOL_MOBILE}://${config.SERVER_HOST_MOBILE}${SERVER_PORT_MOBILE ? ':' + config.SERVER_PORT_MOBILE : ''}`,
       REGISTRATION_ACTIVE: config.REGISTRATION_ACTIVE,
       STRIPE_KEY: config.STRIPE_KEY,
-      TAPPAY: config.TAPPAY,
+      TAPPAY: config.TAPPAY
     },
-    is404,
+    is404
   }
   const handleError = err => {
-    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')  
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate')
     if (err.url) {
       console.error('Error occuerred. Redirect to', err.url)
       res.redirect(err.url)
       return
     }
-    
+
     let status = err.code || 500
     debug('status', status)
 
     if (status === 404) {
       isPageNotFound = true
       console.error(`##########REQUEST URL(404)############\n`,
-      `ERROR OCCURRED WHEN RUNNING renderToString()\n`,
-      `REQUEST URL: ${req.url}\n`,
-      `REQUEST IP: ${req.clientIp}\n`,
-      `REFERER: ${req.headers.referer}\n`,
-      `${err}\n`, '######################')
+        `ERROR OCCURRED WHEN RUNNING renderToString()\n`,
+        `REQUEST URL: ${req.url}\n`,
+        `REQUEST IP: ${req.clientIp}\n`,
+        `REFERER: ${req.headers.referer}\n`,
+        `${err}\n`, '######################')
       req.url = '/404'
-      render(req, res, next)      
+      render(req, res, next)
     } else if (status === 403) {
       isUnauthorized = true
       return res.status(status).send(`<script>location.replace('/login')</script>`)
     } else {
       isErrorOccurred = true
       console.error(`ERROR OCCURRED WHEN RUNNING renderToString()\n`,
-      `REQUEST URL: ${req.url}\n`,
-      `REQUEST IP: ${req.clientIp}\n`,
-      `REFERER: ${req.headers.referer}\n`,
-      `${err}`)
+        `REQUEST URL: ${req.url}\n`,
+        `REQUEST IP: ${req.clientIp}\n`,
+        `REFERER: ${req.headers.referer}\n`,
+        `${err}`)
       return res.status(500).send('500 | Internal Server Error')
     }
   }
 
   res.on('finish', function () {
     const mem = process.memoryUsage()
-    console.error('MEMORY STAT(heapUsed):', formatMem(mem.heapUsed), `${moment().format('YYYY-MM-DD HH:mm:SS')}`)
+    console.error('MEMORY STAT(heapUsed):', formatMem(mem.heapUsed), `${dayjs().format('YYYY-MM-DD HH:mm:ss')}`)
     if (mem.heapUsed > maxMemUsageLimit) {
       for (let i = 0; i < 10; i += 1) {
         console.error('MEMORY WAS RUNNING OUT')
-      } 
-      console.error(`KILLING PROCESS IN 1 SECOND(At ${moment().format('YYYY-MM-DD HH:mm:SS')})`)
+      }
+      console.error(`KILLING PROCESS IN 1 SECOND(At ${dayjs().format('YYYY-MM-DD HH:mm:ss')})`)
       process.exit(1)
     }
     if (isPageNotFound || isErrorOccurred || isUnauthorized) {
@@ -270,7 +270,7 @@ function render (req, res, next) {
     if (err) {
       return handleError(err)
     }
-    
+
     res.status(context.is404 ? 404 : 200).send(html)
     // !isProd && console.info(`whole request: ${Date.now() - s}ms`)
     console.info(`whole request: ${Date.now() - s}ms`)
@@ -292,35 +292,35 @@ module.exports = {
     server.close()
   },
   ready: readyPromise,
-  app: server,
+  app: server
 }
 
-memwatch.on('leak', function(info) {
+memwatch.on('leak', function (info) {
   const growth = formatMem(info.growth)
   const mem = process.memoryUsage()
-  console.error('GETING MEMORY LEAK:', [ 'growth ' + growth, 'reason ' + info.reason, ].join(', '))
+  console.error('GETING MEMORY LEAK:', [ 'growth ' + growth, 'reason ' + info.reason ].join(', '))
   console.error('MEMORY STAT(heapUsed):', formatMem(mem.heapUsed))
 })
-memwatch.on('stats', function(stats) {
+memwatch.on('stats', function (stats) {
   const estBase = formatMem(stats.estimated_base)
   const currBase = formatMem(stats.current_base)
   const min = formatMem(stats.min)
   const max = formatMem(stats.max)
   console.info(`=======================================\n`,
-    `GC STATs(${moment().format('YYYY-MM-DD HH:mm:SS')}):\n`, [
-    'num_full_gc ' + stats.num_full_gc,
-    'num_inc_gc ' + stats.num_inc_gc,
-    'heap_compactions ' + stats.heap_compactions,
-    'usage_trend ' + stats.usage_trend,
-    'estimated_base ' + estBase,
-    'current_base ' + currBase,
-    'min ' + min,
-    'max ' + max,
-  ].join(', '), `\n=======================================`)
+    `GC STATs(${dayjs().format('YYYY-MM-DD HH:mm:ss')}):\n`, [
+      'num_full_gc ' + stats.num_full_gc,
+      'num_inc_gc ' + stats.num_inc_gc,
+      'heap_compactions ' + stats.heap_compactions,
+      'usage_trend ' + stats.usage_trend,
+      'estimated_base ' + estBase,
+      'current_base ' + currBase,
+      'min ' + min,
+      'max ' + max
+    ].join(', '), `\n=======================================`)
   if (stats.current_base > maxMemUsageLimit) {
     for (let i = 0; i < 10; i += 1) {
       console.error('MEMORY WAS RUNNING OUT')
-    } 
+    }
     /**
      * kill this process gracefully
      */
@@ -329,6 +329,6 @@ memwatch.on('stats', function(stats) {
     }, 1000)
     killTimer.unref()
     server.close()
-    console.error(`GOING TO KILL PROCESS IN 1 SECOND(At ${moment().format('YYYY-MM-DD HH:mm:SS')})`)
+    console.error(`GOING TO KILL PROCESS IN 1 SECOND(At ${dayjs().format('YYYY-MM-DD HH:mm:ss')})`)
   }
 })
