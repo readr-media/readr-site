@@ -5,9 +5,9 @@ import { ReadrPerm } from '../util/services'
 Vue.use(Router)
 Vue.use(ReadrPerm)
 
-const AppPost = () => import('../views/AppPost.vue')
 const AppHome = () => import('../views/AppHome.vue')
-const PublicReport = () => import('../views/PublicReport.vue')
+const AppPost = () => import('../views/AppPost.vue')
+const AppReport = () => import('../views/AppReport.vue')
 
 const PublicPageNotFound = () => import('../views/PublicPageNotFound.vue')
 const PublicServerError = () => import('../views/PublicServerError.vue')
@@ -25,7 +25,7 @@ const router = new Router({
   routes: [
     { name: 'home', path: '/', component: AppHome },
     { name: 'post', path: '/post/:postId?', component: AppPost },
-    { name: 'report', path: '/report/:slug', component: PublicReport },
+    { name: 'report', path: '/report/:slug', component: AppReport },
     { path: '/404', component: PublicPageNotFound },
     { path: '/500', component: PublicServerError },
     { path: '*', component: PublicPageNotFound }

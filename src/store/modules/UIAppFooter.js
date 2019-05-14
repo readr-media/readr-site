@@ -2,7 +2,7 @@ export default {
   namespaced: true,
   state () {
     return {
-      shouldHide: false,
+      shouldHide: false
     }
   },
   mutations: {

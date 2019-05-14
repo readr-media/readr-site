@@ -13,7 +13,7 @@
       :border="theme === 'dark' && 'solid 1px #ffffff'"
       :height="theme === 'dark' && '25px'"
       :color="theme === 'dark' && '#fff'"
-      :font-size="theme === 'dark' && '0.9375rem'"      
+      :font-size="theme === 'dark' && '0.9375rem'"
       :value.sync="formData.email"
     />
     <div class="recover-password__desc">
@@ -38,102 +38,104 @@
   </div>
 </template>
 <script>
-  import { get, } from 'lodash'
-  import TextItem from 'src/components/form/TextItem.vue'
-  import Spinner from 'src/components/Spinner.vue'
-  import validator from 'validator'
+import { get } from 'lodash'
+import TextItem from 'src/components/form/TextItem.vue'
+import Spinner from 'src/components/Spinner.vue'
+import validator from 'validator'
 
-  const debug = require('debug')('CLIENT:RecoverPassword')
-  const sendResetEmail = (store, params, token) => {
-    return store.dispatch('RESET_PWD_EMAIL', {
-      params,
-      token,
-    })
-  }
+const debug = require('debug')('CLIENT:RecoverPassword')
+const sendResetEmail = (store, params, token) => {
+  return store.dispatch('RESET_PWD_EMAIL', {
+    params,
+    token
+  })
+}
 
-  export default {
-    name: 'RecoverPassword',
-    components: {
-      TextItem,
-      Spinner,
-    },
-    props: {
-      theme: {
-        default: () => 'normal',
-      },
-    },
-    data () {
-      return {
-        alert: {},
-        formData: {},
-        isSentEmail: false,
-        shouldShowSpinner: false,
-      }
-    },
-    computed: {
-      desc () {
-        return !this.isSentEmail
-          ? this.$t('login.WORDING_LOGIN_PLEASE_ENTER_YOUR_REGISTERED_EMAIL')
-          : this.$t('login.WORDING_LOGIN_RESET_PWD_SUCCESSFULLY')
-      },
-    },
-    mounted () {},
-    methods: {
-      resetPwd () {
-        if (this.shouldShowSpinner) { return }
-        if (this.validate()) {
-          debug('abt to send reset email')
-          this.shouldShowSpinner = true
-          sendResetEmail(this.$store, {
-            email: this.formData.email,
-          }, get(this.$store, [ 'state', 'register-token', ])).then((res) => {
-            this.shouldShowSpinner = false
-            debug('res:')
-            debug(res)
-            if (res.status === 200) {
-              this.isSentEmail = true
-            } else {
-              this.alert.email = {
-                flag: true,
-                msg: this.$t('login.WORDING_LOGIN_UNAUTHORIZED'),
-              }
-            }
-          }).catch(err => {
-            debug('err:')
-            debug(err)
-            this.shouldShowSpinner = false
+export default {
+  name: 'RecoverPassword',
+  components: {
+    TextItem,
+    Spinner
+  },
+  /* eslint-disable */
+  props: {
+    theme: {
+      default: () => 'normal'
+    }
+  },
+  /* eslint-enable */
+  data () {
+    return {
+      alert: {},
+      formData: {},
+      isSentEmail: false,
+      shouldShowSpinner: false
+    }
+  },
+  computed: {
+    desc () {
+      return !this.isSentEmail
+        ? this.$t('login.WORDING_LOGIN_PLEASE_ENTER_YOUR_REGISTERED_EMAIL')
+        : this.$t('login.WORDING_LOGIN_RESET_PWD_SUCCESSFULLY')
+    }
+  },
+  mounted () {},
+  methods: {
+    resetPwd () {
+      if (this.shouldShowSpinner) { return }
+      if (this.validate()) {
+        debug('abt to send reset email')
+        this.shouldShowSpinner = true
+        sendResetEmail(this.$store, {
+          email: this.formData.email
+        }, get(this.$store, [ 'state', 'register-token' ])).then((res) => {
+          this.shouldShowSpinner = false
+          debug('res:')
+          debug(res)
+          if (res.status === 200) {
+            this.isSentEmail = true
+          } else {
             this.alert.email = {
               flag: true,
-              msg: this.$t('login.WORDING_LOGIN_UNAUTHORIZED'),
+              msg: this.$t('login.WORDING_LOGIN_UNAUTHORIZED')
             }
-          })
-        }
-      },
-      setInputValue (key, value) {
-        switch (key) {
-          case 'email':
-            this.formData.email = value
-            break
-        }
-      },
-      validate () {
-        let pass = true
-        this.alertFlags = {}
-        this.alertMsgs = {}
-        if (!this.formData.email || !validator.isEmail(this.formData.email)) {
-          pass = false
+          }
+        }).catch(err => {
+          debug('err:')
+          debug(err)
+          this.shouldShowSpinner = false
           this.alert.email = {
             flag: true,
-            msg: this.$t('login.WORDING_LOGIN_INVALID_EMAIL_FORMAT'),
+            msg: this.$t('login.WORDING_LOGIN_UNAUTHORIZED')
           }
-          debug('MAIL WRONG')
-          debug('>>>', this.formData.email)
-        }
-        this.$forceUpdate()
-        return pass
-      },
+        })
+      }
     },
+    setInputValue (key, value) {
+      switch (key) {
+        case 'email':
+          this.formData.email = value
+          break
+      }
+    },
+    validate () {
+      let pass = true
+      this.alertFlags = {}
+      this.alertMsgs = {}
+      if (!this.formData.email || !validator.isEmail(this.formData.email)) {
+        pass = false
+        this.alert.email = {
+          flag: true,
+          msg: this.$t('login.WORDING_LOGIN_INVALID_EMAIL_FORMAT')
+        }
+        debug('MAIL WRONG')
+        debug('>>>', this.formData.email)
+      }
+      this.$forceUpdate()
+      return pass
+    }
   }
+}
 </script>
 <style lang="stylus" scoped>
   .recover-password.dark

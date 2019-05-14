@@ -24,37 +24,37 @@
 
 <script>
 import _ from 'lodash'
-import { mapState, mapActions, } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
-import { getFullUrl, } from 'src/util/comm'
+import { getFullUrl } from 'src/util/comm'
 
 import NoSSR from 'vue-no-ssr'
 
 export default {
   components: {
-    NoSSR,
+    NoSSR
   },
   computed: {
     ...mapState({
       profile: state => state.DataUser.profile,
-      isLoggedIn: state => state.DataUser.isLoggedIn,
+      isLoggedIn: state => state.DataUser.isLoggedIn
     }),
     userThumbnail () {
       const path = _.get(this.profile, 'profileImage', '')
       return getFullUrl(path)
-    },
+    }
   },
   methods: {
     ...mapActions({
-      LOGIN_ASK_TOGGLE: 'UILoginLightbox/LOGIN_ASK_TOGGLE',
+      LOGIN_ASK_TOGGLE: 'UILoginLightbox/LOGIN_ASK_TOGGLE'
     }),
     switchOnLoginPanel () {
-      this.LOGIN_ASK_TOGGLE({ active: 'on', message: '', })
+      this.LOGIN_ASK_TOGGLE({ active: 'on', message: '' })
     },
     login () {
       this.switchOnLoginPanel()
-    },
-  },
+    }
+  }
 }
 </script>
 
@@ -72,4 +72,3 @@ export default {
     border-radius 30px
     object-fit cover
 </style>
-

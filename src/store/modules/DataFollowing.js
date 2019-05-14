@@ -22,16 +22,16 @@
 //     },
 //   },
 //   actions: {
-//     FOLLOW ({}, { params, }) { 
-//       return new Promise((resolve, reject) => { 
-//         follow({ params, }).then(({ status, }) => { 
-//           if (status === 200) { 
-//             resolve() 
-//           } 
-//         }).catch(() => { 
-//           reject() 
+//     FOLLOW ({}, { params, }) {
+//       return new Promise((resolve, reject) => {
+//         follow({ params, }).then(({ status, }) => {
+//           if (status === 200) {
+//             resolve()
+//           }
+//         }).catch(() => {
+//           reject()
 //         })
-//       }) 
+//       })
 //     },
 
 //     GET_FOLLOWING_BY_RESOURCE ({ commit, }, { resource = '', ids = [], } = {}) {

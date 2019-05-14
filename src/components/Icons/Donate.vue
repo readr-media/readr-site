@@ -16,14 +16,14 @@ import mixin from './_mixin'
 
 export default {
   mixins: [
-    mixin,
+    mixin
   ],
   data () {
     return {
       defaultWidth: 16,
-      defaultHeight: 29,
+      defaultHeight: 29
     }
-  },
+  }
 }
 </script>
 

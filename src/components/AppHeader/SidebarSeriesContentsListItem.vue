@@ -26,7 +26,7 @@
 <script>
 import _ from 'lodash'
 
-import { createPost, } from 'src/util/post'
+import { createPost } from 'src/util/post'
 
 export default {
   props: {
@@ -44,15 +44,15 @@ export default {
       return _.get(this.post, 'id', '')
     },
     image () {
-      return _.get(this.post, [ 'processed', 'ogImgUrl', ], '')
+      return _.get(this.post, [ 'processed', 'ogImgUrl' ], '')
     },
     title () {
       return _.get(this.item, 'ogTitle', '') || _.get(this.item, 'title', '')
     },
     description () {
       return _.get(this.post, 'ogDescription', '')
-    },
-  },
+    }
+  }
 }
 </script>
 

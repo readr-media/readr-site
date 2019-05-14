@@ -43,89 +43,89 @@
   </div>
 </template>
 <script>
-  import TextItem from 'src/components/form/TextItem.vue'
-  import Spinner from 'src/components/Spinner.vue'
-  import validator from 'validator'
+import TextItem from 'src/components/form/TextItem.vue'
+import Spinner from 'src/components/Spinner.vue'
+import validator from 'validator'
 
-  const debug = require('debug')('CLIENT:TextItem')
-  const setupBasicProfile = (store, params) => {
-    return store.dispatch('SETUP_BASIC_PROFILE', { params, })
-  }
+const debug = require('debug')('CLIENT:TextItem')
+const setupBasicProfile = (store, params) => {
+  return store.dispatch('SETUP_BASIC_PROFILE', { params })
+}
 
-  export default {
-    name: 'InitBasicProfile',
-    components: {
-      Spinner,
-      TextItem,
-    },
-    data () {
-      return {
-        alert: {},
-        formData: {},
-        shouldShowSpinner: false,
+export default {
+  name: 'InitBasicProfile',
+  components: {
+    Spinner,
+    TextItem
+  },
+  data () {
+    return {
+      alert: {},
+      formData: {},
+      shouldShowSpinner: false
+    }
+  },
+  mounted () {},
+  methods: {
+    setPwd () {
+      this.shouldShowSpinner = true
+      if (this.validate()) {
+        setupBasicProfile(this.$store, {
+          nickname: this.formData.nickname,
+          password: this.formData.pwd
+        }).then((res) => {
+          if (res.status === 200) {
+            this.shouldShowSpinner = false
+            location.replace('/login')
+          } else {
+            console.log(res)
+          }
+        })
       }
     },
-    mounted () {},
-    methods: {
-      setPwd () {
-        this.shouldShowSpinner = true
-        if (this.validate()) {
-          setupBasicProfile(this.$store, {
-            nickname: this.formData.nickname,
-            password: this.formData.pwd,
-          }).then((res) => {
-            if (res.status === 200) {
-              this.shouldShowSpinner = false
-              location.replace('/login')
-            } else {
-              console.log(res)
-            }
-          })
+    validate () {
+      let pass = true
+      if (!this.formData.nickname || validator.isEmpty(this.formData.nickname)) {
+        pass = false
+        this.alert.nickname = {
+          flag: true,
+          msg: this.$t('login.WORDING_REGISTER_NICKNAME_EMPTY')
         }
-      },
-      validate () {
-        let pass = true
-        if (!this.formData.nickname || validator.isEmpty(this.formData.nickname)) {
-          pass = false
-          this.alert.nickname = {
-            flag: true,
-            msg: this.$t('login.WORDING_REGISTER_NICKNAME_EMPTY'),
-          }
-          debug('Empty nickname', this.formData.nickname)
+        debug('Empty nickname', this.formData.nickname)
+      }
+      if (!this.formData.pwd || validator.isEmpty(this.formData.pwd)) {
+        pass = false
+        this.alert.pwd = {
+          flag: true,
+          msg: this.$t('login.WORDING_REGISTER_PWD_EMPTY')
         }
-        if (!this.formData.pwd || validator.isEmpty(this.formData.pwd)) {
-          pass = false
-          this.alert.pwd = {
-            flag: true,
-            msg: this.$t('login.WORDING_REGISTER_PWD_EMPTY'),
-          }
-          debug('Empty password', this.formData[ 'pwd' ])
+        debug('Empty password', this.formData[ 'pwd' ])
+      }
+      if (!this.formData[ 'pwd-check' ] || validator.isEmpty(this.formData[ 'pwd-check' ])) {
+        pass = false
+        this.alert[ 'pwd-check' ] = {
+          flag: true,
+          msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_EMPTY')
         }
-        if (!this.formData[ 'pwd-check' ] || validator.isEmpty(this.formData[ 'pwd-check' ])) {
-          pass = false
-          this.alert[ 'pwd-check' ] = {
-            flag: true,
-            msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_EMPTY'),
-          }
-          debug('Empty password check', this.formData[ 'pwd-check' ])
+        debug('Empty password check', this.formData[ 'pwd-check' ])
+      }
+      if (!this.formData.pwd || !this.formData[ 'pwd-check' ] || this.formData.pwd !== this.formData[ 'pwd-check' ]) {
+        this.alert.pwd = {
+          flag: true,
+          msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL')
         }
-        if (!this.formData.pwd || !this.formData[ 'pwd-check' ] || this.formData.pwd !== this.formData[ 'pwd-check' ]) {
-          this.alert.pwd = {
-            flag: true,
-            msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL'),
-          }  
-          this.alert[ 'pwd-check' ] = {
-            flag: true,
-            msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL'),
-          }  
-          debug('Password is not the same as password-check', this.formData.pwd, this.formData[ 'pwd-check' ])
-          pass = false
+        this.alert[ 'pwd-check' ] = {
+          flag: true,
+          msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL')
         }
-        this.$forceUpdate()
-        return pass
-      },
-    },
+        debug('Password is not the same as password-check', this.formData.pwd, this.formData[ 'pwd-check' ])
+        pass = false
+      }
+      this.$forceUpdate()
+      return pass
+    }
   }
+}
 </script>
 <style lang="stylus" scoped>
   .init-basic-profile

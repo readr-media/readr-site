@@ -25,23 +25,23 @@
 
 <script>
 import _ from 'lodash'
-import { mapState, mapActions, } from 'vuex'
-import { createPost, } from 'src/util/post'
+import { mapState, mapActions } from 'vuex'
+import { createPost } from 'src/util/post'
 
 import IconFollow from 'src/components/Icons/Follow.vue'
 
 export default {
   components: {
-    IconFollow,
+    IconFollow
   },
   data () {
     return {
-      showTooltip: false,
+      showTooltip: false
     }
   },
   computed: {
     ...mapState({
-      dataUser: state => state.DataUser,
+      dataUser: state => state.DataUser
     }),
     userFollowing () {
       return this.dataUser.isFollowing
@@ -57,7 +57,7 @@ export default {
     },
 
     ...mapState({
-      dataPost: state => state.DataPost.post,
+      dataPost: state => state.DataPost.post
     }),
     post () {
       return createPost(this.dataPost)
@@ -66,7 +66,7 @@ export default {
       return _.get(this.post, 'id')
     },
     postResource () {
-      return _.get(this.post, [ 'processed', 'resource', ], 'post')
+      return _.get(this.post, [ 'processed', 'resource' ], 'post')
     },
 
     isFollow () {
@@ -74,8 +74,8 @@ export default {
     },
 
     ...mapState({
-      isLoggedIn: state => state.DataUser.isLoggedIn,
-    }),
+      isLoggedIn: state => state.DataUser.isLoggedIn
+    })
   },
   beforeMount () {
     if (this.userLoggedIn) {
@@ -83,14 +83,14 @@ export default {
         params: {
           id: this.userId,
           resource: this.postResource,
-          target_ids: [ this.postId, ],
-        },
+          target_ids: [ this.postId ]
+        }
       })
     }
   },
   methods: {
     ...mapActions({
-      PUBSUB_ACTION: 'DataUser/PUBSUB_ACTION',
+      PUBSUB_ACTION: 'DataUser/PUBSUB_ACTION'
     }),
     toggleFollow () {
       if (!this.isLoggedIn) {
@@ -103,7 +103,7 @@ export default {
         action,
         resource: this.postResource,
         subject: this.userId,
-        object: this.postId,
+        object: this.postId
       })
 
       if (this.isFollow) {
@@ -126,19 +126,19 @@ export default {
     },
 
     ...mapActions({
-      CHECK_IS_FOLLOWING: 'DataUser/CHECK_IS_FOLLOWING',
+      CHECK_IS_FOLLOWING: 'DataUser/CHECK_IS_FOLLOWING'
     }),
 
     ...mapActions({
-      LOGIN_ASK_TOGGLE: 'UILoginLightbox/LOGIN_ASK_TOGGLE',
+      LOGIN_ASK_TOGGLE: 'UILoginLightbox/LOGIN_ASK_TOGGLE'
     }),
     switchOnLoginPanel () {
-      this.LOGIN_ASK_TOGGLE({ active: 'on', message: '', })
+      this.LOGIN_ASK_TOGGLE({ active: 'on', message: '' })
     },
     login () {
       this.switchOnLoginPanel()
-    },
-  },
+    }
+  }
 }
 </script>
 

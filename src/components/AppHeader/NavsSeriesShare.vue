@@ -36,8 +36,8 @@
 
 <script>
 import _ from 'lodash'
-import { mapState, } from 'vuex'
-import { createPost, } from 'src/util/post'
+import { mapState } from 'vuex'
+import { createPost } from 'src/util/post'
 
 import NoSSR from 'vue-no-ssr'
 import IconShare from 'src/components/Icons/Share.vue'
@@ -51,7 +51,7 @@ export default {
     IconShare,
     ShareFacebook,
     ShareLine,
-    ShareCopylink,
+    ShareCopylink
   },
   data () {
     return {
@@ -60,20 +60,20 @@ export default {
   },
   computed: {
     ...mapState({
-      dataPost: state => state.DataPost.post,
+      dataPost: state => state.DataPost.post
     }),
     post () {
       return createPost(this.dataPost)
     },
     shareUrlFB () {
-      return _.get(this.post, [ 'processed', 'shareUrlFB', ], '')
+      return _.get(this.post, [ 'processed', 'shareUrlFB' ], '')
     },
     shareUrlLine () {
-      return _.get(this.post, [ 'processed', 'shareUrlLine', ], '')
+      return _.get(this.post, [ 'processed', 'shareUrlLine' ], '')
     },
     shareUrlCopylink () {
-      return _.get(this.post, [ 'processed', 'shareUrlCopylink', ], '')
-    },
+      return _.get(this.post, [ 'processed', 'shareUrlCopylink' ], '')
+    }
   },
   methods: {
     toggleNavs () {
@@ -81,8 +81,8 @@ export default {
     },
     hideNavs () {
       this.showNavs = false
-    },
-  },
+    }
+  }
 }
 </script>
 

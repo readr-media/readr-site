@@ -17,7 +17,7 @@
         <img src="/public/icons/readr-logo.png">
       </div>
       <div class="login-light__container">
-        <template v-if="!isRegistering">        
+        <template v-if="!isRegistering">
           <div class="login-by-social-media">
             <FacebookLogin
               type="mix"
@@ -56,7 +56,7 @@
         </template>
         <div class="registration-switcher">
           <span
-            class="question" 
+            class="question"
             v-text="isRegistering ? $t('login.MEMBER_ALREAY') : $t('login.NOT_MEMBER_YET')"
           />
           <span
@@ -76,78 +76,78 @@
   </div>
 </template>
 <script>
-  import Cookie from 'vue-cookie'
-  import FacebookLogin from './FacebookLogin.vue'
-  import GooglePlusLogin from './GooglePlusLogin.vue'
-  import Login from './Login.vue'
-  import Register from 'src/components/register/Register.vue'
-  import Spinner from 'src/components/Spinner.vue'
-  import preventScroll from 'prevent-scroll'
-  import { get, } from 'lodash'
-  import { loadRecaptcha, loadGapiSDK, loadFbSDK, } from 'src/util/comm'
-  const switchOff = store => store.dispatch('UILoginLightbox/LOGIN_ASK_TOGGLE', { active: false, message: '', })
-  const getDisposableToken = store => store.dispatch('DISPOSABLE_TOKEN', { type: 'register', })
-  // const debug = require('debug')('CLIENT:LoginLight')
-  const TYPE = {
-    WINDOW: 'WINDOW',
-  }
-  export default {
-    name: 'LoginLight',
-    components: {
-      FacebookLogin,
-      GooglePlusLogin,
-      Login,
-      Register,
-      Spinner,
+import Cookie from 'vue-cookie'
+import FacebookLogin from './FacebookLogin.vue'
+import GooglePlusLogin from './GooglePlusLogin.vue'
+import Login from './Login.vue'
+import Register from 'src/components/register/Register.vue'
+import Spinner from 'src/components/Spinner.vue'
+import preventScroll from 'prevent-scroll'
+import { get } from 'lodash'
+import { loadRecaptcha, loadGapiSDK, loadFbSDK } from 'src/util/comm'
+const switchOff = store => store.dispatch('UILoginLightbox/LOGIN_ASK_TOGGLE', { active: false, message: '' })
+const getDisposableToken = store => store.dispatch('DISPOSABLE_TOKEN', { type: 'register' })
+// const debug = require('debug')('CLIENT:LoginLight')
+const TYPE = {
+  WINDOW: 'WINDOW'
+}
+export default {
+  name: 'LoginLight',
+  components: {
+    FacebookLogin,
+    GooglePlusLogin,
+    Login,
+    Register,
+    Spinner
+  },
+  data () {
+    return {
+      TYPE,
+      isProcessing: false,
+      isRegistering: false
+    }
+  },
+  computed: {
+    active () {
+      return get(this.$store, 'state.UILoginLightbox.loginAskFlag.active', false)
     },
-    data () {
-      return {
-        TYPE,
-        isProcessing: false,
-        isRegistering: false,
+    message () {
+      return get(this.$store, 'state.UILoginLightbox.loginAskFlag.message', this.$t('login.REGISTER_BONUS'))
+    },
+    type () {
+      return get(this.$store, 'state.UILoginLightbox.loginAskFlag.type', 'confirm')
+    }
+  },
+  watch: {
+    active () {
+      if (this.active) {
+        preventScroll.on()
+        Cookie.set('location-replace-from', this.$route.fullPath, { expires: '60s' })
+        Promise.all([
+          getDisposableToken(this.$store),
+          loadRecaptcha(this.$store),
+          loadGapiSDK(this.$store),
+          loadFbSDK(this.$store)
+        ])
+      } else {
+        preventScroll.off()
+        Cookie.delete('location-replace-from')
+        this.$forceUpdate()
       }
+    }
+  },
+  mounted () {},
+  methods: {
+    switchAction () {
+      this.isRegistering = !this.isRegistering
     },
-    computed: {
-      active () {
-        return get(this.$store, 'state.UILoginLightbox.loginAskFlag.active', false)
-      },      
-      message () {
-        return get(this.$store, 'state.UILoginLightbox.loginAskFlag.message', this.$t('login.REGISTER_BONUS'))
-      },   
-      type () {
-        return get(this.$store, 'state.UILoginLightbox.loginAskFlag.type', 'confirm')
-      },   
-    },
-    watch: {
-      active () {
-        if (this.active) {
-          preventScroll.on()
-          Cookie.set('location-replace-from', this.$route.fullPath, { expires: '60s', })
-          Promise.all([
-            getDisposableToken(this.$store),
-            loadRecaptcha(this.$store),
-            loadGapiSDK(this.$store),
-            loadFbSDK(this.$store),         
-          ])
-        } else {
-          preventScroll.off()
-          Cookie.delete('location-replace-from')
-          this.$forceUpdate()
-        }
-      },
-    },
-    mounted () {},
-    methods: {
-      switchAction () {
-        this.isRegistering = !this.isRegistering
-      },
-      turnOffThis () {
-        /** if isProcessing is true, user is not allowed to close the this comp */
-        if (this.isProcessing) { return }
-        switchOff(this.$store)
-      },
-    },
+    turnOffThis () {
+      /** if isProcessing is true, user is not allowed to close the this comp */
+      if (this.isProcessing) { return }
+      switchOff(this.$store)
+    }
   }
+}
 </script>
 <style lang="stylus" scoped>
   .login-light

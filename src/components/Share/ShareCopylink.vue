@@ -18,20 +18,20 @@
 </template>
 
 <script>
-import { copyToClipboard, } from 'src/util/comm'
-import { SITE_FULL, } from 'src/constants'
+import { copyToClipboard } from 'src/util/comm'
+import { SITE_FULL } from 'src/constants'
 
 export default {
   props: {
     url: {
       type: String,
-      default: SITE_FULL,
-    },
+      default: SITE_FULL
+    }
   },
   data () {
     return {
       showActionTooltip: false,
-      tooltipText: '複製連結成功',
+      tooltipText: '複製連結成功'
     }
   },
   methods: {
@@ -47,8 +47,8 @@ export default {
     toggleFollowTooltip () {
       this.setTooltipTimer()
       copyToClipboard(this.url)
-    },
-  },
+    }
+  }
 }
 </script>
 

@@ -16,8 +16,8 @@ export default {
         done: [],
         normal: [],
         recommends: [],
-        trends: [],
-      },
+        trends: []
+      }
     }
   },
   mutations: {

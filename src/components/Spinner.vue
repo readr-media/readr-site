@@ -24,8 +24,10 @@
 <script>
 export default {
   name: 'Spinner',
-  props: [ 'show', 'height', ],
-  serverCacheKey: props => props.show,
+  /* eslint-disable */
+  props: [ 'show', 'height' ],
+  /* eslint-enable */
+  serverCacheKey: props => props.show
 }
 </script>
 

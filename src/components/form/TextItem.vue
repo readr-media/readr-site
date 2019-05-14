@@ -29,9 +29,9 @@
       :style="{
         height,
         backgroundColor,
-        borderRight: border,   
+        borderRight: border,
         borderTop: border,
-        borderBottom: border,             
+        borderBottom: border,
       }"
       @click="doFucus"
     />
@@ -43,61 +43,63 @@
   </div>
 </template>
 <script>
-  import validator from 'validator'
-  export default {
-    name: 'TextItem',
-    props: [
-        'alert',
-        'alertPosition',        
-        'type',
-        'placeHolder',
-        'disabled',
-        'initValue',
-        'width',
-        'height',
-        'border',
-        'margin',
-        'padding',
-        'fontSize',
-        'backgroundColor',
-        'color',
-      ],
-    data () {
-      return {
-        currValue: '',
-        flag: false,
-        isTooLong: false,
-        msg: '',
-      }
+import validator from 'validator'
+export default {
+  name: 'TextItem',
+  /* eslint-disable */
+  props: [
+    'alert',
+    'alertPosition',
+    'type',
+    'placeHolder',
+    'disabled',
+    'initValue',
+    'width',
+    'height',
+    'border',
+    'margin',
+    'padding',
+    'fontSize',
+    'backgroundColor',
+    'color'
+  ],
+  /* eslint-enable */
+  data () {
+    return {
+      currValue: '',
+      flag: false,
+      isTooLong: false,
+      msg: ''
+    }
+  },
+  watch: {
+    alert: function () {
+      this.flag = this.alert.flag
+      this.msg = this.alert.msg
+      const len = this.msg ? this.msg.length : 0
+      this.isTooLong = len > 10
     },
-    watch: {
-      alert: function () {
-        this.flag = this.alert.flag
-        this.msg = this.alert.msg
-        const len = this.msg ? this.msg.length : 0
-        this.isTooLong = len > 10
-      },
-      initValue: function () {
-        this.$refs['input'].value = this.initValue
-      },
-      currValue: function () {
-        this.$emit('update:value', validator.trim(this.currValue || '') || undefined)
-      },
+    initValue: function () {
+      this.$refs['input'].value = this.initValue
     },
-    mounted () {
-      this.currValue = this.value
+    currValue: function () {
+      this.$emit('update:value', validator.trim(this.currValue || '') || undefined)
+    }
+  },
+  mounted () {
+    this.currValue = this.value
+  },
+  methods: {
+    doFucus () {
+      this.$refs['input'].focus()
     },
-    methods: {
-      doFucus () {
-        this.$refs['input'].focus()
-      },
-      keyup () {
-        this.$emit('update:alert', {
-          flag: false,
-        })
-      },
-    },
+    keyup () {
+      this.$emit('update:alert', {
+        flag: false
+      })
+    }
   }
+}
 </script>
 <style lang="stylus" scoped>
   // input-width = calc(100% - 20px)
@@ -211,6 +213,5 @@
         top 100%
         &::before, &::after
           content none
-
 
 </style>

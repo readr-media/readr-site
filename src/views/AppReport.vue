@@ -17,9 +17,9 @@ export default {
       return this.$route.params.slug
     }
   },
-  asyncData ({ store, route, }) {
-    return store.dispatch('DataPost/GET_POST_REPORT', { slugs: [ _.get(route, 'params.slug'), ], })
-  },
+  asyncData ({ store, route }) {
+    return store.dispatch('DataPost/GET_POST_REPORT', { slugs: [ _.get(route, 'params.slug') ] })
+  }
 }
 </script>
 

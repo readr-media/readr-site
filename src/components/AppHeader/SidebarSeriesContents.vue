@@ -18,7 +18,7 @@ import NoSSR from 'vue-no-ssr'
 export default {
   components: {
     SidebarSeriesContentsList,
-    NoSSR,
+    NoSSR
   },
   data () {
     return {
@@ -28,11 +28,11 @@ export default {
   computed: {
     ...mapState({
       seriesData: state => _.get(state.DataPost, 'post', {}),
-      seriesContentsData : state => state.DataSeriesContents.publicProjectContents,
+      seriesContentsData: state => state.DataSeriesContents.publicProjectContents
     }),
     seriesId () {
       return _.get(this.seriesData, 'projectId', '')
-    },
+    }
   },
   watch: {
     seriesId: {

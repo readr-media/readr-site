@@ -50,7 +50,7 @@ export function _buildQuery (params = {}) {
     'poll_id',
     'created_at',
     'mode',
-    'target_ids',
+    'target_ids'
   ]
   const snakeCaseParams = mapKeys(params, (value, key) => snakeCase(key))
   whitelist.forEach((ele) => {

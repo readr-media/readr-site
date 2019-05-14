@@ -10,7 +10,7 @@ import { getShareUrl, getFullUrl } from 'src/util/comm'
 import { getReportLink } from './report'
 import { truncatePostContent } from './truncate'
 import { getPostContentStrings } from './content'
-import { createShareUrl, } from './share'
+import { createShareUrl } from './share'
 
 const postType = {
   [ POST_TYPE.REVIEW ]: 'normal',
@@ -69,7 +69,7 @@ export function getPostOgImgUrl (post) {
     normal: '/public/2.0/og-images/og-image-post.jpg',
     news: '/public/2.0/og-images/og-image.jpg',
     report: '/public/2.0/og-images/og-image.jpg',
-    memo: '/public/2.0/og-images/og-image-memo.jpg',
+    memo: '/public/2.0/og-images/og-image-memo.jpg'
   }
   const ogImage = get(post, 'ogImage') || ''
   const postType = getPostType(post)
@@ -117,7 +117,7 @@ export function createPost (post = {}) {
       fullUrl: getFullUrlPost(post),
       shareUrlFB: createShareUrl('fb', getFullUrlPost(post)),
       shareUrlLine: createShareUrl('line', getFullUrlPost(post)),
-      shareUrlCopylink: createShareUrl('copylink', getFullUrlPost(post)),
+      shareUrlCopylink: createShareUrl('copylink', getFullUrlPost(post))
     }
   }
 }

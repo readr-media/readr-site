@@ -1,21 +1,21 @@
 import _ from 'lodash'
 import {
   getPost,
-  getPublicReportsList,
+  getPublicReportsList
 } from 'src/api'
 import {
   POST_PUBLISH_STATUS,
-  PROJECT_PUBLISH_STATUS,
+  PROJECT_PUBLISH_STATUS
 } from 'api/config'
 
 export default {
   namespaced: true,
   state: {
-    post: {},
+    post: {}
   },
   actions: {
-    GET_POST ({ commit, }, { id, params, }) {
-      return getPost({ id, params, })
+    GET_POST ({ commit }, { id, params }) {
+      return getPost({ id, params })
         .then(response => {
           commit('SET_POST', response.body.items[0])
         })
@@ -24,10 +24,12 @@ export default {
         //   reject({ status: 'error', res: err,})
         // })
     },
-    GET_POST_REPORT ({ commit, }, {
+
+    GET_POST_REPORT ({ commit }, {
+      // eslint-disable-next-line camelcase
       max_result = 1,
       page = 1,
-      slugs = [],
+      slugs = []
     } = {}) {
       return getPublicReportsList({
         params: {
@@ -35,16 +37,16 @@ export default {
           page: page,
           report_slugs: slugs,
           publish_status: `{"$in":[${POST_PUBLISH_STATUS.PUBLISHED}]}`,
-          project_publish_status: `{"$in":[${PROJECT_PUBLISH_STATUS.PUBLISHED}]}`,
-        },
+          project_publish_status: `{"$in":[${PROJECT_PUBLISH_STATUS.PUBLISHED}]}`
+        }
       }).then(res => {
-        commit('SET_POST', _.get(res, [ 'body', 'items', 0, ], {}))
+        commit('SET_POST', _.get(res, [ 'body', 'items', 0 ], {}))
       })
-    },
+    }
   },
   mutations: {
     SET_POST (state, post) {
       state.post = post
-    },
-  },
+    }
+  }
 }

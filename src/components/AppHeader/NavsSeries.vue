@@ -38,8 +38,8 @@ export default {
     NavsSeriesFollow,
     NavsSeriesShare,
     IconComment,
-    IconDonate,
-  },
+    IconDonate
+  }
 }
 </script>
 

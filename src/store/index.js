@@ -9,7 +9,6 @@ import DataSeries from './modules/DataSeries'
 import DataSeriesContents from './modules/DataSeriesContents'
 import DataComment from './modules/DataComment'
 import DataUser from './modules/DataUser'
-import DataPost from './modules/DataPost'
 import UIAppFooter from './modules/UIAppFooter'
 import UIAppHeader from './modules/UIAppHeader'
 import UILoginLightbox from './modules/UILoginLightbox'
@@ -24,10 +23,9 @@ export function createStore () {
       DataSeriesContents,
       DataComment,
       DataUser,
-      DataPost,
       UIAppFooter,
       UIAppHeader,
-      UILoginLightbox,
+      UILoginLightbox
     },
     state: {
       'chosenChoices': [],

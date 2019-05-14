@@ -95,9 +95,6 @@ export default {
   asyncData ({ store }) {
     return fetchProjectsList(store)
   },
-  asyncData ({ store, }) {
-    return fetchProjectsList(store)
-  },
   methods: {
     get,
     getFullUrl (url) {

@@ -13,15 +13,15 @@
 </template>
 
 <script>
-import { URL_SHARE_LINE, SITE_FULL, } from 'src/constants'
+import { URL_SHARE_LINE, SITE_FULL } from 'src/constants'
 
 export default {
   props: {
     url: {
       type: String,
-      default: `${URL_SHARE_LINE}/?url=${SITE_FULL}`,
-    },
-  },
+      default: `${URL_SHARE_LINE}/?url=${SITE_FULL}`
+    }
+  }
 }
 </script>
 

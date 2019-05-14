@@ -14,145 +14,146 @@
   </div>
 </template>
 <script>
-  import { get, } from 'lodash'
-  import VueCookie from 'vue-cookie'
+import { get } from 'lodash'
+import VueCookie from 'vue-cookie'
 
-  const debug = require('debug')('CLIENT:FacebookLogin')
-  const login = (store, profile, token) => {
-    return store.dispatch('LOGIN', {
-      params: profile,
-      token,
-    })
-  }
-  const register = (store, profile, token) => {
-    return store.dispatch('REGISTER', {
-      params: profile,
-      token,
-    })
-  }
-  const switchConversation = (store, message) => store.dispatch('CONVERSATION_TOGGLE', { active: true, message, })  
-  const switchOffLoginAsk = store => store.dispatch('UILoginLightbox/LOGIN_ASK_TOGGLE', { active: false, message: '', })
+const debug = require('debug')('CLIENT:FacebookLogin')
+const login = (store, profile, token) => {
+  return store.dispatch('LOGIN', {
+    params: profile,
+    token
+  })
+}
+const register = (store, profile, token) => {
+  return store.dispatch('REGISTER', {
+    params: profile,
+    token
+  })
+}
+const switchConversation = (store, message) => store.dispatch('CONVERSATION_TOGGLE', { active: true, message })
+const switchOffLoginAsk = store => store.dispatch('UILoginLightbox/LOGIN_ASK_TOGGLE', { active: false, message: '' })
 
-  export default {
-    name: 'FacebookLogin',
-    props: {
-      type: {},
-      isDoingLogin: {
-        type: Boolean,
-        default: false,
-      },
-      theme: {},
-      panelType: {},
+export default {
+  name: 'FacebookLogin',
+  /* eslint-disable */
+  props: {
+    type: {},
+    isDoingLogin: {
+      type: Boolean,
+      default: false
     },
-    computed: {
-      labelWording () {
-        return this.$t('login.WORDING_FACEBOOK_LOGIN')
-      },
-    },
-    methods: {
-      login () {
-        const readyToLogin = (params) => {
-          login(this.$store, params, get(this.$store, 'state.register-token'))
-            .then((res) => {
-              this.$emit('update:isDoingLogin', false)
-              if (res.status === 200) {
-                const from = VueCookie.get('location-replace-from')
-                const isFromPathExist = from !== null
-                if (this.panelType === 'WINDOW') {
-                  window.opener.location.reload()
-                  window.close()
-                } else if (isFromPathExist) {
-                  VueCookie.delete('location-replace-from')
-                  this.$router.push(from)
-                } else {
-                  this.$router.push('/')
-                }
-                // revolke switchOffLoginAsk for LoginLight
-                switchOffLoginAsk(this.$store)                 
+    theme: {},
+    panelType: {}
+  },
+  /* eslint-enable */
+  computed: {
+    labelWording () {
+      return this.$t('login.WORDING_FACEBOOK_LOGIN')
+    }
+  },
+  methods: {
+    login () {
+      const readyToLogin = (params) => {
+        login(this.$store, params, get(this.$store, 'state.register-token'))
+          .then((res) => {
+            this.$emit('update:isDoingLogin', false)
+            if (res.status === 200) {
+              const from = VueCookie.get('location-replace-from')
+              const isFromPathExist = from !== null
+              if (this.panelType === 'WINDOW') {
+                window.opener.location.reload()
+                window.close()
+              } else if (isFromPathExist) {
+                VueCookie.delete('location-replace-from')
+                this.$router.push(from)
               } else {
-                debug('res', res)
+                this.$router.push('/')
+              }
+              // revolke switchOffLoginAsk for LoginLight
+              switchOffLoginAsk(this.$store)
+            } else {
+              debug('res', res)
+            }
+          })
+      }
+      debug('Checking fb status before login...', window.fbStatus)
+      if (window && !window.fbStatus) {
+        debug('Never Authorized.')
+        FB.login(response => {
+          if (response.authResponse) {
+            this.$emit('update:isDoingLogin', true)
+            FB.api('/me', { fields: 'id,name,gender,email' }, res => {
+              if (!res || res.error) {
+                console.log(`Err occurred when fetch user's info from facebook`)
+                this.$emit('update:isDoingLogin', false)
+              } else {
+                register(this.$store, {
+                  nickname: get(res, 'name'),
+                  email: res.email,
+                  gender: get(res, 'genders', '').toUpperCase().substr(0, 1),
+                  register_mode: 'oauth-fb',
+                  social_id: res.id
+                }, get(this.$store, [ 'state', 'register-token' ])).then(({ status }) => {
+                  if (status === 200) {
+                    debug('Registered successfully')
+                    readyToLogin({
+                      id: res.id,
+                      login_mode: 'facebook'
+                    })
+                  }
+                }).catch(({ err: error, mode }) => {
+                  if (error === 'User Already Existed' || error === 'User Duplicated') {
+                    const signOutFromApp = () => {
+                      this.$emit('update:isDoingLogin', false)
+                      FB.logout()
+                    }
+                    switch (mode) {
+                      case 'oauth-fb': {
+                        readyToLogin({
+                          id: res.id,
+                          login_mode: 'facebook'
+                        })
+                        break
+                      }
+                      case 'oauth-goo': {
+                        switchConversation(this.$store, this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_G_PLUS'))
+                          .then(signOutFromApp)
+                        break
+                      }
+                      case 'ordinary': {
+                        switchConversation(
+                          this.$store,
+                          `${this.$t('login.REGISTER_FACEBOOK_EMAIL')} ${this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_ORDINARY')}`
+                        ).then(signOutFromApp)
+                        break
+                      }
+                    }
+                  } else {
+                    console.log(error)
+                    this.$emit('update:isDoingLogin', false)
+                  }
+                })
               }
             })
-        }
-        debug('Checking fb status before login...', window.fbStatus)
-        if (window && !window.fbStatus) {
-          debug('Never Authorized.')
-          FB.login(response => {
-            if (response.authResponse) {
-              this.$emit('update:isDoingLogin', true)
-              FB.api('/me', { fields: 'id,name,gender,email', }, res => {
-                if (!res || res.error) {
-                  console.log(`Err occurred when fetch user's info from facebook`)
-                  this.$emit('update:isDoingLogin', false)
-                } else {
-                  register(this.$store, {
-                    nickname: get(res, 'name'),
-                    email: res.email,
-                    gender: get(res, 'genders', '').toUpperCase().substr(0, 1),
-                    register_mode: 'oauth-fb',
-                    social_id: res.id,
-                  }, get(this.$store, [ 'state', 'register-token', ])).then(({ status, }) => {
-                    if (status === 200) {
-                      debug('Registered successfully')
-                      readyToLogin({
-                        id: res.id,
-                        login_mode: 'facebook',
-                      })
-                    }
-                  }).catch(({ err: error, mode, }) => {
-                    if (error === 'User Already Existed' || error === 'User Duplicated') {
-                      const signOutFromApp = () => {
-                        this.$emit('update:isDoingLogin', false)
-                        FB.logout()
-                      }
-                      switch (mode) {
-                        case 'oauth-fb': {
-                          readyToLogin({
-                            id: res.id,
-                            login_mode: 'facebook',
-                          })
-                          break
-                        }
-                        case 'oauth-goo': {
-                          switchConversation(this.$store, this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_G_PLUS'))
-                          .then(signOutFromApp)
-                          break
-                        }
-                        case 'ordinary': {
-                          switchConversation(
-                            this.$store,
-                            `${this.$t('login.REGISTER_FACEBOOK_EMAIL')} ${this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_ORDINARY')}`  
-                          ).then(signOutFromApp)
-                          break
-                        }
-                      } 
-                    } else {
-                      console.log(error)
-                      this.$emit('update:isDoingLogin', false)
-                    }
-                  })
-                }
-              })
-            } else {
-              console.log('User cancelled login or did not fully authorize.')
-            }
-          }, { scope: 'public_profile,email', })
-        } else {
-          debug('Already authorized.')
-          this.$emit('update:isDoingLogin', true)
-          readyToLogin({
-            id: window.fbStatus.uid,
-            login_mode: 'facebook',
-          })
-        }
-      },
-    },
+          } else {
+            console.log('User cancelled login or did not fully authorize.')
+          }
+        }, { scope: 'public_profile,email' })
+      } else {
+        debug('Already authorized.')
+        this.$emit('update:isDoingLogin', true)
+        readyToLogin({
+          id: window.fbStatus.uid,
+          login_mode: 'facebook'
+        })
+      }
+    }
   }
+}
 </script>
 <style lang="stylus" scoped>
   .facebook-login
     cursor pointer
-
 
     width 100%
     height 35px
@@ -190,5 +191,4 @@
       > .wording
         margin-left 11px
 
-    
 </style>

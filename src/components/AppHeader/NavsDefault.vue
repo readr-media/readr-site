@@ -29,8 +29,8 @@ import NavsDefaultUser from './NavsDefaultUser.vue'
 
 export default {
   components: {
-    NavsDefaultUser,
-  },
+    NavsDefaultUser
+  }
 }
 </script>
 

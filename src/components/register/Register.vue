@@ -72,7 +72,7 @@
           v-text="$t('login.WORDING_REGISTER')"
         />
         <Spinner :show="shouldShowSpinner" />
-      </div>    
+      </div>
     </div>
     <div
       v-else
@@ -86,67 +86,67 @@
   </div>
 </template>
 <script>
-  import TextItem from 'src/components/form/TextItem.vue'
-  import Spinner from 'src/components/Spinner.vue'
-  import validator from 'validator'
-  import { GOOGLE_RECAPTCHA_SITE_KEY, } from 'api/config'
-  import { get, } from 'lodash'
+import TextItem from 'src/components/form/TextItem.vue'
+import Spinner from 'src/components/Spinner.vue'
+import validator from 'validator'
+import { GOOGLE_RECAPTCHA_SITE_KEY } from 'api/config'
+import { get } from 'lodash'
 
-  const debug = require('debug')('CLIENT:Register')
-  const register = (store, profile, token) => {
-    return store.dispatch('REGISTER', {
-      params: profile,
-      token,
-    })
-  }
+const debug = require('debug')('CLIENT:Register')
+const register = (store, profile, token) => {
+  return store.dispatch('REGISTER', {
+    params: profile,
+    token
+  })
+}
 
-  const verifyRecaptchaToken = (store, token) => {
-    return store.dispatch('VERIFY_RECAPTCHA_TOKEN', {
-      token,
-    })
-  }
+const verifyRecaptchaToken = (store, token) => {
+  return store.dispatch('VERIFY_RECAPTCHA_TOKEN', {
+    token
+  })
+}
 
-  export default {
-    name: 'Register',
-    components: {
-      TextItem,
-      Spinner,
-    },
-    data () {
-      return {
-        alert: {},
-        formData: {},
-        isRegistered: false,
-        isRegisterClicked: false,
-        isRecaptchaPassed: false,
-        resMsg: '',
-        recaptcha: {},
-        recaptchaToken: '',
-        shouldShowSpinner: false,
-      }
-    },
-    mounted () {
-      if (window.grecaptcha) {
-        this.recaptcha = window.grecaptcha.render('g-recaptcha', {
-          'sitekey': this.$store.state.GOOGLE_RECAPTCHA_SITE_KEY || GOOGLE_RECAPTCHA_SITE_KEY,
-          'callback': (res) => {
-            this.recaptchaToken = res
-          },
-        })
-      }
-    },
-    methods: {
-      register () {
-        if (this.shouldShowSpinner) { return }
-        this.verifyRecaptchaToken().then(() => {
-          if (this.isRecaptchaPassed && this.validatInput()) {
-            this.shouldShowSpinner = true
-            debug('Abt to send req of register.')
-            register(this.$store, {
-              nickname: this.formData.nickname,
-              email: this.formData.mail,
-              password: this.formData.pwd, }, get(this.$store, [ 'state', 'register-token', ]))
-            .then(({ status, }) => {
+export default {
+  name: 'Register',
+  components: {
+    TextItem,
+    Spinner
+  },
+  data () {
+    return {
+      alert: {},
+      formData: {},
+      isRegistered: false,
+      isRegisterClicked: false,
+      isRecaptchaPassed: false,
+      resMsg: '',
+      recaptcha: {},
+      recaptchaToken: '',
+      shouldShowSpinner: false
+    }
+  },
+  mounted () {
+    if (window.grecaptcha) {
+      this.recaptcha = window.grecaptcha.render('g-recaptcha', {
+        'sitekey': this.$store.state.GOOGLE_RECAPTCHA_SITE_KEY || GOOGLE_RECAPTCHA_SITE_KEY,
+        'callback': (res) => {
+          this.recaptchaToken = res
+        }
+      })
+    }
+  },
+  methods: {
+    register () {
+      if (this.shouldShowSpinner) { return }
+      this.verifyRecaptchaToken().then(() => {
+        if (this.isRecaptchaPassed && this.validatInput()) {
+          this.shouldShowSpinner = true
+          debug('Abt to send req of register.')
+          register(this.$store, {
+            nickname: this.formData.nickname,
+            email: this.formData.mail,
+            password: this.formData.pwd }, get(this.$store, [ 'state', 'register-token' ]))
+            .then(({ status }) => {
               this.isRegistered = true
               this.shouldShowSpinner = false
               if (status === 200) {
@@ -155,7 +155,7 @@
                 this.resMsg = this.$t('login.WORDING_REGISTER_INFAIL')
                 window.grecaptcha.reset(this.recaptcha)
               }
-            }).catch(({ err: error, mode, }) => {
+            }).catch(({ err: error, mode }) => {
               this.shouldShowSpinner = false
               if (error === 'User Already Existed' || error === 'User Duplicated') {
                 let message = this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED')
@@ -171,76 +171,76 @@
                 }
                 this.alert.mail = {
                   flag: true,
-                  msg: message,
-                }  
+                  msg: message
+                }
                 this.$forceUpdate()
               } else {
                 this.resMsg = this.$t('login.WORDING_REGISTER_INFAIL')
               }
               window.grecaptcha.reset(this.recaptcha)
             })
-          }
-        })
-      },
-      validatInput () {
-        let pass = true
-        if (!this.formData.nickname || validator.isEmpty(this.formData.nickname)) {
-          pass = false
-          this.alert.nickname = {
-            flag: true,
-            msg: this.$t('login.WORDING_REGISTER_NICKNAME_EMPTY'),
-          }
-          debug('Empty nickname', this.formData.nickname)
         }
-        if (!this.formData.mail || !validator.isEmail(this.formData.mail)) {
-          pass = false
-          this.alert.mail = {
-            flag: true,
-            msg: this.$t('login.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL'),
-          }          
-          debug('Wrong email', this.formData.mail)
-        }
-        if (!this.formData.pwd || validator.isEmpty(this.formData.pwd)) {
-          pass = false
-          this.alert.pwd = {
-            flag: true,
-            msg: this.$t('login.WORDING_REGISTER_PWD_EMPTY'),
-          }          
-          debug('Empty password', this.formData.pwd)
-        }
-        if (!this.formData[ 'pwd-check' ] || validator.isEmpty(this.formData[ 'pwd-check' ])) {
-          pass = false
-          this.alert[ 'pwd-check' ] = {
-            flag: true,
-            msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_EMPTY'),
-          }          
-          debug('Empty password check', this.formData[ 'pwd-check' ])
-        }
-        if (!this.formData.pwd || !this.formData[ 'pwd-check' ] || this.formData.pwd !== this.formData[ 'pwd-check' ]) {
-          this.alert.pwd = {
-            flag: true,
-            msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL'),
-          }          
-          this.alert[ 'pwd-check' ] = {
-            flag: true,
-            msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL'),
-          }          
-          debug('Password is not the same as password-check', this.formData.pwd, this.formData[ 'pwd-check' ])
-          pass = false
-        }
-        this.$forceUpdate()
-        if (!pass) {
-          window.grecaptcha.reset(this.recaptcha)
-        }
-        return pass
-      },
-      verifyRecaptchaToken () {
-        return verifyRecaptchaToken(this.$store, { token: this.recaptchaToken, }).then((response) => {
-          this.isRecaptchaPassed = get(response, [ 'success', ], false)
-        })
-      },
+      })
     },
+    validatInput () {
+      let pass = true
+      if (!this.formData.nickname || validator.isEmpty(this.formData.nickname)) {
+        pass = false
+        this.alert.nickname = {
+          flag: true,
+          msg: this.$t('login.WORDING_REGISTER_NICKNAME_EMPTY')
+        }
+        debug('Empty nickname', this.formData.nickname)
+      }
+      if (!this.formData.mail || !validator.isEmail(this.formData.mail)) {
+        pass = false
+        this.alert.mail = {
+          flag: true,
+          msg: this.$t('login.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL')
+        }
+        debug('Wrong email', this.formData.mail)
+      }
+      if (!this.formData.pwd || validator.isEmpty(this.formData.pwd)) {
+        pass = false
+        this.alert.pwd = {
+          flag: true,
+          msg: this.$t('login.WORDING_REGISTER_PWD_EMPTY')
+        }
+        debug('Empty password', this.formData.pwd)
+      }
+      if (!this.formData[ 'pwd-check' ] || validator.isEmpty(this.formData[ 'pwd-check' ])) {
+        pass = false
+        this.alert[ 'pwd-check' ] = {
+          flag: true,
+          msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_EMPTY')
+        }
+        debug('Empty password check', this.formData[ 'pwd-check' ])
+      }
+      if (!this.formData.pwd || !this.formData[ 'pwd-check' ] || this.formData.pwd !== this.formData[ 'pwd-check' ]) {
+        this.alert.pwd = {
+          flag: true,
+          msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL')
+        }
+        this.alert[ 'pwd-check' ] = {
+          flag: true,
+          msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL')
+        }
+        debug('Password is not the same as password-check', this.formData.pwd, this.formData[ 'pwd-check' ])
+        pass = false
+      }
+      this.$forceUpdate()
+      if (!pass) {
+        window.grecaptcha.reset(this.recaptcha)
+      }
+      return pass
+    },
+    verifyRecaptchaToken () {
+      return verifyRecaptchaToken(this.$store, { token: this.recaptchaToken }).then((response) => {
+        this.isRecaptchaPassed = get(response, [ 'success' ], false)
+      })
+    }
   }
+}
 </script>
 <style lang="stylus" scoped>
   .register

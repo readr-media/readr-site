@@ -44,101 +44,101 @@
   </div>
 </template>
 <script>
-  import TextItem from 'src/components/form/TextItem.vue'
-  import Spinner from 'src/components/Spinner.vue'
-  import validator from 'validator'
+import TextItem from 'src/components/form/TextItem.vue'
+import Spinner from 'src/components/Spinner.vue'
+import validator from 'validator'
 
-  const debug = require('debug')('CLIENT:SetPassword')
-  const resetpwd = (store, params) => (store.dispatch('RESET_PWD', {
-    params,
-  }))
-  export default {
-    name: 'ResetPwd',
-    components: {
-      TextItem,
-      Spinner,
-    },
-    data () {
-      return {
-        alert: {},
-        formData: {},
-        isDone: false,
-        result: '',
-        shouldShowSpinner: false,
+const debug = require('debug')('CLIENT:SetPassword')
+const resetpwd = (store, params) => (store.dispatch('RESET_PWD', {
+  params
+}))
+export default {
+  name: 'ResetPwd',
+  components: {
+    TextItem,
+    Spinner
+  },
+  data () {
+    return {
+      alert: {},
+      formData: {},
+      isDone: false,
+      result: '',
+      shouldShowSpinner: false
+    }
+  },
+  mounted () {
+
+  },
+  methods: {
+    save () {
+      if (this.validate()) {
+        this.shouldShowSpinner = true
+        debug('About to save password')
+        resetpwd(this.$store, {
+          password: this.formData.pwd
+        }).then(res => {
+          debug(res)
+          this.isDone = true
+          this.shouldShowSpinner = false
+          if (res.status === 200) {
+            this.result = this.$t('login.WORDING_LOGIN_RESET_PWD_COMPLETE')
+          } else {
+            this.result = this.$t('login.WORDING_LOGIN_RESET_PWD_INFAIL')
+          }
+        }).catch(err => {
+          debug(err)
+          this.isDone = true
+          this.shouldShowSpinner = false
+          this.result = this.$t('login.WORDING_LOGIN_RESET_PWD_INFAIL')
+        })
       }
     },
-    mounted () {
-
+    setInputValue (key, value) {
+      switch (key) {
+        case 'pwd':
+          this.formData.pwd = value
+          break
+        case 'pwd-check':
+          this.formData[ 'pwd-check' ] = value
+          break
+      }
     },
-    methods: {
-      save () {
-        if (this.validate()) {
-          this.shouldShowSpinner = true
-          debug('About to save password')
-          resetpwd(this.$store, {
-            password: this.formData.pwd,
-          }).then(res => {
-            debug(res)
-            this.isDone = true
-            this.shouldShowSpinner = false
-            if (res.status === 200) {
-              this.result = this.$t('login.WORDING_LOGIN_RESET_PWD_COMPLETE')
-            } else {
-              this.result = this.$t('login.WORDING_LOGIN_RESET_PWD_INFAIL')
-            }
-          }).catch(err => {
-            debug(err)
-            this.isDone = true
-            this.shouldShowSpinner = false
-            this.result = this.$t('login.WORDING_LOGIN_RESET_PWD_INFAIL')
-          })
+    validate () {
+      let pass = true
+      if (!this.formData.pwd || validator.isEmpty(this.formData.pwd)) {
+        pass = false
+        this.alert.pwd = {
+          flag: true,
+          msg: this.$t('login.WORDING_REGISTER_PWD_EMPTY')
         }
-      },
-      setInputValue (key, value) {
-        switch (key) {
-          case 'pwd':
-            this.formData.pwd = value
-            break
-          case 'pwd-check':
-            this.formData[ 'pwd-check' ] = value
-            break
+        debug('pwd empty', this.formData.pwd)
+      }
+      if (!this.formData[ 'pwd-check' ] || validator.isEmpty(this.formData[ 'pwd-check' ])) {
+        pass = false
+        this.alert[ 'pwd-check' ] = {
+          flag: true,
+          msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_EMPTY')
         }
-      },
-      validate () {
-        let pass = true
-        if (!this.formData.pwd || validator.isEmpty(this.formData.pwd)) {
-          pass = false
-          this.alert.pwd = {
-            flag: true,
-            msg: this.$t('login.WORDING_REGISTER_PWD_EMPTY'),
-          }
-          debug('pwd empty', this.formData.pwd)
+        debug('pwd-check empty,', this.formData[ 'pwd-check' ])
+      }
+      if (!this.formData.pwd || !this.formData[ 'pwd-check' ] || this.formData.pwd !== this.formData[ 'pwd-check' ]) {
+        this.alert.pwd = {
+          flag: true,
+          msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL')
         }
-        if (!this.formData[ 'pwd-check' ] || validator.isEmpty(this.formData[ 'pwd-check' ])) {
-          pass = false
-          this.alert[ 'pwd-check' ] = {
-            flag: true,
-            msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_EMPTY'),
-          }
-          debug('pwd-check empty,', this.formData[ 'pwd-check' ])
+        this.alert[ 'pwd-check' ] = {
+          flag: true,
+          msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL')
         }
-        if (!this.formData.pwd || !this.formData[ 'pwd-check' ] || this.formData.pwd !== this.formData[ 'pwd-check' ]) {
-          this.alert.pwd = {
-            flag: true,
-            msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL'),
-          }          
-          this.alert[ 'pwd-check' ] = {
-            flag: true,
-            msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL'),
-          }          
-          pass = false
-          debug('pwd != pwd check,', this.formData.pwd, ',', this.formData[ 'pwd-check' ])
-        }
-        this.$forceUpdate()
-        return pass
-      },
-    },
+        pass = false
+        debug('pwd != pwd check,', this.formData.pwd, ',', this.formData[ 'pwd-check' ])
+      }
+      this.$forceUpdate()
+      return pass
+    }
   }
+}
 </script>
 <style lang="stylus" scoped>
   .reset-pwd

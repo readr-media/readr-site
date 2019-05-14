@@ -10,21 +10,21 @@
 </template>
 
 <script>
-import { mapState, mapGetters, } from 'vuex'
+import { mapState, mapGetters } from 'vuex'
 import CommentContainer from 'src/components/Comment/CommentContainer.vue'
 
 export default {
   components: {
-    CommentContainer,
+    CommentContainer
   },
   computed: {
     ...mapGetters({
-      resourceUrl: 'DataComment/resourceUrl',
+      resourceUrl: 'DataComment/resourceUrl'
     }),
     ...mapState({
-      commentAmount: state => state.DataPost.post.commentAmount || 0,
-    }),
-  },
+      commentAmount: state => state.DataPost.post.commentAmount || 0
+    })
+  }
 }
 </script>
 

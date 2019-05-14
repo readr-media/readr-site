@@ -28,39 +28,39 @@
   </div>
 </template>
 <script>
-  const debug = require('debug')('CLIENT:BooleanSwitcher')
-  export default {
-    name: 'BooleanSwitcher',
-    props: {
-      id: {
-        type: Number,
-        default: () => Number(Date.now().toString()),
-      },
-      status: {
-        type: Boolean,
-      },
+const debug = require('debug')('CLIENT:BooleanSwitcher')
+export default {
+  name: 'BooleanSwitcher',
+  props: {
+    id: {
+      type: Number,
+      default: () => Number(Date.now().toString())
     },
-    data () {
-      return {
-        isChecked: false,
-      }
-    },
-    watch: {
-      status () {
-        debug('this.status', this.status)
-        this.isChecked = this.status
-      },
-    },
-    mounted () {
+    status: {
+      type: Boolean
+    }
+  },
+  data () {
+    return {
+      isChecked: false
+    }
+  },
+  watch: {
+    status () {
+      debug('this.status', this.status)
       this.isChecked = this.status
-    },
-    methods: {
-      toggle () {
-        debug('Going to make isChecked to be', !this.isChecked)
-        this.$emit('update:status', !this.isChecked)
-      },
-    },
+    }
+  },
+  mounted () {
+    this.isChecked = this.status
+  },
+  methods: {
+    toggle () {
+      debug('Going to make isChecked to be', !this.isChecked)
+      this.$emit('update:status', !this.isChecked)
+    }
   }
+}
 </script>
 <style lang="stylus" scoped>
   .switcher

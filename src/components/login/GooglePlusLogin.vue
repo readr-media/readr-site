@@ -14,134 +14,135 @@
   </div>
 </template>
 <script>
-  import { get, } from 'lodash'
-  import VueCookie from 'vue-cookie'
+import { get } from 'lodash'
+import VueCookie from 'vue-cookie'
 
-  const debug = require('debug')('CLIENT:GooglePlusLogin')
-  const login = (store, profile, token) => {
-    return store.dispatch('LOGIN', {
-      params: profile,
-      token,
-    })
-  }
-  const register = (store, profile, token) => {
-    return store.dispatch('REGISTER', {
-      params: profile,
-      token,
-    })
-  }
-  const switchConversation = (store, message) => store.dispatch('CONVERSATION_TOGGLE', { active: true, message, })  
-  const switchOffLoginAsk = store => store.dispatch('UILoginLightbox/LOGIN_ASK_TOGGLE', { active: false, message: '', })
+const debug = require('debug')('CLIENT:GooglePlusLogin')
+const login = (store, profile, token) => {
+  return store.dispatch('LOGIN', {
+    params: profile,
+    token
+  })
+}
+const register = (store, profile, token) => {
+  return store.dispatch('REGISTER', {
+    params: profile,
+    token
+  })
+}
+const switchConversation = (store, message) => store.dispatch('CONVERSATION_TOGGLE', { active: true, message })
+const switchOffLoginAsk = store => store.dispatch('UILoginLightbox/LOGIN_ASK_TOGGLE', { active: false, message: '' })
 
-  export default {
-    name: 'GooglePlusLogin',
-    props: {
-      type: {},
-      isDoingLogin: {
-        type: Boolean,
-        default: false,
-      },
-      theme: {},
-      panelType: {},
+export default {
+  name: 'GooglePlusLogin',
+  /* eslint-disable */
+  props: {
+    type: {},
+    isDoingLogin: {
+      type: Boolean,
+      default: false
     },
-    computed: {
-      labelWording () {
-        return this.$t('login.WORDING_GOOGLE_LOGIN')
-      },
-    },
-    mounted () {},
-    methods: {
-      login () {
-        
-        const readyToLogin = (idToken) => {
-          login(this.$store, { idToken, login_mode: 'google', }, get(this.$store, [ 'state', 'register-token', ]))
-            .then((res) => {
-              this.$emit('update:isDoingLogin', false)
-              if (res.status === 200) {
-                /**
+    theme: {},
+    panelType: {}
+  },
+  /* eslint-enable */
+  computed: {
+    labelWording () {
+      return this.$t('login.WORDING_GOOGLE_LOGIN')
+    }
+  },
+  mounted () {},
+  methods: {
+    login () {
+      const readyToLogin = (idToken) => {
+        login(this.$store, { idToken, login_mode: 'google' }, get(this.$store, [ 'state', 'register-token' ]))
+          .then((res) => {
+            this.$emit('update:isDoingLogin', false)
+            if (res.status === 200) {
+              /**
                  * use location.replace instead of router.push to server-side render page
                  */
-                const from = VueCookie.get('location-replace-from')
-                const isFromPathExist = from !== null
-                if (this.panelType === 'WINDOW') {
-                  window.opener.location.reload()
-                  window.close()
-                } else if (isFromPathExist) {
-                  VueCookie.delete('location-replace-from')
-                  this.$router.push(from)
-                } else {
-                  this.$router.push('/')
-                }
-
-                // revolke switchOffLoginAsk for LoginLight
-                switchOffLoginAsk(this.$store)                
+              const from = VueCookie.get('location-replace-from')
+              const isFromPathExist = from !== null
+              if (this.panelType === 'WINDOW') {
+                window.opener.location.reload()
+                window.close()
+              } else if (isFromPathExist) {
+                VueCookie.delete('location-replace-from')
+                this.$router.push(from)
               } else {
-                debug('res', res)
+                this.$router.push('/')
+              }
+
+              // revolke switchOffLoginAsk for LoginLight
+              switchOffLoginAsk(this.$store)
+            } else {
+              debug('res', res)
+            }
+          })
+      }
+      if (window && !window.googleStatus) {
+        const auth = gapi && gapi.auth2.getAuthInstance()
+        if (!auth) { return }
+        auth.signIn({ scope: 'profile email' }).then((currUser) => {
+          this.$emit('update:isDoingLogin', true)
+          const idToken = currUser.getAuthResponse().id_token
+          gapi.client.people.people.get({
+            'resourceName': 'people/me',
+            'requestMask.includeField': 'person.nicknames,person.genders,person.birthdays,person.occupations'
+          }).then((response) => {
+            debug('Never Authorized.')
+            register(this.$store, {
+              idToken,
+              nickname: get(response, [ 'result', 'nicknames', 0, 'value' ], null),
+              gender: get(response, [ 'result', 'genders', 0, 'value' ], '').toUpperCase().substr(0, 1),
+              register_mode: 'oauth-goo' }, get(this.$store, [ 'state', 'register-token' ])
+            ).then(({ status }) => {
+              if (status === 200) {
+                debug('Register successfully.')
+                readyToLogin(idToken)
+              }
+            }).catch(({ err: error, mode }) => {
+              if (error === 'User Already Existed' || error === 'User Duplicated') {
+                const signOutFromApp = () => {
+                  this.$emit('update:isDoingLogin', false)
+                  auth.disconnect()
+                }
+                switch (mode) {
+                  case 'oauth-goo': {
+                    readyToLogin(idToken)
+                    break
+                  }
+                  case 'oauth-fb': {
+                    switchConversation(this.$store, this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_FACEBOOK'))
+                      .then(signOutFromApp)
+                    break
+                  }
+                  case 'ordinary': {
+                    this.$emit('update:isDoingLogin', false)
+                    switchConversation(
+                      this.$store,
+                      `${this.$t('login.REGISTER_G_PLUS_EMAIL')} ${this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_ORDINARY')}`
+                    ).then(signOutFromApp)
+                    break
+                  }
+                }
+              } else {
+                console.log(error)
               }
             })
-        }
-        if (window && !window.googleStatus) {
-          const auth = gapi && gapi.auth2.getAuthInstance()
-          if (!auth) { return }
-          auth.signIn({ scope: 'profile email', }).then((currUser) => {
-            this.$emit('update:isDoingLogin', true)
-            const idToken = currUser.getAuthResponse().id_token
-            gapi.client.people.people.get({
-              'resourceName': 'people/me',
-              'requestMask.includeField': 'person.nicknames,person.genders,person.birthdays,person.occupations',
-            }).then((response) => {
-              debug('Never Authorized.')
-              register(this.$store, {
-                idToken,
-                nickname: get(response, [ 'result', 'nicknames', 0, 'value', ], null),
-                gender: get(response, [ 'result', 'genders', 0, 'value', ], '').toUpperCase().substr(0, 1),
-                register_mode: 'oauth-goo', }, get(this.$store, [ 'state', 'register-token', ])
-              ).then(({ status, }) => {
-                if (status === 200) {
-                  debug('Register successfully.')
-                  readyToLogin(idToken)
-                }
-              }).catch(({ err: error, mode, }) => {
-                if (error === 'User Already Existed' || error === 'User Duplicated') {
-                  const signOutFromApp = () => {
-                    this.$emit('update:isDoingLogin', false)
-                    auth.disconnect()
-                  }
-                  switch (mode) {
-                    case 'oauth-goo': {
-                      readyToLogin(idToken)
-                      break
-                    }
-                    case 'oauth-fb': {
-                      switchConversation(this.$store, this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_FACEBOOK'))
-                      .then(signOutFromApp)
-                      break
-                    }
-                    case 'ordinary': {
-                      this.$emit('update:isDoingLogin', false)
-                      switchConversation(
-                        this.$store,
-                        `${this.$t('login.REGISTER_G_PLUS_EMAIL')} ${this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_ORDINARY')}`  
-                      ).then(signOutFromApp)
-                      break
-                    }
-                  }
-                } else {
-                  console.log(error)
-                }
-              })
-            }, function (reason) {
-              debug({ msg: 'Error: ' + reason.result.error.message, })
-            })
+          }, function (reason) {
+            debug({ msg: 'Error: ' + reason.result.error.message })
           })
-        } else {
-          debug('Already authorized.')
-          this.$emit('update:isDoingLogin', true)
-          readyToLogin(window.googleStatus.idToken)
-        }
-      },
-    },
+        })
+      } else {
+        debug('Already authorized.')
+        this.$emit('update:isDoingLogin', true)
+        readyToLogin(window.googleStatus.idToken)
+      }
+    }
   }
+}
 </script>
 <style lang="stylus" scoped>
   .google-plus-login

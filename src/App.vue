@@ -26,7 +26,7 @@ export default {
   components: {
     AppHeader,
     AppFooter,
-    LoginLight,
+    LoginLight
   },
   metaInfo: {
     titleTemplate: `%s - ${SITE_NAME}`,

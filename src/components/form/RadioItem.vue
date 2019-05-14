@@ -25,26 +25,36 @@
   </div>
 </template>
 <script>
-  const debug = require('debug')('CLIENT:RadioItem')
-  export default {
-    name: 'RadioItem',
-    props: [ 'label', 'value', 'name', 'disabled', 'currSelected', 'theme', 'fontSize', ],
-    data () {
-      return {
-        checkedStatus: false,
-      }
-    },
-    mounted () {
-      this.$el.ondragstart = function () { return false }
-      this.$el.onselectstart = function () { return false }
-    },
-    methods: {
-      change () {
-        debug(this.$refs[ 'radio' ].checked)
-        this.$emit('update:currSelected', this.value)
-      },
-    },
+const debug = require('debug')('CLIENT:RadioItem')
+export default {
+  name: 'RadioItem',
+  /* eslint-disable */
+  props: [
+    'label',
+    'value',
+    'name',
+    'disabled',
+    'currSelected',
+    'theme',
+    'fontSize'
+  ],
+  /* eslint-enable */
+  data () {
+    return {
+      checkedStatus: false
+    }
+  },
+  mounted () {
+    this.$el.ondragstart = function () { return false }
+    this.$el.onselectstart = function () { return false }
+  },
+  methods: {
+    change () {
+      debug(this.$refs[ 'radio' ].checked)
+      this.$emit('update:currSelected', this.value)
+    }
   }
+}
 </script>
 <style lang="stylus" scoped>
   .radio-container

@@ -63,119 +63,121 @@
   </div>
 </template>
 <script>
-  import { get, } from 'lodash'
-  import TextItem from 'src/components/form/TextItem.vue'
-  import validator from 'validator'
-  import VueCookie from 'vue-cookie'
+import { get } from 'lodash'
+import TextItem from 'src/components/form/TextItem.vue'
+import validator from 'validator'
+import VueCookie from 'vue-cookie'
 
-  const debug = require('debug')('CLIENT:Login')
-  const switchOffLoginAsk = store => store.dispatch('UILoginLightbox/LOGIN_ASK_TOGGLE', { active: false, message: '', })
-  const login = (store, profile, token) => {
-    return store.dispatch('DataUser/LOGIN', {
-      params: {
-        email: profile.email,
-        password: profile.password,
-        keepAlive: profile.keepAlive,
-      },
-      token,
-    })
-  }
+const debug = require('debug')('CLIENT:Login')
+const switchOffLoginAsk = store => store.dispatch('UILoginLightbox/LOGIN_ASK_TOGGLE', { active: false, message: '' })
+const login = (store, profile, token) => {
+  return store.dispatch('DataUser/LOGIN', {
+    params: {
+      email: profile.email,
+      password: profile.password,
+      keepAlive: profile.keepAlive
+    },
+    token
+  })
+}
 
-  export default {
-    name: 'Login',
-    components: {
-      TextItem,
+export default {
+  name: 'Login',
+  components: {
+    TextItem
+  },
+  /* eslint-disable */
+  props: {
+    theme: {
+      default: () => 'normal'
     },
-    props: {
-      theme: {
-        default: () => 'normal',
-      },
-      isDoingLogin: {
-        type: Boolean,
-        default: false,
-      },
-      panelType: {},
+    isDoingLogin: {
+      type: Boolean,
+      default: false
     },
-    data () {
-      return {
-        alert: {},
-        formData: {},
-        resMsg: null,
+    panelType: {}
+  },
+  /* eslint-enable */
+  data () {
+    return {
+      alert: {},
+      formData: {},
+      resMsg: null
+    }
+  },
+  methods: {
+    goRecoverPwd () {
+      this.$emit('goRecoverPwd')
+    },
+    keyupHandler (e) {
+      if (e.keyCode === 13) {
+        this.login()
       }
     },
-    methods: {
-      goRecoverPwd () {
-        this.$emit('goRecoverPwd')
-      },
-      keyupHandler (e) {
-        if (e.keyCode === 13) {
-          this.login()
-        }
-      },
-      login () {
-        if (this.validatInput()) {
-          this.$emit('update:isDoingLogin', true)
-          login(this.$store, {
-            email: this.formData.mail,
-            password: this.formData.pwd,
-            keepAlive: this.$refs[ 'keep-alive' ].checked,
-          }, get(this.$store, [ 'state', 'register-token', ])).then((res) => {
-            this.$emit('update:isDoingLogin', false)
-            if (res.status === 200) {
-              const isPublicComment = this.$route.path === '/comment'
-              const from = VueCookie.get('location-replace-from')
-              const isFromPathExist = from !== null
+    login () {
+      if (this.validatInput()) {
+        this.$emit('update:isDoingLogin', true)
+        login(this.$store, {
+          email: this.formData.mail,
+          password: this.formData.pwd,
+          keepAlive: this.$refs[ 'keep-alive' ].checked
+        }, get(this.$store, [ 'state', 'register-token' ])).then((res) => {
+          this.$emit('update:isDoingLogin', false)
+          if (res.status === 200) {
+            const isPublicComment = this.$route.path === '/comment'
+            const from = VueCookie.get('location-replace-from')
+            const isFromPathExist = from !== null
 
-              if (this.panelType === 'WINDOW') {
-                window.opener.location.reload()
-                window.close()
-              } else if (isPublicComment) {
-                this.$router.push(this.$route.fullPath)
-              } else {
-                if (isFromPathExist) {
-                  VueCookie.delete('location-replace-from')
-                  this.$router.push(from)
-                } else {
-                  this.$router.push('/')
-                }
-              }
-
-              // revolke switchOffLoginAsk for LoginLight
-              switchOffLoginAsk(this.$store)
+            if (this.panelType === 'WINDOW') {
+              window.opener.location.reload()
+              window.close()
+            } else if (isPublicComment) {
+              this.$router.push(this.$route.fullPath)
             } else {
-              this.resMsg = this.$t('login.WORDING_LOGIN_INFAIL_VALIDATION_ISSUE')
+              if (isFromPathExist) {
+                VueCookie.delete('location-replace-from')
+                this.$router.push(from)
+              } else {
+                this.$router.push('/')
+              }
             }
-          }).catch((err) => {
-            this.$emit('update:isDoingLogin', false)
-            if (err.status === 401) {
-              this.resMsg = this.$t('login.WORDING_LOGIN_UNAUTHORIZED')
-            }
-          })
-        }
-      },
-      validatInput () {
-        let pass = true
-        if (!this.formData.mail || !validator.isEmail(this.formData.mail)) {
-          pass = false
-          this.alert.mail = {
-            flag: true,
-            msg: this.$t('login.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL'),
+
+            // revolke switchOffLoginAsk for LoginLight
+            switchOffLoginAsk(this.$store)
+          } else {
+            this.resMsg = this.$t('login.WORDING_LOGIN_INFAIL_VALIDATION_ISSUE')
           }
-          debug('Mail wrong', this.formData.mail)
-        }
-        if (!this.formData.pwd || validator.isEmpty(this.formData.pwd)) {
-          pass = false
-          this.alert.pwd = {
-            flag: true,
-            msg: this.$t('login.WORDING_REGISTER_PWD_EMPTY'),
+        }).catch((err) => {
+          this.$emit('update:isDoingLogin', false)
+          if (err.status === 401) {
+            this.resMsg = this.$t('login.WORDING_LOGIN_UNAUTHORIZED')
           }
-          debug('Empty pwd', this.formData.pwd)
-        }
-        this.$forceUpdate()
-        return pass
-      },
+        })
+      }
     },
+    validatInput () {
+      let pass = true
+      if (!this.formData.mail || !validator.isEmail(this.formData.mail)) {
+        pass = false
+        this.alert.mail = {
+          flag: true,
+          msg: this.$t('login.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL')
+        }
+        debug('Mail wrong', this.formData.mail)
+      }
+      if (!this.formData.pwd || validator.isEmpty(this.formData.pwd)) {
+        pass = false
+        this.alert.pwd = {
+          flag: true,
+          msg: this.$t('login.WORDING_REGISTER_PWD_EMPTY')
+        }
+        debug('Empty pwd', this.formData.pwd)
+      }
+      this.$forceUpdate()
+      return pass
+    }
   }
+}
 </script>
 <style lang="stylus" scoped>
   .login.dark

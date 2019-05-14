@@ -2,26 +2,26 @@ export default {
   props: {
     colorDefault: {
       type: String,
-      default: 'white',
+      default: 'white'
     },
     colorHover: {
       type: String,
-      default: '#ddcf21',
+      default: '#ddcf21'
     },
     width: {
       type: Number,
-      default: null,
+      default: null
     },
     height: {
       type: Number,
-      default: null,
-    },
+      default: null
+    }
   },
   data () {
     return {
       isMouseover: false,
       defaultWidth: 0,
-      defaultHeight: 0,
+      defaultHeight: 0
     }
   },
   computed: {
@@ -44,7 +44,7 @@ export default {
       } else {
         return this.height
       }
-    },
+    }
   },
   methods: {
     onMouseover () {
@@ -52,6 +52,6 @@ export default {
     },
     onMouseout () {
       this.isMouseover = false
-    },
-  },
+    }
+  }
 }
