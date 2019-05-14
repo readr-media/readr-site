@@ -18,7 +18,7 @@ export default {
     }
   },
   asyncData ({ store, route }) {
-    return store.dispatch('DataSeries/FETCH', { slugs: [ _.get(route, 'params.slug') ] })
+    return store.dispatch('DataPost/GET_POST_REPORT', { slugs: [ _.get(route, 'params.slug') ] })
   }
 }
 </script>

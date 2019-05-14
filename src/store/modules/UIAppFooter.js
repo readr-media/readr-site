@@ -1,7 +1,9 @@
 export default {
   namespaced: true,
-  state: {
-    shouldHide: false
+  state () {
+    return {
+      shouldHide: false
+    }
   },
   mutations: {
     SET_HIDE (state, value) {

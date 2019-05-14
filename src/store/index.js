@@ -7,8 +7,11 @@ import getters from './getters'
 import DataPost from './modules/DataPost'
 import DataSeries from './modules/DataSeries'
 import DataSeriesContents from './modules/DataSeriesContents'
+import DataComment from './modules/DataComment'
+import DataUser from './modules/DataUser'
 import UIAppFooter from './modules/UIAppFooter'
 import UIAppHeader from './modules/UIAppHeader'
+import UILoginLightbox from './modules/UILoginLightbox'
 
 Vue.use(Vuex)
 
@@ -18,8 +21,11 @@ export function createStore () {
       DataPost,
       DataSeries,
       DataSeriesContents,
+      DataComment,
+      DataUser,
       UIAppFooter,
-      UIAppHeader
+      UIAppHeader,
+      UILoginLightbox
     },
     state: {
       'chosenChoices': [],

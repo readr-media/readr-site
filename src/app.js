@@ -11,11 +11,36 @@ import EN from 'src/locale/en'
 import VueI18n from 'vue-i18n'
 import VueMeta from 'vue-meta'
 import VueLazyload from 'vue-lazyload'
+import InfiniteLoading from 'vue-infinite-loading'
 
 Vue.use(VueI18n)
 Vue.use(VueMeta)
 Vue.use(VueLazyload, {
   lazyComponent: true
+})
+Vue.use(InfiniteLoading, {
+  props: {
+    spinner: 'spiral'
+  },
+  slots: {
+    noResults: '',
+    noMore: ''
+  }
+})
+Vue.directive('click-outside', {
+  bind (el, binding, vnode) {
+    el.clickOutsideEvent = function (event) {
+      // here I check that click was outside the el and his childrens
+      if (!(el === event.target || el.contains(event.target))) {
+        // and if it did, call method provided in attribute value
+        vnode.context[binding.expression](event)
+      }
+    }
+    document.body.addEventListener('click', el.clickOutsideEvent)
+  },
+  unbind (el) {
+    document.body.removeEventListener('click', el.clickOutsideEvent)
+  }
 })
 
 // Quill Editor

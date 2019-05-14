@@ -18,14 +18,21 @@
         alt=""
       >
     </router-link>
-    <router-link
+    <NavsDefaultUser
       class="navs__nav"
-      to="/"
-    >
-      <p>登入</p>
-    </router-link>
+    />
   </nav>
 </template>
+
+<script>
+import NavsDefaultUser from './NavsDefaultUser.vue'
+
+export default {
+  components: {
+    NavsDefaultUser
+  }
+}
+</script>
 
 <style lang="stylus" scoped>
 .navs

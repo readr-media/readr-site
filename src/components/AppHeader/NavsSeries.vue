@@ -1,37 +1,25 @@
 <template>
   <nav class="navs">
     <div
-      class="navs__nav navs__nav--square"
+      class="navs__nav navs__nav--square navs__nav--series-contents"
       @click="$emit('series')"
     >
       <p>系列內容</p>
     </div>
-    <div
+    <NavsSeriesFollow
       class="navs__nav"
-      @click="$emit('follow')"
-    >
-      <img
-        src="/public/2.0/icons/follow-white.png"
-        alt=""
-      >
-    </div>
+    />
     <div
       class="navs__nav"
       @click="$emit('comment')"
     >
-      <img
-        src="/public/2.0/icons/comment-white.png"
-        alt=""
-      >
+      <IconComment :height="30" />
     </div>
     <div
       class="navs__nav"
       @click="$emit('donate')"
     >
-      <img
-        src="/public/2.0/icons/donate-white.png"
-        alt=""
-      >
+      <IconDonate :height="30" />
     </div>
     <NavsSeriesShare
       class="navs__nav"
@@ -40,11 +28,17 @@
 </template>
 
 <script>
+import NavsSeriesFollow from './NavsSeriesFollow.vue'
 import NavsSeriesShare from './NavsSeriesShare.vue'
+import IconComment from 'src/components/Icons/Comment.vue'
+import IconDonate from 'src/components/Icons/Donate.vue'
 
 export default {
   components: {
-    NavsSeriesShare
+    NavsSeriesFollow,
+    NavsSeriesShare,
+    IconComment,
+    IconDonate
   }
 }
 </script>
@@ -61,6 +55,10 @@ export default {
     &--square
       width 38px
       height 38px
+    &--series-contents
+      &:hover
+        p
+          color #ddcf21
     & + &
       margin 0 0 0 40px
     img
@@ -70,4 +68,5 @@ export default {
       margin 0
       color white
       user-select none
+      transition color .25s ease-out
 </style>

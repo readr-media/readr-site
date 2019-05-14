@@ -3,7 +3,7 @@
     <h1>系列內容</h1>
     <SidebarSeriesContentsList :items="seriesContentsData" />
     <NoSSR>
-      <InfiniteLoading @infinite="infiniteHandler" />
+      <infinite-loading @infinite="infiniteHandler" />
     </NoSSR>
   </div>
 </template>
@@ -14,13 +14,11 @@ import { mapState, mapMutations } from 'vuex'
 
 import SidebarSeriesContentsList from './SidebarSeriesContentsList.vue'
 import NoSSR from 'vue-no-ssr'
-import InfiniteLoading from 'vue-infinite-loading'
 
 export default {
   components: {
     SidebarSeriesContentsList,
-    NoSSR,
-    InfiniteLoading
+    NoSSR
   },
   data () {
     return {
@@ -29,11 +27,11 @@ export default {
   },
   computed: {
     ...mapState({
-      seriesData: state => _.get(state.DataSeries.publicProjects.normal, 0, []),
+      seriesData: state => _.get(state.DataPost, 'post', {}),
       seriesContentsData: state => state.DataSeriesContents.publicProjectContents
     }),
     seriesId () {
-      return _.get(this.seriesData, 'id', '')
+      return _.get(this.seriesData, 'projectId', '')
     }
   },
   watch: {
@@ -54,7 +52,7 @@ export default {
       this.$store.dispatch(
         'DataSeriesContents/FETCH',
         {
-          project_id: this.seriesId,
+          projectId: this.seriesId,
           params: { page: this.page }
         }
       ).then(res => {

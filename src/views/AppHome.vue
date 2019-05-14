@@ -51,7 +51,7 @@ export default {
     titleTemplate: null
   },
   serverPrefetch () {
-    this.$store.dispatch('DataSeries/FETCH')
+    return this.$store.dispatch('DataSeries/FETCH')
   },
   data () {
     return {

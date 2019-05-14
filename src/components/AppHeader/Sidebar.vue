@@ -47,7 +47,7 @@ export default {
   height calc(100vh - 50px)
   opacity 0
   pointer-events none
-  transition opacity 0s .5s
+  transition opacity 0s .25s
   &--show
     opacity 1
     pointer-events auto
@@ -59,7 +59,7 @@ export default {
     bottom 0
     right 0
     background-color rgba(0, 0, 0, 0)
-    transition background-color .5s ease-out
+    transition background-color .25s ease-out
     &--show
       background-color rgba(0, 0, 0, 0.7)
   &__sidebar
@@ -70,7 +70,7 @@ export default {
     height 100%
     background-color white
     transform translateX(-50vw)
-    transition transform .5s ease-out
+    transition transform .25s ease-out
     &--show
       transform translateX(0px)
 

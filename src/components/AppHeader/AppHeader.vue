@@ -72,6 +72,7 @@ export default {
     layout () {
       if (this.layout === 'default' && this.showSidebar) {
         this.showSidebar = false
+        this.currentSidebarSlot = 'seriesContents'
       }
     }
   },
