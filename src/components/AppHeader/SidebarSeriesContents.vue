@@ -52,7 +52,7 @@ export default {
       this.$store.dispatch(
         'DataSeriesContents/FETCH',
         {
-          project_id: this.seriesId,
+          projectId: this.seriesId,
           params: { page: this.page }
         }
       ).then(res => {
