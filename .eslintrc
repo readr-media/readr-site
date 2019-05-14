@@ -10,6 +10,9 @@
   "plugins": [
       "import"
   ],
+  "rules": {
+    "vue/no-v-html": "off"
+  },
   "globals": {
     "Coral": true,
     "FB": true,

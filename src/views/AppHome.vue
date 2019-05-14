@@ -5,9 +5,8 @@
         為您推薦
       </h1>
       <SeriesList
-        :item-style="'recommend'"
         :items="publicProjectsRecommends"
-        class="home__list"
+        class="home__list recommend"
       />
     </div>
     <div v-if="publicProjectsTrends.length > 0">
@@ -15,7 +14,6 @@
         最熱門系列
       </h1>
       <SeriesList
-        :item-style="'highlight'"
         :items="publicProjectsTrends"
         class="home__list highlight"
       />
@@ -50,9 +48,6 @@ export default {
     title: SITE_NAME,
     titleTemplate: null
   },
-  serverPrefetch () {
-    return this.$store.dispatch('DataSeries/FETCH')
-  },
   data () {
     return {
       currentPage: 1,
@@ -75,6 +70,9 @@ export default {
     publicProjectsNormal () {
       return this.publicProjects.normal
     }
+  },
+  asyncData ({ store }) {
+    return store.dispatch('DataSeries/FETCH')
   },
   mounted () {
     window.addEventListener('scroll', this.loadMore)
@@ -108,13 +106,14 @@ export default {
   padding 100px 0
   > div
     & + div
-      margin 70px 0 0
+      margin 35px 0 0
   h1
     text-align center
     &.decorated
       display flex
       justify-content center
       align-items center
+      padding 0 20px
       &:before
         content ''
         display block
@@ -133,22 +132,35 @@ export default {
     display flex
     flex-wrap wrap
     margin-top 1em
+
+    >>> .list-item.comm-narrow
+      width calc((100% - 120px) / 3)
+      margin 30px 20px 0
+      &:nth-child(1), &:nth-child(2), &:nth-child(3)
+        margin-top 0
+    &.recommend
+      >>> .list-item
+        width calc((100% - 120px) / 3)
+        margin 0 20px
     &.highlight
       justify-content center
-    >>> .list-item.comm-narrow
-      width calc((100% - 180px) / 4)
-      margin 60px 20px 0
-      &:nth-child(1), &:nth-child(2), &:nth-child(3), &:nth-child(4)
-        margin-top 14px
-    >>> .list-item.recommend
-      width calc((100% - 120px) / 3)
-      margin 0 20px
-    >>> .list-item.highlight
-      width 80%
-      max-width 900px
-      margin 0
-      background-color transparent
-      h1, p
-        text-align center
+      >>> .list-item
+        width 80%
+        max-width 900px
+        margin 0
+        background-color transparent
+        h1, p
+          text-align center
 
+@media (min-width: 1024px)
+  .home
+    > div
+      & + div
+        margin 70px 0 0
+    &__list
+      >>> .list-item.comm-narrow
+        width calc((100% - 180px) / 4)
+        margin-top 60px
+        &:nth-child(1), &:nth-child(2), &:nth-child(3), &:nth-child(4)
+          margin-top 14px
 </style>

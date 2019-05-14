@@ -147,8 +147,6 @@ export default {
 
 @media (min-width: 768px)
   .donate-share
-    width 60%
-    margin 0 auto
     p
       width 100%
       br
