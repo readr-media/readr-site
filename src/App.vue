@@ -61,6 +61,8 @@ a
     color #000
 button
   cursor pointer
+img
+  font-size .75rem // for alt text
 pre
   padding .5em
   color #f8f8f2

@@ -7,10 +7,23 @@
         v-text="dayjs(post.publishedAt).format('YYYY/MM/DD')"
       />
       <h1 v-text="post.title || post.ogTitle" />
-      <article>{{ postContentProcessed }}</article>
+      <article v-html="postContentProcessed" />
     </main>
-    <lazy-component class="post-bottom">
-      <DonateWithShare :url="getPostFullUrl(post)" />
+    <lazy-component
+      class="post-bottom"
+      @show="fetchSeries"
+    >
+      <DonateWithShare
+        :url="getPostFullUrl(post)"
+        class="app-content-area"
+      />
+      <div class="app-content-area post__series">
+        <h2>更多系列</h2>
+        <SeriesList
+          :items="seriesFiltered"
+          class="post__series-list more"
+        />
+      </div>
     </lazy-component>
   </section>
 </template>
@@ -21,12 +34,14 @@ import { getPostFullUrl } from 'src/util/post/index'
 import { mapState } from 'vuex'
 
 import DonateWithShare from 'src/components/DonateWithShare.vue'
+import SeriesList from 'src/components/Series/SeriesList.vue'
 import dayjs from 'dayjs'
 
 export default {
   name: 'AppPost',
   components: {
-    DonateWithShare
+    DonateWithShare,
+    SeriesList
   },
   metaInfo () {
     const title = this.post.title
@@ -43,12 +58,10 @@ export default {
       ]
     }
   },
-  serverPrefetch () {
-    return this.$store.dispatch('DataPost/GET_POST', { id: this.$route.params.postId })
-  },
   computed: {
     ...mapState({
-      post: state => state.DataPost.post
+      post: state => state.DataPost.post,
+      series: state => state.DataSeries.publicProjects.normal
     }),
     postImage () {
       return this.post.heroImage || this.post.ogImage
@@ -58,16 +71,26 @@ export default {
     },
     postProcessed () {
       return createPost(this.post)
+    },
+    seriesFiltered () {
+      return this.series.slice(0, 3)
     }
+  },
+  asyncData ({ store, route }) {
+    return store.dispatch('DataPost/GET_POST', { id: route.params.postId })
   },
   methods: {
     dayjs,
+    fetchSeries () {
+      this.$store.dispatch('DataSeries/FETCH', { maxResult: 4 })
+    },
     getPostFullUrl
   }
 }
 </script>
 <style lang="stylus" scoped>
   .post
+    position relative
     main
       padding 1em 0 5em
     article
@@ -96,7 +119,27 @@ export default {
         color #4a4a4a
       & + h1
         margin-top .5em
-
+    &::after
+      content ''
+      position absolute
+      left 50%
+      bottom 0
+      transform translateX(-50%)
+      width 60%
+      max-width 800px
+      height 5px
+      background-color #000
+    &__series
+      margin 2em auto 0
+      &-list
+        display flex
+        flex-wrap wrap
+        justify-content space-between
+        &.more
+          >>> .list-item
+            width calc((100% - 60px) / 3)
+            .description
+              display none
     .post-bottom
       margin 0
       padding 30px 0 60px
