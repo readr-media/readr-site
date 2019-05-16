@@ -1,13 +1,28 @@
 <template>
-  <section class="post">
+  <section :class="[ postType, 'post' ]">
     <figure v-if="postImage" />
     <main class="app-content-area">
       <p
-        class="small"
+        class="post__date small"
         v-text="dayjs(post.publishedAt).format('YYYY/MM/DD')"
       />
       <h1 v-text="post.title || post.ogTitle" />
+      <PostAuthor
+        v-if="post.author"
+        :author="post.author"
+        :post-type="postType"
+        class="post__author"
+      />
       <article v-html="postContentProcessed" />
+      <PostReviewLink
+        v-if="isReview"
+        :description="post.linkDescription"
+        :image="post.linkImage"
+        :link="post.link"
+        :source-name="post.linkName"
+        :title="post.linkTitle"
+        class="post__review-link"
+      />
     </main>
     <lazy-component
       class="post-bottom"
@@ -34,6 +49,8 @@ import { getPostFullUrl } from 'src/util/post/index'
 import { mapState } from 'vuex'
 
 import DonateWithShare from 'src/components/DonateWithShare.vue'
+import PostAuthor from 'src/components/post/PostAuthor.vue'
+import PostReviewLink from 'src/components/post/PostReviewLink.vue'
 import SeriesList from 'src/components/Series/SeriesList.vue'
 import dayjs from 'dayjs'
 
@@ -41,6 +58,8 @@ export default {
   name: 'AppPost',
   components: {
     DonateWithShare,
+    PostAuthor,
+    PostReviewLink,
     SeriesList
   },
   metaInfo () {
@@ -63,21 +82,27 @@ export default {
       post: state => state.DataPost.post,
       series: state => state.DataSeries.publicProjects.normal
     }),
-    postImage () {
-      return this.post.heroImage || this.post.ogImage
+    isReview () {
+      return this.postType === 'review'
     },
     postContentProcessed () {
       return this.postProcessed.contentProcessed.join('')
     },
+    postImage () {
+      return this.post.heroImage || this.post.ogImage
+    },
     postProcessed () {
       return createPost(this.post)
+    },
+    postType () {
+      return this.postProcessed.typeProcessed
     },
     seriesFiltered () {
       return this.series.slice(0, 3)
     }
   },
   asyncData ({ store, route }) {
-    return store.dispatch('DataPost/GET_POST', { id: route.params.postId })
+    return store.dispatch('DataPost/GET_POST', { id: route.params.postId, showAuthor: true })
   },
   methods: {
     dayjs,
@@ -92,7 +117,19 @@ export default {
   .post
     position relative
     main
+      display flex
+      flex-direction column
       padding 1em 0 5em
+      h1
+        order 2
+      article
+        order 4
+      .post__date
+        order 1
+      .post__author
+        order 3
+      .post__review-link
+        order 9
     article
       margin .5em 0 0
       >>> *
@@ -111,6 +148,9 @@ export default {
       >>> .readme-embed
         > div
           display none
+    h1
+      & + *
+        margin-top .5em
     h2
       & + div
         margin-top .5em
@@ -140,8 +180,21 @@ export default {
             width calc((100% - 60px) / 3)
             .description
               display none
+    &__review-link
+      margin 30px auto 0
     .post-bottom
       margin 0
       padding 30px 0 60px
       background-color #fff
+    &.review
+      .post__author
+        order 0
+      .post__date
+        margin-top .5em
+
+@media (min-width: 1024px)
+  .post
+    &.review
+      .post__date
+        margin-top 1em
 </style>

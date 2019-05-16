@@ -60,7 +60,11 @@ a
   &:link, &:visited, &:hover, &:active
     color #000
 button
+  background-color transparent
+  border none
   cursor pointer
+figure
+  background-color #979797
 img
   font-size .75rem // for alt text
 pre

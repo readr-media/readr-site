@@ -13,7 +13,7 @@ import { getPostContentStrings } from './content'
 import { createShareUrl } from './share'
 
 const postType = {
-  [ POST_TYPE.REVIEW ]: 'normal',
+  [ POST_TYPE.REVIEW ]: 'review',
   [ POST_TYPE.NEWS ]: 'news',
   [ POST_TYPE.REPORT ]: 'report',
   [ POST_TYPE.MEMO ]: 'memo'
