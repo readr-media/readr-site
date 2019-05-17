@@ -8,6 +8,9 @@ Vue.use(ReadrPerm)
 const AppHome = () => import('../views/AppHome.vue')
 const AppPost = () => import('../views/AppPost.vue')
 const AppReport = () => import('../views/AppReport.vue')
+const AppSearch = () => import('../views/AppSearch.vue')
+
+const MemberFollowing = () => import('../views/MemberFollowing.vue')
 
 const PublicPageNotFound = () => import('../views/PublicPageNotFound.vue')
 const PublicServerError = () => import('../views/PublicServerError.vue')
@@ -23,9 +26,32 @@ const router = new Router({
     }
   },
   routes: [
-    { name: 'home', path: '/', component: AppHome },
-    { name: 'post', path: '/post/:postId?', component: AppPost },
-    { name: 'report', path: '/report/:slug', component: AppReport },
+    {
+      name: 'home',
+      path: '/',
+      component: AppHome
+    },
+    {
+      name: 'post',
+      path: '/post/:postId?',
+      component: AppPost
+    },
+    {
+      name: 'report',
+      path: '/report/:slug',
+      component: AppReport
+    },
+    {
+      name: 'search',
+      path: '/search',
+      component: AppSearch
+    },
+    {
+      name: 'memberFollowing',
+      path: '/following',
+      component: MemberFollowing,
+      meta: { permission: 'member' }
+    },
     { path: '/404', component: PublicPageNotFound },
     { path: '/500', component: PublicServerError },
     { path: '*', component: PublicPageNotFound }

@@ -66,7 +66,7 @@
 import { get } from 'lodash'
 import TextItem from 'src/components/form/TextItem.vue'
 import validator from 'validator'
-import VueCookie from 'vue-cookie'
+// import VueCookie from 'vue-cookie'
 
 const debug = require('debug')('CLIENT:Login')
 const switchOffLoginAsk = store => store.dispatch('UILoginLightbox/LOGIN_ASK_TOGGLE', { active: false, message: '' })
@@ -105,6 +105,11 @@ export default {
       resMsg: null
     }
   },
+  computed: {
+    loginTo () {
+      return this.$store.state.UILoginLightbox.loginAskFlag.to
+    }
+  },
   methods: {
     goRecoverPwd () {
       this.$emit('goRecoverPwd')
@@ -125,21 +130,14 @@ export default {
           this.$emit('update:isDoingLogin', false)
           if (res.status === 200) {
             const isPublicComment = this.$route.path === '/comment'
-            const from = VueCookie.get('location-replace-from')
-            const isFromPathExist = from !== null
 
             if (this.panelType === 'WINDOW') {
               window.opener.location.reload()
               window.close()
             } else if (isPublicComment) {
               this.$router.push(this.$route.fullPath)
-            } else {
-              if (isFromPathExist) {
-                VueCookie.delete('location-replace-from')
-                this.$router.push(from)
-              } else {
-                this.$router.push('/')
-              }
+            } else if (this.loginTo) {
+              this.$router.push(this.loginTo)
             }
 
             // revolke switchOffLoginAsk for LoginLight

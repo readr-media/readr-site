@@ -2,7 +2,7 @@
   <nav class="navs">
     <router-link
       class="navs__nav"
-      to="/"
+      to="/search"
     >
       <img
         src="/public/2.0/icons/search-white.png"
@@ -11,10 +11,10 @@
     </router-link>
     <router-link
       class="navs__nav"
-      to="/"
+      to="/following"
     >
       <img
-        src="/public/2.0/icons/follow-white.png"
+        src="/public/2.0/icons/follow-white-bold.png"
         alt=""
       >
     </router-link>
@@ -25,11 +25,28 @@
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
 import NavsDefaultUser from './NavsDefaultUser.vue'
 
 export default {
   components: {
     NavsDefaultUser
+  },
+  computed: {
+    ...mapState({
+      isLoggedIn: state => state.DataUser.isLoggedIn
+    })
+  },
+  methods: {
+    ...mapActions({
+      LOGIN_ASK_TOGGLE: 'UILoginLightbox/LOGIN_ASK_TOGGLE'
+    }),
+    switchOnLoginPanel () {
+      this.LOGIN_ASK_TOGGLE({ active: 'on', message: '' })
+    },
+    login () {
+      this.switchOnLoginPanel()
+    }
   }
 }
 </script>

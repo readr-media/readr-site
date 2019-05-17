@@ -4,18 +4,19 @@ export default {
     return {
       loginAskFlag: {
         active: false,
-        message: ''
+        message: '',
+        to: '/'
       }
     }
   },
   mutations: {
-    SWITCH_ON_LOGIN_ASK (state, { active, message, type }) {
-      state['loginAskFlag'] = { active, message, type }
+    SWITCH_ON_LOGIN_ASK (state, { active, message, type, to }) {
+      state['loginAskFlag'] = { active, message, type, to }
     }
   },
   actions: {
-    LOGIN_ASK_TOGGLE ({ commit }, { active, message, type }) {
-      return commit('SWITCH_ON_LOGIN_ASK', { active, message, type })
+    LOGIN_ASK_TOGGLE ({ commit }, { active, message, type, to }) {
+      return commit('SWITCH_ON_LOGIN_ASK', { active, message, type, to })
     }
   }
 }

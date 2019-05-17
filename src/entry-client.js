@@ -1,8 +1,8 @@
 import Vue from 'vue'
 import 'es6-promise/auto'
-import { ROLE_MAP } from './constants'
+// import { ROLE_MAP } from './constants'
 import { createApp } from './app'
-import { filter, get } from 'lodash'
+import { get } from 'lodash'
 import { getToken, removeToken } from './util/services'
 import ProgressBar from './components/ProgressBar.vue'
 // import(/* webpackChunkName: "trace-worker" */ './trace-worker.js')
@@ -73,21 +73,11 @@ Vue.mixin({
       debug(get(store, 'state.DataUser.profile.role'))
       debug(get(store, 'state.DataUser.isLoggedIn'))
       if (permission) {
-        next(vm => {
-          if (cookie) {
-            const role = get(filter(ROLE_MAP, { key: get(vm, '$store.state.DataUser.profile.role') }), [ 0, 'route' ], 'visitor')
-            debug('role', role)
-            if (role === 'visitor' || (permission !== 'member' && permission !== role)) {
-              /** User doesn't have the right to go to route "to". So, go back to route "from" */
-              debug(`User doesn't have the right to go to route "to". So, go back to route "from"`)
-              next('/')
-            }
-          } else {
-            /** Cookie doesn't exist or fetching the profile in fail. So, go back to route "from". */
-            debug(`Cookie doesn't exist or fetching the profile in fail. So, go back to route "/login".`)
-            next('/login')
-          }
-        })
+        if (!cookie) {
+          store.dispatch('UILoginLightbox/LOGIN_ASK_TOGGLE', { active: 'on', message: '', to: to.path })
+        } else {
+          next()
+        }
       } else {
         /** Route "to" doesn't have any permission setting. So, go to route "to" without problem. */
         debug(`Route "to" doesn't have any permission setting. So, go to route "to" without problem.`)
