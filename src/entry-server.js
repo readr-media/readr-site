@@ -40,7 +40,10 @@ export default context => {
 
       let targUrl
       if ((permission && (role === 'visitor' || (permission !== role && permission !== 'member'))) || (isInitMember && !initmember)) {
-        return reject(new Error({ code: 403 }))
+        // return reject(new Error({ code: 403 }))
+        router.push('/')
+        targUrl = '/'
+        store.state.server_url = '/'
       } else {
         router.push(url)
         targUrl = url
