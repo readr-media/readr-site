@@ -25,28 +25,11 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
 import NavsDefaultUser from './NavsDefaultUser.vue'
 
 export default {
   components: {
     NavsDefaultUser
-  },
-  computed: {
-    ...mapState({
-      isLoggedIn: state => state.DataUser.isLoggedIn
-    })
-  },
-  methods: {
-    ...mapActions({
-      LOGIN_ASK_TOGGLE: 'UILoginLightbox/LOGIN_ASK_TOGGLE'
-    }),
-    switchOnLoginPanel () {
-      this.LOGIN_ASK_TOGGLE({ active: 'on', message: '' })
-    },
-    login () {
-      this.switchOnLoginPanel()
-    }
   }
 }
 </script>
