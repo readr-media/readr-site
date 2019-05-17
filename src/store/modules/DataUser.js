@@ -19,9 +19,9 @@ export default {
       profile: {},
       isLoggedIn: false,
       isFollowing: {
-        // post: [],
-        review: [],
-        news: [],
+        post: [],
+        // review: [],
+        // news: [],
         report: [],
         memo: [],
         project: [],
