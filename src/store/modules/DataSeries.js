@@ -17,12 +17,16 @@ export default {
         normal: [],
         recommends: [],
         trends: []
-      }
+      },
+      singleSeries: {}
     }
   },
   mutations: {
     SET_PUBLIC_PROJECTS (state, { status, publicProjects }) {
       Vue.set(state['publicProjects'], status, publicProjects)
+    },
+    SET_SINGLE_SERIES (state, { series }) {
+      state.singleSeries = series
     }
   },
   actions: {
@@ -82,6 +86,21 @@ export default {
             publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED
           }
         }
+      })
+    },
+
+    FETCH_SINGLE_SERIES ({ commit }, { slug }) {
+      return getPublicProjectsList({
+        params: {
+          max_result: 1,
+          page: DEFAULT_PAGE,
+          slugs: [ slug ],
+          where: {
+            publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED
+          }
+        }
+      }).then(res => {
+        commit('SET_SINGLE_SERIES', { series: _.get(res, 'body.items.0') })
       })
     }
   }
