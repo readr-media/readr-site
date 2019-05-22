@@ -85,4 +85,7 @@ export default {
       width 90%
       margin-left auto
       margin-right auto
+
+  .list-item.comm-series-more
+    width calc((100% - 60px) / 3)
 </style>

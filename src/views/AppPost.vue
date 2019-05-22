@@ -35,6 +35,7 @@
       <div class="app-content-area post__series">
         <h2>更多系列</h2>
         <SeriesList
+          :item-style="'comm-series-more'"
           :items="seriesFiltered"
           class="post__series-list more"
         />
@@ -177,7 +178,6 @@ export default {
         justify-content space-between
         &.more
           >>> .list-item
-            width calc((100% - 60px) / 3)
             .description
               display none
     &__review-link

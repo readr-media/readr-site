@@ -9,6 +9,7 @@ const AppHome = () => import('../views/AppHome.vue')
 const AppPost = () => import('../views/AppPost.vue')
 const AppReport = () => import('../views/AppReport.vue')
 const AppSearch = () => import('../views/AppSearch.vue')
+const AppSeries = () => import('../views/AppSeries.vue')
 
 const MemberFollowing = () => import('../views/MemberFollowing.vue')
 
@@ -45,6 +46,11 @@ const router = new Router({
       name: 'search',
       path: '/search',
       component: AppSearch
+    },
+    {
+      name: 'series',
+      path: '/series/:slug',
+      component: AppSeries
     },
     {
       name: 'memberFollowing',

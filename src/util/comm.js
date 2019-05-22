@@ -2,7 +2,7 @@ import _ from 'lodash'
 import Cookie from 'vue-cookie'
 import uuidv4 from 'uuid/v4'
 import pathToRegexp from 'path-to-regexp'
-import { SITE_DOMAIN, SITE_DOMAIN_DEV } from '../constants'
+import { SITE_DOMAIN, SITE_DOMAIN_DEV, SITE_FULL } from '../constants'
 
 const debug = require('debug')('CLIENT:comm')
 let isRecaptchaLoaded = false
@@ -43,17 +43,16 @@ export function dateDiffFromNow (date) {
 }
 
 export function getFullUrl (url) {
-  const browser = typeof window !== 'undefined'
-  let hostname
-  if (browser) {
-    hostname = location.hostname
+  const regexProtocol = /^http(s?):\/\//
+  const regexDev = new RegExp(`localhost|${SITE_DOMAIN_DEV}`)
+  const clientSide = typeof window !== 'undefined'
+  if (url.match(regexProtocol)) {
+    return url
+  } else if (!clientSide) {
+    return `${SITE_FULL}${url}`
   }
-
-  const expProtocol = /^http(s?):\/\//
-  if (hostname === 'localhost' && !expProtocol.test(url)) {
-    return `http://${SITE_DOMAIN_DEV}${url}`
-  }
-  return url
+  const hostname = location.hostname
+  return hostname.match(regexDev) ? `http://${SITE_DOMAIN_DEV}${url}` : `${SITE_FULL}${url}`
 }
 
 export function getHost () {
