@@ -1,15 +1,17 @@
 <template>
   <section class="series">
     <main>
-      <figure
+      <div
         v-if="singleSeries.heroImage || singleSeries.ogImage"
         class="series__image app-content-area"
       >
-        <img
-          :src="singleSeries.heroImage || singleSeries.ogImage"
-          :alt="singleSeries.title || singleSeries.ogTitle"
-        >
-      </figure>
+        <figure>
+          <img
+            :src="singleSeries.heroImage || singleSeries.ogImage"
+            :alt="singleSeries.title || singleSeries.ogTitle"
+          >
+        </figure>
+      </div>
       <h1
         class="app-content-area"
         v-text="singleSeries.title || singleSeries.ogTitle"
@@ -82,20 +84,20 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .series
-  h1
-    & + *
-      margin-top .5em
+  main
+    h1, div
+      & + *
+        margin-top .5em
   h2
     & + div
       margin-top .5em
   p
     text-align justify
-  figure
-    & + *
-      margin-top .5em
   &__image
-    position relative
-    padding-top calc(60% * 0.5625)
+    figure
+      position relative
+      width 100%
+      padding-top 56.25%
     img
       position absolute
       top 0
