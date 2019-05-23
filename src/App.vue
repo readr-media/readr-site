@@ -44,7 +44,7 @@ h1, h2, h3, p, a, figure, pre
 h1, h2, h3, p, a,
   color #000
 h1
-  font-size 1.875rem
+  font-size 2rem
   font-weight 600
 h2
   font-size 1.5rem
@@ -89,8 +89,6 @@ pre
     h1
       font-size 1.5rem
       font-weight normal
-    figure
-      background-color #979797
   &-content-area
     width 60%
     max-width 800px
