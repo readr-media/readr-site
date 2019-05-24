@@ -80,7 +80,6 @@ export default {
     p
       width 90%
       margin 0 auto
-      font-size .75rem
       line-height 1.6
       br
         display none
