@@ -10,7 +10,7 @@
         :alt="title"
       >
     </figure>
-    <h1
+    <p
       v-if="title"
       v-text="title"
     />
@@ -73,7 +73,7 @@ export default {
         height 100%
         object-fit cover
         object-position center center
-    h1, p
+    p
       overflow hidden
     .description
       text-align justify
@@ -81,7 +81,7 @@ export default {
   .list-item.comm-narrow
     padding-bottom 1em
     background-color #fff
-    h1, p
+    p
       width 90%
       margin-left auto
       margin-right auto

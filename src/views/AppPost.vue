@@ -132,13 +132,17 @@ export default {
       .post__review-link
         order 9
     article
-      margin .5em 0 0
+      margin 10px 0 0
       >>> *
         & + *
-          margin-top .5em
+          margin-top 1rem
+        & + p
+          margin-top 10px
       >>> p
         line-height 1.86
         text-align justify
+        & + *
+          margin-top 10px
       >>> img
         position relative
         top 0
@@ -151,15 +155,15 @@ export default {
           display none
     h1
       & + *
-        margin-top .5em
+        margin-top 1rem
     h2
       & + div
-        margin-top .5em
+        margin-top 1rem
     p
       &.small
         color #4a4a4a
       & + h1
-        margin-top .5em
+        margin-top 1rem
     &::after
       content ''
       position absolute
