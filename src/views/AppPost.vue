@@ -57,7 +57,7 @@ import { mapState } from 'vuex'
 import DonateWithShare from 'src/components/DonateWithShare.vue'
 import PostAuthor from 'src/components/post/PostAuthor.vue'
 import PostReviewLink from 'src/components/post/PostReviewLink.vue'
-import SeriesList from 'src/components/Series/SeriesList.vue'
+import SeriesList from 'src/components/series/SeriesList.vue'
 import TagsInPost from 'src/components/tag/TagsInPost.vue'
 import dayjs from 'dayjs'
 

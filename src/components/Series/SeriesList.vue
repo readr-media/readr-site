@@ -14,7 +14,7 @@
   </div>
 </template>
 <script>
-import ListItem from '../ListItem/ListItem.vue'
+import ListItem from '../listItem/ListItem.vue'
 import dayjs from 'dayjs'
 import { truncate } from 'lodash'
 
