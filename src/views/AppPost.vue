@@ -8,12 +8,17 @@
       />
       <h1 v-text="post.title || post.ogTitle" />
       <PostAuthor
-        v-if="post.author"
+        v-if="post.author && post.author.nickname"
         :author="post.author"
         :post-type="postType"
         class="post__author"
       />
       <article v-html="postContentProcessed" />
+      <TagsInPost
+        v-if="post.tags && post.tags.length > 0"
+        :tags="post.tags"
+        class="post__tags"
+      />
       <PostReviewLink
         v-if="isReview"
         :description="post.linkDescription"
@@ -53,6 +58,7 @@ import DonateWithShare from 'src/components/DonateWithShare.vue'
 import PostAuthor from 'src/components/post/PostAuthor.vue'
 import PostReviewLink from 'src/components/post/PostReviewLink.vue'
 import SeriesList from 'src/components/Series/SeriesList.vue'
+import TagsInPost from 'src/components/tag/TagsInPost.vue'
 import dayjs from 'dayjs'
 
 export default {
@@ -61,7 +67,8 @@ export default {
     DonateWithShare,
     PostAuthor,
     PostReviewLink,
-    SeriesList
+    SeriesList,
+    TagsInPost
   },
   metaInfo () {
     const title = this.post.title
@@ -103,7 +110,7 @@ export default {
     }
   },
   asyncData ({ store, route }) {
-    return store.dispatch('DataPost/GET_POST', { id: route.params.postId, showAuthor: true })
+    return store.dispatch('DataPost/GET_POST', { id: route.params.postId, showAuthor: true, showTag: true })
   },
   methods: {
     dayjs,
@@ -121,6 +128,8 @@ export default {
       display flex
       flex-direction column
       padding 1em 0 5em
+      > *
+        order 10
       h1
         order 2
       article
@@ -184,6 +193,9 @@ export default {
           >>> .list-item
             .description
               display none
+    &__tags
+      display flex
+      margin-top 30px
     &__review-link
       margin 30px auto 0
     .post-bottom
