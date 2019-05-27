@@ -41,7 +41,7 @@ import { SITE_FULL } from 'src/constants'
 import { getFullUrl } from 'src/util/comm'
 import { mapState } from 'vuex'
 
-import SeriesList from 'src/components/Series/SeriesList.vue'
+import SeriesList from 'src/components/series/SeriesList.vue'
 
 export default {
   name: 'AppSeries',

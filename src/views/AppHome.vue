@@ -37,7 +37,7 @@ import { get } from 'lodash'
 import { mapState } from 'vuex'
 import { isScrollBarReachBottom } from '../util/comm'
 
-import SeriesList from 'src/components/Series/SeriesList.vue'
+import SeriesList from 'src/components/series/SeriesList.vue'
 
 export default {
   name: 'AppHome',
