@@ -24,6 +24,7 @@
         class="header__navs"
         @series="toggleNavSeries('seriesContents')"
         @comment="toggleNavSeries('comment')"
+        @donate="toggleNavSeries('donate')"
       />
     </div>
     <Sidebar
@@ -31,8 +32,16 @@
       :show-sidebar.sync="showSidebar"
       class="header__sidebar"
     >
-      <SidebarSeriesContents v-show="currentSidebarSlot === 'seriesContents'" />
-      <SidebarComment v-show="currentSidebarSlot === 'comment'" />
+      <SidebarSeriesContents
+        v-show="currentSidebarSlot === 'seriesContents'"
+      />
+      <SidebarComment
+        v-show="currentSidebarSlot === 'comment'"
+      />
+      <SidebarDonate
+        v-show="currentSidebarSlot === 'donate'"
+        @closeSidebar="showSidebar = false"
+      />
     </Sidebar>
   </header>
 </template>
@@ -45,6 +54,7 @@ import NavsSeries from './NavsSeries.vue'
 import Sidebar from './Sidebar.vue'
 import SidebarSeriesContents from './SidebarSeriesContents.vue'
 import SidebarComment from './SidebarComment.vue'
+import SidebarDonate from './SidebarDonate.vue'
 
 export default {
   components: {
@@ -52,7 +62,8 @@ export default {
     NavsSeries,
     Sidebar,
     SidebarSeriesContents,
-    SidebarComment
+    SidebarComment,
+    SidebarDonate
   },
   data () {
     return {
