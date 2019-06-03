@@ -10,8 +10,10 @@ import {
 
 export default {
   namespaced: true,
-  state: {
-    post: {}
+  state () {
+    return {
+      post: {}
+    }
   },
   actions: {
     GET_POST ({ commit }, { id, showAuthor = false, showTag = false }) {
