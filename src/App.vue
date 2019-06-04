@@ -48,7 +48,7 @@ h1
   font-weight normal
 h2
   font-size 1.5rem
-  font-weight normal
+  font-weight 500
 p
   font-size 1rem
   &.small

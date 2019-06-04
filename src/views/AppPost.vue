@@ -173,6 +173,8 @@ export default {
     p
       &.small
         color #4a4a4a
+        & + h1
+          margin-top 1.5rem
       & + h1
         margin-top 17px
     &::after
