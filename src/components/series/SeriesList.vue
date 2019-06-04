@@ -7,7 +7,7 @@
       :date="dayjs(item.publishedAt).format('YYYY/MM/DD')"
       :description="truncate(item.ogDescription || item.description)"
       :href="`/series/${item.slug}`"
-      :image="item.ogImage ||item.heroImage || ' '"
+      :image="item.heroImage ||item.ogImage || ' '"
       :target="'_blank'"
       :title="item.title"
     />

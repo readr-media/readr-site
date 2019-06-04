@@ -56,10 +56,10 @@ export function getResourceType (post) {
 export function getPostFullUrl (postData) {
   const postType = getPostType(postData)
   const createPostUrl = {
-    'news': getShareUrl(`/post/${get(postData, 'id', '')}`),
-    'review': getShareUrl(`/post/${get(postData, 'id', '')}`),
-    'memo': get(postData, 'link') || getShareUrl(`/series/${get(postData, [ 'project', 'slug' ], '')}/${get(postData, 'id', '')}`),
-    'report': get(postData, 'link') || getReportLink(postData)
+    news: getShareUrl(`/post/${get(postData, 'id', '')}`),
+    review: getShareUrl(`/post/${get(postData, 'id', '')}`),
+    memo: get(postData, 'link') || getShareUrl(`/series/${get(postData, [ 'project', 'slug' ], '')}/${get(postData, 'id', '')}`),
+    report: get(postData, 'link') || getReportLink(postData)
   }
   return createPostUrl[postType] || SITE_FULL
 }
