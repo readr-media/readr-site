@@ -16,6 +16,7 @@
         <h2 v-text="author.nickname" />
         <button
           v-if="author.description"
+          :class="{ active: openDescription }"
           @click="openDescription = !openDescription"
         />
       </div>
@@ -99,7 +100,6 @@ export default {
     button
       position relative
       top -2px
-      transform rotate(90deg)
       width 25px
       height 25px
       margin-left .6em
@@ -110,6 +110,10 @@ export default {
       background-repeat no-repeat
       border-radius 50%
       box-shadow 0 2px 4px 0 rgba(0, 0, 0, 0.5)
+      transition transform .5s
+      &.active
+        transform rotate(90deg)
+
   &__descr
     padding 1em
     background-color #fff

@@ -44,7 +44,7 @@ h1, h2, h3, p, a, figure, pre
 h1, h2, h3, p, a
   color #000
 h1
-  font-size 2rem
+  font-size 2.8125rem
   font-weight normal
 h2
   font-size 1.5rem
