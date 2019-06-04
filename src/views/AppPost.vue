@@ -174,7 +174,7 @@ export default {
       &.small
         color #4a4a4a
       & + h1
-        margin-top 1rem
+        margin-top 17px
     &::after
       content ''
       position absolute

@@ -87,12 +87,16 @@ export default {
   main
     h1, div
       & + *
-        margin-top .5em
+        margin-top 1.5rem
+  h1
+    & + p
+      margin-top 17px
   h2
     & + div
-      margin-top .5em
+      margin-top 1.5rem
   p
     text-align justify
+    line-height 1.86
   &__image
     figure
       position relative
