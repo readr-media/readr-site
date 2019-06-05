@@ -84,7 +84,7 @@ pre
     h1, p
       line-height 1.3
     h1, p, figure
-      & + h1, & + p
+      & + h1, & + p, & + div
         margin-top .5em
     h1
       font-size 1.5rem

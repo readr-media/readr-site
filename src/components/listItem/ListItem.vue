@@ -10,20 +10,23 @@
         :alt="title"
       >
     </figure>
-    <p
-      v-if="title"
-      v-text="title"
-    />
-    <p
-      v-if="date"
-      class="date small"
-      v-text="date"
-    />
-    <p
-      v-if="description"
-      class="description"
-      v-text="description"
-    />
+    <div class="list-item__content">
+      <p
+        v-if="title"
+        class="title"
+        v-text="title"
+      />
+      <p
+        v-if="date"
+        class="date small"
+        v-text="date"
+      />
+      <p
+        v-if="description"
+        class="description"
+        v-text="description"
+      />
+    </div>
   </router-link>
 </template>
 <script>

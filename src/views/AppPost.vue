@@ -37,12 +37,17 @@
         :url="getPostFullUrl(post)"
         class="app-content-area"
       />
-      <div class="app-content-area post__series">
+      <div class="app-content-area post__related">
+        <h2>系列內容</h2>
+        <PostList
+          :items="seriesPostsFiltered"
+          class="post__post-list"
+        />
         <h2>更多系列</h2>
         <SeriesList
           :item-style="'comm-series-more'"
           :items="seriesFiltered"
-          class="post__series-list more"
+          class="post__series-list"
         />
       </div>
     </lazy-component>
@@ -56,6 +61,7 @@ import { mapState } from 'vuex'
 
 import DonateWithShare from 'src/components/DonateWithShare.vue'
 import PostAuthor from 'src/components/post/PostAuthor.vue'
+import PostList from 'src/components/post/PostList.vue'
 import PostReviewLink from 'src/components/post/PostReviewLink.vue'
 import SeriesList from 'src/components/series/SeriesList.vue'
 import TagsInPost from 'src/components/tag/TagsInPost.vue'
@@ -66,6 +72,7 @@ export default {
   components: {
     DonateWithShare,
     PostAuthor,
+    PostList,
     PostReviewLink,
     SeriesList,
     TagsInPost
@@ -88,7 +95,8 @@ export default {
   computed: {
     ...mapState({
       post: state => state.DataPost.post,
-      series: state => state.DataSeries.publicProjects.normal
+      series: state => state.DataSeries.publicProjects.normal,
+      seriesPosts: state => state.DataSeriesContents.publicProjectContents
     }),
     isReview () {
       return this.postType === 'review'
@@ -107,6 +115,9 @@ export default {
     },
     seriesFiltered () {
       return this.series.slice(0, 3)
+    },
+    seriesPostsFiltered () {
+      return this.seriesPosts.filter(post => post.id !== Number(this.$route.params.postId)).slice(0, 3)
     }
   },
   asyncData ({ store, route }) {
@@ -187,16 +198,46 @@ export default {
       max-width 800px
       height 5px
       background-color #000
-    &__series
+    &__related
       margin 2em auto 0
-      &-list
+      h2, div
+        & + h2, & + div
+          margin-top .5em
+    &__post-list
+      display flex
+      flex-direction column
+      >>> .list-item
         display flex
-        flex-wrap wrap
-        justify-content space-between
-        &.more
-          >>> .list-item
-            .description
-              display none
+        width 100%
+        padding-bottom .5em
+        &:last-child
+          border-bottom none
+        & + .list-item
+          margin-top .5em
+        .date
+          display none
+        p
+          & + p
+            margin-top 1em
+        figure
+          width 33%
+          padding-top calc(33% * 0.5625)
+          border 1px solid #979797
+          & + p
+            margin-top 0
+        .list-item__content
+          flex 1
+          margin 0 0 0 15px
+          border-bottom 1px solid #979797
+        .title
+          font-weight 500
+    &__series-list
+      display flex
+      flex-wrap wrap
+      justify-content space-between
+      >>> .list-item
+        .description
+          display none
     &__tags
       display flex
       margin-top 30px

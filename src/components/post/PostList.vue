@@ -1,15 +1,15 @@
 <template>
-  <div class="series-list">
+  <div class="post-list">
     <ListItem
       v-for="item in items"
       :key="item.id"
       :class="itemStyle"
       :date="dayjs(item.publishedAt).format('YYYY/MM/DD')"
       :description="truncate(item.description || item.ogDescription)"
-      :href="`/series/${item.slug}`"
-      :image="item.heroImage ||item.ogImage || ' '"
+      :href="`/post/${item.id}`"
+      :image="item.heroImage || item.ogImage || ' '"
       :target="'_blank'"
-      :title="item.title"
+      :title="item.title || item.ogTitle"
     />
   </div>
 </template>
@@ -19,7 +19,7 @@ import dayjs from 'dayjs'
 import { truncate } from 'lodash'
 
 export default {
-  name: 'SeriesList',
+  name: 'PostList',
   components: {
     ListItem
   },
