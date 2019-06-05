@@ -36,8 +36,8 @@
           >
         </a>
         <button
+          id="donate-share-copy"
           class="copy"
-          @click="copyToClipboard"
         >
           <img
             src="/public/2.0/icons/link.png"
@@ -50,6 +50,7 @@
   </div>
 </template>
 <script>
+import ClipboardJS from 'clipboard'
 import { createShareUrl } from 'src/util/post/share'
 
 export default {
@@ -60,17 +61,29 @@ export default {
       required: true
     }
   },
+  data () {
+    return {
+      clipboard: undefined
+    }
+  },
+  mounted () {
+    this.initClipboard()
+  },
+  destroyed () {
+    this.clipboard.destroy()
+  },
   methods: {
     createShareUrl,
-    copyToClipboard () {
-      const textArea = document.createElement('textarea')
-      textArea.value = createShareUrl('copylink', this.url)
-      document.body.appendChild(textArea)
-      textArea.select()
-      document.execCommand('copy')
-      document.body.removeChild(textArea)
-      document.querySelector('.copy').classList.add('show')
-      setTimeout(() => { document.querySelector('.copy').classList.remove('show') }, 2000)
+    initClipboard () {
+      this.clipboard = new ClipboardJS('#donate-share-copy', {
+        text () {
+          return document.location.href
+        }
+      })
+      this.clipboard.on('success', () => {
+        document.querySelector('.copy').classList.add('show')
+        setTimeout(() => { document.querySelector('.copy').classList.remove('show') }, 2000)
+      })
     }
   }
 }
