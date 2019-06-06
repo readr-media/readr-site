@@ -77,7 +77,8 @@ export default {
     initClipboard () {
       this.clipboard = new ClipboardJS('#donate-share-copy', {
         text () {
-          return document.location.href
+          const url = document.location.href.split('?')[0]
+          return `${url}?rref=copylinkshare`
         }
       })
       this.clipboard.on('success', () => {

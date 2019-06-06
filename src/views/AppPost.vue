@@ -1,6 +1,11 @@
 <template>
   <section :class="[ postType, 'post' ]">
-    <figure v-if="postImage" />
+    <figure v-if="!isReview && postImage">
+      <img
+        :src="postImage"
+        :alt="post.title || post.ogTitle"
+      >
+    </figure>
     <main class="app-content-area">
       <p
         class="post__date small"
@@ -135,6 +140,21 @@ export default {
 <style lang="stylus" scoped>
   .post
     position relative
+    padding-top 100px
+    figure
+      position relative
+      width 1000px
+      padding-top calc(1000px * 0.5625)
+      margin 0 auto
+      overflow hidden
+      img
+        position absolute
+        top 0
+        left 0
+        width 100%
+        height 100%
+        object-fit cover
+        object-position center center
     main
       display flex
       flex-direction column
@@ -229,8 +249,7 @@ export default {
           flex 1
           margin 0 0 0 15px
           border-bottom 1px solid #979797
-        .title
-          font-weight 500
+
     &__series-list
       display flex
       flex-wrap wrap
