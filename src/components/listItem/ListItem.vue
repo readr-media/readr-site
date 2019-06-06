@@ -11,7 +11,7 @@
       >
     </figure>
     <div class="list-item__content">
-      <p
+      <h2
         v-if="title"
         class="title"
         v-text="title"
@@ -76,15 +76,17 @@ export default {
         height 100%
         object-fit cover
         object-position center center
-    p
+    h2, p
       overflow hidden
+    h2
+      font-weight normal
     .description
       text-align justify
 
   .list-item.comm-narrow
     padding-bottom 1em
     background-color #fff
-    p
+    h2, p
       width 90%
       margin-left auto
       margin-right auto
