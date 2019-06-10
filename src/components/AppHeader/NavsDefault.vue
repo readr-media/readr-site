@@ -1,6 +1,6 @@
 <template>
   <nav class="navs">
-    <router-link
+    <!-- <router-link
       class="navs__nav"
       to="/search"
     >
@@ -17,7 +17,7 @@
         src="/public/2.0/icons/follow-white-bold.png"
         alt=""
       >
-    </router-link>
+    </router-link> -->
     <NavsDefaultUser
       class="navs__nav"
     />

@@ -61,7 +61,7 @@
         </li>
       </ul>
     </div>
-    <div class="footer__right">
+    <!-- <div class="footer__right">
       <ul class="footer__links-list links-list">
         <li class="links-list__list-item">
           <router-link
@@ -104,7 +104,7 @@
           </router-link>
         </li>
       </ul>
-    </div>
+    </div> -->
   </footer>
 </template>
 
