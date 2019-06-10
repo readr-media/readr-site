@@ -3,7 +3,7 @@ export default {
   state () {
     return {
       shouldHide: false,
-      layoutSeriesRouteNames: [ 'report', 'post' ]
+      layoutSeriesRouteNames: [ 'report', 'post', 'series' ]
     }
   },
   mutations: {
