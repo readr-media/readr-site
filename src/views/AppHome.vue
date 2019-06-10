@@ -1,6 +1,6 @@
 <template>
   <section class="home">
-    <div v-if="publicProjectsRecommends.length > 0">
+    <!-- <div v-if="publicProjectsRecommends.length > 0">
       <h2>
         為您推薦
       </h2>
@@ -8,7 +8,7 @@
         :items="publicProjectsRecommends"
         class="home__list recommend"
       />
-    </div>
+    </div> -->
     <div v-if="publicProjectsTrends.length > 0">
       <h2 class="decorated">
         最熱門系列
@@ -59,10 +59,10 @@ export default {
     ...mapState({
       publicProjects: state => state.DataSeries.publicProjects
     }),
-    publicProjectsRecommends () {
-      // return this.publicProjects.recommends
-      return this.publicProjects.normal.slice(0, 3)
-    },
+    // publicProjectsRecommends () {
+    //   // return this.publicProjects.recommends
+    //   return this.publicProjects.normal.slice(0, 3)
+    // },
     publicProjectsTrends () {
       // return this.publicProjects.trends
       return this.publicProjects.normal.slice(0, 1)
