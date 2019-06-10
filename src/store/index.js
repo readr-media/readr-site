@@ -4,6 +4,7 @@ import actions from './actions'
 import mutations from './mutations'
 import getters from './getters'
 
+import DataNotification from './modules/DataNotification'
 import DataPost from './modules/DataPost'
 import DataSeries from './modules/DataSeries'
 import DataSeriesContents from './modules/DataSeriesContents'
@@ -18,6 +19,7 @@ Vue.use(Vuex)
 export function createStore () {
   return new Vuex.Store({
     modules: {
+      DataNotification,
       DataPost,
       DataSeries,
       DataSeriesContents,
