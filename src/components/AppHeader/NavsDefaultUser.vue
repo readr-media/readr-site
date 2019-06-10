@@ -8,8 +8,9 @@
       >
         <p>登入</p>
       </div>
-      <div
+      <a
         v-else
+        href="/account"
         class="nav__user user"
       >
         <img
@@ -17,7 +18,7 @@
           :src="userThumbnail"
           alt=""
         >
-      </div>
+      </a>
     </div>
   </NoSSR>
 </template>
@@ -66,6 +67,7 @@ export default {
     color white
 
 .user
+  font-size 0
   &__thumbnail
     width 30px
     height 30px
