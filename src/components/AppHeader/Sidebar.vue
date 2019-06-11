@@ -10,7 +10,7 @@
         'sidebar-wrapper__dimmed',
         { 'sidebar-wrapper__dimmed--show': showSidebar }
       ]"
-      @click="$emit('update:showSidebar', false)"
+      @click="SET_SHOW_SIDEBAR(false)"
     />
     <div
       :class="[
@@ -27,13 +27,18 @@
 </template>
 
 <script>
+import { mapState, mapMutations } from 'vuex'
+
 export default {
-  props: {
-    showSidebar: {
-      type: Boolean,
-      default: false,
-      required: true
-    }
+  computed: {
+    ...mapState({
+      showSidebar: state => state.UIAppHeader.showSidebar
+    })
+  },
+  methods: {
+    ...mapMutations({
+      SET_SHOW_SIDEBAR: 'UIAppHeader/SET_SHOW_SIDEBAR'
+    })
   }
 }
 </script>

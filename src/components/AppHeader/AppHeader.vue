@@ -29,7 +29,6 @@
     </div>
     <Sidebar
       v-if="layout === 'series'"
-      :show-sidebar.sync="showSidebar"
       class="header__sidebar"
     >
       <SidebarSeriesContents
