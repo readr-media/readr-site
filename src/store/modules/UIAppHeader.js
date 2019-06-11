@@ -3,12 +3,16 @@ export default {
   state () {
     return {
       shouldHide: false,
+      showSidebar: false,
       layoutSeriesRouteNames: [ 'report', 'post', 'series' ]
     }
   },
   mutations: {
     SET_HIDE (state, value) {
       state.shouldHide = value
+    },
+    SET_SHOW_SIDEBAR (state, value) {
+      state.showSidebar = value
     }
   },
   actions: {

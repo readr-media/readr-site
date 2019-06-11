@@ -67,12 +67,12 @@ export default {
   },
   data () {
     return {
-      showSidebar: false,
       currentSidebarSlot: 'seriesContents'
     }
   },
   computed: {
     ...mapState({
+      showSidebar: state => state.UIAppHeader.showSidebar,
       shouldHideHeader: state => state.UIAppHeader.shouldHide
     }),
     ...mapGetters({
@@ -82,7 +82,7 @@ export default {
   watch: {
     layout () {
       if (this.layout === 'default' && this.showSidebar) {
-        this.showSidebar = false
+        this.SET_SHOW_SIDEBAR(false)
         this.currentSidebarSlot = 'seriesContents'
       }
     }
@@ -104,24 +104,24 @@ export default {
     })
   },
   methods: {
+    ...mapMutations({
+      SET_HIDE_HEADER: 'UIAppHeader/SET_HIDE',
+      SET_SHOW_SIDEBAR: 'UIAppHeader/SET_SHOW_SIDEBAR'
+    }),
     toggleNavSeries (navClicked) {
       if (this.currentSidebarSlot === navClicked && this.showSidebar) {
-        this.showSidebar = false
+        this.SET_SHOW_SIDEBAR(false)
         return
       }
 
       this.currentSidebarSlot = navClicked
       if (!this.showSidebar) {
-        this.showSidebar = true
+        this.SET_SHOW_SIDEBAR(true)
       }
     },
     toggleSidebar () {
-      this.showSidebar = !this.showSidebar
-    },
-
-    ...mapMutations({
-      SET_HIDE_HEADER: 'UIAppHeader/SET_HIDE'
-    })
+      this.showSidebar = this.SET_SHOW_SIDEBAR(!this.showSidebar)
+    }
   }
 }
 </script>
