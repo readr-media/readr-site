@@ -59,11 +59,13 @@ export default context => {
         // no matched routes
         if (!matchedComponents.length) {
           return reject(new Error({ code: 404 }))
-        } else {
-          if (typeof (matchedComponents[ 0 ]) === 'function') {
-            return reject(new Error({ url: fullPath }))
-          }
         }
+        // } else {
+        //   if (typeof (matchedComponents[ 0 ]) === 'function') {
+        //     return reject(new Error({ url: fullPath }))
+        //   }
+        // }
+
         // Call fetchData hooks on components matched by the route.
         // A preFetch hook dispatches a store action and returns a Promise,
         // which is resolved when the action is complete and store state has been
