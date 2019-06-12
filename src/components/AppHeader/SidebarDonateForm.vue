@@ -127,6 +127,7 @@
           <input
             v-model="carrierInputs.carrierEmail"
             type="text"
+            placeholder="如：readr@readr.tw"
           >
         </div>
       </div>
