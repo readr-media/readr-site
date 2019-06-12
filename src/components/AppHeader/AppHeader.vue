@@ -64,15 +64,11 @@ export default {
     SidebarComment,
     SidebarDonate
   },
-  data () {
-    return {
-      currentSidebarSlot: 'seriesContents'
-    }
-  },
   computed: {
     ...mapState({
       showSidebar: state => state.UIAppHeader.showSidebar,
-      shouldHideHeader: state => state.UIAppHeader.shouldHide
+      shouldHideHeader: state => state.UIAppHeader.shouldHide,
+      currentSidebarSlot: state => state.UIAppHeader.currentSidebarSlot
     }),
     ...mapGetters({
       layout: 'UIAppHeader/layout'
@@ -82,7 +78,7 @@ export default {
     layout () {
       if (this.layout === 'default' && this.showSidebar) {
         this.SET_SHOW_SIDEBAR(false)
-        this.currentSidebarSlot = 'seriesContents'
+        this.SET_CURRENT_SIDEBAR_SLOT('seriesContents')
       }
     }
   },
@@ -105,7 +101,8 @@ export default {
   methods: {
     ...mapMutations({
       SET_HIDE_HEADER: 'UIAppHeader/SET_HIDE',
-      SET_SHOW_SIDEBAR: 'UIAppHeader/SET_SHOW_SIDEBAR'
+      SET_SHOW_SIDEBAR: 'UIAppHeader/SET_SHOW_SIDEBAR',
+      SET_CURRENT_SIDEBAR_SLOT: 'UIAppHeader/SET_CURRENT_SIDEBAR_SLOT'
     }),
     toggleNavSeries (navClicked) {
       if (this.currentSidebarSlot === navClicked && this.showSidebar) {
@@ -113,7 +110,7 @@ export default {
         return
       }
 
-      this.currentSidebarSlot = navClicked
+      this.SET_CURRENT_SIDEBAR_SLOT(navClicked)
       if (!this.showSidebar) {
         this.SET_SHOW_SIDEBAR(true)
       }

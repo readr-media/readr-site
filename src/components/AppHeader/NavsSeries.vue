@@ -4,7 +4,11 @@
       class="navs__nav navs__nav--square navs__nav--series-contents"
       @click="$emit('series')"
     >
-      <p>系列內容</p>
+      <p
+        :class="{ highlight: shouldHighlightSeriesContents }"
+      >
+        系列內容
+      </p>
     </div>
     <NavsSeriesFollow
       class="navs__nav"
@@ -19,7 +23,10 @@
       class="navs__nav"
       @click="$emit('donate')"
     >
-      <IconDonate :height="30" />
+      <IconDonate
+        :height="iconHeight"
+        :color-default="shouldHighlightDonate ? '#ddcf21' : 'white'"
+      />
     </div>
     <NavsSeriesShare
       class="navs__nav"
@@ -28,6 +35,8 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 import NavsSeriesFollow from './NavsSeriesFollow.vue'
 import NavsSeriesShare from './NavsSeriesShare.vue'
 // import IconComment from 'src/components/Icons/Comment.vue'
@@ -39,6 +48,18 @@ export default {
     NavsSeriesShare,
     // IconComment,
     IconDonate
+  },
+  computed: {
+    ...mapState({
+      showSidebar: state => state.UIAppHeader.showSidebar,
+      currentSidebarSlot: state => state.UIAppHeader.currentSidebarSlot
+    }),
+    shouldHighlightDonate () {
+      return this.showSidebar && this.currentSidebarSlot === 'donate'
+    },
+    shouldHighlightSeriesContents () {
+      return this.showSidebar && this.currentSidebarSlot === 'seriesContents'
+    }
   }
 }
 </script>
@@ -55,10 +76,6 @@ export default {
     &--square
       width 38px
       height 38px
-    &--series-contents
-      &:hover
-        p
-          color #ddcf21
     & + &
       margin 0 0 0 40px
     img
@@ -69,4 +86,6 @@ export default {
       color white
       user-select none
       transition color .25s ease-out
+      &.highlight
+        color #ddcf21
 </style>

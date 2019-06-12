@@ -4,6 +4,7 @@ export default {
     return {
       shouldHide: false,
       showSidebar: false,
+      currentSidebarSlot: 'seriesContents',
       layoutSeriesRouteNames: [ 'report', 'post', 'series' ]
     }
   },
@@ -13,6 +14,9 @@ export default {
     },
     SET_SHOW_SIDEBAR (state, value) {
       state.showSidebar = value
+    },
+    SET_CURRENT_SIDEBAR_SLOT (state, value) {
+      state.currentSidebarSlot = value
     }
   },
   actions: {
