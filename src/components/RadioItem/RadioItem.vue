@@ -60,7 +60,8 @@ export default {
   width d
   height d
   border-radius 50%
-  box-shadow inset 0 1px 3px 0 rgba(0, 0, 0, 0.5)
+  box-shadow inset 0 1px 3px 0 rgba(0,0,0,0.5)
+  border none
   background-color white
   display flex
   justify-content center

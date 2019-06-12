@@ -29,7 +29,6 @@
     </div>
     <Sidebar
       v-if="layout === 'series'"
-      :show-sidebar.sync="showSidebar"
       class="header__sidebar"
     >
       <SidebarSeriesContents
@@ -65,15 +64,11 @@ export default {
     SidebarComment,
     SidebarDonate
   },
-  data () {
-    return {
-      showSidebar: false,
-      currentSidebarSlot: 'seriesContents'
-    }
-  },
   computed: {
     ...mapState({
-      shouldHideHeader: state => state.UIAppHeader.shouldHide
+      showSidebar: state => state.UIAppHeader.showSidebar,
+      shouldHideHeader: state => state.UIAppHeader.shouldHide,
+      currentSidebarSlot: state => state.UIAppHeader.currentSidebarSlot
     }),
     ...mapGetters({
       layout: 'UIAppHeader/layout'
@@ -82,8 +77,8 @@ export default {
   watch: {
     layout () {
       if (this.layout === 'default' && this.showSidebar) {
-        this.showSidebar = false
-        this.currentSidebarSlot = 'seriesContents'
+        this.SET_SHOW_SIDEBAR(false)
+        this.SET_CURRENT_SIDEBAR_SLOT('seriesContents')
       }
     }
   },
@@ -104,24 +99,25 @@ export default {
     })
   },
   methods: {
+    ...mapMutations({
+      SET_HIDE_HEADER: 'UIAppHeader/SET_HIDE',
+      SET_SHOW_SIDEBAR: 'UIAppHeader/SET_SHOW_SIDEBAR',
+      SET_CURRENT_SIDEBAR_SLOT: 'UIAppHeader/SET_CURRENT_SIDEBAR_SLOT'
+    }),
     toggleNavSeries (navClicked) {
       if (this.currentSidebarSlot === navClicked && this.showSidebar) {
-        this.showSidebar = false
+        this.SET_SHOW_SIDEBAR(false)
         return
       }
 
-      this.currentSidebarSlot = navClicked
+      this.SET_CURRENT_SIDEBAR_SLOT(navClicked)
       if (!this.showSidebar) {
-        this.showSidebar = true
+        this.SET_SHOW_SIDEBAR(true)
       }
     },
     toggleSidebar () {
-      this.showSidebar = !this.showSidebar
-    },
-
-    ...mapMutations({
-      SET_HIDE_HEADER: 'UIAppHeader/SET_HIDE'
-    })
+      this.showSidebar = this.SET_SHOW_SIDEBAR(!this.showSidebar)
+    }
   }
 }
 </script>

@@ -83,25 +83,44 @@
         </div>
       </div>
     </div>
+    <div class="donate__block donate__contact contact">
+      <h1>付款人資訊</h1>
+      <div class="contact__form form">
+        <div class="form__row form__contact-name">
+          <p>姓名</p>
+          <input
+            v-model="contactInputs.contactName"
+            type="text"
+          >
+        </div>
+        <div class="form__row form__contact-email">
+          <p>Email</p>
+          <input
+            v-model="contactInputs.contactEmail"
+            type="email"
+          >
+        </div>
+      </div>
+    </div>
     <div class="donate__block donate__payment-method-forms payment-method-forms">
-      <h1>付款方式</h1>
+      <!-- <h1>付款方式</h1> -->
       <div class="payment-method-forms__form form">
-        <h2>信用卡</h2>
-        <div class="form__row forms__card-number">
+        <h2>信用卡資訊</h2>
+        <div class="form__row form__card-number">
           <p>卡號</p>
           <div
             id="card-number"
             class="tpfield"
           />
         </div>
-        <div class="form__row forms__expire-date">
-          <p>日期</p>
+        <div class="form__row form__expire-date">
+          <p>到期日</p>
           <div
             id="card-expiration-date"
             class="tpfield"
           />
         </div>
-        <div class="form__row forms__security-code">
+        <div class="form__row form__security-code">
           <p>末三碼</p>
           <div
             id="card-ccv"
@@ -112,7 +131,7 @@
     </div>
     <div class="donate__block donate__carriers carriers">
       <h1>電子發票</h1>
-      <div class="carriers__receive-method receive-method">
+      <div class="carriers__carrier carrier">
         <RadioItem
           :value="'carrierEmail'"
           :value-selected="carrierTypeSelected"
@@ -122,15 +141,16 @@
         </RadioItem>
         <div
           v-show="carrierTypeSelected === 'carrierEmail'"
-          class="receive-method__inputs"
+          class="carrier__inputs"
         >
           <input
             v-model="carrierInputs.carrierEmail"
             type="text"
+            placeholder="如：readr@readr.tw"
           >
         </div>
       </div>
-      <div class="carriers__receive-method receive-method">
+      <div class="carriers__carrier carrier">
         <RadioItem
           :value="'carrierPhone'"
           :value-selected="carrierTypeSelected"
@@ -140,7 +160,7 @@
         </RadioItem>
         <div
           v-show="carrierTypeSelected === 'carrierPhone'"
-          class="receive-method__inputs"
+          class="carrier__inputs"
         >
           <input
             v-model="carrierInputs.carrierPhone"
@@ -149,7 +169,7 @@
           >
         </div>
       </div>
-      <div class="carriers__receive-method receive-method">
+      <div class="carriers__carrier carrier">
         <RadioItem
           :value="'carrierNatural'"
           :value-selected="carrierTypeSelected"
@@ -159,7 +179,7 @@
         </RadioItem>
         <div
           v-show="carrierTypeSelected === 'carrierNatural'"
-          class="receive-method__inputs"
+          class="carrier__inputs"
         >
           <input
             v-model="carrierInputs.carrierNatural"
@@ -168,7 +188,7 @@
           >
         </div>
       </div>
-      <div class="carriers__receive-method receive-method">
+      <div class="carriers__carrier carrier">
         <RadioItem
           :value="'carrierBusiness'"
           :value-selected="carrierTypeSelected"
@@ -178,7 +198,7 @@
         </RadioItem>
         <div
           v-show="carrierTypeSelected === 'carrierBusiness'"
-          class="receive-method__inputs"
+          class="carrier__inputs"
         >
           <input
             v-model="carrierInputs.carrierBusiness.title"
@@ -267,6 +287,10 @@ export default {
           taxNumber: ''
         }
       },
+      contactInputs: {
+        contactName: get(this.$store.state, [ 'DataUser', 'profile', 'nickname' ], ''),
+        contactEmail: get(this.$store.state, [ 'DataUser', 'profile', 'mail' ], '')
+      },
 
       isTappayInitialized: false,
 
@@ -288,12 +312,21 @@ export default {
 
     isFormValid () {
       const isDonateAmountValid =
-        this.donateAmountSelected !== 0 || (this.isDonateAmountCustom && this.donateAmountCustomInternal >= 30)
-      const isPaymentMethodValid = this.isCardInfoValid
+        this.donateAmountSelected !== 0 ||
+        (this.isDonateAmountCustom && this.donateAmountCustomInternal >= 30)
+      const isPaymentMethodValid =
+        this.isCardInfoValid
       const isCarrierValid =
-        this.carrierTypeSelected !== '' && this.carrierInputs[this.carrierTypeSelected] !== ''
+        this.carrierTypeSelected !== '' &&
+        this.carrierInputs[this.carrierTypeSelected] !== ''
+      const isContactValid =
+        this.contactInputs.contactName !== '' &&
+        this.contactInputs.contactEmail !== ''
 
-      return isDonateAmountValid && isPaymentMethodValid && isCarrierValid
+      return isDonateAmountValid &&
+             isPaymentMethodValid &&
+             isCarrierValid &&
+             isContactValid
     },
 
     // isTappayLoaded () {
@@ -352,9 +385,9 @@ export default {
             },
             points: 0 - this.donateAmount,
             token: result.card.prime,
-            member_name: get(this.$store.state, [ 'DataUser', 'profile', 'nickname' ], ''),
-            // member_mail: 'lion15945@gmail.com',
-            member_phone: '12345678'
+            member_name: get(this.contactInputs, 'contactName', ''),
+            member_mail: get(this.contactInputs, 'contactEmail', ''),
+            member_phone: ''
           }).then(() => {
             this.$emit('submitForm', {
               donateAmount: this.donateAmount,
@@ -367,7 +400,7 @@ export default {
           }).catch(err => {
             console.error(err)
             this.isDepositing = false
-            this.$emit('onShowResultFail')
+            this.$emit('showResultFail')
           })
         })
       }
@@ -518,7 +551,8 @@ export default {
     display flex
     align-items center
     input
-      box-shadow inset 0 1px 3px 0 rgba(0, 0, 0, 0.5)
+      box-shadow inset 0 1px 3px 0 rgba(0,0,0,0.5)
+      border none
       width 409px
       height 30px
       padding 6px 10px
@@ -539,24 +573,38 @@ export default {
 .form
   &__row
     margin 10px 0 0 0
+  &__contact-name, &__contact-email
+    input
+      box-shadow inset 0 1px 3px 0 rgba(0,0,0,0.5)
+      border none
+      width 100%
+      height 30px
+      padding 6px 10px
+      margin 5px 0 0 0
+      font-size 12px
+      &::placeholder
+        font-size 12px
+        color #9b9b9b
 
 .tpfield
   margin 5px 0 0 0
   height 30px
-  box-shadow inset 0 1px 3px 0 rgba(0, 0, 0, 0.5)
+  box-shadow inset 0 1px 3px 0 rgba(0,0,0,0.5)
+  border none
   padding 6px 10px
   font-size 12px
 
 .carriers
-  &__receive-method
+  &__carrier
     margin 10px 0 0 0
 
-.receive-method
+.carrier
   &__inputs
     margin 10px 0 0 0
     padding 0 0 0 30px
     input
-      box-shadow inset 0 1px 3px 0 rgba(0, 0, 0, 0.5)
+      box-shadow inset 0 1px 3px 0 rgba(0,0,0,0.5)
+      border none
       width 100%
       height 30px
       padding 6px 10px

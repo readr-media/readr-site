@@ -48,7 +48,7 @@
         </button>
         <button
           class="buttons__button button button--white"
-          @click="$emit('closeSidebar')"
+          @click="SET_SHOW_SIDEBAR(false)"
         >
           取消
         </button>
@@ -58,6 +58,8 @@
 </template>
 
 <script>
+import { mapMutations } from 'vuex'
+
 export default {
   props: {
     isResultSuccess: {
@@ -68,6 +70,11 @@ export default {
       type: Object,
       required: true
     }
+  },
+  methods: {
+    ...mapMutations({
+      SET_SHOW_SIDEBAR: 'UIAppHeader/SET_SHOW_SIDEBAR'
+    })
   }
 }
 </script>
