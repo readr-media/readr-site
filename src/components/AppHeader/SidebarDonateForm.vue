@@ -95,7 +95,7 @@
           />
         </div>
         <div class="form__row forms__expire-date">
-          <p>日期</p>
+          <p>到期日</p>
           <div
             id="card-expiration-date"
             class="tpfield"
