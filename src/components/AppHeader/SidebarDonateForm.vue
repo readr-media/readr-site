@@ -518,7 +518,8 @@ export default {
     display flex
     align-items center
     input
-      box-shadow inset 0 1px 3px 0 rgba(0, 0, 0, 0.5)
+      box-shadow inset 0 1px 3px 0 rgba(0,0,0,0.5)
+      border none
       width 409px
       height 30px
       padding 6px 10px
@@ -543,7 +544,8 @@ export default {
 .tpfield
   margin 5px 0 0 0
   height 30px
-  box-shadow inset 0 1px 3px 0 rgba(0, 0, 0, 0.5)
+  box-shadow inset 0 1px 3px 0 rgba(0,0,0,0.5)
+  border none
   padding 6px 10px
   font-size 12px
 
@@ -556,7 +558,8 @@ export default {
     margin 10px 0 0 0
     padding 0 0 0 30px
     input
-      box-shadow inset 0 1px 3px 0 rgba(0, 0, 0, 0.5)
+      box-shadow inset 0 1px 3px 0 rgba(0,0,0,0.5)
+      border none
       width 100%
       height 30px
       padding 6px 10px
