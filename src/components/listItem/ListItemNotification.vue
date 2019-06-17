@@ -84,6 +84,7 @@ export default {
     align-items center
     height 100px
     padding 10px 0 10px 20px
+    cursor pointer
     &.read
       background-color #fff
     figure

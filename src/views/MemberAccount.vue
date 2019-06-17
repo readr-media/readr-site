@@ -8,6 +8,7 @@
     />
     <div
       :is="currentTabComponent"
+      :profile="profile"
       v-bind="currentProps"
       class="account__feature app-content-area"
     />
@@ -41,7 +42,7 @@ export default {
   },
   data () {
     return {
-      currentTab: 0,
+      currentTab: 1,
       tabs: [ '通知', '設定' ]
     }
   },
