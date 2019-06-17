@@ -34,6 +34,10 @@ export default {
     notification: {
       type: Array,
       default: () => []
+    },
+    profile: {
+      type: Object,
+      default: () => {}
     }
   },
   methods: {
@@ -44,6 +48,7 @@ export default {
           ids
         }
       })
+        .then(() => this.$store.dispatch('DataNotification/GET_NOTIFICATION', this.profile.id))
     }
   }
 }
