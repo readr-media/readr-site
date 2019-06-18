@@ -5,6 +5,7 @@
       <a
         class="donate"
         target="_blank"
+        @click="$emit('donate')"
       >
         <div>
           <img

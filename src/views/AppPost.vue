@@ -41,6 +41,7 @@
       <DonateWithShare
         :url="getPostFullUrl(post)"
         class="app-content-area"
+        @donate="toggleNavDonate"
       />
       <div class="app-content-area post__related">
         <h2>系列內容</h2>
@@ -62,7 +63,7 @@
 import { SITE_FULL } from 'src/constants'
 import { createPost } from 'src/util/post'
 import { getPostFullUrl } from 'src/util/post/index'
-import { mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 
 import DonateWithShare from 'src/components/DonateWithShare.vue'
 import PostAuthor from 'src/components/post/PostAuthor.vue'
@@ -101,7 +102,8 @@ export default {
     ...mapState({
       post: state => state.DataPost.post,
       series: state => state.DataSeries.publicProjects.normal,
-      seriesPosts: state => state.DataSeriesContents.publicProjectContents
+      seriesPosts: state => state.DataSeriesContents.publicProjectContents,
+      showSidebar: state => state.UIAppHeader.showSidebar
     }),
     isReview () {
       return this.postType === 'review'
@@ -129,11 +131,21 @@ export default {
     return store.dispatch('DataPost/GET_POST', { id: route.params.postId, showAuthor: true, showTag: true })
   },
   methods: {
+    ...mapMutations({
+      SET_SHOW_SIDEBAR: 'UIAppHeader/SET_SHOW_SIDEBAR',
+      SET_CURRENT_SIDEBAR_SLOT: 'UIAppHeader/SET_CURRENT_SIDEBAR_SLOT'
+    }),
     dayjs,
     fetchSeries () {
       this.$store.dispatch('DataSeries/FETCH', { maxResult: 4 })
     },
-    getPostFullUrl
+    getPostFullUrl,
+    toggleNavDonate () {
+      if (!this.showSidebar) {
+        this.SET_CURRENT_SIDEBAR_SLOT('donate')
+      }
+      this.SET_SHOW_SIDEBAR(!this.showSidebar)
+    }
   }
 }
 </script>
