@@ -27,6 +27,9 @@ export const SET_TAPPAY_LOADED = ({ commit }) => {
 export const ADD_REWARD_POINTS_TRANSACTIONS = (action, { params }) => {
   return pointsFunc.addRewardPointsTransactions(params)
 }
+export const DONATE = (action, { params }) => {
+  return pointsFunc.donate(params)
+}
 
 export const SWITCH_OFF_CONSUME_PANEL = ({ commit }, { active }) => {
   return commit('SET_CONSUME_FLAG', {

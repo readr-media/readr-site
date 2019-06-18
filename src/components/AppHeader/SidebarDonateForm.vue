@@ -235,7 +235,7 @@ import RadioItem from 'src/components/RadioItem/RadioItem.vue'
 
 const debug = require('debug')('CLIENT:SidebarDonateForm')
 
-const deposit = (store, {
+const donate = (store, {
   points,
   token,
   invoiceItem,
@@ -244,16 +244,18 @@ const deposit = (store, {
   member_phone,
 
   // eslint-disable-next-line camelcase
-  member_name
-  // member_mail
-} = {}) => store.dispatch('ADD_REWARD_POINTS_TRANSACTIONS', {
+  member_name,
+
+  // eslint-disable-next-line camelcase
+  member_mail
+} = {}) => store.dispatch('DONATE', {
   params: {
-    object_type: 3,
-    points: points,
+    object_type: 5,
+    currency: points,
     token,
     member_name,
     member_phone,
-    // member_mail,
+    member_mail,
     invoiceItem
   }
 })
@@ -373,7 +375,7 @@ export default {
           }
 
           debug('get prime successfully: ' + result.card.prime)
-          deposit(this.$store, {
+          donate(this.$store, {
             invoiceItem: {
               businessTitle: get(this.carrierInputs, ['carrierBusiness', 'title']),
               businessTaxNo: get(this.carrierInputs, ['carrierBusiness', 'taxNumber']),
@@ -383,7 +385,7 @@ export default {
               category: get(this.carrierInfo, 'category'),
               lastFourNum: result.card.lastfour
             },
-            points: 0 - this.donateAmount,
+            points: this.donateAmount,
             token: result.card.prime,
             member_name: get(this.contactInputs, 'contactName', ''),
             member_mail: get(this.contactInputs, 'contactEmail', ''),
