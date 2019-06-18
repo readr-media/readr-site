@@ -24,7 +24,6 @@
       @click="$emit('donate')"
     >
       <IconDonate
-        :height="iconHeight"
         :color-default="shouldHighlightDonate ? '#ddcf21' : 'white'"
       />
     </div>

@@ -17,5 +17,13 @@ export function addRewardPointsTransactions (params) {
   const url = `${host}/api/points`
   return post(url, params)
     .then(res => res.status)
-    .catch(err => err)
+    .catch(err => { throw err })
+}
+
+export function donate (params) {
+  const url = `${host}/api/donate`
+  // const url = `${host}/api/points`
+  return post(url, params)
+    .then(res => res.status)
+    .catch(err => { throw err })
 }
