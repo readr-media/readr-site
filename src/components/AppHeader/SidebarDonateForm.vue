@@ -1,9 +1,9 @@
 <template>
   <div class="donate">
     <header class="donate__header header">
-      <!-- <img
+      <img
         v-lazy="'/public/2.0/decorations/donate.png'"
-      > -->
+      >
       <div class="header__titles">
         <p>贊助 READr</p>
         <p>支持更多優質內容</p>
@@ -515,9 +515,9 @@ export default {
   align-items center
   padding 0 52px 0 0
   img
-    height 84px
+    width 15%
     position absolute
-    top 50px
+    top 10px
     left 0
   &__titles
     margin-left calc((50vw - 440px) / 2)
