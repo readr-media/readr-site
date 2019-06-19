@@ -35,9 +35,7 @@
 </template>
 
 <script>
-import _ from 'lodash'
-import { mapState } from 'vuex'
-import { createPost } from 'src/util/post'
+import { createShareUrl } from 'src/util/post/share'
 import { getShareUrl } from 'src/util/comm'
 
 import NoSSR from 'vue-no-ssr'
@@ -60,23 +58,14 @@ export default {
     }
   },
   computed: {
-    ...mapState({
-      dataPost: state => state.DataPost.post
-    }),
-    post () {
-      return createPost(this.dataPost)
-    },
-    shareUrlDefault () {
-      return getShareUrl(this.$route.fullPath)
-    },
     shareUrlFB () {
-      return _.get(this.post, [ 'processed', 'shareUrlFB' ], this.shareUrlDefault)
+      return createShareUrl('fb', getShareUrl(this.$route.fullPath))
     },
     shareUrlLine () {
-      return _.get(this.post, [ 'processed', 'shareUrlLine' ], this.shareUrlDefault)
+      return createShareUrl('line', getShareUrl(this.$route.fullPath))
     },
     shareUrlCopylink () {
-      return _.get(this.post, [ 'processed', 'shareUrlCopylink' ], this.shareUrlDefault)
+      return createShareUrl('copylink', getShareUrl(this.$route.fullPath))
     }
   },
   methods: {
