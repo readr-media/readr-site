@@ -27,8 +27,8 @@ export default {
 
 <style lang="stylus" scoped>
 .icon
-  -webkit-mask-image url(/public/2.0/icons/follow-white.png)
-  mask-image url(/public/2.0/icons/follow-white.png)
+  -webkit-mask-image url(/public/2.0/icons/follow-white.svg)
+  mask-image url(/public/2.0/icons/follow-white.svg)
   mask-size cover
   transition background-color .25s ease-out
 </style>
