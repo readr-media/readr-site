@@ -15,6 +15,8 @@ import { mapState, mapMutations } from 'vuex'
 import SidebarSeriesContentsList from './SidebarSeriesContentsList.vue'
 import NoSSR from 'vue-no-ssr'
 
+const debug = require('debug')('CLIENT:SidebarSeriesContents')
+
 export default {
   components: {
     SidebarSeriesContentsList,
@@ -28,10 +30,11 @@ export default {
   computed: {
     ...mapState({
       seriesData: state => _.get(state.DataPost, 'post', {}),
+      singleSeries: state => state.DataSeries.singleSeries,
       seriesContentsData: state => state.DataSeriesContents.publicProjectContents
     }),
     seriesId () {
-      return _.get(this.seriesData, 'projectId', '')
+      return this.$route.name === 'series' ? _.get(this.singleSeries, 'id', '') : _.get(this.seriesData, 'projectId', '')
     }
   },
   watch: {
@@ -49,6 +52,7 @@ export default {
     }),
 
     infiniteHandler ($state) {
+      debug('Start fetching DataSeriesContents of projectId: ', this.seriesId)
       this.$store.dispatch(
         'DataSeriesContents/FETCH',
         {
@@ -57,9 +61,13 @@ export default {
         }
       ).then(res => {
         if (res.body.items.length) {
+          debug('page: ', this.page)
+          debug('body items exist, should prepare to fetching next page')
           this.page += 1
           $state.loaded()
         } else {
+          debug('page: ', this.page)
+          debug('body items empty, complete infinite loading')
           $state.complete()
         }
       })

@@ -86,15 +86,6 @@ export default {
   asyncData ({ store, route }) {
     return store.dispatch('DataSeries/FETCH_SINGLE_SERIES', { slug: route.params.slug })
   },
-  beforeMount () {
-    // [暫時] 由於 Header 尚未在 series 頁抓取系列內容
-    this.$store.dispatch('DataSeriesContents/FETCH', {
-      projectId: this.singleSeries.id,
-      params: {
-        maxResult: 1
-      }
-    })
-  },
   methods: {
     fetchSeries () {
       this.$store.dispatch('DataSeries/FETCH', { maxResult: 4 })
