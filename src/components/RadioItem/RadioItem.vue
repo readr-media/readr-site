@@ -49,6 +49,7 @@ export default {
     opacity 0
   &__label
     margin 0 0 0 10px
+    font-size 1.5rem
 
 .input
   &:checked + .checkmark
