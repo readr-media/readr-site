@@ -10,6 +10,7 @@
       </div>
       <a
         v-else
+        :class="{ account: inAccountPage }"
         href="/account"
         class="nav__user user"
       >
@@ -18,6 +19,10 @@
           :src="userThumbnail"
           alt=""
         >
+        <div
+          v-if="hasUnreadNotifications"
+          class="user__alert"
+        />
       </a>
     </div>
   </NoSSR>
@@ -38,15 +43,31 @@ export default {
   computed: {
     ...mapState({
       profile: state => state.DataUser.profile,
-      isLoggedIn: state => state.DataUser.isLoggedIn
+      isLoggedIn: state => state.DataUser.isLoggedIn,
+      notification: state => state.DataNotification.notification
     }),
+    hasUnreadNotifications () {
+      return this.notification.filter(item => !item.read).length > 0
+    },
+    inAccountPage () {
+      return this.$route.name === 'account'
+    },
     userThumbnail () {
       const path = _.get(this.profile, 'profileImage', '')
       return getFullUrl(path)
     }
   },
+  watch: {
+    isLoggedIn (value) {
+      value && this.GET_NOTIFICATION(this.profile.id)
+    }
+  },
+  beforeMount () {
+    this.isLoggedIn && this.GET_NOTIFICATION(this.profile.id)
+  },
   methods: {
     ...mapActions({
+      GET_NOTIFICATION: 'DataNotification/GET_NOTIFICATION',
       LOGIN_ASK_TOGGLE: 'UILoginLightbox/LOGIN_ASK_TOGGLE'
     }),
     switchOnLoginPanel () {
@@ -67,10 +88,24 @@ export default {
     color white
 
 .user
+  position relative
   font-size 0
   &__thumbnail
     width 30px
     height 30px
     border-radius 30px
     object-fit cover
+  &__alert
+    position absolute
+    right -2px
+    bottom -2px
+    width 8px
+    height 8px
+    background-color #11b8c9
+    border-radius 50%
+
+.account
+  border 2px solid #ddcf21
+  border-radius 50%
+
 </style>

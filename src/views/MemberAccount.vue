@@ -22,7 +22,7 @@ import AccountSetting from 'src/components/member/AccountSetting.vue'
 import AppTab from 'src/components/AppTab.vue'
 import { SITE_NAME } from '../constants'
 import { find } from 'lodash'
-import { mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 
 const componentMapping = {
   notice: { index: 0, component: 'AccountNotice', route: '/account/notice' },
@@ -57,6 +57,9 @@ export default {
     currentProps () {
       return this.getProps()
     },
+    notificationFiltered () {
+      return this.notification.filter(item => item.object_type !== 'member')
+    },
     routeSection () {
       return this.$route.params.section
     }
@@ -72,18 +75,21 @@ export default {
     this.currentTab = this.getCurrentTab()
   },
   methods: {
+    ...mapActions({
+      GET_NOTIFICATION: 'DataNotification/GET_NOTIFICATION'
+    }),
     getCurrentTab () {
       return this.routeSection ? componentMapping[this.routeSection].index : componentMapping.setting.index
     },
     getData () {
       const features = {
-        notice: () => this.$store.dispatch('DataNotification/GET_NOTIFICATION', this.profile.id)
+        notice: () => this.GET_NOTIFICATION(this.profile.id)
       }
       return this.routeSection ? features[this.routeSection]() : ''
     },
     getProps () {
       const mapping = {
-        notice: { notification: this.notification },
+        notice: { notification: this.notificationFiltered },
         setting: { profile: this.profile }
       }
       return this.routeSection ? mapping[this.routeSection] : mapping.setting

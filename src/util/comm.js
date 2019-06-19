@@ -1,5 +1,6 @@
 import _ from 'lodash'
 import Cookie from 'vue-cookie'
+import dayjs from 'dayjs'
 import uuidv4 from 'uuid/v4'
 import pathToRegexp from 'path-to-regexp'
 import { SITE_DOMAIN, SITE_DOMAIN_DEV, SITE_FULL } from '../constants'
@@ -21,22 +22,23 @@ export function currEnv () {
   }
 }
 
-export function dateDiffFromNow (date) {
-  const d1 = Math.floor(Date.parse(date) / 1000)
-  const d2 = Math.floor(Date.now() / 1000)
-  const diff = d2 - d1
+export function dateDiffFromNow (timestamp) {
+  const now = Math.floor(Date.now() / 1000)
+  const diff = now - timestamp
   const hour = Math.floor(diff / 3600)
   const min = Math.floor((diff - hour * 3600) / 60)
-  const sec = diff - hour * 3600 - min * 60
   const day = Math.floor(hour / 24)
-  if (day !== 0) {
-    return updatedAtYYYYMMDD(date)
-  } else if (hour !== 0) {
+  const weeks = Math.floor(day / 7)
+  if (weeks > 3) {
+    return dayjs(timestamp * 1000).format('YYYY/MM/DD HH:mm:ss')
+  } else if (day >= 7) {
+    return `${weeks} 週`
+  } else if (hour >= 24) {
+    return `${day} 天`
+  } else if (hour >= 1) {
     return `${hour} 小時`
-  } else if (min !== 0) {
+  } else if (min >= 5) {
     return `${min} 分鐘`
-  } else if (sec !== 0) {
-    return `${sec} 秒`
   } else {
     return `剛剛`
   }

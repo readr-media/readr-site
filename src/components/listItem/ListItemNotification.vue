@@ -22,6 +22,7 @@
 </template>
 <script>
 import NotificationMessage from 'src/components/notification/NotificationMessage.vue'
+import dayjs from 'dayjs'
 import { dateDiffFromNow, getFullUrl } from 'src/util/comm'
 
 export default {
@@ -30,10 +31,6 @@ export default {
     NotificationMessage
   },
   props: {
-    index: {
-      type: Number,
-      required: true
-    },
     item: {
       type: Object,
       default: () => {}
@@ -47,7 +44,7 @@ export default {
       const h = date.substr(8, 2)
       const m = date.substr(10, 2)
       const s = date.substr(12, 2)
-      return dateDiffFromNow(`${Y}-${M}-${D} ${h}:${m}:${s}`)
+      return dateDiffFromNow(dayjs(`${Y}-${M}-${D} ${h}:${m}:${s}`).unix())
     },
     getFullUrl,
     read () {
@@ -56,7 +53,7 @@ export default {
       } else {
         this.$store.dispatch('DataNotification/UPDATE_NOTIFICATION_STATUS', {
           params: {
-            ids: [ `${this.index}` ]
+            ids: [ `${this.item.order}` ]
           }
         })
           .then(() => {
