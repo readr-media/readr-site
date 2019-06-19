@@ -10,9 +10,9 @@
         系列內容
       </p>
     </div>
-    <NavsSeriesFollow
+    <!-- <NavsSeriesFollow
       class="navs__nav"
-    />
+    /> -->
     <!-- <div
       class="navs__nav"
       @click="$emit('comment')"
@@ -36,14 +36,14 @@
 <script>
 import { mapState } from 'vuex'
 
-import NavsSeriesFollow from './NavsSeriesFollow.vue'
+// import NavsSeriesFollow from './NavsSeriesFollow.vue'
 import NavsSeriesShare from './NavsSeriesShare.vue'
 // import IconComment from 'src/components/Icons/Comment.vue'
 import IconDonate from 'src/components/Icons/Donate.vue'
 
 export default {
   components: {
-    NavsSeriesFollow,
+    // NavsSeriesFollow,
     NavsSeriesShare,
     // IconComment,
     IconDonate
