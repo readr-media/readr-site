@@ -10,7 +10,9 @@
       </div>
     </header>
     <div class="donate__block donate__donate-amount donate-amount">
-      <h1>贊助金額</h1>
+      <h2 class="bold">
+        贊助金額
+      </h2>
       <div class="donate-amount__coins coins">
         <div class="coins__row">
           <button
@@ -84,17 +86,19 @@
       </div>
     </div>
     <div class="donate__block donate__contact contact">
-      <h1>付款人資訊</h1>
+      <h2 class="bold">
+        付款人資訊
+      </h2>
       <div class="contact__form form">
         <div class="form__row form__contact-name">
-          <p>姓名</p>
+          <h2>姓名</h2>
           <input
             v-model="contactInputs.contactName"
             type="text"
           >
         </div>
         <div class="form__row form__contact-email">
-          <p>Email</p>
+          <h2>Email</h2>
           <input
             v-model="contactInputs.contactEmail"
             type="email"
@@ -105,23 +109,25 @@
     <div class="donate__block donate__payment-method-forms payment-method-forms">
       <!-- <h1>付款方式</h1> -->
       <div class="payment-method-forms__form form">
-        <h2>信用卡資訊</h2>
+        <h2 class="bold">
+          信用卡資訊
+        </h2>
         <div class="form__row form__card-number">
-          <p>卡號</p>
+          <h2>卡號</h2>
           <div
             id="card-number"
             class="tpfield"
           />
         </div>
         <div class="form__row form__expire-date">
-          <p>到期日</p>
+          <h2>到期日</h2>
           <div
             id="card-expiration-date"
             class="tpfield"
           />
         </div>
         <div class="form__row form__security-code">
-          <p>末三碼</p>
+          <h2>末三碼</h2>
           <div
             id="card-ccv"
             class="tpfield"
@@ -130,7 +136,9 @@
       </div>
     </div>
     <div class="donate__block donate__carriers carriers">
-      <h1>電子發票</h1>
+      <h2 class="bold">
+        電子發票
+      </h2>
       <div class="carriers__carrier carrier">
         <RadioItem
           :value="'carrierEmail'"
@@ -488,8 +496,9 @@ export default {
     font-size 24px
     font-weight 500
   h2
-    font-size 16px
-    font-weight 500
+    font-weight 400
+    &.bold
+      font-weight 500
   &__block
     & + &
       margin 36px 0 0 0
@@ -633,7 +642,7 @@ export default {
   height 50px
   border-radius 8px
   background-color gray
-  font-size 16px
+  font-size 1.5rem
   font-weight 500
   display flex
   justify-content center
