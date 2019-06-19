@@ -66,9 +66,11 @@
             其他
           </button>
         </div>
-        <div class="coins__row">
+        <div
+          v-show="isDonateAmountCustom"
+          class="coins__row"
+        >
           <div
-            v-show="isDonateAmountCustom"
             class="coins__custom-coin-input custom-coin-input"
           >
             <div class="custom-coin-input__top">
@@ -491,7 +493,7 @@ export default {
 <style lang="stylus" scoped>
 .donate
   width 440px
-  margin 100px auto 0 auto
+  margin 80px auto 0 auto
   h1
     font-size 24px
     font-weight 500
@@ -635,7 +637,7 @@ export default {
       margin 10px 0 0 0
 
 .buttons
-  padding 50px 0
+  padding 44px 0 0 0
 
 .button
   width 100%
