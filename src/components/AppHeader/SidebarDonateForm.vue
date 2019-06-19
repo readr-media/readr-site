@@ -430,7 +430,7 @@ export default {
           }
         },
         styles: {
-          'input': { 'color': 'black', 'font-size': '12px' },
+          'input': { 'color': 'black', 'font-size': '16px' },
           // 'input.cvc': {},
           // 'input.expiration-date': {},
           // 'input.card-number': {},
@@ -553,12 +553,14 @@ export default {
     display flex
     align-items center
     input
+      -webkit-appearance none
+      border-radius 0
       box-shadow inset 0 1px 3px 0 rgba(0,0,0,0.5)
       border none
       width 409px
       height 30px
       padding 6px 10px
-      font-size 12px
+      font-size 16px
       &:focus
         outline none
     p
@@ -577,16 +579,19 @@ export default {
     margin 10px 0 0 0
   &__contact-name, &__contact-email
     input
+      -webkit-appearance none
+      border-radius 0
       box-shadow inset 0 1px 3px 0 rgba(0,0,0,0.5)
       border none
       width 100%
       height 30px
       padding 6px 10px
       margin 5px 0 0 0
-      font-size 12px
+      font-size 16px
       &::placeholder
-        font-size 12px
+        font-size 16px
         color #9b9b9b
+        line-height normal
 
 .tpfield
   margin 5px 0 0 0
@@ -605,15 +610,18 @@ export default {
     margin 10px 0 0 0
     padding 0 0 0 30px
     input
+      -webkit-appearance none
+      border-radius 0
       box-shadow inset 0 1px 3px 0 rgba(0,0,0,0.5)
       border none
       width 100%
       height 30px
       padding 6px 10px
-      font-size 12px
+      font-size 16px
       &::placeholder
-        font-size 12px
+        font-size 16px
         color #9b9b9b
+        line-height normal
     input + input
       margin 10px 0 0 0
 
