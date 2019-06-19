@@ -22,7 +22,11 @@ export default {
         if (status === 200) {
           const items = _.get(body, 'items', [])
           const itemsToObject = items.map(item => JSON.parse(item))
-          commit('SET_NOTIFICATION', { items: itemsToObject })
+          const itemsAddOrder = itemsToObject.map((item, index) => {
+            item.order = index
+            return item
+          })
+          commit('SET_NOTIFICATION', { items: itemsAddOrder })
         }
       })
     },
