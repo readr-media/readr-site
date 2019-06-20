@@ -336,6 +336,8 @@ export default {
     overflow hidden
     // text-overflow ellipsis
     text-overflow justify
+    word-break break-all
+    word-wrap break-word
     &--commenter, &--owner, &--post-type
       font-weight bold
     &--commenter, &--owner

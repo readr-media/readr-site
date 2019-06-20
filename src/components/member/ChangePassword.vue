@@ -57,6 +57,7 @@
 import InputWithErrorMessage from '../form/InputWithErrorMessage.vue'
 
 import { get } from 'lodash'
+import { mapActions } from 'vuex'
 import { removeToken } from 'src/util/services'
 import { setTimeout } from 'timers'
 
@@ -106,6 +107,11 @@ export default {
     }
   },
   methods: {
+    ...mapActions({
+      CHECK_PASSWORD: 'DataUser/CHECK_PASSWORD',
+      LOGOUT: 'DataUser/LOGOUT',
+      UPDATE_PASSWORD: 'DataUser/UPDATE_PASSWORD'
+    }),
     validate () {
       this.errors = []
       if (!this.originPassword) {
@@ -124,7 +130,7 @@ export default {
       }
 
       if (this.errors.length === 0) {
-        this.$store.dispatch('DataUser/CHECK_PASSWORD', {
+        this.CHECK_PASSWORD({
           email: this.profile.mail,
           password: this.originPassword
         })
@@ -138,15 +144,13 @@ export default {
       }
     },
     updatePassword () {
-      this.$store.dispatch('DataUser/UPDATE_PASSWORD', {
-        password: this.newPassword
-      })
-        .then(() => this.$store.dispatch('LOGOUT'))
+      this.UPDATE_PASSWORD({ password: this.newPassword })
         .then(() => {
           this.isSuccess = true
-          const domain = get(this.$store, 'state.setting.DOMAIN')
-          removeToken(domain)
           setTimeout(() => {
+            const domain = get(this.$store, 'state.setting.DOMAIN')
+            removeToken(domain)
+            this.LOGOUT()
             this.$router.push('/')
           }, 3000)
         })

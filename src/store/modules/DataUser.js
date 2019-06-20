@@ -9,7 +9,8 @@ import {
   checkLoginStatus,
   getFollowingByUser,
   follow,
-  updatePassword
+  updatePassword,
+  uploadImage
 } from 'src/api'
 
 const { camelize } = require('humps')
@@ -127,7 +128,10 @@ export default {
     // eslint-disable-next-line no-empty-pattern
     UPDATE_PASSWORD ({}, { password }) {
       return updatePassword({ params: { password, editMode: 'edit_profile' } })
+    },
+    // eslint-disable-next-line no-empty-pattern
+    UPLOAD_IMAGE: ({}, { file, type }) => {
+      return uploadImage(file, type)
     }
-
   }
 }
