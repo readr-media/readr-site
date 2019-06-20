@@ -109,7 +109,8 @@ export default {
       return this.postType === 'review'
     },
     postContentProcessed () {
-      return this.postProcessed.contentProcessed.join('')
+      const contentProcessed = this.postProcessed.contentProcessed || []
+      return contentProcessed.join('')
     },
     postImage () {
       return this.post.heroImage || this.post.ogImage
