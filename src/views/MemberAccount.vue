@@ -1,17 +1,26 @@
 <template>
   <section class="account">
-    <AppTab
-      :current="currentTab"
-      :items="tabs"
-      class="account__tab app-content-area"
-      @change="handleTab"
-    />
-    <div
-      :is="currentTabComponent"
-      :profile="profile"
-      v-bind="currentProps"
-      class="account__feature app-content-area"
-    />
+    <div class="app-content-area">
+      <AppTab
+        :current="currentTab"
+        :items="tabs"
+        class="account__tab"
+        @change="handleTab"
+      />
+      <div
+        :is="currentTabComponent"
+        :profile="profile"
+        v-bind="currentProps"
+        class="account__feature"
+      />
+      <button
+        v-if="!routeSection"
+        class="logout"
+        @click="logout"
+      >
+        登出
+      </button>
+    </div>
   </section>
 </template>
 <script>
@@ -21,8 +30,9 @@ import AccountSetting from 'src/components/member/AccountSetting.vue'
 
 import AppTab from 'src/components/AppTab.vue'
 import { SITE_NAME } from '../constants'
-import { find } from 'lodash'
+import { find, get } from 'lodash'
 import { mapActions, mapState } from 'vuex'
+import { removeToken } from 'src/util/services'
 
 const componentMapping = {
   notice: { index: 0, component: 'AccountNotice', route: '/account/notice' },
@@ -76,7 +86,8 @@ export default {
   },
   methods: {
     ...mapActions({
-      GET_NOTIFICATION: 'DataNotification/GET_NOTIFICATION'
+      GET_NOTIFICATION: 'DataNotification/GET_NOTIFICATION',
+      LOGOUT: 'DataUser/LOGOUT'
     }),
     getCurrentTab () {
       return this.routeSection ? componentMapping[this.routeSection].index : componentMapping.setting.index
@@ -97,6 +108,12 @@ export default {
     handleTab (tab) {
       const info = find(componentMapping, { index: tab.index })
       this.$router.push({ path: info.route })
+    },
+    logout () {
+      const domain = get(this.$store, 'state.setting.DOMAIN')
+      removeToken(domain)
+      this.LOGOUT()
+      this.$router.push('/')
     }
   }
 }
@@ -113,4 +130,18 @@ export default {
     > div
       padding-bottom 25px
 
+  .logout
+    display block
+    width 100%
+    padding .4em .5em
+    margin 20px 0
+    color #11b8c9
+    border 1px solid #11b8c9
+
+@media (min-width: 1024px)
+  .account
+    .logout
+      width 90px
+      height 40px
+      margin 20px 0 20px auto
 </style>
