@@ -1,13 +1,32 @@
 <template>
   <div class="change-profile">
     <div class="change-profile__image">
-      <figure>
+      <figure @click="$refs.inputProfileImage.click()">
         <img
           :src="profile.profileImage || '/public/icons/exclamation.png'"
           :alt="profile.name"
         >
         <div class="btn-change-img" />
+        <input
+          ref="inputProfileImage"
+          type="file"
+          accept="image/*"
+          style="display: none;"
+          @change="handleInputProfileImage"
+        >
       </figure>
+      <p
+        v-if="isSuccess"
+        class="small"
+      >
+        更新成功
+      </p>
+      <p
+        v-if="errorOfProfileImage"
+        class="msg-failure small"
+      >
+        檔案大小超過 5MB 限制
+      </p>
     </div>
     <div>
       <div class="change-profile__block">
@@ -38,7 +57,7 @@
         v-if="!inEditing"
         @click="inEditing = true"
       >
-        (Edit)
+        (編輯)
       </button>
       <button
         v-if="inEditing"
@@ -48,7 +67,7 @@
         確認
       </button>
       <p
-        v-if="isFailure"
+        v-if="errorOfProfileInfo"
         class="msg-failure small"
       >
         系統發生異常，請稍候再試
@@ -57,15 +76,10 @@
   </div>
 </template>
 <script>
-// import InputWithErrorMessage from '../form/InputWithErrorMessage.vue'
-
-const debug = require('debug')('CLIENT:ChangeProfile')
+import { mapActions } from 'vuex'
 
 export default {
   name: 'ChangeProfile',
-  // components: {
-  //   InputWithErrorMessage
-  // },
   props: {
     profile: {
       type: Object,
@@ -75,14 +89,39 @@ export default {
   data () {
     return {
       description: this.profile.description,
+      errors: [],
       inEditing: false,
-      isFailure: false,
+      isSuccess: false,
       nickname: this.profile.nickname
     }
   },
+  computed: {
+    errorOfProfileImage () {
+      return this.errors.filter(error => error.match(/profile-image/)).length > 0
+    },
+    errorOfProfileInfo () {
+      return this.errors.filter(error => error.match(/profile-info/)).length > 0
+    }
+  },
   methods: {
+    ...mapActions({
+      UPDATE_PROFILE: 'DataUser/UPDATE_PROFILE',
+      UPLOAD_IMAGE: 'DataUser/UPLOAD_IMAGE'
+    }),
+    handleInputProfileImage () {
+      this.isSuccess = false
+      this.errors = []
+      const file = this.$refs.inputProfileImage.files[0]
+      if (file.size > 5 * 1024 * 1024) {
+        this.errors.push('profile-image')
+      }
+      if (this.errors.length === 0) {
+        this.uploadProfileImage(file)
+      }
+    },
     updateProfileInfo () {
-      this.$store.dispatch('DataUser/UPDATE_PROFILE', {
+      this.errors = []
+      this.UPDATE_PROFILE({
         params: {
           id: this.profile.id,
           nickname: this.nickname,
@@ -93,8 +132,27 @@ export default {
           this.inEditing = false
         })
         .catch(err => {
-          debug('update profile info failed', err)
+          this.errors.push('profile-info')
+          console.error(err)
         })
+    },
+    uploadProfileImage (file) {
+      const fd = new FormData()
+      fd.append('image', file, `${this.profile.id}`)
+      this.UPLOAD_IMAGE({
+        file: fd,
+        type: 'member'
+      })
+        .then((res) => this.UPDATE_PROFILE({
+          params: {
+            id: this.profile.id,
+            profile_image: res.body.url
+          }
+        }))
+        .then(() => {
+          this.isSuccess = true
+        })
+        .catch(err => console.error(err))
     }
   }
 }
@@ -131,6 +189,7 @@ export default {
       width 75px
       height 75px
       background-color transparent
+      cursor pointer
       img
         display block
         width 100%
@@ -176,4 +235,5 @@ export default {
   .msg-failure
     margin-top .5em
     color red
+    text-align justify
 </style>
