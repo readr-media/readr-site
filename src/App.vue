@@ -21,6 +21,8 @@ import AppFooter from 'src/components/AppFooter.vue'
 import LoginLight from 'src/components/login/LoginLight.vue'
 
 import { SITE_FULL, SITE_NAME } from './constants'
+import { isAlink, logTrace } from 'src/util/services'
+import { mapState } from 'vuex'
 
 export default {
   components: {
@@ -33,6 +35,48 @@ export default {
     meta: [
       { name: 'og:image', content: `${SITE_FULL}/public/og-image.jpg` }
     ]
+  },
+  computed: {
+    ...mapState({
+      currentUser: state => state.DataUser.profile.id,
+      useragent: state => state.useragent
+    })
+  },
+  watch: {
+    '$route.fullPath' () {
+      process.browser && this.sendPageview()
+    }
+  },
+  mounted () {
+    this.sendPageview()
+    window.addEventListener('click', this.handleClickLogger)
+  },
+  beforeDestroy () {
+    window.removeEventListener('click', this.handleClickLogger)
+  },
+  methods: {
+    handleClickLogger (event) {
+      const checkAlink = isAlink(event.target)
+      checkAlink && logTrace({
+        category: 'whole-site',
+        description: 'ele clicked',
+        eventType: 'click',
+        sub: this.currentUser,
+        target: event.target,
+        useragent: this.useragent,
+        isAlink: checkAlink
+      })
+    },
+    sendPageview () {
+      logTrace({
+        category: this.$route.fullPath,
+        description: 'pageview',
+        eventType: 'pageview',
+        sub: this.currentUser,
+        target: {},
+        useragent: this.useragent
+      })
+    }
   }
 }
 </script>

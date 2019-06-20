@@ -4,7 +4,7 @@ self.addEventListener('message', function (event) {
       var data = event.data
       var action = data.action
       var targUrl = data.url
-      console.log(data)
+      // console.log(data)
       if (!action || action !== 'trace' || !targUrl) { return }
 
       return fetch(targUrl, {
@@ -15,11 +15,12 @@ self.addEventListener('message', function (event) {
           'content-type': 'application/json'
         },
         method: 'POST'
-      }).then((res) => {
-        console.log('Just sent log. and res:')
-        console.log(res)
-        // event.source.postMessage('Hello! Your message was: ' + event.data);
       })
+      // .then((res) => {
+      //   console.log('Just sent log. and res:')
+      //   console.log(res)
+      //   event.source.postMessage('Hello! Your message was: ' + event.data);
+      // })
     })
   if (event.waitUntil) {
     event.waitUntil(promise)
