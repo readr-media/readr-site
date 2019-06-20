@@ -83,6 +83,14 @@ export default {
       })
     },
 
+    LOGOUT ({ commit }) {
+      return new Promise((resolve) => {
+        commit('SET_LOGGEIN_STATUS', { body: false })
+        commit('SET_PROFILE', { profile: {} })
+        resolve()
+      })
+    },
+
     CHECK_LOGIN_STATUS ({ commit }, { params }) {
       return checkLoginStatus({ params }).then(({ status, body }) => {
         commit('SET_LOGGEIN_STATUS', { status, body })
