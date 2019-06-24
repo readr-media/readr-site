@@ -1,7 +1,7 @@
 <template>
   <li class="list-item-wrapper">
     <router-link
-      :to="`/post/${id}`"
+      :to="url"
       class="list-item"
       @click.native="SET_SHOW_SIDEBAR(false)"
     >
@@ -53,6 +53,9 @@ export default {
     },
     description () {
       return _.get(this.post, 'ogDescription', '')
+    },
+    url () {
+      return _.get(this.post, 'processed.url', '')
     }
   },
   methods: {
