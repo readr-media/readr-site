@@ -43,18 +43,25 @@
         class="app-content-area"
         @donate="toggleNavDonate"
       />
-      <div class="app-content-area post__related">
-        <h2>系列內容</h2>
-        <PostList
-          :items="seriesPostsFiltered"
-          class="post__post-list"
-        />
-        <h2>更多系列</h2>
-        <SeriesList
-          :item-style="'comm-series-more'"
-          :items="seriesFiltered"
-          class="post__series-list"
-        />
+      <div
+        v-if="seriesPostsFiltered.length > 0 || seriesFiltered.length > 0"
+        class="app-content-area post__related"
+      >
+        <template v-if="seriesPostsFiltered.length > 0">
+          <h2>系列內容</h2>
+          <PostList
+            :items="seriesPostsFiltered"
+            class="post__post-list"
+          />
+        </template>
+        <template v-if="seriesFiltered.length > 0">
+          <h2>更多系列</h2>
+          <SeriesList
+            :item-style="'comm-series-more'"
+            :items="seriesFiltered"
+            class="post__series-list"
+          />
+        </template>
       </div>
     </lazy-component>
   </section>
@@ -125,7 +132,9 @@ export default {
       return this.series.slice(0, 3)
     },
     seriesPostsFiltered () {
-      return this.seriesPosts.filter(post => post.id !== Number(this.$route.params.postId)).slice(0, 3)
+      return this.seriesPosts
+        .filter(post => post.id !== Number(this.$route.params.postId))
+        .slice(0, 3)
     }
   },
   asyncData ({ store, route }) {
@@ -205,6 +214,16 @@ export default {
         width 125%
       >>> iframe
         width 100%
+      >>> .readme-image
+        &:after
+          display block
+          content attr(text)
+          margin-top .2em
+          color #4a4a4a
+          font-size 0.875rem
+          text-align center
+          font-weight normal
+          line-height normal
       >>> .readme-embed
         > div
           display none
@@ -272,6 +291,7 @@ export default {
           display none
     &__tags
       display flex
+      flex-wrap wrap
       margin-top 30px
     &__review-link
       margin 30px auto 0

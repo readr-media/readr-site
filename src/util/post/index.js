@@ -83,12 +83,21 @@ export function isAnnouncementAccountId (id) {
 
 export function getFullUrlPost (postData) {
   const postType = getPostType(postData)
-
   switch (postType) {
     case 'report':
       return getFullUrl(`/report/${get(postData, 'slug', '')}`)
     default:
       return getFullUrl(`/post/${get(postData, 'id', '')}`)
+  }
+}
+
+export function getUrlPost (postData) {
+  const postType = getPostType(postData)
+  switch (postType) {
+    case 'report':
+      return `/report/${get(postData, 'slug', '')}`
+    default:
+      return `/post/${get(postData, 'id', '')}`
   }
 }
 
@@ -113,7 +122,8 @@ export function createPost (post = {}) {
       // postContentStrings: getPostContentStrings(post),
       // postContentStringsTruncate: truncatePostContent(post)
       ogImgUrl: getPostOgImgUrl(post),
-      fullUrl: getFullUrlPost(post)
+      fullUrl: getFullUrlPost(post),
+      url: getUrlPost(post)
     }
   }
 }

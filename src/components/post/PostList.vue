@@ -1,12 +1,12 @@
 <template>
   <div class="post-list">
     <ListItem
-      v-for="item in items"
+      v-for="item in itemsProcessed"
       :key="item.id"
       :class="itemStyle"
       :date="dayjs(item.publishedAt).format('YYYY/MM/DD')"
       :description="truncate(item.description || item.ogDescription)"
-      :href="`/post/${item.id}`"
+      :href="item.processed.url"
       :image="item.heroImage || item.ogImage || ' '"
       :target="'_blank'"
       :title="item.title || item.ogTitle"
@@ -16,6 +16,7 @@
 <script>
 import ListItem from '../listItem/ListItem.vue'
 import dayjs from 'dayjs'
+import { createPost } from 'src/util/post'
 import { truncate } from 'lodash'
 
 export default {
@@ -35,6 +36,11 @@ export default {
     items: {
       type: Array,
       default: () => []
+    }
+  },
+  computed: {
+    itemsProcessed () {
+      return this.items.map(item => createPost(item))
     }
   },
   methods: {
