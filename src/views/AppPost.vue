@@ -129,7 +129,9 @@ export default {
       return this.postProcessed.typeProcessed
     },
     seriesFiltered () {
-      return this.series.slice(0, 3)
+      return this.series
+        .filter(series => series.id !== this.post.projectId)
+        .slice(0, 3)
     },
     seriesPostsFiltered () {
       return this.seriesPosts
