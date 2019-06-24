@@ -27,7 +27,7 @@ export default {
 .tags-in-post
   &::before
     content '#'
-    margin-right .2em
+    margin 10px .2em 0 0
     color #11b8c9
     font-size 1.5rem
     font-weight 600
@@ -37,6 +37,7 @@ export default {
     align-items center
     height 30px
     padding .2em .8em
+    margin-top 10px
     background-color #fff
     border 2px solid #11b8c9
     border-radius 23.5px

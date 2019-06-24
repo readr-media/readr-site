@@ -22,7 +22,7 @@
       />
       <a
         v-if="latestSeriesPosts.id"
-        :href="`/post/${latestSeriesPosts.id}`"
+        :href="latestSeriesPosts.processed.fullUrl"
         target="_blank"
       >
         前往閱讀
@@ -45,6 +45,7 @@
 </template>
 <script>
 import { SITE_FULL } from 'src/constants'
+import { createPost } from 'src/util/post'
 import { getFullUrl } from 'src/util/comm'
 import { mapState } from 'vuex'
 
@@ -77,7 +78,7 @@ export default {
       seriesPosts: state => state.DataSeriesContents.publicProjectContents
     }),
     latestSeriesPosts () {
-      return this.seriesPosts[0] || {}
+      return this.seriesPosts.length > 0 ? createPost(this.seriesPosts[0]) : {}
     },
     seriesFilterSelf () {
       return this.series.filter(series => series.slug !== this.$route.params.slug).slice(0, 3)
