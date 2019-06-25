@@ -1,7 +1,7 @@
 <template>
   <section class="section">
     <iframe
-      :src="`http://dev.readr.tw/project/${slug}`"
+      :src="`/project/${slug}`"
       class="section__iframe iframe"
       frameborder="0"
     />
@@ -10,9 +10,32 @@
 
 <script>
 import _ from 'lodash'
+import { SITE_FULL } from 'src/constants'
+import { createPost } from 'src/util/post'
+import { getPostFullUrl } from 'src/util/post/index'
+import { mapState } from 'vuex'
 
 export default {
+  name: 'AppReport',
+  metaInfo () {
+    const title = this.report.ogTitle || this.report.title
+    const description = this.report.ogDescription || this.report.contentTruncateWithoutHtml
+    const image = this.report.ogImage || this.report.heroImage || `${SITE_FULL}/public/og-image.jpg`
+    return {
+      title: title,
+      meta: [
+        { name: 'description', content: description },
+        { name: 'og:title', content: title },
+        { name: 'og:description', content: description },
+        { name: 'og:url', content: getPostFullUrl(this.report) },
+        { name: 'og:image', content: image }
+      ]
+    }
+  },
   computed: {
+    ...mapState({
+      report: state => createPost(state.DataPost.post)
+    }),
     slug () {
       return this.$route.params.slug
     }
