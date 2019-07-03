@@ -83,12 +83,12 @@ export default {
   methods: {
     loadMore () {
       if (this.hasMore && !this.loading && isScrollBarReachBottom(1 / 3)) {
-        const origCount = get(this.projects, [ 'length' ], 0)
+        const origCount = get(this.publicProjectsNormal, [ 'length' ], 0)
         this.loading = true
         this.$store.dispatch('DataSeries/FETCH', { page: this.currentPage + 1 })
           .then(() => {
             this.currentPage += 1
-            get(this.projects, [ 'length' ], 0) <= origCount ? this.hasMore = false : this.hasMore = true
+            this.hasMore = !(get(this.publicProjectsNormal, [ 'length' ], 0) <= origCount)
             this.loading = false
           })
       }
