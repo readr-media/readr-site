@@ -101,7 +101,7 @@ export default {
         { name: 'og:title', content: title },
         { name: 'og:description', content: description },
         { name: 'og:url', content: getPostFullUrl(this.post) },
-        { name: 'og:image', content: image }
+        { vmid: 'og:image', name: 'og:image', content: image }
       ]
     }
   },
