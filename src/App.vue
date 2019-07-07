@@ -34,7 +34,7 @@ export default {
     return {
       titleTemplate: `%s - ${SITE_NAME}`,
       meta: [
-        { vmid: 'og:image', name: 'og:image', content: `${SITE_FULL}/public/og-image.jpg` }
+        { vmid: 'og:image', property: 'og:image', content: `${SITE_FULL}/public/og-image.jpg` }
       ]
     }
   },
