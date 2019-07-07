@@ -25,10 +25,10 @@ export default {
       title: title,
       meta: [
         { name: 'description', content: description },
-        { name: 'og:title', content: title },
-        { name: 'og:description', content: description },
-        { name: 'og:url', content: getPostFullUrl(this.report) },
-        { vmid: 'og:image', name: 'og:image', content: image }
+        { vmid: 'og:title', property: 'og:title', content: title },
+        { vmid: 'og:description', property: 'og:description', content: description },
+        { vmid: 'og:url', property: 'og:url', content: getPostFullUrl(this.report) },
+        { vmid: 'og:image', property: 'og:image', content: image }
       ]
     }
   },
