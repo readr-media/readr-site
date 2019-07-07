@@ -30,11 +30,13 @@ export default {
     AppFooter,
     LoginLight
   },
-  metaInfo: {
-    titleTemplate: `%s - ${SITE_NAME}`,
-    meta: [
-      { name: 'og:image', content: `${SITE_FULL}/public/og-image.jpg` }
-    ]
+  metaInfo () {
+    return {
+      titleTemplate: `%s - ${SITE_NAME}`,
+      meta: [
+        { vmid: 'og:image', name: 'og:image', content: `${SITE_FULL}/public/og-image.jpg` }
+      ]
+    }
   },
   computed: {
     ...mapState({
