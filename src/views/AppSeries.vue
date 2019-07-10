@@ -20,13 +20,13 @@
         class="app-content-area"
         v-text="singleSeries.description || singleSeries.ogDescription"
       />
-      <a
+      <!-- <a
         v-if="latestSeriesPosts.id"
         :href="latestSeriesPosts.processed.fullUrl"
         target="_blank"
       >
         前往閱讀
-      </a>
+      </a> -->
     </main>
     <div class="series__contents-list-wrapper">
       <p>目錄</p>
