@@ -29,7 +29,7 @@
       </a> -->
     </main>
     <div class="series__contents-list-wrapper">
-      <p>目錄</p>
+      <h2>目錄</h2>
       <ol class="series-contents-list">
         <li
           v-for="(post, i) in seriesPosts"
@@ -166,9 +166,6 @@ export default {
     width 60%
     max-width 800px
     margin 50px auto
-    p
-      font-size 14px
-      font-weight 500
   &__more-series
     margin-top 2em
     padding-bottom 2em
@@ -182,7 +179,7 @@ export default {
           margin-top .2em
 
 .series-contents-list
-  margin 0
+  margin 1.5rem 0 0 0
   padding 0
   list-style none
   &__list-item
