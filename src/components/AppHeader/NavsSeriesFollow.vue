@@ -5,7 +5,7 @@
       @click="toggleFollow"
     >
       <IconFollow
-        :color-default="isFollow ? '#ddcf21' : 'white'"
+        :color="isFollow ? '#ddcf21' : 'white'"
         :height="30"
       />
     </div>
@@ -28,7 +28,7 @@ import _ from 'lodash'
 import { mapState, mapActions } from 'vuex'
 import { createPost } from 'src/util/post'
 
-import IconFollow from 'src/components/Icons/Follow.vue'
+import IconFollow from 'src/components/icons/IconFollow.vue'
 
 export default {
   components: {

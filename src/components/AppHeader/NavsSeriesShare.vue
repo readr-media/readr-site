@@ -39,7 +39,7 @@ import { createShareUrl } from 'src/util/post/share'
 import { getShareUrl } from 'src/util/comm'
 
 import NoSSR from 'vue-no-ssr'
-import IconShare from 'src/components/Icons/Share.vue'
+import IconShare from 'src/components/icons/IconShare.vue'
 import ShareFacebook from 'src/components/Share/ShareFacebook.vue'
 import ShareLine from 'src/components/Share/ShareLine.vue'
 import ShareCopylink from 'src/components/Share/ShareCopylink.vue'

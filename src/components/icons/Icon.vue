@@ -1,27 +1,41 @@
+<template>
+  <div
+    class="icon"
+    :style="{
+      maskImage: `url(${imagePath})`,
+      width: `${_width}px`,
+      height: `${_height}px`,
+      backgroundColor: color
+    }"
+  />
+</template>
+
+<script>
 export default {
   props: {
-    colorDefault: {
+    imagePath: {
+      type: String,
+      required: true
+    },
+    color: {
       type: String,
       default: 'white'
     },
-    colorHover: {
-      type: String,
-      default: '#ddcf21'
+    defaultWidth: {
+      type: Number,
+      default: 0
     },
     width: {
       type: Number,
       default: null
     },
+    defaultHeight: {
+      type: Number,
+      default: 0
+    },
     height: {
       type: Number,
       default: null
-    }
-  },
-  data () {
-    return {
-      isMouseover: false,
-      defaultWidth: 0,
-      defaultHeight: 0
     }
   },
   computed: {
@@ -45,13 +59,12 @@ export default {
         return this.height
       }
     }
-  },
-  methods: {
-    onMouseover () {
-      this.isMouseover = true
-    },
-    onMouseout () {
-      this.isMouseover = false
-    }
   }
 }
+</script>
+
+<style lang="stylus" scoped>
+.icon
+  mask-size cover
+  transition background-color .25s ease-out
+</style>
