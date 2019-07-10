@@ -1,14 +1,12 @@
 <template>
   <nav class="navs">
     <div
-      class="navs__nav navs__nav--square navs__nav--series-contents"
+      class="navs__nav navs__nav--series-contents"
       @click="$emit('series')"
     >
-      <p
-        :class="{ highlight: shouldHighlightSeriesContents }"
-      >
-        系列內容
-      </p>
+      <IconSeriesContents
+        :color="shouldHighlightSeriesContents ? '#ddcf21' : 'white'"
+      />
     </div>
     <!-- <NavsSeriesFollow
       class="navs__nav"
@@ -24,7 +22,7 @@
       @click="$emit('donate')"
     >
       <IconDonate
-        :color-default="shouldHighlightDonate ? '#ddcf21' : 'white'"
+        :color="shouldHighlightDonate ? '#ddcf21' : 'white'"
       />
     </div>
     <NavsSeriesShare
@@ -38,13 +36,15 @@ import { mapState } from 'vuex'
 
 // import NavsSeriesFollow from './NavsSeriesFollow.vue'
 import NavsSeriesShare from './NavsSeriesShare.vue'
-// import IconComment from 'src/components/Icons/Comment.vue'
-import IconDonate from 'src/components/Icons/Donate.vue'
+import IconSeriesContents from 'src/components/icons/IconSeriesContents.vue'
+// import IconComment from 'src/components/icons/IconComment.vue'
+import IconDonate from 'src/components/icons/IconDonate.vue'
 
 export default {
   components: {
     // NavsSeriesFollow,
     NavsSeriesShare,
+    IconSeriesContents,
     // IconComment,
     IconDonate
   },
@@ -72,9 +72,6 @@ export default {
     height 30px
     align-items center
     cursor pointer
-    &--square
-      width 38px
-      height 38px
     & + &
       margin 0 0 0 40px
     img
@@ -85,6 +82,4 @@ export default {
       color white
       user-select none
       transition color .25s ease-out
-      &.highlight
-        color #ddcf21
 </style>
