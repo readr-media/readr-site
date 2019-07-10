@@ -33,7 +33,7 @@
       @show="fetchSeries"
     >
       <div class="app-content-area series__more-series">
-        <h2>更多系列</h2>
+        <h2>更多專題</h2>
         <SeriesList
           :item-style="'comm-series-more'"
           :items="seriesFilterSelf"
