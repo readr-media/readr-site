@@ -141,6 +141,10 @@ export default {
   },
   asyncData ({ store, route }) {
     return store.dispatch('DataPost/GET_POST', { id: route.params.postId, showAuthor: true, showTag: true })
+      .catch(err => {
+        const error = { code: err.status }
+        throw error
+      })
   },
   methods: {
     ...mapMutations({

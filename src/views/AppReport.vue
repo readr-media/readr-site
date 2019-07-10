@@ -41,7 +41,12 @@ export default {
     }
   },
   asyncData ({ store, route }) {
-    return store.dispatch('DataPost/GET_POST_REPORT', { slugs: [ _.get(route, 'params.slug') ] })
+    const slug = _.get(route, 'params.slug')
+    return slug && slug !== 'null' && store.dispatch('DataPost/GET_POST_REPORT', { slugs: [ slug ] })
+      .catch(err => {
+        const error = { code: err.status }
+        throw error
+      })
   }
 }
 </script>

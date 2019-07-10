@@ -110,6 +110,17 @@ export default {
   },
   asyncData ({ store, route }) {
     return store.dispatch('DataSeries/FETCH_SINGLE_SERIES', { slug: route.params.slug })
+      .then(res => {
+        if (res.body.items.length === 0) {
+          const err = new Error()
+          err.status = 404
+          return Promise.reject(err)
+        }
+      })
+      .catch(err => {
+        const error = { code: err.status }
+        throw error
+      })
   },
   methods: {
     createPost,

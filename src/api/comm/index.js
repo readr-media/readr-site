@@ -85,38 +85,48 @@ export function constructUrlWithQuery (url, params) {
 
 export function fetch (url) {
   return new Promise((resolve, reject) => {
-    const s = Date.now()
-    const response = !process.browser && 3000
     superagent
       .get(url)
-      .timeout({ response })
-      .end(function (err, res) {
-        if (err) {
-          if (!process.browser) {
-            console.info('err occurred while fetching:', url, 'in', `${Date.now() - s}ms`, get(err, 'message'))
-            /** Use resolve instead of reject to avoiding blocking on server-side */
-            resolve(get(err, 'message'))
-          } else {
-            reject(new Error({ err, res }))
-          }
-        } else {
-        // resolve(camelizeKeys(res.body))
-          if (res.text === 'not found' || res.status !== 200) {
-            if (!process.browser) {
-              console.info('not found while fetching:', url, 'in', `${Date.now() - s}ms`)
-              /** Use resolve instead of reject to avoiding blocking on server-side */
-              resolve(res.text)
-            } else {
-              reject(res.text)
-            }
-          } else {
-            !process.browser && console.info('fetch:', url, 'in', `${Date.now() - s}ms`)
-            resolve({ status: res.status, body: camelizeKeys(res.body) })
-          }
-        }
-      })
+      .timeout({ response: 3000 })
+      .then(res => resolve({ status: res.status, body: camelizeKeys(res.body) }))
+      .catch(err => reject(err))
   })
 }
+
+// export function fetch (url) {
+//   return new Promise((resolve, reject) => {
+//     const s = Date.now()
+//     const response = !process.browser && 3000
+//     superagent
+//       .get(url)
+//       .timeout({ response })
+//       .end(function (err, res) {
+//         if (err) {
+//           if (!process.browser) {
+//             console.info('err occurred while fetching:', url, 'in', `${Date.now() - s}ms`, get(err, 'message'))
+//             /** Use resolve instead of reject to avoiding blocking on server-side */
+//             resolve(get(err, 'message'))
+//           } else {
+//             reject(new Error({ err, res }))
+//           }
+//         } else {
+//         // resolve(camelizeKeys(res.body))
+//           if (res.text === 'not found' || res.status !== 200) {
+//             if (!process.browser) {
+//               console.info('not found while fetching:', url, 'in', `${Date.now() - s}ms`)
+//               /** Use resolve instead of reject to avoiding blocking on server-side */
+//               resolve(res.text)
+//             } else {
+//               reject(res.text)
+//             }
+//           } else {
+//             !process.browser && console.info('fetch:', url, 'in', `${Date.now() - s}ms`)
+//             resolve({ status: res.status, body: camelizeKeys(res.body) })
+//           }
+//         }
+//       })
+//   })
+// }
 
 export function post (url, params, token) {
   return new Promise((resolve, reject) => {

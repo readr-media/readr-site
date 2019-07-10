@@ -15,15 +15,15 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, '../distribution'),
     publicPath: '/distribution/',
-    filename: '[name].[chunkhash].js',
+    filename: '[name].[chunkhash].js'
   },
   resolve: {
     alias: {
       'public': path.resolve(__dirname, '../public'),
       'src': path.resolve(__dirname, '../src'),
       'components': path.resolve(__dirname, '../src/components'),
-      'api': path.resolve(__dirname, '../api'),
-    },
+      'api': path.resolve(__dirname, '../api')
+    }
   },
   module: {
     noParse: /es6-promise\.js$/, // avoid webpack shimming process
@@ -33,22 +33,26 @@ module.exports = {
         loader: 'vue-loader',
         options: {
           compilerOptions: {
-            preserveWhitespace: false,
-          },
-        },
+            preserveWhitespace: false
+          }
+        }
+      },
+      {
+        test: /\.pug$/,
+        loader: 'pug-loader'
       },
       {
         test: /\.js$/,
         loader: 'babel-loader',
-        exclude: /node_modules/,
+        exclude: /node_modules/
       },
       {
         test: /\.(png|jpg|gif|svg)$/,
         loader: 'url-loader',
         options: {
           limit: 10000,
-          name: '[name].[ext]?[hash]',
-        },
+          name: '[name].[ext]?[hash]'
+        }
       },
       {
         test: /\.css$/,
@@ -56,9 +60,9 @@ module.exports = {
           ? [
             MiniCssExtractPlugin.loader,
             'css-loader',
-            'postcss-loader',
+            'postcss-loader'
           ]
-          : [ 'vue-style-loader', 'css-loader', 'postcss-loader', ],
+          : [ 'vue-style-loader', 'css-loader', 'postcss-loader' ]
       },
       {
         test: /\.styl(us)?$/,
@@ -66,25 +70,25 @@ module.exports = {
           'vue-style-loader',
           'css-loader',
           'postcss-loader',
-          'stylus-loader',
-        ],
-      },
-    ],
+          'stylus-loader'
+        ]
+      }
+    ]
   },
   performance: {
     maxEntrypointSize: 300000,
-    hints: isProd ? 'warning' : false,
+    hints: isProd ? 'warning' : false
   },
   plugins: [
     new VueLoaderPlugin(),
-    ... isProd
-    ? [
+    ...isProd
+      ? [
         new MiniCssExtractPlugin({
-          filename: 'common.[chunkhash].css',
-        }),
+          filename: 'common.[chunkhash].css'
+        })
       ]
-    : [
-        new FriendlyErrorsPlugin(),
-      ],
-  ],
+      : [
+        new FriendlyErrorsPlugin()
+      ]
+  ]
 }
