@@ -1,6 +1,6 @@
 <template>
   <div class="series">
-    <h1>系列內容</h1>
+    <h1>目錄</h1>
     <SidebarSeriesContentsList :items="seriesContentsData" />
     <NoSSR>
       <infinite-loading @infinite="infiniteHandler" />

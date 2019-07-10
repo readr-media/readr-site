@@ -48,14 +48,14 @@
         class="app-content-area post__related"
       >
         <template v-if="seriesPostsFiltered.length > 0">
-          <h2>系列內容</h2>
+          <h2>繼續閱讀</h2>
           <PostList
             :items="seriesPostsFiltered"
             class="post__post-list"
           />
         </template>
         <template v-if="seriesFiltered.length > 0">
-          <h2>更多系列</h2>
+          <h2>更多專題</h2>
           <SeriesList
             :item-style="'comm-series-more'"
             :items="seriesFiltered"

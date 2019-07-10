@@ -11,7 +11,7 @@
     </div> -->
     <div v-if="publicProjectsTrends.length > 0">
       <h2 class="decorated">
-        最熱門系列
+        最熱門專題
       </h2>
       <SeriesList
         :items="publicProjectsTrends"
@@ -20,7 +20,7 @@
     </div>
     <div>
       <h2 class="decorated">
-        系列報導
+        專題
       </h2>
       <SeriesList
         :item-style="'comm-narrow'"
