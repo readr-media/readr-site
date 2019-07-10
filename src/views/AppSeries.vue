@@ -20,14 +20,38 @@
         class="app-content-area"
         v-text="singleSeries.description || singleSeries.ogDescription"
       />
-      <a
+      <!-- <a
         v-if="latestSeriesPosts.id"
         :href="latestSeriesPosts.processed.fullUrl"
         target="_blank"
       >
         前往閱讀
-      </a>
+      </a> -->
     </main>
+    <div class="series__contents-list-wrapper">
+      <p>目錄</p>
+      <ol class="series-contents-list">
+        <li
+          v-for="(post, i) in seriesPosts"
+          :key="i"
+          class="series-contents-list__list-item series-contents-list-item"
+        >
+          <router-link
+            class="series-contents-list-item__link"
+            :to="createPost(post).processed.url"
+          >
+            <div
+              class="series-contents-list-item__order"
+              v-text="i + 1"
+            />
+            <div
+              class="series-contents-list-item__title"
+              v-text="post.title"
+            />
+          </router-link>
+        </li>
+      </ol>
+    </div>
     <lazy-component
       class="series-bottom"
       @show="fetchSeries"
@@ -88,6 +112,7 @@ export default {
     return store.dispatch('DataSeries/FETCH_SINGLE_SERIES', { slug: route.params.slug })
   },
   methods: {
+    createPost,
     fetchSeries () {
       this.$store.dispatch('DataSeries/FETCH', { maxResult: 4 })
     }
@@ -100,6 +125,17 @@ export default {
     h1, div
       & + *
         margin-top 1.5rem
+    a
+      display block
+      width 300px
+      height 50px
+      margin-left auto
+      margin-right auto
+      font-weight 500
+      line-height 50px
+      text-align center
+      background-color #ddcf21
+      border-radius 8px
   h1
     & + p
       margin-top 17px
@@ -111,17 +147,6 @@ export default {
     line-height 1.86
     & + *
       margin-top 17px
-  a
-    display block
-    width 300px
-    height 50px
-    margin-left auto
-    margin-right auto
-    font-weight 500
-    line-height 50px
-    text-align center
-    background-color #ddcf21
-    border-radius 8px
   &__image
     figure
       position relative
@@ -137,6 +162,13 @@ export default {
       height 100%
       object-fit cover
       object-position center center
+  &__contents-list-wrapper
+    width 60%
+    max-width 800px
+    margin 50px auto
+    p
+      font-size 14px
+      font-weight 500
   &__more-series
     margin-top 2em
     padding-bottom 2em
@@ -149,4 +181,37 @@ export default {
         h1
           margin-top .2em
 
+.series-contents-list
+  margin 0
+  padding 0
+  list-style none
+  &__list-item
+    & + &
+      border-top 1px solid #979797
+
+.series-contents-list-item
+  height 40px
+  display flex
+  align-items center
+  transition background-color .25s ease-out
+  &:hover
+    background-color white
+  &__link
+    display flex
+    width 100%
+    height 100%
+  &__order
+    min-width 50px
+    max-width 50px
+    display flex
+    justify-content center
+    align-items center
+    font-size 18px
+    color #11b8c9
+  &__title
+    font-size 14px
+    line-height 40px
+    white-space nowrap
+    overflow hidden
+    text-overflow ellipsis
 </style>
