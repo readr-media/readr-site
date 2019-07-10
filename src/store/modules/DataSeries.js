@@ -89,8 +89,8 @@ export default {
       })
     },
 
-    FETCH_SINGLE_SERIES ({ commit }, { slug }) {
-      return getPublicProjectsList({
+    async FETCH_SINGLE_SERIES ({ commit }, { slug }) {
+      const response = await getPublicProjectsList({
         params: {
           max_result: 1,
           page: DEFAULT_PAGE,
@@ -99,9 +99,9 @@ export default {
             publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED
           }
         }
-      }).then(res => {
-        commit('SET_SINGLE_SERIES', { series: _.get(res, 'body.items.0') })
       })
+      commit('SET_SINGLE_SERIES', { series: _.get(response, 'body.items.0') })
+      return response
     }
   }
 }

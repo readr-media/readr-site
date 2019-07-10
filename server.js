@@ -51,8 +51,8 @@ function createRenderer (bundle, options) {
 
 app.use(useragent.express())
 app.use(requestIp.mw())
-app.set('views', path.join(__dirname, 'src/views'))
-app.set('view engine', 'ejs')
+app.set('views', path.join(__dirname, 'src/pug'))
+app.set('view engine', 'pug')
 
 let renderer
 let readyPromise
@@ -225,25 +225,15 @@ function render (req, res, next) {
 
     if (status === 404) {
       isPageNotFound = true
-      console.error(`##########REQUEST URL(404)############\n`,
-        `ERROR OCCURRED WHEN RUNNING renderToString()\n`,
-        `REQUEST URL: ${req.url}\n`,
-        `REQUEST IP: ${req.clientIp}\n`,
-        `REFERER: ${req.headers.referer}\n`,
-        `${err}\n`, '######################')
-      req.url = '/404'
-      render(req, res, next)
+      console.error('[ERROR] renderToString 404', 'REQUEST URL:', req.url, 'REQUEST IP:', req.clientIp, err)
+      return res.status(404).render('index', { code: status, message: '抱歉 找不到這個網址' })
     } else if (status === 403) {
       isUnauthorized = true
       return res.status(status).send(`<script>location.replace('/login')</script>`)
     } else {
       isErrorOccurred = true
-      console.error(`ERROR OCCURRED WHEN RUNNING renderToString()\n`,
-        `REQUEST URL: ${req.url}\n`,
-        `REQUEST IP: ${req.clientIp}\n`,
-        `REFERER: ${req.headers.referer}\n`,
-        `${err}`)
-      return res.status(500).send('500 | Internal Server Error')
+      console.error(`[ERROR] renderToString ${status}`, 'REQUEST URL:', req.url, 'REQUEST IP:', req.clientIp, err)
+      return res.status(500).render('index', { code: status })
     }
   }
 
