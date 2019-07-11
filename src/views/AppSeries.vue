@@ -50,7 +50,7 @@
               />
               <div
                 class="series-contents-list-item__title"
-                v-text="post.title"
+                v-text="post.ogTitle || post.title"
               />
             </router-link>
           </li>
