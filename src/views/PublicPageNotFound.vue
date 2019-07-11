@@ -28,19 +28,17 @@
           class="projects-list__list-item list-item"
         >
           <router-link :to="project.slug ? `/series/${project.slug}` : '/'">
-            <template v-if="isClientSide">
-              <img
-                v-if="project.heroImage"
-                :src="getFullUrl(get(project, 'heroImage', ''))"
-                class="list-item__project-img"
-                alt=""
-              >
-              <div
-                v-else
-                class="list-item__project-img list-item__project-img--no-img"
-                v-text="get(project, 'title', '')"
-              />
-            </template>
+            <img
+              v-if="project.heroImage"
+              :src="getFullUrl(get(project, 'heroImage', ''))"
+              class="list-item__project-img"
+              alt=""
+            >
+            <div
+              v-else
+              class="list-item__project-img list-item__project-img--no-img"
+              v-text="get(project, 'title', '')"
+            />
             <p
               class="list-item__project-title"
               v-text="get(project, 'title', '')"
@@ -53,47 +51,27 @@
 </template>
 
 <script>
-import { get, take } from 'lodash'
-import { PROJECT_PUBLISH_STATUS, PROJECT_STATUS } from 'api/config'
-import { getFullUrl, isClientSide } from 'src/util/comm'
 
-const DEFAULT_PAGE = 1
-const DEFAULT_SORT = 'project_order,-updated_at'
-const MAXRESULT = 9
-// const debug = require('debug')('CLIENT:404')
-const fetchProjectsList = (store, {
-  maxResult = MAXRESULT,
-  page = DEFAULT_PAGE,
-  sort = DEFAULT_SORT
-} = {}) => {
-  return store.dispatch('GET_PUBLIC_PROJECTS', {
-    params: {
-      max_result: maxResult,
-      page: page,
-      sort: sort,
-      where: {
-        status: [ PROJECT_STATUS.DONE, PROJECT_STATUS.WIP ],
-        publish_status: PROJECT_PUBLISH_STATUS.PUBLISHED
-      }
-    }
-  })
-}
+import { SITE_NAME } from '../constants'
+import { get } from 'lodash'
+import { getFullUrl } from 'src/util/comm'
+import { mapState } from 'vuex'
+
+const MAXRESULT = 3
 
 export default {
   name: 'PageNotFound',
-  data () {
-    return {
-      projectLimit: 3
-    }
+  metaInfo: {
+    title: SITE_NAME,
+    titleTemplate: null
   },
   computed: {
-    projects () {
-      return take(get(this.$store.state, [ 'publicProjects', 'normal' ], []), this.projectLimit)
-    },
-    isClientSide
+    ...mapState({
+      projects: state => state.DataSeries.publicProjects.normal
+    })
   },
   asyncData ({ store }) {
-    return fetchProjectsList(store)
+    return store.dispatch('DataSeries/FETCH', { maxResult: MAXRESULT })
   },
   methods: {
     get,
@@ -143,7 +121,7 @@ export default {
     font-weight 900
     color #808080
     width 300px
-    margin 0 0 40px 0
+    margin 20px 0 40px 0
     &:focus
       outline none
 
@@ -172,6 +150,7 @@ export default {
       align-items center
       font-size 25px
       color white
+      text-align center
   &__project-title
     width 300px
     white-space nowrap
