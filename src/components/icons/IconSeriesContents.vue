@@ -33,7 +33,7 @@ export default {
   data () {
     return {
       imagePath: '/public/2.0/icons/series-contents-white.svg',
-      defaultWidth: 22,
+      defaultWidth: 26,
       defaultHeight: 29
     }
   }
