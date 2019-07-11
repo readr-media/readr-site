@@ -6,7 +6,8 @@ export default {
   namespaced: true,
   state () {
     return {
-      publicProjectContents: []
+      publicProjectContents: [],
+      currentPage: 0
     }
   },
   mutations: {
@@ -15,6 +16,9 @@ export default {
     },
     PUSH_PUBLIC_PROJECT_CONTENTS (state, items = []) {
       state['publicProjectContents'].push(...items)
+    },
+    SET_CURRENT_PAGE (state, page) {
+      state['currentPage'] = page
     }
   },
   actions: {

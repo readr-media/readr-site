@@ -28,29 +28,37 @@
         前往閱讀
       </a> -->
     </main>
-    <div class="series__contents-list-wrapper">
-      <p>目錄</p>
-      <ol class="series-contents-list">
-        <li
-          v-for="(post, i) in seriesPosts"
-          :key="i"
-          class="series-contents-list__list-item series-contents-list-item"
-        >
-          <router-link
-            class="series-contents-list-item__link"
-            :to="createPost(post).processed.url"
+    <div class="series__contents-wrapper">
+      <div
+        v-if="seriesPosts.length > 0"
+        class="series__contents-list-wrapper"
+      >
+        <h2>目錄</h2>
+        <ol class="series-contents-list">
+          <li
+            v-for="(post, i) in seriesPosts"
+            :key="i"
+            class="series-contents-list__list-item series-contents-list-item"
           >
-            <div
-              class="series-contents-list-item__order"
-              v-text="i + 1"
-            />
-            <div
-              class="series-contents-list-item__title"
-              v-text="post.title"
-            />
-          </router-link>
-        </li>
-      </ol>
+            <router-link
+              class="series-contents-list-item__link"
+              :to="createPost(post).processed.url"
+            >
+              <div
+                class="series-contents-list-item__order"
+                v-text="i + 1"
+              />
+              <div
+                class="series-contents-list-item__title"
+                v-text="post.title"
+              />
+            </router-link>
+          </li>
+        </ol>
+      </div>
+      <NoSSR>
+        <infinite-loading @infinite="infiniteHandler" />
+      </NoSSR>
     </div>
     <lazy-component
       class="series-bottom"
@@ -71,14 +79,17 @@
 import { SITE_FULL } from 'src/constants'
 import { createPost } from 'src/util/post'
 import { getFullUrl } from 'src/util/comm'
-import { mapState } from 'vuex'
+import { mapState, mapMutations } from 'vuex'
+import _ from 'lodash'
 
 import SeriesList from 'src/components/series/SeriesList.vue'
+import NoSSR from 'vue-no-ssr'
 
 export default {
   name: 'AppSeries',
   components: {
-    SeriesList
+    SeriesList,
+    NoSSR
   },
   metaInfo () {
     const title = this.singleSeries.ogTitle || this.singleSeries.title
@@ -99,13 +110,26 @@ export default {
     ...mapState({
       series: state => state.DataSeries.publicProjects.normal,
       singleSeries: state => state.DataSeries.singleSeries,
-      seriesPosts: state => state.DataSeriesContents.publicProjectContents
+      seriesPosts: state => state.DataSeriesContents.publicProjectContents,
+      currentPage: state => state.DataSeriesContents.currentPage
     }),
     latestSeriesPosts () {
       return this.seriesPosts.length > 0 ? createPost(this.seriesPosts[0]) : {}
     },
     seriesFilterSelf () {
       return this.series.filter(series => series.slug !== this.$route.params.slug).slice(0, 3)
+    },
+    seriesId () {
+      return _.get(this.singleSeries, 'id', '')
+    }
+  },
+  watch: {
+    seriesId: {
+      handler () {
+        this.RESET_PUBLIC_PROJECT_CONTENTS()
+        this.SET_CURRENT_PAGE(1)
+      },
+      immediate: true
     }
   },
   asyncData ({ store, route }) {
@@ -123,9 +147,33 @@ export default {
       })
   },
   methods: {
+    ...mapMutations({
+      RESET_PUBLIC_PROJECT_CONTENTS: 'DataSeriesContents/RESET_PUBLIC_PROJECT_CONTENTS',
+      SET_CURRENT_PAGE: 'DataSeriesContents/SET_CURRENT_PAGE'
+    }),
     createPost,
     fetchSeries () {
       this.$store.dispatch('DataSeries/FETCH', { maxResult: 4 })
+    },
+    infiniteHandler ($state) {
+      if (this.currentPage === 0) {
+        this.SET_CURRENT_PAGE(1)
+      }
+
+      this.$store.dispatch(
+        'DataSeriesContents/FETCH',
+        {
+          projectId: this.seriesId,
+          params: { page: this.currentPage }
+        }
+      ).then(res => {
+        if (res.body.items.length) {
+          this.SET_CURRENT_PAGE(this.currentPage + 1)
+          $state.loaded()
+        } else {
+          $state.complete()
+        }
+      })
     }
   }
 }
@@ -177,9 +225,6 @@ export default {
     width 60%
     max-width 800px
     margin 50px auto
-    p
-      font-size 14px
-      font-weight 500
   &__more-series
     margin-top 2em
     padding-bottom 2em
@@ -193,7 +238,7 @@ export default {
           margin-top .2em
 
 .series-contents-list
-  margin 0
+  margin 1.5rem 0 0 0
   padding 0
   list-style none
   &__list-item

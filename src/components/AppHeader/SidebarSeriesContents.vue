@@ -2,7 +2,9 @@
   <div class="series">
     <h1>目錄</h1>
     <SidebarSeriesContentsList :items="seriesContentsData" />
-    <NoSSR>
+    <NoSSR
+      v-if="showSidebar && currentSidebarSlot === 'seriesContents'"
+    >
       <infinite-loading @infinite="infiniteHandler" />
     </NoSSR>
   </div>
@@ -22,16 +24,16 @@ export default {
     SidebarSeriesContentsList,
     NoSSR
   },
-  data () {
-    return {
-      page: 1
-    }
-  },
   computed: {
     ...mapState({
       seriesData: state => _.get(state.DataPost, 'post', {}),
       singleSeries: state => state.DataSeries.singleSeries,
-      seriesContentsData: state => state.DataSeriesContents.publicProjectContents
+      seriesContentsData: state => state.DataSeriesContents.publicProjectContents,
+      currentPage: state => state.DataSeriesContents.currentPage
+    }),
+    ...mapState({
+      showSidebar: state => state.UIAppHeader.showSidebar,
+      currentSidebarSlot: state => state.UIAppHeader.currentSidebarSlot
     }),
     seriesId () {
       return this.$route.name === 'series' ? _.get(this.singleSeries, 'id', '') : _.get(this.seriesData, 'projectId', '')
@@ -41,32 +43,37 @@ export default {
     seriesId: {
       handler () {
         this.RESET_PUBLIC_PROJECT_CONTENTS()
-        this.page = 1
+        this.SET_CURRENT_PAGE(1)
       },
       immediate: true
     }
   },
   methods: {
     ...mapMutations({
-      RESET_PUBLIC_PROJECT_CONTENTS: 'DataSeriesContents/RESET_PUBLIC_PROJECT_CONTENTS'
+      RESET_PUBLIC_PROJECT_CONTENTS: 'DataSeriesContents/RESET_PUBLIC_PROJECT_CONTENTS',
+      SET_CURRENT_PAGE: 'DataSeriesContents/SET_CURRENT_PAGE'
     }),
 
     infiniteHandler ($state) {
       debug('Start fetching DataSeriesContents of projectId: ', this.seriesId)
+      if (this.currentPage === 0) {
+        this.SET_CURRENT_PAGE(1)
+      }
+
       this.$store.dispatch(
         'DataSeriesContents/FETCH',
         {
           projectId: this.seriesId,
-          params: { page: this.page }
+          params: { page: this.currentPage }
         }
       ).then(res => {
         if (res.body.items.length) {
           debug('page: ', this.page)
           debug('body items exist, should prepare to fetching next page')
-          this.page += 1
+          this.SET_CURRENT_PAGE(this.currentPage + 1)
           $state.loaded()
         } else {
-          debug('page: ', this.page)
+          debug('page: ', this.currentPage)
           debug('body items empty, complete infinite loading')
           $state.complete()
         }
