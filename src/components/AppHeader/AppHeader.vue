@@ -150,4 +150,10 @@ export default {
     top -5px
   &__sidebar
     z-index 999
+
+@media (max-width 1450px)
+  .header
+    &__wrapper
+      max-width none
+      padding 0 50px
 </style>
