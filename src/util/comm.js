@@ -189,7 +189,7 @@ export function getShareUrl (url) {
       ? `http://${SITE_DOMAIN_DEV}${url}`
       : `${location.protocol}//${location.host}${url}`
   }
-  return `http://${SITE_DOMAIN_DEV}${url}`
+  return `https://www.${SITE_DOMAIN}${url}`
 }
 
 export function isLink (content) {
