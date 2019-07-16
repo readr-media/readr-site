@@ -1432,7 +1432,7 @@ babel-code-frame@^6.22.0, babel-code-frame@^6.26.0:
     esutils "^2.0.2"
     js-tokens "^3.0.2"
 
-babel-core@^6.18.2, babel-core@^6.26.0, babel-core@^6.26.3:
+babel-core@^6.18.2, babel-core@^6.26.0:
   version "6.26.3"
   resolved "https://registry.yarnpkg.com/babel-core/-/babel-core-6.26.3.tgz#b2e2f09e342d0f0c88e2f02e067794125e75c207"
   dependencies:
@@ -1625,14 +1625,6 @@ babel-helpers@^6.24.1:
 babel-loader@7.1.1:
   version "7.1.1"
   resolved "https://registry.yarnpkg.com/babel-loader/-/babel-loader-7.1.1.tgz#b87134c8b12e3e4c2a94e0546085bc680a2b8488"
-  dependencies:
-    find-cache-dir "^1.0.0"
-    loader-utils "^1.0.2"
-    mkdirp "^0.5.1"
-
-babel-loader@^7.1.4:
-  version "7.1.5"
-  resolved "https://registry.yarnpkg.com/babel-loader/-/babel-loader-7.1.5.tgz#e3ee0cd7394aa557e013b02d3e492bfd07aa6d68"
   dependencies:
     find-cache-dir "^1.0.0"
     loader-utils "^1.0.2"
@@ -2043,7 +2035,7 @@ babel-preset-env@^1.7.0:
     invariant "^2.2.2"
     semver "^5.3.0"
 
-babel-preset-es2015@^6.18.0, babel-preset-es2015@^6.24.1:
+babel-preset-es2015@^6.18.0:
   version "6.24.1"
   resolved "https://registry.yarnpkg.com/babel-preset-es2015/-/babel-preset-es2015-6.24.1.tgz#d44050d6bc2c9feea702aaf38d727a0210538939"
   dependencies:
@@ -2986,9 +2978,9 @@ concat-stream@1.6.2, concat-stream@^1.5.0, concat-stream@^1.5.2, concat-stream@^
     readable-stream "^2.2.2"
     typedarray "^0.0.6"
 
-config@^1.30.0:
-  version "1.31.0"
-  resolved "https://registry.yarnpkg.com/config/-/config-1.31.0.tgz#ab08aeba6536015d220cd0afe14b3e0501082542"
+config@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/config/-/config-3.2.0.tgz#9dc4f74770657b583f47a1209e52f3b0d0e531db"
   dependencies:
     json5 "^1.0.1"
 
@@ -3683,10 +3675,6 @@ dot-prop@^4.1.0, dot-prop@^4.2.0:
   resolved "https://registry.yarnpkg.com/dot-prop/-/dot-prop-4.2.0.tgz#1f19e0c2e1aa0e32797c49799f2837ac6af69c57"
   dependencies:
     is-obj "^1.0.0"
-
-dotenv@^6.0.0:
-  version "6.2.0"
-  resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-6.2.0.tgz#941c0410535d942c8becf28d3f357dbd9d476064"
 
 double-ended-queue@^2.1.0-0:
   version "2.1.0-0"
@@ -5263,10 +5251,6 @@ hoek@2.x.x:
   version "2.16.3"
   resolved "https://registry.yarnpkg.com/hoek/-/hoek-2.16.3.tgz#20bb7403d3cea398e91dc4710a8ff1b8274a25ed"
 
-hoek@5.x.x:
-  version "5.0.4"
-  resolved "https://registry.yarnpkg.com/hoek/-/hoek-5.0.4.tgz#0f7fa270a1cafeb364a4b2ddfaa33f864e4157da"
-
 hoek@6.x.x:
   version "6.1.3"
   resolved "https://registry.yarnpkg.com/hoek/-/hoek-6.1.3.tgz#73b7d33952e01fe27a38b0457294b79dd8da242c"
@@ -6035,11 +6019,11 @@ istanbul@^0.4.0:
     which "^1.1.1"
     wordwrap "^1.0.0"
 
-joi@^13.4.0:
-  version "13.7.0"
-  resolved "https://registry.yarnpkg.com/joi/-/joi-13.7.0.tgz#cfd85ebfe67e8a1900432400b4d03bbd93fb879f"
+joi@^14.3.1:
+  version "14.3.1"
+  resolved "https://registry.yarnpkg.com/joi/-/joi-14.3.1.tgz#164a262ec0b855466e0c35eea2a885ae8b6c703c"
   dependencies:
-    hoek "5.x.x"
+    hoek "6.x.x"
     isemail "3.x.x"
     topo "3.x.x"
 
@@ -8021,10 +8005,6 @@ path-to-regexp@^1.0.1, path-to-regexp@^1.7.0:
   dependencies:
     isarray "0.0.1"
 
-path-to-regexp@^2.2.1:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/path-to-regexp/-/path-to-regexp-2.4.0.tgz#35ce7f333d5616f1c1e1bfe266c3aba2e5b2e704"
-
 path-to-regexp@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/path-to-regexp/-/path-to-regexp-3.0.0.tgz#c981a218f3df543fa28696be2f88e0c58d2e012a"
@@ -8889,44 +8869,35 @@ readr-comment@^1.0.21:
     prevent-scroll "^2.0.0"
     sanitize-html "^1.18.2"
 
-readr-web-api@^1.0.70:
-  version "1.0.70"
-  resolved "https://registry.yarnpkg.com/readr-web-api/-/readr-web-api-1.0.70.tgz#774a51b17830846e361221d79d1f0ae3f6f1614b"
+readr-web-api@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/readr-web-api/-/readr-web-api-1.1.1.tgz#d00f5f63f38d7e6c046fcd59934855e9d91a8262"
   dependencies:
     "@google-cloud/logging" "^1.2.0"
     "@google-cloud/pubsub" "^0.18.0"
     "@google-cloud/storage" "^1.7.0"
-    babel-cli "^6.22.2"
-    babel-core "^6.26.3"
-    babel-eslint "^7.1.0"
-    babel-loader "^7.1.4"
-    babel-preset-babili "0.0.11"
-    babel-preset-env "^1.7.0"
-    babel-preset-es2015 "^6.24.1"
-    babel-runtime "^6.22.0"
     body-parser "^1.18.3"
-    config "^1.30.0"
+    config "^3.2.0"
     cookies "^0.7.1"
     crypto-js "^3.1.9-1"
-    debug "^3.1.0"
-    dotenv "^6.0.0"
+    debug "^4.1.1"
     express "^4.15.4"
     express-jwt "^5.3.0"
     google-auth-library "^1.6.1"
     html-truncate "^1.2.2"
     humps "^2.0.1"
-    joi "^13.4.0"
+    joi "^14.3.1"
     jsonwebtoken "^8.2.2"
     locutus "^2.0.10"
     lodash "^4.17.10"
     moment "^2.22.2"
     multer "^1.3.0"
-    path-to-regexp "^2.2.1"
+    path-to-regexp "^3.0.0"
     redis-connection-pool "^1.6.1"
     sharp "^0.20.3"
     superagent "^3.8.3"
     uuid "^3.2.1"
-    validator "^10.3.0"
+    validator "^11.1.0"
 
 redent@^1.0.0:
   version "1.0.0"
@@ -10765,9 +10736,13 @@ validate-npm-package-license@^3.0.1:
     spdx-correct "^3.0.0"
     spdx-expression-parse "^3.0.0"
 
-validator@^10.11.0, validator@^10.3.0:
+validator@^10.11.0:
   version "10.11.0"
   resolved "https://registry.yarnpkg.com/validator/-/validator-10.11.0.tgz#003108ea6e9a9874d31ccc9e5006856ccd76b228"
+
+validator@^11.1.0:
+  version "11.1.0"
+  resolved "https://registry.yarnpkg.com/validator/-/validator-11.1.0.tgz#ac18cac42e0aa5902b603d7a5d9b7827e2346ac4"
 
 vary@~1.1.2:
   version "1.1.2"
