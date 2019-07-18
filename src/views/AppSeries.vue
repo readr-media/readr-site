@@ -163,11 +163,15 @@ export default {
       this.$store.dispatch(
         'DataSeriesContents/FETCH',
         {
-          projectId: this.seriesId,
-          params: { page: this.currentPage }
+          params: {
+            project_id: this.seriesId,
+            page: this.currentPage,
+            max_result: 10,
+            sort: 'post_order,-published_at'
+          }
         }
       ).then(res => {
-        if (res.body.items.length) {
+        if (res && res.body.items.length) {
           this.SET_CURRENT_PAGE(this.currentPage + 1)
           $state.loaded()
         } else {

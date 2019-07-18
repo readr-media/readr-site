@@ -1,5 +1,5 @@
 import {
-  getPublicProjectContents
+  getPublicPosts
 } from 'src/api'
 
 export default {
@@ -22,8 +22,8 @@ export default {
     }
   },
   actions: {
-    FETCH ({ commit }, { projectId = '', params }) {
-      return getPublicProjectContents({ projectId, params })
+    FETCH ({ commit }, { params }) {
+      return getPublicPosts({ params })
         .then(res => {
           commit('PUSH_PUBLIC_PROJECT_CONTENTS', res.body.items)
           return res
