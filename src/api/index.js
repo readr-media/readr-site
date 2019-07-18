@@ -310,32 +310,32 @@ export function getPublicProjectsList ({ params }) {
   return fetch(url)
 }
 
-export function getPublicProjectContents ({ projectId = '', params }) {
-  let url = `${host}/api/public/project/contents/${projectId}`
-  const query = _buildQuery(params)
-  if (query && (query.length > 0)) {
-    url = url + `?${query}`
-  }
-  return fetch(url)
-}
+// export function getPublicProjectContents ({ projectId = '', params }) {
+//   let url = `${host}/api/public/project/contents/${projectId}`
+//   const query = _buildQuery(params)
+//   if (query && (query.length > 0)) {
+//     url = url + `?${query}`
+//   }
+//   return fetch(url)
+// }
 
-export function getProjectContents ({ projectId = '', params }) {
-  let url = `${host}/api/project/contents/${projectId}`
-  const query = _buildQuery(params)
-  if (query && (query.length > 0)) {
-    url = url + `?${query}`
-  }
-  return fetchInStrict(url, {})
-}
+// export function getProjectContents ({ projectId = '', params }) {
+//   let url = `${host}/api/project/contents/${projectId}`
+//   const query = _buildQuery(params)
+//   if (query && (query.length > 0)) {
+//     url = url + `?${query}`
+//   }
+//   return fetchInStrict(url, {})
+// }
 
-export function getPublicReportsList ({ params }) {
-  let url = `${host}/api/public/reports`
-  const query = _buildQuery(params)
-  if (query && (query.length > 0)) {
-    url = url + `?${query}`
-  }
-  return fetch(url)
-}
+// export function getPublicReportsList ({ params }) {
+//   let url = `${host}/api/public/reports`
+//   const query = _buildQuery(params)
+//   if (query && (query.length > 0)) {
+//     url = url + `?${query}`
+//   }
+//   return fetch(url)
+// }
 
 export function getProfile ({ params = {} }) {
   const url = `${host}/api/profile`
