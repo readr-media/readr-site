@@ -1,11 +1,10 @@
 import _ from 'lodash'
 import {
   getPost,
-  getPublicReportsList
+  getPublicPosts
 } from 'src/api'
 import {
-  POST_PUBLISH_STATUS,
-  PROJECT_PUBLISH_STATUS
+  POST_TYPE
 } from 'api/config'
 
 export default {
@@ -31,17 +30,17 @@ export default {
       // eslint-disable-next-line camelcase
       max_result = 1,
       page = 1,
-      slugs = []
+      slug = ''
     } = {}) {
-      const response = await getPublicReportsList({
+      const response = await getPublicPosts({
         params: {
           max_result: max_result,
           page: page,
-          report_slugs: slugs,
-          publish_status: `{"$in":[${POST_PUBLISH_STATUS.PUBLISHED}]}`,
-          project_publish_status: `{"$in":[${PROJECT_PUBLISH_STATUS.PUBLISHED}]}`
+          slug: slug,
+          type: `{"$in":[${POST_TYPE.REPORT}]}`
         }
       })
+      console.log(response)
       commit('SET_POST', _.get(response, [ 'body', 'items', 0 ], {}))
     }
   },
