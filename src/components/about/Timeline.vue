@@ -57,6 +57,7 @@ export default {
     &:nth-child(1)
       top 50px
       left 200px
+      z-index 2
     &:nth-child(2)
       top -30px
     &:nth-child(3)
