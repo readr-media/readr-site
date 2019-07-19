@@ -10,6 +10,7 @@ const AppPost = () => import('../views/AppPost.vue')
 const AppReport = () => import('../views/AppReport.vue')
 const AppSearch = () => import('../views/AppSearch.vue')
 const AppSeries = () => import('../views/AppSeries.vue')
+const AppAbout = () => import('../views/AppAbout.vue')
 
 const MemberAccount = () => import('../views/MemberAccount.vue')
 const MemberFollowing = () => import('../views/MemberFollowing.vue')
@@ -52,6 +53,11 @@ const router = new Router({
       name: 'series',
       path: '/series/:slug',
       component: AppSeries
+    },
+    {
+      name: 'about',
+      path: '/about',
+      component: AppAbout
     },
     {
       name: 'account',
