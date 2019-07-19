@@ -61,7 +61,7 @@
         </li>
       </ul>
     </div>
-    <!-- <div class="footer__right">
+    <div class="footer__right">
       <ul class="footer__links-list links-list">
         <li class="links-list__list-item">
           <router-link
@@ -71,40 +71,40 @@
             關於我們
           </router-link>
         </li>
-        <li class="links-list__list-item">
+        <!-- <li class="links-list__list-item">
           <router-link
             class="link"
             to="/agreement"
           >
             隱私政策
           </router-link>
-        </li>
-        <li class="links-list__list-item">
+        </li> -->
+        <!-- <li class="links-list__list-item">
           <router-link
             class="link"
             to="/agreement"
           >
             服務條款
           </router-link>
-        </li>
-        <li class="links-list__list-item">
+        </li> -->
+        <!-- <li class="links-list__list-item">
           <router-link
             class="link"
             to="/agreement"
           >
             版權所有
           </router-link>
-        </li>
+        </li> -->
         <li class="links-list__list-item">
-          <router-link
+          <a
             class="link"
-            to="/"
+            href="mailto:readr@readr.tw"
           >
             聯絡我們
-          </router-link>
+          </a>
         </li>
       </ul>
-    </div> -->
+    </div>
   </footer>
 </template>
 
