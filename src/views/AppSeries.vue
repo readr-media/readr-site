@@ -76,7 +76,7 @@
   </section>
 </template>
 <script>
-import { SITE_FULL } from 'src/constants'
+import { SITE_FULL, SITE_NAME } from 'src/constants'
 import { createPost } from 'src/util/post'
 import { getFullUrl } from 'src/util/comm'
 import { mapState, mapMutations } from 'vuex'
@@ -99,7 +99,7 @@ export default {
       title: title,
       meta: [
         { name: 'description', content: description },
-        { vmid: 'og:title', property: 'og:title', content: title },
+        { vmid: 'og:title', property: 'og:title', content: `${title} - ${SITE_NAME}` },
         { vmid: 'og:description', property: 'og:description', content: description },
         { vmid: 'og:url', property: 'og:url', content: getFullUrl(this.$route.path) },
         { vmid: 'og:image', property: 'og:image', content: image }
