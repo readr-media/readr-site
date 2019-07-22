@@ -10,7 +10,7 @@
 
 <script>
 import _ from 'lodash'
-import { SITE_FULL } from 'src/constants'
+import { SITE_FULL, SITE_NAME } from 'src/constants'
 import { createPost } from 'src/util/post'
 import { getPostFullUrl } from 'src/util/post/index'
 import { mapState } from 'vuex'
@@ -25,7 +25,7 @@ export default {
       title: title,
       meta: [
         { name: 'description', content: description },
-        { vmid: 'og:title', property: 'og:title', content: title },
+        { vmid: 'og:title', property: 'og:title', content: `${title} - ${SITE_NAME}` },
         { vmid: 'og:description', property: 'og:description', content: description },
         { vmid: 'og:url', property: 'og:url', content: getPostFullUrl(this.report) },
         { vmid: 'og:image', property: 'og:image', content: image }
