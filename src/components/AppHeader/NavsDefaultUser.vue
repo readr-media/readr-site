@@ -53,7 +53,7 @@ export default {
       return this.$route.name === 'account'
     },
     userThumbnail () {
-      const path = _.get(this.profile, 'profileImage', '')
+      const path = _.get(this.profile, 'profileImage') || '/public/icons/exclamation.png'
       return getFullUrl(path)
     }
   },

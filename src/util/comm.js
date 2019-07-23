@@ -53,7 +53,7 @@ export function getFullUrl (url) {
   } else if (!clientSide) {
     return `${SITE_FULL}${url}`
   }
-  const hostname = location.hostname
+  const hostname = location.hostname || ''
   return hostname.match(regexDev) ? `http://${SITE_DOMAIN_DEV}${url}` : `${SITE_FULL}${url}`
 }
 
