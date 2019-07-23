@@ -15,20 +15,19 @@
           alt=""
         >
       </router-link>
-      <NavsDefault
-        v-show="layout === 'default'"
-        class="header__navs"
-      />
       <NavsSeries
-        v-show="layout === 'series'"
+        :show-icon-list="showIconList"
         class="header__navs"
         @series="toggleNavSeries('seriesContents')"
         @comment="toggleNavSeries('comment')"
         @donate="toggleNavSeries('donate')"
       />
+      <NavsDefault
+        v-show="layout === 'default'"
+        class="header__navs"
+      />
     </div>
     <Sidebar
-      v-if="layout === 'series'"
       class="header__sidebar"
     >
       <SidebarSeriesContents
@@ -72,7 +71,13 @@ export default {
     }),
     ...mapGetters({
       layout: 'UIAppHeader/layout'
-    })
+    }),
+    showIconList () {
+      if (this.layout === 'series') {
+        return [ 'seriesContents', 'donate', 'share' ]
+      }
+      return [ 'donate' ]
+    }
   },
   watch: {
     layout () {
@@ -148,6 +153,9 @@ export default {
   &__navs
     position relative
     top -5px
+    margin 0 0 0 auto
+    & + .header__navs
+      margin-left 40px
   &__sidebar
     z-index 999
 
