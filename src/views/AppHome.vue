@@ -34,7 +34,7 @@
 <script>
 import { SITE_NAME } from '../constants'
 import { get } from 'lodash'
-import { mapState } from 'vuex'
+import { mapMutations, mapState } from 'vuex'
 import { isScrollBarReachBottom } from '../util/comm'
 
 import SeriesList from 'src/components/series/SeriesList.vue'
@@ -78,6 +78,12 @@ export default {
         throw error
       })
   },
+  beforeMount () {
+    if (this.$route.name === 'donate') {
+      this.SET_CURRENT_SIDEBAR_SLOT('donate')
+      this.SET_SHOW_SIDEBAR(true)
+    }
+  },
   mounted () {
     window.addEventListener('scroll', this.loadMore)
   },
@@ -85,6 +91,10 @@ export default {
     window.removeEventListener('scroll', this.loadMore)
   },
   methods: {
+    ...mapMutations({
+      SET_SHOW_SIDEBAR: 'UIAppHeader/SET_SHOW_SIDEBAR',
+      SET_CURRENT_SIDEBAR_SLOT: 'UIAppHeader/SET_CURRENT_SIDEBAR_SLOT'
+    }),
     loadMore () {
       if (this.hasMore && !this.loading && isScrollBarReachBottom(1 / 3)) {
         const origCount = get(this.publicProjectsNormal, [ 'length' ], 0)
