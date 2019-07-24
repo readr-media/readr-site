@@ -11,6 +11,7 @@ const AppReport = () => import('../views/AppReport.vue')
 const AppSearch = () => import('../views/AppSearch.vue')
 const AppSeries = () => import('../views/AppSeries.vue')
 const AppAbout = () => import('../views/AppAbout.vue')
+const AppAgreement = () => import('../views/AppAgreement.vue')
 
 const MemberAccount = () => import('../views/MemberAccount.vue')
 const MemberFollowing = () => import('../views/MemberFollowing.vue')
@@ -75,6 +76,21 @@ const router = new Router({
       name: 'donate',
       path: '/donate',
       component: AppHome
+    },
+    {
+      name: 'agreement',
+      path: '/agreement',
+      component: AppAgreement
+    },
+    {
+      name: 'privacy-rule',
+      path: '/privacy-rule',
+      component: AppAgreement
+    },
+    {
+      name: 'service-rule',
+      path: '/service-rule',
+      component: AppAgreement
     },
     { path: '/404', component: PublicPageNotFound },
     { path: '/500', component: PublicServerError },
