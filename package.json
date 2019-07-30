@@ -31,6 +31,9 @@
     "node": ">=7.0",
     "npm": ">=4.0"
   },
+  "browserslist": [
+    "last 3 versions"
+  ],
   "dependencies": {
     "@babel/runtime": "^7.4.4",
     "@google-cloud/logging": "^1.2.0",

@@ -328,15 +328,6 @@ export function getPublicProjectsList ({ params }) {
 //   return fetchInStrict(url, {})
 // }
 
-// export function getPublicReportsList ({ params }) {
-//   let url = `${host}/api/public/reports`
-//   const query = _buildQuery(params)
-//   if (query && (query.length > 0)) {
-//     url = url + `?${query}`
-//   }
-//   return fetch(url)
-// }
-
 export function getProfile ({ params = {} }) {
   const url = `${host}/api/profile`
   return fetchInStrict(url, { cookie: params.cookie })
