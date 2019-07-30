@@ -43,7 +43,7 @@ const fetchCommentStrict = (store, { params }) => store.dispatch('FETCH_COMMENT'
 const fetchCommentPublic = (store, { params }) => store.dispatch('FETCH_COMMENT_PUBLIC', { params: Object.assign({}, { sort: DEFAULT_SORT }, params) })
 const reportComment = (store, { params }) => store.dispatch('ADD_COMMENT_REPORT', { params })
 const updateComment = (store, { params }) => store.dispatch('UPDATE_COMMENT', { params })
-const fetchReportsListBySlugs = (store, slugs = []) => store.dispatch('GET_PUBLIC_REPORTS', { params: { report_slugs: slugs } })
+const fetchReportsListBySlugs = (store, slugs = []) => store.dispatch('DataPost/GET_POST_REPORT', { params: { slug: slugs } })
 const switchOn = (store, message) => store.dispatch('UILoginLightbox/LOGIN_ASK_TOGGLE', { active: true, message, type: 'GO_LOGIN' })
 const debug = require('debug')('CLIENT:CommentContainer')
 
