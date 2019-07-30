@@ -40,9 +40,9 @@
             :key="i"
             class="series-contents-list__list-item series-contents-list-item"
           >
-            <router-link
+            <LinkItem
               class="series-contents-list-item__link"
-              :to="createPost(post).processed.url"
+              :href="createPost(post).processed.url"
             >
               <div
                 class="series-contents-list-item__order"
@@ -52,7 +52,7 @@
                 class="series-contents-list-item__title"
                 v-text="post.ogTitle || post.title"
               />
-            </router-link>
+            </LinkItem>
           </li>
         </ol>
       </div>
@@ -82,12 +82,14 @@ import { getFullUrl } from 'src/util/comm'
 import { mapState, mapMutations } from 'vuex'
 import _ from 'lodash'
 
+import LinkItem from 'src/components/common/LinkItem.vue'
 import SeriesList from 'src/components/series/SeriesList.vue'
 import NoSSR from 'vue-no-ssr'
 
 export default {
   name: 'AppSeries',
   components: {
+    LinkItem,
     SeriesList,
     NoSSR
   },

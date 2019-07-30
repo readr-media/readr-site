@@ -34,6 +34,8 @@
   "dependencies": {
     "@babel/runtime": "^7.4.4",
     "@google-cloud/logging": "^1.2.0",
+    "@vue/babel-helper-vue-jsx-merge-props": "^1.0.0",
+    "@vue/babel-preset-jsx": "^1.1.0",
     "awesome-phonenumber": "^2.2.6",
     "big-integer": "^1.6.36",
     "body-parser": "^1.18.2",

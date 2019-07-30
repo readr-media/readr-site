@@ -1,6 +1,6 @@
 <template>
-  <router-link
-    :to="href"
+  <LinkItem
+    :href="href"
     :target="target"
     class="list-item app-list"
   >
@@ -27,11 +27,16 @@
         v-text="description"
       />
     </div>
-  </router-link>
+  </LinkItem>
 </template>
 <script>
+import LinkItem from 'src/components/common/LinkItem.vue'
+
 export default {
   name: 'ListItem',
+  components: {
+    LinkItem
+  },
   props: {
     date: {
       type: String,
