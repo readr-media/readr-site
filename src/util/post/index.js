@@ -85,7 +85,7 @@ export function getFullUrlPost (postData) {
   const postType = getPostType(postData)
   switch (postType) {
     case 'report':
-      return getFullUrl(`/report/${get(postData, 'slug', '')}`)
+      return getFullUrl(`/project/${get(postData, 'slug', '')}`)
     default:
       return getFullUrl(`/post/${get(postData, 'id', '')}`)
   }
@@ -95,7 +95,7 @@ export function getUrlPost (postData) {
   const postType = getPostType(postData)
   switch (postType) {
     case 'report':
-      return `/report/${get(postData, 'slug', '')}`
+      return `/project/${get(postData, 'slug', '')}`
     default:
       return `/post/${get(postData, 'id', '')}`
   }
