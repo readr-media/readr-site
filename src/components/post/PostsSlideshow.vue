@@ -1,0 +1,96 @@
+<template>
+  <div class="posts-slideshow">
+    <PostList :items="chunkPosts[currentIndex]" />
+    <div class="control-bar">
+      <div
+        v-if="currentIndex !== 0"
+        class="control-bar__action prev"
+        @click="currentIndex -= 1"
+      >
+        <img
+          :alt="`上 ${chunkSize} 則`"
+          src="/public/2.0/icons/arrow.svg"
+        >
+        <span>上 {{ chunkSize }} 則</span>
+      </div>
+      <div
+        v-if="hasMore || currentIndex < chunkPosts.length - 1"
+        class="control-bar__action next"
+        @click="currentIndex += 1"
+      >
+        <span>下 {{ chunkSize }} 則</span>
+        <img
+          :alt="`下 ${chunkSize} 則`"
+          src="/public/2.0/icons/arrow.svg"
+        >
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import { chunk } from 'lodash'
+
+import PostList from 'src/components/post/PostList.vue'
+
+export default {
+  name: 'PostsSlideshow',
+  components: {
+    PostList
+  },
+  props: {
+    chunkSize: {
+      type: Number,
+      default: 3
+    },
+    hasMore: {
+      type: Boolean,
+      default: false
+    },
+    posts: {
+      type: Array,
+      default: () => []
+    }
+  },
+  data () {
+    return {
+      currentIndex: 0
+    }
+  },
+  computed: {
+    chunkPosts () {
+      return chunk(this.posts, this.chunkSize)
+    }
+  },
+  watch: {
+    currentIndex (value) {
+      if (value === this.chunkPosts.length - 1) {
+        this.$emit('toFinalChunk')
+      }
+    }
+  }
+}
+</script>
+<style lang="stylus" scoped>
+.posts-slideshow
+  .control-bar
+    display flex
+    justify-content space-between
+    margin-top .5em
+    &__action
+      display flex
+      align-items center
+      cursor pointer
+      &.prev
+        img
+          transform rotate(-180deg)
+      &.next
+        margin 0 0 0 auto
+      img
+        width 30px
+        & + span
+          margin-left .5em
+      span
+        color #11b8c9
+        & + img
+          margin-left .5em
+</style>

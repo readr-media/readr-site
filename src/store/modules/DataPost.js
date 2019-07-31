@@ -11,7 +11,8 @@ export default {
   namespaced: true,
   state () {
     return {
-      post: {}
+      post: {},
+      posts: []
     }
   },
   actions: {
@@ -42,11 +43,48 @@ export default {
       })
       console.log(response)
       commit('SET_POST', _.get(response, [ 'body', 'items', 0 ], {}))
+    },
+    async GET_POSTS ({ commit, state }, {
+      maxResult = 12,
+      page = 1,
+      projectId,
+      showAuthor = false,
+      showComment = false,
+      showTag = false,
+      showUpdater = false,
+      sort = '-published_at'
+    } = {}) {
+      try {
+        const response = await getPublicPosts({
+          params: {
+            max_result: maxResult,
+            page,
+            project_id: projectId,
+            show_author: showAuthor,
+            show_comment: showComment,
+            show_tag: showTag,
+            show_updater: showUpdater,
+            sort
+          }
+        })
+        let items = _.get(response, 'body.items', []) || []
+        if (page > 1) {
+          const orig = _.values(_.get(state, 'posts', []))
+          items = _.concat(orig, items)
+        }
+        commit('SET_POSTS', items)
+        return _.get(response, 'body.items', []) || []
+      } catch (error) {
+        return []
+      }
     }
   },
   mutations: {
     SET_POST (state, post) {
       state.post = post
+    },
+    SET_POSTS (state, posts) {
+      state.posts = posts
     }
   }
 }
