@@ -4,7 +4,7 @@ import truncate from 'truncate-html'
 import { get, isEmpty } from 'lodash'
 
 import { POST_TYPE } from 'api/config'
-import { SITE_FULL, ANNOUNCEMENT_ACCOUNT_ID } from 'src/constants'
+import { ANNOUNCEMENT_ACCOUNT_ID } from 'src/constants'
 
 import { getShareUrl, getFullUrl } from 'src/util/comm'
 import { getReportLink } from './report'
@@ -54,13 +54,12 @@ export function getResourceType (post) {
 
 export function getPostFullUrl (postData) {
   const postType = getPostType(postData)
-  const createPostUrl = {
-    news: getShareUrl(`/post/${get(postData, 'id', '')}`),
-    review: getShareUrl(`/post/${get(postData, 'id', '')}`),
-    memo: get(postData, 'link') || getShareUrl(`/series/${get(postData, [ 'project', 'slug' ], '')}/${get(postData, 'id', '')}`),
-    report: get(postData, 'link') || getReportLink(postData)
+
+  const fullUrlStrategies = {
+    default: getShareUrl(`/post/${get(postData, 'id', '')}`),
+    report: getReportLink(postData)
   }
-  return createPostUrl[postType] || SITE_FULL
+  return fullUrlStrategies[postType] || fullUrlStrategies.default
 }
 
 export function getPostOgImgUrl (post) {
@@ -81,24 +80,13 @@ export function isAnnouncementAccountId (id) {
   return idString === ANNOUNCEMENT_ACCOUNT_ID
 }
 
-export function getFullUrlPost (postData) {
+export function getPostUrl (postData) {
   const postType = getPostType(postData)
-  switch (postType) {
-    case 'report':
-      return getFullUrl(`/project/${get(postData, 'slug', '')}`)
-    default:
-      return getFullUrl(`/post/${get(postData, 'id', '')}`)
+  const urlStrategies = {
+    default: `/post/${get(postData, 'id', '')}`,
+    report: getReportLink(postData)
   }
-}
-
-export function getUrlPost (postData) {
-  const postType = getPostType(postData)
-  switch (postType) {
-    case 'report':
-      return `/project/${get(postData, 'slug', '')}`
-    default:
-      return `/post/${get(postData, 'id', '')}`
-  }
+  return urlStrategies[postType] || urlStrategies.default
 }
 
 export function createPost (post = {}) {
@@ -122,8 +110,8 @@ export function createPost (post = {}) {
       // postContentStrings: getPostContentStrings(post),
       // postContentStringsTruncate: truncatePostContent(post)
       ogImgUrl: getPostOgImgUrl(post),
-      fullUrl: getFullUrlPost(post),
-      url: getUrlPost(post)
+      fullUrl: getPostFullUrl(post),
+      url: getPostUrl(post)
     }
   }
 }

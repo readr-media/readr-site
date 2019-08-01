@@ -12,10 +12,10 @@ export default {
     }
   },
   render () {
-    const isProjectLink = this.href.match(/\/project\//)
-    const linkTag = isProjectLink ? 'a' : 'router-link'
+    const isHttpLink = this.href.match(/https?:\/\//)
+    const linkTag = isHttpLink ? 'a' : 'router-link'
     return (
-      <linkTag href={ this.href } to={ this.href } target={ isProjectLink ? '_blank' : this.target }>
+      <linkTag href={ this.href } to={ this.href } target={ isHttpLink ? '_blank' : this.target }>
         { this.$slots.default }
       </linkTag>
     )

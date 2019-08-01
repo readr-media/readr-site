@@ -12,7 +12,7 @@ export function getReportContent (report) {
 
 export function getReportLink (report) {
   const getReportLinkBySlug = (slug) => {
-    return OLD_PROJECTS_SLUGS.includes(slug) ? `https://www.${MM_SITE_DOMAIN}/projects/${slug}` : `https://${SITE_DOMAIN}/project/${slug}`
+    return OLD_PROJECTS_SLUGS.includes(slug) ? `https://www.${MM_SITE_DOMAIN}/projects/${slug}` : `https://www.${SITE_DOMAIN}/project/${slug}`
   }
 
   return getReportLinkBySlug(get(report, 'slug'))
