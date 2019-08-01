@@ -82,6 +82,7 @@ export default {
         object-fit cover
         object-position center center
     h2, p
+      word-break break-all
       overflow hidden
     h2
       font-weight normal
