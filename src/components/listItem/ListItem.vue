@@ -120,8 +120,9 @@ export default {
       position relative
       .side-badge
         display initial
+        transform scale(.7)
         position absolute
-        top -15px
+        top -25px
         left -15px
 
   .list-item.comm-series-more
