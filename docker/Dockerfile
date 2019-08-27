@@ -9,7 +9,8 @@ WORKDIR $NODE_SOURCE
 RUN apt-get update \
     && apt-get install -y node-gyp
 
-ADD . $NODE_SOURCE/
+# ADD . $NODE_SOURCE/
+COPY . .
 
 EXPOSE 3000
 CMD ["yarn", "start"]
