@@ -1,5 +1,9 @@
 <template>
   <li class="list-item-wrapper">
+    <SideBadge
+      v-if="shouldShowSideBadge"
+      class="list-item-wrapper__side-badge"
+    />
     <LinkItem
       :href="url"
       class="list-item"
@@ -31,10 +35,13 @@ import { mapMutations } from 'vuex'
 import { createPost } from 'src/util/post'
 
 import LinkItem from 'src/components/common/LinkItem.vue'
+import SideBadge from '@readr-ui/side-badge/src/readr-ui-side-badge.vue'
+import dayjs from 'dayjs'
 
 export default {
   components: {
-    LinkItem
+    LinkItem,
+    SideBadge
   },
   props: {
     item: {
@@ -61,6 +68,15 @@ export default {
     },
     url () {
       return _.get(this.post, 'processed.url', '')
+    },
+    shouldShowSideBadge () {
+      const date = _.get(this.post, 'publishedAt', '')
+      if (date) {
+        const today = dayjs()
+        const currentDate = dayjs(date)
+        return today.diff(currentDate, 'day') <= 7
+      }
+      return false
     }
   },
   methods: {
@@ -72,6 +88,13 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.list-item-wrapper
+  position relative
+  &__side-badge
+    position absolute
+    left -15px
+    top 0
+
 .list-item
   display flex
 

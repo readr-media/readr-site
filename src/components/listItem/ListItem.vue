@@ -11,6 +11,10 @@
       >
     </figure>
     <div class="list-item__content">
+      <SideBadge
+        v-if="shouldShowSideBadge"
+        class="side-badge"
+      />
       <h2
         v-if="title"
         class="title"
@@ -31,11 +35,14 @@
 </template>
 <script>
 import LinkItem from 'src/components/common/LinkItem.vue'
+import SideBadge from '@readr-ui/side-badge/src/readr-ui-side-badge.vue'
+import dayjs from 'dayjs'
 
 export default {
   name: 'ListItem',
   components: {
-    LinkItem
+    LinkItem,
+    SideBadge
   },
   props: {
     date: {
@@ -62,6 +69,16 @@ export default {
       type: String,
       default: ''
     }
+  },
+  computed: {
+    shouldShowSideBadge () {
+      if (this.date) {
+        const today = dayjs()
+        const currentDate = dayjs(this.date)
+        return today.diff(currentDate, 'day') <= 7
+      }
+      return false
+    }
   }
 }
 </script>
@@ -81,6 +98,8 @@ export default {
         height 100%
         object-fit cover
         object-position center center
+    .side-badge
+      display none
     h2, p
       word-break break-all
       overflow hidden
@@ -96,6 +115,14 @@ export default {
       width 90%
       margin-left auto
       margin-right auto
+    .list-item__content
+      position relative
+      .side-badge
+        display initial
+        transform scale(.7)
+        position absolute
+        top -25px
+        left -15px
 
   .list-item.comm-series-more
     width calc((100% - 60px) / 3)
