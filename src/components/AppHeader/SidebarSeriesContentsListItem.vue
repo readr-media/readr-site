@@ -71,13 +71,12 @@ export default {
     },
     shouldShowSideBadge () {
       const date = _.get(this.post, 'publishedAt', '')
-      if (date === '') {
-        return false
+      if (date) {
+        const today = dayjs()
+        const currentDate = dayjs(date)
+        return today.diff(currentDate, 'day') <= 7
       }
-
-      const today = dayjs()
-      const currentDate = dayjs(date)
-      return today.diff(currentDate, 'day') <= 7
+      return false
     }
   },
   methods: {

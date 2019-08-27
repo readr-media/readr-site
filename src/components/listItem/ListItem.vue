@@ -72,13 +72,12 @@ export default {
   },
   computed: {
     shouldShowSideBadge () {
-      if (this.date === '') {
-        return false
+      if (this.date) {
+        const today = dayjs()
+        const currentDate = dayjs(this.date)
+        return today.diff(currentDate, 'day') <= 7
       }
-
-      const today = dayjs()
-      const currentDate = dayjs(this.date)
-      return today.diff(currentDate, 'day') <= 7
+      return false
     }
   }
 }
