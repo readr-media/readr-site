@@ -91,11 +91,12 @@ export default {
     padding 20px 50px
   &__title
     font-weight 400
-    line-height 1
+    line-height 1.25
   &__date
     margin 10px 0 0 0
     font-size 14px
     color #4a4a4a
   &__description
     margin 10px 0 0 0
+    line-height 1.38
 </style>
