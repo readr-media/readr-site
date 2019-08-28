@@ -10,7 +10,6 @@
           v-for="(post, i) in seriesPosts"
           :key="i"
           class="series-contents-list__list-item"
-          :order="i"
           :post="post"
         />
       </ol>
@@ -86,6 +85,7 @@ export default {
   padding 0
   list-style none
   &__list-item
-    & + &
+    border-bottom 1px solid #979797
+    &:nth-child(1)
       border-top 1px solid #979797
 </style>
