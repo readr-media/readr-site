@@ -6,25 +6,13 @@
     >
       <h2>目錄</h2>
       <ol class="series-contents-list">
-        <li
+        <SeriesCatalogListItem
           v-for="(post, i) in seriesPosts"
           :key="i"
-          class="series-contents-list__list-item series-contents-list-item"
-        >
-          <LinkItem
-            class="series-contents-list-item__link"
-            :href="createPost(post).processed.url"
-          >
-            <div
-              class="series-contents-list-item__order"
-              v-text="i + 1"
-            />
-            <div
-              class="series-contents-list-item__title"
-              v-text="post.ogTitle || post.title"
-            />
-          </LinkItem>
-        </li>
+          class="series-contents-list__list-item"
+          :order="i"
+          :post="post"
+        />
       </ol>
     </div>
     <NoSSR>
@@ -34,16 +22,15 @@
 </template>
 
 <script>
-import { createPost } from 'src/util/post'
 import { mapState, mapMutations } from 'vuex'
 import _ from 'lodash'
 
-import LinkItem from 'src/components/common/LinkItem.vue'
+import SeriesCatalogListItem from './SeriesCatalogListItem.vue'
 import NoSSR from 'vue-no-ssr'
 
 export default {
   components: {
-    LinkItem,
+    SeriesCatalogListItem,
     NoSSR
   },
   computed: {
@@ -57,7 +44,6 @@ export default {
     }
   },
   methods: {
-    createPost,
     ...mapMutations({
       SET_CURRENT_PAGE: 'DataSeriesContents/SET_CURRENT_PAGE'
     }),
@@ -102,30 +88,4 @@ export default {
   &__list-item
     & + &
       border-top 1px solid #979797
-
-.series-contents-list-item
-  height 40px
-  display flex
-  align-items center
-  transition background-color .25s ease-out
-  &:hover
-    background-color white
-  &__link
-    display flex
-    width 100%
-    height 100%
-  &__order
-    min-width 50px
-    max-width 50px
-    display flex
-    justify-content center
-    align-items center
-    font-size 18px
-    color #11b8c9
-  &__title
-    font-size 14px
-    line-height 40px
-    white-space nowrap
-    overflow hidden
-    text-overflow ellipsis
 </style>

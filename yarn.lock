@@ -894,9 +894,9 @@
   version "1.1.0"
   resolved "https://registry.yarnpkg.com/@protobufjs/utf8/-/utf8-1.1.0.tgz#a777360b5b39a1a2e5106f8e858f2fd2d060c570"
 
-"@readr-ui/side-badge@^1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@readr-ui/side-badge/-/side-badge-1.0.0.tgz#5167b179c1d559331215880fd960543ae15df11b"
+"@readr-ui/side-badge@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@readr-ui/side-badge/-/side-badge-1.1.0.tgz#12c9d43466c0e22a4d419ba4b57b8f574ce9c008"
 
 "@samverschueren/stream-to-observable@^0.3.0":
   version "0.3.0"
