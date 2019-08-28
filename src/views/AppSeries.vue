@@ -156,6 +156,7 @@ export default {
       height 100%
       object-fit cover
       object-position center center
+  &__more-series
     margin-top 2em
     padding-bottom 2em
     &-list
