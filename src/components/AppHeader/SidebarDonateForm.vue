@@ -369,7 +369,7 @@ export default {
       singleSeries: state => state.DataSeries.singleSeries
     }),
     seriesId () {
-      return this.$route.name === 'series' ? get(this.singleSeries, 'id', '') : get(this.seriesData, 'projectId', '')
+      return this.$route.name === 'series' ? get(this.singleSeries, 'id', null) : get(this.seriesData, 'projectId', null)
     }
   },
   mounted () {
