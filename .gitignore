@@ -68,4 +68,5 @@ package-lock.json
 test/unit/coverage/*
 test/e2e/reports/*
 
-
+# Ignore compiled tokens
+src/assets/tokens/

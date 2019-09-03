@@ -1,0 +1,17 @@
+{
+	"props": {
+		"max_width_l": {
+			"value": "1024px"
+		},
+		"max_width_m": {
+			"value": "800px"
+		},
+		"max_width_s": {
+			"value": "750px"
+		}
+	},
+	"global": {
+		"type": "number",
+		"category": "max-width"
+	}
+}

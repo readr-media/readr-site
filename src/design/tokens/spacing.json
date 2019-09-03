@@ -1,0 +1,26 @@
+{
+	"props": {
+		"space_xxl": {
+			"value": "100px"
+		},
+		"space_xl": {
+			"value": "80px"
+		},
+		"space_l": {
+			"value": "50px"
+		},
+		"space_m": {
+			"value": "40px"
+		},
+		"space_s": {
+			"value": "20px"
+		},
+		"space_xs": {
+			"value": "15px"
+		}
+	},
+	"global": {
+		"type": "number",
+		"category": "space"
+	}
+}

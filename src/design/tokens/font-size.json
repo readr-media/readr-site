@@ -1,0 +1,32 @@
+{
+	"props": {
+    "size_xxxxl": {
+			"value": "45px"
+		},
+    "size_xxxl": {
+			"value": "30px"
+		},
+		"size_xxl": {
+			"value": "22px"
+		},
+		"size_xl": {
+			"value": "20px"
+		},
+		"size_l": {
+			"value": "18px"
+		},
+		"size_m": {
+			"value": "16px"
+		},
+		"size_s": {
+			"value": "14px"
+		},
+		"size_xs": {
+			"value": "12px"
+		}
+	},
+	"global": {
+		"type": "number",
+		"category": "font-size"
+	}
+}

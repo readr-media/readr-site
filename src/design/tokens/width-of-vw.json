@@ -1,0 +1,23 @@
+{
+	"props": {
+		"width_of_vw_xxl": {
+			"value": "100vw"
+		},
+		"width_of_vw_xl": {
+			"value": "90vw"
+		},
+		"width_of_vw_l": {
+			"value": "80vw"
+		},
+		"width_of_vw_m": {
+			"value": "70vw"
+		},
+		"width_of_vw_s": {
+			"value": "60vw"
+		}
+	},
+	"global": {
+		"type": "size",
+		"category": "width-of-vw"
+	}
+}
