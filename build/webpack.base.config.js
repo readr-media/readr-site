@@ -70,7 +70,15 @@ module.exports = {
           'vue-style-loader',
           'css-loader',
           'postcss-loader',
-          'stylus-loader'
+          'stylus-loader',
+          {
+            loader: 'style-resources-loader',
+            options: {
+              patterns: [
+                path.resolve(__dirname, '../src/assets/tokens/tokens.styl')
+              ]
+            }
+          }
         ]
       }
     ]
