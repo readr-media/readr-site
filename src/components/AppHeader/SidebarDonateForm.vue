@@ -241,6 +241,8 @@
 <script>
 import { get } from 'lodash'
 import dayjs from 'dayjs'
+import { mapState } from 'vuex'
+
 import RadioItem from 'src/components/RadioItem/RadioItem.vue'
 
 const debug = require('debug')('CLIENT:SidebarDonateForm')
@@ -257,10 +259,17 @@ const donate = (store, {
   member_name,
 
   // eslint-disable-next-line camelcase
-  member_mail
+  member_mail,
+
+  // eslint-disable-next-line camelcase
+  object_id,
+
+  reason
 } = {}) => store.dispatch('DONATE', {
   params: {
     object_type: 5,
+    object_id,
+    reason,
     currency: points,
     token,
     member_name,
@@ -353,6 +362,14 @@ export default {
       const carrierNum = get(this.carrierInputs, this.carrierTypeSelected, '')
       const category = this.carrierTypeSelected === 'carrierBusiness' ? 2 : 1
       return { carrierType, carrierNum, category }
+    },
+
+    ...mapState({
+      seriesData: state => get(state.DataPost, 'post', {}),
+      singleSeries: state => state.DataSeries.singleSeries
+    }),
+    seriesId () {
+      return this.$route.name === 'series' ? get(this.singleSeries, 'id', null) : get(this.seriesData, 'projectId', null)
     }
   },
   mounted () {
@@ -399,7 +416,9 @@ export default {
             token: result.card.prime,
             member_name: get(this.contactInputs, 'contactName', ''),
             member_mail: get(this.contactInputs, 'contactEmail', ''),
-            member_phone: ''
+            member_phone: '',
+            object_id: this.seriesId,
+            reason: location && location.pathname
           }).then(() => {
             this.$emit('submitForm', {
               donateAmount: this.donateAmount,
