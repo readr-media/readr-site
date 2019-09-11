@@ -166,12 +166,16 @@ export default {
 .change-password
   display flex
   flex-direction column
+  p
+    font-size $size-s
   button
     align-self flex-end
     width calc(100% - 125px)
     height 30px
     color #fff
     background-color #11b8c9
+    font-size $size-s
+    font-weight bold
   > div
     margin-top 1em
     & + button

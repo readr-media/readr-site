@@ -35,6 +35,8 @@ defaultColor = #11b8c9
     height 30px
     padding .2em 0
     color defaultColor
+    font-size $size-s
+    font-weight bold
     & + button
       border-left 1px solid defaultColor
     &:hover, &.active

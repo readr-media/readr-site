@@ -170,6 +170,7 @@ export default {
       flex 1
       margin-left 50px
   p
+    font-size $size-s
     &.not-set
       color #979797
   textarea
@@ -182,6 +183,7 @@ export default {
     padding 0
     color #11b8c9
     line-height 20px
+    font-size $size-s
   &__image
     // width calc(1.125rem * 4)
     figure

@@ -137,6 +137,8 @@ export default {
     margin 20px 0
     color #11b8c9
     border 1px solid #11b8c9
+    font-size $size-s
+    font-weight bold
 
 @media (min-width: 1024px)
   .account

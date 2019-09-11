@@ -36,6 +36,7 @@ export default {
   h2
     position relative
     padding 0 0 0 25px
+    font-size $size-m
     &::before
       content ''
       position absolute
