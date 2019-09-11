@@ -126,4 +126,10 @@ export default {
 
   .list-item.comm-series-more
     width calc((100% - 60px) / 3)
+    h2
+      font-size $size-m
+    .date
+      font-size $size-xs
+    p
+      font-size $size-s
 </style>

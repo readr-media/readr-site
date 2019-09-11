@@ -79,6 +79,9 @@ export default {
   width 60%
   max-width 800px
   margin 50px auto
+  h2
+    font-size $size-m
+    font-weight bold
 
 .series-contents-list
   margin 1.5rem 0 0 0

@@ -131,6 +131,7 @@ export default {
       background-color #ddcf21
       border-radius 8px
   h1
+    font-size $size-l
     & + p
       margin-top 17px
   h2
@@ -139,6 +140,7 @@ export default {
   p
     text-align justify
     line-height 1.86
+    font-size $size-s
     & + *
       margin-top 17px
   &__image
