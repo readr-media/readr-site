@@ -90,7 +90,7 @@ export default {
 <style lang="stylus" scoped>
 .series
   h1
-    font-size 30px
-    font-weight 600
+    font-size $size-m
+    font-weight bold
     margin 0 0 20px 0
 </style>

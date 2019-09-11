@@ -109,13 +109,13 @@ export default {
   margin 0 0 0 20px
   h1
     margin 0
-    font-size 24px
+    font-size $size-m
     font-weight 400
     line-height 1.3
     color black
   p
     margin 14px 0 0 0
-    font-size 16px
+    font-size $size-s
     line-height 1.3
     color black
 </style>
