@@ -1,28 +1,19 @@
 {
 	"props": {
-    "line_height_xxxxl": {
+		"line_height_xl": {
 			"value": "60px"
 		},
-    "line_height_xxxl": {
+		"line_height_l": {
 			"value": "42px"
 		},
-		"line_height_xxl": {
-			"value": "38px"
-		},
-		"line_height_xl": {
+		"line_height_m": {
 			"value": "30px"
 		},
-		"line_height_l": {
+		"line_height_s": {
 			"value": "26px"
 		},
-		"line_height_m": {
-			"value": "22px"
-		},
-		"line_height_s": {
-			"value": "20px"
-		},
 		"line_height_xs": {
-			"value": "16px"
+			"value": "20px"
 		}
 	},
 	"global": {

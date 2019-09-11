@@ -1,28 +1,19 @@
 {
 	"props": {
-    "size_xxxxl": {
+		"size_xl": {
 			"value": "45px"
 		},
-    "size_xxxl": {
+		"size_l": {
 			"value": "30px"
 		},
-		"size_xxl": {
+		"size_m": {
 			"value": "22px"
 		},
-		"size_xl": {
-			"value": "20px"
-		},
-		"size_l": {
-			"value": "18px"
-		},
-		"size_m": {
+		"size_s": {
 			"value": "16px"
 		},
-		"size_s": {
-			"value": "14px"
-		},
 		"size_xs": {
-			"value": "12px"
+			"value": "14px"
 		}
 	},
 	"global": {
