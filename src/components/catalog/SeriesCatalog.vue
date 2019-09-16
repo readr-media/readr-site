@@ -58,7 +58,7 @@ export default {
             project_id: this.seriesId,
             page: this.currentPage,
             max_result: 10,
-            sort: 'post_order,-published_at'
+            sort: 'post_order,-updated_at'
           }
         }
       ).then(res => {
