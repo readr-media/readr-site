@@ -51,7 +51,7 @@ export function getPostContentStrings (post) {
 
     // Add a wrapper element for the purpose of fluid 16:9 youtube iframe
     const regexIsIframe = /<(iframe)[^>]*>/g
-    const regexGetSrc = /(?<=src=").*?(?=[?"])/g
+    const regexGetSrc = /(?:src=").*?(?=[?"])/g
     const checkYoutubeIframe = html => regexIsIframe.test(html) && get(html.match(regexGetSrc), 0, '').includes('youtube')
     if (checkYoutubeIframe(pHtmlStr)) {
       pHtmlStr = `<div class="youtube-wrapper">${pHtmlStr}</div>`
