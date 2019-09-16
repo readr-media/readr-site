@@ -4,7 +4,7 @@ import { PROJECT_STATUS, PROJECT_PUBLISH_STATUS } from 'api/config'
 import { getPublicProjectsList } from 'src/api'
 
 const DEFAULT_PAGE = 1
-const DEFAULT_SORT = 'project_order,-published_at'
+const DEFAULT_SORT = 'project_order,-updated_at'
 const MAX_RESULT = 12
 
 export default {
