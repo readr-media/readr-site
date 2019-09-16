@@ -48,6 +48,15 @@ export function getPostContentStrings (post) {
     if (pHtmlStr.match(regexErrorSelfClosingTag)) {
       pHtmlStr = pHtmlStr.replace(regexErrorSelfClosingTag, '$&</$1>').replace('/></iframe', '></iframe')
     }
+
+    // Add a wrapper element for the purpose of fluid 16:9 youtube iframe
+    const regexIsIframe = /<(iframe)[^>]*>/g
+    const regexGetSrc = /(?<=src=").*?(?=[?"])/g
+    const checkYoutubeIframe = html => regexIsIframe.test(html) && get(html.match(regexGetSrc), 0, '').includes('youtube')
+    if (checkYoutubeIframe(pHtmlStr)) {
+      pHtmlStr = `<div class="youtube-wrapper">${pHtmlStr}</div>`
+    }
+
     const sanitize = sanitizeHtml(pHtmlStr, options)
     return (!sanitize.match(regexHtmlTag) || sanitize.match(regexSpecificHtmlTag)) ? pHtmlStr : sanitize
   })
