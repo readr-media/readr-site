@@ -22,16 +22,10 @@ export function fetchPersonalSetting () {
 
 export function register (params, token) {
   const url = `${host}/api/register`
-  return new Promise((resolve, reject) => {
-    superagent
-      .post(url)
-      .set('Authorization', `Bearer ${token || getToken()}`)
-      .send(params)
-      .then(response => {
-        resolve({ status: response.status })
-      })
-      .catch(error => {
-        reject(new Error({ status: error.status, err: error.body.Error, mode: error.body.Mode }))
-      })
-  })
+  return superagent
+    .post(url)
+    .set('Authorization', `Bearer ${token || getToken()}`)
+    .send(params)
+    .then(response => ({ status: response.status }))
+    .catch(error => { throw error })
 }

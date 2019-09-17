@@ -105,7 +105,10 @@ export default {
                       login_mode: 'facebook'
                     })
                   }
-                }).catch(({ err: error, mode }) => {
+                }).catch(err => {
+                  const error = err.response.body.Error
+                  const mode = err.response.body.Mode
+
                   if (error === 'User Already Existed' || error === 'User Duplicated') {
                     const signOutFromApp = () => {
                       this.$emit('update:isDoingLogin', false)
