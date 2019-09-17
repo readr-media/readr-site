@@ -30,7 +30,7 @@ const register = (store, profile, token) => {
     token
   })
 }
-const switchConversation = (store, message) => store.dispatch('CONVERSATION_TOGGLE', { active: true, message })
+const switchConversation = (store, message) => store.dispatch('UILoginLightbox/LOGIN_ASK_TOGGLE', { active: true, message })
 const switchOffLoginAsk = store => store.dispatch('UILoginLightbox/LOGIN_ASK_TOGGLE', { active: false, message: '' })
 
 export default {
@@ -87,13 +87,17 @@ export default {
                 console.log(`Err occurred when fetch user's info from facebook`)
                 this.$emit('update:isDoingLogin', false)
               } else {
-                register(this.$store, {
-                  nickname: get(res, 'name'),
-                  email: res.email,
-                  gender: get(res, 'genders', '').toUpperCase().substr(0, 1),
-                  register_mode: 'oauth-fb',
-                  social_id: res.id
-                }, get(this.$store, [ 'state', 'register-token' ])).then(({ status }) => {
+                register(
+                  this.$store,
+                  {
+                    nickname: get(res, 'name'),
+                    email: res.email,
+                    gender: get(res, 'genders', '').toUpperCase().substr(0, 1),
+                    register_mode: 'oauth-fb',
+                    social_id: res.id
+                  },
+                  get(this.$store, [ 'state', 'register-token' ])
+                ).then(({ status }) => {
                   if (status === 200) {
                     debug('Registered successfully')
                     readyToLogin({
@@ -101,7 +105,10 @@ export default {
                       login_mode: 'facebook'
                     })
                   }
-                }).catch(({ err: error, mode }) => {
+                }).catch(err => {
+                  const error = err.response.body.Error
+                  const mode = err.response.body.Mode
+
                   if (error === 'User Already Existed' || error === 'User Duplicated') {
                     const signOutFromApp = () => {
                       this.$emit('update:isDoingLogin', false)

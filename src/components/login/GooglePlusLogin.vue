@@ -30,7 +30,7 @@ const register = (store, profile, token) => {
     token
   })
 }
-const switchConversation = (store, message) => store.dispatch('CONVERSATION_TOGGLE', { active: true, message })
+const switchConversation = (store, message) => store.dispatch('UILoginLightbox/LOGIN_ASK_TOGGLE', { active: true, message })
 const switchOffLoginAsk = store => store.dispatch('UILoginLightbox/LOGIN_ASK_TOGGLE', { active: false, message: '' })
 
 export default {
@@ -81,6 +81,8 @@ export default {
             }
           })
       }
+
+      // if not signed in google already
       if (window && !window.googleStatus) {
         const auth = gapi && gapi.auth2.getAuthInstance()
         if (!auth) { return }
@@ -92,17 +94,24 @@ export default {
             'requestMask.includeField': 'person.nicknames,person.genders,person.birthdays,person.occupations'
           }).then((response) => {
             debug('Never Authorized.')
-            register(this.$store, {
-              idToken,
-              nickname: get(response, [ 'result', 'nicknames', 0, 'value' ], null),
-              gender: get(response, [ 'result', 'genders', 0, 'value' ], '').toUpperCase().substr(0, 1),
-              register_mode: 'oauth-goo' }, get(this.$store, [ 'state', 'register-token' ])
+            register(
+              this.$store,
+              {
+                idToken,
+                nickname: get(response, [ 'result', 'nicknames', 0, 'value' ], null),
+                gender: get(response, [ 'result', 'genders', 0, 'value' ], '').toUpperCase().substr(0, 1),
+                register_mode: 'oauth-goo'
+              },
+              get(this.$store, [ 'state', 'register-token' ])
             ).then(({ status }) => {
               if (status === 200) {
                 debug('Register successfully.')
                 readyToLogin(idToken)
               }
-            }).catch(({ err: error, mode }) => {
+            }).catch(err => {
+              const error = err.response.body.Error
+              const mode = err.response.body.Mode
+
               if (error === 'User Already Existed' || error === 'User Duplicated') {
                 const signOutFromApp = () => {
                   this.$emit('update:isDoingLogin', false)
