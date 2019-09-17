@@ -30,7 +30,7 @@ const register = (store, profile, token) => {
     token
   })
 }
-const switchConversation = (store, message) => store.dispatch('CONVERSATION_TOGGLE', { active: true, message })
+const switchConversation = (store, message) => store.dispatch('UILoginLightbox/LOGIN_ASK_TOGGLE', { active: true, message })
 const switchOffLoginAsk = store => store.dispatch('UILoginLightbox/LOGIN_ASK_TOGGLE', { active: false, message: '' })
 
 export default {
