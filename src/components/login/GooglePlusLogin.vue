@@ -81,6 +81,8 @@ export default {
             }
           })
       }
+
+      // if not signed in google already
       if (window && !window.googleStatus) {
         const auth = gapi && gapi.auth2.getAuthInstance()
         if (!auth) { return }
