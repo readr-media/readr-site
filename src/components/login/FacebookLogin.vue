@@ -87,13 +87,17 @@ export default {
                 console.log(`Err occurred when fetch user's info from facebook`)
                 this.$emit('update:isDoingLogin', false)
               } else {
-                register(this.$store, {
-                  nickname: get(res, 'name'),
-                  email: res.email,
-                  gender: get(res, 'genders', '').toUpperCase().substr(0, 1),
-                  register_mode: 'oauth-fb',
-                  social_id: res.id
-                }, get(this.$store, [ 'state', 'register-token' ])).then(({ status }) => {
+                register(
+                  this.$store,
+                  {
+                    nickname: get(res, 'name'),
+                    email: res.email,
+                    gender: get(res, 'genders', '').toUpperCase().substr(0, 1),
+                    register_mode: 'oauth-fb',
+                    social_id: res.id
+                  },
+                  get(this.$store, [ 'state', 'register-token' ])
+                ).then(({ status }) => {
                   if (status === 200) {
                     debug('Registered successfully')
                     readyToLogin({

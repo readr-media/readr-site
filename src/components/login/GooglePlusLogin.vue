@@ -92,11 +92,15 @@ export default {
             'requestMask.includeField': 'person.nicknames,person.genders,person.birthdays,person.occupations'
           }).then((response) => {
             debug('Never Authorized.')
-            register(this.$store, {
-              idToken,
-              nickname: get(response, [ 'result', 'nicknames', 0, 'value' ], null),
-              gender: get(response, [ 'result', 'genders', 0, 'value' ], '').toUpperCase().substr(0, 1),
-              register_mode: 'oauth-goo' }, get(this.$store, [ 'state', 'register-token' ])
+            register(
+              this.$store,
+              {
+                idToken,
+                nickname: get(response, [ 'result', 'nicknames', 0, 'value' ], null),
+                gender: get(response, [ 'result', 'genders', 0, 'value' ], '').toUpperCase().substr(0, 1),
+                register_mode: 'oauth-goo'
+              },
+              get(this.$store, [ 'state', 'register-token' ])
             ).then(({ status }) => {
               if (status === 200) {
                 debug('Register successfully.')
