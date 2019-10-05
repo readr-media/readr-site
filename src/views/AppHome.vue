@@ -26,7 +26,7 @@
         <PostsSlideshow
           :has-more="hasMorePosts"
           :posts="publicPosts"
-          chunk-size="5"
+          :chunk-size="5"
           class="home__posts-slideshow"
           @toFinalChunk="loadMorePosts"
         />
