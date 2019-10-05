@@ -2,6 +2,7 @@
   <div
     class="icon"
     :style="{
+      '-webkit-mask-image': `url(${imagePath})`,
       maskImage: `url(${imagePath})`,
       width: `${_width}px`,
       height: `${_height}px`,

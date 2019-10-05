@@ -55,18 +55,17 @@ export default {
             return commit('SET_PUBLIC_PROJECTS', { status: 'normal', publicProjects: body.items })
         }
       }
-      return new Promise((resolve, reject) => {
-        getPublicProjectsList({ params })
-          .then(({ status, body }) => {
-            if (status === 200) {
-              setPublicProject(body)
-              resolve({ status: 200, res: body })
-            }
-          })
-          .catch((res) => {
-            reject(new Error({ status: status, res: res }))
-          })
-      })
+      return new Promise((resolve, reject) => getPublicProjectsList({ params })
+        .then(({ status, body }) => {
+          if (status === 200) {
+            setPublicProject(body)
+            return resolve({ status: 200, res: body })
+          }
+        })
+        .catch((res) => {
+          return reject(new Error({ status: status, res: res }))
+        })
+      )
     },
 
     FETCH ({ dispatch }, {
