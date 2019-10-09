@@ -79,7 +79,7 @@ export default {
     })
   },
   watch: {
-    '$route.fullPath' (value) {
+    '$route.fullPath' () {
       process.browser && this.sendPageview()
       this.needToSendPageView = true
     }
