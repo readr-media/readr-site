@@ -19,6 +19,7 @@
     "FormData": true,
     "expect": true,
     "gapi": true,
+    "gtag": true,
     "location": true,
     "source": true
   },

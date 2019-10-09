@@ -19,6 +19,9 @@ export default {
     CoreValues,
     TeamMembers,
     Timeline
+  },
+  metaInfo: {
+    title: '關於我們'
   }
 }
 </script>

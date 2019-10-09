@@ -3,6 +3,9 @@ import { get } from 'lodash'
 import projectList from './projectList'
 export const PROJECTS = projectList
 
+export const MM_GA_ID = 'UA-83609754-1'
+export const MM_GA_TEST_ID = 'UA-83609754-2'
+
 export const SITE_DOMAIN = 'readr.tw'
 export const SITE_DOMAIN_DEV = 'dev.readr.tw'
 export const SITE_NAME = '讀+ Readr'
