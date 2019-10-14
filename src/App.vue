@@ -20,7 +20,7 @@ import AppHeader from 'src/components/AppHeader/AppHeader.vue'
 import AppFooter from 'src/components/AppFooter.vue'
 import LoginLight from 'src/components/login/LoginLight.vue'
 
-import { SITE_FULL, SITE_NAME } from './constants'
+import { MM_GA_ID, MM_GA_TEST_ID, SITE_FULL, SITE_NAME } from './constants'
 import { isAlink, logTrace } from 'src/util/services'
 import { mapState } from 'vuex'
 
@@ -31,11 +31,45 @@ export default {
     LoginLight
   },
   metaInfo () {
+    let script = []
+    let gaId = MM_GA_TEST_ID
+    if (process.env.VUE_ENV === 'client') {
+      gaId = location.hostname.match(/(www|m).readr.tw/) ? MM_GA_ID : MM_GA_TEST_ID
+      script = [
+        {
+          src: `https://www.googletagmanager.com/gtag/js?id=${gaId}`,
+          async: true
+        },
+        {
+          innerHTML: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', '${gaId}');
+          `
+        }
+      ]
+    }
     return {
       titleTemplate: `%s - ${SITE_NAME}`,
       meta: [
         { vmid: 'og:image', property: 'og:image', content: `${SITE_FULL}/public/og-image.jpg` }
-      ]
+      ],
+      script,
+      changed: (newInfo, addedTags, removedTags) => {
+        if (process.env.VUE_ENV === 'client' && this.needToSendPageView && gtag) {
+          gtag('config', `${gaId}`, {
+            'page_title': newInfo.title,
+            'page_location': location.href
+          })
+          this.needToSendPageView = false
+        }
+      }
+    }
+  },
+  data () {
+    return {
+      needToSendPageView: false
     }
   },
   computed: {
@@ -47,6 +81,7 @@ export default {
   watch: {
     '$route.fullPath' () {
       process.browser && this.sendPageview()
+      this.needToSendPageView = true
     }
   },
   mounted () {
