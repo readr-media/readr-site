@@ -5,11 +5,13 @@
       :key="i"
       :item="item"
       class="list__list-item"
+      @click.native="sendGaEvent('click', `header_readr`, 'tableofcontents')"
     />
   </ol>
 </template>
 
 <script>
+import { sendGaEvent } from 'src/util/comm'
 import ListItem from './SidebarSeriesContentsListItem.vue'
 
 export default {
@@ -22,6 +24,9 @@ export default {
       default: () => [],
       required: true
     }
+  },
+  methods: {
+    sendGaEvent
   }
 }
 </script>

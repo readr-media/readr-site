@@ -344,3 +344,10 @@ export function copyToClipboard (str) {
     document.getSelection().addRange(selected)
   }
 }
+
+export function sendGaEvent (action, category, label) {
+  gtag && gtag('event', action, {
+    event_category: category,
+    event_label: label
+  })
+}

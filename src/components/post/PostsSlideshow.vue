@@ -1,6 +1,9 @@
 <template>
   <div class="posts-slideshow">
-    <PostList :items="chunkPosts[currentIndex]" />
+    <PostList
+      :items="chunkPosts[currentIndex]"
+      ga-event-label="article"
+    />
     <div class="control-bar">
       <div
         v-if="currentIndex !== 0"
@@ -16,7 +19,7 @@
       <div
         v-if="hasMore || currentIndex < chunkPosts.length - 1"
         class="control-bar__action next"
-        @click="currentIndex += 1"
+        @click="nextChunk()"
       >
         <span>下 {{ chunkSize }} 則</span>
         <img
@@ -29,6 +32,7 @@
 </template>
 <script>
 import { chunk } from 'lodash'
+import { sendGaEvent } from 'src/util/comm'
 
 import PostList from 'src/components/post/PostList.vue'
 
@@ -66,6 +70,12 @@ export default {
       if (value === this.chunkPosts.length - 1) {
         this.$emit('toFinalChunk')
       }
+    }
+  },
+  methods: {
+    nextChunk () {
+      this.currentIndex += 1
+      sendGaEvent('click', `${this.$route.name}_readr`, 'article more')
     }
   }
 }

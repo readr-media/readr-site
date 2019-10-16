@@ -13,6 +13,7 @@
         :class="{ account: inAccountPage }"
         href="/account"
         class="nav__user user"
+        @click="sendGaEvent('click', 'header_readr', 'profile')"
       >
         <img
           class="user__thumbnail"
@@ -32,7 +33,7 @@
 import _ from 'lodash'
 import { mapState, mapActions } from 'vuex'
 
-import { getFullUrl } from 'src/util/comm'
+import { getFullUrl, sendGaEvent } from 'src/util/comm'
 
 import NoSSR from 'vue-no-ssr'
 
@@ -70,11 +71,13 @@ export default {
       GET_NOTIFICATION: 'DataNotification/GET_NOTIFICATION',
       LOGIN_ASK_TOGGLE: 'UILoginLightbox/LOGIN_ASK_TOGGLE'
     }),
+    sendGaEvent,
     switchOnLoginPanel () {
       this.LOGIN_ASK_TOGGLE({ active: 'on', message: '' })
     },
     login () {
       this.switchOnLoginPanel()
+      sendGaEvent('click', 'header_readr', 'log in')
     }
   }
 }

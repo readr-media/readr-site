@@ -5,7 +5,7 @@
       <a
         class="donate"
         target="_blank"
-        @click="$emit('donate')"
+        @click="handleClickDonate()"
       >
         <div>
           <img
@@ -20,6 +20,7 @@
           :href="createShareUrl('fb', url)"
           class="facebook"
           target="_blank"
+          @click="sendGaEvent('click', `${$route.name}_readr`, 'share-fb')"
         >
           <img
             src="/public/2.0/icons/fb-simple.png"
@@ -30,6 +31,7 @@
           :href="createShareUrl('line', url)"
           class="line"
           target="_blank"
+          @click="sendGaEvent('click', `${$route.name}_readr`, 'share-line')"
         >
           <img
             src="/public/2.0/icons/line.png"
@@ -39,6 +41,7 @@
         <button
           id="donate-share-copy"
           class="copy"
+          @click="sendGaEvent('click', `${$route.name}_readr`, 'share-copylink')"
         >
           <img
             src="/public/2.0/icons/link.png"
@@ -53,6 +56,7 @@
 <script>
 import ClipboardJS from 'clipboard'
 import { createShareUrl } from 'src/util/post/share'
+import { sendGaEvent } from 'src/util/comm'
 
 export default {
   name: 'DonateWithShare',
@@ -75,6 +79,10 @@ export default {
   },
   methods: {
     createShareUrl,
+    handleClickDonate () {
+      this.$emit('donate')
+      sendGaEvent('click', `${this.$route.name}_readr`, 'donate')
+    },
     initClipboard () {
       this.clipboard = new ClipboardJS('#donate-share-copy', {
         text () {
@@ -86,7 +94,8 @@ export default {
         document.querySelector('.copy').classList.add('show')
         setTimeout(() => { document.querySelector('.copy').classList.remove('show') }, 2000)
       })
-    }
+    },
+    sendGaEvent
   }
 }
 </script>
