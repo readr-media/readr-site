@@ -107,7 +107,7 @@
           <a
             class="link"
             href="mailto:readr@readr.tw"
-            @click.native="sendGaEvent('click', 'footer_readr', 'contact us')"
+            @click="sendGaEvent('click', 'footer_readr', 'contact us')"
           >
             聯絡我們
           </a>
