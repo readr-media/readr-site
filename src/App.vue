@@ -24,6 +24,16 @@ import { MM_GA_ID, MM_GA_TEST_ID, SITE_FULL, SITE_NAME } from './constants'
 import { isAlink, logTrace } from 'src/util/services'
 import { mapState } from 'vuex'
 
+const generateMetaInfoScripts = (gaId) => {
+  const scripts = [
+    {
+      once: true,
+      innerHTML: COMSCORE
+    }
+  ]
+  return scripts
+}
+
 export default {
   components: {
     AppHeader,
@@ -35,24 +45,7 @@ export default {
     let gaId = MM_GA_TEST_ID
     if (process.env.VUE_ENV === 'client') {
       gaId = location.hostname.match(/(www|m).readr.tw/) ? MM_GA_ID : MM_GA_TEST_ID
-      scripts = [
-        {
-          src: `https://www.googletagmanager.com/gtag/js?id=${gaId}`,
-          async: true
-        },
-        {
-          innerHTML: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${gaId}');
-          `
-        },
-        {
-          once: true,
-          innerHTML: COMSCORE
-        }
-      ]
+      scripts = generateMetaInfoScripts(gaId)
     }
 
     return {

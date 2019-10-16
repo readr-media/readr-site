@@ -41,7 +41,6 @@ export default {
           type: `{"$in":[${POST_TYPE.REPORT}]}`
         }
       })
-      console.log(response)
       commit('SET_POST', _.get(response, [ 'body', 'items', 0 ], {}))
     },
     async GET_POSTS ({ commit, state }, {

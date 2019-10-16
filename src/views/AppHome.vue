@@ -15,6 +15,7 @@
       </h2>
       <SeriesList
         :items="publicProjectsTrends"
+        ga-event-label="popular"
         class="home__list highlight"
       />
     </div>
@@ -38,6 +39,7 @@
         <SeriesList
           :item-style="'comm-narrow'"
           :items="publicProjectsNormal"
+          ga-event-label="series"
           class="home__list"
         />
       </div>
