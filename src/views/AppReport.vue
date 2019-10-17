@@ -25,6 +25,7 @@ export default {
       title: title,
       meta: [
         { name: 'description', content: description },
+        { vmid: 'og:type', property: 'og:type', content: 'article' },
         { vmid: 'og:title', property: 'og:title', content: `${title} - ${SITE_NAME}` },
         { vmid: 'og:description', property: 'og:description', content: description },
         { vmid: 'og:url', property: 'og:url', content: getPostFullUrl(this.report) },

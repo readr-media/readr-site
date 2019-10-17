@@ -53,6 +53,10 @@ export default {
     return {
       titleTemplate: `%s - ${SITE_NAME}`,
       meta: [
+        { vmid: 'og:url', property: 'og:url', content: SITE_FULL },
+        { vmid: 'og:type', property: 'og:type', content: 'website' },
+        { vmid: 'og:title', property: 'og:title', content: SITE_NAME },
+        { vmid: 'og:description', property: 'og:description', content: 'READr 是一個新聞媒體，致力於透過內容實驗，增加使用者的媒體識別能力。團隊組成為工程師、設計師、記者、產品經理，多元專業背景的成員共同完成新聞的產製，並在專案中加上讀者參與的元素，讓以往封閉的新聞編輯室有開放的可能。' },
         { vmid: 'og:image', property: 'og:image', content: `${SITE_FULL}/public/og-image.jpg` }
       ],
       script,
