@@ -9,6 +9,7 @@ export const MM_GA_TEST_ID = 'UA-83609754-2'
 export const SITE_DOMAIN = 'readr.tw'
 export const SITE_DOMAIN_DEV = 'dev.readr.tw'
 export const SITE_NAME = '讀+ Readr'
+export const SITE_DESCRIPTION = 'READr 是一個新聞媒體，致力於透過內容實驗，增加使用者的媒體識別能力。團隊組成為工程師、設計師、記者、產品經理，多元專業背景的成員共同完成新聞的產製，並在專案中加上讀者參與的元素，讓以往封閉的新聞編輯室有開放的可能。'
 export const SITE_FULL = 'https://www.readr.tw'
 
 export const URL_FB_FANPAGE = 'https://www.facebook.com/readr.tw'

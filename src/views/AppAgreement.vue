@@ -7,7 +7,9 @@
     <article v-html="content" />
   </section>
 </template>
+
 <script>
+import { SITE_NAME } from 'src/constants'
 import { AGREEMENT_CONTENT, IPR_CONTENT, PRIVACY_CONTENT } from '../constants/agreement'
 
 const metaTitle = {
@@ -25,8 +27,13 @@ const contenStrategies = {
 export default {
   name: 'AppAgreement',
   metaInfo () {
+    const title = metaTitle[this.$route.name]
     return {
-      title: metaTitle[this.$route.name]
+      title,
+      meta: [
+        { vmid: 'og:title', property: 'og:title', content: `${title} - ${SITE_NAME}` },
+        { vmid: 'og:type', property: 'og:type', content: 'article' }
+      ]
     }
   },
   data () {

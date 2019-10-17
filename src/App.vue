@@ -20,7 +20,7 @@ import AppHeader from 'src/components/AppHeader/AppHeader.vue'
 import AppFooter from 'src/components/AppFooter.vue'
 import LoginLight from 'src/components/login/LoginLight.vue'
 import { COMSCORE } from './constants/scripts'
-import { MM_GA_ID, MM_GA_TEST_ID, SITE_FULL, SITE_NAME } from './constants'
+import { MM_GA_ID, MM_GA_TEST_ID, SITE_FULL, SITE_NAME, SITE_DESCRIPTION } from './constants'
 import { isAlink, logTrace } from 'src/util/services'
 import { mapState } from 'vuex'
 
@@ -51,6 +51,10 @@ export default {
     return {
       titleTemplate: `%s - ${SITE_NAME}`,
       meta: [
+        { vmid: 'og:url', property: 'og:url', content: SITE_FULL },
+        { vmid: 'og:type', property: 'og:type', content: 'website' },
+        { vmid: 'og:title', property: 'og:title', content: SITE_NAME },
+        { vmid: 'og:description', property: 'og:description', content: SITE_DESCRIPTION },
         { vmid: 'og:image', property: 'og:image', content: `${SITE_FULL}/public/og-image.jpg` }
       ],
       script: scripts,

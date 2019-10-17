@@ -8,6 +8,7 @@
 </template>
 
 <script>
+import { SITE_NAME } from 'src/constants'
 import Intro from 'src/components/about/Intro.vue'
 import CoreValues from 'src/components/about/CoreValues.vue'
 import TeamMembers from 'src/components/about/TeamMembers.vue'
@@ -21,7 +22,11 @@ export default {
     Timeline
   },
   metaInfo: {
-    title: '關於我們'
+    title: '關於我們',
+    meta: [
+      { vmid: 'og:title', property: 'og:title', content: `關於我們 - ${SITE_NAME}` },
+      { vmid: 'og:type', property: 'og:type', content: 'article' }
+    ]
   }
 }
 </script>
