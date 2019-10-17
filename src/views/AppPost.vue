@@ -52,6 +52,7 @@
           <h2>繼續閱讀</h2>
           <PostList
             :items="seriesPostsFiltered"
+            ga-event-label="tableofcontents"
             class="post__post-list"
           />
         </template>
@@ -60,6 +61,7 @@
           <SeriesList
             :item-style="'comm-series-more'"
             :items="seriesFiltered"
+            ga-event-label="series"
             class="post__series-list"
           />
         </template>

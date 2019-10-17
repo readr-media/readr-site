@@ -31,6 +31,7 @@
         <SeriesList
           :item-style="'comm-series-more'"
           :items="seriesFilterSelf"
+          ga-event-label="series"
           class="series__more-series-list"
         />
       </div>

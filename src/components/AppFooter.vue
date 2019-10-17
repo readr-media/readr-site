@@ -13,6 +13,7 @@
             class="link"
             target="_blank"
             rel="noopener"
+            @click="sendGaEvent('click', 'footer_readr', 'fb')"
           >
             <img
               v-lazy="'/public/2.0/icons/fb.png'"
@@ -26,6 +27,7 @@
             class="link"
             target="_blank"
             rel="noopener"
+            @click="sendGaEvent('click', 'footer_readr', 'twitter')"
           >
             <img
               v-lazy="'/public/2.0/icons/twitter.png'"
@@ -39,6 +41,7 @@
             class="link"
             target="_blank"
             rel="noopener"
+            @click="sendGaEvent('click', 'footer_readr', 'instagram')"
           >
             <img
               v-lazy="'/public/2.0/icons/ig.png'"
@@ -52,6 +55,7 @@
             class="link"
             target="_blank"
             rel="noopener"
+            @click="sendGaEvent('click', 'footer_readr', 'mirrormedia')"
           >
             <img
               v-lazy="'/public/2.0/icons/mm.png'"
@@ -67,6 +71,7 @@
           <router-link
             class="link"
             to="/about"
+            @click.native="sendGaEvent('click', 'footer_readr', 'about')"
           >
             關於我們
           </router-link>
@@ -75,6 +80,7 @@
           <router-link
             class="link"
             to="/agreement"
+            @click.native="sendGaEvent('click', 'footer_readr', 'agreement')"
           >
             服務條款
           </router-link>
@@ -83,6 +89,7 @@
           <router-link
             class="link"
             to="/privacy-rule"
+            @click.native="sendGaEvent('click', 'footer_readr', 'privacy-rule')"
           >
             隱私政策
           </router-link>
@@ -91,6 +98,7 @@
           <router-link
             class="link"
             to="/service-rule"
+            @click.native="sendGaEvent('click', 'footer_readr', 'service-rule')"
           >
             智財政策
           </router-link>
@@ -99,6 +107,7 @@
           <a
             class="link"
             href="mailto:readr@readr.tw"
+            @click="sendGaEvent('click', 'footer_readr', 'contact us')"
           >
             聯絡我們
           </a>
@@ -110,6 +119,7 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
+import { sendGaEvent } from 'src/util/comm'
 
 import {
   URL_FB_FANPAGE,
@@ -159,7 +169,8 @@ export default {
   methods: {
     ...mapMutations({
       SET_HIDE_FOOTER: 'UIAppFooter/SET_HIDE'
-    })
+    }),
+    sendGaEvent
   }
 }
 </script>

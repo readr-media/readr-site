@@ -8,6 +8,7 @@
     <LinkItem
       class="series-contents-list-item__link"
       :href="href"
+      @click.native="sendGaEvent('click', `series_readr`, 'tableofcontents')"
     >
       <h2
         class="series-contents-list-item__title"
@@ -28,6 +29,7 @@
 
 <script>
 import { createPost } from 'src/util/post'
+import { sendGaEvent } from 'src/util/comm'
 import _ from 'lodash'
 import dayjs from 'dayjs'
 
@@ -70,6 +72,9 @@ export default {
       }
       return false
     }
+  },
+  methods: {
+    sendGaEvent
   }
 }
 </script>

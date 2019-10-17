@@ -19,10 +19,20 @@
 import AppHeader from 'src/components/AppHeader/AppHeader.vue'
 import AppFooter from 'src/components/AppFooter.vue'
 import LoginLight from 'src/components/login/LoginLight.vue'
-
+import { COMSCORE } from './constants/scripts'
 import { MM_GA_ID, MM_GA_TEST_ID, SITE_FULL, SITE_NAME, SITE_DESCRIPTION } from './constants'
 import { isAlink, logTrace } from 'src/util/services'
 import { mapState } from 'vuex'
+
+const generateMetaInfoScripts = (gaId) => {
+  const scripts = [
+    {
+      once: true,
+      innerHTML: COMSCORE
+    }
+  ]
+  return scripts
+}
 
 export default {
   components: {
@@ -31,25 +41,13 @@ export default {
     LoginLight
   },
   metaInfo () {
-    let script = []
+    let scripts = []
     let gaId = MM_GA_TEST_ID
     if (process.env.VUE_ENV === 'client') {
       gaId = location.hostname.match(/(www|m).readr.tw/) ? MM_GA_ID : MM_GA_TEST_ID
-      script = [
-        {
-          src: `https://www.googletagmanager.com/gtag/js?id=${gaId}`,
-          async: true
-        },
-        {
-          innerHTML: `
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', '${gaId}');
-          `
-        }
-      ]
+      scripts = generateMetaInfoScripts(gaId)
     }
+
     return {
       titleTemplate: `%s - ${SITE_NAME}`,
       meta: [
@@ -59,7 +57,13 @@ export default {
         { vmid: 'og:description', property: 'og:description', content: SITE_DESCRIPTION },
         { vmid: 'og:image', property: 'og:image', content: `${SITE_FULL}/public/og-image.jpg` }
       ],
-      script,
+      script: scripts,
+      noscript: [
+        {
+          innerHTML: `<img src="https://sb.scorecardresearch.com/p?c1=2&c2=24318560&cv=2.0&cj=1" />`
+        }
+      ],
+      __dangerouslyDisableSanitizers: [ 'script' ],
       changed: (newInfo, addedTags, removedTags) => {
         if (process.env.VUE_ENV === 'client' && this.needToSendPageView && gtag) {
           gtag('config', `${gaId}`, {

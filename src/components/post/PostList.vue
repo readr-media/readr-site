@@ -10,6 +10,7 @@
       :image="item.heroImage || item.ogImage || ' '"
       :target="'_blank'"
       :title="item.title || item.ogTitle"
+      @click.native="sendGaEvent()"
     />
   </div>
 </template>
@@ -17,6 +18,7 @@
 import ListItem from '../listItem/ListItem.vue'
 import dayjs from 'dayjs'
 import { createPost } from 'src/util/post'
+import { sendGaEvent } from 'src/util/comm'
 import { truncate } from 'lodash'
 
 export default {
@@ -28,6 +30,10 @@ export default {
     descriptionLength: {
       type: Number,
       default: 50
+    },
+    gaEventLabel: {
+      type: String,
+      default: ''
     },
     itemStyle: {
       type: String,
@@ -45,6 +51,9 @@ export default {
   },
   methods: {
     dayjs,
+    sendGaEvent () {
+      this.gaEventLabel && sendGaEvent('click', `${this.$route.name}_readr`, this.gaEventLabel)
+    },
     truncate (description) {
       return description ? truncate(description, { length: this.descriptionLength }) : description
     }
