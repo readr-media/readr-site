@@ -35,7 +35,7 @@
     "last 3 versions"
   ],
   "dependencies": {
-    "@babel/runtime": "^7.4.4",
+    "@babel/runtime": "^7.7.7",
     "@google-cloud/logging": "^1.2.0",
     "@readr-ui/side-badge": "^1.1.2",
     "@vue/babel-helper-vue-jsx-merge-props": "^1.0.0",
@@ -89,12 +89,12 @@
     "xmldom": "^0.1.27"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.4",
-    "@babel/plugin-proposal-object-rest-spread": "^7.4.4",
-    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
-    "@babel/plugin-transform-runtime": "^7.4.4",
-    "@babel/preset-env": "^7.4.4",
-    "@babel/register": "^7.4.4",
+    "@babel/core": "^7.7.7",
+    "@babel/plugin-proposal-object-rest-spread": "^7.7.7",
+    "@babel/plugin-syntax-dynamic-import": "^7.7.4",
+    "@babel/plugin-transform-runtime": "^7.7.6",
+    "@babel/preset-env": "^7.7.7",
+    "@babel/register": "^7.7.7",
     "autoprefixer": "^9.5.1",
     "avoriaz": "^6.3.0",
     "babel-eslint": "^10.0.1",
