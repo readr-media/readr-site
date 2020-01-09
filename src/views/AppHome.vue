@@ -12,7 +12,7 @@
     <div class="election-2020-iframe">
       <iframe
         width="100%"
-        height="384"
+        height="473"
         src="https://www.readr.tw/project/election-2020-embed?utm_source=readr"
         frameborder="0"
       />
