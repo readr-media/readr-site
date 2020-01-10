@@ -7,7 +7,7 @@ export const sanitizeHtmlOptions = {
     div: [ 'class', 'text' ],
     script: [ 'src' ]
   }),
-  allowedIframeHostnames: [ 'www.youtube.com', 'dev.readr.tw', 'www.readr.tw', 'cloud.highcharts.com', 'public.flourish.studio', 'quiz.tryinteract.com' ],
+  allowedIframeHostnames: [ 'www.youtube.com', 'dev.readr.tw', 'www.readr.tw', 'cloud.highcharts.com', 'public.flourish.studio', 'quiz.tryinteract.com', 'plotdb.io' ],
   allowedTags: [ 'img', 'strong', 'h1', 'h2', 'figcaption', 'em', 'blockquote', 'a', 'iframe', 'div', 'script' ],
   customContentBreakTagName: 'hr',
   transformTags: {
