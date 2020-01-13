@@ -81,7 +81,7 @@
               <p>元</p>
             </div>
             <div class="custom-coin-input__bottom">
-              <p>(最低贊助 30 元，單筆最高 2000 元)</p>
+              <p>(單筆贊助最低 30 元，最高 2000 元)</p>
             </div>
           </div>
         </div>
