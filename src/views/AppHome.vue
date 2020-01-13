@@ -9,14 +9,6 @@
         class="home__list recommend"
       />
     </div> -->
-    <div class="election-2020-iframe">
-      <iframe
-        width="100%"
-        height="473"
-        src="https://www.readr.tw/project/election-2020-embed?utm_source=readr"
-        frameborder="0"
-      />
-    </div>
     <div v-if="publicProjectsTrends.length > 0">
       <h2 class="decorated">
         最熱門專題
