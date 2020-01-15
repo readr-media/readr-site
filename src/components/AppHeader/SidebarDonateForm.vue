@@ -92,18 +92,25 @@
         付款人資訊
       </h2>
       <div class="contact__form form">
-        <div class="form__row form__contact-name">
+        <div class="form__row form__contact">
           <h2>姓名</h2>
           <input
             v-model="contactInputs.contactName"
             type="text"
           >
         </div>
-        <div class="form__row form__contact-email">
+        <div class="form__row form__contact">
           <h2>Email</h2>
           <input
             v-model="contactInputs.contactEmail"
             type="email"
+          >
+        </div>
+        <div class="form__row form__contact">
+          <h2>電話</h2>
+          <input
+            v-model="contactInputs.contactPhone"
+            type="tel"
           >
         </div>
       </div>
@@ -310,7 +317,8 @@ export default {
       },
       contactInputs: {
         contactName: get(this.$store.state, [ 'DataUser', 'profile', 'nickname' ], ''),
-        contactEmail: get(this.$store.state, [ 'DataUser', 'profile', 'mail' ], '')
+        contactEmail: get(this.$store.state, [ 'DataUser', 'profile', 'mail' ], ''),
+        contactPhone: ''
       },
 
       isTappayInitialized: false,
@@ -342,7 +350,8 @@ export default {
         this.carrierInputs[this.carrierTypeSelected] !== ''
       const isContactValid =
         this.contactInputs.contactName !== '' &&
-        this.contactInputs.contactEmail !== ''
+        this.contactInputs.contactEmail !== '' &&
+        this.contactInputs.contactPhone !== ''
 
       return isDonateAmountValid &&
              isPaymentMethodValid &&
@@ -416,7 +425,7 @@ export default {
             token: result.card.prime,
             member_name: get(this.contactInputs, 'contactName', ''),
             member_mail: get(this.contactInputs, 'contactEmail', ''),
-            member_phone: '',
+            member_phone: get(this.contactInputs, 'contactPhone', ''),
             object_id: this.seriesId,
             reason: location && location.pathname
           }).then(() => {
@@ -607,7 +616,7 @@ export default {
 .form
   &__row
     margin 10px 0 0 0
-  &__contact-name, &__contact-email
+  &__contact
     input
       -webkit-appearance none
       border-radius 0
