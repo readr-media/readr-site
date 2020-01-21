@@ -24,7 +24,7 @@ pipeline:
       - /tmp/cache:/cache
     when:
       event: [push]
-      branch: [dev, stage, 2.0]
+      branch: [master, dev, stage, 2.0]
   
   get_dev_config:
     image: gcr.io/mirrormedia-1470651750304/drone-cloud-sdk:latest
@@ -57,12 +57,12 @@ pipeline:
     - yarn run build
     when:
       event: [push]
-      branch: [dev, stage, 2.0]
+      branch: [master, dev, stage, 2.0]
   
   publish:
     image: plugins/gcr
     repo: mirrormedia-1470651750304/${DRONE_REPO_NAME}
-    tag: ${DRONE_COMMIT_AUTHOR}_${DRONE_COMMIT_BRANCH}_${DRONE_BUILD_NUMBER}
+    tag: ${DRONE_BRANCH}_${DRONE_COMMIT_AUTHOR}_${DRONE_BUILD_NUMBER}
     environment:
       - DOCKER_LAUNCH_DEBUG=true
     secrets: [google_credentials]
@@ -82,7 +82,7 @@ pipeline:
       - source: google_credentials
         target: token
     vars:
-      image: gcr.io/mirrormedia-1470651750304/${DRONE_REPO_NAME}:${DRONE_COMMIT_AUTHOR}_${DRONE_COMMIT_BRANCH}_${DRONE_BUILD_NUMBER}
+      image: gcr.io/mirrormedia-1470651750304/${DRONE_REPO_NAME}:${DRONE_BRANCH}_${DRONE_COMMIT_AUTHOR}_${DRONE_BUILD_NUMBER}
       app: ${DRONE_REPO_NAME}
       tier: frontend
     when:
@@ -101,13 +101,26 @@ pipeline:
       - source: google_credentials
         target: token
     vars:
-      image: gcr.io/mirrormedia-1470651750304/${DRONE_REPO_NAME}:${DRONE_COMMIT_AUTHOR}_${DRONE_COMMIT_BRANCH}_${DRONE_BUILD_NUMBER}
+      image: gcr.io/mirrormedia-1470651750304/${DRONE_REPO_NAME}:${DRONE_BRANCH}_${DRONE_COMMIT_AUTHOR}_${DRONE_BUILD_NUMBER}
       app: ${DRONE_REPO_NAME}
       tier: frontend-stage
       branch: stage
     when:
       event: [push]
       branch: stage
+  
+  upload:
+    image: plugins/gcs
+    source: distribution
+    target: readr-files/distribution/
+    acl: allUsers:READER
+    # cache_control: public, max-age=3600
+    secrets:
+      - source: google_credentials
+        target: token
+    when:
+      event: push
+      branch: master
 
   rebuild-cache:
     image: drillster/drone-volume-cache
@@ -118,7 +131,7 @@ pipeline:
     volumes:
       - /tmp/cache:/cache
     when:
-      branch: [dev, stage, 2.0]
+      branch: [master, dev, stage, 2.0]
   
   finish_slack:
     image: plugins/slack
@@ -131,7 +144,7 @@ pipeline:
       event: [push]
     template: >
       {{#success build.status}}
-        *success* ${DRONE_REPO_NAME}:${DRONE_COMMIT_AUTHOR}_${DRONE_COMMIT_BRANCH}_${DRONE_BUILD_NUMBER} was well served.
+        *success* ${DRONE_REPO_NAME}:${DRONE_BRANCH}_${DRONE_COMMIT_AUTHOR}_${DRONE_BUILD_NUMBER} was well served.
         Check out our new <http://dev.readr.tw|readr>.
       {{else}}
         Houston, we have a problem. Build <${DRONE_BUILD_LINK}|#{{build.number}}> failed.
