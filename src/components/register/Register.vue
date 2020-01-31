@@ -1,144 +1,313 @@
 <template>
   <div class="register">
-    <div class="register-container" v-if="!isRegistered">
-      <div class="register-container__input-nickname">
-        <input type="text" :placeholder="wording.WORDING_NICKNAME" ref="nickname">
-      </div>
-      <div class="register-container__input-email">
-        <input type="text" :placeholder="wording.WORDING_EMAIL" ref="mail">
-      </div>
-      <div class="register-container__input-pwd">
-        <input type="text" :placeholder="wording.WORDING_PASSWORD" ref="pwd">
-      </div>
-      <div class="register-container__input-pwd-check">
-        <input type="text" :placeholder="wording.WORDING_PASSWORD_CHECK" ref="pwd-check">
-      </div>
+    <div
+      v-if="!isRegistered"
+      class="register-container"
+    >
+      <TextItem
+        class="register-container__input-nickname"
+        type="text"
+        :place-holder="$t('login.WORDING_NICKNAME')"
+        :alert.sync="alert.nickname"
+        :background-color="'transparent'"
+        :border="'solid 1px #9b9b9b'"
+        :color="'#fff'"
+        :value.sync="formData.nickname"
+      />
+      <TextItem
+        class="register-container__input-email"
+        type="text"
+        :place-holder="$t('login.WORDING_EMAIL')"
+        :alert.sync="alert.mail"
+        :background-color="'transparent'"
+        :border="'solid 1px #9b9b9b'"
+        :color="'#fff'"
+        :value.sync="formData.mail"
+      />
+      <TextItem
+        class="register-container__input-pwd"
+        type="password"
+        :place-holder="$t('login.WORDING_PASSWORD')"
+        :alert.sync="alert.pwd"
+        :background-color="'transparent'"
+        :border="'solid 1px #9b9b9b'"
+        :color="'#fff'"
+        :value.sync="formData.pwd"
+      />
+      <TextItem
+        class="register-container__input-pwd-check"
+        type="password"
+        :place-holder="$t('login.WORDING_PASSWORD_CHECK')"
+        :alert.sync="alert[ 'pwd-check' ]"
+        :background-color="'transparent'"
+        :border="'solid 1px #9b9b9b'"
+        :color="'#fff'"
+        :value.sync="formData[ 'pwd-check' ]"
+      />
       <div class="register-container__notice">
-        <span class="notice" v-text="wording.WORDING_REGISTER_NOTICE"></span>
-        <span class="agreement" v-text="wording.WORDING_MEMBER_AGREEMENT"></span>
+        <span
+          class="notice"
+          v-text="$t('login.WORDING_REGISTER_NOTICE')"
+        />
+        <router-link
+          to="/agreement"
+          target="_blank"
+          class="agreement"
+          v-text="$t('login.WORDING_MEMBER_AGREEMENT')"
+        />
       </div>
-      <div class="register-container__btn" @click="register">
-        <span v-text="wording.WORDING_REGISTER"></span>
-      </div>    
+      <div
+        class="g-recaptcha"
+        :class="{ warn: (!isRecaptchaPassed && isRegisterClicked) }"
+      >
+        <div id="g-recaptcha" />
+      </div>
+      <div
+        class="register-container__btn"
+        :class="{ disabled: shouldShowSpinner }"
+        @click="register"
+      >
+        <span
+          v-if="!shouldShowSpinner"
+          v-text="$t('login.WORDING_REGISTER')"
+        />
+        <Spinner :show="shouldShowSpinner" />
+      </div>
     </div>
-    <div class="register-container" v-else>
-      <div class="register-container__msg" v-text="resMsg">
-      </div>
+    <div
+      v-else
+      class="register-container"
+    >
+      <div
+        class="register-container__msg"
+        v-text="resMsg"
+      />
     </div>
   </div>
 </template>
 <script>
-  import { WORDING_EMAIL, WORDING_MEMBER_AGREEMENT, WORDING_NICKNAME, WORDING_PASSWORD, WORDING_PASSWORD_CHECK, WORDING_REGISTER, WORDING_REGISTER_NOTICE, WORDING_REGISTER_SUCESSFUL, WORDING_REGISTER_INFAIL } from '../../constants'
-  import { consoleLogOnDev } from '../../util/comm'
-  import validator from 'validator'
+import TextItem from 'src/components/form/TextItem.vue'
+import Spinner from 'src/components/Spinner.vue'
+import validator from 'validator'
+import { GOOGLE_RECAPTCHA_SITE_KEY } from 'api/config'
+import { get } from 'lodash'
 
-  const register = (store, profile) => {
-    return store.dispatch('REGISTER', {
-      params: profile
-    })
-  }
+const debug = require('debug')('CLIENT:Register')
+const register = (store, profile, token) => {
+  return store.dispatch('REGISTER', {
+    params: profile,
+    token
+  })
+}
 
-  export default {
-    data () {
-      return {
-        isRegistered: false,
-        resMsg: '',
-        wording: {
-          WORDING_EMAIL,
-          WORDING_MEMBER_AGREEMENT,
-          WORDING_NICKNAME,
-          WORDING_REGISTER,
-          WORDING_REGISTER_NOTICE,
-          WORDING_PASSWORD,
-          WORDING_PASSWORD_CHECK,
-          WORDING_REGISTER_SUCESSFUL,
-          WORDING_REGISTER_INFAIL
+const verifyRecaptchaToken = (store, token) => {
+  return store.dispatch('VERIFY_RECAPTCHA_TOKEN', {
+    token
+  })
+}
+
+export default {
+  name: 'Register',
+  components: {
+    TextItem,
+    Spinner
+  },
+  data () {
+    return {
+      alert: {},
+      formData: {},
+      isRegistered: false,
+      isRegisterClicked: false,
+      isRecaptchaPassed: false,
+      resMsg: '',
+      recaptcha: {},
+      recaptchaToken: '',
+      shouldShowSpinner: false
+    }
+  },
+  mounted () {
+    if (window.grecaptcha) {
+      this.recaptcha = window.grecaptcha.render('g-recaptcha', {
+        'sitekey': this.$store.state.GOOGLE_RECAPTCHA_SITE_KEY || GOOGLE_RECAPTCHA_SITE_KEY,
+        'callback': (res) => {
+          this.recaptchaToken = res
         }
-      }
-    },
-    name: 'register',
-    methods: {
-      register () {
-        if (this.validatInput()) {
+      })
+    }
+  },
+  methods: {
+    register () {
+      if (this.shouldShowSpinner) { return }
+      this.verifyRecaptchaToken().then(() => {
+        if (this.isRecaptchaPassed && this.validatInput()) {
+          this.shouldShowSpinner = true
+          debug('Abt to send req of register.')
           register(this.$store, {
-            nickname: this.$refs[ 'nickname' ].value,
-            email: this.$refs[ 'mail' ].value,
-            password: this.$refs[ 'pwd' ].value
-          }).then(({ status }) => {
-            this.isRegistered = true
-            if (status === 200) {
-              this.resMsg = this.wording.WORDING_REGISTER_SUCESSFUL
-            } else {
-              this.resMsg = this.wording.WORDING_REGISTER_INFAIL
-            }
-          })
+            nickname: this.formData.nickname,
+            email: this.formData.mail,
+            password: this.formData.pwd }, get(this.$store, [ 'state', 'register-token' ]))
+            .then(({ status }) => {
+              this.isRegistered = true
+              this.shouldShowSpinner = false
+              if (status === 200) {
+                this.resMsg = this.$t('login.WORDING_REGISTER_SUCESSFUL')
+              } else {
+                this.resMsg = this.$t('login.WORDING_REGISTER_INFAIL')
+                window.grecaptcha.reset(this.recaptcha)
+              }
+            }).catch(({ err: error, mode }) => {
+              this.shouldShowSpinner = false
+              if (error === 'User Already Existed' || error === 'User Duplicated') {
+                let message = this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED')
+                switch (mode) {
+                  case 'oauth-fb': {
+                    message = this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_FACEBOOK')
+                    break
+                  }
+                  case 'oauth-goo': {
+                    message = this.$t('login.WORDING_REGISTER_INFAIL_DUPLICATED_WITH_G_PLUS')
+                    break
+                  }
+                }
+                this.alert.mail = {
+                  flag: true,
+                  msg: message
+                }
+                this.$forceUpdate()
+              } else {
+                this.resMsg = this.$t('login.WORDING_REGISTER_INFAIL')
+              }
+              window.grecaptcha.reset(this.recaptcha)
+            })
         }
-      },
-      validatInput () {
-        let pass = true
-        if (!this.$refs[ 'nickname' ].value || validator.isEmpty(this.$refs[ 'nickname' ].value)) {
-          pass = false
-          consoleLogOnDev({ msg: 'nickname empty, ' + this.$refs[ 'nickname' ].value })
-        }
-        if (!this.$refs[ 'mail' ].value || !validator.isEmail(this.$refs[ 'mail' ].value)) {
-          pass = false
-          consoleLogOnDev({ msg: 'mail wrong, ' + this.$refs[ 'mail' ].value })
-        }
-        if (!this.$refs[ 'pwd' ].value || validator.isEmpty(this.$refs[ 'pwd' ].value)) {
-          pass = false
-          consoleLogOnDev({ msg: 'pwd empty, ' + this.$refs[ 'pwd' ].value })
-        }
-        if (!this.$refs[ 'pwd-check' ].value || validator.isEmpty(this.$refs[ 'pwd-check' ].value)) {
-          pass = false
-          consoleLogOnDev({ msg: 'pwd-check empty, ' + this.$refs[ 'pwd-check' ].value })
-        }
-        if (!this.$refs[ 'pwd' ].value || !this.$refs[ 'pwd-check' ].value || this.$refs[ 'pwd' ].value !== this.$refs[ 'pwd-check' ].value) {
-          consoleLogOnDev({ msg: 'pwd != pwd check, ' + this.$refs[ 'pwd' ].value + ',' + this.$refs[ 'pwd-check' ].value })
-          pass = false
-        }
-        return pass
-      }
+      })
     },
-    mounted () {},
+    validatInput () {
+      let pass = true
+      if (!this.formData.nickname || validator.isEmpty(this.formData.nickname)) {
+        pass = false
+        this.alert.nickname = {
+          flag: true,
+          msg: this.$t('login.WORDING_REGISTER_NICKNAME_EMPTY')
+        }
+        debug('Empty nickname', this.formData.nickname)
+      }
+      if (!this.formData.mail || !validator.isEmail(this.formData.mail)) {
+        pass = false
+        this.alert.mail = {
+          flag: true,
+          msg: this.$t('login.WORDING_REGISTER_EMAIL_VALIDATE_IN_FAIL')
+        }
+        debug('Wrong email', this.formData.mail)
+      }
+      if (!this.formData.pwd || validator.isEmpty(this.formData.pwd)) {
+        pass = false
+        this.alert.pwd = {
+          flag: true,
+          msg: this.$t('login.WORDING_REGISTER_PWD_EMPTY')
+        }
+        debug('Empty password', this.formData.pwd)
+      }
+      if (!this.formData[ 'pwd-check' ] || validator.isEmpty(this.formData[ 'pwd-check' ])) {
+        pass = false
+        this.alert[ 'pwd-check' ] = {
+          flag: true,
+          msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_EMPTY')
+        }
+        debug('Empty password check', this.formData[ 'pwd-check' ])
+      }
+      if (!this.formData.pwd || !this.formData[ 'pwd-check' ] || this.formData.pwd !== this.formData[ 'pwd-check' ]) {
+        this.alert.pwd = {
+          flag: true,
+          msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL')
+        }
+        this.alert[ 'pwd-check' ] = {
+          flag: true,
+          msg: this.$t('login.WORDING_REGISTER_PWD_CHECK_INFAIL')
+        }
+        debug('Password is not the same as password-check', this.formData.pwd, this.formData[ 'pwd-check' ])
+        pass = false
+      }
+      this.$forceUpdate()
+      if (!pass) {
+        window.grecaptcha.reset(this.recaptcha)
+      }
+      return pass
+    },
+    verifyRecaptchaToken () {
+      return verifyRecaptchaToken(this.$store, { token: this.recaptchaToken }).then((response) => {
+        this.isRecaptchaPassed = get(response, [ 'success' ], false)
+      })
+    }
   }
+}
 </script>
 <style lang="stylus" scoped>
   .register
+    height 100%
+    width 100%
+    position relative
     .register-container
+      &__input-nickname, &__input-email, &__input-pwd, &__input-pwd-check
+        margin 15px 0
       width 100%
-      height calc(300px - 2rem)
-      margin 20px 0
-      position relative
-      padding-bottom 2rem
-      > div
-        width 100%
-        color #666
-      &__input-email, &__input-nickname, &__input-pwd-check, &__input-pwd
-        margin 10px 0
-        > input
-          border none
-          width calc(100% - 1rem)
-          height 2rem
-          font-size 1rem
-          padding 0 0.5rem
-          &::-webkit-input-placeholder
-            color #bdbdbd
+      padding-bottom 40px
+      color #fff
       &__notice
-        font-size 0.9rem
+        font-size 0.875rem
         text-align right
         > .agreement
-          margin-left 20px
+          margin-left 1em
+          color #11b8c9
           cursor pointer
       &__btn
         position absolute
-        bottom 0
         left 0
         width 100%
-        height 2rem
-        background-color #000
-        color yellow
+        height 35px
+        background-color #ddcf21
+        color #444746
         display flex
         justify-content center
         align-items center
         cursor pointer
+        &.disabled
+          background-color #c5c5c5
+          color #a5a5a5
+        &:hover
+          background-color #737373
+
+      .g-recaptcha
+        margin 15px 0
+        display flex
+        justify-content center
+        align-items center
+        position relative
+        &::before, &::after
+          display none
+        // &.warn
+        //   animation wran linear 2s
+        //   &::before
+        //     content ''
+        //     border-width 7.5px 17.5px 7.5px 0
+        //     border-color transparent rgba(0, 0, 0, 0.4) transparent transparent
+        //     border-style solid
+        //     position absolute
+        //     left -17.5px
+        //     top 8.5px
+        //     display block
+        //   &::after
+        //     content ''
+        //     border-width 7.5px 17.5px 7.5px 0
+        //     border-color transparent #ddcf21 transparent transparent
+        //     border-style solid
+        //     position absolute
+        //     left -17.5px
+        //     top 7.5px
+        //     display block
+  @keyframes wran
+    0%
+      border 5px solid #ddcf21
+    100%
+      border 5px solid #ddcf21
 </style>

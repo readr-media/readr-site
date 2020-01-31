@@ -1,25 +1,28 @@
 const path = require('path')
-const webpack = require('webpack')
-const vueConfig = require('./vue-loader.config')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 const isProd = process.env.NODE_ENV === 'production'
 
 module.exports = {
+  mode: isProd
+    ? 'production'
+    : 'development',
   devtool: isProd
     ? false
     : '#cheap-module-source-map',
   output: {
-    path: path.resolve(__dirname, '../dist'),
-    publicPath: '/dist/',
+    path: path.resolve(__dirname, '../distribution'),
+    publicPath: '/distribution/',
     filename: '[name].[chunkhash].js'
   },
   resolve: {
     alias: {
       'public': path.resolve(__dirname, '../public'),
       'src': path.resolve(__dirname, '../src'),
-      'components': path.resolve(__dirname, '../src/components')
+      'components': path.resolve(__dirname, '../src/components'),
+      'api': path.resolve(__dirname, '../api')
     }
   },
   module: {
@@ -28,7 +31,15 @@ module.exports = {
       {
         test: /\.vue$/,
         loader: 'vue-loader',
-        options: vueConfig
+        options: {
+          compilerOptions: {
+            preserveWhitespace: false
+          }
+        }
+      },
+      {
+        test: /\.pug$/,
+        loader: 'pug-loader'
       },
       {
         test: /\.js$/,
@@ -46,11 +57,21 @@ module.exports = {
       {
         test: /\.css$/,
         use: isProd
-          ? ExtractTextPlugin.extract({
-              use: 'css-loader?minimize',
-              fallback: 'vue-style-loader'
-            })
-          : ['vue-style-loader', 'css-loader']
+          ? [
+            MiniCssExtractPlugin.loader,
+            'css-loader',
+            'postcss-loader'
+          ]
+          : [ 'vue-style-loader', 'css-loader', 'postcss-loader' ]
+      },
+      {
+        test: /\.styl(us)?$/,
+        use: [
+          'vue-style-loader',
+          'css-loader',
+          'postcss-loader',
+          'stylus-loader'
+        ]
       }
     ]
   },
@@ -58,17 +79,16 @@ module.exports = {
     maxEntrypointSize: 300000,
     hints: isProd ? 'warning' : false
   },
-  plugins: isProd
-    ? [
-        new webpack.optimize.UglifyJsPlugin({
-          compress: { warnings: false }
-        }),
-        new webpack.optimize.ModuleConcatenationPlugin(),
-        new ExtractTextPlugin({
+  plugins: [
+    new VueLoaderPlugin(),
+    ...isProd
+      ? [
+        new MiniCssExtractPlugin({
           filename: 'common.[chunkhash].css'
         })
       ]
-    : [
+      : [
         new FriendlyErrorsPlugin()
       ]
+  ]
 }

@@ -1,45 +1,105 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
   <head>
-    <title>{{ title }}</title>
+    {{{ meta.inject().title.text() }}}
     <meta charset="utf-8">
+    <meta name="google-site-verification" content="p7RW0gU2FsFr4yJq4S2OhWmYQdumG1DWJsyY7GHxTIg" />
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <link rel="apple-touch-icon" sizes="120x120" href="/public/favicon-120x120.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/public/favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimal-ui">
-    <link rel="shortcut icon" sizes="48x48" href="/public/favicon-48x48.png">
+    <link rel="shortcut icon" sizes="48x48" href="/public/favicon.png">
     <meta name="theme-color" content="#f60">
     <link rel="manifest" href="/manifest.json">
+    {{{ meta.inject().meta.text() }}}
+    <meta property="fb:app_id" content="175313259598308">
+    <meta property="fb:pages" content="1855418728011324">
+    <meta property="og:site_name" content="Readr" />
+    <meta property="og:locale" content="zh_TW" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="800" />
+    <!-- normalize.css v7.0.0 -->
+    <style>
+      html { line-height: 1.15; /* 1 */ -ms-text-size-adjust: 100%; /* 2 */ -webkit-text-size-adjust: 100%; /* 2 */}
+      body { margin: 0; }
+      article, aside, footer, header, nav, section { display: block; }
+      h1 { font-size: 2em; margin: 0.67em 0; }
+      figcaption, figure, main { display: block; }
+      figure { margin: 1em 40px; }
+      hr { box-sizing: content-box; /* 1 */ height: 0; /* 1 */ overflow: visible; /* 2 */ }
+      pre { font-family: monospace, monospace; /* 1 */ font-size: 1em; /* 2 */ }
+      a { background-color: transparent; /* 1 */ -webkit-text-decoration-skip: objects; /* 2 */ }
+      abbr[title] { border-bottom: none; /* 1 */ text-decoration: underline; /* 2 */ text-decoration: underline dotted; /* 2 */ }
+      b, strong { font-weight: inherit; }
+      b, strong { font-weight: bolder; }
+      code, kbd, samp { font-family: monospace, monospace; /* 1 */ font-size: 1em; /* 2 */ }
+      dfn { font-style: italic; }
+      mark { background-color: #ff0; color: #000; }
+      small { font-size: 80%; }
+      sub, sup { font-size: 75%; line-height: 0; position: relative; vertical-align: baseline; }
+      sub { bottom: -0.25em; }
+      sup { top: -0.5em; }
+      audio, video { display: inline-block; }
+      audio:not([controls]) { display: none; height: 0; }
+      img { border-style: none; }
+      svg:not(:root) { overflow: hidden; }
+      button, input, optgroup, select, textarea { font-family: sans-serif; /* 1 */ font-size: 100%; /* 1 */ line-height: 1.15; /* 1 */ margin: 0; /* 2 */ }
+      button, input { /* 1 */ overflow: visible; }
+      button, select { /* 1 */ text-transform: none; }
+      button, html [type="button"], /* 1 */ [type="reset"], [type="submit"] { -webkit-appearance: button; /* 2 */ }
+      button::-moz-focus-inner, [type="button"]::-moz-focus-inner, [type="reset"]::-moz-focus-inner, [type="submit"]::-moz-focus-inner { border-style: none; padding: 0; }
+      button:-moz-focusring, [type="button"]:-moz-focusring, [type="reset"]:-moz-focusring, [type="submit"]:-moz-focusring { outline: 1px dotted ButtonText; }
+      fieldset { padding: 0.35em 0.75em 0.625em; }
+      legend { box-sizing: border-box; /* 1 */ color: inherit; /* 2 */ display: table; /* 1 */ max-width: 100%; /* 1 */ padding: 0; /* 3 */ white-space: normal; /* 1 */ }
+      progress { display: inline-block; /* 1 */ vertical-align: baseline; /* 2 */ }
+      textarea { overflow: auto; }
+      [type="checkbox"], [type="radio"] { box-sizing: border-box; /* 1 */ padding: 0; /* 2 */ }
+      [type="number"]::-webkit-inner-spin-button, [type="number"]::-webkit-outer-spin-button { height: auto; }
+      [type="search"] { -webkit-appearance: textfield; /* 1 */ outline-offset: -2px; /* 2 */ }
+      [type="search"]::-webkit-search-cancel-button, [type="search"]::-webkit-search-decoration { -webkit-appearance: none; }
+      ::-webkit-file-upload-button { -webkit-appearance: button; /* 1 */ font: inherit; /* 2 */ }
+      details, /* 1 */ menu { display: block; }
+      summary { display: list-item; }
+      canvas { display: inline-block; }
+      template { display: none; }
+      [hidden] { display: none; }
+    </style>
+    <!-- End normalize.css -->
+    <!-- common css -->
+    <style>
+      #app { position: relative; }
+      *, *:before, *:after { box-sizing: inherit; }
+      html { box-sizing: border-box; font-size: 16px; font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", -apple-system, sans-serif; }
+      button, input, optgroup, select, textarea { font-family: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", -apple-system, sans-serif; }
+      button { user-select: none; }
+      img[src=''], img:not([src]) { opacity:0; }
+    </style>
+    <!-- End common css  -->
     <style>
       #skip a {  position:absolute;  left:-10000px;  top:auto;  width:1px;  height:1px;  overflow:hidden;  }
       #skip a:focus {  position:static;  width:auto;  height:auto;  }
     </style>
-    <script src="https://apis.google.com/js/api.js"></script>
-    <script src="https://sdk.accountkit.com/en_US/sdk.js"></script>
-    <!-- Facebook SDK code -->
+    <!-- <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/medium-editor@5.23.2/dist/css/medium-editor.min.css" type="text/css" media="screen" charset="utf-8"> -->
+    <!--link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet"-->
+    <!--script src="https://sdk.accountkit.com/en_US/sdk.js"></script-->
+    {{{ meta.inject().script.text() }}}
+    <!-- Google Tag Manager -->
     <script>
-      window.fbAsyncInit = function() {
-          FB.init({
-          appId            : '143500093073133',
-          autoLogAppEvents : true,
-          xfbml            : true,
-          version          : 'v2.9'
-          });
-          FB.AppEvents.logPageView();
-      };
-
-      (function(d, s, id){
-          var js, fjs = d.getElementsByTagName(s)[0];
-          if (d.getElementById(id)) {return;}
-          js = d.createElement(s); js.id = id;
-          js.src = "//connect.facebook.net/zh_TW/sdk.js";
-          fjs.parentNode.insertBefore(js, fjs);
-      }(document, 'script', 'facebook-jssdk'));
-      </script>
-    <!-- End of Facebook SDK code -->
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-TH2M74H');
+    </script>
+    <!-- End Google Tag Manager -->
+    <script src="https://js.tappaysdk.com/tpdirect/v3" defer></script>
   </head>
   <body>
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TH2M74H"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
   <div id="skip"><a href="#app">skip to content</a></div>
   <!--vue-ssr-outlet-->
   </body>

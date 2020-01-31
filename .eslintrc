@@ -1,16 +1,31 @@
 {
-  "parser": "babel-eslint",
-  "extends": "vue",
+  "root": true,
+  "extends": [
+    "standard",
+    "plugin:vue/recommended"
+  ],
+  "parserOptions": {
+    "parser": "babel-eslint"
+  },
   "plugins": [
       "import"
   ],
-  "rules": { 
-    "array-bracket-spacing": [ 2, "always" ],
-    "camelcase": [ 0, "" ],
-    "yoda": [ 0, "never" ]
+  "rules": {
+    "vue/no-v-html": "off"
   },
   "globals": {
+    "Coral": true,
+    "FB": true,
+    "FormData": true,
+    "expect": true,
+    "gapi": true,
+    "gtag": true,
     "location": true,
     "source": true
+  },
+  "env": {
+    "es6": true,
+    "mocha": true,
+    "node": true
   }
 }

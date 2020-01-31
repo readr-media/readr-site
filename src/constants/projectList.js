@@ -5,6 +5,6 @@ export default {
   // |----YourProject
   // |------YourProject.vue
 //  'proj1': () => import('../components/Proj1/Proj1.vue')
-  'proj1': 'Proj1',
+  'proj1': 'Proj1'
   // 'proj2': 'Proj2'
 }

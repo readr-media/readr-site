@@ -1,24 +1,71 @@
-.DS_Store
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Coverage directory used by tools like istanbul
+coverage
+coverage/
+
+# nyc test coverage
+.nyc_output
+.nyc_output/
+
+# Dependency directories
 node_modules/
+
+# Optional npm cache directory
+.npm
+
+# Yarn Integrity file
+.yarn-integrity
+
+# Vim
+*.swp
+
+# VisualStudioCode
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Trashes
+
+# Windows
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+
+# Other
 dist/
-npm-debug.log
-yarn-error.log
+distribution/
 .idea
 *.iml
 
-err.log
-npm-debug.log*
-debug.log
 .idea
 api/config.js
 /tmp
 gcskeyfile.json
 archives
+package-lock.json
 
-.vscode
-selenium-debug.log
 test/unit/coverage/*
 test/e2e/reports/*
 
-.nyc_output/
-coverage/
+

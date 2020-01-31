@@ -1,87 +1,194 @@
 <template>
-  <div id="app">
-    <transition name="fade" mode="out-in">
-      <router-view class="view"></router-view>
+  <div
+    id="app"
+    class="app"
+  >
+    <LoginLight />
+    <AppHeader class="app__header" />
+    <transition
+      name="fade"
+      mode="out-in"
+    >
+      <router-view class="view" />
     </transition>
+    <AppFooter class="app__footer" />
   </div>
 </template>
 
+<script>
+import AppHeader from 'src/components/AppHeader/AppHeader.vue'
+import AppFooter from 'src/components/AppFooter.vue'
+import LoginLight from 'src/components/login/LoginLight.vue'
+import { COMSCORE } from './constants/scripts'
+import { MM_GA_ID, MM_GA_TEST_ID, SITE_FULL, SITE_NAME, SITE_DESCRIPTION } from './constants'
+import { isAlink, logTrace } from 'src/util/services'
+import { mapState } from 'vuex'
+
+const generateMetaInfoScripts = (gaId) => {
+  const scripts = [
+    {
+      once: true,
+      innerHTML: COMSCORE
+    }
+  ]
+  return scripts
+}
+
+export default {
+  components: {
+    AppHeader,
+    AppFooter,
+    LoginLight
+  },
+  metaInfo () {
+    let scripts = []
+    let gaId = MM_GA_TEST_ID
+    if (process.env.VUE_ENV === 'client') {
+      gaId = location.hostname.match(/(www|m).readr.tw/) ? MM_GA_ID : MM_GA_TEST_ID
+      scripts = generateMetaInfoScripts(gaId)
+    }
+
+    return {
+      titleTemplate: `%s - ${SITE_NAME}`,
+      meta: [
+        { vmid: 'og:url', property: 'og:url', content: SITE_FULL },
+        { vmid: 'og:type', property: 'og:type', content: 'website' },
+        { vmid: 'og:title', property: 'og:title', content: SITE_NAME },
+        { vmid: 'og:description', property: 'og:description', content: SITE_DESCRIPTION },
+        { vmid: 'og:image', property: 'og:image', content: `${SITE_FULL}/public/og-image.jpg` }
+      ],
+      script: scripts,
+      noscript: [
+        {
+          innerHTML: `<img src="https://sb.scorecardresearch.com/p?c1=2&c2=24318560&cv=2.0&cj=1" />`
+        }
+      ],
+      __dangerouslyDisableSanitizers: [ 'script' ],
+      changed: (newInfo, addedTags, removedTags) => {
+        if (process.env.VUE_ENV === 'client' && this.needToSendPageView && gtag) {
+          gtag('config', `${gaId}`, {
+            'page_title': newInfo.title,
+            'page_location': location.href
+          })
+          this.needToSendPageView = false
+        }
+      }
+    }
+  },
+  data () {
+    return {
+      needToSendPageView: false
+    }
+  },
+  computed: {
+    ...mapState({
+      currentUser: state => state.DataUser.profile.id,
+      useragent: state => state.useragent
+    })
+  },
+  watch: {
+    '$route.fullPath' () {
+      process.browser && this.sendPageview()
+      this.needToSendPageView = true
+    }
+  },
+  mounted () {
+    this.sendPageview()
+    window.addEventListener('click', this.handleClickLogger)
+  },
+  beforeDestroy () {
+    window.removeEventListener('click', this.handleClickLogger)
+  },
+  methods: {
+    handleClickLogger (event) {
+      const checkAlink = isAlink(event.target)
+      checkAlink && logTrace({
+        category: 'whole-site',
+        description: 'ele clicked',
+        eventType: 'click',
+        sub: this.currentUser,
+        target: event.target,
+        useragent: this.useragent,
+        isAlink: checkAlink
+      })
+    },
+    sendPageview () {
+      logTrace({
+        category: this.$route.fullPath,
+        description: 'pageview',
+        eventType: 'pageview',
+        sub: this.currentUser,
+        target: {},
+        useragent: this.useragent
+      })
+    }
+  }
+}
+</script>
+
 <style lang="stylus">
-body
-  font-family -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-  font-size 16px
-  background-color lighten(#eceef1, 30%)
+
+h1, h2, h3, p, a, figure, pre
   margin 0
-  padding-top 55px
-  color #34495e
-  overflow-y scroll
-
+h1, h2, h3, p, a
+  color #000
+h1
+  font-size 2.8125rem
+  font-weight normal
+h2
+  font-size 1.5rem
+  font-weight 500
+p
+  font-size 1rem
+  &.small
+    color #4a4a4a
+    font-size .875rem
 a
-  color #34495e
   text-decoration none
+  cursor pointer
+  &:link, &:visited, &:hover, &:active
+    color #000
+button
+  background-color transparent
+  border none
+  cursor pointer
+figure
+  background-color #979797
+img
+  font-size .75rem // for alt text
+pre
+  padding .5em
+  color #f8f8f2
+  white-space pre-line
+  background-color #23241f
+  border-radius 3px
 
-.header
-  background-color #ff6600
-  position fixed
-  z-index 999
-  height 55px
-  top 0
-  left 0
-  right 0
-  .inner
+.app
+  background-color #f1f1f1
+  &__header
+    position fixed
+    top 0
+    left 0
+  &-list
+    h1, p
+      line-height 1.3
+    h1, h2, p, figure
+      & + h1, & + h2, & + p, & + div
+        margin-top .5em
+    h1
+      font-size 1.5rem
+      font-weight normal
+  &-content-area
+    width 60%
     max-width 800px
-    box-sizing border-box
-    margin 0px auto
-    padding 15px 5px
-  a
-    color rgba(255, 255, 255, .8)
-    line-height 24px
-    transition color .15s ease
-    display inline-block
-    vertical-align middle
-    font-weight 300
-    letter-spacing .075em
-    margin-right 1.8em
-    &:hover
-      color #fff
-    &.router-link-active
-      color #fff
-      font-weight 400
-    &:nth-child(6)
-      margin-right 0
-  .github
-    color #fff
-    font-size .9em
-    margin 0
-    float right
-
-.logo
-  width 24px
-  margin-right 10px
-  display inline-block
-  vertical-align middle
+    margin-left auto
+    margin-right auto
 
 .view
-  max-width 800px
-  margin 0 auto
-  position relative
+  padding 50px 0 0
 
 .fade-enter-active, .fade-leave-active
-  transition all .2s ease
-
-.fade-enter, .fade-leave-active
+  transition opacity .5s
+.fade-enter, .fade-leave-to
   opacity 0
-
-@media (max-width 860px)
-  .header .inner
-    padding 15px 30px
-
-@media (max-width 600px)
-  .header
-    .inner
-      padding 15px
-    a
-      margin-right 1em
-    .github
-      display none
 </style>
