@@ -7,8 +7,10 @@
       >
         <figure>
           <img
-            :src="singleSeries.heroImage || singleSeries.ogImage"
+            :src="heroImageSrc"
+            :srcset="heroImageSrcset"
             :alt="singleSeries.title || singleSeries.ogTitle"
+            sizes="60vw"
           >
         </figure>
       </div>
@@ -31,6 +33,7 @@
         <SeriesList
           :item-style="'comm-series-more'"
           :items="seriesFilterSelf"
+          image-sizes="20vw"
           ga-event-label="series"
           class="series__more-series-list"
         />
@@ -40,7 +43,7 @@
 </template>
 <script>
 import { SITE_FULL, SITE_NAME } from 'src/constants'
-import { getFullUrl } from 'src/util/comm'
+import { getFullUrl, getImageResizeSrc, getImageResizeSrcset, getImageSrc } from 'src/util/comm'
 import { mapState, mapMutations } from 'vuex'
 import _ from 'lodash'
 
@@ -73,6 +76,17 @@ export default {
       series: state => state.DataSeries.publicProjects.normal,
       singleSeries: state => state.DataSeries.singleSeries
     }),
+    heroImageResizeSrc () {
+      const img = this.singleSeries.heroImage || this.singleSeries.ogImage
+      return getImageResizeSrc(img)
+    },
+    heroImageSrc () {
+      return getImageSrc(this.heroImageResizeSrc)
+    },
+    heroImageSrcset () {
+      const isEmpty = typeof this.heroImageSrc !== 'string' || this.heroImageSrc.trim()
+      return !isEmpty ? getImageResizeSrcset(this.heroImageResizeSrc) : ''
+    },
     seriesFilterSelf () {
       return this.series.filter(series => series.slug !== this.$route.params.slug).slice(0, 3)
     },

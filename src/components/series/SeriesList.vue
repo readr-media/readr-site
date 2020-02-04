@@ -8,6 +8,7 @@
       :description="truncate(item.description || item.ogDescription)"
       :href="`/series/${item.slug}`"
       :image="item.heroImage || item.ogImage || ' '"
+      :image-sizes="imageSizes"
       :target="'_blank'"
       :title="item.title"
       @click.native="sendGaEvent()"
@@ -33,6 +34,10 @@ export default {
     gaEventLabel: {
       type: String,
       default: ''
+    },
+    imageSizes: {
+      type: String,
+      required: true
     },
     itemStyle: {
       type: String,
