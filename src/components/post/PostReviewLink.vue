@@ -87,6 +87,8 @@ export default {
     border-color transparent transparent #ded120 transparent
   h3, p
     text-align justify
+    word-break break-all
+    word-wrap break-word
   h3
     font-size 1rem
     font-weight 500

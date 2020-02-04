@@ -156,6 +156,8 @@ figure
   background-color #979797
 img
   font-size .75rem // for alt text
+  word-break break-all // for alt text
+  word-wrap break-word // for alt text
 pre
   padding .5em
   color #f8f8f2
