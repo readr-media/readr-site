@@ -21,6 +21,7 @@
 </template>
 
 <script>
+import { POST_TYPE } from '../../../api/config'
 import { mapState, mapMutations } from 'vuex'
 import _ from 'lodash'
 
@@ -58,7 +59,10 @@ export default {
             project_id: this.seriesId,
             page: this.currentPage,
             max_result: 10,
-            sort: 'post_order,-updated_at'
+            sort: 'post_order,-updated_at',
+            where: {
+              type: [POST_TYPE.REVIEW, POST_TYPE.LIVE, POST_TYPE.REPORT, POST_TYPE.MEMO]
+            }
           }
         }
       ).then(res => {
