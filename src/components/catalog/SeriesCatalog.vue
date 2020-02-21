@@ -61,7 +61,7 @@ export default {
             max_result: 10,
             sort: 'post_order,-updated_at',
             where: {
-              type: [POST_TYPE.REVIEW, POST_TYPE.LIVE, POST_TYPE.REPORT, POST_TYPE.MEMO]
+              type: [POST_TYPE.REVIEW, POST_TYPE.NEWS, POST_TYPE.REPORT, POST_TYPE.MEMO]
             }
           }
         }
