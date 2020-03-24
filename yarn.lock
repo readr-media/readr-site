@@ -9582,10 +9582,10 @@ readr-comment@^1.0.21:
     prevent-scroll "^2.0.0"
     sanitize-html "^1.18.2"
 
-readr-web-api@^1.6.3:
-  version "1.6.3"
-  resolved "https://registry.yarnpkg.com/readr-web-api/-/readr-web-api-1.6.3.tgz#6a787756a5f5fe1581d4b460045110276306e7de"
-  integrity sha512-Elh9dRB/Gsythi/AFS+Y6KTXZ5HMVZEr1q7I8CiE1tlJqZxgzS3oW9x9xLenJBxpN9nNWT7kTvpIGSVUKmqZ6A==
+readr-web-api@^1.6.4:
+  version "1.6.4"
+  resolved "https://registry.yarnpkg.com/readr-web-api/-/readr-web-api-1.6.4.tgz#b4cf8248560a526a61d08e8cbdca395e3f869b17"
+  integrity sha512-sBDW7y3uttSo+Rnd1DU2Tzmk+J0iUXXShj9V+JD6+cnHc+dbZ7P7gNJObI6bBntF+/8CnzZaW1wQy4NSCqfXIg==
   dependencies:
     "@babel/runtime-corejs3" "^7.8.4"
     "@google-cloud/logging" "^5.1.3"
