@@ -24,7 +24,7 @@ pipeline:
       - /tmp/cache:/cache
     when:
       event: [push]
-      branch: [master, dev, stage, 2.0, 2.0-qa]
+      branch: [master, dev, stage, 2.0, hotfix]
   
   get_dev_config:
     image: gcr.io/mirrormedia-1470651750304/drone-cloud-sdk:latest
@@ -35,7 +35,7 @@ pipeline:
     - cp ../default/keystone/gcskeyfile.json ./gcskeyfile.json
     when:
       event: [push]
-      branch: [dev, 2.0, 2.0-qa]
+      branch: [dev, 2.0, hotfix]
   
   get_stage_config:
     image: gcr.io/mirrormedia-1470651750304/drone-cloud-sdk:latest
@@ -57,7 +57,7 @@ pipeline:
     - yarn run build
     when:
       event: [push]
-      branch: [master, dev, stage, 2.0, 2.0-qa]
+      branch: [master, dev, stage, 2.0, hotfix]
   
   publish:
     image: plugins/gcr
@@ -68,7 +68,7 @@ pipeline:
     secrets: [google_credentials]
     when:
       event: [push]
-      branch: [dev, stage, 2.0, 2.0-qa]
+      branch: [dev, stage, 2.0, hotfix]
   
   deploy_dev:
     image: nytimes/drone-gke
@@ -87,7 +87,7 @@ pipeline:
       tier: frontend
     when:
       event: [push]
-      branch: [dev, 2.0, 2.0-qa]
+      branch: [dev, 2.0, hotfix]
 
   deploy_stage:
     image: nytimes/drone-gke
@@ -131,7 +131,7 @@ pipeline:
     volumes:
       - /tmp/cache:/cache
     when:
-      branch: [master, dev, stage, 2.0, 2.0-qa]
+      branch: [master, dev, stage, 2.0, hotfix]
   
   finish_slack:
     image: plugins/slack
