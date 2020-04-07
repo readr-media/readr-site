@@ -14,7 +14,7 @@ const {
 
 export function getPostContentDOM (post) {
   const options = {
-    allowedTags: false,
+    allowedTags: false, // allow all tags
     allowedAttributes,
     allowedIframeHostnames,
     selfClosing: [ 'img', customContentBreakTagName ],
