@@ -19,12 +19,6 @@
       <div class="login-light__container">
         <template v-if="!isRegistering">
           <div class="login-by-social-media">
-            <FacebookLogin
-              type="mix"
-              :is-doing-login.sync="isProcessing"
-              theme="light"
-              :panel-type="type"
-            />
             <GooglePlusLogin
               type="mix"
               :is-doing-login.sync="isProcessing"
@@ -77,7 +71,6 @@
 </template>
 <script>
 import Cookie from 'vue-cookie'
-import FacebookLogin from './FacebookLogin.vue'
 import GooglePlusLogin from './GooglePlusLogin.vue'
 import Login from './Login.vue'
 import Register from 'src/components/register/Register.vue'
@@ -94,7 +87,6 @@ const TYPE = {
 export default {
   name: 'LoginLight',
   components: {
-    FacebookLogin,
     GooglePlusLogin,
     Login,
     Register,
