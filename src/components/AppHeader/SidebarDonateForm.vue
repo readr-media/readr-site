@@ -9,6 +9,26 @@
         <p>支持更多優質內容</p>
       </div>
     </header>
+    <div class="donate__block type">
+      <RadioItem
+        :value="'subscription'"
+        :value-selected="donateType"
+        :class="{ active: donateType === 'subscription' }"
+        class="type__radio"
+        @change="changeDonateType"
+      >
+        每月定額
+      </RadioItem>
+      <RadioItem
+        :value="'once'"
+        :value-selected="donateType"
+        :class="{ active: donateType === 'once' }"
+        class="type__radio"
+        @change="changeDonateType"
+      >
+        單筆贊助
+      </RadioItem>
+    </div>
     <div class="donate__block donate__donate-amount donate-amount">
       <h2 class="bold">
         贊助金額
@@ -227,6 +247,11 @@
             type="text"
             placeholder="請填入您的公司統一編號"
           >
+          <input
+            v-model="carrierInputs.carrierBusiness.address"
+            type="text"
+            placeholder="請填入您的發票寄送地址"
+          >
         </div>
       </div>
     </div>
@@ -286,6 +311,8 @@ const donate = (store, {
   }
 })
 
+const subscribe = (store, params = {}) => store.dispatch('SUBSCRIBE', params)
+
 const CARRIER_TYPE_NUM = {
   carrierEmail: '2',
   carrierPhone: '0',
@@ -311,6 +338,7 @@ export default {
         carrierPhone: '',
         carrierNatural: '',
         carrierBusiness: {
+          address: '',
           title: '',
           taxNumber: ''
         }
@@ -320,6 +348,8 @@ export default {
         contactEmail: get(this.$store.state, [ 'DataUser', 'profile', 'mail' ], ''),
         contactPhone: ''
       },
+
+      donateType: 'subscription',
 
       isTappayInitialized: false,
 
@@ -335,14 +365,20 @@ export default {
         return this.donateAmountCustomInternal
       },
       set (value) {
-        this.donateAmountCustomInternal = value < 30 ? 30 : value
+        if (value < 30) {
+          this.donateAmountCustomInternal = 30
+        } else if (value > 2000) {
+          this.donateAmountCustomInternal = 2000
+        } else {
+          this.donateAmountCustomInternal = value
+        }
       }
     },
 
     isFormValid () {
       const isDonateAmountValid =
         this.donateAmountSelected !== 0 ||
-        (this.isDonateAmountCustom && this.donateAmountCustomInternal >= 30)
+        (this.isDonateAmountCustom && this.donateAmountCustomInternal >= 30 && this.donateAmountCustomInternal <= 2000)
       const isPaymentMethodValid =
         this.isCardInfoValid
       const isCarrierValid =
@@ -353,10 +389,19 @@ export default {
         this.contactInputs.contactEmail !== '' &&
         this.contactInputs.contactPhone !== ''
 
+      const isCarrierBusiness = this.carrierTypeSelected === 'carrierBusiness'
+      let isCarrierBusinessInfoValid = true
+      if (isCarrierBusiness) {
+        isCarrierBusinessInfoValid = this.carrierInputs.carrierBusiness.address &&
+          this.carrierInputs.carrierBusiness.taxNumber &&
+          this.carrierInputs.carrierBusiness.title
+      }
+
       return isDonateAmountValid &&
              isPaymentMethodValid &&
              isCarrierValid &&
-             isContactValid
+             isContactValid &&
+             isCarrierBusinessInfoValid
     },
 
     // isTappayLoaded () {
@@ -399,6 +444,83 @@ export default {
       this.carrierTypeSelected = newType
     },
 
+    changeDonateType (type) {
+      this.donateType = type
+    },
+
+    processSubscription (primeResult, now) {
+      const invoiceCategoryMapping = {
+        1: 'B2C',
+        2: 'B2B',
+        default: 'B2C'
+      }
+      const email = get(this.contactInputs, 'contactEmail', '')
+      const contactName = get(this.contactInputs, 'contactName', '')
+      const invoiceCategory = get(this.carrierInfo, 'category')
+      const invoiceCarrierType = get(this.carrierInfo, 'carrierType')
+      let requestBody = {
+        amount: this.donateAmount,
+        email,
+        createdAt: now.toISOString(),
+        paymentInfos: {
+          prime: primeResult.card.prime,
+          cardholder: {
+            phoneNumber: get(this.contactInputs, 'contactPhone', ''),
+            name: contactName,
+            email
+          }
+        },
+        invoiceInfos: {
+          category: invoiceCategoryMapping[invoiceCategory] || invoiceCategory.default,
+          buyerName: contactName,
+          buyerEmail: email,
+          itemPrice: [ this.donateAmount ],
+          lastFourNum: primeResult.card.lastfour // for readr-web-api log
+        }
+      }
+
+      const memberId = get(this.$store, 'state.DataUser.profile.id')
+      if (memberId) {
+        requestBody.memberId = memberId
+      }
+      if (invoiceCarrierType === '2') { // Email 載具
+        requestBody.invoiceInfos.buyerEmail = get(this.carrierInputs, 'carrierEmail')
+      }
+      if (this.carrierTypeSelected === 'carrierBusiness') {
+        requestBody.invoiceInfos.buyerUbn = get(this.carrierInputs, 'carrierBusiness.taxNumber')
+        requestBody.invoiceInfos.buyerName = get(this.carrierInputs, 'carrierBusiness.title') || contactName
+        requestBody.invoiceInfos.buyerAddress = get(this.carrierInputs, 'carrierBusiness.address')
+      }
+
+      if (this.carrierTypeSelected !== 'carrierBusiness') {
+        requestBody.invoiceInfos.carrierType = invoiceCarrierType
+        requestBody.invoiceInfos.carrierNum = get(this.carrierInfo, 'carrierNum')
+      }
+
+      return subscribe(this.$store, requestBody)
+    },
+
+    processOnce (primeResult, now) {
+      return donate(this.$store, {
+        invoiceItem: {
+          businessTitle: get(this.carrierInputs, ['carrierBusiness', 'title']),
+          businessTaxNo: get(this.carrierInputs, ['carrierBusiness', 'taxNumber']),
+          businessAddress: get(this.carrierInputs, 'carrierBusiness.address'),
+          carrierType: get(this.carrierInfo, 'carrierType'),
+          carrierNum: get(this.carrierInfo, 'carrierNum'),
+          category: get(this.carrierInfo, 'category'),
+          lastFourNum: primeResult.card.lastfour
+        },
+        points: this.donateAmount,
+        token: primeResult.card.prime,
+        member_name: get(this.contactInputs, 'contactName', ''),
+        member_mail: get(this.contactInputs, 'contactEmail', ''),
+        member_phone: get(this.contactInputs, 'contactPhone', ''),
+        object_id: this.seriesId,
+        reason: location && location.pathname
+      })
+    },
+
     submitForm () {
       if (this.isFormValid && !this.isDepositing) {
         this.isDepositing = true
@@ -410,38 +532,31 @@ export default {
             return
           }
 
+          const submitStrategy = {
+            once: this.processOnce,
+            subscription: this.processSubscription
+          }
+
+          const now = new Date()
+
           debug('get prime successfully: ' + result.card.prime)
-          donate(this.$store, {
-            invoiceItem: {
-              businessTitle: get(this.carrierInputs, ['carrierBusiness', 'title']),
-              businessTaxNo: get(this.carrierInputs, ['carrierBusiness', 'taxNumber']),
-              // businessAddress: get(this.businessInfo, 'businessAddress'),
-              carrierType: get(this.carrierInfo, 'carrierType'),
-              carrierNum: get(this.carrierInfo, 'carrierNum'),
-              category: get(this.carrierInfo, 'category'),
-              lastFourNum: result.card.lastfour
-            },
-            points: this.donateAmount,
-            token: result.card.prime,
-            member_name: get(this.contactInputs, 'contactName', ''),
-            member_mail: get(this.contactInputs, 'contactEmail', ''),
-            member_phone: get(this.contactInputs, 'contactPhone', ''),
-            object_id: this.seriesId,
-            reason: location && location.pathname
-          }).then(() => {
-            this.$emit('submitForm', {
-              donateAmount: this.donateAmount,
-              carrierTypeSelected: this.carrierTypeSelected,
-              carrierInputs: this.carrierInputs[this.carrierTypeSelected],
-              date: dayjs().format('YYYY/MM/DD HH:mm:ss')
+          submitStrategy[this.donateType] && submitStrategy[this.donateType](result, now)
+            .then(() => {
+              this.$emit('submitForm', {
+                isSubscription: this.donateType === 'subscription',
+                donateAmount: this.donateAmount,
+                carrierTypeSelected: this.carrierTypeSelected,
+                carrierInputs: this.carrierInputs[this.carrierTypeSelected],
+                date: dayjs(now).format('YYYY/MM/DD HH:mm:ss')
+              })
+              this.isDepositing = false
+              this.$emit('showResultSuccess')
             })
-            this.isDepositing = false
-            this.$emit('showResultSuccess')
-          }).catch(err => {
-            console.error(err)
-            this.isDepositing = false
-            this.$emit('showResultFail')
-          })
+            .catch(err => {
+              console.error(err)
+              this.isDepositing = false
+              this.$emit('showResultFail')
+            })
         })
       }
     },
@@ -679,4 +794,22 @@ export default {
   align-items center
   &--yellow
     background-color #ddcf21
+
+.type
+  display flex
+  &__radio
+    flex 1
+    height 40px
+    line-height 40px
+    border 1px solid #9b9b9b
+    & + .type__radio
+      border-left none
+    &.active
+      background-color #ddcf21
+      box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.5)
+    >>> .wrapper__label
+      margin 0 auto
+      font-size 1rem
+    >>> .wrapper__checkmark
+      display none
 </style>

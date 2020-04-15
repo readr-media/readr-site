@@ -15,6 +15,7 @@
       </h2>
       <SeriesList
         :items="publicProjectsTrends"
+        image-sizes="64vw"
         ga-event-label="popular"
         class="home__list highlight"
       />
@@ -39,6 +40,7 @@
         <SeriesList
           :item-style="'comm-narrow'"
           :items="publicProjectsNormal"
+          image-sizes="26vw"
           ga-event-label="series"
           class="home__list"
         />
@@ -230,7 +232,7 @@ export default {
         margin 70px 0 0
     &__list
       >>> .list-item.comm-narrow
-        &:nth-child(1), &:nth-child(2), &:nth-child(3), &:nth-child(4)
+        &:nth-child(1), &:nth-child(2), &:nth-child(3)
           margin-top 14px
     &__series-posts
       display flex

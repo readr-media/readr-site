@@ -3,7 +3,8 @@
     <div id="fb-root" />
     <figure v-if="!isReview && postImage">
       <img
-        :src="postImage"
+        :src="postImageSrc"
+        :srcset="postImageSrcset"
         :alt="post.title || post.ogTitle"
       >
     </figure>
@@ -52,6 +53,7 @@
           <h2>繼續閱讀</h2>
           <PostList
             :items="seriesPostsFiltered"
+            image-sizes="20vw"
             ga-event-label="tableofcontents"
             class="post__post-list"
           />
@@ -61,6 +63,7 @@
           <SeriesList
             :item-style="'comm-series-more'"
             :items="seriesFiltered"
+            image-sizes="20vw"
             ga-event-label="series"
             class="post__series-list"
           />
@@ -73,6 +76,7 @@
 <script>
 import { SITE_FULL, SITE_NAME } from 'src/constants'
 import { createPost } from 'src/util/post'
+import { getImageResizeSrc, getImageResizeSrcset, getImageSrc } from 'src/util/comm'
 import { getPostFullUrl } from 'src/util/post/index'
 import { mapMutations, mapState } from 'vuex'
 
@@ -141,6 +145,16 @@ export default {
     },
     postImage () {
       return this.post.heroImage || this.post.ogImage
+    },
+    postImageResizeSrc () {
+      return getImageResizeSrc(this.postImage)
+    },
+    postImageSrc () {
+      return getImageSrc(this.postImageResizeSrc)
+    },
+    postImageSrcset () {
+      const isEmpty = typeof this.postImageSrc !== 'string' || this.postImageSrc.trim()
+      return !isEmpty ? getImageResizeSrcset(this.postImageResizeSrc) : ''
     },
     postProcessed () {
       return createPost(this.post)

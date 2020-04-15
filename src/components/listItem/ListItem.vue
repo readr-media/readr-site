@@ -6,8 +6,10 @@
   >
     <figure v-if="image">
       <img
-        :src="image"
+        :src="imageSrc"
         :alt="title"
+        :srcset="imageSrcset"
+        :sizes="imageSizes"
       >
     </figure>
     <div class="list-item__content">
@@ -34,6 +36,7 @@
   </LinkItem>
 </template>
 <script>
+import { getImageResizeSrc, getImageResizeSrcset, getImageSrc } from 'src/util/comm'
 import LinkItem from 'src/components/common/LinkItem.vue'
 import SideBadge from '@readr-ui/side-badge/src/readr-ui-side-badge.vue'
 import dayjs from 'dayjs'
@@ -61,6 +64,10 @@ export default {
       type: String,
       default: ''
     },
+    imageSizes: {
+      type: String,
+      default: ''
+    },
     target: {
       type: String,
       default: ''
@@ -78,6 +85,15 @@ export default {
         return today.diff(currentDate, 'day') <= 7
       }
       return false
+    },
+    imageSrc () {
+      return getImageSrc(this.imageResizeSrc)
+    },
+    imageResizeSrc () {
+      return getImageResizeSrc(this.image)
+    },
+    imageSrcset () {
+      return this.imageSizes && this.image.trim() ? getImageResizeSrcset(this.imageResizeSrc) : ''
     }
   }
 }

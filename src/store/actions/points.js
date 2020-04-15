@@ -31,6 +31,10 @@ export const DONATE = (action, { params }) => {
   return pointsFunc.donate(params)
 }
 
+export const SUBSCRIBE = (action, params) => {
+  return pointsFunc.subscribe(params)
+}
+
 export const SWITCH_OFF_CONSUME_PANEL = ({ commit }, { active }) => {
   return commit('SET_CONSUME_FLAG', {
     active,

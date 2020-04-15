@@ -27,3 +27,10 @@ export function donate (params) {
     .then(res => res.status)
     .catch(err => { throw err })
 }
+
+export function subscribe (params) {
+  const url = `${host}/api/subscriptions`
+  return post(url, params)
+    .then(res => res.status)
+    .catch(err => { throw err })
+}

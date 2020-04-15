@@ -8,7 +8,7 @@ export const sanitizeHtmlOptions = {
     script: [ 'src' ]
   }),
   allowedIframeHostnames: [ 'www.youtube.com', 'dev.readr.tw', 'www.readr.tw', 'cloud.highcharts.com', 'public.flourish.studio', 'quiz.tryinteract.com', 'plotdb.io', 'e.infogram.com' ],
-  allowedTags: [ 'img', 'strong', 'h1', 'h2', 'figcaption', 'em', 'blockquote', 'a', 'iframe', 'div', 'script' ],
+  allowedTags: [ 'img', 'strong', 'h1', 'h2', 'figcaption', 'em', 'blockquote', 'a', 'iframe', 'div', 'script', 'br', 'p' ],
   customContentBreakTagName: 'hr',
   transformTags: {
     'iframe': function (tagName, attribs) {
