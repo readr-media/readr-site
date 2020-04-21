@@ -85,32 +85,6 @@ export function getArticleAuthorThumbnailImg (articleData) {
   return getFullUrl(_.get(articleData, 'authorProfileImage') || (_.get(articleData, 'author.profileImage') || _.get(articleData, 'profileImage') || '/public/icons/exclamation.png'))
 }
 
-export function getImageResizeSrc (src = '') {
-  const split = typeof src === 'string' ? src.trim().split(/.(png|jpg)?$/) : []
-  if (split.length > 2) {
-    const resizeSrc = {
-      origin: src,
-      mobile2x: `${split[0]}-mobile@2x.${split[1]}`,
-      mobile3x: `${split[0]}-mobile@3x.${split[1]}`,
-      mobile4x: `${split[0]}-mobile@4x.${split[1]}`,
-      tablet1x: `${split[0]}-tablet@1x.${split[1]}`,
-      tablet2x: `${split[0]}-tablet@2x.${split[1]}`,
-      desktop1x: `${split[0]}-desktop@1x.${split[1]}`,
-      desktop2x: `${split[0]}-desktop@2x.${split[1]}`
-    }
-    return resizeSrc
-  }
-  return { origin: src }
-}
-
-export function getImageResizeSrcset (resizeSrc = {}) {
-  return `${resizeSrc.mobile2x} 800w, ${resizeSrc.mobile3x} 1200w, ${resizeSrc.mobile4x} 1500w, ${resizeSrc.desktop1x} 2000w, ${resizeSrc.desktop2x}`
-}
-
-export function getImageSrc (resizeSrc = {}) {
-  return resizeSrc.mobile2x || resizeSrc.origin
-}
-
 export function isScrollBarReachBottom (ratio = 0, errorMargin = 10) {
   const vh = window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight
   function getScrollXY () {
