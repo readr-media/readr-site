@@ -6,7 +6,6 @@ const XMLSerializer = require('xmldom').XMLSerializer
 
 const {
   allowedAttributes,
-  allowedIframeHostnames,
   allowedTags,
   customContentBreakTagName,
   transformTags
@@ -16,7 +15,6 @@ export function getPostContentDOM (post) {
   const options = {
     allowedTags: false, // allow all tags
     allowedAttributes,
-    allowedIframeHostnames,
     selfClosing: [ 'img', customContentBreakTagName ],
     transformTags
   }
@@ -31,7 +29,6 @@ export function getPostContentStrings (post) {
   const options = {
     allowedTags,
     allowedAttributes,
-    allowedIframeHostnames,
     transformTags
   }
   const contentDOMChildNodes = get(getPostContentDOM(post), 'childNodes')
