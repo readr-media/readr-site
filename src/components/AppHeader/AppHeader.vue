@@ -34,9 +34,9 @@
       <SidebarSeriesContents
         v-show="currentSidebarSlot === 'seriesContents'"
       />
-      <SidebarComment
+      <!-- <SidebarComment
         v-show="currentSidebarSlot === 'comment'"
-      />
+      /> -->
       <SidebarDonate
         v-show="currentSidebarSlot === 'donate'"
         @closeSidebar="showSidebar = false"
@@ -53,7 +53,7 @@ import NavsDefault from './NavsDefault.vue'
 import NavsSeries from './NavsSeries.vue'
 import Sidebar from './Sidebar.vue'
 import SidebarSeriesContents from './SidebarSeriesContents.vue'
-import SidebarComment from './SidebarComment.vue'
+// import SidebarComment from './SidebarComment.vue'
 import SidebarDonate from './SidebarDonate.vue'
 
 export default {
@@ -62,7 +62,7 @@ export default {
     NavsSeries,
     Sidebar,
     SidebarSeriesContents,
-    SidebarComment,
+    // SidebarComment,
     SidebarDonate
   },
   computed: {
