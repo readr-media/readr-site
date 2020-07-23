@@ -5,8 +5,7 @@
         v-lazy="'/public/2.0/decorations/donate.png'"
       >
       <div class="header__titles">
-        <p>贊助 READr</p>
-        <p>支持更多優質內容</p>
+        <p><span>贊助 READr</span><br><span>支持更多優質內容</span></p>
       </div>
     </header>
     <div class="donate__block type">
@@ -321,6 +320,7 @@ const CARRIER_TYPE_NUM = {
 }
 
 export default {
+  name: 'DonateForm',
   components: {
     RadioItem
   },
@@ -635,8 +635,7 @@ export default {
 
 <style lang="stylus" scoped>
 .donate
-  width 440px
-  margin 80px auto 0 auto
+  padding 0 0 80px
   h1
     font-size 24px
     font-weight 500
@@ -645,32 +644,36 @@ export default {
     &.bold
       font-weight 500
   &__block
+    width 90%
+    max-width 640px
+    margin 0 auto
     & + &
-      margin 36px 0 0 0
+      margin-top 36px
   &__header
-    position absolute
-    top 0
-    left 0
+    position relative
+    + *
+      margin-top 80px
 
 .header
   width 100%
   height 80px
   background-color #ddcf21
   display flex
+  justify-content center
   align-items center
-  padding 0 52px 0 0
   img
-    width 15%
+    width 120px
     position absolute
     top 10px
     left 0
   &__titles
-    margin-left calc((50vw - 440px) / 2)
-    display flex
     p
       font-size 30px
-    p + p
-      margin 0 0 0 20px
+      br
+        display none
+      span
+        &:last-child
+          margin 0 0 0 20px
 
 .donate-amount
   &__coins
