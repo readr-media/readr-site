@@ -4,7 +4,7 @@
     class="app"
   >
     <LoginLight />
-    <AppHeader class="app__header" />
+    <Header />
     <transition
       name="fade"
       mode="out-in"
@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import AppHeader from 'src/components/AppHeader/AppHeader.vue'
+import Header from 'src/components/3.0/Header.vue'
 import AppFooter from 'src/components/AppFooter.vue'
 import LoginLight from 'src/components/login/LoginLight.vue'
 import { COMSCORE } from './constants/scripts'
@@ -36,9 +36,9 @@ const generateMetaInfoScripts = (gaId) => {
 
 export default {
   components: {
-    AppHeader,
     AppFooter,
-    LoginLight
+    LoginLight,
+    Header
   },
   metaInfo () {
     let scripts = []
