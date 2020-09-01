@@ -21,7 +21,6 @@
         class="header__navs"
         @series="toggleNavSeries('seriesContents')"
         @comment="toggleNavSeries('comment')"
-        @donate="toggleNavSeries('donate')"
       />
       <NavsDefault
         v-show="layout === 'default'"
@@ -37,10 +36,6 @@
       <!-- <SidebarComment
         v-show="currentSidebarSlot === 'comment'"
       /> -->
-      <SidebarDonate
-        v-show="currentSidebarSlot === 'donate'"
-        @closeSidebar="showSidebar = false"
-      />
     </Sidebar>
   </header>
 </template>
@@ -54,16 +49,14 @@ import NavsSeries from './NavsSeries.vue'
 import Sidebar from './Sidebar.vue'
 import SidebarSeriesContents from './SidebarSeriesContents.vue'
 // import SidebarComment from './SidebarComment.vue'
-import SidebarDonate from './SidebarDonate.vue'
 
 export default {
   components: {
     NavsDefault,
     NavsSeries,
     Sidebar,
-    SidebarSeriesContents,
+    SidebarSeriesContents
     // SidebarComment,
-    SidebarDonate
   },
   computed: {
     ...mapState({
