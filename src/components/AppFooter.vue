@@ -68,40 +68,40 @@
     <div class="footer__right">
       <ul class="footer__links-list links-list">
         <li class="links-list__list-item">
-          <router-link
+          <a
             class="link"
-            to="/about"
+            href="/about"
             @click.native="sendGaEvent('click', 'footer_readr', 'about')"
           >
             關於我們
-          </router-link>
+          </a>
         </li>
         <li class="links-list__list-item">
-          <router-link
+          <a
             class="link"
-            to="/agreement"
+            href="/agreement"
             @click.native="sendGaEvent('click', 'footer_readr', 'agreement')"
           >
             服務條款
-          </router-link>
+          </a>
         </li>
         <li class="links-list__list-item">
-          <router-link
+          <a
             class="link"
-            to="/privacy-rule"
+            href="/privacy-rule"
             @click.native="sendGaEvent('click', 'footer_readr', 'privacy-rule')"
           >
             隱私政策
-          </router-link>
+          </a>
         </li>
         <li class="links-list__list-item">
-          <router-link
+          <a
             class="link"
-            to="/service-rule"
+            href="/service-rule"
             @click.native="sendGaEvent('click', 'footer_readr', 'service-rule')"
           >
             智財政策
-          </router-link>
+          </a>
         </li>
         <li class="links-list__list-item">
           <a
@@ -177,24 +177,31 @@ export default {
 
 <style lang="stylus" scoped>
 .footer
-  padding 0 15px
-  width 100%
-  height 177px
-  background-color white
-  display flex
-  justify-content center
-  align-items center
-  &--hide
-    display none
-  &__right
-    margin 0 0 0 20px
+  padding 1em 0
+  &__bottom
+    margin .5em auto 0
+  @media (min-width: 1024px)
+    padding 0 15px
+    width 100%
+    height 177px
+    background-color white
+    display flex
+    justify-content center
+    align-items center
+    &--hide
+      display none
+    &__right
+      margin 0 0 0 20px
 
 .link
-  font-size 14px
+  color black
+  font-size 12px
   font-weight 500
-  color #444746
-  display flex
-  align-items center
+  @media (min-width: 1024px)
+    font-size 14px
+    color #444746
+    display flex
+    align-items center
 
 .links-icon-list
   list-style none
@@ -216,12 +223,27 @@ export default {
   margin 0
   padding 0
   display flex
-  align-items center
-  border-left 1px solid #979797
-  height 30px
+  flex-wrap wrap
+  @media (min-width: 1024px)
+    align-items center
+    border-left 1px solid #979797
+    height 30px
   &__list-item
     display flex
     justify-content center
     align-items center
-    margin 0 0 0 20px
+    width calc(100% / 3)
+    height 20px
+    border-left 1px solid #979797
+    margin .4em 0
+    @media (min-width: 1024px)
+      width auto
+      height auto
+      margin 0 0 0 20px
+      border-left none
+    @media (max-width: 767px)
+      &:nth-child(3n)
+        border-right 1px solid #979797
+      &:nth-last-child(1)
+        border-right 1px solid #979797
 </style>
