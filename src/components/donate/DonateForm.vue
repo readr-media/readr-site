@@ -635,61 +635,95 @@ export default {
 
 <style lang="stylus" scoped>
 .donate
-  padding 0 0 80px
+  padding 0 0 50px
+  @media (min-width: 1024px)
+    padding 0 0 80px
   h1
-    font-size 24px
-    font-weight 500
+    @media (min-width 768px)
+      font-size 24px
+      font-weight 500
   h2
     font-weight 400
+    @media (min-width 768px)
+      font-size 16px
+      font-weight 500
     &.bold
       font-weight 500
   &__block
     width 90%
     max-width 640px
     margin 0 auto
+    @media (min-width 768px)
+      width 60%
     & + &
-      margin-top 36px
+      margin-top 20px
+      @media (min-width: 768px)
+        margin-top 36px
   &__header
     position relative
     + *
-      margin-top 80px
+      margin-top 40px
+      @media (min-width: 1024px)
+        margin-top 80px
 
 .header
   width 100%
   height 80px
   background-color #ddcf21
   display flex
-  justify-content center
   align-items center
+  @media (min-width: 768px)
+    justify-content center
   img
-    width 120px
+    height 84px
     position absolute
-    top 10px
+    top 5px
     left 0
+    @media (min-width: 1024px)
+      width 120px
+      top 10px
   &__titles
-    p
-      font-size 30px
-      br
-        display none
-      span
-        &:last-child
-          margin 0 0 0 20px
+    margin 0 0 0 115px
+    @media (min-width: 768px)
+      margin 0
+      p
+        font-size 30px
+    @media (min-width: 1024px)
+      p
+        br
+          display none
+        span
+          &:last-child
+            margin 0 0 0 20px
 
 .donate-amount
   &__coins
-    margin 12px 0 0 0
+    margin 8px 0 0 0
+    @media (min-width: 1024px)
+      margin 12px 0 0 0
 
 .coins
   &__row
     display flex
     align-items center
     & + &
-      margin 20px 0 0 0
+      margin 8px 0 0 0
+      @media (min-width: 768px)
+        margin 20px 0 0 0
   &__coin
     & + &
-      margin 0 0 0 20px
+      margin 0 0 0 8px
+      @media (min-width: 768px)
+        margin 0 0 0 20px
   &__custom-coin-input
-    margin 0
+    margin 0 0 0 8px
+    @media (min-width: 768px)
+      margin 0 0 0 20px
+      &__top
+        input
+          width 200px
+    @media (min-width: 1024px)
+      margin 0
 
 .coin
   d = 60px
@@ -714,10 +748,11 @@ export default {
       border-radius 0
       box-shadow inset 0 1px 3px 0 rgba(0,0,0,0.5)
       border none
-      width 409px
       height 30px
       padding 6px 10px
       font-size 16px
+      @media (min-width: 1024px)
+        width 409px
       &:focus
         outline none
     p

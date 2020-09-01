@@ -6,26 +6,17 @@
     ]"
   >
     <div class="header__wrapper">
-      <router-link
+      <a
         class="header__logo"
-        to="/"
+        href="/"
+        target="_blank"
         @click.native="sendGaEvent('click', 'header_readr', 'logo')"
       >
         <img
           src="/public/2.0/logos/readr-logo-light.svg"
           alt=""
         >
-      </router-link>
-      <NavsSeries
-        :show-icon-list="showIconList"
-        class="header__navs"
-        @series="toggleNavSeries('seriesContents')"
-        @comment="toggleNavSeries('comment')"
-      />
-      <NavsDefault
-        v-show="layout === 'default'"
-        class="header__navs"
-      />
+      </a>
     </div>
     <Sidebar
       class="header__sidebar"
@@ -44,16 +35,12 @@
 import { mapState, mapMutations, mapGetters } from 'vuex'
 import { sendGaEvent } from 'src/util/comm'
 
-import NavsDefault from './NavsDefault.vue'
-import NavsSeries from './NavsSeries.vue'
 import Sidebar from './Sidebar.vue'
 import SidebarSeriesContents from './SidebarSeriesContents.vue'
 // import SidebarComment from './SidebarComment.vue'
 
 export default {
   components: {
-    NavsDefault,
-    NavsSeries,
     Sidebar,
     SidebarSeriesContents
     // SidebarComment,
