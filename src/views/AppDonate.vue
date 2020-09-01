@@ -63,5 +63,5 @@ export default {
 
 <style lang="stylus" scoped>
 .app-donate
-  padding 50px 0 0
+  padding 0
 </style>
