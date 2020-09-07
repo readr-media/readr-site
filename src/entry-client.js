@@ -21,30 +21,8 @@ if (window.__INITIAL_STATE__) {
   store.replaceState(window.__INITIAL_STATE__)
 }
 
-const expLocalhost = /localhost/
-const expDev = /(dev)|(localhost)/
-const expMobile = /^m/
 const useragent = new UserAgent().parse(navigator.userAgent)
-const { HOST, HOST_MOBILE } = get(store, 'state.setting')
-const { host, pathname, search } = location
-
-if (!expLocalhost.test(host)) {
-  debug('STAGE:', expDev.test(host) ? 'DEV' : 'PROD')
-  debug('CURR HOST:', host)
-  if (HOST && HOST_MOBILE) {
-    if ((useragent.isMobile || useragent.isTablet) && !expMobile.test(host)) {
-      /** Redirect to mobile version */
-      debug('GOING TO', `${HOST_MOBILE}${pathname}${search}`)
-      location.replace(`${HOST_MOBILE}${pathname}${search}`)
-    } else if (useragent.isDesktop && expMobile.test(host)) {
-      /** Redirect to desktop version */
-      debug('GOING TO', `${HOST}${pathname}${search}`)
-      location.replace(`${HOST}${pathname}${search}`)
-    } else {
-      debug('WELL, DO NOTHING!')
-    }
-  }
-}
+const { pathname } = location
 
 // import Comments from 'readr-comment'
 // Vue.use(Comments)

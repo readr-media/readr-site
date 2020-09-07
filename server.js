@@ -18,7 +18,7 @@ const { createBundleRenderer } = require('vue-server-renderer')
 
 const config = require('./api/config')
 const { PAGE_CACHE_EXCLUDING } = require('./api/config')
-const { SERVER_PROTOCOL_MOBILE, SERVER_HOST_MOBILE, SERVER_PORT_MOBILE } = require('./api/config')
+const { SERVER_PORT_MOBILE } = require('./api/config')
 // const { SERVER_PROTOCOL, SERVER_HOST, SERVER_PORT, } = require('./api/config')
 
 const debug = require('debug')('READR:server')
@@ -146,19 +146,11 @@ function render (req, res, next) {
 
   const currHost = _.get(req, 'headers.host') || ''
   const targExp = /(dev)|(localhost)/
-  const targLocalhostExp = /(localhost)/
   const targExpLogin = /(\/login)/
   debug('Current client host:', currHost, !currHost.match(targExp))
   debug('Requested page:', req.url, req.url.match(targExpLogin))
   debug('isMobile', req.useragent.isMobile)
   debug('isTablet', req.useragent.isTablet)
-
-  if ((req.useragent.isMobile || req.useragent.isTablet) && !currHost.match(targLocalhostExp)) {
-    if (SERVER_PROTOCOL_MOBILE && SERVER_HOST_MOBILE) {
-      res.redirect(302, `${SERVER_PROTOCOL_MOBILE}://${SERVER_HOST_MOBILE}${SERVER_PORT_MOBILE ? ':' + SERVER_PORT_MOBILE : ''}${req.url}`)
-      return
-    }
-  }
 
   const isPreview = req.url.indexOf('preview=true') > -1
   const is404 = req.url.indexOf('/404') === 0
