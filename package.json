@@ -135,7 +135,7 @@
     "path-to-regexp": "^3.0.0",
     "phantomjs-prebuilt": "^2.1.14",
     "postcss-loader": "^3.0.0",
-    "pug": "^2.0.4",
+    "pug": "^3.0.1",
     "pug-loader": "^2.4.0",
     "rimraf": "^2.6.2",
     "selenium-server": "^3.8.1",
