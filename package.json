@@ -66,7 +66,7 @@
     "readr-web-api": "^1.6.4",
     "request-ip": "^2.0.2",
     "route-cache": "0.4.4",
-    "sanitize-html": "^1.18.2",
+    "sanitize-html": "^2.3.2",
     "serve-favicon": "^2.4.4",
     "superagent": "^5.0.5",
     "tap.js": "^2.2.0",
