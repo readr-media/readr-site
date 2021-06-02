@@ -1,5 +1,5 @@
 # readr-site
-For the new site called 'READr'
+For the new site called 'READr' (This repo is deprecated)
 
 This project is based on [Vue-hacknews-2.0](https://github.com/vuejs/vue-hackernews-2.0).
 
