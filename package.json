@@ -61,7 +61,7 @@
     "node-memwatch": "^1.0.1",
     "prevent-scroll": "^2.0.0",
     "pym.js": "^1.3.2",
-    "qs": "^6.5.1",
+    "qs": "^6.8.3",
     "readr-comment": "^1.0.21",
     "readr-web-api": "^1.6.4",
     "request-ip": "^2.0.2",
